@@ -1,6 +1,6 @@
-package fr.cnrs.siamois.ws.api.v1.routes;
+package fr.siamois.ws.api.v1.routes;
 
-import fr.cnrs.siamois.ws.api.helper.CustomMediaType;
+import fr.siamois.ws.api.helper.CustomMediaType;
 import jakarta.json.Json;
 import jakarta.json.JsonObjectBuilder;
 import org.springframework.http.MediaType;

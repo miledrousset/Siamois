@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package fr.cnrs.siamois.ws.api.helper;
+package fr.siamois.ws.api.helper;
 
 import java.io.File;
 import java.util.ArrayList;

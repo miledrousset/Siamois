@@ -1,4 +1,4 @@
-package fr.cnrs.siamois.ws.api.helper;
+package fr.siamois.ws.api.helper;
 
 import jakarta.ws.rs.core.MediaType;
 import java.util.Arrays;

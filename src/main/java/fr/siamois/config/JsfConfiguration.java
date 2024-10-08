@@ -1,4 +1,4 @@
-package fr.cnrs.siamois.config;
+package fr.siamois.config;
 
 import com.sun.faces.config.ConfigureListener;
 import jakarta.faces.webapp.FacesServlet;

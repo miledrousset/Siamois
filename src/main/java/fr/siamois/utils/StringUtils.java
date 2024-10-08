@@ -1,4 +1,4 @@
-package fr.cnrs.siamois.utils;
+package fr.siamois.utils;
 
 import org.apache.commons.validator.routines.UrlValidator;
 import java.text.Normalizer;

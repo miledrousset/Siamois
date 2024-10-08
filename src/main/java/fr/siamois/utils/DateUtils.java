@@ -1,4 +1,4 @@
-package fr.cnrs.siamois.utils;
+package fr.siamois.utils;
 
 import java.sql.Date;
 import java.text.DateFormat;

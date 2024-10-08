@@ -1,4 +1,4 @@
-package fr.cnrs.siamois.config;
+package fr.siamois.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package fr.cnrs.siamois.ws.api.helper;
+package fr.siamois.ws.api.helper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

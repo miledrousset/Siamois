@@ -1,4 +1,4 @@
-package fr.cnrs.siamois.utils;
+package fr.siamois.utils;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;

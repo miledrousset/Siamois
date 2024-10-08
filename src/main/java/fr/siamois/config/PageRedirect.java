@@ -1,4 +1,4 @@
-package fr.cnrs.siamois.config;
+package fr.siamois.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;

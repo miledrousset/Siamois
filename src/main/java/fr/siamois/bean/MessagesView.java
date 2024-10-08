@@ -1,4 +1,4 @@
-package fr.cnrs.siamois.bean;
+package fr.siamois.bean;
 
 import jakarta.faces.application.FacesMessage;
 import jakarta.inject.Named;
