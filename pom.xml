@@ -31,7 +31,6 @@
         <jakarta.websocket-api.version>2.2.0</jakarta.websocket-api.version>
         <springdoc-openapi-ui.version>1.8.0</springdoc-openapi-ui.version>
         <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
-        <jsoup.version>1.18.1</jsoup.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.6.0</springdoc-openapi-starter-webmvc-ui.version>
         <commons-csv.version>1.12.0</commons-csv.version>
         <jakarta.json-api.version>2.1.3</jakarta.json-api.version>
@@ -180,12 +179,6 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>${jsoup.version}</version>
         </dependency>
 
         <dependency>
