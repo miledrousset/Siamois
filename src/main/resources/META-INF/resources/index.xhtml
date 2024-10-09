@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<HTML xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+
+    </h:head>
+
+    <h:body>
+        <div class="card">
+            <p:tooltip/>
+
+            <h:form>
+                <p:messages id="messages" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
+
+                <h5 class="mt-0">Severities</h5>
+                <p:commandButton value="Info" action="#{messagesView.info}" styleClass="mr-2" />
+                <p:commandButton value="Warn" action="#{messagesView.warn}" styleClass="mr-2 ui-button-warning" />
+                <p:commandButton value="Error" action="#{messagesView.error}" styleClass="ui-button-danger" />
+            </h:form>
+        </div>
+    </h:body>
+</HTML>
