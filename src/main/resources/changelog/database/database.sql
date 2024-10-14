@@ -7,47 +7,51 @@ CREATE TABLE unite_enregistrement
     PRIMARY KEY (ue_id)
 );
 
-CREATE TABLE lien_stratigraphique (
+CREATE TABLE lien_stratigraphique
+(
     nom_lien_stratigraphique VARCHAR(50),
 
     PRIMARY KEY (nom_lien_stratigraphique)
 );
 
-CREATE TABLE stratigraphie(
-    ue_id_1_stratigraphie   INT,
-    ue_id_2_stratigraphie   INT,
-    lien_stratigraphie      VARCHAR(50),
+CREATE TABLE stratigraphie
+(
+    ue_id_1 INT,
+    ue_id_2 INT,
+    lien_stratigraphie    VARCHAR(50),
 
-    PRIMARY KEY (ue_id_1_stratigraphie, ue_id_2_stratigraphie),
-    FOREIGN KEY (ue_id_1_stratigraphie) REFERENCES unite_enregistrement(ue_id),
-    FOREIGN KEY (ue_id_2_stratigraphie) REFERENCES unite_enregistrement(ue_id),
-    FOREIGN KEY (lien_stratigraphie) REFERENCES lien_stratigraphique(nom_lien_stratigraphique)
+    PRIMARY KEY (ue_id_1, ue_id_2),
+    FOREIGN KEY (ue_id_1) REFERENCES unite_enregistrement (ue_id),
+    FOREIGN KEY (ue_id_2) REFERENCES unite_enregistrement (ue_id),
+    FOREIGN KEY (lien_stratigraphie) REFERENCES lien_stratigraphique (nom_lien_stratigraphique)
 );
 
-CREATE TABLE document (
+CREATE TABLE document
+(
     document_id SERIAL,
     -- TODO : Table document
 
     PRIMARY KEY (document_id)
 );
 
-CREATE TABLE media_ue (
-    ue_id_media_ue INT,
-    document_id_media_ue INT,
+CREATE TABLE media_ue
+(
+    ue_id       INT,
+    document_id INT,
 
-    PRIMARY KEY (ue_id_media_ue, document_id_media_ue),
-    FOREIGN KEY (ue_id_media_ue) REFERENCES unite_enregistrement (ue_id),
-    FOREIGN KEY (document_id_media_ue) REFERENCES document(document_id)
+    PRIMARY KEY (ue_id, document_id),
+    FOREIGN KEY (ue_id) REFERENCES unite_enregistrement (ue_id),
+    FOREIGN KEY (document_id) REFERENCES document (document_id)
 );
 
 CREATE TABLE hierarchie_ue
 (
-    parent_id_hierarchie_ue INT,
-    enfant_id_hierarchie_ue INT,
+    parent_id INT,
+    enfant_id INT,
 
-    PRIMARY KEY (parent_id_hierarchie_ue, enfant_id_hierarchie_ue),
-    FOREIGN KEY (parent_id_hierarchie_ue) REFERENCES unite_enregistrement (ue_id),
-    FOREIGN KEY (enfant_id_hierarchie_ue) REFERENCES unite_enregistrement (ue_id)
+    PRIMARY KEY (parent_id, enfant_id),
+    FOREIGN KEY (parent_id) REFERENCES unite_enregistrement (ue_id),
+    FOREIGN KEY (enfant_id) REFERENCES unite_enregistrement (ue_id)
 );
 
 CREATE TABLE etude_ue
@@ -62,12 +66,12 @@ CREATE TABLE etude_ue
 
 CREATE TABLE interpretation_ue
 (
-    ue_id_interpretation_ue    INT,
-    etude_id_interpreration_ue INT,
+    ue_id    INT,
+    etude_id INT,
 
-    PRIMARY KEY (ue_id_interpretation_ue, etude_id_interpreration_ue),
-    FOREIGN KEY (ue_id_interpretation_ue) REFERENCES unite_enregistrement (ue_id),
-    FOREIGN KEY (etude_id_interpreration_ue) REFERENCES etude_ue (etude_ue_id)
+    PRIMARY KEY (ue_id, etude_id),
+    FOREIGN KEY (ue_id) REFERENCES unite_enregistrement (ue_id),
+    FOREIGN KEY (etude_id) REFERENCES etude_ue (etude_ue_id)
 );
 
 CREATE TABLE mouvement_prelevement
@@ -98,13 +102,14 @@ CREATE TABLE prelevement
     FOREIGN KEY (mouvement_prelevement_id) REFERENCES mouvement_prelevement (mouvement_prelevement_id)
 );
 
-CREATE TABLE document_prelevement (
-    prelevement_id_document_prelevement INT,
-    document_id_document_prelevement INT,
+CREATE TABLE document_prelevement
+(
+    prelevement_id INT,
+    document_id    INT,
 
-    PRIMARY KEY (prelevement_id_document_prelevement, document_id_document_prelevement),
-    FOREIGN KEY (prelevement_id_document_prelevement) REFERENCES prelevement (prelevement_id),
-    FOREIGN KEY (document_id_document_prelevement) REFERENCES document (document_id)
+    PRIMARY KEY (prelevement_id, document_id),
+    FOREIGN KEY (prelevement_id) REFERENCES prelevement (prelevement_id),
+    FOREIGN KEY (document_id) REFERENCES document (document_id)
 );
 
 CREATE TABLE etude_prelevement
@@ -119,22 +124,24 @@ CREATE TABLE etude_prelevement
     PRIMARY KEY (etude_prelevement_id)
 );
 
-CREATE TABLE lien_prelevment_etude (
-    prelevement_id_lien INT,
-    etude_prelevement_id_lien INT,
+CREATE TABLE lien_prelevment_etude
+(
+    prelevement_id       INT,
+    etude_prelevement_id INT,
 
-    PRIMARY KEY (prelevement_id_lien, etude_prelevement_id_lien),
-    FOREIGN KEY (prelevement_id_lien) REFERENCES prelevement(prelevement_id),
-    FOREIGN KEY (etude_prelevement_id_lien) REFERENCES etude_prelevement(etude_prelevement_id)
+    PRIMARY KEY (prelevement_id, etude_prelevement_id),
+    FOREIGN KEY (prelevement_id) REFERENCES prelevement (prelevement_id),
+    FOREIGN KEY (etude_prelevement_id) REFERENCES etude_prelevement (etude_prelevement_id)
 );
 
-CREATE TABLE document_etude_prelevement (
-    etude_prelevement_id_document INT,
-    document_id_etude_prelevement INT,
+CREATE TABLE document_etude_prelevement
+(
+    etude_prelevement_id INT,
+    document_id INT,
 
-    PRIMARY KEY (etude_prelevement_id_document, document_id_etude_prelevement),
-    FOREIGN KEY (etude_prelevement_id_document) REFERENCES etude_prelevement (etude_prelevement_id),
-    FOREIGN KEY (document_id_etude_prelevement) REFERENCES document(document_id)
+    PRIMARY KEY (etude_prelevement_id, document_id),
+    FOREIGN KEY (etude_prelevement_id) REFERENCES etude_prelevement (etude_prelevement_id),
+    FOREIGN KEY (document_id) REFERENCES document (document_id)
 );
 
 
