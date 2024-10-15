@@ -35,7 +35,7 @@ CREATE TABLE vocabulaire
 CREATE TABLE concept
 (
     concept_id     VARCHAR(256),
-    vocabulaire_id VARCHAR(256)          NOT NULL,
+    vocabulaire_id VARCHAR(256) NOT NULL,
     concept_label  VARCHAR(256) NOT NULL,
 
     PRIMARY KEY (concept_id),
@@ -56,10 +56,22 @@ CREATE TABLE stratigraphie
 
 CREATE TABLE document
 (
-    document_id SERIAL,
-    -- TODO : Table document
+    document_id                 SERIAL,
+    nature_concept_id_document  VARCHAR,
+    echelle_concept_id_document VARCHAR,
+    auteur_id_document          INT,
+    format_concept_ip_document  VARCHAR,
+    parent_document             INT DEFAULT NULL,
+    localisation_document       VARCHAR,
+    metadata_document           TEXT,
+    stockage_document           VARCHAR,
+    license_document            TEXT,
+    statut_document             VARCHAR,
 
-    PRIMARY KEY (document_id)
+    PRIMARY KEY (document_id),
+    FOREIGN KEY (nature_concept_id_document) REFERENCES concept (concept_id),
+    FOREIGN KEY (echelle_concept_id_document) REFERENCES concept (concept_id),
+    FOREIGN KEY (parent_document) REFERENCES document (document_id)
 );
 
 CREATE TABLE media_ue
@@ -85,7 +97,7 @@ CREATE TABLE hierarchie_ue
 CREATE TABLE etude_ue
 (
     etude_ue_id                 SERIAL,
-    auteur_etude_ue             INT,     -- TODO : Lien vers auteur
+    auteur_etude_ue             INT, -- TODO : Lien vers auteur
     date_etude_ue               TIMESTAMP,
     methode_concept_id_etude_ue VARCHAR,
     date_ouverture_ue           TIMESTAMP,
