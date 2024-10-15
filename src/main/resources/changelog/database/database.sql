@@ -35,7 +35,7 @@ CREATE TABLE vocabulaire
 CREATE TABLE concept
 (
     concept_id     VARCHAR(256),
-    vocabulaire_id INT          NOT NULL,
+    vocabulaire_id VARCHAR(256)          NOT NULL,
     concept_label  VARCHAR(256) NOT NULL,
 
     PRIMARY KEY (concept_id),
