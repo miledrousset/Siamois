@@ -128,14 +128,15 @@ CREATE TABLE prelevement
 (
     prelevement_id                          SERIAL,
     ue_id_prelevement                       INT,
-    morphometrie_prelevement                INT,     -- TODO : FK (???)
+    morphometrie_prelevement                INT, -- TODO : FK (???)
     concept_id_categorie_prelevement        VARCHAR,
-    traitement_prelevement                  INT,     -- TODO : Lien avec Opération traitement
+    traitement_prelevement                  INT, -- TODO : Lien avec Opération traitement
     concept_id_methode_collecte_prelevement VARCHAR,
     date_collecte_prelevement               TIMESTAMP,
-    localisation_collecte_prelevement       INT,     -- TODO : Lien avec le SIG (?)
+    localisation_collecte_prelevement       INT, -- TODO : Lien avec le SIG (?)
     stockage_prelevement                    VARCHAR,
     mouvement_prelevement_id                INT,
+    concept_id_typologie_prelevement        VARCHAR,
 
     PRIMARY KEY (prelevement_id),
     FOREIGN KEY (ue_id_prelevement) REFERENCES unite_enregistrement (ue_id),
@@ -206,7 +207,18 @@ ALTER TABLE prelevement
 ALTER TABLE prelevement
     ADD FOREIGN KEY (concept_id_methode_collecte_prelevement) REFERENCES concept (concept_id);
 
+CREATE TABLE etude_prelevement_typologie_concept
+(
+    concept_id           VARCHAR,
+    etude_prelevement_id INT,
 
+    PRIMARY KEY (etude_prelevement_id, concept_id),
+    FOREIGN KEY (concept_id) REFERENCES concept (concept_id),
+    FOREIGN KEY (etude_prelevement_id) REFERENCES etude_prelevement (etude_prelevement_id)
+);
+
+ALTER TABLE prelevement
+    ADD FOREIGN KEY (concept_id_typologie_prelevement) REFERENCES concept (concept_id);
 
 
 
