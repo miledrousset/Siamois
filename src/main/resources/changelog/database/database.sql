@@ -84,12 +84,12 @@ CREATE TABLE hierarchie_ue
 
 CREATE TABLE etude_ue
 (
-    etude_ue_id       SERIAL,
-    auteur_etude_ue   INT,     -- TODO : Lien vers auteur
-    date_etude_ue     TIMESTAMP,
-    concept_id_methode_etude_ue  VARCHAR, -- TODO : Lien avec Thesaurus
-    date_ouverture_ue TIMESTAMP,
-    date_fermeture_ue TIMESTAMP,
+    etude_ue_id                 SERIAL,
+    auteur_etude_ue             INT,     -- TODO : Lien vers auteur
+    date_etude_ue               TIMESTAMP,
+    concept_id_methode_etude_ue VARCHAR, -- TODO : Lien avec Thesaurus
+    date_ouverture_ue           TIMESTAMP,
+    date_fermeture_ue           TIMESTAMP,
 
     PRIMARY KEY (etude_ue_id)
 );
@@ -126,16 +126,16 @@ CREATE TABLE mouvement_prelevement
 
 CREATE TABLE prelevement
 (
-    prelevement_id                    SERIAL,
-    ue_id_prelevement                 INT,
-    morphometrie_prelevement          INT, -- TODO : FK (???)
-    categorie_prelevement             INT, -- TODO : Lien avec un thésaurus
-    traitement_prelevement            INT, -- TODO : Lien avec Opération traitement
-    methode_collecte_prelevement      INT, -- TODO : Lien avec un thésaurus
-    date_collecte_prelevement         TIMESTAMP,
-    localisation_collecte_prelevement INT, -- TODO : Lien avec le SIG (?)
-    stockage_prelevement              VARCHAR,
-    mouvement_prelevement_id          INT,
+    prelevement_id                          SERIAL,
+    ue_id_prelevement                       INT,
+    morphometrie_prelevement                INT,     -- TODO : FK (???)
+    concept_id_categorie_prelevement        VARCHAR,
+    traitement_prelevement                  INT,     -- TODO : Lien avec Opération traitement
+    concept_id_methode_collecte_prelevement VARCHAR,
+    date_collecte_prelevement               TIMESTAMP,
+    localisation_collecte_prelevement       INT,     -- TODO : Lien avec le SIG (?)
+    stockage_prelevement                    VARCHAR,
+    mouvement_prelevement_id                INT,
 
     PRIMARY KEY (prelevement_id),
     FOREIGN KEY (ue_id_prelevement) REFERENCES unite_enregistrement (ue_id),
@@ -190,7 +190,8 @@ ALTER TABLE unite_enregistrement
 ALTER TABLE etude_ue
     ADD FOREIGN KEY (concept_id_methode_etude_ue) REFERENCES concept (concept_id);
 
-CREATE TABLE etude_ue_typologie_concept (
+CREATE TABLE etude_ue_typologie_concept
+(
     concept_id  VARCHAR,
     etude_ue_id INT,
 
@@ -198,6 +199,12 @@ CREATE TABLE etude_ue_typologie_concept (
     FOREIGN KEY (concept_id) REFERENCES concept (concept_id),
     FOREIGN KEY (etude_ue_id) REFERENCES etude_ue (etude_ue_id)
 );
+
+ALTER TABLE prelevement
+    ADD FOREIGN KEY (concept_id_categorie_prelevement) REFERENCES concept (concept_id);
+
+ALTER TABLE prelevement
+    ADD FOREIGN KEY (concept_id_methode_collecte_prelevement) REFERENCES concept (concept_id);
 
 
 
