@@ -1,7 +1,7 @@
 CREATE TABLE unite_enregistrement
 (
     ue_id                  SERIAL,
-    concept_id_type_ue     INT,
+    concept_id_type_ue     VARCHAR,
     date_enregistrement_ue TIMESTAMP,
     emprise_ue             INT, -- TODO : Lien avec le SIG
     PRIMARY KEY (ue_id)
@@ -87,7 +87,7 @@ CREATE TABLE etude_ue
     etude_ue_id       SERIAL,
     auteur_etude_ue   INT,     -- TODO : Lien vers auteur
     date_etude_ue     TIMESTAMP,
-    methode_etude_ue  VARCHAR, -- TODO : À définir
+    concept_id_methode_etude_ue  VARCHAR, -- TODO : Lien avec Thesaurus
     date_ouverture_ue TIMESTAMP,
     date_fermeture_ue TIMESTAMP,
 
@@ -186,6 +186,18 @@ CREATE TABLE document_etude_prelevement
 
 ALTER TABLE unite_enregistrement
     ADD FOREIGN KEY (concept_id_type_ue) REFERENCES concept (concept_id);
+
+ALTER TABLE etude_ue
+    ADD FOREIGN KEY (concept_id_methode_etude_ue) REFERENCES concept (concept_id);
+
+CREATE TABLE etude_ue_typologie_concept (
+    concept_id  VARCHAR,
+    etude_ue_id INT,
+
+    PRIMARY KEY (etude_ue_id, concept_id),
+    FOREIGN KEY (concept_id) REFERENCES concept (concept_id),
+    FOREIGN KEY (etude_ue_id) REFERENCES etude_ue (etude_ue_id)
+);
 
 
 
