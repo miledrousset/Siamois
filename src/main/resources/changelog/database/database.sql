@@ -1,7 +1,7 @@
 CREATE TABLE unite_enregistrement
 (
     ue_id                  SERIAL,
-    type_ue                INT, -- TODO : Lien avec un thésaurus
+    concept_id_type_ue     INT,
     date_enregistrement_ue TIMESTAMP,
     emprise_ue             INT, -- TODO : Lien avec le SIG
     PRIMARY KEY (ue_id)
@@ -183,6 +183,11 @@ CREATE TABLE document_etude_prelevement
     FOREIGN KEY (etude_prelevement_id) REFERENCES etude_prelevement (etude_prelevement_id),
     FOREIGN KEY (document_id) REFERENCES document (document_id)
 );
+
+ALTER TABLE unite_enregistrement
+    ADD FOREIGN KEY (concept_id_type_ue) REFERENCES concept (concept_id);
+
+
 
 
 
