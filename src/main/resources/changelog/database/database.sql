@@ -1,7 +1,7 @@
 CREATE TABLE unite_enregistrement
 (
     ue_id                  SERIAL,
-    concept_id_type_ue     VARCHAR,
+    type_concept_id_ue     VARCHAR,
     date_enregistrement_ue TIMESTAMP,
     emprise_ue             INT, -- TODO : Lien avec le SIG
     PRIMARY KEY (ue_id)
@@ -87,7 +87,7 @@ CREATE TABLE etude_ue
     etude_ue_id                 SERIAL,
     auteur_etude_ue             INT,     -- TODO : Lien vers auteur
     date_etude_ue               TIMESTAMP,
-    concept_id_methode_etude_ue VARCHAR,
+    methode_concept_id_etude_ue VARCHAR,
     date_ouverture_ue           TIMESTAMP,
     date_fermeture_ue           TIMESTAMP,
 
@@ -129,14 +129,14 @@ CREATE TABLE prelevement
     prelevement_id                          SERIAL,
     ue_id_prelevement                       INT,
     morphometrie_prelevement                INT, -- TODO : FK (???)
-    concept_id_categorie_prelevement        VARCHAR,
+    categorie_concept_id_prelevement        VARCHAR,
     traitement_prelevement                  INT, -- TODO : Lien avec Opération traitement
-    concept_id_methode_collecte_prelevement VARCHAR,
+    methode_collecte_concept_id_prelevement VARCHAR,
     date_collecte_prelevement               TIMESTAMP,
     localisation_collecte_prelevement       INT, -- TODO : Lien avec le SIG (?)
     stockage_prelevement                    VARCHAR,
     mouvement_prelevement_id                INT,
-    concept_id_typologie_prelevement        VARCHAR,
+    typologie_concept_id_prelevement        VARCHAR,
 
     PRIMARY KEY (prelevement_id),
     FOREIGN KEY (ue_id_prelevement) REFERENCES unite_enregistrement (ue_id),
@@ -186,10 +186,10 @@ CREATE TABLE document_etude_prelevement
 );
 
 ALTER TABLE unite_enregistrement
-    ADD FOREIGN KEY (concept_id_type_ue) REFERENCES concept (concept_id);
+    ADD FOREIGN KEY (type_concept_id_ue) REFERENCES concept (concept_id);
 
 ALTER TABLE etude_ue
-    ADD FOREIGN KEY (concept_id_methode_etude_ue) REFERENCES concept (concept_id);
+    ADD FOREIGN KEY (methode_concept_id_etude_ue) REFERENCES concept (concept_id);
 
 CREATE TABLE etude_ue_typologie_concept
 (
@@ -202,10 +202,10 @@ CREATE TABLE etude_ue_typologie_concept
 );
 
 ALTER TABLE prelevement
-    ADD FOREIGN KEY (concept_id_categorie_prelevement) REFERENCES concept (concept_id);
+    ADD FOREIGN KEY (categorie_concept_id_prelevement) REFERENCES concept (concept_id);
 
 ALTER TABLE prelevement
-    ADD FOREIGN KEY (concept_id_methode_collecte_prelevement) REFERENCES concept (concept_id);
+    ADD FOREIGN KEY (methode_collecte_concept_id_prelevement) REFERENCES concept (concept_id);
 
 CREATE TABLE etude_prelevement_typologie_concept
 (
@@ -218,7 +218,7 @@ CREATE TABLE etude_prelevement_typologie_concept
 );
 
 ALTER TABLE prelevement
-    ADD FOREIGN KEY (concept_id_typologie_prelevement) REFERENCES concept (concept_id);
+    ADD FOREIGN KEY (typologie_concept_id_prelevement) REFERENCES concept (concept_id);
 
 
 
