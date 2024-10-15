@@ -64,6 +64,15 @@ CREATE TABLE etude_ue
     PRIMARY KEY (etude_ue_id)
 );
 
+CREATE TABLE document_etude_ue (
+    etude_ue_id INT,
+    document_id INT,
+
+    PRIMARY KEY (etude_ue_id, document_id),
+    FOREIGN KEY (etude_ue_id) REFERENCES etude_ue(etude_ue_id),
+    FOREIGN KEY (document_id) REFERENCES document (document_id)
+);
+
 CREATE TABLE interpretation_ue
 (
     ue_id    INT,
