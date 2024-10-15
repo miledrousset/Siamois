@@ -21,7 +21,7 @@ import java.util.List;
 
 @Configuration
 @OpenAPIDefinition(
-        info = @Info(title = "Opentheso ", version = "v1"),
+        info = @Info(title = "Siamois ", version = "v1"),
         security = @SecurityRequirement(name = "apiKey")
 )
 @SecurityScheme(
@@ -36,7 +36,7 @@ public class OpenApiConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("fr.cnrs.opentheso.config"))
+                .apis(RequestHandlerSelectors.basePackage("fr.siamois.config"))
                 .paths(PathSelectors.any())
                 .build();
     }
