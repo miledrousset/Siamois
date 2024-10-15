@@ -60,6 +60,8 @@ CREATE TABLE etude_ue
     auteur_etude_ue  INT,     -- TODO : Lien vers auteur
     date_etude_ue    TIMESTAMP,
     methode_etude_ue VARCHAR, -- TODO : À définir
+    date_ouverture_ue   TIMESTAMP,
+    date_fermeture_ue   TIMESTAMP,
 
     PRIMARY KEY (etude_ue_id)
 );
