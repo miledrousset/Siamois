@@ -14,11 +14,39 @@ CREATE TABLE lien_stratigraphique
     PRIMARY KEY (nom_lien_stratigraphique)
 );
 
+CREATE TABLE vocabulaire_type
+(
+    vocabulaire_type_id    SERIAL,
+    vocabulaire_type_label VARCHAR,
+
+    PRIMARY KEY (vocabulaire_type_id)
+);
+
+CREATE TABLE vocabulaire
+(
+    vocabulaire_id      VARCHAR(256),
+    type_id_vocabulaire INT NOT NULL,
+    nom_vocabulaire     VARCHAR,
+
+    PRIMARY KEY (vocabulaire_id),
+    FOREIGN KEY (type_id_vocabulaire) REFERENCES vocabulaire_type (vocabulaire_type_id)
+);
+
+CREATE TABLE concept
+(
+    concept_id     VARCHAR(256),
+    vocabulaire_id INT          NOT NULL,
+    concept_label  VARCHAR(256) NOT NULL,
+
+    PRIMARY KEY (concept_id),
+    FOREIGN KEY (vocabulaire_id) REFERENCES vocabulaire (vocabulaire_id)
+);
+
 CREATE TABLE stratigraphie
 (
-    ue_id_1 INT,
-    ue_id_2 INT,
-    lien_stratigraphie    VARCHAR(50),
+    ue_id_1            INT,
+    ue_id_2            INT,
+    lien_stratigraphie VARCHAR(50),
 
     PRIMARY KEY (ue_id_1, ue_id_2),
     FOREIGN KEY (ue_id_1) REFERENCES unite_enregistrement (ue_id),
@@ -56,22 +84,23 @@ CREATE TABLE hierarchie_ue
 
 CREATE TABLE etude_ue
 (
-    etude_ue_id      SERIAL,
-    auteur_etude_ue  INT,     -- TODO : Lien vers auteur
-    date_etude_ue    TIMESTAMP,
-    methode_etude_ue VARCHAR, -- TODO : À définir
-    date_ouverture_ue   TIMESTAMP,
-    date_fermeture_ue   TIMESTAMP,
+    etude_ue_id       SERIAL,
+    auteur_etude_ue   INT,     -- TODO : Lien vers auteur
+    date_etude_ue     TIMESTAMP,
+    methode_etude_ue  VARCHAR, -- TODO : À définir
+    date_ouverture_ue TIMESTAMP,
+    date_fermeture_ue TIMESTAMP,
 
     PRIMARY KEY (etude_ue_id)
 );
 
-CREATE TABLE document_etude_ue (
+CREATE TABLE document_etude_ue
+(
     etude_ue_id INT,
     document_id INT,
 
     PRIMARY KEY (etude_ue_id, document_id),
-    FOREIGN KEY (etude_ue_id) REFERENCES etude_ue(etude_ue_id),
+    FOREIGN KEY (etude_ue_id) REFERENCES etude_ue (etude_ue_id),
     FOREIGN KEY (document_id) REFERENCES document (document_id)
 );
 
@@ -148,7 +177,7 @@ CREATE TABLE lien_prelevment_etude
 CREATE TABLE document_etude_prelevement
 (
     etude_prelevement_id INT,
-    document_id INT,
+    document_id          INT,
 
     PRIMARY KEY (etude_prelevement_id, document_id),
     FOREIGN KEY (etude_prelevement_id) REFERENCES etude_prelevement (etude_prelevement_id),
