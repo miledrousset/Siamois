@@ -87,7 +87,7 @@ CREATE TABLE etude_ue
     etude_ue_id                 SERIAL,
     auteur_etude_ue             INT,     -- TODO : Lien vers auteur
     date_etude_ue               TIMESTAMP,
-    concept_id_methode_etude_ue VARCHAR, -- TODO : Lien avec Thesaurus
+    concept_id_methode_etude_ue VARCHAR,
     date_ouverture_ue           TIMESTAMP,
     date_fermeture_ue           TIMESTAMP,
 
