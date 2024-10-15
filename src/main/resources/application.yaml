@@ -1,0 +1,92 @@
+#######################
+# Server Configuration
+#######################
+server:
+  port: 8099
+  forward-headers-strategy: native
+  servlet:
+    context-path: /siamois
+    session:
+      timeout: 125m
+  error:
+    path: /errorPages/error500.xhtml
+    whitelabel:
+      enabled: false
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+ #   platform: postgres
+    url: jdbc:postgresql://localhost:5432/opentheso
+    password: opentheso
+    username: opentheso
+    dataSourceClassName: org.postgresql.ds.PGSimpleDataSource
+    maxPoolSize: 1000
+    minIdle: 1
+    idleTimeout: 30000
+    connectionTimeout: 30000
+    connectionTestQuery: SELECT 1
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    enabled: true
+    change-log: classpath:/changelog/db.changelog.xml
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework: INFO
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
+settings:
+  timeout: 79
+  workLanguage: fr
+  user: neo4j
+  password: neo4j1234
+  databaseName: neo4j
+
+smpt:
+  protocol: smtp
+  hostname: smtprelay.cnrs.fr
+  portNumber: 25
+  authorization: false
+  mailFrom: opentheso@mom.fr
+  transportMail: smtp
+
+
+neo4j:
+  serverName: localhost
+  serverPort: 7687
+  databaseName: neo4j
+  user: neo4j
+  password: neo4j1234
+
+ldap:
+  security:
+    authentication: simple
+  server:
+    url: ldapr3.huma-num.fr
+  initial:
+    context:
+      factory: com.sun.jndi.ldap.LdapCtxFactory
+  key:
+    store:
+      password: changeit
+      path: /usr/lib/jvm/java-11-openjdk-amd64/lib/security/cacerts
+    trust:
+      password: changeit
+      path: /usr/lib/jvm/java-11-openjdk-amd64/lib/security/cacerts
