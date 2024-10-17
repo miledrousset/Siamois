@@ -1,236 +1,180 @@
-CREATE TABLE unite_enregistrement
+CREATE TABLE concept -- TODO : properly define this table which is just a placeholder for opentheso/opentypo relationships now.
 (
-    ue_id                  SERIAL,
-    type_concept_id_ue     VARCHAR,
-    date_enregistrement_ue TIMESTAMP,
-    emprise_ue             INT, -- TODO : Lien avec le SIG
-    PRIMARY KEY (ue_id)
-);
+    concept_id  SERIAL,
 
-CREATE TABLE lien_stratigraphique
-(
-    nom_lien_stratigraphique VARCHAR(50),
-
-    PRIMARY KEY (nom_lien_stratigraphique)
-);
-
-CREATE TABLE vocabulaire_type
-(
-    vocabulaire_type_id    SERIAL,
-    vocabulaire_type_label VARCHAR,
-
-    PRIMARY KEY (vocabulaire_type_id)
-);
-
-CREATE TABLE vocabulaire
-(
-    vocabulaire_id      VARCHAR(256),
-    type_id_vocabulaire INT NOT NULL,
-    nom_vocabulaire     VARCHAR,
-
-    PRIMARY KEY (vocabulaire_id),
-    FOREIGN KEY (type_id_vocabulaire) REFERENCES vocabulaire_type (vocabulaire_type_id)
-);
-
-CREATE TABLE concept
-(
-    concept_id     VARCHAR(256),
-    vocabulaire_id VARCHAR(256) NOT NULL,
-    concept_label  VARCHAR(256) NOT NULL,
-
-    PRIMARY KEY (concept_id),
-    FOREIGN KEY (vocabulaire_id) REFERENCES vocabulaire (vocabulaire_id)
-);
-
-CREATE TABLE stratigraphie
-(
-    ue_id_1            INT,
-    ue_id_2            INT,
-    lien_stratigraphie VARCHAR(50),
-
-    PRIMARY KEY (ue_id_1, ue_id_2),
-    FOREIGN KEY (ue_id_1) REFERENCES unite_enregistrement (ue_id),
-    FOREIGN KEY (ue_id_2) REFERENCES unite_enregistrement (ue_id),
-    FOREIGN KEY (lien_stratigraphie) REFERENCES lien_stratigraphique (nom_lien_stratigraphique)
+    PRIMARY KEY (concept_id)
 );
 
 CREATE TABLE document
 (
     document_id                 SERIAL,
-    nature_concept_id_document  VARCHAR,
-    echelle_concept_id_document VARCHAR,
-    auteur_id_document          INT,
-    format_concept_ip_document  VARCHAR,
-    parent_document             INT DEFAULT NULL,
-    localisation_document       VARCHAR,
-    metadata_document           TEXT,
-    stockage_document           VARCHAR,
-    license_document            TEXT,
-    statut_document             VARCHAR,
+    title VARCHAR(255), -- might be useful
+    fk_nature INT,
+    fk_scale INT,
+    -- author TODO : tbd
+    fk_format INT,
+    fk_parent INT,
+    --localisation_document       VARCHAR,TODO : tbd
+    --metadata_document           TEXT,TODO : tbd
+    --stockage_document           VARCHAR,TODO : tbd
+    --license_document            TEXT,TODO : tbd
+    --statut_document             VARCHAR,TODO : tbd
 
     PRIMARY KEY (document_id),
-    FOREIGN KEY (nature_concept_id_document) REFERENCES concept (concept_id),
-    FOREIGN KEY (echelle_concept_id_document) REFERENCES concept (concept_id),
-    FOREIGN KEY (parent_document) REFERENCES document (document_id)
+    FOREIGN KEY (fk_scale) REFERENCES concept (concept_id),
+    FOREIGN KEY (fk_nature) REFERENCES concept (concept_id),
+    FOREIGN KEY (fk_format) REFERENCES concept (concept_id),
+    FOREIGN KEY (fk_parent) REFERENCES document (document_id)
 );
 
-CREATE TABLE media_ue
+CREATE TABLE recording_unit
 (
-    ue_id       INT,
-    document_id INT,
+    recording_unit_id   SERIAL, -- TODO: Think about ARK, should we use ARK as id?
+    fk_type INT,
+    begin_date          TIMESTAMP,
+    end_date            TIMESTAMP,
+    -- geospatial_extent   , -- TODO : Lien avec le SIG
 
-    PRIMARY KEY (ue_id, document_id),
-    FOREIGN KEY (ue_id) REFERENCES unite_enregistrement (ue_id),
-    FOREIGN KEY (document_id) REFERENCES document (document_id)
+    PRIMARY KEY (recording_unit_id),
+    FOREIGN KEY (fk_type) REFERENCES concept (concept_id)
 );
 
-CREATE TABLE hierarchie_ue
+CREATE TABLE recording_unit_media
 (
-    parent_id INT,
-    enfant_id INT,
+    fk_media_id       INT,
+    fk_recording_unit_id INT,
 
-    PRIMARY KEY (parent_id, enfant_id),
-    FOREIGN KEY (parent_id) REFERENCES unite_enregistrement (ue_id),
-    FOREIGN KEY (enfant_id) REFERENCES unite_enregistrement (ue_id)
+    PRIMARY KEY (fk_media_id, fk_recording_unit_id),
+    FOREIGN KEY (fk_media_id) REFERENCES document (document_id),
+    FOREIGN KEY (fk_recording_unit_id) REFERENCES recording_unit (recording_unit_id)
 );
 
-CREATE TABLE etude_ue
+CREATE TABLE recording_unit_group
 (
-    etude_ue_id                 SERIAL,
-    auteur_etude_ue             INT, -- TODO : Lien vers auteur
-    date_etude_ue               TIMESTAMP,
-    methode_concept_id_etude_ue VARCHAR,
-    date_ouverture_ue           TIMESTAMP,
-    date_fermeture_ue           TIMESTAMP,
+    fk_parent_id INT,
+    fk_child_id INT,
 
-    PRIMARY KEY (etude_ue_id)
+    PRIMARY KEY (fk_parent_id, fk_child_id),
+    FOREIGN KEY (fk_parent_id) REFERENCES recording_unit (recording_unit_id),
+    FOREIGN KEY (fk_child_id) REFERENCES recording_unit (recording_unit_id)
 );
 
-CREATE TABLE document_etude_ue
+
+CREATE TABLE stratigraphic_relationship
 (
-    etude_ue_id INT,
-    document_id INT,
+    fk_recording_unit_1_id         INT,
+    fk_recording_unit_2_id         INT,
+    fk_relationship_concept_id  INT,
 
-    PRIMARY KEY (etude_ue_id, document_id),
-    FOREIGN KEY (etude_ue_id) REFERENCES etude_ue (etude_ue_id),
-    FOREIGN KEY (document_id) REFERENCES document (document_id)
+    -- TODO : constraint about the RU ids ? if relationship RU1 -> RU2 exists, don't allow for RU2 -> RU1 ?
+    PRIMARY KEY (fk_recording_unit_1_id, fk_recording_unit_2_id),
+    FOREIGN KEY (fk_recording_unit_1_id) REFERENCES recording_unit (recording_unit_id),
+    FOREIGN KEY (fk_recording_unit_2_id) REFERENCES recording_unit (recording_unit_id),
+    FOREIGN KEY (fk_relationship_concept_id) REFERENCES concept (concept_id)
 );
 
-CREATE TABLE interpretation_ue
+CREATE TABLE recording_unit_study
 (
-    ue_id    INT,
-    etude_id INT,
+    recording_unit_study_id     SERIAL,
+    author                      INT, -- TODO : link to author or user
+    study_date                  TIMESTAMP,
+    fk_method        INT,
 
-    PRIMARY KEY (ue_id, etude_id),
-    FOREIGN KEY (ue_id) REFERENCES unite_enregistrement (ue_id),
-    FOREIGN KEY (etude_id) REFERENCES etude_ue (etude_ue_id)
+    PRIMARY KEY (recording_unit_study_id),
+    FOREIGN KEY (fk_method) REFERENCES concept (concept_id)
 );
 
-CREATE TABLE mouvement_prelevement
+CREATE TABLE ru_study_document
 (
-    mouvement_prelevement_id          SERIAL,
-    date_sortie_mouvement_prelevement TIMESTAMP,
-    date_retour_mouvement_prelevement TIMESTAMP,
-    lieu_mouvement_prelevement        VARCHAR,
+    fk_document_id       INT,
+    fk_ru_study_id INT,
 
-    PRIMARY KEY (mouvement_prelevement_id)
+    PRIMARY KEY (fk_document_id, fk_ru_study_id),
+    FOREIGN KEY (fk_document_id) REFERENCES document (document_id),
+    FOREIGN KEY (fk_ru_study_id) REFERENCES recording_unit_study (recording_unit_study_id)
 );
 
-CREATE TABLE prelevement
+CREATE TABLE ru_study_typology
 (
-    prelevement_id                          SERIAL,
-    ue_id_prelevement                       INT,
-    morphometrie_prelevement                INT, -- TODO : FK (???)
-    categorie_concept_id_prelevement        VARCHAR,
-    traitement_prelevement                  INT, -- TODO : Lien avec Opération traitement
-    methode_collecte_concept_id_prelevement VARCHAR,
-    date_collecte_prelevement               TIMESTAMP,
-    localisation_collecte_prelevement       INT, -- TODO : Lien avec le SIG (?)
-    stockage_prelevement                    VARCHAR,
-    mouvement_prelevement_id                INT,
-    typologie_concept_id_prelevement        VARCHAR,
+    fk_ru_study_id              INT,
+    fk_typologie_concept_id     INT,
 
-    PRIMARY KEY (prelevement_id),
-    FOREIGN KEY (ue_id_prelevement) REFERENCES unite_enregistrement (ue_id),
-    FOREIGN KEY (mouvement_prelevement_id) REFERENCES mouvement_prelevement (mouvement_prelevement_id)
+    PRIMARY KEY (fk_ru_study_id, fk_typologie_concept_id),
+    FOREIGN KEY (fk_typologie_concept_id) REFERENCES concept (concept_id),
+    FOREIGN KEY (fk_ru_study_id) REFERENCES recording_unit_study (recording_unit_study_id)
 );
 
-CREATE TABLE document_prelevement
+CREATE TABLE specimen
 (
-    prelevement_id INT,
-    document_id    INT,
+    specimen_id                          SERIAL,
+    fk_recording_unit_id                       INT,
+    -- todo : morphometrie INT ?
+    fk_specimen_category INT,
+    -- todo : traitement INT
+    -- todo : clarify relationship between specimen and specimec study. On Miro: N to N. Why?
+    fk_collection_method INT, -- todo : faut il deux champs? il est ecrit COMMENT et POURQUOI dans le miro
+    collection_date TIMESTAMP, -- quand a il été prelevé
+    -- location INT -- ou a t'il été prelévé todo :GIS
+    -- storage -- todo : c'est quoi stockage prelevement??
 
-    PRIMARY KEY (prelevement_id, document_id),
-    FOREIGN KEY (prelevement_id) REFERENCES prelevement (prelevement_id),
-    FOREIGN KEY (document_id) REFERENCES document (document_id)
+    PRIMARY KEY (specimen_id),
+    FOREIGN KEY (fk_recording_unit_id) REFERENCES recording_unit (recording_unit_id),
+    FOREIGN KEY (fk_specimen_category) REFERENCES concept (concept_id),
+    FOREIGN KEY (fk_collection_method) REFERENCES concept (concept_id)
 );
 
-CREATE TABLE etude_prelevement
+CREATE TABLE specimen_document
 (
-    etude_prelevement_id        SERIAL,
-    auteur_etude_prelevement    INT, -- TODO : Lien avec auteur
-    date_etude_prelevement      TIMESTAMP,
-    methode_etude_prelevement   INT, -- TODO : Lien avec Thésaurus
-    typologie_etude_prelevement INT, -- TODO : Lien avec Thésaurus
+    fk_document_id       INT,
+    fk_specimen_id INT,
 
-
-    PRIMARY KEY (etude_prelevement_id)
+    PRIMARY KEY (fk_document_id, fk_specimen_id),
+    FOREIGN KEY (fk_document_id) REFERENCES document (document_id),
+    FOREIGN KEY (fk_specimen_id) REFERENCES specimen (specimen_id)
 );
 
-CREATE TABLE lien_prelevment_etude
+CREATE TABLE specimen_movement
 (
-    prelevement_id       INT,
-    etude_prelevement_id INT,
+    movement_id              SERIAL PRIMARY KEY,
+    fk_specimen_id           INT NOT NULL,
+    departure_date           TIMESTAMP NOT NULL,
+    return_date           TIMESTAMP NOT NULL,
+    origin_location     VARCHAR(255), -- todo : define
+    destination_location     VARCHAR(255), -- todo : define
+    movement_reason          VARCHAR(255), -- todo : useful?
+    handled_by               VARCHAR(255), -- todo : useful?
+    notes                   TEXT, -- todo : useful?
 
-    PRIMARY KEY (prelevement_id, etude_prelevement_id),
-    FOREIGN KEY (prelevement_id) REFERENCES prelevement (prelevement_id),
-    FOREIGN KEY (etude_prelevement_id) REFERENCES etude_prelevement (etude_prelevement_id)
+    FOREIGN KEY (fk_specimen_id) REFERENCES specimen(specimen_id)
 );
 
-CREATE TABLE document_etude_prelevement
+CREATE TABLE specimen_study
 (
-    etude_prelevement_id INT,
-    document_id          INT,
+    specimen_study_id        SERIAL,
+    --author   INT, -- TODO : Lien avec auteur
+    study_date      TIMESTAMP,
+    fk_method   INT,
 
-    PRIMARY KEY (etude_prelevement_id, document_id),
-    FOREIGN KEY (etude_prelevement_id) REFERENCES etude_prelevement (etude_prelevement_id),
-    FOREIGN KEY (document_id) REFERENCES document (document_id)
+    PRIMARY KEY (specimen_study_id),
+    FOREIGN KEY (fk_method) REFERENCES concept (concept_id)
 );
 
-ALTER TABLE unite_enregistrement
-    ADD FOREIGN KEY (type_concept_id_ue) REFERENCES concept (concept_id);
-
-ALTER TABLE etude_ue
-    ADD FOREIGN KEY (methode_concept_id_etude_ue) REFERENCES concept (concept_id);
-
-CREATE TABLE etude_ue_typologie_concept
+CREATE TABLE specimen_study_document
 (
-    concept_id  VARCHAR,
-    etude_ue_id INT,
+    fk_document_id       INT,
+    fk_specimen_study_id INT,
 
-    PRIMARY KEY (etude_ue_id, concept_id),
-    FOREIGN KEY (concept_id) REFERENCES concept (concept_id),
-    FOREIGN KEY (etude_ue_id) REFERENCES etude_ue (etude_ue_id)
+    PRIMARY KEY (fk_document_id, fk_specimen_study_id),
+    FOREIGN KEY (fk_document_id) REFERENCES document (document_id),
+    FOREIGN KEY (fk_specimen_study_id) REFERENCES specimen_study (specimen_study_id)
 );
 
-ALTER TABLE prelevement
-    ADD FOREIGN KEY (categorie_concept_id_prelevement) REFERENCES concept (concept_id);
-
-ALTER TABLE prelevement
-    ADD FOREIGN KEY (methode_collecte_concept_id_prelevement) REFERENCES concept (concept_id);
-
-CREATE TABLE etude_prelevement_typologie_concept
+CREATE TABLE specimen_study_typology
 (
-    concept_id           VARCHAR,
-    etude_prelevement_id INT,
+    fk_specimen_study_id              INT,
+    fk_typologie_concept_id     INT,
 
-    PRIMARY KEY (etude_prelevement_id, concept_id),
-    FOREIGN KEY (concept_id) REFERENCES concept (concept_id),
-    FOREIGN KEY (etude_prelevement_id) REFERENCES etude_prelevement (etude_prelevement_id)
+    PRIMARY KEY (fk_specimen_study_id , fk_typologie_concept_id),
+    FOREIGN KEY (fk_typologie_concept_id) REFERENCES concept (concept_id),
+    FOREIGN KEY (fk_specimen_study_id) REFERENCES specimen_study (specimen_study_id)
 );
-
-ALTER TABLE prelevement
-    ADD FOREIGN KEY (typologie_concept_id_prelevement) REFERENCES concept (concept_id);
-
-
-
