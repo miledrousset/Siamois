@@ -318,7 +318,7 @@ CREATE TABLE spatial_unit_document
     fk_document_id INT,
     fk_spatial_unit_id INT,
 
-    PRIMARY KEY (fk_document_id, fk_action_unit_id),
+    PRIMARY KEY (fk_document_id, fk_spatial_unit_id),
     FOREIGN KEY (fk_document_id) REFERENCES siamois_document (document_id),
     FOREIGN KEY (fk_spatial_unit_id) REFERENCES spatial_unit (spatial_unit_id)
 );
