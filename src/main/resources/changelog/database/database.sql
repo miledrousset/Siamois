@@ -312,3 +312,23 @@ CREATE TABLE log_entry
 
 CREATE INDEX idx_log_entry_user_id ON log_entry (fk_user_id);
 CREATE INDEX idx_log_entry_log_date ON log_entry (log_date);
+
+CREATE TABLE spatial_unit_document
+(
+    fk_document_id INT,
+    fk_spatial_unit_id INT,
+
+    PRIMARY KEY (fk_document_id, fk_action_unit_id),
+    FOREIGN KEY (fk_document_id) REFERENCES siamois_document (document_id),
+    FOREIGN KEY (fk_spatial_unit_id) REFERENCES spatial_unit (spatial_unit_id)
+);
+
+CREATE TABLE action_unit_document
+(
+    fk_document_id INT,
+    fk_action_unit_id INT,
+
+    PRIMARY KEY (fk_document_id, fk_action_unit_id),
+    FOREIGN KEY (fk_document_id) REFERENCES siamois_document (document_id),
+    FOREIGN KEY (fk_action_unit_id) REFERENCES action_unit (action_unit_id)
+);
