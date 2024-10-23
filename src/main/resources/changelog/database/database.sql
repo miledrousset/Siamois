@@ -35,7 +35,6 @@ CREATE TABLE concept -- TODO : properly define this table which is just a placeh
     ark                VARCHAR UNIQUE NOT NULL,
     label              VARCHAR        NOT NULL, -- on veut ajouter les labels dans differentes langues?
     concept_definition VARCHAR        NOT NULL, -- on veut ajouter les def dans differentes langues?
-    variant            VARCHAR[],               -- on veut gerer les differente langues?
 
     PRIMARY KEY (concept_id),
     FOREIGN KEY (fk_vocabulary_id) REFERENCES vocabulary (vocabulary_id)
