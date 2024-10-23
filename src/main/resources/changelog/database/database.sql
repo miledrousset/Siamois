@@ -27,6 +27,13 @@ CREATE TABLE vocabulary_collection
     FOREIGN KEY (fk_vocabulary_id) REFERENCES vocabulary (vocabulary_id)
 );
 
+CREATE TABLE ark
+(
+    ark_table_id INT GENERATED ALWAYS AS IDENTITY,
+    ark_id       VARCHAR UNIQUE NOT NULL,
+
+    primary key (ark_table_id)
+);
 
 CREATE TABLE concept
 (
@@ -38,15 +45,6 @@ CREATE TABLE concept
     FOREIGN KEY (fk_vocabulary_id) REFERENCES vocabulary (vocabulary_id),
     FOREIGN KEY (fk_ark_id) REFERENCES ark (ark_id)
 );
-
-CREATE TABLE ark
-(
-    ark_table_id INT GENERATED ALWAYS AS IDENTITY,
-    ark_id       VARCHAR UNIQUE NOT NULL,
-
-    primary key (ark_table_id)
-);
-
 
 CREATE TABLE field
 (
