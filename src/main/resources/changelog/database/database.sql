@@ -150,7 +150,7 @@ CREATE TABLE recording_unit_media
     FOREIGN KEY (fk_recording_unit_id) REFERENCES recording_unit (recording_unit_id)
 );
 
-CREATE TABLE recording_unit_group
+CREATE TABLE recording_unit_hierarchy
 (
     fk_parent_id INT,
     fk_child_id  INT,
