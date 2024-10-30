@@ -23,16 +23,45 @@
         </div>
         <div class="card">
             <p:tooltip/>
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+            <p:growl id="messageIndex" globalOnly="true" showDetail="true" />
 
-            <h:form>
-                <p:messages id="messages" showDetail="true" closable="true">
-                    <p:autoUpdate/>
-                </p:messages>
+            <h:form id="formValidate">
+
+
+
+                <div class="row">
+                    <div class="col-lg-4 col-xs-2" >
+                        <h:outputText value="texte à saisir"></h:outputText>
+                        <p:inputText value="#{validateInput.input1}"></p:inputText>
+                    </div>
+                    <div class="col-lg-4 col-xs-2" >
+                        <h:outputText value="texte à saisir"></h:outputText>
+                        <p:inputText value="#{validateInput.input2}"></p:inputText>
+                    </div>
+                    <div class="col-lg-4 col-xs-2" >
+                        <h:outputText value="texte à saisir"></h:outputText>
+                        <p:inputText value="#{validateInput.input3}"></p:inputText>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row-12">
+                        <p:commandButton value="valider" action="#{validateInput.validate()}" update="messageIndex formValidate"/>
+                    </div>
+                </div>
+
+
+
 
                 <h5 class="mt-0">Severities</h5>
                 <p:commandButton value="Info" action="#{messagesView.info}" styleClass="mr-2" />
                 <p:commandButton value="Warn" action="#{messagesView.warn}" styleClass="mr-2 ui-button-warning" />
                 <p:commandButton value="Error" action="#{messagesView.error}" styleClass="ui-button-danger" />
+
+
+
             </h:form>
         </div>
 
