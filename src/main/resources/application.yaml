@@ -21,12 +21,11 @@ spring:
     url: jdbc:postgresql://localhost:5433/siamois
     password: opentheso
     username: opentheso
-    dataSourceClassName: org.postgresql.ds.PGSimpleDataSource
-    maxPoolSize: 1000
-    minIdle: 1
-    idleTimeout: 30000
-    connectionTimeout: 30000
-    connectionTestQuery: SELECT 1
+    hikari:
+      maximum-pool-size: 1000
+      minimum-idle: 1
+      idle-timeout: 30000
+      connection-test-query: SELECT 1
   jpa:
     show-sql: true
     generate-ddl: true
