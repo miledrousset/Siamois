@@ -11,19 +11,19 @@ import lombok.Setter;
 @Table(name = "concept")
 public class Concept {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "concept_id_gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "concept_id", nullable = false)
     private Integer id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_vocabulary_id", nullable = false)
-    private fr.siamois.models.Vocabulary fkVocabulary;
+    private fr.siamois.models.Vocabulary vocabulary;
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_ark_id", nullable = false)
-    private Ark fkArk;
+    private Ark ark;
 
     @NotNull
     @Column(name = "label", nullable = false, length = Integer.MAX_VALUE)
