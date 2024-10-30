@@ -94,7 +94,6 @@ CREATE TABLE field_vocabulary_collection
     PRIMARY KEY (fk_field_id, fk_collection_id),
     FOREIGN KEY (fk_collection_id) REFERENCES vocabulary_collection (vocabulary_collection_id),
     FOREIGN KEY (fk_field_id) REFERENCES field (field_id)
-
 );
 
 CREATE TABLE spatial_unit
