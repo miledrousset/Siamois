@@ -198,13 +198,13 @@ CREATE TABLE recording_unit
     FOREIGN KEY (fk_author_id) REFERENCES person (person_id)
 );
 
-CREATE TABLE recording_unit_media
+CREATE TABLE recording_unit_document
 (
-    fk_media_id          INT,
+    fk_document_id          INT,
     fk_recording_unit_id INT,
 
-    PRIMARY KEY (fk_media_id, fk_recording_unit_id),
-    FOREIGN KEY (fk_media_id) REFERENCES siamois_document (document_id),
+    PRIMARY KEY (fk_document_id, fk_recording_unit_id),
+    FOREIGN KEY (fk_document_id) REFERENCES siamois_document (document_id),
     FOREIGN KEY (fk_recording_unit_id) REFERENCES recording_unit (recording_unit_id)
 );
 
