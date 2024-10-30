@@ -44,6 +44,9 @@ public class Document {
     @JoinColumn(name = "fk_parent")
     private Document parent;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Person author;
+
     @Column(name = "url", length = Integer.MAX_VALUE)
     private String url;
 
