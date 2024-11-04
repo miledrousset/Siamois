@@ -14,8 +14,7 @@ import org.hibernate.annotations.ColumnDefault;
 })
 public class ArkServer {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ark_server_id_gen")
-    @SequenceGenerator(name = "ark_server_id_gen", sequenceName = "ark_server_ark_server_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ark_server_id", nullable = false)
     private Integer id;
 

@@ -13,8 +13,7 @@ import lombok.Setter;
 })
 public class VocabularyType {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "vocabulary_type_id_gen")
-    @SequenceGenerator(name = "vocabulary_type_id_gen", sequenceName = "vocabulary_type_vocabulary_type_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vocabulary_type_id", nullable = false)
     private Integer id;
 
