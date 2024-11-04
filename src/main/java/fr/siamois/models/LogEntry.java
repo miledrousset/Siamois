@@ -22,7 +22,7 @@ public class LogEntry {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_user_id")
-    private Person fkUser;
+    private Person person;
 
     @Column(name = "log_date")
     private OffsetDateTime logDate;
@@ -32,6 +32,6 @@ public class LogEntry {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_ark_id")
-    private Ark fkArk;
+    private Ark ark;
 
 }
