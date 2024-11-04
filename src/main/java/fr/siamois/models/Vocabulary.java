@@ -18,7 +18,7 @@ public class Vocabulary {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_type_id", nullable = false)
-    private fr.siamois.models.VocabularyType type;
+    private VocabularyType type;
 
     @NotNull
     @Column(name = "uri", nullable = false, length = Integer.MAX_VALUE)

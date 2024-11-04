@@ -36,7 +36,7 @@ public class ActionUnit {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_user_id")
-    private fr.siamois.models.Person owner;
+    private Person owner;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

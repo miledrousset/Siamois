@@ -18,7 +18,7 @@ public class Concept {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_vocabulary_id", nullable = false)
-    private fr.siamois.models.Vocabulary vocabulary;
+    private Vocabulary vocabulary;
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false)
