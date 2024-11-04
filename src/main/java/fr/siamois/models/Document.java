@@ -45,6 +45,7 @@ public class Document {
     private Document parent;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fk_author_id")
     private Person author;
 
     @Column(name = "url", length = Integer.MAX_VALUE)
