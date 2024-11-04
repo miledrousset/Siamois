@@ -40,6 +40,7 @@
         <jakarta.enterprise.cdi-api.version>4.1.0</jakarta.enterprise.cdi-api.version>
         <tomcat-embed-jasper.version>11.0.0-M26</tomcat-embed-jasper.version>
         <jsf-impl.version>2.2.20</jsf-impl.version>
+        <jts.version>1.20.0</jts.version>
 
     </properties>
 
@@ -61,6 +62,12 @@
         <dependency>
             <groupId>org.joinfaces</groupId>
             <artifactId>primefaces-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
+            <version>${jts.version}</version>
         </dependency>
 
 

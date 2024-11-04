@@ -3,6 +3,7 @@ package fr.siamois.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.locationtech.jts.geom.Polygon;
 
 import java.time.OffsetDateTime;
 
@@ -42,12 +43,7 @@ public class RecordingUnit {
     @JoinColumn(name = "fk_author_id", nullable = false)
     private Person author;
 
-    // todo : hierarchy and stratigraphy
-
-/*
- TODO [Reverse Engineering] create field to map the 'spatial_extent' column
- Available actions: Define target Java type | Uncomment as is | Remove column mapping
     @Column(name = "spatial_extent", columnDefinition = "geometry not null")
-    private Object spatialExtent;
-*/
+    private Polygon spatialExtent;
+
 }
