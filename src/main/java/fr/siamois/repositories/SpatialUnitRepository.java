@@ -1,6 +1,5 @@
 package fr.siamois.repositories;
 
-import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ArkRepository extends CrudRepository<Ark, Integer> {
+public interface ArkRepository extends CrudRepository<Ark, String> {
 
 }
