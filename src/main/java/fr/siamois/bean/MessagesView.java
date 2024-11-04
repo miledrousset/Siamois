@@ -1,11 +1,11 @@
 package fr.siamois.bean;
 
-import jakarta.faces.application.FacesMessage;
-import jakarta.inject.Named;
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Named;
 import lombok.Getter;
 
-import jakarta.faces.context.FacesContext;
 import java.io.Serializable;
 
 @Getter
