@@ -3,7 +3,7 @@ package fr.siamois.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
+import org.locationtech.jts.geom.Point;
 import java.time.OffsetDateTime;
 
 @Data
@@ -44,10 +44,7 @@ public class Specimen {
     @JoinColumn(name = "fk_author_id", nullable = false)
     private Person author;
 
-/*
- TODO [Reverse Engineering] create field to map the 'coordinates' column
- Available actions: Define target Java type | Uncomment as is | Remove column mapping
     @Column(name = "coordinates", columnDefinition = "geometry not null")
-    private Object coordinates;
-*/
+    private Point coordinates;
+
 }
