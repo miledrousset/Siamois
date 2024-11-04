@@ -2,14 +2,12 @@ package fr.siamois.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.OffsetDateTime;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "person", schema = "public", uniqueConstraints = {
         @UniqueConstraint(name = "person_username_key", columnNames = {"username"}),

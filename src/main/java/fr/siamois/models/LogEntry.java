@@ -1,13 +1,11 @@
 package fr.siamois.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.OffsetDateTime;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "log_entry", schema = "public", indexes = {
         @Index(name = "idx_log_entry_user_id", columnList = "fk_user_id"),

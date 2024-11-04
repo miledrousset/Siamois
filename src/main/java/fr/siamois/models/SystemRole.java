@@ -2,11 +2,9 @@ package fr.siamois.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "system_role", schema = "public", uniqueConstraints = {
         @UniqueConstraint(name = "system_role_role_name_key", columnNames = {"role_name"})
