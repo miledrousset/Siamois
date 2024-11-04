@@ -41,11 +41,21 @@ CREATE TABLE vocabulary
     FOREIGN KEY (fk_type_id) REFERENCES vocabulary_type (vocabulary_type_id)
 );
 
+CREATE TABLE ark_server(
+    ark_server_id   INT GENERATED ALWAYS AS IDENTITY,
+    server_ark_uri  VARCHAR UNIQUE NOT NULL,
+    is_local_server BOOLEAN DEFAULT FALSE,
+
+    PRIMARY KEY (ark_server_id)
+);
+
 CREATE TABLE ark
 (
     ark_id VARCHAR UNIQUE NOT NULL,
+    fk_base_uri VARCHAR NOT NULL,
 
-    primary key (ark_id)
+    primary key (ark_id),
+    FOREIGN KEY (fk_base_uri) REFERENCES arK_server(server_ark_uri)
 );
 
 CREATE TABLE vocabulary_collection

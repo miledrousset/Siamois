@@ -1,17 +1,22 @@
 package fr.siamois.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Data;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
-@Table(name = "ark")
+@Table(name = "ark", schema = "public")
 public class Ark {
     @Id
     @Column(name = "ark_id", nullable = false, length = Integer.MAX_VALUE)
-    private String id;
+    private String arkId;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "fk_base_uri", nullable = false, referencedColumnName = "server_ark_uri")
+    private ArkServer arkServer;
 
 }
