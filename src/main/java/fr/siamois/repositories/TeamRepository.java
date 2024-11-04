@@ -13,7 +13,7 @@ public interface TeamRepository extends CrudRepository<Team, Integer> {
 
     @Query(
             nativeQuery = true,
-            value = "SELECT * FROM person_role_team prt JOIN team t ON prt.fk_team_id = t.team_id WHERE prt.fk_person_id = :person"
+            value = "SELECT prt.* FROM person_role_team prt JOIN team t ON prt.fk_team_id = t.team_id WHERE prt.fk_person_id = :person"
     )
     List<Team> findTeamsOfPerson(Person person);
 

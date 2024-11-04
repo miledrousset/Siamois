@@ -14,7 +14,7 @@ public interface SpecimenStudyRepository extends CrudRepository<SpecimenStudy, I
 
     @Query(
             nativeQuery = true,
-            value = "SELECT * FROM specimen_study ss WHERE ss.fk_specimen_group_id = :specimenGroup"
+            value = "SELECT ss.* FROM specimen_study ss WHERE ss.fk_specimen_group_id = :specimenGroup"
     )
     List<SpecimenStudy> findAllBySpecimenGroup(@Param("specimenGroup") SpecimenGroup specimenGroup);
 
