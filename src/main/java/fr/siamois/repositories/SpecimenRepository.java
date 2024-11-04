@@ -14,9 +14,9 @@ public interface SpecimenRepository extends CrudRepository<Specimen, Integer> {
 
     @Query(
             nativeQuery = true,
-            value = "SELECT * FROM specimen s JOIN specimen_group_attribution sga ON s.specimen_id = sga.fk_specimen_id WHERE sga.fk_specimen_group_id = :specimenGrou"
+            value = "SELECT s.* FROM specimen s JOIN specimen_group_attribution sga ON s.specimen_id = sga.fk_specimen_id WHERE sga.fk_specimen_group_id = :specimenGroup"
     )
-    List<SpecimenGroup> findAllSpecimensOfSpecimenGroup(@Param("specimenGroup") SpecimenGroup specimenGroup);
+    List<Specimen> findAllSpecimensOfSpecimenGroup(@Param("specimenGroup") SpecimenGroup specimenGroup);
 
 }
 
