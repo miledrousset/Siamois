@@ -32,17 +32,17 @@ public interface DocumentRepository extends CrudRepository<Document, Integer> {
             nativeQuery = true,
             value = "SELECT * FROM siamois_document s JOIN ru_study_document d ON s.document_id = d.fk_document_id WHERE d.fk_ru_study_id = :recordingUnitStudy"
     )
-    List<Document> findAllDocumentsOfRecordingUnitStudy(RecordingUnitStudy recordingUnitStudy);
+    List<Document> findAllDocumentsOfRecordingUnitStudy(@Param("recordingUnitStudy") RecordingUnitStudy recordingUnitStudy);
 
     @Query(
             nativeQuery = true,
             value = "SELECT * FROM siamois_document s JOIN specimen_document d ON s.document_id = d.fk_document_id WHERE d.fk_specimen_id = :specimen"
     )
-    List<Document> findAllDocumentsOfSpecimen(Specimen specimen);
+    List<Document> findAllDocumentsOfSpecimen(@Param("specimen") Specimen specimen);
 
     @Query(
             nativeQuery = true,
             value = "SELECT * FROM siamois_document s JOIN specimen_study_document d ON s.document_id = d.fk_document_id WHERE d.fk_specimen_study_id = :specimenStudy"
     )
-    List<Document> findAllDocumentsOfSpecimenStudy(SpecimenStudy specimenStudy);
+    List<Document> findAllDocumentsOfSpecimenStudy(@Param("specimenStudy") SpecimenStudy specimenStudy);
 }
