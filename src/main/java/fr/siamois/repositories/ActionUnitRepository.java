@@ -23,4 +23,5 @@ public interface ActionUnitRepository extends CrudRepository<ActionUnit, Integer
     )
     List<ActionUnit> findAllParentsOfActionUnit(@Param("actionUnit") ActionUnit actionUnit);
 
+    List<ActionUnit> findAllBySpatialUnitId(Integer id);
 }

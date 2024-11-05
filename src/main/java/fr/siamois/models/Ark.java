@@ -10,6 +10,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "ark", schema = "public")
 public class Ark {
+
     @Id
     @Column(name = "ark_id", nullable = false, length = Integer.MAX_VALUE)
     private String arkId;

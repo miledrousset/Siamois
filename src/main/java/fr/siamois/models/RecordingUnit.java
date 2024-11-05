@@ -43,7 +43,7 @@ public class RecordingUnit {
     @JoinColumn(name = "fk_author_id", nullable = false)
     private Person author;
 
-    @Column(name = "spatial_extent", columnDefinition = "geometry not null")
-    private Polygon spatialExtent;
+    //@Column(name = "spatial_extent", columnDefinition = "geometry not null")
+    //private Polygon spatialExtent;
 
 }

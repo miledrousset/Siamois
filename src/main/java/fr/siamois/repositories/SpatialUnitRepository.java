@@ -13,15 +13,24 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Integ
 
     @Query(
             nativeQuery = true,
-            value = "SELECT su.* FROM spatial_unit su JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_child_id WHERE suh.fk_parent_id = :spatialUnit"
+            value = "SELECT su.* FROM spatial_unit su JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_child_id WHERE suh.fk_parent_id = :spatialUnitId"
     )
-    List<SpatialUnit> findAllChildOfSpatialUnit(@Param("spatialUnit") SpatialUnit spatialUnit);
+    List<SpatialUnit> findAllChildOfSpatialUnit(@Param("spatialUnitId") int spatialUnitId);
 
     @Query(
             nativeQuery = true,
             value = "SELECT su.* FROM spatial_unit su JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_parent_id WHERE suh.fk_child_id = :spatialUnit"
     )
     List<SpatialUnit> findAllParentsOfSpatialUnit(@Param("spatialUnit") SpatialUnit spatialUnit);
+
+    @Query(
+        nativeQuery = true,
+        value = "SELECT su.* " +
+        "FROM spatial_unit su LEFT JOIN spatial_hierarchy sh " +
+        "ON su.spatial_unit_id = sh.fk_child_id " +
+        "WHERE sh.fk_parent_id IS NULL;"
+    )
+    List<SpatialUnit> findAllWithoutParents();
 
 }
 

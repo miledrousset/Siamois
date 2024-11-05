@@ -1,67 +1,23 @@
 <!DOCTYPE HTML>
 <HTML xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <h:head>
-        <!-- Import de BOOTSTRAP -->
-        <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css"/>
-        <script src="resources/js/bootstrap.bundle.min.js"></script>
+<h:head>
+    <!-- Import de BOOTSTRAP -->
+    <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css"/>
+    <script src="resources/js/bootstrap.bundle.min.js"></script>
 
-        <!-- Import de jQuery -->
-        <script src="resources/js/jquery-3.7.1.js"></script>
+    <!-- Import de jQuery -->
+    <script src="resources/js/jquery-3.7.1.js"></script>
 
-    </h:head>
+</h:head>
 
-    <h:body>
+<h:body>
 
-        <div class="alert alert-primary" role="alert">
-            A simple primary alert—check it out!
-        </div>
-        <div class="card">
-            <p:tooltip/>
-            <p:messages id="messages" showDetail="true" closable="true">
-                <p:autoUpdate/>
-            </p:messages>
-            <p:growl id="messageIndex" globalOnly="true" showDetail="true" />
+    <ui:include src="pages/home/home.xhtml"/>
 
-            <h:form id="formValidate">
-
-
-
-                <div class="row">
-                    <div class="col-lg-4 col-xs-2" >
-                        <h:outputText value="texte à saisir"></h:outputText>
-                        <p:inputText value="#{validateInput.input1}"></p:inputText>
-                    </div>
-                    <div class="col-lg-4 col-xs-2" >
-                        <h:outputText value="texte à saisir"></h:outputText>
-                        <p:inputText value="#{validateInput.input2}"></p:inputText>
-                    </div>
-                    <div class="col-lg-4 col-xs-2" >
-                        <h:outputText value="texte à saisir"></h:outputText>
-                        <p:inputText value="#{validateInput.input3}"></p:inputText>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row-12">
-                        <p:commandButton value="valider" action="#{validateInput.validate()}" update="messageIndex formValidate"/>
-                    </div>
-                </div>
-
-
-
-
-                <h5 class="mt-0">Severities</h5>
-                <p:commandButton value="Info" action="#{messagesView.info}" styleClass="mr-2" />
-                <p:commandButton value="Warn" action="#{messagesView.warn}" styleClass="mr-2 ui-button-warning" />
-                <p:commandButton value="Error" action="#{messagesView.error}" styleClass="ui-button-danger" />
-
-
-
-            </h:form>
-        </div>
-
-    </h:body>
+</h:body>
 
 </HTML>

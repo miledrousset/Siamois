@@ -23,6 +23,9 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, I
     )
     List<RecordingUnit> findAllParentsOfRecordingUnit(@Param("recordingUnit") RecordingUnit recordingUnit);
 
+
+    List<RecordingUnit> findAllBySpatialUnitId(int spatialUnitId);
+
 //    todo:  @Query(
 //            nativeQuery = true,
 //            value = "SELECT * FROM recording_unit ru JOIN stratigraphic_relationship sr on ru.recording_unit_id = ruh.fk_parent_id WHERE ruh.fk_child_id = :recordingUnit"
