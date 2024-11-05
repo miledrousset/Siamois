@@ -18,9 +18,9 @@ spring:
     allow-bean-definition-overriding: true
   datasource:
  #   platform: postgres
-    url: jdbc:postgresql://localhost:5433/siamois
-    password: opentheso
-    username: opentheso
+    url: jdbc:postgresql://localhost:5432/siamois
+    password: siamois
+    username: siamois
     hikari:
       maximum-pool-size: 1000
       minimum-idle: 1

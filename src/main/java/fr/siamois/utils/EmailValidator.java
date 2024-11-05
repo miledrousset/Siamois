@@ -10,8 +10,6 @@ package fr.siamois.utils;
  * @author miled.rousset
  */
 
-import java.util.Map;
-import java.util.regex.Pattern;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
@@ -19,6 +17,9 @@ import jakarta.faces.validator.FacesValidator;
 import jakarta.faces.validator.Validator;
 import jakarta.faces.validator.ValidatorException;
 import org.primefaces.validate.ClientValidator;
+
+import java.util.Map;
+import java.util.regex.Pattern;
  
 /**
  * Custom JSF Validator for Email input
