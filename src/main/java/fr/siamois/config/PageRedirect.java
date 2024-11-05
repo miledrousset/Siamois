@@ -12,6 +12,7 @@ public class PageRedirect implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("forward:/index.xhtml");
+        registry.addViewController("/hello").setViewName("forward:/hello.xhtml");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 

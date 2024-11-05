@@ -2,14 +2,15 @@ package fr.siamois.repositories;
 
 import fr.siamois.models.Concept;
 import fr.siamois.models.Person;
-import fr.siamois.models.SystemRole;
 import fr.siamois.models.Team;
+import fr.siamois.models.auth.SystemRole;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PersonRepository extends CrudRepository<Person, Integer> {
@@ -40,5 +41,7 @@ public interface PersonRepository extends CrudRepository<Person, Integer> {
                     "AND prt.fk_role_concept_id = :role"
     )
     List<Person> findPersonsOfTeamWithRole(@Param("team") Team team, @Param("role") Concept role);
+
+    Optional<Person> findPersonByUsername(String username);
 
 }
