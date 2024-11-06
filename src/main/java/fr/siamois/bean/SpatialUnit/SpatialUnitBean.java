@@ -51,17 +51,14 @@ public class SpatialUnitBean {
     @PostConstruct
     public void init() {
         if (id != null) {
-            Optional<SpatialUnit> optionalSpatialUnit = spatialUnitService.findById(id);
+            SpatialUnit optionalSpatialUnit = spatialUnitService.findById(id);
             // Handle the case when the spatial unit is not found
-            spatialUnit = optionalSpatialUnit.orElse(null);
+/*            spatialUnit = optionalSpatialUnit.orElse(null);
             if(spatialUnit != null) {
                 spatialUnitList = spatialUnitService.findAllChildOfSpatialUnit(spatialUnit);
                 recordingUnitList = recordingUnitService.findAllBySpatialUnitId(spatialUnit);
                 actionUnitList = actionUnitService.findAllBySpatialUnitId(spatialUnit);
-            }
+            }*/
         }
-
-
     }
-
 }

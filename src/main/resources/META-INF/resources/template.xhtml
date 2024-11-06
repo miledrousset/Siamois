@@ -6,7 +6,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:head>
-    <title>Your Application Title</title>
+    <title>Siamois</title>
     <h:outputStylesheet name="css/bootstrap.min.css"/>
     <h:outputScript name="js/jquery-3.7.1.js"/>
     <h:outputScript name="js/bootstrap.bundle.min.js"/>
@@ -15,35 +15,53 @@
 
 <h:body>
     <h:form>
-
-            <!-- Top Menubar -->
-            <p:menubar>
-                <f:facet name="start">
-                    <h:outputText value="SIAMOIS" styleClass="navbar-brand"/>
-                </f:facet>
-                <p:divider layout="vertical"/>
-                <f:facet name="end">
-                    <p:button value="Logout" icon="pi pi-fw pi-sign-out" styleClass="ui-button-info" action="#{loginBean.logout}"/>
-                </f:facet>
-            </p:menubar>
-
-            <div class="row">
-                <!-- Left Navigation Menu -->
-                <div class="col-md-2" >
-                    <p:menu>
-                        <p:submenu label="Navigation">
-                            <p:menuitem value="Home" outcome="/pages/home/home" icon="pi pi-home"/>
-                            <!-- Add more menu items as needed -->
-                        </p:submenu>
-                    </p:menu>
+        <!-- Main Layout -->
+        <div class="layout-container no-gutters">
+            <div class="row g-0">
+                <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
+                    <div class="app-name">SIAMOIS</div>
                 </div>
+                <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
+                    <!-- Top Menu Bar -->
+                    <div class="top-bar">
+                        <p:menubar>
+                            <f:facet name="start">
 
-                <!-- Content Area -->
-                <div class="col-md-10">
-                    <ui:insert name="content"/>
+                            </f:facet>
+                            <p:divider layout="vertical"/>
+                            <f:facet name="end">
+                                <p:button value="Logout" icon="pi pi-fw pi-sign-out" styleClass="ui-button-info"
+                                          action="#{loginBean.logout}"/>
+                            </f:facet>
+                        </p:menubar>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-0">
+                <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
+                    <!-- Left Panel -->
+                    <div class="left-panel">
+
+<!--                        <p:menu>
+                            <p:submenu styleClass="icon-only-menu" label="">
+                                <p:menuitem value="" outcome="/pages/home/home" icon="pi pi-home"/>
+                                &lt;!&ndash; Add more menu items as needed &ndash;&gt;
+                            </p:submenu>
+                        </p:menu>-->
+                    </div>
+                </div>
+                <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
+                    <!-- Main Content Area -->
+                    <div class="main-content">
+                        <ui:insert name="content">
+                            <!-- Content will be inserted here -->
+                        </ui:insert>
+                    </div>
                 </div>
             </div>
 
+
+        </div>
     </h:form>
 </h:body>
 </html>
