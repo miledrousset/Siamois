@@ -6,6 +6,8 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <ui:define name="content">
+        <!-- Conditionally render the message if it's set in the bean -->
+        <p:staticMessage severity="error" summary="Error" closable="false" detail="#{homeBean.spatialUnitListErrorMessage}" rendered="#{not empty homeBean.spatialUnitListErrorMessage}" />
         <p:outputPanel>
             <p:panelGrid columns="3" styleClass="card-grid">
                 <ui:repeat value="#{homeBean.spatialUnitList}" var="item">

@@ -1,5 +1,6 @@
 package fr.siamois.bean.SpatialUnit;
 
+import fr.siamois.exceptions.SpatialUnitNotFoundException;
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.RecordingUnit;
 import fr.siamois.models.SpatialUnit;
@@ -46,19 +47,24 @@ public class SpatialUnitBean {
     @Getter @Setter
     private Integer id;  // ID of the spatial unit
 
-
-
     @PostConstruct
     public void init() {
         if (id != null) {
-            SpatialUnit optionalSpatialUnit = spatialUnitService.findById(id);
-            // Handle the case when the spatial unit is not found
-/*            spatialUnit = optionalSpatialUnit.orElse(null);
-            if(spatialUnit != null) {
-                spatialUnitList = spatialUnitService.findAllChildOfSpatialUnit(spatialUnit);
-                recordingUnitList = recordingUnitService.findAllBySpatialUnitId(spatialUnit);
-                actionUnitList = actionUnitService.findAllBySpatialUnitId(spatialUnit);
-            }*/
+            try {
+                spatialUnit = spatialUnitService.findById(id);
+                if(spatialUnit != null) {
+                    spatialUnitList = spatialUnitService.findAllChildOfSpatialUnit(spatialUnit);
+                    recordingUnitList = recordingUnitService.findAllBySpatialUnitId(spatialUnit);
+                    actionUnitList = actionUnitService.findAllBySpatialUnitId(spatialUnit);
+                }
+            }
+            catch(SpatialUnitNotFoundException e) {
+                // todo : do smth
+            }
+            catch(RuntimeException e) {
+                // todo : do smth
+            }
+
         }
     }
 }

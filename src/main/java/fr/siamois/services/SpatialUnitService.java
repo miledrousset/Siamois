@@ -22,26 +22,33 @@ public class SpatialUnitService {
         return spatialUnitRepository.findAllWithoutParents();
     }
 
+    /**
+     * Find all the spatial unit not having another spatial unit as parent
+     *
+     * @return The List of SpatialUnit
+     * @throws RuntimeException             If the repository method returns a RuntimeException
+     */
     public List<SpatialUnit> findAllChildOfSpatialUnit(SpatialUnit spatialUnit) {
-
-        return spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit.getId());
+        try {
+            return spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit.getId());
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 
     /**
      * Find a spatial unit by its ID
      *
      * @param id The ID of the spatial unit
-     * @return SpatialUnit
+     * @return The SpatialUnit having the given ID
      * @throws SpatialUnitNotFoundException If no spatial unit are found for the given id
-     * @throws RuntimeException If the repository method returns a RuntimeException
+     * @throws RuntimeException             If the repository method returns a RuntimeException
      */
     public SpatialUnit findById(int id) {
         try {
             return spatialUnitRepository.findById(id).orElseThrow(() -> new SpatialUnitNotFoundException("SpatialUnit not found with ID: " + id));
-        } catch (SpatialUnitNotFoundException e) {
-            throw e;
         } catch (RuntimeException e) {
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 

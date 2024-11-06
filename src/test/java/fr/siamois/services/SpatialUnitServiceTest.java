@@ -3,6 +3,7 @@ package fr.siamois.services;
 import fr.siamois.exceptions.SpatialUnitNotFoundException;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.repositories.SpatialUnitRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,11 +12,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 class SpatialUnitServiceTest {
 
@@ -34,7 +37,36 @@ class SpatialUnitServiceTest {
     }
 
     @Test
-    void findAllWithoutParents() {
+    void testFindAllWithoutParents_Success() {
+        // Arrange
+        SpatialUnit spatialUnit1 = new SpatialUnit();
+        spatialUnit1.setId(1);
+        SpatialUnit spatialUnit2 = new SpatialUnit();
+        spatialUnit2.setId(2);
+
+        when(spatialUnitRepository.findAllWithoutParents()).thenReturn(List.of(spatialUnit1, spatialUnit2));
+
+        // Act
+        List<SpatialUnit> actualResult = spatialUnitService.findAllWithoutParents();
+
+        // Assert
+        assertEquals(List.of(spatialUnit1, spatialUnit2), actualResult);
+    }
+
+    @Test
+    void testFindAllWithoutParents_RuntimeException() {
+
+        // Arrange
+        when(spatialUnitRepository.findAllWithoutParents()).thenThrow(new RuntimeException("Database error"));
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> spatialUnitService.findAllWithoutParents()
+        );
+
+        assertEquals("Database error", exception.getMessage());
+
     }
 
     @Test
@@ -83,7 +115,7 @@ class SpatialUnitServiceTest {
                 () -> spatialUnitService.findById(id)
         );
 
-        assertEquals("Database error", exception.getCause().getMessage());
+        assertEquals("Database error", exception.getMessage());
 
     }
 }
