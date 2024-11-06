@@ -16,7 +16,8 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.trace("Security chain ");
-        http.authorizeHttpRequests((requests) -> requests.requestMatchers("/hello", "/hello.xhtml").authenticated()
+        http.authorizeHttpRequests((requests) -> requests
+                .requestMatchers("/hello", "/hello.xhtml").authenticated()
                 .requestMatchers("/", "/index.xhtml").authenticated()
                 .anyRequest().permitAll()
         );
