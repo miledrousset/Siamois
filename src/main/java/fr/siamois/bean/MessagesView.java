@@ -31,7 +31,6 @@ public class MessagesView implements Serializable {
     public String greetUser() {
         AuthenticatedUserUtils utils = new AuthenticatedUserUtils();
         Optional<Person> opt = utils.getAuthenticatedUser();
-        if (opt.isEmpty()) return "ANONYMOUS";
-        return opt.get().getUsername();
+        return opt.map(person -> "Hello " + person.getUsername() + " !").orElse("Hello ANONYMOUS ! You're not supposed to be here ...");
     }
 }
