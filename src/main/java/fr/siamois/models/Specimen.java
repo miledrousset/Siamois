@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.locationtech.jts.geom.Point;
+
 import java.time.OffsetDateTime;
 
 @Data
