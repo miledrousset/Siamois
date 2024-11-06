@@ -22,6 +22,4 @@ public class RecordingUnitService {
         return recordingUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
     }
 
-
-
 }

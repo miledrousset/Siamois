@@ -1,4 +1,4 @@
-package fr.siamois.exceptions;
+package fr.siamois.exceptions.SpatialUnit;
 
 public class SpatialUnitNotFoundException extends RuntimeException {
     public SpatialUnitNotFoundException(String message) {

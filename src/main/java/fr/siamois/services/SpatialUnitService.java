@@ -1,6 +1,6 @@
 package fr.siamois.services;
 
-import fr.siamois.exceptions.SpatialUnitNotFoundException;
+import fr.siamois.exceptions.SpatialUnit.SpatialUnitNotFoundException;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.repositories.SpatialUnitRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -26,7 +25,7 @@ public class SpatialUnitService {
      * Find all the spatial unit not having another spatial unit as parent
      *
      * @return The List of SpatialUnit
-     * @throws RuntimeException             If the repository method returns a RuntimeException
+     * @throws RuntimeException             If the repository method throws a Exception
      */
     public List<SpatialUnit> findAllChildOfSpatialUnit(SpatialUnit spatialUnit) {
         try {

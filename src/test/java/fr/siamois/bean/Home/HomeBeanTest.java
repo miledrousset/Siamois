@@ -48,8 +48,8 @@ class HomeBeanTest {
     }
 
     @Test
-    void testInit_RuntimeException() {
-        // Given: mock the service to return a runtime error
+    void testInit_Exception() {
+        // Given: mock the service to throw an error
         when(spatialUnitService.findAllWithoutParents()).thenThrow(new RuntimeException("Service error"));
 
         // When: call the @PostConstruct method (implicitly triggered during bean initialization)

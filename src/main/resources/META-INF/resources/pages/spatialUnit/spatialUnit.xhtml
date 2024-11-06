@@ -13,15 +13,17 @@
         </f:metadata>
 
         <!-- Content -->
+        <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.spatialUnitErrorMessage}" rendered="#{not empty spatialUnitBean.spatialUnitErrorMessage}" />
         <h:panelGroup id="contentPanel" rendered="#{spatialUnitBean.spatialUnit != null}">
             <h2>Spatial Unit: #{spatialUnitBean.spatialUnit.name}</h2>
             <h3>Category: #{spatialUnitBean.spatialUnit.category.label}</h3>
             <p>ARK ID: #{spatialUnitBean.spatialUnit.ark.arkId}</p>
-            <!-- Add more fields as necessary -->
+
         </h:panelGroup>
 
         <p:outputPanel>
             <h3>Spatial units</h3>
+            <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.spatialUnitListErrorMessage}" rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}" />
             <p:panelGrid columns="3" styleClass="card-grid">
                 <ui:repeat value="#{spatialUnitBean.spatialUnitList}" var="item">
                     <p:card>
@@ -50,6 +52,7 @@
 
         <p:outputPanel>
             <h3>Recording units</h3>
+            <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.recordingUnitListErrorMessage}" rendered="#{not empty spatialUnitBean.recordingUnitListErrorMessage}" />
             <p:panelGrid columns="3" styleClass="card-grid">
                 <ui:repeat value="#{spatialUnitBean.recordingUnitList}" var="item">
                     <p:card>
@@ -73,11 +76,12 @@
 
         <p:outputPanel>
             <h3>Actions</h3>
+            <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.actionUnitListErrorMessage}" rendered="#{not empty spatialUnitBean.actionUnitListErrorMessage}" />
             <p:panelGrid columns="3" styleClass="card-grid">
                 <ui:repeat value="#{spatialUnitBean.actionUnitList}" var="item">
                     <p:card>
                         <f:facet name="header">
-                            <!-- <img alt="user header" src="../../resources/img/location.jpg"/> -->
+
                         </f:facet>
                         <f:facet name="title">
                             #{item.ark.arkId}

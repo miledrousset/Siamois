@@ -30,7 +30,7 @@ public class HomeBean {
         try {
             // Initializing the bean: we need all the spatial units without parents
             spatialUnitList = spatialUnitService.findAllWithoutParents();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             spatialUnitListErrorMessage = "Failed to load spatial units: " + e.getMessage();
         }
     }

@@ -1,6 +1,6 @@
 package fr.siamois.services;
 
-import fr.siamois.exceptions.SpatialUnitNotFoundException;
+import fr.siamois.exceptions.SpatialUnit.SpatialUnitNotFoundException;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.repositories.SpatialUnitRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -54,14 +54,14 @@ class SpatialUnitServiceTest {
     }
 
     @Test
-    void testFindAllWithoutParents_RuntimeException() {
+    void testFindAllWithoutParents_Exception() {
 
         // Arrange
         when(spatialUnitRepository.findAllWithoutParents()).thenThrow(new RuntimeException("Database error"));
 
         // Act & Assert
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
+        Exception exception = assertThrows(
+                Exception.class,
                 () -> spatialUnitService.findAllWithoutParents()
         );
 
@@ -104,14 +104,14 @@ class SpatialUnitServiceTest {
     }
 
     @Test
-    public void testFindById_RuntimeException() {
+    public void testFindById_Exception() {
         // Arrange
         int id = 1;
         when(spatialUnitRepository.findById(id)).thenThrow(new RuntimeException("Database error"));
 
         // Act & Assert
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
+        Exception exception = assertThrows(
+                Exception.class,
                 () -> spatialUnitService.findById(id)
         );
 
