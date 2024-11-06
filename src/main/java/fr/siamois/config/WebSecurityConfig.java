@@ -15,22 +15,16 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((requests) -> {
-            requests.requestMatchers("/hello", "/hello.xhtml").authenticated()
-                    .anyRequest().permitAll();
-        });
+        http.authorizeHttpRequests((requests) -> requests.requestMatchers("/hello", "/hello.xhtml").authenticated()
+                .anyRequest().permitAll());
         http.formLogin((form) -> {
             // Connexion page
             // The current connexion page is Spring Boot Default
         });
-        http.logout((logout) -> {
-            logout
-                    .permitAll()
-                    .addLogoutHandler(new HeaderWriterLogoutHandler(new ClearSiteDataHeaderWriter(ClearSiteDataHeaderWriter.Directive.COOKIES)));
-        });
-        http.sessionManagement((session) -> {
-            session.maximumSessions(1);
-        });
+        http.logout((logout) -> logout
+                .permitAll()
+                .addLogoutHandler(new HeaderWriterLogoutHandler(new ClearSiteDataHeaderWriter(ClearSiteDataHeaderWriter.Directive.COOKIES))));
+        http.sessionManagement((session) -> session.maximumSessions(1));
 
         return http.build();
     }
