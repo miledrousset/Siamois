@@ -1,11 +1,9 @@
 package fr.siamois.utils;
 
 import fr.siamois.models.Person;
-import fr.siamois.services.auth.PersonDetailsService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,10 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 class AuthenticatedUserUtilsTest {
 
-    private AuthenticatedUserUtils utils = new AuthenticatedUserUtils();
-
-    @MockBean
-    private PersonDetailsService mockPersonDetailsService;
+    private final AuthenticatedUserUtils utils = new AuthenticatedUserUtils();
 
     @AfterEach
     public void tearDown() {
