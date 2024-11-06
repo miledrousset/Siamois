@@ -11,24 +11,43 @@
 </h:head>
 
 <h:body>
-    <div class="card">
-        <form action="${pageContext.request.contextPath}login" method="post">
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <section class="vh-100" style="background-color: #508bfc;">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                    <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                        <form class="card-body p-5 text-center" action="${pageContext.request.contextPath}login" method="post">
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            <h3 class="mb-5">Connexion</h3>
 
-            <p:outputLabel for="@next" value="Identifiant"/>
-            <p:inputText id="username"/>
+                            <div class="form-outline mb-4">
+                                <label class="form-label" for="username">Nom d'utilisateur</label>
+                                <input type="text" id="username"  name="username" class="form-control form-control-lg" />
+                            </div>
 
-            <p:outputLabel for="@next" value="Mot de passe"/>
-            <p:password id="password"/>
+                            <div class="form-outline mb-4">
+                                <label class="form-label" for="password">Mot de passe</label>
+                                <input type="password" id="password" name="password" class="form-control form-control-lg" />
+                            </div>
+                            
+                            <button class="btn btn-primary btn-lg btn-block" type="submit">Se connecter</button>
 
-            <button class="btn btn-primary" type="submit">Se connecter</button>
-        </form>
-    </div>
 
-    <h:panelGroup rendered="#{param.error != null}">
-        <h:messages/>
-        <h:outputText value="Identifiant ou mot de passe incorrect." style="color: red;"/>
-    </h:panelGroup>
+
+                            <h:panelGroup rendered="#{param.error != null}">
+                                <hr/>
+                                <div class="alert alert-danger" role="alert">
+                                    Nom d'utilisateur ou mot de passe incorrect
+                                </div>
+                            </h:panelGroup>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </h:body>
 
 </HTML>
