@@ -15,6 +15,8 @@
 
     <h:body>
 
+        <p:outputLabel value="#{messagesView.greetUser()}"/>
+
         <div class="alert alert-primary" role="alert">
             A simple primary alert—check it out!
         </div>
@@ -57,10 +59,10 @@
                 <p:commandButton value="Warn" action="#{messagesView.warn}" styleClass="mr-2 ui-button-warning" />
                 <p:commandButton value="Error" action="#{messagesView.error}" styleClass="ui-button-danger" />
 
-
-
             </h:form>
         </div>
+
+        <p:button icon="pi pi-user" styleClass="rounded-button ui-button-info" href="hello" />
 
     </h:body>
 

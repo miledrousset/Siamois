@@ -5,6 +5,9 @@
 <body>
 <h1>Secured hello</h1>
 <p:outputLabel value="#{helloBean.username}"/>
-<p:commandButton action="logout" value="Log out"/>
+<form action="${pageContext.request.contextPath}logout" method="post">
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <button type="submit">Log out</button>
+</form>
 </body>
 </HTML>

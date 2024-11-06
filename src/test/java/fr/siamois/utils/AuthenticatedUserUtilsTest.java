@@ -1,0 +1,61 @@
+package fr.siamois.utils;
+
+import fr.siamois.models.Person;
+import fr.siamois.services.auth.PersonDetailsService;
+import org.junit.Ignore;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
+@SpringBootTest
+class AuthenticatedUserUtilsTest {
+
+    private AuthenticatedUserUtils utils = new AuthenticatedUserUtils();
+
+    @MockBean
+    private PersonDetailsService mockPersonDetailsService;
+
+    @AfterEach
+    public void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
+
+    @Test
+    @WithAnonymousUser
+    void getAuthenticatedUser_shouldReturnEmptyOptional_whenNoUserSignedIn() {
+        Optional<Person> opt = utils.getAuthenticatedUser();
+        assertTrue(opt.isEmpty(), "Optional is not empty");
+    }
+
+    @Test
+    void getAuthenticatedUser_shouldReturnPerson_whenUserSignedIn() {
+        Person base = new Person();
+        base.setUsername("testUsername");
+        Authentication authentication = new TestingAuthenticationToken(base, base.getPassword(), base.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Act
+        Optional<Person> opt = utils.getAuthenticatedUser();
+
+        // Assert
+        assertTrue(opt.isPresent(), "Optional is empty");
+        assertEquals("testUsername", opt.get().getUsername(), "Usernames do not match");
+    }
+
+}
