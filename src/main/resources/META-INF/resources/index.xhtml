@@ -29,8 +29,6 @@
 
             <h:form id="formValidate">
 
-
-
                 <div class="row">
                     <div class="col-lg-4 col-xs-2" >
                         <h:outputText value="texte à saisir"></h:outputText>
@@ -62,7 +60,10 @@
             </h:form>
         </div>
 
-        <p:button icon="pi pi-user" styleClass="rounded-button ui-button-info" href="hello" />
+        <form action="${pageContext.request.contextPath}logout" method="post">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <button type="submit" class="btn btn-danger">Deconnexion</button>
+        </form>
 
     </h:body>
 
