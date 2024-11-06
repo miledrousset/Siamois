@@ -22,8 +22,10 @@ public class HelloBean implements Serializable {
     @PostConstruct
     public void init() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Person person = (Person) auth.getPrincipal();
-        username = person.getAuthorities().toString();
+        if (auth.isAuthenticated()) {
+            Person person = (Person) auth.getPrincipal();
+            username = person.getAuthorities().toString();
+        }
     }
 
 }
