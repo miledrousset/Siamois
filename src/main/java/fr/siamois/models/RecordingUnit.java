@@ -14,7 +14,7 @@ public class RecordingUnit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recording_unit_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false)

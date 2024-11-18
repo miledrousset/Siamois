@@ -13,7 +13,7 @@ public class RecordingUnitStudy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recording_unit_study_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "study_date")
     private OffsetDateTime studyDate;

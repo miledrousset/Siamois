@@ -13,7 +13,7 @@ public class Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "document_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @OneToOne(fetch = FetchType.EAGER, optional = false)

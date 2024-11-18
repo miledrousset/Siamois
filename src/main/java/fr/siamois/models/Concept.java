@@ -11,7 +11,7 @@ public class Concept {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "concept_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

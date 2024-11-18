@@ -13,7 +13,7 @@ public class Field {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "field_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @Column(name = "field_code", nullable = false, length = Integer.MAX_VALUE)
