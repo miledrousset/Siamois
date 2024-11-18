@@ -15,7 +15,7 @@ public class VocabularyType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vocabulary_type_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @Column(name = "label", nullable = false, length = Integer.MAX_VALUE)

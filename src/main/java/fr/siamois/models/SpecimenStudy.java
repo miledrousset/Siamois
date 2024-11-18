@@ -13,7 +13,7 @@ public class SpecimenStudy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "specimen_study_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "study_date")
     private OffsetDateTime studyDate;

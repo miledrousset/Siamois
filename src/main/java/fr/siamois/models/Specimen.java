@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.locationtech.jts.geom.Point;
+
 import java.time.OffsetDateTime;
 
 @Data
@@ -13,7 +14,7 @@ public class Specimen {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "specimen_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_recording_unit_id")
