@@ -19,7 +19,7 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
 
     @Query(
             nativeQuery = true,
-            value = "SELECT ru.* FROM recording_unit ru JOIN recording_unit_hierarchy ruh on ru.recording_unit_id = ruh.fk_parent_id WHERE ruh.fk_child_id = :recordingUnit"
+            value = "SELECT ru.* FROM recording_unit ru JOIN recording_unit_hierarchy ruh on ru.recording_unit_id = ruh.fk_parent_id WHERE ruh.fk_child_id = :recordingUnitId"
     )
     List<RecordingUnit> findAllParentsOfRecordingUnit(@Param("recordingUnitId") Long recordingUnitId);
 

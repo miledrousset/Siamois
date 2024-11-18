@@ -15,7 +15,7 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
             nativeQuery = true,
             value = "SELECT c.* FROM concept c JOIN specimen_study_typology sst on c.concept_id = sst.fk_typology_concept_id WHERE sst.fk_specimen_study_id = :actionUnitId"
     )
-    List<Concept> findAllTypologiesOfSpecimenStudy(@Param("Long actionUnitId") Long specimenStudyId);
+    List<Concept> findAllTypologiesOfSpecimenStudy(@Param("actionUnitId") Long specimenStudyId);
 
     @Query(
             nativeQuery = true,
