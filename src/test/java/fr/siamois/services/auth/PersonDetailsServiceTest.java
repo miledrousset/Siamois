@@ -34,7 +34,7 @@ class PersonDetailsServiceTest {
     @Test
     void loadUserByUsername_shouldReturnPerson_whenUsernameExist() {
         Person person = new Person();
-        person.setId(-1);
+        person.setId(-1L);
         person.setUsername("test_username");
         person.setPassword("unhashed_password");
 

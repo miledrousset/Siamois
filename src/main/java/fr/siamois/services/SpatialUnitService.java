@@ -1,7 +1,7 @@
 package fr.siamois.services;
 
-import fr.siamois.exceptions.SpatialUnit.SpatialUnitNotFoundException;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
 import fr.siamois.repositories.SpatialUnitRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +53,7 @@ public class SpatialUnitService {
         try {
             return spatialUnitRepository.findById(id).orElseThrow(() -> new SpatialUnitNotFoundException("SpatialUnit not found with ID: " + id));
         } catch (RuntimeException e) {
+            log.error(e.getMessage(), e);
             throw e;
         }
     }

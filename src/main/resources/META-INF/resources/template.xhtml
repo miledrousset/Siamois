@@ -14,54 +14,51 @@
 </h:head>
 
 <h:body>
-    <h:form>
-        <!-- Main Layout -->
-        <div class="layout-container no-gutters">
-            <div class="row g-0">
-                <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
-                    <div class="app-name">SIAMOIS</div>
-                </div>
-                <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
-                    <!-- Top Menu Bar -->
-                    <div class="top-bar">
-                        <p:menubar>
-                            <f:facet name="start">
-
-                            </f:facet>
-                            <p:divider layout="vertical"/>
+    <!-- Main Layout -->
+    <div class="layout-container no-gutters">
+        <div class="row g-0">
+            <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
+                <div class="app-name">SIAMOIS</div>
+            </div>
+            <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
+                <!-- Top Menu Bar -->
+                <div class="top-bar">
+                    <p:menubar>
+                        <f:facet name="start">
                             <form action="${pageContext.request.contextPath}logout" method="post">
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                 <button type="submit" class="btn btn-danger">Deconnexion</button>
                             </form>
-                        </p:menubar>
-                    </div>
+                        </f:facet>
+                        <p:divider layout="vertical"/>
+                    </p:menubar>
                 </div>
             </div>
-            <div class="row g-0">
-                <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
-                    <!-- Left Panel -->
-                    <div class="left-panel">
-
-<!--                        <p:menu>
-                            <p:submenu styleClass="icon-only-menu" label="">
-                                <p:menuitem value="" outcome="/pages/home/home" icon="pi pi-home"/>
-                                &lt;!&ndash; Add more menu items as needed &ndash;&gt;
-                            </p:submenu>
-                        </p:menu>-->
-                    </div>
-                </div>
-                <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
-                    <!-- Main Content Area -->
-                    <div class="main-content">
-                        <ui:insert name="content">
-                            <!-- Content will be inserted here -->
-                        </ui:insert>
-                    </div>
-                </div>
-            </div>
-
-
         </div>
-    </h:form>
+        <div class="row g-0">
+            <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
+                <!-- Left Panel -->
+                <div class="left-panel">
+
+                    <!--                        <p:menu>
+                                                <p:submenu styleClass="icon-only-menu" label="">
+                                                    <p:menuitem value="" outcome="/pages/home/home" icon="pi pi-home"/>
+                                                    &lt;!&ndash; Add more menu items as needed &ndash;&gt;
+                                                </p:submenu>
+                                            </p:menu>-->
+                </div>
+            </div>
+            <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
+                <!-- Main Content Area -->
+                <div class="main-content">
+                    <ui:insert name="content">
+                        <!-- Content will be inserted here -->
+                    </ui:insert>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
 </h:body>
 </html>
