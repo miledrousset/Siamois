@@ -1,6 +1,5 @@
 package fr.siamois.repositories;
 
-import fr.siamois.models.Specimen;
 import fr.siamois.models.SpecimenGroup;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -14,9 +13,9 @@ public interface SpecimenGroupRepository extends CrudRepository<SpecimenGroup, L
 
     @Query(
             nativeQuery = true,
-            value = "SELECT sg.* FROM specimen_group sg JOIN specimen_group_attribution sga ON sg.specimen_group_id = sga.fk_specimen_group_id WHERE sga.fk_specimen_id = :specimen"
+            value = "SELECT sg.* FROM specimen_group sg JOIN specimen_group_attribution sga ON sg.specimen_group_id = sga.fk_specimen_group_id WHERE sga.fk_specimen_id = :specimenId"
     )
-    List<SpecimenGroup> findAllSpecimenGroupsOfSpecimen(@Param("specimen") Specimen specimen);
+    List<SpecimenGroup> findAllSpecimenGroupsOfSpecimen(@Param("specimenId") Long specimenId);
 
 
 
