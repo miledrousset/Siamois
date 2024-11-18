@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -28,8 +29,19 @@ class SpatialUnitServiceTest {
     @InjectMocks
     private SpatialUnitService spatialUnitService;
 
+    SpatialUnit spatialUnit1 ;
+
+    SpatialUnit spatialUnit2 ;
+
+
     @BeforeEach
     void setUp() {
+        spatialUnit1 = new SpatialUnit();
+        spatialUnit2 = new SpatialUnit();
+        spatialUnit1.setId(1);
+        spatialUnit2.setId(2);
+        lenient().when(spatialUnitRepository.findAllWithoutParents()).thenReturn(List.of(spatialUnit1, spatialUnit2));
+        lenient().when(spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit1.getId())).thenReturn(List.of(spatialUnit2));
     }
 
     @AfterEach
@@ -38,13 +50,6 @@ class SpatialUnitServiceTest {
 
     @Test
     void testFindAllWithoutParents_Success() {
-        // Arrange
-        SpatialUnit spatialUnit1 = new SpatialUnit();
-        spatialUnit1.setId(1);
-        SpatialUnit spatialUnit2 = new SpatialUnit();
-        spatialUnit2.setId(2);
-
-        when(spatialUnitRepository.findAllWithoutParents()).thenReturn(List.of(spatialUnit1, spatialUnit2));
 
         // Act
         List<SpatialUnit> actualResult = spatialUnitService.findAllWithoutParents();
@@ -70,7 +75,30 @@ class SpatialUnitServiceTest {
     }
 
     @Test
-    void findAllChildOfSpatialUnit() {
+    void findAllChildOfSpatialUnit_Success() {
+
+        // Act
+        List<SpatialUnit> actualResult = spatialUnitService.findAllChildOfSpatialUnit(spatialUnit1);
+
+        // Assert
+        assertEquals(List.of(spatialUnit2), actualResult);
+
+    }
+
+    @Test
+    void findAllChildOfSpatialUnit_Exception() {
+
+        // Arrange
+        when(spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit1.getId())).thenThrow(new RuntimeException("Database error"));
+
+        // Act & Assert
+        Exception exception = assertThrows(
+                Exception.class,
+                () -> spatialUnitService.findAllChildOfSpatialUnit(spatialUnit1)
+        );
+
+        assertEquals("Database error", exception.getMessage());
+
     }
 
     @Test

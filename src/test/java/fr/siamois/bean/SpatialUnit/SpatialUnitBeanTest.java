@@ -77,7 +77,7 @@ class SpatialUnitBeanTest {
         spatialUnitBean.init();
 
         // Then: verify that the bean is populated properly
-        // The selected action unit
+        // The selected spatial unit
         assertNotNull(spatialUnitBean.getSpatialUnit());  // List should not be null
         assertEquals(spatialUnit1, spatialUnitBean.getSpatialUnit());
 
@@ -109,9 +109,38 @@ class SpatialUnitBeanTest {
         spatialUnitBean.init();
 
         // Then: verify that the bean is populated properly
-        // The selected action unit and its associated error message
-        assertNull(spatialUnitBean.getSpatialUnit());  // List should not be null
+        assertNull(spatialUnitBean.getSpatialUnit());
         assertEquals("Failed to load spatial unit: Exception", spatialUnitBean.getSpatialUnitErrorMessage());
     }
+
+    @Test
+    void testInit_FailToGetChildrenOfSelectedSpatialUnit() {
+
+        // Given: mock the services
+        when(spatialUnitService.findById(1)).thenReturn(spatialUnit1);
+        when(spatialUnitService.findAllChildOfSpatialUnit(spatialUnit1)).thenThrow(new RuntimeException("Exception"));
+        when(recordingUnitService.findAllBySpatialUnitId(spatialUnit1)).thenThrow(new RuntimeException("Exception"));
+        when(actionUnitService.findAllBySpatialUnitId(spatialUnit1)).thenThrow(new RuntimeException("Exception"));
+
+        // When: call the @PostConstruct method (implicitly triggered during bean initialization)
+        spatialUnitBean.init();
+
+        // Then: verify that the bean is populated properly
+        // The selected spatial unit
+        assertNotNull(spatialUnitBean.getSpatialUnit());  // List should not be null
+        assertEquals(spatialUnit1, spatialUnitBean.getSpatialUnit());
+
+        // Error messages
+        assertNull(spatialUnitBean.getSpatialUnitList());
+        assertEquals("Unable to load spatial units: Exception", spatialUnitBean.getSpatialUnitListErrorMessage());
+        assertNull(spatialUnitBean.getActionUnitList());
+        assertEquals("Unable to load action units: Exception", spatialUnitBean.getActionUnitListErrorMessage());
+        assertNull(spatialUnitBean.getRecordingUnitList());
+        assertEquals("Unable to load recording units: Exception", spatialUnitBean.getRecordingUnitListErrorMessage());
+    }
+
+
+
+
 
 }

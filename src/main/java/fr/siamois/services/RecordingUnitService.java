@@ -18,6 +18,12 @@ public class RecordingUnitService {
     @Autowired
     RecordingUnitRepository recordingUnitRepository;
 
+    /**
+     * Find all the recording units from a spatial unit
+     *
+     * @return The List of RecordingUnit
+     * @throws RuntimeException If the repository method throws an Exception
+     */
     public List<RecordingUnit> findAllBySpatialUnitId(SpatialUnit spatialUnit)   {
         return recordingUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
     }

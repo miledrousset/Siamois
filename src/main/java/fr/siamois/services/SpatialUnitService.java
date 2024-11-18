@@ -17,15 +17,21 @@ public class SpatialUnitService {
     @Autowired
     SpatialUnitRepository spatialUnitRepository;
 
+    /**
+     * Find all the spatial unit not having any spatial unit as parent
+     *
+     * @return The List of SpatialUnit
+     * @throws RuntimeException             If the repository method throws an Exception
+     */
     public List<SpatialUnit> findAllWithoutParents() {
         return spatialUnitRepository.findAllWithoutParents();
     }
 
     /**
-     * Find all the spatial unit not having another spatial unit as parent
+     * Find all the children of a spatial unit
      *
      * @return The List of SpatialUnit
-     * @throws RuntimeException             If the repository method throws a Exception
+     * @throws RuntimeException             If the repository method throws an Exception
      */
     public List<SpatialUnit> findAllChildOfSpatialUnit(SpatialUnit spatialUnit) {
         try {
