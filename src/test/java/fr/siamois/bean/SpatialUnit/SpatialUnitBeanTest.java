@@ -40,21 +40,21 @@ class SpatialUnitBeanTest {
         MockitoAnnotations.openMocks(this);  // Initialize the mocks
         // Initialize sample SpatialUnit objects for testing
         spatialUnit1 = new SpatialUnit();
-        spatialUnit1.setId(1);
+        spatialUnit1.setId(1L);
         spatialUnit2 = new SpatialUnit();
-        spatialUnit2.setId(2);
+        spatialUnit2.setId(2L);
 
         // Initialize sample ActionUnit objects for testing
         actionUnit1 = new ActionUnit();
-        actionUnit1.setId(1);
+        actionUnit1.setId(1L);
         actionUnit2 = new ActionUnit();
-        actionUnit2.setId(2);
+        actionUnit2.setId(2L);
 
         // Initialize sample RecordingUnit objects for testing
         recordingUnit1 = new RecordingUnit();
-        recordingUnit1.setId(1);
+        recordingUnit1.setId(1L);
         recordingUnit2 = new RecordingUnit();
-        recordingUnit2.setId(2);
+        recordingUnit2.setId(2L);
 
         // Initialize the bean
         spatialUnitBean.setId(1);

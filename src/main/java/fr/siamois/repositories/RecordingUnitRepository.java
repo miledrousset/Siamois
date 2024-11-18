@@ -24,7 +24,7 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
     List<RecordingUnit> findAllParentsOfRecordingUnit(@Param("recordingUnitId") Long recordingUnitId);
 
 
-    List<RecordingUnit> findAllBySpatialUnitId(int spatialUnitId);
+    List<RecordingUnit> findAllBySpatialUnitId(long spatialUnitId);
 
 //    todo:  @Query(
 //            nativeQuery = true,

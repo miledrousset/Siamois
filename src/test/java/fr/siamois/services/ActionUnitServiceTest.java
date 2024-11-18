@@ -36,9 +36,9 @@ class ActionUnitServiceTest {
         spatialUnit1 = new SpatialUnit();
         actionUnit1 = new ActionUnit();
         actionUnit2 = new ActionUnit();
-        spatialUnit1.setId(1);
-        actionUnit1.setId(1);
-        actionUnit2.setId(2);
+        spatialUnit1.setId(1L);
+        actionUnit1.setId(1L);
+        actionUnit2.setId(2L);
         when(actionUnitRepository.findAllBySpatialUnitId(actionUnit1.getId())).thenReturn(List.of(actionUnit1, actionUnit2));
     }
 

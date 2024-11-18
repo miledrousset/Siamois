@@ -36,9 +36,9 @@ class RecordingUnitServiceTest {
         spatialUnit1 = new SpatialUnit();
         recordingUnit1 = new RecordingUnit();
         recordingUnit2 = new RecordingUnit();
-        spatialUnit1.setId(1);
-        recordingUnit1.setId(1);
-        recordingUnit2.setId(2);
+        spatialUnit1.setId(1L);
+        recordingUnit1.setId(1L);
+        recordingUnit2.setId(2L);
         when(recordingUnitRepository.findAllBySpatialUnitId(spatialUnit1.getId())).thenReturn(List.of(recordingUnit1, recordingUnit2));
         //lenient().when(spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit1.getId())).thenReturn(List.of(spatialUnit2));
     }

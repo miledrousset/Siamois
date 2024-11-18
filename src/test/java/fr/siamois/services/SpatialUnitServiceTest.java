@@ -38,8 +38,8 @@ class SpatialUnitServiceTest {
     void setUp() {
         spatialUnit1 = new SpatialUnit();
         spatialUnit2 = new SpatialUnit();
-        spatialUnit1.setId(1);
-        spatialUnit2.setId(2);
+        spatialUnit1.setId(1L);
+        spatialUnit2.setId(2L);
         lenient().when(spatialUnitRepository.findAllWithoutParents()).thenReturn(List.of(spatialUnit1, spatialUnit2));
         lenient().when(spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit1.getId())).thenReturn(List.of(spatialUnit2));
     }
@@ -106,8 +106,8 @@ class SpatialUnitServiceTest {
 
         // Arrange
         SpatialUnit spatialUnit = new SpatialUnit();
-        spatialUnit.setId(1);
-        when(spatialUnitRepository.findById(1)).thenReturn(Optional.of(spatialUnit));
+        spatialUnit.setId(1L);
+        when(spatialUnitRepository.findById(1L)).thenReturn(Optional.of(spatialUnit));
 
         // Act
         SpatialUnit actualResult = spatialUnitService.findById(1);
@@ -119,7 +119,7 @@ class SpatialUnitServiceTest {
     @Test
     public void testFindById_SpatialUnitNotFoundException() {
         // Arrange
-        int id = 1;
+        long id = 1;
         when(spatialUnitRepository.findById(id)).thenReturn(Optional.empty());
 
         // Act & Assert
@@ -134,7 +134,7 @@ class SpatialUnitServiceTest {
     @Test
     public void testFindById_Exception() {
         // Arrange
-        int id = 1;
+        long id = 1;
         when(spatialUnitRepository.findById(id)).thenThrow(new RuntimeException("Database error"));
 
         // Act & Assert

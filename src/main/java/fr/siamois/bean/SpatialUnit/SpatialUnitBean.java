@@ -48,7 +48,7 @@ public class SpatialUnitBean {
 
     @Getter
     @Setter
-    private Integer id;  // ID of the spatial unit
+    private Long id;  // ID of the spatial unit
 
     @PostConstruct
     public void init() {

@@ -49,7 +49,7 @@ public class SpatialUnitService {
      * @throws SpatialUnitNotFoundException If no spatial unit are found for the given id
      * @throws RuntimeException             If the repository method returns a RuntimeException
      */
-    public SpatialUnit findById(int id) {
+    public SpatialUnit findById(long id) {
         try {
             return spatialUnitRepository.findById(id).orElseThrow(() -> new SpatialUnitNotFoundException("SpatialUnit not found with ID: " + id));
         } catch (RuntimeException e) {

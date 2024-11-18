@@ -27,9 +27,9 @@ class HomeBeanTest {
         MockitoAnnotations.openMocks(this);  // Initialize the mocks
         // Initialize sample SpatialUnit objects for testing
         spatialUnit1 = new SpatialUnit();
-        spatialUnit1.setId(1);
+        spatialUnit1.setId(1L);
         spatialUnit2 = new SpatialUnit();
-        spatialUnit2.setId(2);
+        spatialUnit2.setId(2L);
     }
 
     @Test
