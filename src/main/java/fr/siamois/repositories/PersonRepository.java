@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PersonRepository extends CrudRepository<Person, Long> {
@@ -37,5 +38,7 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
                     "AND prt.fk_role_concept_id = :roleId"
     )
     List<Person> findPersonsOfTeamWithRole(@Param("teamId") Long teamId, @Param("roleId") Long roleConceptId);
+
+    Optional<Person> findPersonByUsername(String username);
 
 }

@@ -1,11 +1,16 @@
 package fr.siamois.models;
 
+import fr.siamois.models.auth.SystemRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.OffsetDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Data
 @Entity
@@ -13,7 +18,7 @@ import java.time.OffsetDateTime;
         @UniqueConstraint(name = "person_username_key", columnNames = {"username"}),
         @UniqueConstraint(name = "person_mail_key", columnNames = {"mail"})
 })
-public class Person {
+public class Person implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id", nullable = false)
@@ -66,4 +71,36 @@ public class Person {
     @Column(name = "key_description", length = Integer.MAX_VALUE)
     private String keyDescription;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "system_role_user",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<SystemRole> roles;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

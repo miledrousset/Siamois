@@ -29,10 +29,10 @@
 
                             </f:facet>
                             <p:divider layout="vertical"/>
-                            <f:facet name="end">
-                                <p:button value="Logout" icon="pi pi-fw pi-sign-out" styleClass="ui-button-info"
-                                          action="#{loginBean.logout}"/>
-                            </f:facet>
+                            <form action="${pageContext.request.contextPath}logout" method="post">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <button type="submit" class="btn btn-danger">Deconnexion</button>
+                            </form>
                         </p:menubar>
                     </div>
                 </div>

@@ -18,6 +18,13 @@
 
     <ui:include src="pages/home/home.xhtml"/>
 
+
+        <form action="${pageContext.request.contextPath}logout" method="post">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <button type="submit" class="btn btn-danger">Deconnexion</button>
+        </form>
+
 </h:body>
+
 
 </HTML>
