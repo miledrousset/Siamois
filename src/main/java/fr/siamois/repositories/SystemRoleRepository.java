@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SystemRoleRepository extends CrudRepository<SystemRole, Integer> {
+public interface SystemRoleRepository extends CrudRepository<SystemRole, Long> {
 
     @Query(
             nativeQuery = true,

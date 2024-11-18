@@ -1,6 +1,6 @@
 package fr.siamois.repositories;
 
-import fr.siamois.models.*;
+import fr.siamois.models.RecordingUnit;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, Integer> {
+public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, Long> {
 
     @Query(
             nativeQuery = true,

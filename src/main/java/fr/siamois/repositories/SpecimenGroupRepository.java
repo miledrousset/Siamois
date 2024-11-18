@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SpecimenGroupRepository extends CrudRepository<SpecimenGroup, Integer> {
+public interface SpecimenGroupRepository extends CrudRepository<SpecimenGroup, Long> {
 
     @Query(
             nativeQuery = true,

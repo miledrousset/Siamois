@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Integer> {
+public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long> {
 
     @Query(
             nativeQuery = true,

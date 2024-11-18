@@ -3,8 +3,6 @@ package fr.siamois.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
 @Entity
@@ -13,7 +11,7 @@ public class SpecimenGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "specimen_group_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @Column(name = "name", nullable = false, length = Integer.MAX_VALUE)

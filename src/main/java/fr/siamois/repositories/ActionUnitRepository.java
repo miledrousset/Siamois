@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ActionUnitRepository extends CrudRepository<ActionUnit, Integer> {
+public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long> {
 
     @Query(
             nativeQuery = true,

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ConceptRepository extends CrudRepository<Concept, Integer> {
+public interface ConceptRepository extends CrudRepository<Concept, Long> {
 
     @Query(
             nativeQuery = true,
