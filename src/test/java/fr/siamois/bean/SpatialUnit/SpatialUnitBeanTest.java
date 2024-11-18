@@ -57,7 +57,7 @@ class SpatialUnitBeanTest {
         recordingUnit2.setId(2L);
 
         // Initialize the bean
-        spatialUnitBean.setId(1);
+        spatialUnitBean.setId(1L);
     }
 
     @AfterEach
