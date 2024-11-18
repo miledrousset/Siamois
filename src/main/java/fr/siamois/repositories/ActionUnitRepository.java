@@ -9,18 +9,18 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ActionUnitRepository extends CrudRepository<ActionUnit, Integer> {
+public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long> {
 
     @Query(
             nativeQuery = true,
-            value = "SELECT au.* FROM action_unit au JOIN action_hierarchy auh ON au.action_unit_id = auh.fk_child_id WHERE auh.fk_parent_id = :actionUnit"
+            value = "SELECT au.* FROM action_unit au JOIN action_hierarchy auh ON au.action_unit_id = auh.fk_child_id WHERE auh.fk_parent_id = :actionUnitId"
     )
-    List<ActionUnit> findAllChildOfActionUnit(@Param("actionUnit") ActionUnit actionUnit);
+    List<ActionUnit> findAllChildOfActionUnit(@Param("actionUnitId") Long actionUnitId);
 
     @Query(
             nativeQuery = true,
-            value = "SELECT au.* FROM action_unit au JOIN action_hierarchy auh ON au.action_unit_id = auh.fk_parent_id WHERE auh.fk_child_id = :actionUnit"
+            value = "SELECT au.* FROM action_unit au JOIN action_hierarchy auh ON au.action_unit_id = auh.fk_parent_id WHERE auh.fk_child_id = :actionUnitId"
     )
-    List<ActionUnit> findAllParentsOfActionUnit(@Param("actionUnit") ActionUnit actionUnit);
+    List<ActionUnit> findAllParentsOfActionUnit(@Param("actionUnitId") Long actionUnitId);
 
 }

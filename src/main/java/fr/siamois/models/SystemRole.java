@@ -13,7 +13,7 @@ public class SystemRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "system_role_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @Column(name = "role_name", nullable = false, length = Integer.MAX_VALUE)

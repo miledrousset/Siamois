@@ -11,7 +11,7 @@ public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "team_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @Column(name = "name", nullable = false, length = Integer.MAX_VALUE)

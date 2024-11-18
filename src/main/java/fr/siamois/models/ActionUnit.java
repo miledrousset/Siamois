@@ -13,7 +13,7 @@ public class ActionUnit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "action_unit_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @Column(name = "begin_date", nullable = false)

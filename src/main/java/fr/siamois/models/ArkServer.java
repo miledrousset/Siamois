@@ -16,7 +16,7 @@ public class ArkServer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ark_server_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @Column(name = "server_ark_uri", nullable = false, length = Integer.MAX_VALUE)

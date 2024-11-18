@@ -1,6 +1,6 @@
 package fr.siamois.repositories;
 
-import fr.siamois.models.*;
+import fr.siamois.models.RecordingUnit;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -9,19 +9,19 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, Integer> {
+public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, Long> {
 
     @Query(
             nativeQuery = true,
-            value = "SELECT ru.* FROM recording_unit ru JOIN recording_unit_hierarchy ruh on ru.recording_unit_id = ruh.fk_child_id WHERE ruh.fk_parent_id = :recordingUnit"
+            value = "SELECT ru.* FROM recording_unit ru JOIN recording_unit_hierarchy ruh on ru.recording_unit_id = ruh.fk_child_id WHERE ruh.fk_parent_id = :recordingUnitId"
     )
-    List<RecordingUnit> findAllChildrenOfRecordingUnit(@Param("recordingUnit") RecordingUnit recordingUnit);
+    List<RecordingUnit> findAllChildrenOfRecordingUnit(@Param("recordingUnitId") Long recordingUnitId);
 
     @Query(
             nativeQuery = true,
             value = "SELECT ru.* FROM recording_unit ru JOIN recording_unit_hierarchy ruh on ru.recording_unit_id = ruh.fk_parent_id WHERE ruh.fk_child_id = :recordingUnit"
     )
-    List<RecordingUnit> findAllParentsOfRecordingUnit(@Param("recordingUnit") RecordingUnit recordingUnit);
+    List<RecordingUnit> findAllParentsOfRecordingUnit(@Param("recordingUnitId") Long recordingUnitId);
 
 //    todo:  @Query(
 //            nativeQuery = true,
