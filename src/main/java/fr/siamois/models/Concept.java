@@ -14,12 +14,12 @@ public class Concept {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_vocabulary_id", nullable = false)
     private Vocabulary vocabulary;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_ark_id", nullable = false)
     private Ark ark;
 

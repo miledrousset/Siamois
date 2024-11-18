@@ -23,7 +23,7 @@ public class Vocabulary {
     private VocabularyType fkType;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "ark_id", nullable = false)
     private Ark ark;
 

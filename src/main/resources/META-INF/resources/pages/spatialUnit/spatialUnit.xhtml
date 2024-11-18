@@ -1,0 +1,105 @@
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:define name="content">
+        <f:metadata>
+            <!-- Capture the ID parameter from the URL and bind it to spatialUnitBean -->
+            <f:viewParam name="id" value="#{spatialUnitBean.id}" />
+            <f:event type="preRenderView" listener="#{spatialUnitBean.init}" />
+        </f:metadata>
+
+        <!-- Content -->
+        <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.spatialUnitErrorMessage}" rendered="#{not empty spatialUnitBean.spatialUnitErrorMessage}" />
+        <h:panelGroup id="contentPanel" rendered="#{spatialUnitBean.spatialUnit != null}">
+            <h2>Spatial Unit: #{spatialUnitBean.spatialUnit.name}</h2>
+            <h3>Category: #{spatialUnitBean.spatialUnit.category.label}</h3>
+            <p>ARK ID: #{spatialUnitBean.spatialUnit.ark.arkId}</p>
+
+        </h:panelGroup>
+
+        <p:outputPanel>
+            <h3>Spatial units</h3>
+            <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.spatialUnitListErrorMessage}" rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}" />
+            <p:panelGrid columns="3" styleClass="card-grid">
+                <ui:repeat value="#{spatialUnitBean.spatialUnitList}" var="item">
+                    <p:card>
+                        <f:facet name="header">
+                            <!-- <img alt="user header" src="../../resources/img/location.jpg"/> -->
+                        </f:facet>
+                        <f:facet name="title">
+                            #{item.name}
+                        </f:facet>
+                        <f:facet name="subtitle">
+                            ARK: #{item.ark.arkId}
+                        </f:facet>
+
+                        <p>Category : #{item.category.label}</p>
+
+                        <f:facet name="footer">
+                            <p:commandButton icon="pi pi-search" value="Explore"
+                                             action="#{navigationBean.goToSpatialUnitPage(item)}"
+                                             update="@form"
+                                             ajax="false"/>
+                        </f:facet>
+                    </p:card>
+                </ui:repeat>
+            </p:panelGrid>
+        </p:outputPanel>
+
+        <p:outputPanel>
+            <h3>Recording units</h3>
+            <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.recordingUnitListErrorMessage}" rendered="#{not empty spatialUnitBean.recordingUnitListErrorMessage}" />
+            <p:panelGrid columns="3" styleClass="card-grid">
+                <ui:repeat value="#{spatialUnitBean.recordingUnitList}" var="item">
+                    <p:card>
+                        <f:facet name="header">
+                            <!-- <img alt="user header" src="../../resources/img/location.jpg"/> -->
+                        </f:facet>
+                        <f:facet name="title">
+                            #{item.ark.arkId}
+                        </f:facet>
+                        <f:facet name="subtitle">
+
+                        </f:facet>
+
+                        <p>Category : #{item.type.label}</p>
+                        <p>Author : #{item.author.lastname} #{item.author.name}</p>
+
+                    </p:card>
+                </ui:repeat>
+            </p:panelGrid>
+        </p:outputPanel>
+
+        <p:outputPanel>
+            <h3>Actions</h3>
+            <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.actionUnitListErrorMessage}" rendered="#{not empty spatialUnitBean.actionUnitListErrorMessage}" />
+            <p:panelGrid columns="3" styleClass="card-grid">
+                <ui:repeat value="#{spatialUnitBean.actionUnitList}" var="item">
+                    <p:card>
+                        <f:facet name="header">
+
+                        </f:facet>
+                        <f:facet name="title">
+                            #{item.ark.arkId}
+                        </f:facet>
+
+                        <f:facet name="subtitle">
+
+                        </f:facet>
+
+                        <p>Category : #{item.type.label}</p>
+
+
+                        <f:facet name="footer">
+
+                        </f:facet>
+                    </p:card>
+                </ui:repeat>
+            </p:panelGrid>
+        </p:outputPanel>
+    </ui:define>
+</ui:composition>

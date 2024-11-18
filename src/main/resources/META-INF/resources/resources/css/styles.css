@@ -1,0 +1,60 @@
+/* Basic Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+.layout-container {
+
+    height: 100vh;
+
+}
+
+.left-panel {
+    background-color: #f4f4f4;
+    padding: 20px;
+    min-height: 100%;
+    transition: width 0.3s;
+}
+
+.app-name {
+    font-size: 20px;
+    min-height: 100%;
+    background-color: #f4f4f4;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.top-bar {
+    flex-grow: 1;
+    background-color: #fff;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.icon-only-menu .ui-menuitem-text {
+    display: none; /* Hide the text labels */
+}
+.icon-only-menu .ui-menuitem-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px; /* Adjust width as needed */
+    height: 40px; /* Adjust height as needed */
+}
+
