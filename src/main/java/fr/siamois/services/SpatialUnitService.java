@@ -14,8 +14,11 @@ import java.util.List;
 @Service
 public class SpatialUnitService {
 
-    @Autowired
-    SpatialUnitRepository spatialUnitRepository;
+    private final SpatialUnitRepository spatialUnitRepository;
+
+    public SpatialUnitService(SpatialUnitRepository spatialUnitRepository) {
+        this.spatialUnitRepository = spatialUnitRepository;
+    }
 
     /**
      * Find all the spatial unit not having any spatial unit as parent
