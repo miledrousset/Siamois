@@ -1,11 +1,9 @@
 package fr.siamois.services;
 
+import fr.siamois.infrastructure.repositories.ActionUnitRepository;
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
-
-import fr.siamois.infrastructure.repositories.ActionUnitRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

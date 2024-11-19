@@ -1,13 +1,10 @@
 package fr.siamois.infrastructure.api;
 
 import fr.siamois.infrastructure.api.dto.ThesaurusDTO;
-import fr.siamois.infrastructure.api.dto.VocabularyCollectionDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @Service
