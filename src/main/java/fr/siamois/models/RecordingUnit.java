@@ -3,7 +3,6 @@ package fr.siamois.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.locationtech.jts.geom.Polygon;
 
 import java.time.OffsetDateTime;
 
