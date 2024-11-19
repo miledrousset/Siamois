@@ -1,6 +1,5 @@
 package fr.siamois.bean.SpatialUnit;
 
-import fr.siamois.bean.Home.HomeBean;
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.RecordingUnit;
 import fr.siamois.models.SpatialUnit;
