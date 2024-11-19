@@ -1,4 +1,4 @@
-package fr.siamois.repositories;
+package fr.siamois.infrastructure.repositories;
 
 import fr.siamois.models.SpatialUnit;
 import org.springframework.data.jpa.repository.Query;

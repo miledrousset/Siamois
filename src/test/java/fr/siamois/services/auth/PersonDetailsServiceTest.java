@@ -1,7 +1,7 @@
 package fr.siamois.services.auth;
 
 import fr.siamois.models.Person;
-import fr.siamois.repositories.PersonRepository;
+import fr.siamois.infrastructure.repositories.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

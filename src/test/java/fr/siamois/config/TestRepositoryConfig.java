@@ -1,8 +1,8 @@
 package fr.siamois.config;
 
-import fr.siamois.repositories.ActionUnitRepository;
-import fr.siamois.repositories.RecordingUnitRepository;
-import fr.siamois.repositories.SpatialUnitRepository;
+import fr.siamois.infrastructure.repositories.ActionUnitRepository;
+import fr.siamois.infrastructure.repositories.RecordingUnitRepository;
+import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

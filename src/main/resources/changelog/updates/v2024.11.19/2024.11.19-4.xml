@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+<changeSet id="2024.11.19-4" author="Julien Linget">
+    <preConditions onFail="MARK_RAN">
+        <indexExists tableName="vocabulary_collection" indexName="vocabulary_collection_fk_ark_id"/>
+    </preConditions>
+    <dropIndex tableName="vocabulary_collection" indexName="vocabulary_collection_fk_ark_id"/>
+    <dropNotNullConstraint tableName="vocabulary_collection" columnName="fk_ark_id"/>
+</changeSet>
+
+</databaseChangeLog>

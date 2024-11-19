@@ -10,6 +10,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 
+/**
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -45,3 +46,4 @@ public class GlobalExceptionHandler {
         return HttpStatus.valueOf(statusCode);
     }
 }
+ **/

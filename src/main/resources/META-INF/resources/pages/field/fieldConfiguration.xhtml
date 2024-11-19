@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <!-- Import de BOOTSTRAP -->
+    <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css"/>
+    <script src="resources/js/bootstrap.bundle.min.js"></script>
+    <title>Configuration des champs</title>
+</h:head>
+
+<body>
+<h1>Field Configuration</h1>
+<h:outputText value="Page de configuration de #{fieldConfigurationBean.authenticatedUser}"/>
+<h2>Unités spatiales</h2>
+<h3>Types d'unités spatiales</h3>
+<div class="ui-fluid">
+    <h:form>
+        <div class="field grid">
+            <p:outputLabel for="serverUrl" styleClass="col-12 md:col-2" value="URL du serveur"/>
+            <div class="col-12 md:col-10">
+                <p:inputText id="serverUrl" value="#{fieldConfigurationBean.serverUrl}"/>
+            </div>
+        </div>
+        <div class="field grid">
+            <p:outputLabel for="internalId" styleClass="col-12 md:col-2" value="Identifiant interne du thésaurus"/>
+            <div class="col-12 md:col-10">
+                <p:inputText id="internalId" value="#{fieldConfigurationBean.thesaurusId}"/>
+            </div>
+            <p:commandButton value="Charger" action="#{fieldConfigurationBean.loadValues()}" update="globalCollectionsId"/>
+        </div>
+
+        <div class="field grid">
+            <p:outputLabel for="globalCollectionsId" styleClass="col-12 md:col-2"
+                           value="Selectionnez la collection à utiliser"/>
+            <div class="col-12 md:col-10">
+                <p:selectOneMenu id="globalCollectionsId" value="#{fieldConfigurationBean.selectedValue}">
+                    <f:selectItems value="#{fieldConfigurationBean.values}"/>
+                </p:selectOneMenu>
+            </div>
+        </div>
+
+
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <p:commandButton value="Sauvegarder" action="#{fieldConfigurationBean.processForm()}"/>
+    </h:form>
+
+    <p:button value="Retour à la page d'accueil" outcome="/index.xhtml"/>
+</div>
+
+</body>
+
+</html>

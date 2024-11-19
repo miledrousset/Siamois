@@ -1,4 +1,4 @@
-package fr.siamois.repositories;
+package fr.siamois.infrastructure.repositories;
 
 import fr.siamois.models.Person;
 import org.springframework.data.jpa.repository.Query;

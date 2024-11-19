@@ -2,11 +2,9 @@ package fr.siamois.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "vocabulary", schema = "public", uniqueConstraints = {
         @UniqueConstraint(name = "vocabulary_ark_id_key", columnNames = {"ark_id"})
@@ -20,15 +18,18 @@ public class Vocabulary {
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_type_id", nullable = false)
-    private VocabularyType fkType;
-
-    @NotNull
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "ark_id", nullable = false)
-    private Ark ark;
+    private VocabularyType type;
 
     @NotNull
     @Column(name = "vocabulary_name", nullable = false, length = Integer.MAX_VALUE)
     private String vocabularyName;
+
+    @NotNull
+    @Column(name = "external_id", nullable = false)
+    private String externalVocabularyId;
+
+    @NotNull
+    @Column(name = "base_uri", nullable = false)
+    private String baseUri;
 
 }
