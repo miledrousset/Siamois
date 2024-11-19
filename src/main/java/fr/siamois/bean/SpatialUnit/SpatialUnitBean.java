@@ -22,12 +22,9 @@ import java.util.List;
 @SessionScoped
 public class SpatialUnitBean {
 
-    @Autowired
-    private SpatialUnitService spatialUnitService;
-    @Autowired
-    private RecordingUnitService recordingUnitService;
-    @Autowired
-    private ActionUnitService actionUnitService;
+    private final SpatialUnitService spatialUnitService;
+    private final RecordingUnitService recordingUnitService;
+    private final ActionUnitService actionUnitService;
 
     @Getter
     private SpatialUnit spatialUnit;
@@ -49,6 +46,12 @@ public class SpatialUnitBean {
     @Getter
     @Setter
     private Long id;  // ID of the spatial unit
+
+    public SpatialUnitBean(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService) {
+        this.spatialUnitService = spatialUnitService;
+        this.recordingUnitService = recordingUnitService;
+        this.actionUnitService = actionUnitService;
+    }
 
     @PostConstruct
     public void init() {

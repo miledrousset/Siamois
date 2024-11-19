@@ -17,8 +17,11 @@ import java.util.Optional;
 @Service
 public class ActionUnitService {
 
-    @Autowired
-    ActionUnitRepository actionUnitRepository;
+    private final ActionUnitRepository actionUnitRepository;
+
+    public ActionUnitService(ActionUnitRepository actionUnitRepository) {
+        this.actionUnitRepository = actionUnitRepository;
+    }
 
     public List<ActionUnit> findAllBySpatialUnitId(SpatialUnit spatialUnit)   {
         return actionUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());

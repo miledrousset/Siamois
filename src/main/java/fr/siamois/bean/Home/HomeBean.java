@@ -17,13 +17,16 @@ import java.util.List;
 @SessionScoped
 public class HomeBean {
 
-    @Autowired
-    private SpatialUnitService spatialUnitService;
+    private final SpatialUnitService spatialUnitService;
 
     @Getter
     private List<SpatialUnit> spatialUnitList;
 
     @Getter private String spatialUnitListErrorMessage;
+
+    public HomeBean(SpatialUnitService spatialUnitService) {
+        this.spatialUnitService = spatialUnitService;
+    }
 
     @PostConstruct
     public void init()  {

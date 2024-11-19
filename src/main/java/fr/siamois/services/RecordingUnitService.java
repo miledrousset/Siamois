@@ -15,8 +15,11 @@ import java.util.Optional;
 @Service
 public class RecordingUnitService {
 
-    @Autowired
-    RecordingUnitRepository recordingUnitRepository;
+    private final RecordingUnitRepository recordingUnitRepository;
+
+    public RecordingUnitService(RecordingUnitRepository recordingUnitRepository) {
+        this.recordingUnitRepository = recordingUnitRepository;
+    }
 
     /**
      * Find all the recording units from a spatial unit
