@@ -42,8 +42,9 @@
             <div class="col-12 md:col-10">
                 <p:selectOneMenu id="globalCollectionsId" value="#{fieldConfigurationBean.selectedValue}">
                     <f:selectItems value="#{fieldConfigurationBean.collections}" var="group"
-                                    itemLabel="#{fieldConfigurationBean.labels.get(group.externalId)}"
+                                   itemLabel="#{fieldConfigurationBean.labels.get(group.externalId)} (#{group.externalId})"
                                     itemValue="#{group.externalId}"/>
+
                 </p:selectOneMenu>
             </div>
         </div>
