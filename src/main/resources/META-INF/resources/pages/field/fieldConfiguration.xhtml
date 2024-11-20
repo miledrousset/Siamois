@@ -33,7 +33,7 @@
             <div class="col-12 md:col-10">
                 <p:inputText id="internalId" value="#{fieldConfigurationBean.thesaurusId}"/>
             </div>
-            <p:commandButton value="Charger" action="#{fieldConfigurationBean.loadValues()}" update="globalCollectionsId"/>
+            <p:commandButton value="Charger" action="#{fieldConfigurationBean.loadGroupValue()}" update="globalCollectionsId"/>
         </div>
 
         <div class="field grid">
@@ -41,7 +41,9 @@
                            value="Selectionnez la collection à utiliser"/>
             <div class="col-12 md:col-10">
                 <p:selectOneMenu id="globalCollectionsId" value="#{fieldConfigurationBean.selectedValue}">
-                    <f:selectItems value="#{fieldConfigurationBean.values}"/>
+                    <f:selectItems value="#{fieldConfigurationBean.collections}" var="group"
+                                    itemLabel="#{fieldConfigurationBean.labels.get(group.externalId)}"
+                                    itemValue="#{group.externalId}"/>
                 </p:selectOneMenu>
             </div>
         </div>

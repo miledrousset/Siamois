@@ -18,6 +18,7 @@ import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.models.vocabulary.VocabularyType;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,43 +47,7 @@ public class FieldConfigurationService {
 
     public void saveThesaurusFieldConfiguration(Person loggedUser,
                                                 String fieldCode,
-                                                String serverUrl,
-                                                String thesaurusId,
-                                                VocabularyCollectionDTO selected) throws FailedFieldUpdateException, FailedFieldSaveException {
-
-        VocabularyType type = vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus").orElseThrow();
-
-        ThesaurusDTO thesaurusDTO = thesaurusApi.fetchThesaurusInfos(serverUrl, thesaurusId).orElseThrow();
-
-        Optional<Vocabulary> optVocab = vocabularyRepository.findVocabularyByBaseUriIgnoreCaseAndExternalVocabularyIdIgnoreCase(serverUrl, thesaurusId);
-
-        Vocabulary vocabulary;
-
-        if (optVocab.isPresent()) {
-            vocabulary = optVocab.get();
-        } else {
-            vocabulary = new Vocabulary();
-            vocabulary.setBaseUri(serverUrl);
-            vocabulary.setExternalVocabularyId(thesaurusId);
-            vocabulary.setType(type);
-            vocabulary.setVocabularyName(thesaurusDTO.getLabels().get(0).getTitle());
-
-            vocabulary = vocabularyRepository.save(vocabulary);
-        }
-
-        VocabularyCollection collection;
-
-        Optional<VocabularyCollection> optCollection = vocabularyCollectionRepository.findByVocabularyAndExternalId(vocabulary, selected.getIdGroup());
-
-        if (optCollection.isPresent()) {
-            collection = optCollection.get();
-        } else {
-            collection = new VocabularyCollection();
-            collection.setExternalId(selected.getIdGroup());
-            collection.setVocabulary(vocabulary);
-
-            vocabularyCollectionRepository.save(collection);
-        }
+                                                VocabularyCollection collectionToSave) throws FailedFieldUpdateException, FailedFieldSaveException {
 
         Field field;
 
@@ -91,10 +56,10 @@ public class FieldConfigurationService {
 
         if (optField.isPresent()) {
             field = optField.get();
-            if (optCol.isPresent() && optCol.get().equals(collection)) {
+            if (optCol.isPresent() && optCol.get().equals(collectionToSave)) {
                 throw new FailedFieldUpdateException("Failed to update field :" + fieldCode);
             } else {
-                fieldRepository.changeCollectionOfField(collection.getId(), field.getId());
+                fieldRepository.changeCollectionOfField(collectionToSave.getId(), field.getId());
             }
         } else {
             field = new Field();
@@ -103,13 +68,67 @@ public class FieldConfigurationService {
 
             field = fieldRepository.save(field);
 
-            int nbResult = fieldRepository.saveCollectionWithField(collection.getId(), field.getId());
+            int nbResult = fieldRepository.saveCollectionWithField(collectionToSave.getId(), field.getId());
             if (nbResult == 0) throw new FailedFieldSaveException("Failed to save field");
         }
     }
 
-    public List<VocabularyCollectionDTO> fetchListOfCollection(String serverUrl, String thesaurusId) throws ClientSideErrorException {
-        return thesaurusCollectionApi.fetchAllCollectionsFrom(serverUrl, thesaurusId);
+    public Optional<Vocabulary> fetchAndSaveThesaurus(String lang, String serverUrl, String thesaurusId) {
+        Optional<VocabularyType> type = vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus");
+        Optional<Vocabulary> vocaOpt = vocabularyRepository.findVocabularyByBaseUriIgnoreCaseAndExternalVocabularyIdIgnoreCase(serverUrl, thesaurusId);
+
+        if (vocaOpt.isPresent()) return vocaOpt;
+
+        Optional<ThesaurusDTO> dtoOpt = thesaurusApi.fetchThesaurusInfos(serverUrl, thesaurusId);
+        if (dtoOpt.isEmpty()) return Optional.empty();
+
+        ThesaurusDTO dto = dtoOpt.get();
+
+        Vocabulary vocabulary = new Vocabulary();
+        vocabulary.setBaseUri(serverUrl);
+        vocabulary.setExternalVocabularyId(thesaurusId);
+        vocabulary.setVocabularyName(dto.getLabels().stream()
+                .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(lang))
+                .findFirst()
+                .orElseThrow()
+                .getTitle());
+        vocabulary.setType(type.orElseThrow());
+
+        vocabulary = vocabularyRepository.save(vocabulary);
+
+        return Optional.of(vocabulary);
+    }
+
+    public record VocabularyCollectionsAndLabels(List<VocabularyCollection> collections, List<String> localisedLabels) {}
+
+    public VocabularyCollectionsAndLabels fetchAndSaveCollections(String lang, Vocabulary vocabulary) throws ClientSideErrorException {
+        List<VocabularyCollectionDTO> dtos = thesaurusCollectionApi.fetchAllCollectionsFrom(vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId());
+        List<VocabularyCollection> result = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+
+        for (VocabularyCollectionDTO dto : dtos) {
+            Optional<VocabularyCollection> opt = vocabularyCollectionRepository.findByVocabularyAndExternalId(vocabulary, dto.getIdGroup());
+            VocabularyCollection collection;
+            if (opt.isEmpty()) {
+                collection = new VocabularyCollection();
+                collection.setExternalId(dto.getIdGroup());
+                collection.setVocabulary(vocabulary);
+                collection = vocabularyCollectionRepository.save(collection);
+            } else {
+                collection = opt.get();
+            }
+
+            labels.add(dto.getLabels().stream()
+                    .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(lang))
+                    .findFirst()
+                    .orElseThrow()
+                    .getTitle());
+
+            result.add(collection);
+        }
+
+        return new VocabularyCollectionsAndLabels(result, labels);
+
     }
 
     public Optional<VocabularyCollection> fetchPersonFieldConfiguration(Person loggedUser, String categoryFieldCode) {

@@ -68,8 +68,6 @@ class FieldConfigurationServiceTest {
         thesaurusType.setId(1L);
         thesaurusType.setLabel("Thesaurus");
 
-        when(vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus")).thenReturn(Optional.of(thesaurusType));
-
         Vocabulary th21 = new Vocabulary();
         th21.setExternalVocabularyId("th21");
         th21.setId(1L);
@@ -77,17 +75,10 @@ class FieldConfigurationServiceTest {
         th21.setType(thesaurusType);
         th21.setBaseUri("http://example.com");
 
-        when(vocabularyRepository
-                .findVocabularyByBaseUriIgnoreCaseAndExternalVocabularyIdIgnoreCase("http://example.com", "th21"))
-                .thenReturn(Optional.of(th21));
-
         g21 = new VocabularyCollection();
         g21.setId(1L);
         g21.setVocabulary(th21);
         g21.setExternalId("g21");
-
-        when(vocabularyCollectionRepository.findByVocabularyAndExternalId(th21, "g21"))
-                .thenReturn(Optional.of(g21));
 
         ThesaurusDTO thesaurusDTO = new ThesaurusDTO();
         thesaurusDTO.setIdTheso("th21");
@@ -98,9 +89,6 @@ class FieldConfigurationServiceTest {
         labelDTO.setTitle("Test name");
 
         thesaurusDTO.getLabels().add(labelDTO);
-
-        when(thesaurusApi.fetchThesaurusInfos("http://example.com", "th21"))
-                .thenReturn(Optional.of(thesaurusDTO));
 
     }
 
@@ -131,9 +119,7 @@ class FieldConfigurationServiceTest {
         assertThrows(FailedFieldUpdateException.class, () ->
                 service.saveThesaurusFieldConfiguration(person,
                 SpatialUnit.CATEGORY_FIELD_CODE,
-                "http://example.com",
-                "th21",
-                dto
+                        g21
         ));
     }
 
@@ -168,9 +154,7 @@ class FieldConfigurationServiceTest {
         assertThrows(FailedFieldSaveException.class, () ->
                 service.saveThesaurusFieldConfiguration(person,
                 SpatialUnit.CATEGORY_FIELD_CODE,
-                "http://example.com",
-                "th21",
-                dto
+                        g21
         ));
 
     }
