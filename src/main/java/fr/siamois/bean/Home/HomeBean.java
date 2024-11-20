@@ -34,6 +34,7 @@ public class HomeBean {
             // Initializing the bean: we need all the spatial units without parents
             spatialUnitList = spatialUnitService.findAllWithoutParents();
         } catch (RuntimeException e) {
+            spatialUnitList = null;
             spatialUnitListErrorMessage = "Failed to load spatial units: " + e.getMessage();
         }
     }

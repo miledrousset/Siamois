@@ -58,26 +58,39 @@ public class SpatialUnitBean {
         if (id != null) {
 
             try {
-                spatialUnit = spatialUnitService.findById(id);
+                this.spatialUnit = spatialUnitService.findById(id);
             } catch (RuntimeException e) {
-                spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
+                this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
+                // Reinit children
+                this.spatialUnitListErrorMessage = null;
+                this.recordingUnitListErrorMessage = null;
+                this.actionUnitListErrorMessage = null;
+                this.spatialUnitList = null;
+                this.recordingUnitList = null;
+                this.actionUnitList = null;
             }
 
-            if (spatialUnit != null) {
+            if (this.spatialUnit != null) {
                 try {
-                    spatialUnitList = spatialUnitService.findAllChildOfSpatialUnit(spatialUnit);
+                    this.spatialUnitListErrorMessage = null;
+                    this.spatialUnitList = spatialUnitService.findAllChildOfSpatialUnit(spatialUnit);
                 } catch (RuntimeException e) {
-                    spatialUnitListErrorMessage = "Unable to load spatial units: " + e.getMessage();
+                    this.spatialUnitList = null;
+                    this.spatialUnitListErrorMessage = "Unable to load spatial units: " + e.getMessage();
                 }
                 try {
-                    recordingUnitList = recordingUnitService.findAllBySpatialUnitId(spatialUnit);
+                    this.recordingUnitListErrorMessage = null;
+                    this.recordingUnitList = recordingUnitService.findAllBySpatialUnitId(spatialUnit);
                 } catch (RuntimeException e) {
-                    recordingUnitListErrorMessage = "Unable to load recording units: " + e.getMessage();
+                    this.recordingUnitList = null;
+                    this.recordingUnitListErrorMessage = "Unable to load recording units: " + e.getMessage();
                 }
                 try {
-                    actionUnitList = actionUnitService.findAllBySpatialUnitId(spatialUnit);
+                    this.actionUnitListErrorMessage = null;
+                    this.actionUnitList = actionUnitService.findAllBySpatialUnitId(spatialUnit);
                 } catch (RuntimeException e) {
-                    actionUnitListErrorMessage = "Unable to load action units: " + e.getMessage();
+                    this.actionUnitList = null;
+                    this.actionUnitListErrorMessage = "Unable to load action units: " + e.getMessage();
                 }
             }
 
