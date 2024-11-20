@@ -1,9 +1,10 @@
 package fr.siamois.bean.Field;
 
-import fr.siamois.infrastructure.api.ThesaurusCollectionApi;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.infrastructure.api.dto.VocabularyCollectionDTO;
-import fr.siamois.models.*;
+import fr.siamois.models.Person;
+import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.VocabularyCollection;
 import fr.siamois.models.exceptions.field.FailedFieldSaveException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
 import fr.siamois.services.FieldConfigurationService;
@@ -28,21 +29,37 @@ import java.util.Optional;
 @SessionScoped
 public class FieldConfigurationBean implements Serializable {
 
-    private final ThesaurusCollectionApi thesaurusCollectionApi;
     private final FieldConfigurationService fieldConfigurationService;
 
     private final AuthenticatedUserUtils userUtils = new AuthenticatedUserUtils();
     private List<VocabularyCollectionDTO> collections = new ArrayList<>();
     private final String lang = "fr";
 
-    private String serverUrl = "https://thesaurus.mom.fr/opentheso";
-    private String thesaurusId = "th221";
+    private String serverUrl = "";
+    private String thesaurusId = "";
     private String selectedValue = "";
     private List<String> values = new ArrayList<>();
 
-    public FieldConfigurationBean(ThesaurusCollectionApi thesaurusCollectionApi, FieldConfigurationService fieldConfigurationService) {
-        this.thesaurusCollectionApi = thesaurusCollectionApi;
+    public FieldConfigurationBean(FieldConfigurationService fieldConfigurationService) {
         this.fieldConfigurationService = fieldConfigurationService;
+    }
+
+    public void onLoad() {
+        Person loggedUser = userUtils.getAuthenticatedUser().orElseThrow();
+        Optional<VocabularyCollection> opt = this.fieldConfigurationService.fetchPersonFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE);
+        if (opt.isPresent()) {
+            VocabularyCollection vocabularyCollection = opt.get();
+            serverUrl = vocabularyCollection.getVocabulary().getBaseUri();
+            thesaurusId = vocabularyCollection.getVocabulary().getExternalVocabularyId();
+            loadValues();
+            Optional<VocabularyCollectionDTO> optSaved = getSavedDto(vocabularyCollection.getExternalId());
+            optSaved.ifPresent(vocabularyCollectionDTO ->
+                    selectedValue = vocabularyCollectionDTO.getLabels().stream()
+                    .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(lang))
+                    .findFirst()
+                    .orElseThrow()
+                    .getTitle());
+        }
     }
 
     public String getAuthenticatedUser() {
@@ -101,5 +118,10 @@ public class FieldConfigurationBean implements Serializable {
         return Optional.empty();
     }
 
+    private Optional<VocabularyCollectionDTO> getSavedDto(String externalId) {
+        return collections.stream()
+                .filter(vocabularyCollectionDTO -> vocabularyCollectionDTO.getIdGroup().equalsIgnoreCase(externalId))
+                .findFirst();
+    }
 
 }

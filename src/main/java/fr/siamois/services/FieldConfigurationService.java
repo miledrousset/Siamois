@@ -107,4 +107,7 @@ public class FieldConfigurationService {
         return thesaurusCollectionApi.fetchAllCollectionsFrom(serverUrl, thesaurusId);
     }
 
+    public Optional<VocabularyCollection> fetchPersonFieldConfiguration(Person loggedUser, String categoryFieldCode) {
+        return vocabularyCollectionRepository.findVocabularyCollectionByPersonAndFieldCode(loggedUser.getId(), categoryFieldCode);
+    }
 }

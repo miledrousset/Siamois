@@ -11,6 +11,10 @@
     <title>Configuration des champs</title>
 </h:head>
 
+<f:metadata>
+    <f:viewAction action="#{fieldConfigurationBean.onLoad()}"/>
+</f:metadata>
+
 <body>
 <h1>Field Configuration</h1>
 <h:outputText value="Page de configuration de #{fieldConfigurationBean.authenticatedUser}"/>
