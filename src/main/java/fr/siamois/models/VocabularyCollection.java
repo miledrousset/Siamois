@@ -6,18 +6,15 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "vocabulary_collection", schema = "public", uniqueConstraints = {
-        @UniqueConstraint(name = "vocabulary_collection_fk_ark_id_key", columnNames = {"fk_ark_id"})
-})
+@Table(name = "vocabulary_collection", schema = "public")
 public class VocabularyCollection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vocabulary_collection_id", nullable = false)
     private Long id;
 
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "fk_ark_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_ark_id")
     private Ark ark;
 
     @NotNull

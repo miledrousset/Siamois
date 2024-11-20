@@ -1,15 +1,15 @@
 package fr.siamois.bean.Field;
 
-import fr.siamois.infrastructure.api.ThesaurusApi;
 import fr.siamois.infrastructure.api.ThesaurusCollectionApi;
-import fr.siamois.infrastructure.api.dto.ThesaurusDTO;
+import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.infrastructure.api.dto.VocabularyCollectionDTO;
-import fr.siamois.infrastructure.repositories.FieldRepository;
-import fr.siamois.infrastructure.repositories.VocabularyCollectionRepository;
-import fr.siamois.infrastructure.repositories.VocabularyRepository;
-import fr.siamois.infrastructure.repositories.VocabularyTypeRepository;
 import fr.siamois.models.*;
+import fr.siamois.models.exceptions.field.FailedFieldSaveException;
+import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
+import fr.siamois.services.FieldConfigurationService;
 import fr.siamois.utils.AuthenticatedUserUtils;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -28,34 +28,21 @@ import java.util.Optional;
 @SessionScoped
 public class FieldConfigurationBean implements Serializable {
 
+    private final ThesaurusCollectionApi thesaurusCollectionApi;
+    private final FieldConfigurationService fieldConfigurationService;
+
     private final AuthenticatedUserUtils userUtils = new AuthenticatedUserUtils();
+    private List<VocabularyCollectionDTO> collections = new ArrayList<>();
+    private final String lang = "fr";
 
     private String serverUrl = "https://thesaurus.mom.fr/opentheso";
     private String thesaurusId = "th221";
     private String selectedValue = "";
     private List<String> values = new ArrayList<>();
-    private List<VocabularyCollectionDTO> vocabularyCollectionDTOS;
 
-    private final ThesaurusCollectionApi thesaurusCollectionApi;
-    private final ThesaurusApi thesaurusApi;
-
-    private final FieldRepository fieldRepository;
-    private final VocabularyCollectionRepository vocabularyCollectionRepository;
-    private final VocabularyRepository vocabularyRepository;
-    private final VocabularyTypeRepository vocabularyTypeRepository;
-
-    public FieldConfigurationBean(ThesaurusCollectionApi thesaurusCollectionApi,
-                                  ThesaurusApi thesaurusApi,
-                                  FieldRepository fieldRepository,
-                                  VocabularyCollectionRepository vocabularyCollectionRepository,
-                                  VocabularyRepository vocabularyRepository,
-                                  VocabularyTypeRepository vocabularyTypeRepository) {
+    public FieldConfigurationBean(ThesaurusCollectionApi thesaurusCollectionApi, FieldConfigurationService fieldConfigurationService) {
         this.thesaurusCollectionApi = thesaurusCollectionApi;
-        this.thesaurusApi = thesaurusApi;
-        this.fieldRepository = fieldRepository;
-        this.vocabularyCollectionRepository = vocabularyCollectionRepository;
-        this.vocabularyRepository = vocabularyRepository;
-        this.vocabularyTypeRepository = vocabularyTypeRepository;
+        this.fieldConfigurationService = fieldConfigurationService;
     }
 
     public String getAuthenticatedUser() {
@@ -65,56 +52,54 @@ public class FieldConfigurationBean implements Serializable {
 
     public void processForm() {
         Person loggedUser = userUtils.getAuthenticatedUser().orElseThrow();
-        VocabularyCollectionDTO selected = findSelectedCollection().orElseThrow();
+        Optional<VocabularyCollectionDTO> opt = findSelectedVocabulary();
+        if (opt.isEmpty()) {
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Erreur interne lors du traitement de la donnée"));
+        }
+        try {
+            fieldConfigurationService.saveThesaurusFieldConfiguration(loggedUser,
+                    SpatialUnit.CATEGORY_FIELD_CODE,
+                    serverUrl,
+                    thesaurusId,
+                    opt.orElseThrow());
 
-        VocabularyType type = vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus").orElseThrow();
-        ThesaurusDTO thesaurusDTO = thesaurusApi.fetchThesaurusInfos(serverUrl, thesaurusId).orElseThrow();
-
-        Vocabulary vocabulary = new Vocabulary();
-        vocabulary.setBaseUri(serverUrl);
-        vocabulary.setExternalVocabularyId(thesaurusId);
-        vocabulary.setType(type);
-        vocabulary.setVocabularyName(thesaurusDTO.getLabels().get(0).getTitle());
-
-        vocabulary = vocabularyRepository.save(vocabulary);
-
-        VocabularyCollection collection = new VocabularyCollection();
-        collection.setExternalId(selected.getIdGroup());
-        collection.setVocabulary(vocabulary);
-
-        collection = vocabularyCollectionRepository.save(collection);
-
-        Field field1 = new Field();
-        field1.setUser(loggedUser);
-        field1.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
-
-        field1 = fieldRepository.save(field1);
-
-        boolean result = fieldRepository.saveFieldWithCollection(collection.getId(), field1.getId());
-        if (!result) throw new RuntimeException("Failed to save field");
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La configuration a bien été enregistrée !"));
+        }  catch (FailedFieldSaveException e) {
+            log.error(e.getMessage(), e);
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Error", "Erreur lors de la sauvegarde de la configuration"));
+        } catch (FailedFieldUpdateException e) {
+            log.error(e.getMessage());
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La configuration est identique à la précédente."));
+        }
 
     }
 
     public void loadValues() {
-        vocabularyCollectionDTOS = thesaurusCollectionApi.fetchAllCollectionsFrom(serverUrl, thesaurusId);
-        for (VocabularyCollectionDTO data : vocabularyCollectionDTOS) {
-            values.add(data.getLabels().get(0).getTitle());
+        collections = fieldConfigurationService.fetchListOfCollection(serverUrl, thesaurusId);
+        for (VocabularyCollectionDTO dto : collections) {
+            String label = dto.getLabels().stream()
+                    .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(lang))
+                    .map(LabelDTO::getTitle)
+                    .findFirst()
+                    .orElseThrow();
+            values.add(label);
         }
     }
 
-    private boolean collectionDTOContainsLabel(VocabularyCollectionDTO dto, String label) {
-        return dto.getLabels()
-                .stream()
-                .anyMatch((labelDTO -> labelDTO.getTitle().equals(label)));
+    private Optional<VocabularyCollectionDTO> findSelectedVocabulary() {
+        for (VocabularyCollectionDTO dto : collections) {
+            for (LabelDTO labelDTO : dto.getLabels()) {
+                if (labelDTO.getLang().equalsIgnoreCase(lang) && labelDTO.getTitle().equalsIgnoreCase(selectedValue)) {
+                    return Optional.of(dto);
+                }
+            }
+        }
+        return Optional.empty();
     }
 
-    private Optional<VocabularyCollectionDTO> findSelectedCollection() {
-        int i = 0;
-        while (i < vocabularyCollectionDTOS.size() && !collectionDTOContainsLabel(vocabularyCollectionDTOS.get(i), selectedValue)) {
-            i++;
-        }
-        if (i == vocabularyCollectionDTOS.size()) return Optional.empty();
-        return Optional.of(vocabularyCollectionDTOS.get(i));
-    }
 
 }

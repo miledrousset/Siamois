@@ -45,6 +45,11 @@
 
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <p:commandButton value="Sauvegarder" action="#{fieldConfigurationBean.processForm()}"/>
+
+        <p:messages id="messages" showDetail="true" closable="true">
+            <p:autoUpdate/>
+        </p:messages>
+
     </h:form>
 
     <p:button value="Retour à la page d'accueil" outcome="/index.xhtml"/>

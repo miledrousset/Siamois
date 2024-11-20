@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "vocabulary", schema = "public", uniqueConstraints = {
-        @UniqueConstraint(name = "vocabulary_ark_id_key", columnNames = {"ark_id"})
+        @UniqueConstraint(name = "vocabulary_pk_uri_external_id", columnNames = {"base_uri", "external_id"})
 })
 public class Vocabulary {
     @Id
