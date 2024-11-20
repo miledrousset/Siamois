@@ -44,8 +44,6 @@ class FieldConfigurationServiceTest {
     private FieldConfigurationService service;
 
     private Person person;
-    private VocabularyType thesaurusType;
-    private Vocabulary th21;
     private VocabularyCollection g21;
 
     @BeforeEach
@@ -62,13 +60,13 @@ class FieldConfigurationServiceTest {
         person.setUsername("test");
         person.setPassword("unhashedPassword");
 
-        thesaurusType = new VocabularyType();
+        VocabularyType thesaurusType = new VocabularyType();
         thesaurusType.setId(1L);
         thesaurusType.setLabel("Thesaurus");
 
         when(vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus")).thenReturn(Optional.of(thesaurusType));
 
-        th21 = new Vocabulary();
+        Vocabulary th21 = new Vocabulary();
         th21.setExternalVocabularyId("th21");
         th21.setId(1L);
         th21.setVocabularyName("Test name");
@@ -126,14 +124,13 @@ class FieldConfigurationServiceTest {
         when(vocabularyCollectionRepository.findVocabularyCollectionByPersonAndFieldCode(person.getId(), SpatialUnit.CATEGORY_FIELD_CODE))
                 .thenReturn(Optional.of(g21));
 
-        assertThrows(FailedFieldUpdateException.class, () -> {
-            service.saveThesaurusFieldConfiguration(person,
-                    SpatialUnit.CATEGORY_FIELD_CODE,
-                    "http://example.com",
-                    "th21",
-                    dto
-            );
-        });
+        assertThrows(FailedFieldUpdateException.class, () ->
+                service.saveThesaurusFieldConfiguration(person,
+                SpatialUnit.CATEGORY_FIELD_CODE,
+                "http://example.com",
+                "th21",
+                dto
+        ));
     }
 
     @Test
@@ -164,14 +161,13 @@ class FieldConfigurationServiceTest {
 
         when(fieldRepository.saveCollectionWithField(g21.getId(), field.getId())).thenReturn(0);
 
-        assertThrows(FailedFieldSaveException.class, () -> {
-            service.saveThesaurusFieldConfiguration(person,
-                    SpatialUnit.CATEGORY_FIELD_CODE,
-                    "http://example.com",
-                    "th21",
-                    dto
-            );
-        });
+        assertThrows(FailedFieldSaveException.class, () ->
+                service.saveThesaurusFieldConfiguration(person,
+                SpatialUnit.CATEGORY_FIELD_CODE,
+                "http://example.com",
+                "th21",
+                dto
+        ));
 
     }
 }

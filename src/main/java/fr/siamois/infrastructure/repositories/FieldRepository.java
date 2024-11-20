@@ -32,5 +32,5 @@ public interface FieldRepository extends CrudRepository<Field, Long> {
                     "SET fk_collection_id = :collectionId " +
                     "WHERE fk_field_id = :fieldId"
     )
-    int changeCollectionOfField(@Param("collectionId") Long collectionId, @Param("fieldId") Long fieldId);
+    void changeCollectionOfField(@Param("collectionId") Long collectionId, @Param("fieldId") Long fieldId);
 }
