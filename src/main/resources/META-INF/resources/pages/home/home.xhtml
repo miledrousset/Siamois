@@ -25,10 +25,13 @@
                         <p>Category : #{item.category.label}</p>
 
                         <f:facet name="footer">
-                            <p:commandButton icon="pi pi-search" value="Explore"
-                                             action="#{navigationBean.goToSpatialUnitPage(item)}"
-                                             update="@form"
-                                             ajax="false"/>
+<!--                            <p:commandButton icon="pi pi-search" value="Explore"-->
+<!--                                             action="#{navigationBean.goToSpatialUnitPage(item)}"-->
+<!--                                             update="@form"-->
+<!--                                             ajax="false"/>-->
+                            <p:button value="Go to Spatial Unit"
+                                      icon="pi pi-search"
+                                      outcome="/pages/spatialUnit/spatialUnit.xhtml?id=${item.id}" />
                         </f:facet>
                     </p:card>
                 </ui:repeat>

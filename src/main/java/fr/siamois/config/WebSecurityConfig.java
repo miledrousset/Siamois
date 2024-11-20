@@ -17,7 +17,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.trace("Security chain ");
         http.authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/", "/index.xhtml").authenticated()
+                .requestMatchers("/", "/index.xhtml", "/pages/spatialUnit/*").authenticated()
                 .anyRequest().permitAll()
         );
         http.formLogin((login) -> login
