@@ -8,7 +8,7 @@
     <ui:define name="content">
         <f:metadata>
             <!-- Capture the ID parameter from the URL and bind it to spatialUnitBean -->
-            <f:viewParam name="id" value="#{spatialUnitBean.id}" />
+            <f:viewParam name="id" value="#{spatialUnitBean.id}" required="true"/>
             <f:event type="preRenderView" listener="#{spatialUnitBean.init}" />
         </f:metadata>
 
@@ -40,10 +40,9 @@
                         <p>Category : #{item.category.label}</p>
 
                         <f:facet name="footer">
-                            <p:commandButton icon="pi pi-search" value="Explore"
-                                             action="#{navigationBean.goToSpatialUnitPage(item)}"
-                                             update="@form"
-                                             ajax="false"/>
+                            <p:button value="Go to Spatial Unit"
+                                      icon="pi pi-search"
+                                      outcome="/pages/spatialUnit/spatialUnit.xhtml?id=${item.id}" />
                         </f:facet>
                     </p:card>
                 </ui:repeat>
