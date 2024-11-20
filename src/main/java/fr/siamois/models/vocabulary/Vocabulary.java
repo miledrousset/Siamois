@@ -1,4 +1,4 @@
-package fr.siamois.models;
+package fr.siamois.models.vocabulary;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

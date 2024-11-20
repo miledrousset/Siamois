@@ -1,6 +1,5 @@
-package fr.siamois.models;
+package fr.siamois.models.auth;
 
-import fr.siamois.models.auth.SystemRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

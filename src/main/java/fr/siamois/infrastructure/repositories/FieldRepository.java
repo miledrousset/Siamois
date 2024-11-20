@@ -1,7 +1,7 @@
 package fr.siamois.infrastructure.repositories;
 
 import fr.siamois.models.Field;
-import fr.siamois.models.Person;
+import fr.siamois.models.auth.Person;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Modifying;

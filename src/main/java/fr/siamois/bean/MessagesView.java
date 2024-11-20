@@ -1,6 +1,6 @@
 package fr.siamois.bean;
 
-import fr.siamois.models.Person;
+import fr.siamois.models.auth.Person;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;

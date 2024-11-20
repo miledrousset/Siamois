@@ -2,9 +2,9 @@ package fr.siamois.bean.Field;
 
 import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.infrastructure.api.dto.VocabularyCollectionDTO;
-import fr.siamois.models.Person;
+import fr.siamois.models.auth.Person;
 import fr.siamois.models.SpatialUnit;
-import fr.siamois.models.VocabularyCollection;
+import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.models.exceptions.field.FailedFieldSaveException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
 import fr.siamois.services.FieldConfigurationService;

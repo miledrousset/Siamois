@@ -1,6 +1,6 @@
 package fr.siamois.utils;
 
-import fr.siamois.models.Person;
+import fr.siamois.models.auth.Person;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

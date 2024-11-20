@@ -1,6 +1,6 @@
 package fr.siamois.infrastructure.repositories;
 
-import fr.siamois.models.Person;
+import fr.siamois.models.auth.Person;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

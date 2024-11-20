@@ -1,7 +1,7 @@
 package fr.siamois.services;
 
-import fr.siamois.infrastructure.repositories.RecordingUnitRepository;
-import fr.siamois.models.RecordingUnit;
+import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
+import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.SpatialUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
