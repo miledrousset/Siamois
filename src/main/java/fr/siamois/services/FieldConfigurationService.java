@@ -10,6 +10,7 @@ import fr.siamois.infrastructure.repositories.vocabulary.VocabularyRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.VocabularyTypeRepository;
 import fr.siamois.models.*;
 import fr.siamois.models.auth.Person;
+import fr.siamois.models.exceptions.api.ClientSideErrorException;
 import fr.siamois.models.exceptions.field.FailedFieldSaveException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
 import fr.siamois.models.vocabulary.Vocabulary;
@@ -107,7 +108,7 @@ public class FieldConfigurationService {
         }
     }
 
-    public List<VocabularyCollectionDTO> fetchListOfCollection(String serverUrl, String thesaurusId) {
+    public List<VocabularyCollectionDTO> fetchListOfCollection(String serverUrl, String thesaurusId) throws ClientSideErrorException {
         return thesaurusCollectionApi.fetchAllCollectionsFrom(serverUrl, thesaurusId);
     }
 

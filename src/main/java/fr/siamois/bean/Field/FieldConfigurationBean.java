@@ -4,6 +4,7 @@ import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.infrastructure.api.dto.VocabularyCollectionDTO;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.exceptions.api.ClientSideErrorException;
 import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.models.exceptions.field.FailedFieldSaveException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
@@ -96,15 +97,22 @@ public class FieldConfigurationBean implements Serializable {
     }
 
     public void loadValues() {
-        collections = fieldConfigurationService.fetchListOfCollection(serverUrl, thesaurusId);
-        for (VocabularyCollectionDTO dto : collections) {
-            String label = dto.getLabels().stream()
-                    .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(lang))
-                    .map(LabelDTO::getTitle)
-                    .findFirst()
-                    .orElseThrow();
-            values.add(label);
+        values = new ArrayList<>();
+        try {
+            collections = fieldConfigurationService.fetchListOfCollection(serverUrl, thesaurusId);
+            for (VocabularyCollectionDTO dto : collections) {
+                String label = dto.getLabels().stream()
+                        .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(lang))
+                        .map(LabelDTO::getTitle)
+                        .findFirst()
+                        .orElseThrow();
+                values.add(label);
+            }
+        } catch (ClientSideErrorException e) {
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Thesaurus ou serveur introuvable"));
         }
+
     }
 
     private Optional<VocabularyCollectionDTO> findSelectedVocabulary() {
