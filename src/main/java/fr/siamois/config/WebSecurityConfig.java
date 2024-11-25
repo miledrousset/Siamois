@@ -13,6 +13,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+    /**
+     * Security filter chain of the application.
+     * @param http HttpSecurity object to configure the security chain.
+     * @return The security filter chain with the configuration.
+     * @throws Exception If any filter configuration fails.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.trace("Security chain ");
@@ -34,6 +40,10 @@ public class WebSecurityConfig {
         return http.build();
     }
 
+    /**
+     * Password encoder bean.
+     * @return BCryptPasswordEncoder object to encode passwords with bcrypt.
+     */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
