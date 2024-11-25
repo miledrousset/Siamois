@@ -20,6 +20,9 @@ import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * This class is a bean that handles the configuration of the field Spatial Unit in the application.
+ */
 @Slf4j
 @Getter
 @Setter
@@ -44,6 +47,9 @@ public class FieldConfigurationBean implements Serializable {
         this.fieldConfigurationService = fieldConfigurationService;
     }
 
+    /**
+     * Load the existing configuration of the field, if this configuration exist.
+     */
     public void onLoad() {
         Person loggedUser = userUtils.getAuthenticatedUser().orElseThrow();
         Optional<VocabularyCollection> opt = fieldConfigurationService.fetchPersonFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE);
@@ -62,6 +68,9 @@ public class FieldConfigurationBean implements Serializable {
         }
     }
 
+    /**
+     * Load the collections in the selected Thesaurus in the matching field for selection.
+     */
     public void loadGroupValue() {
         try {
             selectedVocab = getSelectedVocab().orElseThrow();
@@ -85,11 +94,19 @@ public class FieldConfigurationBean implements Serializable {
         }
     }
 
+    /**
+     * Get the username of the current authenticated user.
+     * @return The username of the User
+     * @throws NoSuchElementException Throws when no user is authenticated as this page should only be visible to authenticated user.
+     */
     public String getAuthenticatedUser() {
         Person loggedUser = userUtils.getAuthenticatedUser().orElseThrow();
         return loggedUser.getUsername();
     }
 
+    /**
+     * Save or update the input collection configuration. Displays a message depending on the success or failure of this operation.
+     */
     public void processForm() {
         Person loggedUser = userUtils.getAuthenticatedUser().orElseThrow();
 
@@ -122,18 +139,29 @@ public class FieldConfigurationBean implements Serializable {
 
     }
 
+    /**
+     * Search for the selected collection by it's id input in the field.
+     * @return An empty optional of the ID is invalid. Returns the collection otherwise.
+     */
     private Optional<VocabularyCollection> getSelectedCollectionId() {
         return collections.stream()
                 .filter(vocabularyCollection -> vocabularyCollection.getExternalId().equalsIgnoreCase(selectedValue))
                 .findFirst();
     }
 
+    /**
+     * Search for the selected vocabulary by it's id input in the field.
+     * @return An empty optional of the ID is invalid. Returns the vocabulary otherwise.
+     */
     private Optional<Vocabulary> getSelectedVocab() {
         return vocabularies.stream()
                 .filter(vocabulary -> vocabulary.getExternalVocabularyId().equalsIgnoreCase(selectedThesaurus))
                 .findFirst();
     }
 
+    /**
+     * Load the list of vocabularies from the server URL input in the server URL field.
+     */
     public void loadThesaurusValue() {
 
         if (!serverUrl.startsWith("http") && !serverUrl.startsWith("https")) {
