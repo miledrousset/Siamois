@@ -22,6 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service to handle the configuration of the field Spatial Unit in the application.
+ * @author Julien Linget
+ */
 @Service
 public class FieldConfigurationService {
 
@@ -45,6 +49,14 @@ public class FieldConfigurationService {
         this.thesaurusCollectionApi = thesaurusCollectionApi;
     }
 
+    /**
+     * Save the configuration of the field Spatial Unit for a user.
+     * @param loggedUser The user
+     * @param fieldCode The field code to save
+     * @param collectionToSave The collection to save
+     * @throws FailedFieldUpdateException If the field already exists and the collection is the same
+     * @throws FailedFieldSaveException If the save somehow failed
+     */
     public void saveThesaurusFieldConfiguration(Person loggedUser,
                                                 String fieldCode,
                                                 VocabularyCollection collectionToSave) throws FailedFieldUpdateException, FailedFieldSaveException {
@@ -73,8 +85,21 @@ public class FieldConfigurationService {
         }
     }
 
+
+    /**
+     * Record to store the collections and their labels.
+     * @param collections The collections
+     * @param localisedLabels The labels
+     */
     public record VocabularyCollectionsAndLabels(List<VocabularyCollection> collections, List<String> localisedLabels) {}
 
+    /**
+     * Fetch all collections from a vocabulary and return them with their labels in the specified language.
+     * @param lang The language to fetch the labels in
+     * @param vocabulary The vocabulary to fetch the collections from
+     * @return A record containing the collections and their labels
+     * @throws ClientSideErrorException If the client sent wrong id or server URL
+     */
     public VocabularyCollectionsAndLabels fetchCollections(String lang, Vocabulary vocabulary) throws ClientSideErrorException {
         List<VocabularyCollectionDTO> dtos = thesaurusCollectionApi.fetchAllCollectionsFrom(vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId());
         List<VocabularyCollection> result = new ArrayList<>();
@@ -105,10 +130,22 @@ public class FieldConfigurationService {
 
     }
 
+    /**
+     * Fetch the configuration of the field Spatial Unit for a user in the database.
+     * @param loggedUser The user
+     * @param categoryFieldCode The field code
+     * @return The configuration if it exists
+     */
     public Optional<VocabularyCollection> fetchPersonFieldConfiguration(Person loggedUser, String categoryFieldCode) {
         return vocabularyCollectionRepository.findVocabularyCollectionByPersonAndFieldCode(loggedUser.getId(), categoryFieldCode);
     }
 
+    /**
+     * Fetch all public thesaurus name and labels from the API.
+     * @param lang The language to fetch the labels in
+     * @param serverUrl The server URL
+     * @return A list of thesaurus
+     */
     public List<Vocabulary> fetchAllPublicThesaurus(String lang, String serverUrl) {
         List<Vocabulary> result = new ArrayList<>();
         List<ThesaurusDTO> dtos = thesaurusApi.fetchAllPublicThesaurus(serverUrl);
@@ -133,11 +170,21 @@ public class FieldConfigurationService {
         return result;
     }
 
+    /**
+     * Save a vocabulary if it does not exist in the database.
+     * @param vocabulary The vocabulary to save
+     * @return The saved vocabulary or the existing one if it exists
+     */
     public Vocabulary saveVocabularyIfNotExists(Vocabulary vocabulary) {
         Optional<Vocabulary> opt = vocabularyRepository.findVocabularyByBaseUriAndVocabExternalId(vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId());
         return opt.orElseGet(() -> vocabularyRepository.save(vocabulary));
     }
 
+    /**
+     * Save a vocabulary collection if it does not exist in the database.
+     * @param vocabularyCollection The vocabulary collection to save
+     * @return The saved vocabulary collection or the existing one if it exists
+     */
     public VocabularyCollection saveVocabularyCollectionIfNotExists(VocabularyCollection vocabularyCollection) {
         Optional<VocabularyCollection> opt = vocabularyCollectionRepository.findByVocabularyAndExternalId(vocabularyCollection.getVocabulary(), vocabularyCollection.getExternalId());
         return opt.orElseGet(() -> vocabularyCollectionRepository.save(vocabularyCollection));
