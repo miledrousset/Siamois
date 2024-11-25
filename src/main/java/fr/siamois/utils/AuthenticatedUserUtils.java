@@ -7,6 +7,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
 
+/**
+ * Utility class to retrieve the authenticated user from the SecurityContextHolder
+ * @author Julien Linget
+ */
 public class AuthenticatedUserUtils {
 
     /**
