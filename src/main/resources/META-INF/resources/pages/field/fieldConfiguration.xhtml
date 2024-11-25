@@ -27,13 +27,19 @@
             <div class="col-12 md:col-10">
                 <p:inputText id="serverUrl" value="#{fieldConfigurationBean.serverUrl}"/>
             </div>
+            <p:commandButton value="Accéder au serveur" action="#{fieldConfigurationBean.loadThesaurusValue()}" update="globalThesaurusId,globalCollectionsId"/>
         </div>
         <div class="field grid">
-            <p:outputLabel for="internalId" styleClass="col-12 md:col-2" value="Identifiant interne du thésaurus"/>
+            <p:outputLabel for="globalThesaurusId" styleClass="col-12 md:col-2" value="Identifiant interne du thésaurus"/>
             <div class="col-12 md:col-10">
-                <p:inputText id="internalId" value="#{fieldConfigurationBean.thesaurusId}"/>
+                <p:selectOneMenu id="globalThesaurusId" value="#{fieldConfigurationBean.selectedThesaurus}">
+                    <f:selectItems value="#{fieldConfigurationBean.vocabularies}" var="vocab"
+                                   itemLabel="#{vocab.vocabularyName} (#{vocab.externalVocabularyId})"
+                                   itemValue="#{vocab.externalVocabularyId}"/>
+
+                </p:selectOneMenu>
+                <p:commandButton value="Charger les groupes" action="#{fieldConfigurationBean.loadGroupValue()}" update="globalCollectionsId"/>
             </div>
-            <p:commandButton value="Charger" action="#{fieldConfigurationBean.loadGroupValue()}" update="globalCollectionsId"/>
         </div>
 
         <div class="field grid">

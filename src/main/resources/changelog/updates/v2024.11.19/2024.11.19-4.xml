@@ -6,10 +6,12 @@
 
 <changeSet id="2024.11.19-4" author="Julien Linget">
     <preConditions onFail="MARK_RAN">
-        <indexExists tableName="vocabulary_collection" indexName="vocabulary_collection_fk_ark_id"/>
+        <columnExists tableName="vocabulary_collection" columnName="fk_ark_id"/>
     </preConditions>
-    <dropIndex tableName="vocabulary_collection" indexName="vocabulary_collection_fk_ark_id"/>
-    <dropNotNullConstraint tableName="vocabulary_collection" columnName="fk_ark_id"/>
+    <sql>
+        alter table vocabulary_collection
+            alter column fk_ark_id drop not null;
+    </sql>
 </changeSet>
 
 </databaseChangeLog>

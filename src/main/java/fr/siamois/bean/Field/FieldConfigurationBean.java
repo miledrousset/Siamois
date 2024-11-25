@@ -1,7 +1,5 @@
 package fr.siamois.bean.Field;
 
-import fr.siamois.infrastructure.api.dto.LabelDTO;
-import fr.siamois.infrastructure.api.dto.VocabularyCollectionDTO;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.exceptions.api.ClientSideErrorException;
@@ -33,13 +31,14 @@ public class FieldConfigurationBean implements Serializable {
 
     private final AuthenticatedUserUtils userUtils = new AuthenticatedUserUtils();
     private List<VocabularyCollection> collections = new ArrayList<>();
-    private Vocabulary selectedVocab;
+    private List<Vocabulary> vocabularies = new ArrayList<>();
+    private Vocabulary selectedVocab = null;
     private Map<String, String> labels = new HashMap<>();
     private final String lang = "fr";
 
     private String serverUrl = "";
-    private String thesaurusId = "";
     private String selectedValue = "";
+    private String selectedThesaurus = "";
 
     public FieldConfigurationBean(FieldConfigurationService fieldConfigurationService) {
         this.fieldConfigurationService = fieldConfigurationService;
@@ -50,25 +49,25 @@ public class FieldConfigurationBean implements Serializable {
         Optional<VocabularyCollection> opt = fieldConfigurationService.fetchPersonFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE);
         if (opt.isPresent()) {
             VocabularyCollection vocabularyCollection = opt.get();
+            serverUrl = vocabularyCollection.getVocabulary().getBaseUri();
             selectedValue = vocabularyCollection.getExternalId();
+
+            loadThesaurusValue();
+
             selectedVocab = vocabularyCollection.getVocabulary();
-            serverUrl = selectedVocab.getBaseUri();
-            thesaurusId = selectedVocab.getExternalVocabularyId();
+            selectedThesaurus = selectedVocab.getExternalVocabularyId();
+
             loadGroupValue();
+
         }
     }
 
     public void loadGroupValue() {
         try {
-            Optional<Vocabulary> optVocab = fieldConfigurationService.fetchAndSaveThesaurus(lang, serverUrl, thesaurusId);
-            if (optVocab.isEmpty()) {
-                FacesContext.getCurrentInstance()
-                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Thesaurus introuvable ou invalide"));
-            } else {
-                selectedVocab = optVocab.get();
-            }
+            selectedVocab = getSelectedVocab().orElseThrow();
+            selectedVocab = fieldConfigurationService.saveVocabularyIfNotExists(selectedVocab);
 
-            FieldConfigurationService.VocabularyCollectionsAndLabels result = fieldConfigurationService.fetchAndSaveCollections(lang, selectedVocab);
+            FieldConfigurationService.VocabularyCollectionsAndLabels result = fieldConfigurationService.fetchCollections(lang, selectedVocab);
 
             List<VocabularyCollection> savedCollections = result.collections();
             List<String> localisedLabels = result.localisedLabels();
@@ -94,7 +93,7 @@ public class FieldConfigurationBean implements Serializable {
     public void processForm() {
         Person loggedUser = userUtils.getAuthenticatedUser().orElseThrow();
 
-        Optional<VocabularyCollection> optSelected = getSelectedCollection();
+        Optional<VocabularyCollection> optSelected = getSelectedCollectionId();
 
         if (optSelected.isEmpty()) {
             FacesContext.getCurrentInstance()
@@ -103,12 +102,14 @@ public class FieldConfigurationBean implements Serializable {
         }
 
         try {
+            VocabularyCollection collection = fieldConfigurationService.saveVocabularyCollectionIfNotExists(optSelected.get());
+
             fieldConfigurationService.saveThesaurusFieldConfiguration(loggedUser,
                     SpatialUnit.CATEGORY_FIELD_CODE,
-                    optSelected.get());
+                    collection);
 
             FacesContext.getCurrentInstance()
-                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La configuration a bien été enregistrée !"));
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La configuration a bien été enregistrée"));
         } catch (FailedFieldSaveException e) {
             log.error(e.getMessage(), e);
             FacesContext.getCurrentInstance()
@@ -121,10 +122,38 @@ public class FieldConfigurationBean implements Serializable {
 
     }
 
-    private Optional<VocabularyCollection> getSelectedCollection() {
+    private Optional<VocabularyCollection> getSelectedCollectionId() {
         return collections.stream()
                 .filter(vocabularyCollection -> vocabularyCollection.getExternalId().equalsIgnoreCase(selectedValue))
                 .findFirst();
+    }
+
+    private Optional<Vocabulary> getSelectedVocab() {
+        return vocabularies.stream()
+                .filter(vocabulary -> vocabulary.getExternalVocabularyId().equalsIgnoreCase(selectedThesaurus))
+                .findFirst();
+    }
+
+    public void loadThesaurusValue() {
+
+        if (!serverUrl.startsWith("http") && !serverUrl.startsWith("https")) {
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Erreur", "L'URL du serveur est invalide."));
+            return;
+        }
+
+        if (serverUrl.endsWith("/")) {
+            serverUrl = serverUrl.substring(0,  serverUrl.length() - 1);
+        }
+
+        collections = new ArrayList<>();
+        vocabularies = new ArrayList<>();
+        selectedVocab = null;
+        selectedThesaurus = null;
+
+        List<Vocabulary> result = fieldConfigurationService.fetchAllPublicThesaurus(lang, serverUrl);
+        vocabularies.addAll(result);
+
     }
 
 

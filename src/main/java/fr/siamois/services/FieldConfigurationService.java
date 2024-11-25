@@ -73,35 +73,9 @@ public class FieldConfigurationService {
         }
     }
 
-    public Optional<Vocabulary> fetchAndSaveThesaurus(String lang, String serverUrl, String thesaurusId) {
-        Optional<VocabularyType> type = vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus");
-        Optional<Vocabulary> vocaOpt = vocabularyRepository.findVocabularyByBaseUriIgnoreCaseAndExternalVocabularyIdIgnoreCase(serverUrl, thesaurusId);
-
-        if (vocaOpt.isPresent()) return vocaOpt;
-
-        Optional<ThesaurusDTO> dtoOpt = thesaurusApi.fetchThesaurusInfos(serverUrl, thesaurusId);
-        if (dtoOpt.isEmpty()) return Optional.empty();
-
-        ThesaurusDTO dto = dtoOpt.get();
-
-        Vocabulary vocabulary = new Vocabulary();
-        vocabulary.setBaseUri(serverUrl);
-        vocabulary.setExternalVocabularyId(thesaurusId);
-        vocabulary.setVocabularyName(dto.getLabels().stream()
-                .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(lang))
-                .findFirst()
-                .orElseThrow()
-                .getTitle());
-        vocabulary.setType(type.orElseThrow());
-
-        vocabulary = vocabularyRepository.save(vocabulary);
-
-        return Optional.of(vocabulary);
-    }
-
     public record VocabularyCollectionsAndLabels(List<VocabularyCollection> collections, List<String> localisedLabels) {}
 
-    public VocabularyCollectionsAndLabels fetchAndSaveCollections(String lang, Vocabulary vocabulary) throws ClientSideErrorException {
+    public VocabularyCollectionsAndLabels fetchCollections(String lang, Vocabulary vocabulary) throws ClientSideErrorException {
         List<VocabularyCollectionDTO> dtos = thesaurusCollectionApi.fetchAllCollectionsFrom(vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId());
         List<VocabularyCollection> result = new ArrayList<>();
         List<String> labels = new ArrayList<>();
@@ -111,9 +85,9 @@ public class FieldConfigurationService {
             VocabularyCollection collection;
             if (opt.isEmpty()) {
                 collection = new VocabularyCollection();
+                collection.setId(-1L);
                 collection.setExternalId(dto.getIdGroup());
                 collection.setVocabulary(vocabulary);
-                collection = vocabularyCollectionRepository.save(collection);
             } else {
                 collection = opt.get();
             }
@@ -134,4 +108,40 @@ public class FieldConfigurationService {
     public Optional<VocabularyCollection> fetchPersonFieldConfiguration(Person loggedUser, String categoryFieldCode) {
         return vocabularyCollectionRepository.findVocabularyCollectionByPersonAndFieldCode(loggedUser.getId(), categoryFieldCode);
     }
+
+    public List<Vocabulary> fetchAllPublicThesaurus(String lang, String serverUrl) {
+        List<Vocabulary> result = new ArrayList<>();
+        List<ThesaurusDTO> dtos = thesaurusApi.fetchAllPublicThesaurus(serverUrl);
+        VocabularyType type = vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus").orElseThrow();
+
+        for (ThesaurusDTO dto : dtos) {
+            Vocabulary vocabulary = new Vocabulary();
+            vocabulary.setId(-1L);
+            vocabulary.setBaseUri(serverUrl);
+            vocabulary.setExternalVocabularyId(dto.getIdTheso());
+            vocabulary.setVocabularyName(dto.getLabels().stream()
+                    .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(lang))
+                    .findFirst()
+                    .orElseThrow()
+                    .getTitle()
+            );
+            vocabulary.setType(type);
+
+            result.add(vocabulary);
+        }
+
+        return result;
+    }
+
+    public Vocabulary saveVocabularyIfNotExists(Vocabulary vocabulary) {
+        Optional<Vocabulary> opt = vocabularyRepository.findVocabularyByBaseUriAndVocabExternalId(vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId());
+        return opt.orElseGet(() -> vocabularyRepository.save(vocabulary));
+    }
+
+    public VocabularyCollection saveVocabularyCollectionIfNotExists(VocabularyCollection vocabularyCollection) {
+        Optional<VocabularyCollection> opt = vocabularyCollectionRepository.findByVocabularyAndExternalId(vocabularyCollection.getVocabulary(), vocabularyCollection.getExternalId());
+        return opt.orElseGet(() -> vocabularyCollectionRepository.save(vocabularyCollection));
+    }
+
+
 }
