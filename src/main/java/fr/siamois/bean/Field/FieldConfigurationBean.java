@@ -21,7 +21,8 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * This class is a bean that handles the configuration of the field Spatial Unit in the application.
+ * <p>This class is a bean that handles the configuration of the field Spatial Unit in the application.</p>
+ * @author Julien Linget
  */
 @Slf4j
 @Getter

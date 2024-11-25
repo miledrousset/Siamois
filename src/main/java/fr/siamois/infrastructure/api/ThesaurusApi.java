@@ -7,17 +7,19 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * Service to fetch thesaurus information from the API.
+ * @author Julien Linget
+ */
 @Service
 public class ThesaurusApi {
 
-    public Optional<ThesaurusDTO> fetchThesaurusInfos(String server, String thesaurusId) {
-        return fetchAllPublicThesaurus(server).stream()
-                .filter(thesaurusDTO -> thesaurusDTO.getIdTheso().equals(thesaurusId))
-                .findFirst();
-    }
-
+    /**
+     * Send a request to the API to fetch all public thesaurus names, ids and labels.
+     * @param server The server URL
+     * @return A list of thesaurus DTOs
+     */
     public List<ThesaurusDTO> fetchAllPublicThesaurus(String server) {
         String url = server + "/openapi/v1/thesaurus";
         RestTemplate restTemplate = new RestTemplate();

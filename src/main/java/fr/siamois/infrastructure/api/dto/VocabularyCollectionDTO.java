@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * DTO for the vocabulary collection. Structure of the API response for vocabulary collections.
+ * @author Julien Linget
  */
 @Data
 public class VocabularyCollectionDTO {

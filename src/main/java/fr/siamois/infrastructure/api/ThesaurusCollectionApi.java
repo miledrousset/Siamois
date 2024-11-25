@@ -12,10 +12,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Service to fetch thesaurus collection from the API.
+ * @author Julien Linget
+ */
 @Slf4j
 @Service
 public class ThesaurusCollectionApi {
 
+    /**
+     * Send a request to the API to fetch all collections from a vocabulary.
+     * @param server The server URL
+     * @param vocabularyId The vocabulary id
+     * @return A list of vocabulary collection DTOs
+     * @throws ClientSideErrorException Throws if the client sent wrong id or server URL
+     */
     public List<VocabularyCollectionDTO> fetchAllCollectionsFrom(String server, String vocabularyId) throws ClientSideErrorException {
         String url = String.format("%s/openapi/v1/group/%s", server, vocabularyId);
         RestTemplate restTemplate = new RestTemplate();
