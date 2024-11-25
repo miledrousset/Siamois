@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+>
+
+<h:head>
+    <!-- Import de BOOTSTRAP -->
+    <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css"/>
+    <script src="resources/js/bootstrap.bundle.min.js"></script>
+
+    <title>Enregistrement d'une US</title>
+</h:head>
+
+<h:body>
+
+    <h1>Enregistrement d'une Unité Spatiale</h1>
+    <h:form id="formId">
+        <div class="card">
+            <div class="ui-fluid">
+                <div class="field">
+                    <p:outputLabel for="su-name" value="Nom de l'unité spatiale"/>
+                    <p:inputText id="su-name" value="#{spatialUnitFieldBean.FName}"/>
+                </div>
+
+                <div class="field">
+                    <p:outputLabel for="su-extent" value="Portée spatiale"/>
+                    <p:inputText id="su-extent" value="#{spatialUnitFieldBean.FExtent}"/>
+                </div>
+
+                <p:outputLabel for="su-category" value="Catégorie"/>
+                <p:autoComplete id="su-category" value="#{spatialUnitFieldBean.FCategory}"
+                                completeMethod="#{spatialUnitFieldBean.completeCategory}"
+                                forceSelection="true"
+                                scrollHeight="300"/>
+
+            </div>
+
+            <p:outputLabel for="su-parents" value="Parents de l'unité spatiale"/>
+            <p:dataTable id="su-parents" var="spatialUnit" value="#{spatialUnitFieldBean.refSpatialUnits}"
+                         selection="#{spatialUnitFieldBean.FParentsSpatialUnits}" rowKey="#{spatialUnit.id}"
+                         rows="5" selectionPageOnly="false" selectionRowMode="none" cellNavigation="true"
+                        onRowClick="">
+                <p:column selectionBox="true" style="width:16px;text-align:center"/>
+                <p:column headerText="ID">
+                    <h:outputText value="#{spatialUnit.id}" />
+                </p:column>
+
+                <p:column headerText="Categorie">
+                    <h:outputText value="#{spatialUnit.category}" />
+                </p:column>
+
+                <p:column headerText="Nom">
+                    <h:outputText value="#{spatialUnit.name}" />
+                </p:column>
+
+                <p:column headerText="Ark">
+                    <h:outputText value="#{spatialUnit.ark}" />
+                </p:column>
+
+            </p:dataTable>
+
+            <p:outputLabel for="su-childrens" value="Enfants de l'unité spatiale"/>
+            <p:dataTable id="su-childrens" var="spatialUnit" value="#{spatialUnitFieldBean.refSpatialUnits}"
+                         selection="#{spatialUnitFieldBean.FChildrensSpatialUnits}" rowKey="#{spatialUnit.id}"
+                         style="margin-bottom:0" paginator="true" rows="5" selectionPageOnly="false" selectionRowMode="none" cellNavigation="true">
+                <p:column selectionBox="true" style="width:16px;text-align:center"/>
+                <p:column headerText="ID">
+                    <h:outputText value="#{spatialUnit.id}" />
+                </p:column>
+
+                <p:column headerText="Categorie">
+                    <h:outputText value="#{spatialUnit.category}" />
+                </p:column>
+
+                <p:column headerText="Nom">
+                    <h:outputText value="#{spatialUnit.name}" />
+                </p:column>
+
+                <p:column headerText="Ark">
+                    <h:outputText value="#{spatialUnit.ark}" />
+                </p:column>
+
+            </p:dataTable>
+
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <p:commandButton value="Enregistrer" action="#{spatialUnitFieldBean.save()}"/>
+        </div>
+    </h:form>
+
+</h:body>
+
+</html>

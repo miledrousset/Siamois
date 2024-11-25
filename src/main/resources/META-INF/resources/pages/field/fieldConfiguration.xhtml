@@ -12,12 +12,12 @@
 </h:head>
 
 <f:metadata>
-    <f:viewAction action="#{fieldConfigurationBean.onLoad()}"/>
+    <f:viewAction action="#{spatialUnitConfigurationBean.onLoad()}"/>
 </f:metadata>
 
 <body>
 <h1>Field Configuration</h1>
-<h:outputText value="Page de configuration de #{fieldConfigurationBean.authenticatedUser}"/>
+<h:outputText value="Page de configuration de #{spatialUnitConfigurationBean.authenticatedUser}"/>
 <h2>Unités spatiales</h2>
 <h3>Types d'unités spatiales</h3>
 <div class="ui-fluid">
@@ -25,20 +25,20 @@
         <div class="field grid">
             <p:outputLabel for="serverUrl" styleClass="col-12 md:col-2" value="URL du serveur"/>
             <div class="col-12 md:col-10">
-                <p:inputText id="serverUrl" value="#{fieldConfigurationBean.serverUrl}"/>
+                <p:inputText id="serverUrl" value="#{spatialUnitConfigurationBean.serverUrl}"/>
             </div>
-            <p:commandButton value="Accéder au serveur" action="#{fieldConfigurationBean.loadThesaurusValue()}" update="globalThesaurusId,globalCollectionsId"/>
+            <p:commandButton value="Accéder au serveur" action="#{spatialUnitConfigurationBean.loadThesaurusValue()}" update="globalThesaurusId,globalCollectionsId"/>
         </div>
         <div class="field grid">
             <p:outputLabel for="globalThesaurusId" styleClass="col-12 md:col-2" value="Identifiant interne du thésaurus"/>
             <div class="col-12 md:col-10">
-                <p:selectOneMenu id="globalThesaurusId" value="#{fieldConfigurationBean.selectedThesaurus}">
-                    <f:selectItems value="#{fieldConfigurationBean.vocabularies}" var="vocab"
+                <p:selectOneMenu id="globalThesaurusId" value="#{spatialUnitConfigurationBean.selectedThesaurus}">
+                    <f:selectItems value="#{spatialUnitConfigurationBean.vocabularies}" var="vocab"
                                    itemLabel="#{vocab.vocabularyName} (#{vocab.externalVocabularyId})"
                                    itemValue="#{vocab.externalVocabularyId}"/>
 
                 </p:selectOneMenu>
-                <p:commandButton value="Charger les groupes" action="#{fieldConfigurationBean.loadGroupValue()}" update="globalCollectionsId"/>
+                <p:commandButton value="Charger les groupes" action="#{spatialUnitConfigurationBean.loadGroupValue()}" update="globalCollectionsId"/>
             </div>
         </div>
 
@@ -46,23 +46,24 @@
             <p:outputLabel for="globalCollectionsId" styleClass="col-12 md:col-2"
                            value="Selectionnez la collection à utiliser"/>
             <div class="col-12 md:col-10">
-                <p:selectOneMenu id="globalCollectionsId" value="#{fieldConfigurationBean.selectedValue}">
-                    <f:selectItems value="#{fieldConfigurationBean.collections}" var="group"
-                                   itemLabel="#{fieldConfigurationBean.labels.get(group.externalId)} (#{group.externalId})"
-                                    itemValue="#{group.externalId}"/>
+                <p:selectOneMenu id="globalCollectionsId" value="#{spatialUnitConfigurationBean.selectedValue}">
+                    <f:selectItems value="#{spatialUnitConfigurationBean.collections}" var="group"
+                                   itemLabel="#{spatialUnitConfigurationBean.labels.get(group.externalId)} (#{group.externalId})"
+                                   itemValue="#{group.externalId}"/>
 
                 </p:selectOneMenu>
             </div>
         </div>
 
 
-        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-        <p:commandButton value="Sauvegarder" action="#{fieldConfigurationBean.processForm()}"/>
+
+        <p:commandButton value="Sauvegarder" action="#{spatialUnitConfigurationBean.processForm()}"/>
 
         <p:messages id="messages" showDetail="true" closable="true">
             <p:autoUpdate/>
         </p:messages>
 
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </h:form>
 
     <p:button value="Retour à la page d'accueil" outcome="/index.xhtml"/>

@@ -1,12 +1,12 @@
 package fr.siamois.bean.Field;
 
-import fr.siamois.models.auth.Person;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.api.ClientSideErrorException;
-import fr.siamois.models.vocabulary.Vocabulary;
-import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.models.exceptions.field.FailedFieldSaveException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
+import fr.siamois.models.vocabulary.Vocabulary;
+import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.services.FieldConfigurationService;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.faces.application.FacesMessage;
@@ -29,22 +29,24 @@ import java.util.*;
 @Setter
 @Component
 @SessionScoped
-public class FieldConfigurationBean implements Serializable {
+public class SpatialUnitConfigurationBean implements Serializable {
 
+    // Dependencies
     private final FieldConfigurationService fieldConfigurationService;
 
-    private final AuthenticatedUserUtils userUtils = new AuthenticatedUserUtils();
+    // Configuration storage
     private List<VocabularyCollection> collections = new ArrayList<>();
     private List<Vocabulary> vocabularies = new ArrayList<>();
     private Vocabulary selectedVocab = null;
     private Map<String, String> labels = new HashMap<>();
     private final String lang = "fr";
 
+    // Fields
     private String serverUrl = "";
     private String selectedValue = "";
     private String selectedThesaurus = "";
 
-    public FieldConfigurationBean(FieldConfigurationService fieldConfigurationService) {
+    public SpatialUnitConfigurationBean(FieldConfigurationService fieldConfigurationService) {
         this.fieldConfigurationService = fieldConfigurationService;
     }
 
@@ -52,7 +54,7 @@ public class FieldConfigurationBean implements Serializable {
      * Load the existing configuration of the field, if this configuration exist.
      */
     public void onLoad() {
-        Person loggedUser = userUtils.getAuthenticatedUser().orElseThrow();
+        Person loggedUser = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow();
         Optional<VocabularyCollection> opt = fieldConfigurationService.fetchPersonFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE);
         if (opt.isPresent()) {
             VocabularyCollection vocabularyCollection = opt.get();
@@ -101,7 +103,7 @@ public class FieldConfigurationBean implements Serializable {
      * @throws NoSuchElementException Throws when no user is authenticated as this page should only be visible to authenticated user.
      */
     public String getAuthenticatedUser() {
-        Person loggedUser = userUtils.getAuthenticatedUser().orElseThrow();
+        Person loggedUser = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("No user logged in"));
         return loggedUser.getUsername();
     }
 
@@ -109,7 +111,7 @@ public class FieldConfigurationBean implements Serializable {
      * Save or update the input collection configuration. Displays a message depending on the success or failure of this operation.
      */
     public void processForm() {
-        Person loggedUser = userUtils.getAuthenticatedUser().orElseThrow();
+        Person loggedUser = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow();
 
         Optional<VocabularyCollection> optSelected = getSelectedCollectionId();
 

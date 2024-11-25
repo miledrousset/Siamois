@@ -29,6 +29,7 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/", "/index.xhtml").authenticated()
                 .requestMatchers("/fieldConfiguration", "/pages/field/fieldConfiguration.xhtml").authenticated()
+                .requestMatchers("/pages/create/spatialUnit.xhtml").authenticated()
                 .anyRequest().permitAll()
         );
         http.formLogin((login) -> login

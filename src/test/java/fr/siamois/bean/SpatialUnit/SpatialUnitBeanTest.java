@@ -1,8 +1,8 @@
 package fr.siamois.bean.SpatialUnit;
 
 import fr.siamois.models.ActionUnit;
-import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.SpatialUnitService;
