@@ -28,10 +28,10 @@ public class ThesaurusCollectionApi {
      * @throws ClientSideErrorException Throws if the client sent wrong id or server URL
      */
     public List<VocabularyCollectionDTO> fetchAllCollectionsFrom(String server, String vocabularyId) throws ClientSideErrorException {
-        String url = String.format("%s/openapi/v1/group/%s", server, vocabularyId);
+        String uri = String.format("%s/openapi/v1/group/%s", server, vocabularyId);
         RestTemplate restTemplate = new RestTemplate();
         try {
-            VocabularyCollectionDTO[] data = restTemplate.getForObject(url, VocabularyCollectionDTO[].class);
+            VocabularyCollectionDTO[] data = restTemplate.getForObject(uri, VocabularyCollectionDTO[].class);
             if (data == null) return new ArrayList<>();
             return Arrays.asList(data);
         } catch (RestClientException e) {

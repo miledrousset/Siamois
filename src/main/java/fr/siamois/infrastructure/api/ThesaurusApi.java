@@ -21,9 +21,9 @@ public class ThesaurusApi {
      * @return A list of thesaurus DTOs
      */
     public List<ThesaurusDTO> fetchAllPublicThesaurus(String server) {
-        String url = server + "/openapi/v1/thesaurus";
+        String uri = server + "/openapi/v1/thesaurus";
         RestTemplate restTemplate = new RestTemplate();
-        ThesaurusDTO[] data = restTemplate.getForObject(url, ThesaurusDTO[].class);
+        ThesaurusDTO[] data = restTemplate.getForObject(uri, ThesaurusDTO[].class);
         if (data == null) return new ArrayList<>();
         return Arrays.asList(data);
 
