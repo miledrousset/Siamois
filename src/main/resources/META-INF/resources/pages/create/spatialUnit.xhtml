@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
 >
 
 <h:head>
@@ -11,6 +12,10 @@
 
     <title>Enregistrement d'une US</title>
 </h:head>
+
+<f:metadata>
+    <f:viewAction action="#{spatialUnitFieldBean.init()}"/>
+</f:metadata>
 
 <h:body>
 
@@ -32,18 +37,19 @@
 
             </div>
 
-            <p:outputLabel for="su-parents" value="Parents de l'unité spatiale"/>
+            <p:outputLabel for="su-parents" value="Parents de l'unité spatiale crée"/>
             <p:dataTable id="su-parents" var="spatialUnit" value="#{spatialUnitFieldBean.refSpatialUnits}"
                          selection="#{spatialUnitFieldBean.FParentsSpatialUnits}" rowKey="#{spatialUnit.id}"
                          rows="5" selectionPageOnly="false" selectionRowMode="none" cellNavigation="true"
-                        onRowClick="">
+                        onRowClick=""
+                        paginator="true">
                 <p:column selectionBox="true" style="width:16px;text-align:center"/>
                 <p:column headerText="ID">
                     <h:outputText value="#{spatialUnit.id}" />
                 </p:column>
 
                 <p:column headerText="Categorie">
-                    <h:outputText value="#{spatialUnit.category}" />
+                    <h:outputText value="#{spatialUnit.category.label}" />
                 </p:column>
 
                 <p:column headerText="Nom">
@@ -51,30 +57,7 @@
                 </p:column>
 
                 <p:column headerText="Ark">
-                    <h:outputText value="#{spatialUnit.ark}" />
-                </p:column>
-
-            </p:dataTable>
-
-            <p:outputLabel for="su-childrens" value="Enfants de l'unité spatiale"/>
-            <p:dataTable id="su-childrens" var="spatialUnit" value="#{spatialUnitFieldBean.refSpatialUnits}"
-                         selection="#{spatialUnitFieldBean.FChildrensSpatialUnits}" rowKey="#{spatialUnit.id}"
-                         style="margin-bottom:0" paginator="true" rows="5" selectionPageOnly="false" selectionRowMode="none" cellNavigation="true">
-                <p:column selectionBox="true" style="width:16px;text-align:center"/>
-                <p:column headerText="ID">
-                    <h:outputText value="#{spatialUnit.id}" />
-                </p:column>
-
-                <p:column headerText="Categorie">
-                    <h:outputText value="#{spatialUnit.category}" />
-                </p:column>
-
-                <p:column headerText="Nom">
-                    <h:outputText value="#{spatialUnit.name}" />
-                </p:column>
-
-                <p:column headerText="Ark">
-                    <h:outputText value="#{spatialUnit.ark}" />
+                    <h:outputText value="#{spatialUnit.ark.arkId}" />
                 </p:column>
 
             </p:dataTable>

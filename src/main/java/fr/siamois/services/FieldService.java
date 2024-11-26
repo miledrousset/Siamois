@@ -13,9 +13,12 @@ import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
+import fr.siamois.services.ark.ArkGenerator;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -96,38 +99,40 @@ public class FieldService {
                                        ConceptFieldDTO category) throws SpatialUnitAlreadyExistsException {
         String buildOpenthesoArkUri = vocabulary.getBaseUri() + "/openapi/v1/concept/ark:/";
         Optional<ArkServer> serverOpt = arkServerRepository.findArkServerByServerArkUri(buildOpenthesoArkUri);
-        ArkServer srv;
+        ArkServer openthesoServer;
         if (serverOpt.isEmpty()) {
-            srv = new ArkServer();
-            srv.setIsLocalServer(false);
-            srv.setServerArkUri(buildOpenthesoArkUri);
-            srv = arkServerRepository.save(srv);
+            openthesoServer = new ArkServer();
+            openthesoServer.setIsLocalServer(false);
+            openthesoServer.setServerArkUri(buildOpenthesoArkUri);
+            openthesoServer = arkServerRepository.save(openthesoServer);
         } else {
-            srv = serverOpt.get();
+            openthesoServer = serverOpt.get();
         }
 
-        String arkId = getArkIdFromUri(category.getUri());
+        ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
 
-        if (arkId.startsWith("/")) {
-            arkId = arkId.substring(1);
-        }
+        String arkId = getArkIdFromUri(ArkGenerator.generateArk());
+        Ark spatialUnitArk = new Ark();
+        spatialUnitArk.setArkId(arkId);
+        spatialUnitArk.setArkServer(localServer);
+        spatialUnitArk = arkRepository.save(spatialUnitArk);
 
-        Optional<Ark> arkOpt = arkRepository.findArkByArkIdIgnoreCase(arkId);
-        Ark ark;
-        if (arkOpt.isEmpty()) {
-            ark = new Ark();
-            ark.setArkId(arkId);
-            ark.setArkServer(srv);
-            ark = arkRepository.save(ark);
+        Optional<Ark> conceptArkOpt = arkRepository.findArkByArkIdIgnoreCase(arkId);
+        Ark conceptArk;
+        if (conceptArkOpt.isEmpty()) {
+            conceptArk = new Ark();
+            conceptArk.setArkId(arkId);
+            conceptArk.setArkServer(openthesoServer);
+            conceptArk = arkRepository.save(conceptArk);
         } else {
-            ark = arkOpt.get();
+            conceptArk = conceptArkOpt.get();
         }
 
-        Optional<Concept> conceptOpt = conceptRepository.findConceptByArkId(ark.getArkId());
+        Optional<Concept> conceptOpt = conceptRepository.findConceptByArkId(conceptArk.getArkId());
         Concept concept;
         if (conceptOpt.isEmpty()) {
             concept = new Concept();
-            concept.setArk(ark);
+            concept.setArk(conceptArk);
             concept.setVocabulary(vocabulary);
             concept.setLabel(category.getLabel());
             concept = conceptRepository.save(concept);
@@ -135,7 +140,7 @@ public class FieldService {
             concept = conceptOpt.get();
         }
 
-        Optional<SpatialUnit> spatialUnitOptional = spatialUnitRepository.findSpatialUnitByArkId(ark.getArkId());
+        Optional<SpatialUnit> spatialUnitOptional = spatialUnitRepository.findSpatialUnitByArkId(conceptArk.getArkId());
 
         if (spatialUnitOptional.isPresent()) {
             throw new SpatialUnitAlreadyExistsException("A spatial unit with the same ARK already exists");
@@ -143,7 +148,7 @@ public class FieldService {
 
         SpatialUnit spatialUnit = new SpatialUnit();
         spatialUnit.setName(name);
-        spatialUnit.setArk(ark);
+        spatialUnit.setArk(spatialUnitArk);
         spatialUnit.setCategory(concept);
 
         spatialUnit = spatialUnitRepository.save(spatialUnit);
@@ -186,4 +191,22 @@ public class FieldService {
         return builder.toString();
     }
 
+    public List<SpatialUnit> fetchAllSpatialUnits() {
+        Iterator<SpatialUnit> spatialUnitIterator = spatialUnitRepository.findAll().iterator();
+        List<SpatialUnit> spatialUnits = new ArrayList<>();
+
+        while (spatialUnitIterator.hasNext()) {
+            spatialUnits.add(spatialUnitIterator.next());
+        }
+
+        return spatialUnits;
+    }
+
+    public SpatialUnit saveSpatialUnit(String fName, @NotNull Vocabulary vocabulary, ConceptFieldDTO selectedConceptFieldDTO, List<SpatialUnit> parentsSpatialUnit) throws SpatialUnitAlreadyExistsException {
+        SpatialUnit unit = saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO);
+        for (SpatialUnit parent : parentsSpatialUnit) {
+            spatialUnitRepository.saveSpatialUnitHierarchy(parent.getId(), unit.getId());
+        }
+        return unit;
+    }
 }

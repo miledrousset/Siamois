@@ -52,24 +52,30 @@ public class SpatialUnitFieldBean implements Serializable {
     private String fName = "";
     private String fCategory = "";
     private List<SpatialUnit> fParentsSpatialUnits = new ArrayList<>();
-    private List<SpatialUnit> fChildrensSpatialUnits = new ArrayList<>();
 
     public SpatialUnitFieldBean(FieldService fieldService, FieldConfigurationService fieldConfigurationService) {
         this.fieldService = fieldService;
         this.fieldConfigurationService = fieldConfigurationService;
     }
 
+    public void init() {
+        refSpatialUnits = fieldService.fetchAllSpatialUnits();
+        labels = refSpatialUnits.stream()
+                .map(SpatialUnit::getName)
+                .collect(Collectors.toList());
+
+        selectedConcept = null;
+        fName = "";
+        fCategory = "";
+        fParentsSpatialUnits = new ArrayList<>();
+    }
+
     public void save() {
         ConceptFieldDTO selectedConceptFieldDTO = getSelectedConceptFieldDTO().orElseThrow(() -> new IllegalStateException("No concept selected"));
-        boolean hierarchyIsCoherent = fieldService.isSpatialUnitHierarchyCoherent(fParentsSpatialUnits, fChildrensSpatialUnits);
-        if (!hierarchyIsCoherent) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Error", "Hierarchy is not coherent"));
-        }
 
         try {
             SpatialUnit saved = fieldService.saveSpatialUnit(fName, vocabularyCollection.getVocabulary(),
-                    selectedConceptFieldDTO, fParentsSpatialUnits, fChildrensSpatialUnits);
+                    selectedConceptFieldDTO, fParentsSpatialUnits);
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
                     "Info", "L'unité spatiale " + saved.getName() + " a été crée."));

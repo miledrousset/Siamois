@@ -1,6 +1,7 @@
 package fr.siamois.infrastructure.repositories;
 
 import fr.siamois.models.SpatialUnit;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -38,6 +39,7 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
     @Query(value = "SELECT su FROM SpatialUnit su WHERE UPPER(su.ark) = UPPER(:arkId)")
     Optional<SpatialUnit> findSpatialUnitByArkId(String arkId);
 
+    @Transactional
     @Modifying
     @Query(
             nativeQuery = true,
