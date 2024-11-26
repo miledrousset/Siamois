@@ -125,7 +125,7 @@ public class FieldService {
 
         Optional<Concept> conceptOpt = conceptRepository.findConceptByArkId(ark.getArkId());
         Concept concept;
-        if (arkOpt.isEmpty()) {
+        if (conceptOpt.isEmpty()) {
             concept = new Concept();
             concept.setArk(ark);
             concept.setVocabulary(vocabulary);
