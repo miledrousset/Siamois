@@ -2,9 +2,9 @@ package fr.siamois.bean.Field;
 
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.SpatialUnit;
-import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoCollectionForFieldException;
+import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.services.FieldConfigurationService;
