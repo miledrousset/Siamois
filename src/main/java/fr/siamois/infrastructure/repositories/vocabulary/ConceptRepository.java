@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ConceptRepository extends CrudRepository<Concept, Long> {
@@ -23,4 +24,9 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
     )
     List<Concept> findAllTypologiesOfRecordingUnitStudy(@Param("recordingUnitStudyId") Long recordingUnitStudyId);
 
+    @Query(
+            nativeQuery = true,
+            value = "SELECT c.* FROM concept c WHERE c.fk_ark_id = :arkId"
+    )
+    Optional<Concept> findConceptByArkId(@Param("arkId") String arkId);
 }

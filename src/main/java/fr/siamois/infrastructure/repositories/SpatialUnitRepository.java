@@ -1,12 +1,14 @@
 package fr.siamois.infrastructure.repositories;
 
 import fr.siamois.models.SpatialUnit;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long> {
@@ -33,5 +35,15 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
     )
     List<SpatialUnit> findAllWithoutParents();
 
+    @Query(value = "SELECT su FROM SpatialUnit su WHERE UPPER(su.ark) = UPPER(:arkId)")
+    Optional<SpatialUnit> findSpatialUnitByArkId(String arkId);
+
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = "INSERT INTO spatial_hierarchy(fk_parent_id, fk_child_id) " +
+                    "VALUES (:parentSpatialUnitId, :childSpatialUnitId)"
+    )
+    void saveSpatialUnitHierarchy(Long parentSpatialUnitId, Long childSpatialUnitId);
 }
 

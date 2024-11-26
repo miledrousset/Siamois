@@ -23,11 +23,6 @@
                     <p:inputText id="su-name" value="#{spatialUnitFieldBean.FName}"/>
                 </div>
 
-                <div class="field">
-                    <p:outputLabel for="su-extent" value="Portée spatiale"/>
-                    <p:inputText id="su-extent" value="#{spatialUnitFieldBean.FExtent}"/>
-                </div>
-
                 <p:outputLabel for="su-category" value="Catégorie"/>
                 <p:autoComplete id="su-category" value="#{spatialUnitFieldBean.FCategory}"
                                 completeMethod="#{spatialUnitFieldBean.completeCategory}"
@@ -87,6 +82,13 @@
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <p:commandButton value="Enregistrer" action="#{spatialUnitFieldBean.save()}"/>
         </div>
+
+        <p:messages id="messages" showDetail="true" closable="true">
+            <p:autoUpdate/>
+        </p:messages>
+
+        <p:button value="Retour à la page d'accueil" outcome="/index.xhtml"/>
+
     </h:form>
 
 </h:body>
