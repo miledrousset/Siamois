@@ -16,11 +16,9 @@ import java.util.List;
 @Service
 public class FieldService {
 
-    private final VocabularyCollectionRepository vocabularyCollectionRepository;
     private final ConceptApi conceptApi;
 
-    public FieldService(VocabularyCollectionRepository vocabularyCollectionRepository, ConceptApi conceptApi) {
-        this.vocabularyCollectionRepository = vocabularyCollectionRepository;
+    public FieldService(ConceptApi conceptApi) {
         this.conceptApi = conceptApi;
     }
 

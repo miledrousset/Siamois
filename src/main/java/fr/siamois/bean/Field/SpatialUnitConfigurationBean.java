@@ -100,7 +100,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
     /**
      * Get the username of the current authenticated user.
      * @return The username of the User
-     * @throws NoSuchElementException Throws when no user is authenticated as this page should only be visible to authenticated user.
+     * @throws IllegalStateException Throws when no user is authenticated as this page should only be visible to authenticated user.
      */
     public String getAuthenticatedUser() {
         Person loggedUser = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("No user logged in"));
