@@ -7,7 +7,7 @@ import java.security.SecureRandom;
 @Service
 public class ArkGenerator {
 
-    private static String serverNaanNumber = "666666";
+    private static final String serverNaanNumber = "666666";
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final SecureRandom RANDOM = new SecureRandom();
 
