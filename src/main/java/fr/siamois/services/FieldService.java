@@ -16,6 +16,7 @@ import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.services.ark.ArkGenerator;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -29,6 +30,7 @@ import java.util.Optional;
  * @author Julien Linget
  */
 @Service
+@Transactional
 public class FieldService {
 
     private final ConceptApi conceptApi;
@@ -47,12 +49,11 @@ public class FieldService {
 
     /**
      * Fetch the autocomplete results of Opentheso API for a given input and vocabulary collection.
-     * @param vocabularyCollection The database saved vocabulary collection
      * @param input The input to search for
      * @return A list of concept field DTOs
      */
-    public List<ConceptFieldDTO> fetchAutocomplete(VocabularyCollection vocabularyCollection, String input) {
-        List<ConceptFieldDTO> result = conceptApi.fetchAutocomplete(vocabularyCollection, input, "fr");
+    public List<ConceptFieldDTO> fetchAutocomplete(List<VocabularyCollection> collections, String input) {
+        List<ConceptFieldDTO> result = conceptApi.fetchAutocomplete(collections, input, "fr");
         if (result == null) return new ArrayList<>();
         return result;
     }

@@ -37,18 +37,19 @@ public class ConceptApi {
 
     /**
      * Fetch the autocomplete results of Opentheso API for a given input and vocabulary collection.
-     * @param collection The database saved vocabulary collection
      * @param input The input to search for
      * @param lang The language to search in
      * @return A list of concept field DTOs
      */
-    public List<ConceptFieldDTO> fetchAutocomplete(VocabularyCollection collection, String input, String lang) {
-        Vocabulary vocabulary = collection.getVocabulary();
+    public List<ConceptFieldDTO> fetchAutocomplete(List<VocabularyCollection> collections, String input, String lang) {
+        Vocabulary vocabulary = collections.get(0).getVocabulary();
         AutocompletionRequestBuilder builder = AutocompletionRequestBuilder
                 .getBuilder(vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId(), input);
 
-        builder.withLang(lang)
-                .withGroup(collection.getExternalId());
+        for (VocabularyCollection collection : collections)
+            builder.withGroup(collection.getExternalId());
+
+        builder.withLang(lang);
 
         return fetchAutocomplete(builder.build());
     }

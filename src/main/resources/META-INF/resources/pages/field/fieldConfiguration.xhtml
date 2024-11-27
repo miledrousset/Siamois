@@ -46,18 +46,29 @@
             <p:outputLabel for="globalCollectionsId" styleClass="col-12 md:col-2"
                            value="Selectionnez la collection à utiliser"/>
             <div class="col-12 md:col-10">
-                <p:selectOneMenu id="globalCollectionsId" value="#{spatialUnitConfigurationBean.selectedValue}">
-                    <f:selectItems value="#{spatialUnitConfigurationBean.collections}" var="group"
-                                   itemLabel="#{spatialUnitConfigurationBean.labels.get(group.externalId)} (#{group.externalId})"
-                                   itemValue="#{group.externalId}"/>
 
-                </p:selectOneMenu>
+                <p:dataTable id="globalCollectionsId" var="group" value="#{spatialUnitConfigurationBean.collections}"
+                             selection="#{spatialUnitConfigurationBean.selectedGroups}" rowKey="#{group.externalId}"
+                             rows="5" selectionPageOnly="false" selectionRowMode="none" cellNavigation="true"
+                             paginator="true">
+
+                    <p:column selectionBox="true" style="width:16px;text-align:center"/>
+                    <p:column headerText="ID">
+                        <h:outputText value="#{group.externalId}" />
+                    </p:column>
+
+                    <p:column headerText="Nom">
+                        <h:outputText value="#{spatialUnitConfigurationBean.labels.get(group.externalId)}"/>
+                    </p:column>
+
+                </p:dataTable>
+
             </div>
         </div>
 
 
 
-        <p:commandButton value="Sauvegarder" action="#{spatialUnitConfigurationBean.processForm()}"/>
+        <p:commandButton value="Sauvegarder" action="#{spatialUnitConfigurationBean.processForm()}" update="globalCollectionsId"/>
 
         <p:messages id="messages" showDetail="true" closable="true">
             <p:autoUpdate/>

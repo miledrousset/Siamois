@@ -46,7 +46,7 @@ public class SpatialUnitFieldBean implements Serializable {
     private List<String> labels;
     private List<ConceptFieldDTO> concepts;
     private String langcode = "fr";
-    private VocabularyCollection vocabularyCollection = null;
+    private List<VocabularyCollection> collections = null;
     private Vocabulary vocabulary = null;
 
     // Fields
@@ -75,14 +75,14 @@ public class SpatialUnitFieldBean implements Serializable {
     public void save() {
         ConceptFieldDTO selectedConceptFieldDTO = getSelectedConceptFieldDTO().orElseThrow(() -> new IllegalStateException("No concept selected"));
 
+        if (collections == null) throw new IllegalStateException("Collections should be defined before saving the spatial unit");
+
+        if (vocabulary == null) {
+            vocabulary = collections.get(0).getVocabulary();
+        }
+
         try {
-            SpatialUnit saved;
-            if (vocabularyCollection == null) {
-                saved = fieldService.saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, fParentsSpatialUnits);
-            } else {
-                saved = fieldService.saveSpatialUnit(fName, vocabularyCollection.getVocabulary(),
-                        selectedConceptFieldDTO, fParentsSpatialUnits);
-            }
+            SpatialUnit saved = fieldService.saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, fParentsSpatialUnits);
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
                     "Info", "L'unité spatiale " + saved.getName() + " a été crée."));
@@ -97,17 +97,17 @@ public class SpatialUnitFieldBean implements Serializable {
         Person person = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("User should be connected"));
 
         try {
-            Optional<VocabularyCollection> currentCollOpt = fieldConfigurationService.fetchCollectionOfPersonFieldConfiguration(person, SpatialUnit.CATEGORY_FIELD_CODE);
-            currentCollOpt.ifPresent(collection -> vocabularyCollection = collection);
+            List<VocabularyCollection> currentColl = fieldConfigurationService.fetchCollectionsOfPersonFieldConfiguration(person, SpatialUnit.CATEGORY_FIELD_CODE);
+            if (!currentColl.isEmpty()) collections = currentColl;
 
             Optional<Vocabulary> currentVocab = fieldConfigurationService.fetchVocabularyOfPersonFieldConfiguration(person, SpatialUnit.CATEGORY_FIELD_CODE);
             currentVocab.ifPresent(vocab -> vocabulary = vocab);
 
-            if(vocabulary == null && vocabularyCollection == null) throw new NoConfigForField(SpatialUnit.CATEGORY_FIELD_CODE);
-            if(vocabulary != null && vocabularyCollection != null ) throw new IllegalStateException("Only one type of configuration should be set");
+            if(vocabulary == null && collections == null) throw new NoConfigForField(SpatialUnit.CATEGORY_FIELD_CODE);
+            if(vocabulary != null && collections != null ) throw new IllegalStateException("Only one type of configuration should be set");
 
-            if (vocabularyCollection != null) {
-                concepts = fieldService.fetchAutocomplete(vocabularyCollection, input);
+            if (collections != null && !collections.isEmpty()) {
+                concepts = fieldService.fetchAutocomplete(collections, input);
             } else {
                 concepts = fieldService.fetchAutocomplete(vocabulary, input);
             }

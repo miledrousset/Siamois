@@ -16,7 +16,9 @@ import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.models.vocabulary.VocabularyType;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,7 @@ import java.util.Optional;
  * @author Julien Linget
  */
 @Service
+@Transactional
 public class FieldConfigurationService {
 
     private final VocabularyTypeRepository vocabularyTypeRepository;
@@ -54,19 +57,19 @@ public class FieldConfigurationService {
      * Delete the old configuration if it exists, even if it's a VocabularyCollection or a Vocabulary.
      * @param loggedUser The database saved user
      * @param fieldCode The field code to save
-     * @param collectionToSave The database saved collection to save
      * @throws FailedFieldUpdateException If the field already exists and the collection is the same
      * @throws FailedFieldSaveException If the save somehow failed
      */
     public void saveThesaurusCollectionFieldConfiguration(Person loggedUser,
                                                           String fieldCode,
-                                                          VocabularyCollection collectionToSave) throws FailedFieldUpdateException, FailedFieldSaveException {
-        boolean fieldExist = deleteOldConfigurationIfDifferent(loggedUser, fieldCode, collectionToSave);
+                                                          List<VocabularyCollection> collectionsToSave) throws FailedFieldUpdateException, FailedFieldSaveException {
+        Field field = prepareConfiguration(loggedUser, fieldCode, null, collectionsToSave);
 
-        Field field = getOrCreateField(loggedUser, fieldCode, fieldExist);
+        for (VocabularyCollection collection : collectionsToSave) {
+            int result = fieldRepository.saveCollectionWithField(collection.getId(), field.getId());
+            if (result == 0) throw new FailedFieldSaveException("Failed to save field. No row affected");
+        }
 
-        int result = fieldRepository.saveCollectionWithField(collectionToSave.getId(), field.getId());
-        if (result == 0) throw new FailedFieldSaveException("Failed to save field. No row affected");
     }
 
     /**
@@ -81,98 +84,85 @@ public class FieldConfigurationService {
     public void saveThesaurusFieldConfiguration(Person loggedUser,
                                                 String fieldCode,
                                                 Vocabulary vocabulary) throws FailedFieldUpdateException, FailedFieldSaveException {
-
-        boolean fieldExist = deleteOldConfigurationIfDifferent(loggedUser, fieldCode, vocabulary);
-
-        Field field = getOrCreateField(loggedUser, fieldCode, fieldExist);
+        Field field = prepareConfiguration(loggedUser, fieldCode, vocabulary, null);
 
         int nbResult = fieldRepository.saveVocabularyWithField(field.getId(), vocabulary.getId());
         if (nbResult == 0) throw new FailedFieldSaveException("Failed to save field. No row affected");
 
     }
 
+    private Field prepareConfiguration(Person loggedUser, String fieldCode, Vocabulary vocabulary, List<VocabularyCollection> collections) throws FailedFieldUpdateException {
+
+        if (vocabulary == null) {
+            deleteOldConfigurationIfDifferent(loggedUser, fieldCode, collections);
+        } else {
+            deleteOldConfigurationIfDifferent(loggedUser, fieldCode, vocabulary);
+        }
+
+        return getOrCreateField(loggedUser, fieldCode);
+    }
+
     /**
      * Return the field if it exists, create it otherwise.
      * @param loggedUser The database saved user
      * @param fieldCode The field code to save
-     * @param fieldExist True if the field already exists, false otherwise
      * @return The database saved field
      * @throws FailedFieldSaveException If the save somehow failed
      */
-    private Field getOrCreateField(Person loggedUser, String fieldCode, boolean fieldExist) throws FailedFieldSaveException {
+    private Field getOrCreateField(Person loggedUser, String fieldCode) throws FailedFieldSaveException {
+        Optional<Field> optField = fieldRepository.findByUserAndFieldCode(loggedUser, fieldCode);
         Field field;
-        if (fieldExist) {
-            field = fieldRepository.findByUserAndFieldCode(loggedUser, fieldCode).orElseThrow(() -> new FailedFieldSaveException("Failed to save field"));
-        } else {
+
+        if (optField.isEmpty()) {
             field = new Field();
             field.setFieldCode(fieldCode);
             field.setUser(loggedUser);
 
             field = fieldRepository.save(field);
+        } else {
+            field = optField.get();
         }
+
         return field;
     }
 
     /**
      * Delete the old configuration when the new configuration is a vocabulary.
      * @param loggedUser The database saved user
-     * @param fieldCode The field code to save
      * @param selectedVocab The database saved vocabulary
      * @return True if the field exists, false otherwise
      * @throws FailedFieldUpdateException If the field already exists and the vocabulary is the same
      */
-    private boolean deleteOldConfigurationIfDifferent(Person loggedUser, String fieldCode, Vocabulary selectedVocab) throws FailedFieldUpdateException, FailedFieldSaveException {
-        boolean fieldExists = false;
-        Optional<VocabularyCollection> optAlreadyExistConfigCollection = vocabularyCollectionRepository.findVocabularyCollectionByPersonAndFieldCode(loggedUser.getId(), fieldCode);
-        if (optAlreadyExistConfigCollection.isPresent()) {
-            fieldExists = true;
-            int affectedRow = fieldRepository.deleteVocabularyCollectionConfigurationByPersonAndFieldCode(loggedUser.getId(), fieldCode);
-            if (affectedRow == 0) throw new FailedFieldSaveException("Can't delete old configuration");
-        }
+    private void  deleteOldConfigurationIfDifferent(Person loggedUser, String fieldCode, Vocabulary selectedVocab) throws FailedFieldUpdateException {
+        fieldRepository.deleteVocabularyCollectionConfigurationByPersonAndFieldCode(loggedUser.getId(), fieldCode);
 
-        Optional<Vocabulary> optAlreadyExistConfigVocabulary = vocabularyRepository.findVocabularyOfUserForField(loggedUser.getId(), fieldCode);
-        if (optAlreadyExistConfigVocabulary.isPresent()) {
-            fieldExists = true;
-            Vocabulary vocabulary = optAlreadyExistConfigVocabulary.get();
-            if (vocabulary.equals(selectedVocab)) {
-                throw new FailedFieldUpdateException("Failed to update field :" + fieldCode);
+        Optional<Vocabulary> optVocab = vocabularyRepository.findVocabularyOfUserForField(loggedUser.getId(), fieldCode);
+        if (optVocab.isPresent()) {
+            if (optVocab.get().equals(selectedVocab)) {
+                throw new FailedFieldUpdateException("Failed to update field : " + fieldCode);
             } else {
-                int affectedRow = fieldRepository.deleteVocabularyConfigurationByPersonAndFieldCode(loggedUser.getId(), fieldCode);
-                if (affectedRow == 0) throw new FailedFieldSaveException("Can't delete old configuration");
+                fieldRepository.deleteVocabularyConfigurationByPersonAndFieldCode(loggedUser.getId(), fieldCode);
             }
         }
-
-        return fieldExists;
     }
 
     /**
      * Delete the old configuration when the new configuration is a collection.
      * @param loggedUser The database saved user
      * @param fieldCode The field code to save
-     * @param selectedCollection The database saved collection
-     * @return True if the field exists, false otherwise
      * @throws FailedFieldUpdateException If the field already exists and the collection is the same
      */
-    private boolean deleteOldConfigurationIfDifferent(Person loggedUser, String fieldCode, VocabularyCollection selectedCollection) throws FailedFieldUpdateException {
-        boolean fieldExists = false;
-        Optional<VocabularyCollection> optAlreadyExistConfigCollection = vocabularyCollectionRepository.findVocabularyCollectionByPersonAndFieldCode(loggedUser.getId(), fieldCode);
-        if (optAlreadyExistConfigCollection.isPresent()) {
-            VocabularyCollection collection = optAlreadyExistConfigCollection.get();
-            if (collection.equals(selectedCollection)) {
-                throw new FailedFieldUpdateException("Failed to update field :" + fieldCode);
-            } else {
-                fieldExists = true;
-                fieldRepository.deleteVocabularyCollectionConfigurationByPersonAndFieldCode(loggedUser.getId(), fieldCode);
-            }
+    private void deleteOldConfigurationIfDifferent(Person loggedUser, String fieldCode, List<VocabularyCollection> collections) throws FailedFieldUpdateException {
+        List<VocabularyCollection> existingCollections = vocabularyCollectionRepository.findAllVocabularyCollectionByPersonAndFieldCode(loggedUser.getId(), fieldCode);
+        if (CollectionUtils.isEqualCollection(collections, existingCollections)) {
+            throw new FailedFieldUpdateException("Failed to update field : " + fieldCode);
         }
+        fieldRepository.deleteVocabularyCollectionConfigurationByPersonAndFieldCode(loggedUser.getId(), fieldCode);
 
-        Optional<Vocabulary> optAlreadyExistConfigVocabulary = vocabularyRepository.findVocabularyOfUserForField(loggedUser.getId(), fieldCode);
-        if (optAlreadyExistConfigVocabulary.isPresent()) {
-            fieldExists = true;
+        Optional<Vocabulary> optVocab = vocabularyRepository.findVocabularyOfUserForField(loggedUser.getId(), fieldCode);
+        if (optVocab.isPresent()) {
             fieldRepository.deleteVocabularyConfigurationByPersonAndFieldCode(loggedUser.getId(), fieldCode);
         }
-
-        return fieldExists;
     }
 
     /**
@@ -225,8 +215,8 @@ public class FieldConfigurationService {
      * @param categoryFieldCode The field code
      * @return The configuration if it exists
      */
-    public Optional<VocabularyCollection> fetchCollectionOfPersonFieldConfiguration(Person loggedUser, String categoryFieldCode) {
-        return vocabularyCollectionRepository.findVocabularyCollectionByPersonAndFieldCode(loggedUser.getId(), categoryFieldCode);
+    public List<VocabularyCollection> fetchCollectionsOfPersonFieldConfiguration(Person loggedUser, String categoryFieldCode) {
+        return vocabularyCollectionRepository.findAllVocabularyCollectionByPersonAndFieldCode(loggedUser.getId(), categoryFieldCode);
     }
 
     /**

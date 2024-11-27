@@ -29,11 +29,7 @@ public interface FieldRepository extends CrudRepository<Field, Long> {
     @Query(
             nativeQuery = true,
             value = "DELETE FROM field_vocabulary_collection fvc " +
-                    "WHERE fk_field_id IN " +
-                    "( SELECT f.field_id " +
-                    "FROM field f " +
-                    "WHERE fk_user_id = :personId " +
-                    "AND field_code = :fieldCode )"
+                    "WHERE fvc.fk_field_id IN ( SELECT f.field_id FROM field f WHERE f.fk_user_id = :personId AND f.field_code = :fieldCode)"
     )
     int deleteVocabularyCollectionConfigurationByPersonAndFieldCode(Long personId, String fieldCode);
 
