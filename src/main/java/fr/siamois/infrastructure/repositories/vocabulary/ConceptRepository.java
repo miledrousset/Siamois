@@ -29,4 +29,6 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
             value = "SELECT c.* FROM concept c WHERE c.fk_ark_id = :arkId"
     )
     Optional<Concept> findConceptByArkId(@Param("arkId") String arkId);
+
+    Optional<Concept> findConceptByExternalIdIgnoreCase(String idc);
 }

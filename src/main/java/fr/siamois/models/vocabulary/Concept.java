@@ -19,13 +19,15 @@ public class Concept {
     @JoinColumn(name = "fk_vocabulary_id", nullable = false)
     private Vocabulary vocabulary;
 
-    @NotNull
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "fk_ark_id", nullable = false)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fk_ark_id")
     private Ark ark;
 
     @NotNull
     @Column(name = "label", nullable = false, length = Integer.MAX_VALUE)
     private String label;
+
+    @Column(name = "external_id", length = Integer.MAX_VALUE)
+    private String externalId;
 
 }

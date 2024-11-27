@@ -3,9 +3,10 @@ package fr.siamois.bean.Field;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.NoCollectionForFieldException;
+import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.services.FieldConfigurationService;
 import fr.siamois.services.FieldService;
@@ -46,6 +47,7 @@ public class SpatialUnitFieldBean implements Serializable {
     private List<ConceptFieldDTO> concepts;
     private String langcode = "fr";
     private VocabularyCollection vocabularyCollection = null;
+    private Vocabulary vocabulary = null;
 
     // Fields
     private Concept selectedConcept = null;
@@ -74,8 +76,13 @@ public class SpatialUnitFieldBean implements Serializable {
         ConceptFieldDTO selectedConceptFieldDTO = getSelectedConceptFieldDTO().orElseThrow(() -> new IllegalStateException("No concept selected"));
 
         try {
-            SpatialUnit saved = fieldService.saveSpatialUnit(fName, vocabularyCollection.getVocabulary(),
-                    selectedConceptFieldDTO, fParentsSpatialUnits);
+            SpatialUnit saved;
+            if (vocabularyCollection == null) {
+                saved = fieldService.saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, fParentsSpatialUnits);
+            } else {
+                saved = fieldService.saveSpatialUnit(fName, vocabularyCollection.getVocabulary(),
+                        selectedConceptFieldDTO, fParentsSpatialUnits);
+            }
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
                     "Info", "L'unité spatiale " + saved.getName() + " a été crée."));
@@ -90,18 +97,26 @@ public class SpatialUnitFieldBean implements Serializable {
         Person person = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("User should be connected"));
 
         try {
-            if (vocabularyCollection == null) {
-                vocabularyCollection = fieldConfigurationService.fetchCollectionOfPersonFieldConfiguration(person, SpatialUnit.CATEGORY_FIELD_CODE)
-                        .orElseThrow(() -> new NoCollectionForFieldException(SpatialUnit.CATEGORY_FIELD_CODE));
-            }
+            Optional<VocabularyCollection> currentCollOpt = fieldConfigurationService.fetchCollectionOfPersonFieldConfiguration(person, SpatialUnit.CATEGORY_FIELD_CODE);
+            currentCollOpt.ifPresent(collection -> vocabularyCollection = collection);
 
-            concepts = fieldService.fetchAutocomplete(vocabularyCollection, input);
+            Optional<Vocabulary> currentVocab = fieldConfigurationService.fetchVocabularyOfPersonFieldConfiguration(person, SpatialUnit.CATEGORY_FIELD_CODE);
+            currentVocab.ifPresent(vocab -> vocabulary = vocab);
+
+            if(vocabulary == null && vocabularyCollection == null) throw new NoConfigForField(SpatialUnit.CATEGORY_FIELD_CODE);
+            if(vocabulary != null && vocabularyCollection != null ) throw new IllegalStateException("Only one type of configuration should be set");
+
+            if (vocabularyCollection != null) {
+                concepts = fieldService.fetchAutocomplete(vocabularyCollection, input);
+            } else {
+                concepts = fieldService.fetchAutocomplete(vocabulary, input);
+            }
 
             return concepts.stream()
                     .map(ConceptFieldDTO::getLabel)
                     .collect(Collectors.toList());
 
-        } catch (NoCollectionForFieldException e) {
+        } catch (NoConfigForField e) {
             log.error("No collection for field " + SpatialUnit.CATEGORY_FIELD_CODE);
             return new ArrayList<>();
         }

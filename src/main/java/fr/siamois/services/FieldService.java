@@ -16,6 +16,8 @@ import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.services.ark.ArkGenerator;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -51,6 +53,12 @@ public class FieldService {
      */
     public List<ConceptFieldDTO> fetchAutocomplete(VocabularyCollection vocabularyCollection, String input) {
         List<ConceptFieldDTO> result = conceptApi.fetchAutocomplete(vocabularyCollection, input, "fr");
+        if (result == null) return new ArrayList<>();
+        return result;
+    }
+
+    public List<ConceptFieldDTO> fetchAutocomplete(Vocabulary vocabulary, String input) {
+        List<ConceptFieldDTO> result = conceptApi.fetchAutocomplete(vocabulary, input, "fr");
         if (result == null) return new ArrayList<>();
         return result;
     }
@@ -97,6 +105,47 @@ public class FieldService {
     public SpatialUnit saveSpatialUnit(String name,
                                        Vocabulary vocabulary,
                                        ConceptFieldDTO category) throws SpatialUnitAlreadyExistsException {
+
+        ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
+
+        Ark spatialUnitArk = new Ark();
+        spatialUnitArk.setArkId(ArkGenerator.generateArk());
+        spatialUnitArk.setArkServer(localServer);
+        spatialUnitArk = arkRepository.save(spatialUnitArk);
+
+        Concept concept = saveOrGetConceptFromCategory(vocabulary, category);
+
+        SpatialUnit spatialUnit = new SpatialUnit();
+        spatialUnit.setName(name);
+        spatialUnit.setArk(spatialUnitArk);
+        spatialUnit.setCategory(concept);
+
+        spatialUnit = spatialUnitRepository.save(spatialUnit);
+
+        return spatialUnit;
+    }
+
+    private Concept saveOrGetConceptFromCategory(Vocabulary vocabulary, ConceptFieldDTO category) {
+        MultiValueMap<String,String> queryParams = UriComponentsBuilder.fromUriString(category.getUri()).build().getQueryParams();
+        if (queryParams.containsKey("idt") && queryParams.containsKey("idc")) {
+            String externalId = queryParams.get("idc").get(0);
+            Optional<Concept> opt = conceptRepository.findConceptByExternalIdIgnoreCase(externalId);
+            if (opt.isEmpty()) {
+                Concept concept = new Concept();
+                concept.setExternalId(externalId);
+                concept.setVocabulary(vocabulary);
+                concept.setLabel(category.getLabel());
+
+                return conceptRepository.save(concept);
+            } else {
+                return opt.get();
+            }
+        } else {
+            return processConceptWithArkUri(vocabulary, category);
+        }
+    }
+
+    private Concept processConceptWithArkUri(Vocabulary vocabulary, ConceptFieldDTO category) {
         String buildOpenthesoArkUri = vocabulary.getBaseUri() + "/openapi/v1/concept/ark:/";
         Optional<ArkServer> serverOpt = arkServerRepository.findArkServerByServerArkUri(buildOpenthesoArkUri);
         ArkServer openthesoServer;
@@ -109,19 +158,12 @@ public class FieldService {
             openthesoServer = serverOpt.get();
         }
 
-        ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
-
-        String arkId = getArkIdFromUri(ArkGenerator.generateArk());
-        Ark spatialUnitArk = new Ark();
-        spatialUnitArk.setArkId(arkId);
-        spatialUnitArk.setArkServer(localServer);
-        spatialUnitArk = arkRepository.save(spatialUnitArk);
-
-        Optional<Ark> conceptArkOpt = arkRepository.findArkByArkIdIgnoreCase(arkId);
+        String conceptArkId = getArkIdFromUri(category.getUri());
+        Optional<Ark> conceptArkOpt = arkRepository.findArkByArkIdIgnoreCase(conceptArkId);
         Ark conceptArk;
         if (conceptArkOpt.isEmpty()) {
             conceptArk = new Ark();
-            conceptArk.setArkId(arkId);
+            conceptArk.setArkId(conceptArkId);
             conceptArk.setArkServer(openthesoServer);
             conceptArk = arkRepository.save(conceptArk);
         } else {
@@ -139,21 +181,7 @@ public class FieldService {
         } else {
             concept = conceptOpt.get();
         }
-
-        Optional<SpatialUnit> spatialUnitOptional = spatialUnitRepository.findSpatialUnitByArkId(conceptArk.getArkId());
-
-        if (spatialUnitOptional.isPresent()) {
-            throw new SpatialUnitAlreadyExistsException("A spatial unit with the same ARK already exists");
-        }
-
-        SpatialUnit spatialUnit = new SpatialUnit();
-        spatialUnit.setName(name);
-        spatialUnit.setArk(spatialUnitArk);
-        spatialUnit.setCategory(concept);
-
-        spatialUnit = spatialUnitRepository.save(spatialUnit);
-
-        return spatialUnit;
+        return concept;
     }
 
     public String getArkIdFromUri(String uri) {
