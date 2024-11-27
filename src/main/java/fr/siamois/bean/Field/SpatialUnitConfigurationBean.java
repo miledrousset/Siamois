@@ -57,7 +57,9 @@ public class SpatialUnitConfigurationBean implements Serializable {
     }
 
     /**
-     * Load the existing configuration of the field, if this configuration exist.
+     * Load the existing configuration on the page.
+     * If it's a thesaurus configuration, load the thesaurus list, the selected thesaurus and the empty collection.
+     * If it's collections, load the collections list, the selected collections and the selected thesaurus.
      */
     public void onLoad() {
         Person loggedUser = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow();
@@ -95,6 +97,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
 
     /**
      * Load the collections in the selected Thesaurus in the matching field for selection.
+     * On load, clears the collections list and the labels map and adds the empty collection to the list.
      */
     public void loadGroupValue() {
         try {
@@ -124,8 +127,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
 
         } catch (ClientSideErrorException e) {
             log.error(e.getMessage(), e);
-            FacesContext.getCurrentInstance()
-                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Serveur introuvable ou invalide"));
+            displayErrorMessage("Serveur introuvable ou invalide");
         }
     }
 
@@ -140,7 +142,8 @@ public class SpatialUnitConfigurationBean implements Serializable {
     }
 
     /**
-     * Save or update the input collection configuration. Displays a message depending on the success or failure of this operation.
+     * Save or update the configuration.
+     * Refresh the groups list if the selected groups are empty or contain the empty collection.
      */
     public void processForm() {
         Person loggedUser = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow();
@@ -155,14 +158,12 @@ public class SpatialUnitConfigurationBean implements Serializable {
             try {
                 fieldConfigurationService.saveThesaurusFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE, selectedVocab);
 
-                FacesContext.getCurrentInstance()
-                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La configuration a bien été enregistrée"));
+                displayInfoMessage("La configuration a bien été enregistrée");
 
                 return;
             } catch (FailedFieldUpdateException e) {
                 log.error(e.getMessage());
-                FacesContext.getCurrentInstance()
-                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La configuration est identique à la précédente."));
+                displayInfoMessage("La configuration est identique à la précédente.");
             }
         }
 
@@ -176,14 +177,31 @@ public class SpatialUnitConfigurationBean implements Serializable {
                     SpatialUnit.CATEGORY_FIELD_CODE,
                     savedVocabColl);
 
-            FacesContext.getCurrentInstance()
-                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La configuration a bien été enregistrée"));
+            displayInfoMessage("La configuration a bien été enregistrée");
 
         } catch (FailedFieldUpdateException e) {
-            FacesContext.getCurrentInstance()
-                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La configuration est identique à la précédente."));
+            displayInfoMessage("La configuration est identique à la précédente.");
         }
 
+    }
+
+    /**
+     * Display an error message on the page.
+     * @param detail The message to display.
+     */
+    private static void displayInfoMessage(String detail) {
+        displayMessage(FacesMessage.SEVERITY_INFO, "Information", detail);
+    }
+
+    /**
+     * Display a  message on the page.
+     * @param severityInfo The severity of the message.
+     * @param head  The head of the message.
+     * @param detail The message to display.
+     */
+    private static void displayMessage(FacesMessage.Severity severityInfo, String head, String detail) {
+        FacesContext.getCurrentInstance()
+                .addMessage(null, new FacesMessage(severityInfo, head, detail));
     }
 
     /**
@@ -202,8 +220,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
     public void loadThesaurusValue() {
 
         if (!serverUrl.startsWith("http") && !serverUrl.startsWith("https")) {
-            FacesContext.getCurrentInstance()
-                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Erreur", "L'URL du serveur est invalide."));
+            displayErrorMessage("L'URL du serveur est invalide.");
             return;
         }
 
@@ -219,6 +236,10 @@ public class SpatialUnitConfigurationBean implements Serializable {
         List<Vocabulary> result = fieldConfigurationService.fetchAllPublicThesaurus(lang, serverUrl);
         vocabularies.addAll(result);
 
+    }
+
+    private void displayErrorMessage(String s) {
+        displayMessage(FacesMessage.SEVERITY_ERROR, "Erreur", s);
     }
 
 
