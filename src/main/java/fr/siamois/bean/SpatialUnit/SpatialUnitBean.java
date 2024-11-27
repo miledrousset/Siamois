@@ -53,21 +53,29 @@ public class SpatialUnitBean {
         this.actionUnitService = actionUnitService;
     }
 
+    public void reinitializeBean() {
+        this.spatialUnit = null;
+        this.spatialUnitErrorMessage = null;
+
+        this.spatialUnitListErrorMessage = null;
+        this.recordingUnitListErrorMessage = null;
+        this.actionUnitListErrorMessage = null;
+        this.spatialUnitList = null;
+        this.recordingUnitList = null;
+        this.actionUnitList = null;
+    }
+
     @PostConstruct
     public void init() {
+
+        reinitializeBean();
+
         if (id != null) {
 
             try {
                 this.spatialUnit = spatialUnitService.findById(id);
             } catch (RuntimeException e) {
                 this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
-                // Reinit children
-                this.spatialUnitListErrorMessage = null;
-                this.recordingUnitListErrorMessage = null;
-                this.actionUnitListErrorMessage = null;
-                this.spatialUnitList = null;
-                this.recordingUnitList = null;
-                this.actionUnitList = null;
             }
 
             if (this.spatialUnit != null) {
@@ -94,6 +102,9 @@ public class SpatialUnitBean {
                 }
             }
 
+        }
+        else {
+            this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
         }
     }
 

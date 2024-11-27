@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+    <cc:interface>
+        <!-- Attributes to pass the bean's list and optional additional parameters -->
+        <cc:attribute name="spatialUnitList" required="true" />
+    </cc:interface>
+    <cc:implementation>
+        <p:outputPanel>
+            <h3>Spatial units</h3>
+            <p:panelGrid columns="3" styleClass="card-grid">
+                <ui:repeat value="#{cc.attrs.spatialUnitList}" var="item">
+                    <p:card>
+                        <f:facet name="header">
+                            <!-- <img alt="user header" src="../../resources/img/location.jpg"/> -->
+                        </f:facet>
+                        <f:facet name="title">
+                            #{item.name}
+                        </f:facet>
+                        <f:facet name="subtitle">
+                            ARK: #{item.ark.arkId}
+                        </f:facet>
+
+                        <p>Category : #{item.category.label}</p>
+
+                        <f:facet name="footer">
+                            <p:button value="Go to Spatial Unit"
+                                      icon="pi pi-search"
+                                      outcome="/pages/spatialUnit/spatialUnit.xhtml?id=${item.id}" />
+                        </f:facet>
+                    </p:card>
+                </ui:repeat>
+            </p:panelGrid>
+        </p:outputPanel>
+    </cc:implementation>
+</ui:composition>
+

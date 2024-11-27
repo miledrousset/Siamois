@@ -17,7 +17,7 @@ html, body {
 }
 
 .left-panel {
-    background-color: #f4f4f4;
+    background-color: #a7484d;
     padding: 20px;
     min-height: 100%;
     transition: width 0.3s;
@@ -26,14 +26,14 @@ html, body {
 .app-name {
     font-size: 20px;
     min-height: 100%;
-    background-color: #f4f4f4;
+    background-color: #bed730;
     font-weight: bold;
     margin-bottom: 20px;
 }
 
 .top-bar {
     flex-grow: 1;
-    background-color: #fff;
+    background-color: #bed730;
     padding: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     display: flex;
