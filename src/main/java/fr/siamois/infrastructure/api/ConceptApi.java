@@ -19,6 +19,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service to fetch concept information from the API.
+ * @author Julien Linget
+ */
 @Slf4j
 @Service
 public class ConceptApi {
@@ -54,6 +58,13 @@ public class ConceptApi {
         return fetchAutocomplete(builder.build());
     }
 
+    /**
+     * Fetch the autocomplete results of Opentheso API for a given input. Filters the results by the given vocabulary.
+     * @param vocabulary The vocabulary to search in
+     * @param input The input to search for
+     * @param lang The language to search in
+     * @return A list of concept field DTOs for the given input
+     */
     public List<ConceptFieldDTO> fetchAutocomplete(Vocabulary vocabulary, String input, String lang) {
         AutocompletionRequestBuilder builder = AutocompletionRequestBuilder
                 .getBuilder(vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId(), input);
@@ -63,6 +74,11 @@ public class ConceptApi {
         return fetchAutocomplete(builder.build());
     }
 
+    /**
+     * Fetch the autocomplete results of Opentheso API for a given uri.
+     * @param requestUri The uri with the parameters to send to the API
+     * @return A list of concept field DTOs
+     */
     private List<ConceptFieldDTO> fetchAutocomplete(String requestUri) {
         URI uri = URI.create(requestUri);
 

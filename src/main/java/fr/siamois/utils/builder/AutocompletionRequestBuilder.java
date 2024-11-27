@@ -7,6 +7,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.TreeSet;
 
+
+/**
+ * Builder to create an autocompletion request for the Opentheso API.
+ * @author Julien Linget
+ */
 public class AutocompletionRequestBuilder {
 
     private final String server, input, thesoExternalId;

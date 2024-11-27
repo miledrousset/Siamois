@@ -24,11 +24,22 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
     )
     List<Concept> findAllTypologiesOfRecordingUnitStudy(@Param("recordingUnitStudyId") Long recordingUnitStudyId);
 
+    /**
+     * Find a concept by its arkId.
+     * @param arkId The arkId to search for
+     * @return An optional containing the concept if found
+     */
     @Query(
             nativeQuery = true,
             value = "SELECT c.* FROM concept c WHERE c.fk_ark_id = :arkId"
     )
     Optional<Concept> findConceptByArkId(@Param("arkId") String arkId);
 
-    Optional<Concept> findConceptByExternalIdIgnoreCase(String idc);
+    /**
+     * Find a concept by its external ids.
+     * @param idt The ID of the external vocabulary
+     * @param idc The ID of the concept in the external vocabulary
+     * @return An optional containing the concept if found
+     */
+    Optional<Concept> findConceptByExternalIdIgnoreCase(String idt, String idc);
 }

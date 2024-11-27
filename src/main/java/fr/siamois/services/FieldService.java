@@ -48,8 +48,9 @@ public class FieldService {
     }
 
     /**
-     * Fetch the autocomplete results of Opentheso API for a given input and vocabulary collection.
+     * Fetch the autocomplete results of Opentheso API for a given input on multiple vocabulary collection.
      * @param input The input to search for
+     * @param collections The list of database saved vocabulary collections to search in
      * @return A list of concept field DTOs
      */
     public List<ConceptFieldDTO> fetchAutocomplete(List<VocabularyCollection> collections, String input) {
@@ -58,6 +59,12 @@ public class FieldService {
         return result;
     }
 
+    /**
+     * Fetch the autocomplete results of Opentheso API for a given input on a vocabulary.
+     * @param vocabulary The database saved vocabulary to search in
+     * @param input The input to search for
+     * @return A list of concept field DTOs
+     */
     public List<ConceptFieldDTO> fetchAutocomplete(Vocabulary vocabulary, String input) {
         List<ConceptFieldDTO> result = conceptApi.fetchAutocomplete(vocabulary, input, "fr");
         if (result == null) return new ArrayList<>();
@@ -65,8 +72,7 @@ public class FieldService {
     }
 
     /**
-     * Creates if not exists the arkServer, ark and concept for a given category and saves a new spatial unit with
-     * the given hierarchy.
+     * Generate an ARK for a spatial unit. Create or save the category concept and save the spatial unit.
      * @param name The name of the spatial unit
      * @param vocabulary The database saved vocabulary
      * @param category The API response for the category concept
@@ -95,14 +101,20 @@ public class FieldService {
         return spatialUnit;
     }
 
+    /**
+     * Save or get a concept from a category field DTO.
+     * @param vocabulary The database saved vocabulary
+     * @param category The API response for the category concept
+     * @return The saved concept
+     */
     private Concept saveOrGetConceptFromCategory(Vocabulary vocabulary, ConceptFieldDTO category) {
         MultiValueMap<String,String> queryParams = UriComponentsBuilder.fromUriString(category.getUri()).build().getQueryParams();
         if (queryParams.containsKey("idt") && queryParams.containsKey("idc")) {
-            String externalId = queryParams.get("idc").get(0);
-            Optional<Concept> opt = conceptRepository.findConceptByExternalIdIgnoreCase(externalId);
+            String conceptExternalId = queryParams.get("idc").get(0);
+            Optional<Concept> opt = conceptRepository.findConceptByExternalIdIgnoreCase(vocabulary.getExternalVocabularyId(), conceptExternalId);
             if (opt.isEmpty()) {
                 Concept concept = new Concept();
-                concept.setExternalId(externalId);
+                concept.setExternalId(conceptExternalId);
                 concept.setVocabulary(vocabulary);
                 concept.setLabel(category.getLabel());
 
@@ -115,6 +127,12 @@ public class FieldService {
         }
     }
 
+    /**
+     * The save or get concept method for a category field DTO with an ARK URI.
+     * @param vocabulary The database saved vocabulary
+     * @param category The API response for the category concept
+     * @return The saved concept
+     */
     private Concept processConceptWithArkUri(Vocabulary vocabulary, ConceptFieldDTO category) {
         String buildOpenthesoArkUri = vocabulary.getBaseUri() + "/openapi/v1/concept/ark:/";
         Optional<ArkServer> serverOpt = arkServerRepository.findArkServerByServerArkUri(buildOpenthesoArkUri);
@@ -154,6 +172,11 @@ public class FieldService {
         return concept;
     }
 
+    /**
+     * Extract the ARK ID from an URI.
+     * @param uri The URI to extract the ARK ID from
+     * @return The ARK ID with the format "naan/arkId" without the "ark:/" prefix
+     */
     public String getArkIdFromUri(String uri) {
         StringBuilder builder = new StringBuilder();
         int slashCount = 0;
@@ -172,6 +195,10 @@ public class FieldService {
         return builder.toString();
     }
 
+    /**
+     * Fetch all the spatial units in the database.
+     * @return A list of all the spatial units
+     */
     public List<SpatialUnit> fetchAllSpatialUnits() {
         Iterator<SpatialUnit> spatialUnitIterator = spatialUnitRepository.findAll().iterator();
         List<SpatialUnit> spatialUnits = new ArrayList<>();
@@ -183,6 +210,15 @@ public class FieldService {
         return spatialUnits;
     }
 
+    /**
+     * Save the spatial unit and its hierarchy.
+     * @param fName The name of the spatial unit
+     * @param vocabulary The database saved vocabulary
+     * @param selectedConceptFieldDTO The API response for the category concept
+     * @param parentsSpatialUnit The list of database saved parent spatial units
+     * @return The saved spatial unit
+     * @throws SpatialUnitAlreadyExistsException If the spatial unit already exists in the database
+     */
     public SpatialUnit saveSpatialUnit(String fName, @NotNull Vocabulary vocabulary, ConceptFieldDTO selectedConceptFieldDTO, List<SpatialUnit> parentsSpatialUnit) throws SpatialUnitAlreadyExistsException {
         SpatialUnit unit = saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO);
         for (SpatialUnit parent : parentsSpatialUnit) {

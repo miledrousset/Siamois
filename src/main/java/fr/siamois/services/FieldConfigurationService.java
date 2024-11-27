@@ -57,6 +57,7 @@ public class FieldConfigurationService {
      * Delete the old configuration if it exists, even if it's a VocabularyCollection or a Vocabulary.
      * @param loggedUser The database saved user
      * @param fieldCode The field code to save
+     * @param collectionsToSave The database saved collections
      * @throws FailedFieldUpdateException If the field already exists and the collection is the same
      * @throws FailedFieldSaveException If the save somehow failed
      */
@@ -91,6 +92,15 @@ public class FieldConfigurationService {
 
     }
 
+    /**
+     * Deletes all existing configurations of a field and saves the new configuration.
+     * @param loggedUser The database saved user
+     * @param fieldCode The field code to save
+     * @param vocabulary The database saved vocabulary
+     * @param collections The database saved collections
+     * @return The field to save
+     * @throws FailedFieldUpdateException If the field already exists and the configuration is the same
+     */
     private Field prepareConfiguration(Person loggedUser, String fieldCode, Vocabulary vocabulary, List<VocabularyCollection> collections) throws FailedFieldUpdateException {
 
         if (vocabulary == null) {
@@ -129,6 +139,7 @@ public class FieldConfigurationService {
     /**
      * Delete the old configuration when the new configuration is a vocabulary.
      * @param loggedUser The database saved user
+     * @param fieldCode The field code to save
      * @param selectedVocab The database saved vocabulary
      * @throws FailedFieldUpdateException If the field already exists and the vocabulary is the same
      */
@@ -149,6 +160,7 @@ public class FieldConfigurationService {
      * Delete the old configuration when the new configuration is a collection.
      * @param loggedUser The database saved user
      * @param fieldCode The field code to save
+     * @param collections The database saved collections
      * @throws FailedFieldUpdateException If the field already exists and the collection is the same
      */
     private void deleteOldConfigurationIfDifferent(Person loggedUser, String fieldCode, List<VocabularyCollection> collections) throws FailedFieldUpdateException {

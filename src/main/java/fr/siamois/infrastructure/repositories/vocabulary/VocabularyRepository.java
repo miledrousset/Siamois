@@ -11,11 +11,23 @@ import java.util.Optional;
 @Repository
 public interface VocabularyRepository extends CrudRepository<Vocabulary, Long> {
 
+    /**
+     * Find a vocabulary by its baseUri and externalId ignoring case.
+     * @param baseUri The baseUri of the vocabulary
+     * @param externalId The externalId of the vocabulary
+     * @return An optional containing the vocabulary if found
+     */
     @Query(
             value = "SELECT v FROM Vocabulary v WHERE upper(v.baseUri) = upper(:baseUri) AND upper(v.externalVocabularyId) = upper(:externalId)"
     )
     Optional<Vocabulary> findVocabularyByBaseUriAndVocabExternalId(@Param("baseUri")String baseUri, @Param("externalId") String externalId);
 
+    /**
+     * Find a vocabulary by its user and externalId ignoring case.
+     * @param personId  The id of the user
+     * @param categoryFieldCode The code of the field
+     * @return An optional containing the vocabulary if found
+     */
     @Query(
             nativeQuery = true,
             value = "SELECT v.* FROM vocabulary v " +

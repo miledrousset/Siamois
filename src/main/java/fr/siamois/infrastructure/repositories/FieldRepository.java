@@ -13,6 +13,12 @@ import java.util.Optional;
 
 public interface FieldRepository extends CrudRepository<Field, Long> {
 
+    /**
+     * Set a collection configuration parameter to a field.
+     * @param collectionId The id of the collection
+     * @param fieldId The id of the field
+     * @return The number of rows affected
+     */
     @Transactional
     @Modifying
     @Query(
@@ -22,8 +28,20 @@ public interface FieldRepository extends CrudRepository<Field, Long> {
     )
     int saveCollectionWithField(@Param("collectionId") Long collectionId, @Param("fieldId") Long fieldId);
 
+    /**
+     * Find a field by its user and field code.
+     * @param user The user
+     * @param fieldCode The code of the field
+     * @return An optional containing the field if found
+     */
     Optional<Field> findByUserAndFieldCode(Person user, @NotNull String fieldCode);
 
+    /**
+     * Deletes all the vocabulary collection configuration of a person by a field code.
+     * @param personId The id of the person
+     * @param fieldCode The code of the field
+     * @return The number of rows affected
+     */
     @Transactional
     @Modifying
     @Query(
@@ -33,6 +51,12 @@ public interface FieldRepository extends CrudRepository<Field, Long> {
     )
     int deleteVocabularyCollectionConfigurationByPersonAndFieldCode(Long personId, String fieldCode);
 
+    /**
+     * Deletes the vocabulary configuration of a person by a field code.
+     * @param personId The id of the person
+     * @param fieldCode The code of the field
+     * @return The number of rows affected
+     */
     @Transactional
     @Modifying
     @Query(
@@ -43,6 +67,12 @@ public interface FieldRepository extends CrudRepository<Field, Long> {
     )
     int deleteVocabularyConfigurationByPersonAndFieldCode(Long personId, String fieldCode);
 
+    /**
+     * Saves a vocabulary configuration to a field.
+     * @param fieldId The id of the field
+     * @param vocabId The id of the vocabulary
+     * @return The number of rows affected
+     */
     @Transactional
     @Modifying
     @Query(

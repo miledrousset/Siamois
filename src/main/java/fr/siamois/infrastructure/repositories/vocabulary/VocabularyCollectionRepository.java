@@ -14,6 +14,12 @@ import java.util.Optional;
 public interface VocabularyCollectionRepository extends CrudRepository<VocabularyCollection, Long> {
     Optional<VocabularyCollection> findByVocabularyAndExternalId(Vocabulary vocabulary, String idGroup);
 
+    /**
+     * Find all vocabulary collections of a person by a field code.
+     * @param personId The id of the person
+     * @param fieldCode The code of the field
+     * @return A list of vocabulary collections
+     */
     @Query(
             nativeQuery = true,
             value = "SELECT c.* FROM vocabulary_collection c " +
