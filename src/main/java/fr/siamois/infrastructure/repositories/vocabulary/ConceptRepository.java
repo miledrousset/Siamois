@@ -41,5 +41,9 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
      * @param idc The ID of the concept in the external vocabulary
      * @return An optional containing the concept if found
      */
+    @Query(
+            nativeQuery = true,
+            value = "SELECT c.* FROM concept c WHERE c.external_id = :idc AND c.fk_vocabulary_id = :idt"
+    )
     Optional<Concept> findConceptByExternalIdIgnoreCase(String idt, String idc);
 }
