@@ -70,42 +70,11 @@ public class FieldService {
      * @param name The name of the spatial unit
      * @param vocabulary The database saved vocabulary
      * @param category The API response for the category concept
-     * @param parents The list of database saved parent spatial units
-     * @param childs The list of database saved child spatial units
      * @return The saved spatial unit
-     * @throws SpatialUnitAlreadyExistsException If a spatial unit with the same ARK already exists
      */
     public SpatialUnit saveSpatialUnit(String name,
                                        Vocabulary vocabulary,
-                                       ConceptFieldDTO category,
-                                       List<SpatialUnit> parents,
-                                       List<SpatialUnit> childs) throws SpatialUnitAlreadyExistsException {
-
-        SpatialUnit spatialUnit = saveSpatialUnit(name, vocabulary, category);
-
-        for (SpatialUnit parent : parents) {
-            spatialUnitRepository.saveSpatialUnitHierarchy(parent.getId(), spatialUnit.getId());
-        }
-
-        for (SpatialUnit child : childs) {
-            spatialUnitRepository.saveSpatialUnitHierarchy(spatialUnit.getId(), child.getId());
-        }
-
-        return spatialUnit;
-    }
-
-    /**
-     * Creates if not exists the arkServer, ark and concept for a given category and saves a new spatial unit with
-     * the given hierarchy.
-     * @param name The name of the spatial unit
-     * @param vocabulary The database saved vocabulary
-     * @param category The API response for the category concept
-     * @return The saved spatial unit
-     * @throws SpatialUnitAlreadyExistsException If a spatial unit with the same ARK already exists
-     */
-    public SpatialUnit saveSpatialUnit(String name,
-                                       Vocabulary vocabulary,
-                                       ConceptFieldDTO category) throws SpatialUnitAlreadyExistsException {
+                                       ConceptFieldDTO category) {
 
         ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
 

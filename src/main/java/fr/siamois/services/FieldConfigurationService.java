@@ -130,7 +130,6 @@ public class FieldConfigurationService {
      * Delete the old configuration when the new configuration is a vocabulary.
      * @param loggedUser The database saved user
      * @param selectedVocab The database saved vocabulary
-     * @return True if the field exists, false otherwise
      * @throws FailedFieldUpdateException If the field already exists and the vocabulary is the same
      */
     private void  deleteOldConfigurationIfDifferent(Person loggedUser, String fieldCode, Vocabulary selectedVocab) throws FailedFieldUpdateException {

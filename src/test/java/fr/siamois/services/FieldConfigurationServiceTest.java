@@ -167,9 +167,7 @@ class FieldConfigurationServiceTest {
                 .thenReturn(List.of(vocabularyCollection));
 
         // WHEN
-        assertThrows(FailedFieldUpdateException.class, () -> {
-            service.saveThesaurusCollectionFieldConfiguration(person, field.getFieldCode(), List.of(vocabularyCollection));
-        });
+        assertThrows(FailedFieldUpdateException.class, () -> service.saveThesaurusCollectionFieldConfiguration(person, field.getFieldCode(), List.of(vocabularyCollection)));
     }
 
     @Test
@@ -195,9 +193,7 @@ class FieldConfigurationServiceTest {
         when(vocabularyRepository.findVocabularyOfUserForField(person.getId(), field.getFieldCode()))
                 .thenReturn(Optional.of(vocabulary));
 
-        assertThrows(FailedFieldUpdateException.class, () -> {
-            service.saveThesaurusFieldConfiguration(person, field.getFieldCode(), vocabulary);
-        });
+        assertThrows(FailedFieldUpdateException.class, () -> service.saveThesaurusFieldConfiguration(person, field.getFieldCode(), vocabulary));
     }
 
 }
