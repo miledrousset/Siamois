@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.lang.NonNullApi;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,6 +36,13 @@ public class ConceptApi {
         }).build();
     }
 
+    /**
+     * Fetch the autocomplete results of Opentheso API for a given input and vocabulary collection.
+     * @param collection The database saved vocabulary collection
+     * @param input The input to search for
+     * @param lang The language to search in
+     * @return A list of concept field DTOs
+     */
     public List<ConceptFieldDTO> fetchAutocomplete(VocabularyCollection collection, String input, String lang) {
         input = URLEncoder.encode(input, StandardCharsets.UTF_8);
         if (input.equals("+") || StringUtils.isEmpty(input)) input = "%20"; // Avoid sending empty string, replace it with a space to get all results

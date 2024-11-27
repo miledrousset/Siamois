@@ -16,5 +16,13 @@ public interface VocabularyRepository extends CrudRepository<Vocabulary, Long> {
     )
     Optional<Vocabulary> findVocabularyByBaseUriAndVocabExternalId(@Param("baseUri")String baseUri, @Param("externalId") String externalId);
 
+    @Query(
+            nativeQuery = true,
+            value = "SELECT v.* FROM vocabulary v " +
+                    "JOIN field f ON v.vocabulary_id = f.fk_vocabulary_id " +
+                    "WHERE f.fk_user_id = :personId AND f.field_code = :categoryFieldCode"
+    )
+    Optional<Vocabulary> findVocabularyOfUserForField(@Param("personId") Long personId, @Param("categoryFieldCode") String categoryFieldCode);
+
 }
 

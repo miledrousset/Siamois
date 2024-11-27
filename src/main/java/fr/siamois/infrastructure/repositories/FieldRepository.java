@@ -28,9 +28,32 @@ public interface FieldRepository extends CrudRepository<Field, Long> {
     @Modifying
     @Query(
             nativeQuery = true,
-            value = "UPDATE field_vocabulary_collection " +
-                    "SET fk_collection_id = :collectionId " +
-                    "WHERE fk_field_id = :fieldId"
+            value = "DELETE FROM field_vocabulary_collection fvc " +
+                    "WHERE fk_field_id IN " +
+                    "( SELECT f.field_id " +
+                    "FROM field f " +
+                    "WHERE fk_user_id = :personId " +
+                    "AND field_code = :fieldCode )"
     )
-    void changeCollectionOfField(@Param("collectionId") Long collectionId, @Param("fieldId") Long fieldId);
+    int deleteVocabularyCollectionConfigurationByPersonAndFieldCode(Long personId, String fieldCode);
+
+    @Transactional
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = "UPDATE field " +
+                    "SET fk_vocabulary_id = NULL " +
+                    "WHERE field_code = :fieldCode AND fk_user_id = :personId"
+    )
+    int deleteVocabularyConfigurationByPersonAndFieldCode(Long personId, String fieldCode);
+
+    @Transactional
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = "UPDATE field " +
+                    "SET fk_vocabulary_id = :vocabId " +
+                    "WHERE field_id = :fieldId"
+    )
+    int saveVocabularyWithField(Long fieldId, Long vocabId);
 }

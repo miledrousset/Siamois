@@ -91,7 +91,7 @@ public class SpatialUnitFieldBean implements Serializable {
 
         try {
             if (vocabularyCollection == null) {
-                vocabularyCollection = fieldConfigurationService.fetchPersonFieldConfiguration(person, SpatialUnit.CATEGORY_FIELD_CODE)
+                vocabularyCollection = fieldConfigurationService.fetchCollectionOfPersonFieldConfiguration(person, SpatialUnit.CATEGORY_FIELD_CODE)
                         .orElseThrow(() -> new NoCollectionForFieldException(SpatialUnit.CATEGORY_FIELD_CODE));
             }
 

@@ -22,4 +22,5 @@ public interface VocabularyCollectionRepository extends CrudRepository<Vocabular
     )
     Optional<VocabularyCollection> findVocabularyCollectionByPersonAndFieldCode(@Param("personId") Long personId,
                                                                             @Param("fieldCode") String fieldCode);
+
 }

@@ -2,9 +2,6 @@ package fr.siamois.services;
 
 import fr.siamois.infrastructure.api.ThesaurusApi;
 import fr.siamois.infrastructure.api.ThesaurusCollectionApi;
-import fr.siamois.infrastructure.api.dto.LabelDTO;
-import fr.siamois.infrastructure.api.dto.ThesaurusDTO;
-import fr.siamois.infrastructure.api.dto.VocabularyCollectionDTO;
 import fr.siamois.infrastructure.repositories.FieldRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.VocabularyCollectionRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.VocabularyRepository;
@@ -16,19 +13,17 @@ import fr.siamois.models.exceptions.field.FailedFieldSaveException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
-import fr.siamois.models.vocabulary.VocabularyType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class FieldConfigurationServiceTest {
@@ -49,7 +44,10 @@ class FieldConfigurationServiceTest {
     private FieldConfigurationService service;
 
     private Person person;
-    private VocabularyCollection g21;
+
+    private Vocabulary vocabulary;
+    private VocabularyCollection vocabularyCollection;
+    private Field field;
 
     @BeforeEach
     public void setUp() {
@@ -65,98 +63,143 @@ class FieldConfigurationServiceTest {
         person.setUsername("test");
         person.setPassword("unhashedPassword");
 
-        VocabularyType thesaurusType = new VocabularyType();
-        thesaurusType.setId(1L);
-        thesaurusType.setLabel("Thesaurus");
+        vocabulary = new Vocabulary();
+        vocabulary.setId(-1L);
+        vocabulary.setExternalVocabularyId("th21");
 
-        Vocabulary th21 = new Vocabulary();
-        th21.setExternalVocabularyId("th21");
-        th21.setId(1L);
-        th21.setVocabularyName("Test name");
-        th21.setType(thesaurusType);
-        th21.setBaseUri("http://example.com");
+        vocabularyCollection = new VocabularyCollection();
+        vocabularyCollection.setId(-1L);
+        vocabularyCollection.setVocabulary(vocabulary);
 
-        g21 = new VocabularyCollection();
-        g21.setId(1L);
-        g21.setVocabulary(th21);
-        g21.setExternalId("g21");
-
-        ThesaurusDTO thesaurusDTO = new ThesaurusDTO();
-        thesaurusDTO.setIdTheso("th21");
-        thesaurusDTO.setLabels(new ArrayList<>());
-
-        LabelDTO labelDTO = new LabelDTO();
-        labelDTO.setLang("fr");
-        labelDTO.setTitle("Test name");
-
-        thesaurusDTO.getLabels().add(labelDTO);
+        field = new Field();
+        field.setId(-1L);
+        field.setUser(person);
+        field.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
 
     }
 
     @Test
-    void saveThesaurusFieldConfiguration_shouldThrow_whenNoUpdate() {
+    public void saveThesaurusCollectionFieldConfiguraiton_shouldCreateField_whenNoFieldExistAndNoConfigurationExist() throws FailedFieldSaveException, FailedFieldUpdateException {
         // GIVEN
-        Field field = new Field();
-        field.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
-        field.setUser(person);
-        field.setId(1L);
-
-        VocabularyCollectionDTO dto = new VocabularyCollectionDTO();
-        dto.setIdGroup("g21");
-        dto.setLabels(new ArrayList<>());
-
-        LabelDTO labelDTO = new LabelDTO();
-        labelDTO.setLang("fr");
-        labelDTO.setTitle("Groupe test");
-
-        dto.getLabels().add(labelDTO);
-
-        when(fieldRepository.findByUserAndFieldCode(person, SpatialUnit.CATEGORY_FIELD_CODE))
-                .thenReturn(Optional.of(field));
-
-        when(vocabularyCollectionRepository.findVocabularyCollectionByPersonAndFieldCode(person.getId(), SpatialUnit.CATEGORY_FIELD_CODE))
-                .thenReturn(Optional.of(g21));
-
-        assertThrows(FailedFieldUpdateException.class, () ->
-                service.saveThesaurusFieldConfiguration(person,
-                SpatialUnit.CATEGORY_FIELD_CODE,
-                        g21
-        ));
-    }
-
-    @Test
-    void saveThesaurusFieldConfiguration_shouldThrow_whenSaveError() {
-        // GIVEN
-        Field field = new Field();
-        field.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
-        field.setUser(person);
-        field.setId(1L);
-
-        VocabularyCollectionDTO dto = new VocabularyCollectionDTO();
-        dto.setIdGroup("g21");
-        dto.setLabels(new ArrayList<>());
-
-        LabelDTO labelDTO = new LabelDTO();
-        labelDTO.setLang("fr");
-        labelDTO.setTitle("Groupe test");
-
-        dto.getLabels().add(labelDTO);
-
-        when(vocabularyCollectionRepository.findVocabularyCollectionByPersonAndFieldCode(person.getId(), SpatialUnit.CATEGORY_FIELD_CODE))
+        when(vocabularyCollectionRepository.findVocabularyCollectionByPersonAndFieldCode(person.getId(), field.getFieldCode()))
                 .thenReturn(Optional.empty());
 
-        when(fieldRepository.findByUserAndFieldCode(person, SpatialUnit.CATEGORY_FIELD_CODE))
+        when(vocabularyRepository.findVocabularyOfUserForField(person.getId(), field.getFieldCode()))
                 .thenReturn(Optional.empty());
 
         when(fieldRepository.save(any(Field.class))).thenReturn(field);
 
-        when(fieldRepository.saveCollectionWithField(g21.getId(), field.getId())).thenReturn(0);
+        when(fieldRepository.saveCollectionWithField(vocabularyCollection.getId(), field.getId())).thenReturn(1);
 
-        assertThrows(FailedFieldSaveException.class, () ->
-                service.saveThesaurusFieldConfiguration(person,
-                SpatialUnit.CATEGORY_FIELD_CODE,
-                        g21
-        ));
+        // WHEN
+        service.saveThesaurusCollectionFieldConfiguration(person, field.getFieldCode(), vocabularyCollection);
 
+        // THEN
+        verify(fieldRepository, times(1)).save(any(Field.class));
+        verify(fieldRepository, times(1)).saveCollectionWithField(vocabulary.getId(), field.getId());
     }
+
+    @Test
+    public void saveThesaurusCollectionFieldConfiguration_shouldUpdateField_whenNewCollectionIsGivenAndPreviousWasCollection() throws FailedFieldSaveException, FailedFieldUpdateException {
+        // GIVEN
+        VocabularyCollection newCollection = new VocabularyCollection();
+        newCollection.setId(-2L);
+        newCollection.setVocabulary(vocabulary);
+        newCollection.setExternalId("g2132");
+
+        when(vocabularyCollectionRepository.findVocabularyCollectionByPersonAndFieldCode(person.getId(), field.getFieldCode()))
+                .thenReturn(Optional.of(vocabularyCollection));
+
+        when(fieldRepository.deleteVocabularyCollectionConfigurationByPersonAndFieldCode(person.getId(), field.getFieldCode()))
+                .thenReturn(1);
+
+        when(vocabularyRepository.findVocabularyOfUserForField(person.getId(), field.getFieldCode()))
+                .thenReturn(Optional.empty());
+
+        when(fieldRepository.findByUserAndFieldCode(person, field.getFieldCode())).thenReturn(Optional.of(field));
+
+        when(fieldRepository.saveCollectionWithField(newCollection.getId(), field.getId()))
+                .thenReturn(1);
+
+        // WHEN
+        service.saveThesaurusCollectionFieldConfiguration(person, field.getFieldCode(), newCollection);
+
+        // THEN
+        verify(fieldRepository, times(1)).deleteVocabularyCollectionConfigurationByPersonAndFieldCode(person.getId(), field.getFieldCode());
+        verify(fieldRepository, times(1)).saveCollectionWithField(newCollection.getId(), field.getId());
+    }
+
+    @Test
+    public void saveThesaurusCollectionFieldConfiguration_shouldUpdateField_whenNewCollectionIsGivenAndPreviousWasVocab() throws FailedFieldSaveException, FailedFieldUpdateException {
+        // GIVEN
+        VocabularyCollection newCollection = new VocabularyCollection();
+        newCollection.setId(-2L);
+        newCollection.setVocabulary(vocabulary);
+        newCollection.setExternalId("g2132");
+
+        when(vocabularyCollectionRepository.findVocabularyCollectionByPersonAndFieldCode(person.getId(), field.getFieldCode()))
+                .thenReturn(Optional.empty());
+
+        when(vocabularyRepository.findVocabularyOfUserForField(person.getId(), field.getFieldCode()))
+                .thenReturn(Optional.of(vocabulary));
+
+        when(fieldRepository.deleteVocabularyConfigurationByPersonAndFieldCode(person.getId(), field.getFieldCode()))
+                .thenReturn(1);
+
+        when(fieldRepository.findByUserAndFieldCode(person, field.getFieldCode())).thenReturn(Optional.of(field));
+
+        when(fieldRepository.saveCollectionWithField(newCollection.getId(), field.getId()))
+                .thenReturn(1);
+
+        // WHEN
+        service.saveThesaurusCollectionFieldConfiguration(person, field.getFieldCode(), newCollection);
+
+        // THEN
+        verify(fieldRepository, times(1)).deleteVocabularyConfigurationByPersonAndFieldCode(person.getId(), field.getFieldCode());
+        verify(fieldRepository, times(1)).saveCollectionWithField(newCollection.getId(), field.getId());
+    }
+
+    @Test
+    public void saveThesaurusCollectionFieldConfiguration_shouldThrow_whenNewCollectionIsTheSame() {
+        // GIVEN
+        when(vocabularyCollectionRepository.findVocabularyCollectionByPersonAndFieldCode(person.getId(), field.getFieldCode()))
+                .thenReturn(Optional.of(vocabularyCollection));
+
+        // WHEN
+        assertThrows(FailedFieldUpdateException.class, () -> {
+            service.saveThesaurusCollectionFieldConfiguration(person, field.getFieldCode(), vocabularyCollection);
+        });
+    }
+
+    @Test
+    public void saveThesaurusFieldConfiguration_shouldCreateField_whenNoFieldExistAndNoConfigurationExist() throws FailedFieldSaveException, FailedFieldUpdateException {
+        // GIVEN
+        when(vocabularyCollectionRepository.findVocabularyCollectionByPersonAndFieldCode(person.getId(), field.getFieldCode()))
+                .thenReturn(Optional.empty());
+
+        when(vocabularyRepository.findVocabularyOfUserForField(person.getId(), field.getFieldCode()))
+                .thenReturn(Optional.empty());
+
+        when(fieldRepository.save(any(Field.class))).thenReturn(field);
+
+        when(fieldRepository.saveVocabularyWithField(vocabulary.getId(), field.getId())).thenReturn(1);
+
+        // WHEN
+        service.saveThesaurusFieldConfiguration(person, field.getFieldCode(), vocabulary);
+
+        // THEN
+        verify(fieldRepository, times(1)).save(any(Field.class));
+        verify(fieldRepository, times(1)).saveVocabularyWithField(field.getId(), vocabulary.getId());
+    }
+
+    @Test
+    public void saveThesaurusCollectionFieldConfiguration_shouldThrow_whenNewVocabIsTheSame() {
+        when(vocabularyRepository.findVocabularyOfUserForField(person.getId(), field.getFieldCode()))
+                .thenReturn(Optional.of(vocabulary));
+
+        assertThrows(FailedFieldUpdateException.class, () -> {
+            service.saveThesaurusFieldConfiguration(person, field.getFieldCode(), vocabulary);
+        });
+    }
+
 }

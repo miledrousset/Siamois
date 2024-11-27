@@ -5,17 +5,12 @@ import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
-import fr.siamois.models.SpatialUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(MockitoExtension.class)
 class FieldServiceTest {
@@ -49,22 +44,5 @@ class FieldServiceTest {
         String arkId = fieldService.getArkIdFromUri(uri);
 
         assertEquals("666666/SOMEID-0", arkId);
-    }
-
-    @Test
-    void isSpatialUnitHierarchyCoherent_shouldReturnFalseIfNodeIsParentAndChild() {
-        List<SpatialUnit> parent = new ArrayList<>();
-        List<SpatialUnit> child = new ArrayList<>();
-
-        SpatialUnit parent1 = new SpatialUnit();
-        parent1.setId(1L);
-        SpatialUnit child1 = new SpatialUnit();
-        child1.setId(1L);
-
-        parent.add(parent1);
-        child.add(child1);
-        child.add(parent1);
-
-        assertFalse(fieldService.isSpatialUnitHierarchyCoherent(parent, child), "The hierarchy is not coherent");
     }
 }

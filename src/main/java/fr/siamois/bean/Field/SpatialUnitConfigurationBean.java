@@ -14,6 +14,7 @@ import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -40,6 +41,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
     private Vocabulary selectedVocab = null;
     private Map<String, String> labels = new HashMap<>();
     private final String lang = "fr";
+    private static final String EMPTY_LABEL = "Tout le thésaurus";
 
     // Fields
     private String serverUrl = "";
@@ -55,7 +57,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
      */
     public void onLoad() {
         Person loggedUser = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow();
-        Optional<VocabularyCollection> opt = fieldConfigurationService.fetchPersonFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE);
+        Optional<VocabularyCollection> opt = fieldConfigurationService.fetchCollectionOfPersonFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE);
         if (opt.isPresent()) {
             VocabularyCollection vocabularyCollection = opt.get();
             serverUrl = vocabularyCollection.getVocabulary().getBaseUri();
@@ -68,6 +70,17 @@ public class SpatialUnitConfigurationBean implements Serializable {
 
             loadGroupValue();
 
+        } else {
+            Optional<Vocabulary> optionalVocabulary = fieldConfigurationService.fetchVocabularyOfPersonFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE);
+            if (optionalVocabulary.isPresent()) {
+                Vocabulary  vocabulary = optionalVocabulary.get();
+                serverUrl = vocabulary.getBaseUri();
+
+                loadThesaurusValue();
+
+                selectedVocab = vocabulary;
+                selectedValue = vocabulary.getExternalVocabularyId();
+            }
         }
     }
 
@@ -88,7 +101,21 @@ public class SpatialUnitConfigurationBean implements Serializable {
             for (int i = 0; i < localisedLabels.size(); i++)
                 labels.put(savedCollections.get(i).getExternalId(), localisedLabels.get(i));
 
+            if (labels.isEmpty()) {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Aucune collection trouvée. Tout le thésaurus sera utilisé."));
+                return;
+            }
+
+            labels.put("", EMPTY_LABEL);
+
             collections.addAll(savedCollections);
+
+            VocabularyCollection empty = new VocabularyCollection();
+            empty.setId(-1L);
+            empty.setExternalId("");
+
+            collections.add(empty);
 
         } catch (ClientSideErrorException e) {
             log.error(e.getMessage(), e);
@@ -113,18 +140,28 @@ public class SpatialUnitConfigurationBean implements Serializable {
     public void processForm() {
         Person loggedUser = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow();
 
-        Optional<VocabularyCollection> optSelected = getSelectedCollectionId();
-
-        if (optSelected.isEmpty()) {
-            FacesContext.getCurrentInstance()
-                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Erreur interne lors du traitement de la donnée."));
-            return;
-        }
-
         try {
+
+            if (StringUtils.isEmpty(selectedValue)) {
+                fieldConfigurationService.saveThesaurusFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE, selectedVocab);
+
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La configuration a bien été enregistrée"));
+
+                return;
+            }
+
+            Optional<VocabularyCollection> optSelected = getSelectedCollectionId();
+
+            if (optSelected.isEmpty()) {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Erreur interne lors du traitement de la donnée."));
+                return;
+            }
+
             VocabularyCollection collection = fieldConfigurationService.saveVocabularyCollectionIfNotExists(optSelected.get());
 
-            fieldConfigurationService.saveThesaurusFieldConfiguration(loggedUser,
+            fieldConfigurationService.saveThesaurusCollectionFieldConfiguration(loggedUser,
                     SpatialUnit.CATEGORY_FIELD_CODE,
                     collection);
 
@@ -143,7 +180,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
     }
 
     /**
-     * Search for the selected collection by it's id input in the field.
+     * Search for the selected collection by its id input in the field.
      * @return An empty optional of the ID is invalid. Returns the collection otherwise.
      */
     private Optional<VocabularyCollection> getSelectedCollectionId() {
@@ -153,7 +190,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
     }
 
     /**
-     * Search for the selected vocabulary by it's id input in the field.
+     * Search for the selected vocabulary by its id input in the field.
      * @return An empty optional of the ID is invalid. Returns the vocabulary otherwise.
      */
     private Optional<Vocabulary> getSelectedVocab() {

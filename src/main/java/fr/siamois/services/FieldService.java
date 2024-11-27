@@ -156,23 +156,6 @@ public class FieldService {
         return spatialUnit;
     }
 
-    public boolean isSpatialUnitHierarchyCoherent(List<SpatialUnit> parents, List<SpatialUnit> children) {
-
-        for (SpatialUnit parent : parents) {
-            if (children.contains(parent)) {
-                return false;
-            }
-        }
-
-        for (SpatialUnit child : children) {
-            if (parents.contains(child)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public String getArkIdFromUri(String uri) {
         StringBuilder builder = new StringBuilder();
         int slashCount = 0;
