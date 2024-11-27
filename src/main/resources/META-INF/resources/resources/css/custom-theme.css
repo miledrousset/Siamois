@@ -1,0 +1,11 @@
+.ui-button {
+    background-color: #bed730 !important; /* Change button background */
+    border-color: #bed730 !important;    /* Change button border */
+    color: black; !important;
+}
+
+.btn-danger {
+    background-color: #a7484d !important; /* Change button background */
+    border-color: #a7484d !important;    /* Change button border */
+}
+

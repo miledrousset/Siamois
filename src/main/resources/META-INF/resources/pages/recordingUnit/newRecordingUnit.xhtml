@@ -1,0 +1,83 @@
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:define name="content">
+
+        <h:outputScript library="primefaces" name="jquery/jquery.js"/>
+
+        <!-- Content -->
+        <h:form>
+            <h5 class="mt-0">Nouvelle unité d'enregistrement</h5>
+            <div class="row">
+                <!-- <p:staticMessage severity="error" summary="Error" closable="false" detail="Just testing"/> -->
+                <div class="form-panel col-12 col-lg-6 col-xl-6">
+                    <p:panel id="panel-general" header="General" toggleable="true">
+                        <div class="field grid">
+                            <h:outputLabel for="name" value="Nom" styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                            <div class="col-12 md:col-10">
+                                <p:inputText id="name" required="true"/>
+                            </div>
+                            <h:outputLabel for="description" value="Description"
+                                           styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                            <div class="col-12 md:col-10">
+                                <!-- <p:inputTextarea rows="6" cols="33" id="description"/> -->
+                                <!-- TODO : make is secure or remove it -->
+                                <p:textEditor is="description" secure='false' height="300px"  />
+                            </div>
+                        </div>
+                    </p:panel>
+                </div>
+
+                <div class="form-panel col-12 col-lg-6 col-xl-6">
+                    <p:panel id="panel-type" header="General" toggleable="true">
+                        <div class="field grid">
+                            <div class="field col-12 md:col-4">
+                                <p:outputLabel for="@next" value="Type d'UE" styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                                <p:selectOneMenu id="option" value="#{selectOneMenuView.selectedOption}">
+                                    <f:selectItem itemLabel="Unité de fouille" itemValue=""/>
+                                    <f:selectItem itemLabel="Unité stratigraphique" itemValue="Option1"/>
+                                    <f:selectItem itemLabel="Unité englobante" itemValue="Option2"/>
+                                    <f:selectItem itemLabel="Unité technique" itemValue="Option3"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </p:panel>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-panel col-12">
+                    <p:panel id="panel-stratigraphy" header="Stratigraphie" toggleable="true" toggleSpeed="500">
+                        <p:chronoline value="#{recordingUnitFormBean.events}" var="event" align="left" styleClass="customized-chronoline">
+
+                            <f:facet name="opposite">
+                                <small class="text-secondary">#{event.status}</small>
+                            </f:facet>
+
+                            <f:facet name="marker">
+                                <span class="custom-marker shadow-1" style="background-color: #{event.color}"><i class="#{event.icon}"/></span>
+                            </f:facet>
+
+                            <p:button value="Add"
+                                      icon="pi pi-plus-circle"/>
+                            <div class="flex align-items-center flex-wrap" id="slot">
+                                <p:chip label="US1" styleClass="mr-2" />
+                                <p:chip label="US2" styleClass="mr-2"/>
+                                <p:chip label="US3" styleClass="mr-2"/>
+                                <p:chip label="US4" removable="true"/>
+                            </div>
+
+                        </p:chronoline>
+                    </p:panel>
+                </div>
+            </div>
+
+            <p:commandButton value="Save" update="@form"/>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

@@ -17,7 +17,7 @@ html, body {
 }
 
 .left-panel {
-    background-color: #a7484d;
+    background-color: #c7c7c7;
     padding: 20px;
     min-height: 100%;
     transition: width 0.3s;
@@ -26,7 +26,7 @@ html, body {
 .app-name {
     font-size: 20px;
     min-height: 100%;
-    background-color: #bed730;
+    background-color: white;
     font-weight: bold;
     margin-bottom: 20px;
 }
@@ -35,6 +35,7 @@ html, body {
     flex-grow: 1;
     background-color: #bed730;
     padding: 10px;
+    min-height: 100%;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     display: flex;
     align-items: center;
@@ -56,5 +57,33 @@ html, body {
     align-items: center;
     width: 40px; /* Adjust width as needed */
     height: 40px; /* Adjust height as needed */
+}
+
+.form-panel {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.custom-marker {
+    display: flex;
+    width: 2rem;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.ui-chronoline-event-content,
+.ui-chronoline-event-opposite {
+    line-height: 1;
+    width: 0px;
+}
+
+
+.ui-chip.custom-chip {
+    background: var(--primary-color);
+    color: var(--primary-color-text);
 }
 

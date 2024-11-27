@@ -10,6 +10,11 @@
         <!-- Conditionally render the message if it's set in the bean -->
         <p:staticMessage severity="error" summary="Error" closable="false" detail="#{homeBean.spatialUnitListErrorMessage}" rendered="#{not empty homeBean.spatialUnitListErrorMessage}" />
         <spatialUnit:spatialUnitList spatialUnitList="#{homeBean.spatialUnitList}" />
+
+        <!-- Button to access recording unit form -->
+        <p:button value="Nouvelle unité d'enregistrement"
+                  icon="pi pi-add"
+                  outcome="/pages/recordingUnit/newRecordingUnit.xhtml" />
     </ui:define>
 
 </ui:composition>
