@@ -1,6 +1,7 @@
 package fr.siamois.repositories;
 
 import fr.siamois.models.RecordingUnit;
+import fr.siamois.models.SpatialUnit;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -24,7 +25,18 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
     List<RecordingUnit> findAllParentsOfRecordingUnit(@Param("recordingUnitId") Long recordingUnitId);
 
 
-    List<RecordingUnit> findAllBySpatialUnitId(long spatialUnitId);
+    /**
+     * @param spatialUnitId - The ID of the spatial unit
+     * @return List of recording units
+     */
+    @Query(
+            nativeQuery = true,
+            value = "SELECT ru.* FROM recording_unit ru " +
+                    "JOIN action_unit au ON ru.fk_action_unit_id = au.action_unit_id " +
+                    "JOIN spatial_unit su ON au.fk_spatial_unit_id = su.spatial_unit_id "+
+                    "WHERE su.spatial_unit_id = :spatialUnitId"
+    )
+    List<RecordingUnit> findAllBySpatialUnitId(Long spatialUnitId);
 
 //    todo:  @Query(
 //            nativeQuery = true,

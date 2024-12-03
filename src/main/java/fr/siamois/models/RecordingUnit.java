@@ -1,5 +1,6 @@
 package fr.siamois.models;
 
+import fr.siamois.models.ark.Ark;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -27,15 +28,16 @@ public class RecordingUnit {
     @Column(name = "recording_unit_date")
     private OffsetDateTime recordingUnitDate;
 
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "description")
+    private String description;
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_action_unit_id", nullable = false)
     private ActionUnit actionUnit;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "fk_spatial_unit_id", nullable = false)
-    private SpatialUnit spatialUnit;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

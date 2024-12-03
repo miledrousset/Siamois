@@ -88,7 +88,7 @@ public class SpatialUnitBean {
                 }
                 try {
                     this.recordingUnitListErrorMessage = null;
-                    this.recordingUnitList = recordingUnitService.findAllBySpatialUnitId(spatialUnit);
+                    this.recordingUnitList = recordingUnitService.findAllBySpatialUnit(spatialUnit);
                 } catch (RuntimeException e) {
                     this.recordingUnitList = null;
                     this.recordingUnitListErrorMessage = "Unable to load recording units: " + e.getMessage();

@@ -4,21 +4,22 @@ import fr.siamois.models.RecordingUnit;
 import fr.siamois.models.SpatialUnit;
 
 import fr.siamois.repositories.RecordingUnitRepository;
+import fr.siamois.repositories.RecordingUnitStudyRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
 public class RecordingUnitService {
 
     private final RecordingUnitRepository recordingUnitRepository;
+    private final RecordingUnitStudyRepository recordingUnitStudyRepository;
 
-    public RecordingUnitService(RecordingUnitRepository recordingUnitRepository) {
+    public RecordingUnitService(RecordingUnitRepository recordingUnitRepository, RecordingUnitStudyRepository recordingUnitStudyRepository) {
         this.recordingUnitRepository = recordingUnitRepository;
+        this.recordingUnitStudyRepository = recordingUnitStudyRepository;
     }
 
     /**
@@ -27,8 +28,12 @@ public class RecordingUnitService {
      * @return The List of RecordingUnit
      * @throws RuntimeException If the repository method throws an Exception
      */
-    public List<RecordingUnit> findAllBySpatialUnitId(SpatialUnit spatialUnit)   {
+    public List<RecordingUnit> findAllBySpatialUnit(SpatialUnit spatialUnit)   {
         return recordingUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
+    }
+
+    public RecordingUnit save(RecordingUnit recordingUnit) {
+        return recordingUnitRepository.save(recordingUnit);
     }
 
 }
