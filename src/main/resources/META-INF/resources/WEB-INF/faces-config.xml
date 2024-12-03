@@ -8,6 +8,7 @@
     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd"
     version="2.3">
 
+    <!--
      <application>
         <resource-bundle>
             <base-name>hikari</base-name>
@@ -62,7 +63,7 @@
         <filter-name>PrimeFaces FileUpload Filter</filter-name>
         <servler-name>Faces Servlet</servler-name>
     </filter-mapping>
-    <!--
+
     <factory>
         <exception-handler-factory>fr.cnrs.siamois.bean.session.ViewExpiredExceptionHandlerFactory</exception-handler-factory>
     </factory>

@@ -8,16 +8,28 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Configuration class for the security of the application.
+ * @author Julien Linget
+ */
 @Slf4j
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+    /**
+     * Security filter chain of the application.
+     * @param http HttpSecurity object to configure the security chain.
+     * @return The security filter chain with the configuration.
+     * @throws Exception If any filter configuration fails.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.trace("Security chain ");
         http.authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/", "/index.xhtml", "/pages/spatialUnit/*").authenticated()
+                .requestMatchers("/", "/index.xhtml").authenticated()
+                .requestMatchers("/fieldConfiguration", "/pages/field/fieldConfiguration.xhtml").authenticated()
+                .requestMatchers("/pages/create/spatialUnit.xhtml").authenticated()
                 .anyRequest().permitAll()
         );
         http.formLogin((login) -> login
@@ -33,6 +45,10 @@ public class WebSecurityConfig {
         return http.build();
     }
 
+    /**
+     * Password encoder bean.
+     * @return BCryptPasswordEncoder object to encode passwords with bcrypt.
+     */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

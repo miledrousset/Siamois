@@ -2,8 +2,8 @@ package fr.siamois.bean.RecordingUnit;
 
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.ark.Ark;
-import fr.siamois.models.Concept;
-import fr.siamois.models.RecordingUnit;
+import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.ark.ArkGenerator;
@@ -88,8 +88,8 @@ public class RecordingUnitFormBean {
         recordingUnit.setActionUnit(actionUnit);
         // Todo : properly generate ARK
         Ark ark = new Ark();
-        ark.setArkServer();
-        ark.setArkId(ArkGenerator.generateArk());
+//        ark.setArkServer();
+//        ark.setArkId(ArkGenerator.generateArk());
 
 
         events = new ArrayList<>();

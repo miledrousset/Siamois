@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2024.11.19-5" author="Julien Linget">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*)
+                FROM information_schema.table_constraints
+                WHERE constraint_type = 'UNIQUE'
+                  AND table_name = 'vocabulary'
+                  AND constraint_name = 'vocabulary_pk_uri_external_id';
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            alter table vocabulary
+                add constraint vocabulary_pk_uri_external_id
+                    unique (base_uri, external_id);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

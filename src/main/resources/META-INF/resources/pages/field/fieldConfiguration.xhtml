@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <!-- Import de BOOTSTRAP -->
+    <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css"/>
+    <script src="resources/js/bootstrap.bundle.min.js"></script>
+    <title>Configuration des champs</title>
+</h:head>
+
+<f:metadata>
+    <f:viewAction action="#{spatialUnitConfigurationBean.onLoad()}"/>
+</f:metadata>
+
+<body>
+<h1>Field Configuration</h1>
+<h:outputText value="Page de configuration de #{spatialUnitConfigurationBean.authenticatedUser}"/>
+<h2>Unités spatiales</h2>
+<h3>Types d'unités spatiales</h3>
+<div class="ui-fluid">
+    <h:form>
+        <div class="field grid">
+            <p:outputLabel for="serverUrl" styleClass="col-12 md:col-2" value="URL du serveur"/>
+            <div class="col-12 md:col-10">
+                <p:inputText id="serverUrl" value="#{spatialUnitConfigurationBean.serverUrl}"/>
+            </div>
+            <p:commandButton value="Accéder au serveur" action="#{spatialUnitConfigurationBean.loadThesaurusValue()}"
+                             update="globalThesaurusId,globalCollectionsId"/>
+        </div>
+        <div class="field grid">
+            <p:outputLabel for="globalThesaurusId" styleClass="col-12 md:col-2"
+                           value="Identifiant interne du thésaurus"/>
+            <div class="col-12 md:col-10">
+                <p:selectOneMenu id="globalThesaurusId" value="#{spatialUnitConfigurationBean.selectedThesaurus}">
+                    <f:selectItems value="#{spatialUnitConfigurationBean.vocabularies}" var="vocab"
+                                   itemLabel="#{vocab.vocabularyName} (#{vocab.externalVocabularyId})"
+                                   itemValue="#{vocab.externalVocabularyId}"/>
+
+                </p:selectOneMenu>
+                <p:commandButton value="Charger les groupes" action="#{spatialUnitConfigurationBean.loadGroupValue()}"
+                                 update="globalCollectionsId"/>
+            </div>
+        </div>
+
+        <p:selectBooleanCheckbox value="#{spatialUnitConfigurationBean.selectEntireThesaurus}"
+                                 itemLabel="Selectionner tout le thésaurus">
+            <p:ajax event="change" update="globalCollectionsId" listener="#{spatialUnitConfigurationBean.removeAllSelectedGroups}"/>
+        </p:selectBooleanCheckbox>
+
+        <div class="field grid">
+            <p:outputLabel for="globalCollectionsId" styleClass="col-12 md:col-2"
+                           value="Selectionnez la ou les collection à utiliser"/>
+            <div class="col-12 md:col-10">
+
+                <p:dataTable id="globalCollectionsId" var="group" value="#{spatialUnitConfigurationBean.collections}"
+                             selection="#{spatialUnitConfigurationBean.selectedGroups}" rowKey="#{group.externalId}"
+                             rows="5" selectionPageOnly="false" selectionRowMode="none" cellNavigation="true"
+                             paginator="true"
+                             selectionDisabled="#{spatialUnitConfigurationBean.selectEntireThesaurus == true}">
+
+                    <p:column selectionBox="true" style="width:16px;text-align:center"/>
+                    <p:column headerText="ID">
+                        <h:outputText value="#{group.externalId}"/>
+                    </p:column>
+
+                    <p:column headerText="Nom">
+                        <h:outputText value="#{spatialUnitConfigurationBean.labels.get(group.externalId)}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+            </div>
+        </div>
+
+
+        <p:commandButton value="Sauvegarder" action="#{spatialUnitConfigurationBean.processForm()}"
+                         update="globalCollectionsId"/>
+
+        <p:messages id="messages" showDetail="true" closable="true">
+            <p:autoUpdate/>
+        </p:messages>
+
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    </h:form>
+
+    <p:button value="Retour à la page d'accueil" outcome="/index.xhtml"/>
+</div>
+
+</body>
+
+</html>

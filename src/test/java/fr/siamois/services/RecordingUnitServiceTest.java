@@ -1,8 +1,10 @@
 package fr.siamois.services;
 
-import fr.siamois.models.RecordingUnit;
+import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
 import fr.siamois.models.SpatialUnit;
-import fr.siamois.repositories.RecordingUnitRepository;
+
+import fr.siamois.models.recordingunit.RecordingUnit;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +15,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)

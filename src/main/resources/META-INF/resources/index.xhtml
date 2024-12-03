@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <HTML xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:head>
@@ -16,12 +15,6 @@
 <h:body>
 
     <ui:include src="pages/home/home.xhtml"/>
-
-
-        <form action="${pageContext.request.contextPath}logout" method="post">
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <button type="submit" class="btn btn-danger">Deconnexion</button>
-        </form>
 
 </h:body>
 

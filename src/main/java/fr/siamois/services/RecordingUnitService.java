@@ -1,10 +1,11 @@
 package fr.siamois.services;
 
-import fr.siamois.models.RecordingUnit;
+import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
+import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitStudyRepository;
 import fr.siamois.models.SpatialUnit;
 
-import fr.siamois.repositories.RecordingUnitRepository;
-import fr.siamois.repositories.RecordingUnitStudyRepository;
+import fr.siamois.models.recordingunit.RecordingUnit;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

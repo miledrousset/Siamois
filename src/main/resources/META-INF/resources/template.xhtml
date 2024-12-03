@@ -11,7 +11,7 @@
     <h:outputScript name="js/jquery-3.7.1.js"/>
     <h:outputScript name="js/bootstrap.bundle.min.js"/>
     <h:outputStylesheet name="css/styles.css"/>
-    <h:outputStylesheet name="css/custom-theme.css" />
+    <h:outputStylesheet name="css/custom-theme.css"/>
 </h:head>
 
 <h:body>
@@ -20,7 +20,7 @@
         <div class="row g-0">
             <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
                 <div class="app-name">
-                    <img src="#{resource['img/logo.png']}" alt="SIAMOIS Logo" class="img-fluid" />
+                    <img src="#{resource['img/logo.png']}" alt="SIAMOIS Logo" class="img-fluid"/>
                 </div>
             </div>
             <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
@@ -32,36 +32,43 @@
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                 <button type="submit" class="btn btn-danger">Deconnexion</button>
                             </form>
+                            <h:button value="Configuration champs" outcome="/pages/field/fieldConfiguration.xhtml"/>
                         </f:facet>
                         <p:divider layout="vertical"/>
                     </p:menubar>
                 </div>
             </div>
         </div>
+
+        <h:button value="Enregistrer une US" outcome="/pages/create/spatialUnit.xhtml"/>
         <div class="row g-0" style="min-height: 100%">
-            <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
-                <!-- Left Panel -->
-                <div class="left-panel">
+            <div class="row g-0">
 
-                    <!--                        <p:menu>
-                                                <p:submenu styleClass="icon-only-menu" label="">
-                                                    <p:menuitem value="" outcome="/pages/home/home" icon="pi pi-home"/>
-                                                    &lt;!&ndash; Add more menu items as needed &ndash;&gt;
-                                                </p:submenu>
-                                            </p:menu>-->
+                <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
+                    <!-- Left Panel -->
+                    <div class="left-panel">
+
+                        <!--                        <p:menu>
+                                                    <p:submenu styleClass="icon-only-menu" label="">
+                                                        <p:menuitem value="" outcome="/pages/home/home" icon="pi pi-home"/>
+                                                        &lt;!&ndash; Add more menu items as needed &ndash;&gt;
+                                                    </p:submenu>
+                                                </p:menu>-->
+                    </div>
+                </div>
+                <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
+                    <!-- Main Content Area -->
+                    <div class="main-content">
+                        <ui:insert name="content">
+                            <!-- Content will be inserted here -->
+                        </ui:insert>
+                    </div>
                 </div>
             </div>
-            <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
-                <!-- Main Content Area -->
-                <div class="main-content">
-                    <ui:insert name="content">
-                        <!-- Content will be inserted here -->
-                    </ui:insert>
-                </div>
-            </div>
+
+
         </div>
-
-
     </div>
+
 </h:body>
 </html>

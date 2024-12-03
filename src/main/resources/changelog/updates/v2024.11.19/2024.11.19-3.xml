@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2024.11.19-3" author="Julien Linget">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM vocabulary_type;
+            </sqlCheck>
+
+        </preConditions>
+        <sql>
+            INSERT INTO vocabulary_type(label) VALUES ('Thesaurus');
+            INSERT INTO vocabulary_type(label) VALUES ('Typology');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

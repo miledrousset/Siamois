@@ -4,7 +4,13 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components"> >
+                xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components">
+
+
+
+    <f:metadata>
+        <f:viewAction action="#{homeBean.init()}"/>
+    </f:metadata>
 
     <ui:define name="content">
         <!-- Conditionally render the message if it's set in the bean -->

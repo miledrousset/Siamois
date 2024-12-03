@@ -1,17 +1,15 @@
 package fr.siamois.bean.SpatialUnit;
 
 import fr.siamois.models.ActionUnit;
-import fr.siamois.models.RecordingUnit;
 import fr.siamois.models.SpatialUnit;
-
+import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.services.ActionUnitService;
-import fr.siamois.services.SpatialUnitService;
 import fr.siamois.services.RecordingUnitService;
+import fr.siamois.services.SpatialUnitService;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;

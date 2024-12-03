@@ -1,6 +1,8 @@
 package fr.siamois.models;
 
 import fr.siamois.models.ark.Ark;
+import fr.siamois.models.vocabulary.Concept;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -29,5 +31,7 @@ public class SpatialUnit {
 
 //    @Column(name = "spatial_extent", columnDefinition = "geometry not null")
 //    private Polygon spatialExtent;
+
+    public static final String CATEGORY_FIELD_CODE = "spatialUnit.category.collection";
 
 }
