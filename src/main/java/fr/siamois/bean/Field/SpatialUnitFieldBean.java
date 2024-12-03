@@ -69,7 +69,8 @@ public class SpatialUnitFieldBean implements Serializable {
         labels = refSpatialUnits.stream()
                 .map(SpatialUnit::getName)
                 .collect(Collectors.toList());
-
+        collections = null;
+        concepts = null;
         selectedConcept = null;
         fName = "";
         fCategory = "";
@@ -112,28 +113,50 @@ public class SpatialUnitFieldBean implements Serializable {
         Person person = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("User should be connected"));
 
         try {
-            List<VocabularyCollection> currentColl = fieldConfigurationService.fetchCollectionsOfPersonFieldConfiguration(person, SpatialUnit.CATEGORY_FIELD_CODE);
-            if (!currentColl.isEmpty()) collections = currentColl;
-
-            Optional<Vocabulary> currentVocab = fieldConfigurationService.fetchVocabularyOfPersonFieldConfiguration(person, SpatialUnit.CATEGORY_FIELD_CODE);
-            currentVocab.ifPresent(vocab -> vocabulary = vocab);
-
-            if(vocabulary == null && collections == null) throw new NoConfigForField(SpatialUnit.CATEGORY_FIELD_CODE);
-            if(vocabulary != null && collections != null ) throw new IllegalStateException("Only one type of configuration should be set");
-
-            if (collections != null && !collections.isEmpty()) {
+            setCurrentCollectionsIfNull(person);
+            if (collections != null)
+            {
                 concepts = fieldService.fetchAutocomplete(collections, input);
-            } else {
-                concepts = fieldService.fetchAutocomplete(vocabulary, input);
+                return concepts.stream()
+                        .map(ConceptFieldDTO::getLabel)
+                        .collect(Collectors.toList());
             }
 
-            return concepts.stream()
-                    .map(ConceptFieldDTO::getLabel)
-                    .collect(Collectors.toList());
+            setCurrentVocabularyIfNull(person);
+            if (vocabulary != null) {
+                concepts = fieldService.fetchAutocomplete(vocabulary, input, langcode);
+                return concepts.stream()
+                        .map(ConceptFieldDTO::getLabel)
+                        .collect(Collectors.toList());
+            }
+
+            throw new NoConfigForField(SpatialUnit.CATEGORY_FIELD_CODE);
 
         } catch (NoConfigForField e) {
             log.error("No collection for field " + SpatialUnit.CATEGORY_FIELD_CODE);
             return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Fetch the current collections if it is not defined.
+     * @param person the current user
+     */
+    private void setCurrentVocabularyIfNull(Person person) {
+        if (vocabulary == null) {
+            Optional<Vocabulary> vocabularyOptional = fieldConfigurationService.fetchVocabularyOfPersonFieldConfiguration(person, SpatialUnit.CATEGORY_FIELD_CODE);
+            vocabulary = vocabularyOptional.orElse(null);
+        }
+    }
+
+    /**
+     * Fetch the current collections if it is not defined.
+     * @param person the current user
+     */
+    private void setCurrentCollectionsIfNull(Person person) {
+        if (collections == null) {
+            collections = fieldConfigurationService.fetchCollectionsOfPersonFieldConfiguration(person, SpatialUnit.CATEGORY_FIELD_CODE);
+            if (collections.isEmpty()) collections = null;
         }
     }
 

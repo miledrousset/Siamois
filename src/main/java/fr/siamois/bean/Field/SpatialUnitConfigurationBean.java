@@ -39,21 +39,29 @@ public class SpatialUnitConfigurationBean implements Serializable {
     private Vocabulary selectedVocab = null;
     private Map<String, String> labels = new HashMap<>();
     private final String lang = "fr";
-    private static final String EMPTY_LABEL = "Tout le thésaurus";
-    private static final String EMPTY_ID = " ";
-    private final VocabularyCollection emptyVocab;
+    private List<VocabularyCollection> cacheSelectedGroups = new ArrayList<>();
 
     // Fields
+    private boolean selectEntireThesaurus = false;
     private String serverUrl = "";
     private List<VocabularyCollection> selectedGroups = new ArrayList<>();
     private String selectedThesaurus = "";
 
     public SpatialUnitConfigurationBean(FieldConfigurationService fieldConfigurationService) {
         this.fieldConfigurationService = fieldConfigurationService;
+    }
 
-        emptyVocab = new VocabularyCollection();
-        emptyVocab.setId(-1L);
-        emptyVocab.setExternalId(EMPTY_ID);
+    public void init() {
+        collections = new ArrayList<>();
+        vocabularies = new ArrayList<>();
+        selectedVocab = null;
+        labels = new HashMap<>();
+        cacheSelectedGroups = new ArrayList<>();
+
+        selectEntireThesaurus = false;
+        serverUrl = "";
+        selectedGroups = new ArrayList<>();
+        selectedThesaurus = "";
     }
 
     /**
@@ -62,37 +70,48 @@ public class SpatialUnitConfigurationBean implements Serializable {
      * If it's collections, load the collections list, the selected collections and the selected thesaurus.
      */
     public void onLoad() {
+        init();
+        cacheSelectedGroups = new ArrayList<>(selectedGroups);
         Person loggedUser = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow();
         Optional<Vocabulary> optionalVocabulary = fieldConfigurationService.fetchVocabularyOfPersonFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE);
         if (optionalVocabulary.isPresent()) {
-            Vocabulary  vocabulary = optionalVocabulary.get();
+            loadThesaurusOnlyConfiguration(optionalVocabulary.get());
+        } else {
+            loadGroupsConfiguration(loggedUser);
+        }
+
+    }
+
+    /**
+     * Load the existing groups if the setup is already done.
+     * @param loggedUser The authenticated user.
+     */
+    private void loadGroupsConfiguration(Person loggedUser) {
+        List<VocabularyCollection> alreadySelectedGroups = fieldConfigurationService.fetchCollectionsOfPersonFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE);
+        if (!alreadySelectedGroups.isEmpty()) {
+            Vocabulary vocabulary = alreadySelectedGroups.get(0).getVocabulary();
             serverUrl = vocabulary.getBaseUri();
+            selectedGroups = alreadySelectedGroups;
 
             loadThesaurusValue();
 
             selectedVocab = vocabulary;
+            selectedThesaurus = selectedVocab.getExternalVocabularyId();
 
-            collections.add(emptyVocab);
-            labels.put(EMPTY_ID, "Tout le thésaurus");
-
-            selectedGroups.add(emptyVocab);
-
-        } else {
-            List<VocabularyCollection> alreadySelectedGroups = fieldConfigurationService.fetchCollectionsOfPersonFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE);
-            if (!alreadySelectedGroups.isEmpty()) {
-                Vocabulary vocabulary = alreadySelectedGroups.get(0).getVocabulary();
-                serverUrl = vocabulary.getBaseUri();
-                selectedGroups = alreadySelectedGroups;
-
-                loadThesaurusValue();
-
-                selectedVocab = vocabulary;
-                selectedThesaurus = selectedVocab.getExternalVocabularyId();
-
-                loadGroupValue();
-            }
+            loadGroupValue();
         }
+    }
 
+    /**
+     * Load the configuration of the Thesaurus only if the setup is already done.
+     * @param vocabulary The vocabulary to load.
+     */
+    private void loadThesaurusOnlyConfiguration(Vocabulary vocabulary) {
+        serverUrl = vocabulary.getBaseUri();
+
+        loadThesaurusValue();
+
+        selectedVocab = vocabulary;
     }
 
     /**
@@ -106,6 +125,12 @@ public class SpatialUnitConfigurationBean implements Serializable {
 
             FieldConfigurationService.VocabularyCollectionsAndLabels result = fieldConfigurationService.fetchCollections(lang, selectedVocab);
 
+            if (result.collections().isEmpty()) {
+                collections = new ArrayList<>();
+                selectEntireThesaurus = true;
+                return;
+            }
+
             List<VocabularyCollection> savedCollections = result.collections();
             List<String> localisedLabels = result.localisedLabels();
             labels = new HashMap<>();
@@ -113,13 +138,6 @@ public class SpatialUnitConfigurationBean implements Serializable {
 
             for (int i = 0; i < localisedLabels.size(); i++)
                 labels.put(savedCollections.get(i).getExternalId(), localisedLabels.get(i));
-
-            labels.put(EMPTY_ID, EMPTY_LABEL);
-            VocabularyCollection empty = new VocabularyCollection();
-            empty.setId(-1L);
-            empty.setExternalId(EMPTY_ID);
-
-            collections.add(empty);
 
             collections.addAll(savedCollections);
 
@@ -148,23 +166,16 @@ public class SpatialUnitConfigurationBean implements Serializable {
     public void processForm() {
         Person loggedUser = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow();
 
-        if (selectedGroups.isEmpty() || selectedGroups.stream().anyMatch(elt -> elt == emptyVocab)) {
-            selectedGroups = new ArrayList<>();
-            selectedGroups.add(collections
-                    .stream()
-                    .filter(elt -> elt.getExternalId().equalsIgnoreCase(EMPTY_ID))
-                    .findFirst()
-                    .orElseThrow());
+        if (userHasSelectedEntireThesaurus()) {
             try {
                 fieldConfigurationService.saveThesaurusFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE, selectedVocab);
 
                 displayInfoMessage("La configuration a bien été enregistrée");
-
-                return;
             } catch (FailedFieldUpdateException e) {
                 log.error(e.getMessage());
                 displayInfoMessage("La configuration est identique à la précédente.");
             }
+            return;
         }
 
         List<VocabularyCollection> savedVocabColl = new ArrayList<>();
@@ -183,6 +194,14 @@ public class SpatialUnitConfigurationBean implements Serializable {
             displayInfoMessage("La configuration est identique à la précédente.");
         }
 
+    }
+
+    /**
+     * Check if the user has selected the entire thesaurus.
+     * @return True if the user has selected the entire thesaurus, false otherwise.
+     */
+    private boolean userHasSelectedEntireThesaurus() {
+        return selectEntireThesaurus;
     }
 
     /**
@@ -238,8 +257,25 @@ public class SpatialUnitConfigurationBean implements Serializable {
 
     }
 
+    /**
+     * Display an error message on the page.
+     * @param s The message to display.
+     */
     private void displayErrorMessage(String s) {
         displayMessage(FacesMessage.SEVERITY_ERROR, "Erreur", s);
+    }
+
+    /**
+     * Cache the selected groups and remove all the selected groups.
+     */
+    public void removeAllSelectedGroups() {
+        if (collections.isEmpty()) selectEntireThesaurus = true;
+        if (selectEntireThesaurus) {
+            cacheSelectedGroups = new ArrayList<>(selectedGroups);
+            selectedGroups.clear();
+        } else {
+            selectedGroups = new ArrayList<>(cacheSelectedGroups);
+        }
     }
 
 

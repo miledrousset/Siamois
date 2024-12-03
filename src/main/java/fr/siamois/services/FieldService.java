@@ -65,8 +65,8 @@ public class FieldService {
      * @param input The input to search for
      * @return A list of concept field DTOs
      */
-    public List<ConceptFieldDTO> fetchAutocomplete(Vocabulary vocabulary, String input) {
-        List<ConceptFieldDTO> result = conceptApi.fetchAutocomplete(vocabulary, input, "fr");
+    public List<ConceptFieldDTO> fetchAutocomplete(Vocabulary vocabulary, String input, String langCode) {
+        List<ConceptFieldDTO> result = conceptApi.fetchAutocomplete(vocabulary, input, langCode);
         if (result == null) return new ArrayList<>();
         return result;
     }

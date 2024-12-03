@@ -27,10 +27,12 @@
             <div class="col-12 md:col-10">
                 <p:inputText id="serverUrl" value="#{spatialUnitConfigurationBean.serverUrl}"/>
             </div>
-            <p:commandButton value="Accéder au serveur" action="#{spatialUnitConfigurationBean.loadThesaurusValue()}" update="globalThesaurusId,globalCollectionsId"/>
+            <p:commandButton value="Accéder au serveur" action="#{spatialUnitConfigurationBean.loadThesaurusValue()}"
+                             update="globalThesaurusId,globalCollectionsId"/>
         </div>
         <div class="field grid">
-            <p:outputLabel for="globalThesaurusId" styleClass="col-12 md:col-2" value="Identifiant interne du thésaurus"/>
+            <p:outputLabel for="globalThesaurusId" styleClass="col-12 md:col-2"
+                           value="Identifiant interne du thésaurus"/>
             <div class="col-12 md:col-10">
                 <p:selectOneMenu id="globalThesaurusId" value="#{spatialUnitConfigurationBean.selectedThesaurus}">
                     <f:selectItems value="#{spatialUnitConfigurationBean.vocabularies}" var="vocab"
@@ -38,23 +40,30 @@
                                    itemValue="#{vocab.externalVocabularyId}"/>
 
                 </p:selectOneMenu>
-                <p:commandButton value="Charger les groupes" action="#{spatialUnitConfigurationBean.loadGroupValue()}" update="globalCollectionsId"/>
+                <p:commandButton value="Charger les groupes" action="#{spatialUnitConfigurationBean.loadGroupValue()}"
+                                 update="globalCollectionsId"/>
             </div>
         </div>
 
+        <p:selectBooleanCheckbox value="#{spatialUnitConfigurationBean.selectEntireThesaurus}"
+                                 itemLabel="Selectionner tout le thésaurus">
+            <p:ajax event="change" update="globalCollectionsId" listener="#{spatialUnitConfigurationBean.removeAllSelectedGroups}"/>
+        </p:selectBooleanCheckbox>
+
         <div class="field grid">
             <p:outputLabel for="globalCollectionsId" styleClass="col-12 md:col-2"
-                           value="Selectionnez la collection à utiliser"/>
+                           value="Selectionnez la ou les collection à utiliser"/>
             <div class="col-12 md:col-10">
 
                 <p:dataTable id="globalCollectionsId" var="group" value="#{spatialUnitConfigurationBean.collections}"
                              selection="#{spatialUnitConfigurationBean.selectedGroups}" rowKey="#{group.externalId}"
                              rows="5" selectionPageOnly="false" selectionRowMode="none" cellNavigation="true"
-                             paginator="true">
+                             paginator="true"
+                             selectionDisabled="#{spatialUnitConfigurationBean.selectEntireThesaurus == true}">
 
                     <p:column selectionBox="true" style="width:16px;text-align:center"/>
                     <p:column headerText="ID">
-                        <h:outputText value="#{group.externalId}" />
+                        <h:outputText value="#{group.externalId}"/>
                     </p:column>
 
                     <p:column headerText="Nom">
@@ -67,8 +76,8 @@
         </div>
 
 
-
-        <p:commandButton value="Sauvegarder" action="#{spatialUnitConfigurationBean.processForm()}" update="globalCollectionsId"/>
+        <p:commandButton value="Sauvegarder" action="#{spatialUnitConfigurationBean.processForm()}"
+                         update="globalCollectionsId"/>
 
         <p:messages id="messages" showDetail="true" closable="true">
             <p:autoUpdate/>

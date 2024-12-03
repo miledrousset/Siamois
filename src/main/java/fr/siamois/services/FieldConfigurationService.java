@@ -196,16 +196,7 @@ public class FieldConfigurationService {
         List<String> labels = new ArrayList<>();
 
         for (VocabularyCollectionDTO dto : dtos) {
-            Optional<VocabularyCollection> opt = vocabularyCollectionRepository.findByVocabularyAndExternalId(vocabulary, dto.getIdGroup());
-            VocabularyCollection collection;
-            if (opt.isEmpty()) {
-                collection = new VocabularyCollection();
-                collection.setId(-1L);
-                collection.setExternalId(dto.getIdGroup());
-                collection.setVocabulary(vocabulary);
-            } else {
-                collection = opt.get();
-            }
+            VocabularyCollection collection = createVocabularyCollectionIfNotExists(vocabulary, dto);
 
             labels.add(dto.getLabels().stream()
                     .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(lang))
@@ -218,6 +209,26 @@ public class FieldConfigurationService {
 
         return new VocabularyCollectionsAndLabels(result, labels);
 
+    }
+
+    /**
+     * Create a VocabularyCollection if it does not exist in the database.
+     * @param vocabulary The database saved vocabulary
+     * @param dto The DTO to create the collection from
+     * @return The database saved collection
+     */
+    private VocabularyCollection createVocabularyCollectionIfNotExists(Vocabulary vocabulary, VocabularyCollectionDTO dto) {
+        Optional<VocabularyCollection> opt = vocabularyCollectionRepository.findByVocabularyAndExternalId(vocabulary, dto.getIdGroup());
+        VocabularyCollection collection;
+        if (opt.isEmpty()) {
+            collection = new VocabularyCollection();
+            collection.setId(-1L);
+            collection.setExternalId(dto.getIdGroup());
+            collection.setVocabulary(vocabulary);
+        } else {
+            collection = opt.get();
+        }
+        return collection;
     }
 
     /**
