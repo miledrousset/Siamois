@@ -7,10 +7,10 @@
 
 <h:head>
     <title>Siamois</title>
-    <h:outputStylesheet name="css/bootstrap.min.css"/>
-    <h:outputScript name="js/jquery-3.7.1.js"/>
-    <h:outputScript name="js/bootstrap.bundle.min.js"/>
-    <h:outputStylesheet name="css/styles.css"/>
+    <h:outputStylesheet name="resources/css/bootstrap.min.css"/>
+    <h:outputScript name="resources/js/jquery-3.7.1.js"/>
+    <h:outputScript name="resources/js/bootstrap.bundle.min.js"/>
+    <h:outputStylesheet name="resources/css/styles.css"/>
 </h:head>
 
 <h:body>
@@ -27,16 +27,16 @@
                         <f:facet name="start">
                             <form action="${pageContext.request.contextPath}logout" method="post">
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                <button type="submit" class="btn btn-danger">Deconnexion</button>
+                                <button type="submit" class="btn btn-danger">${langBean.msg("nav.logout")}</button>
                             </form>
-                            <h:button value="Configuration champs" outcome="/pages/field/fieldConfiguration.xhtml"/>
+                            <h:button value='${langBean.msg("nav.fieldconfig")}' outcome="/pages/field/fieldConfiguration.xhtml"/>
                         </f:facet>
                         <p:divider layout="vertical"/>
                     </p:menubar>
                 </div>
             </div>
         </div>
-        <h:button value="Enregistrer une US" outcome="/pages/create/spatialUnit.xhtml"/>
+        <h:button value='${langBean.msg("home.save.spatialunit")}' outcome="/pages/create/spatialUnit.xhtml"/>
         <div class="row g-0">
             <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
                 <!-- Left Panel -->

@@ -13,7 +13,6 @@ import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.primefaces.event.SelectEvent;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
