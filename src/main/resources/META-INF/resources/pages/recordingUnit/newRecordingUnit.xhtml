@@ -10,74 +10,95 @@
         <h:outputScript library="primefaces" name="jquery/jquery.js"/>
 
         <!-- Content -->
-        <h:form>
-            <h5 class="mt-0">Nouvelle unité d'enregistrement</h5>
-            <div class="row">
-                <!-- <p:staticMessage severity="error" summary="Error" closable="false" detail="Just testing"/> -->
-                <div class="form-panel col-12 col-lg-6 col-xl-6">
-                    <p:panel id="panel-general" header="General" toggleable="true">
-                        <div class="field grid">
-                            <h:outputLabel for="name" value="Nom" styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
-                            <div class="col-12 md:col-10">
-                                <p:inputText id="name" required="true"/>
+
+
+        <h:panelGroup rendered="#{recordingUnitFormBean.recordingUnit != null}">
+            <h:form>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+                <div class="row">
+                    <!-- <p:staticMessage severity="error" summary="Error" closable="false" detail="Just testing"/> -->
+                    <div class="form-panel col-12 col-lg-6 col-xl-6">
+                        <p:panel id="panel-general" header="General" toggleable="true">
+                            <div class="field grid">
+                                <h:outputLabel for="name" value="Nom" styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                                <div class="col-12 md:col-10">
+                                    <p:inputText id="name" required="true"
+                                                 value="#{recordingUnitFormBean.recordingUnit.name}"/>
+                                </div>
+
+                                <h:outputLabel for="datePicker-open" value="Creation"
+                                               styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                                <p:datePicker id="datePicker-open"/>
+                                <h:outputLabel for="datePicker-close" value="Clôture"
+                                               styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                                <p:datePicker id="datePicker-close"/>
+
                             </div>
-                            <h:outputLabel for="description" value="Description"
-                                           styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
-                            <div class="col-12 md:col-10">
-                                <!-- <p:inputTextarea rows="6" cols="33" id="description"/> -->
-                                <!-- TODO : make is secure or remove it -->
-                                <p:textEditor is="description" secure='false' height="300px"  />
+                        </p:panel>
+                    </div>
+
+                    <div class="form-panel col-12 col-lg-6 col-xl-6">
+                        <p:panel id="panel-type" header="Type" toggleable="true">
+                            <div class="field grid">
+                                <div class="field col-12 md:col-4">
+                                    <p:outputLabel for="@next" value="Type d'UE"
+                                                   styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                                    <p:selectOneMenu id="option"
+                                                     value="#{recordingUnitFormBean.recordingUnit.type.label}">
+                                        <f:selectItem itemLabel="Unité stratigraphique" itemValue="US"/>
+                                        <f:selectItem itemLabel="Unité de fouille" itemValue="Option1"/>
+                                        <f:selectItem itemLabel="Unité englobante" itemValue="Option2"/>
+                                        <f:selectItem itemLabel="Unité technique" itemValue="Option3"/>
+                                        <f:selectItems/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <h:outputLabel for="description" value="Description"
+                                               styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                                <div class="col-12 md:col-10">
+                                    <!-- <p:inputTextarea rows="6" cols="33" id="description"/> -->
+                                    <!-- TODO : make is secure or remove it -->
+                                    <p:textEditor is="description" secure='false' height="300px"/>
+                                </div>
                             </div>
-                        </div>
-                    </p:panel>
+                        </p:panel>
+                    </div>
                 </div>
 
-                <div class="form-panel col-12 col-lg-6 col-xl-6">
-                    <p:panel id="panel-type" header="General" toggleable="true">
-                        <div class="field grid">
-                            <div class="field col-12 md:col-4">
-                                <p:outputLabel for="@next" value="Type d'UE" styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
-                                <p:selectOneMenu id="option" value="#{selectOneMenuView.selectedOption}">
-                                    <f:selectItem itemLabel="Unité de fouille" itemValue=""/>
-                                    <f:selectItem itemLabel="Unité stratigraphique" itemValue="Option1"/>
-                                    <f:selectItem itemLabel="Unité englobante" itemValue="Option2"/>
-                                    <f:selectItem itemLabel="Unité technique" itemValue="Option3"/>
-                                </p:selectOneMenu>
-                            </div>
-                        </div>
-                    </p:panel>
+                <div class="row">
+                    <div class="form-panel col-12">
+                        <p:panel id="panel-stratigraphy" header="Stratigraphie" toggleable="true" toggleSpeed="500">
+                            <p:chronoline value="#{recordingUnitFormBean.events}" var="event" align="left"
+                                          styleClass="customized-chronoline">
+
+                                <f:facet name="opposite">
+                                    <small class="text-secondary">#{event.status}</small>
+                                </f:facet>
+
+                                <f:facet name="marker">
+                                <span class="custom-marker shadow-1" style="background-color: #{event.color}"><i
+                                        class="#{event.icon}"/></span>
+                                </f:facet>
+
+                                <p:button value="Add"
+                                          icon="pi pi-plus-circle"/>
+                                <div class="flex align-items-center flex-wrap" id="slot">
+                                    <p:chip label="US1" styleClass="mr-2"/>
+                                    <p:chip label="US2" styleClass="mr-2"/>
+                                    <p:chip label="US3" styleClass="mr-2"/>
+                                    <p:chip label="US4" removable="true"/>
+                                </div>
+
+                            </p:chronoline>
+                        </p:panel>
+                    </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="form-panel col-12">
-                    <p:panel id="panel-stratigraphy" header="Stratigraphie" toggleable="true" toggleSpeed="500">
-                        <p:chronoline value="#{recordingUnitFormBean.events}" var="event" align="left" styleClass="customized-chronoline">
+                <p:commandButton value="Save" update="@form" action="#{recordingUnitFormBean.save}"/>
+            </h:form>
 
-                            <f:facet name="opposite">
-                                <small class="text-secondary">#{event.status}</small>
-                            </f:facet>
+        </h:panelGroup>
 
-                            <f:facet name="marker">
-                                <span class="custom-marker shadow-1" style="background-color: #{event.color}"><i class="#{event.icon}"/></span>
-                            </f:facet>
-
-                            <p:button value="Add"
-                                      icon="pi pi-plus-circle"/>
-                            <div class="flex align-items-center flex-wrap" id="slot">
-                                <p:chip label="US1" styleClass="mr-2" />
-                                <p:chip label="US2" styleClass="mr-2"/>
-                                <p:chip label="US3" styleClass="mr-2"/>
-                                <p:chip label="US4" removable="true"/>
-                            </div>
-
-                        </p:chronoline>
-                    </p:panel>
-                </div>
-            </div>
-
-            <p:commandButton value="Save" update="@form"/>
-        </h:form>
 
     </ui:define>
 </ui:composition>
