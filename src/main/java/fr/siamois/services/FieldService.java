@@ -103,27 +103,38 @@ public class FieldService {
 
     /**
      * Save or get a concept from a category field DTO.
-     * @param vocabulary The database saved vocabulary
+     * @param vocabulary The database saved vocabularys
      * @param category The API response for the category concept
      * @return The saved concept
      */
     private Concept saveOrGetConceptFromCategory(Vocabulary vocabulary, ConceptFieldDTO category) {
         MultiValueMap<String,String> queryParams = UriComponentsBuilder.fromUriString(category.getUri()).build().getQueryParams();
         if (queryParams.containsKey("idt") && queryParams.containsKey("idc")) {
-            String conceptExternalId = queryParams.get("idc").get(0);
-            Optional<Concept> opt = conceptRepository.findConceptByExternalIdIgnoreCase(vocabulary.getExternalVocabularyId(), conceptExternalId);
-            if (opt.isEmpty()) {
-                Concept concept = new Concept();
-                concept.setExternalId(conceptExternalId);
-                concept.setVocabulary(vocabulary);
-                concept.setLabel(category.getLabel());
-
-                return conceptRepository.save(concept);
-            } else {
-                return opt.get();
-            }
+            return processConceptWithExternalIdThesaurusAndIdConcept(vocabulary, category, queryParams);
         } else {
             return processConceptWithArkUri(vocabulary, category);
+        }
+    }
+
+    /**
+     * The save or get concept method for a category field DTO with an external ID and thesaurus ID.
+     * @param vocabulary The database saved vocabulary
+     * @param category The API response for the category concept
+     * @param queryParams The query parameters of the URI
+     * @return The saved concept
+     */
+    private Concept processConceptWithExternalIdThesaurusAndIdConcept(Vocabulary vocabulary, ConceptFieldDTO category, MultiValueMap<String, String> queryParams) {
+        String conceptExternalId = queryParams.get("idc").get(0);
+        Optional<Concept> opt = conceptRepository.findConceptByExternalIdIgnoreCase(vocabulary.getExternalVocabularyId(), conceptExternalId);
+        if (opt.isEmpty()) {
+            Concept concept = new Concept();
+            concept.setExternalId(conceptExternalId);
+            concept.setVocabulary(vocabulary);
+            concept.setLabel(category.getLabel());
+
+            return conceptRepository.save(concept);
+        } else {
+            return opt.get();
         }
     }
 
