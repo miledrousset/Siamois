@@ -6,6 +6,7 @@
     <!-- create database if not exist -->
     <include file="/changelog/database/createdb.xml"/>
 
+    <includeAll path="changelog/dev-utils-updates"/>
     <includeAll path="changelog/updates"/>
 
 </databaseChangeLog>

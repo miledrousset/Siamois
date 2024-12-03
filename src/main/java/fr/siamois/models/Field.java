@@ -1,12 +1,12 @@
 package fr.siamois.models;
 
+import fr.siamois.models.auth.Person;
+import fr.siamois.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "field", schema = "public")
 public class Field {

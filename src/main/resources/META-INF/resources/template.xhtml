@@ -29,12 +29,14 @@
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                 <button type="submit" class="btn btn-danger">Deconnexion</button>
                             </form>
+                            <h:button value="Configuration champs" outcome="/pages/field/fieldConfiguration.xhtml"/>
                         </f:facet>
                         <p:divider layout="vertical"/>
                     </p:menubar>
                 </div>
             </div>
         </div>
+        <h:button value="Enregistrer une US" outcome="/pages/create/spatialUnit.xhtml"/>
         <div class="row g-0">
             <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
                 <!-- Left Panel -->
