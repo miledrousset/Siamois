@@ -53,8 +53,8 @@ public class FieldService {
      * @param collections The list of database saved vocabulary collections to search in
      * @return A list of concept field DTOs
      */
-    public List<ConceptFieldDTO> fetchAutocomplete(List<VocabularyCollection> collections, String input) {
-        List<ConceptFieldDTO> result = conceptApi.fetchAutocomplete(collections, input, "fr");
+    public List<ConceptFieldDTO> fetchAutocomplete(List<VocabularyCollection> collections, String input, String langCode) {
+        List<ConceptFieldDTO> result = conceptApi.fetchAutocomplete(collections, input, langCode);
         if (result == null) return new ArrayList<>();
         return result;
     }

@@ -1,5 +1,6 @@
 package fr.siamois.bean.Field;
 
+import fr.siamois.bean.LangBean;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.api.ClientSideErrorException;
@@ -32,13 +33,14 @@ public class SpatialUnitConfigurationBean implements Serializable {
 
     // Dependencies
     private final FieldConfigurationService fieldConfigurationService;
+    private final LangBean langBean;
 
     // Configuration storage
     private List<VocabularyCollection> collections = new ArrayList<>();
     private List<Vocabulary> vocabularies = new ArrayList<>();
     private Vocabulary selectedVocab = null;
     private Map<String, String> labels = new HashMap<>();
-    private final String lang = "fr";
+    private String lang = "fr";
     private List<VocabularyCollection> cacheSelectedGroups = new ArrayList<>();
     private List<VocabularyCollection> cachedGroups = new ArrayList<>();
 
@@ -48,8 +50,9 @@ public class SpatialUnitConfigurationBean implements Serializable {
     private List<VocabularyCollection> selectedGroups = new ArrayList<>();
     private String selectedThesaurus = "";
 
-    public SpatialUnitConfigurationBean(FieldConfigurationService fieldConfigurationService) {
+    public SpatialUnitConfigurationBean(FieldConfigurationService fieldConfigurationService, LangBean langBean) {
         this.fieldConfigurationService = fieldConfigurationService;
+        this.langBean = langBean;
     }
 
     public void init() {
@@ -64,6 +67,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
         serverUrl = "";
         selectedGroups = new ArrayList<>();
         selectedThesaurus = "";
+        lang = langBean.getLanguageCode();
     }
 
     /**

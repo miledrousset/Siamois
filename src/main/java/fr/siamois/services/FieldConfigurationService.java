@@ -201,7 +201,7 @@ public class FieldConfigurationService {
             labels.add(dto.getLabels().stream()
                     .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(lang))
                     .findFirst()
-                    .orElseThrow()
+                            .orElse(dto.getLabels().get(0))
                     .getTitle());
 
             result.add(collection);
