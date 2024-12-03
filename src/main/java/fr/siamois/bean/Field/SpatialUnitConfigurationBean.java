@@ -13,6 +13,7 @@ import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.event.SelectEvent;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -40,6 +41,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
     private Map<String, String> labels = new HashMap<>();
     private final String lang = "fr";
     private List<VocabularyCollection> cacheSelectedGroups = new ArrayList<>();
+    private List<VocabularyCollection> cachedGroups = new ArrayList<>();
 
     // Fields
     private boolean selectEntireThesaurus = false;
@@ -57,6 +59,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
         selectedVocab = null;
         labels = new HashMap<>();
         cacheSelectedGroups = new ArrayList<>();
+        cachedGroups = new ArrayList<>();
 
         selectEntireThesaurus = false;
         serverUrl = "";
@@ -135,6 +138,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
             List<String> localisedLabels = result.localisedLabels();
             labels = new HashMap<>();
             collections = new ArrayList<>();
+            selectEntireThesaurus = false;
 
             for (int i = 0; i < localisedLabels.size(); i++)
                 labels.put(savedCollections.get(i).getExternalId(), localisedLabels.get(i));
@@ -272,9 +276,11 @@ public class SpatialUnitConfigurationBean implements Serializable {
         if (collections.isEmpty()) selectEntireThesaurus = true;
         if (selectEntireThesaurus) {
             cacheSelectedGroups = new ArrayList<>(selectedGroups);
+            cachedGroups = new ArrayList<>(collections);
             selectedGroups.clear();
         } else {
             selectedGroups = new ArrayList<>(cacheSelectedGroups);
+            collections = new ArrayList<>(cachedGroups);
         }
     }
 

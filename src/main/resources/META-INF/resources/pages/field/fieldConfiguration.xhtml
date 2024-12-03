@@ -41,13 +41,13 @@
 
                 </p:selectOneMenu>
                 <p:commandButton value="Charger les groupes" action="#{spatialUnitConfigurationBean.loadGroupValue()}"
-                                 update="globalCollectionsId"/>
+                                 update="globalCollectionsId selectEntireThesaurus"/>
             </div>
         </div>
 
-        <p:selectBooleanCheckbox value="#{spatialUnitConfigurationBean.selectEntireThesaurus}"
+        <p:selectBooleanCheckbox id="selectEntireThesaurus" value="#{spatialUnitConfigurationBean.selectEntireThesaurus}"
                                  itemLabel="Selectionner tout le thésaurus">
-            <p:ajax event="change" update="globalCollectionsId" listener="#{spatialUnitConfigurationBean.removeAllSelectedGroups}"/>
+            <p:ajax event="change" update="globalCollectionsId @this" listener="#{spatialUnitConfigurationBean.removeAllSelectedGroups}"/>
         </p:selectBooleanCheckbox>
 
         <div class="field grid">
@@ -57,7 +57,7 @@
 
                 <p:dataTable id="globalCollectionsId" var="group" value="#{spatialUnitConfigurationBean.collections}"
                              selection="#{spatialUnitConfigurationBean.selectedGroups}" rowKey="#{group.externalId}"
-                             rows="5" selectionPageOnly="false" selectionRowMode="none" cellNavigation="true"
+                             rows="5" selectionPageOnly="false" selectionRowMode="multiple" cellNavigation="true"
                              paginator="true"
                              selectionDisabled="#{spatialUnitConfigurationBean.selectEntireThesaurus == true}">
 
