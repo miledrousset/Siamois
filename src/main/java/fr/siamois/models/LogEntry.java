@@ -1,5 +1,6 @@
 package fr.siamois.models;
 
+import fr.siamois.models.ark.Ark;
 import jakarta.persistence.*;
 import lombok.Data;
 
