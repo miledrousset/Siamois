@@ -38,6 +38,10 @@ spring:
     enabled: true
     change-log: classpath:/changelog/db.changelog.xml
 
+  messages:
+    basename: language/messages
+    encoding: UTF-8
+
 logging:
   level:
     root: INFO
