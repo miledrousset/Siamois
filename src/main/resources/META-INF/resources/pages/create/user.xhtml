@@ -1,19 +1,72 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
->
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-<h:head>
-    <!-- Import de BOOTSTRAP -->
-    <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css"/>
-    <script src="resources/js/bootstrap.bundle.min.js"></script>
+    <ui:define name="content">
+        <h:form>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <div class="col-12 md:col-4">
+                <div class="ui-inputgroup">
+                    <div class="ui-inputgroup-addon"><i class="pi pi-user"></i></div>
+                    <p:inputText placeholder="Username" value="#{userCreationBean.VUsername}" />
+                </div>
+            </div>
+            <div class="col-12 md:col-4">
+                <div class="ui-inputgroup">
+                    <div class="ui-inputgroup-addon"><i class="pi pi-envelope"></i></div>
+                    <p:inputText placeholder="Email" value="#{userCreationBean.VEmail}" />
+                </div>
+            </div>
+            <div class="col-12 md:col-4">
+                <div class="ui-inputgroup">
+                    <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h"></i></div>
+                    <p:inputText placeholder="Password" value="#{userCreationBean.VPassword}"/>
+                </div>
+            </div>
+            <div class="col-12 md:col-4">
+                <div class="ui-inputgroup">
+                    <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h"></i></div>
+                    <p:inputText placeholder="Confirm password" value="#{userCreationBean.VConfirmPassword}" />
+                </div>
+            </div>
 
-    <title>Page title</title>
-</h:head>
+            <p:dataTable var="actionUnit" value="#{userCreationBean.refActionUnits}"
+                         selection="#{userCreationBean.VActionUnits}"
+                         widgetVar="actionUnitTable"
+                         emptyMessage="No action unit found with given criteria"
+                         filteredValue="#{userCreationBean.filteredActionUnits}"
+            >
+                <p:column headerText="ID" filterBy="#{actionUnit.id}" filterMatchMode="contains" filterPlaceholder="Filter by ID">
+                    <h:outputText value="#{actionUnit.id}" />
+                </p:column>
 
-<h:body>
-</h:body>
+                <p:column headerText="Name" filterBy="#{actionUnit.name}" filterMatchMode="contains" filterPlaceholder="Filter by name">
+                    <h:outputText value="#{actionUnit.name}" />
+                </p:column>
 
-</html>
+                <p:column headerText="Beginning" filterBy="#{actionUnit.beginDate}" filterMatchMode="exact" filterPlaceholder="Filter by beginning date">
+                    <h:outputText value="#{actionUnit.beginDate}" />
+                </p:column>
+
+                <p:column headerText="End" filterBy="#{actionUnit.endDate}" filterMatchMode="exact" filterPlaceholder="Filter by end date">
+                    <h:outputText value="#{actionUnit.endDate}" />
+                </p:column>
+
+                <p:column headerText="Type" filterBy="#{actionUnit.type.label}" filterMatchMode="contains" filterPlaceholder="Filter by type">
+                    <h:outputText value="#{actionUnit.type.label}" />
+                </p:column>
+
+                <p:column headerText="Author" filterBy="#{actionUnit.owner.username}" filterMatchMode="contains" filterPlaceholder="Filter by author">
+                    <h:outputText value="#{actionUnit.owner.username}" />
+                </p:column>
+
+            </p:dataTable>
+
+            <h:commandButton value="Create" action="#{userCreationBean.createUser()}" />
+        </h:form>
+    </ui:define>
+
+</ui:composition>
