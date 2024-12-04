@@ -13,12 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
+import java.io.Serializable;
 import java.util.List;
 
 @Slf4j
 @Component
 @SessionScoped
-public class SpatialUnitBean {
+public class SpatialUnitBean implements Serializable {
 
     private final SpatialUnitService spatialUnitService;
     private final RecordingUnitService recordingUnitService;

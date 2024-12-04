@@ -23,11 +23,11 @@ public class RecordingUnit {
     private Long id;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false, cascade=CascadeType.PERSIST)
     @JoinColumn(name = "fk_ark_id", nullable = false)
     private Ark ark;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST)
     @JoinColumn(name = "fk_type")
     private Concept type;
 
@@ -46,9 +46,11 @@ public class RecordingUnit {
     private ActionUnit actionUnit;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade=CascadeType.PERSIST)
     @JoinColumn(name = "fk_author_id", nullable = false)
     private Person author;
+
+    // TODO : also add "fouilleur"
 
     //@Column(name = "spatial_extent", columnDefinition = "geometry not null")
     //private Polygon spatialExtent;

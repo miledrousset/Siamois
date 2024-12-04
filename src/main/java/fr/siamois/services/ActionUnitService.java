@@ -28,7 +28,7 @@ public class ActionUnitService {
     }
 
     /**
-     * Find a action unit by its ID
+     * Find an action unit by its ID
      *
      * @param id The ID of the action unit
      * @return The ActionUnit having the given ID

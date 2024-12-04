@@ -7,11 +7,12 @@ import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
+import java.io.Serializable;
 import java.util.List;
 
 @Component
 @SessionScoped
-public class HomeBean {
+public class HomeBean implements Serializable {
 
     private final SpatialUnitService spatialUnitService;
 
