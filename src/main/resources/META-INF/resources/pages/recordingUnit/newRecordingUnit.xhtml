@@ -5,46 +5,39 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <ui:define name="content">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="id" value="#{recordingUnitFormBean.id}"/>
+            <f:event type="preRenderView" listener="#{recordingUnitFormBean.init}"/>
+        </f:metadata>
+    </ui:define>
 
+    <ui:define name="content">
         <h:outputScript library="primefaces" name="jquery/jquery.js"/>
 
         <!-- Content -->
-
-
         <h:panelGroup rendered="#{recordingUnitFormBean.recordingUnit != null}">
             <h:form>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
                 <div class="row">
                     <!-- <p:staticMessage severity="error" summary="Error" closable="false" detail="Just testing"/> -->
-                    <div class="form-panel col-12 col-lg-6 col-xl-6">
-                        <p:panel id="panel-general" header="General" toggleable="true">
+                    <div class="form-panel col-12 col-lg-2 col-xl-2">
+                        <p:panel id="panel-identifier" header='${langBean.msg("recordingunit.panel.identification")}'
+                                 toggleable="true">
                             <div class="field grid">
-                                <h:outputLabel for="name" value="Nom" styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                                <!-- Identifier -->
+                                <h:outputLabel for="output-label-serial-id" value="Identifiant"
+                                               styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
                                 <div class="col-12 md:col-10">
-                                    <p:inputText id="name" required="true"
-                                                 value="#{recordingUnitFormBean.recordingUnit.name}"/>
+                                    <p:inputText id="output-label-serial-id" required="false" disabled="true"
+                                                 value="#{recordingUnitFormBean.recordingUnit.serial_id}"/>
                                 </div>
-
-                                <h:outputLabel for="datePicker-open" value="Creation"
-                                               styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
-                                <p:datePicker id="datePicker-open"/>
-                                <h:outputLabel for="datePicker-close" value="Clôture"
-                                               styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
-                                <p:datePicker id="datePicker-close"/>
-
-                            </div>
-                        </p:panel>
-                    </div>
-
-                    <div class="form-panel col-12 col-lg-6 col-xl-6">
-                        <p:panel id="panel-type" header="Type" toggleable="true">
-                            <div class="field grid">
+                                <!-- UE Type -->
                                 <div class="field col-12 md:col-4">
-                                    <p:outputLabel for="@next" value="Type d'UE"
+                                    <p:outputLabel for="select-one-menu-ue-type" value="Type d'UE"
                                                    styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
-                                    <p:selectOneMenu id="option"
+                                    <p:selectOneMenu id="select-one-menu-ue-type"
                                                      value="#{recordingUnitFormBean.recordingUnit.type.label}">
                                         <f:selectItem itemLabel="Unité stratigraphique" itemValue="US"/>
                                         <f:selectItem itemLabel="Unité de fouille" itemValue="Option1"/>
@@ -53,17 +46,76 @@
                                         <f:selectItems/>
                                     </p:selectOneMenu>
                                 </div>
+                                <!-- UE Secondary Type -->
+                                <div class="field col-12 md:col-4">
+                                    <p:outputLabel for="select-one-menu-ue-secondary-type" value="Type d'UE"
+                                                   styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                                    <p:selectOneMenu id="select-one-menu-ue-secondary-type">
+                                        <f:selectItem itemLabel="Unité stratigraphique negative" itemValue="US"/>
+                                        <f:selectItems/>
+                                    </p:selectOneMenu>
+                                </div>
+
+
+                            </div>
+                        </p:panel>
+                    </div>
+                    <div class="form-panel col-12 col-lg-2 col-xl-2">
+                        <p:panel id="panel-general" header='${langBean.msg("recordingunit.panel.general")}'
+                                 toggleable="true">
+                            <div class="field grid">
+                                <!-- Owner/Excavator -->
+                                <p:outputLabel for="auto-complete-author" value='${langBean.msg("recordingunit.field.author")}'/>
+                                <p:autoComplete id="auto-complete-author" value="#{recordingUnitFormBean.author}"
+                                                completeMethod="#{recordingUnitFormBean.completeAuthor}"
+                                                forceSelection="true"
+                                                scrollHeight="300"
+                                                dropdown="true"/>
+
+                                <!-- Dates -->
+                                <h:outputLabel for="datePicker-open" value="Creation"
+                                               styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                                <p:datePicker id="datePicker-open" value="#{recordingUnitFormBean.startDate}"/>
+                                <h:outputLabel for="datePicker-close" value="Clôture"
+                                               styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                                <p:datePicker id="datePicker-close" value="#{recordingUnitFormBean.endDate}"/>
+
+
+
+                            </div>
+                        </p:panel>
+                    </div>
+
+                    <div class="form-panel col-12 col-lg-8 col-xl-8">
+                        <p:panel id="panel-type" header='${langBean.msg("recordingunit.panel.type")}' toggleable="true">
+                            <div class="field grid">
                                 <h:outputLabel for="description" value="Description"
                                                styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
                                 <div class="col-12 md:col-10">
                                     <!-- <p:inputTextarea rows="6" cols="33" id="description"/> -->
                                     <!-- TODO : make is secure or remove it -->
-                                    <p:textEditor is="description" secure='false' height="300px"/>
+                                    <p:textEditor id="description" secure='false' height="200px"
+                                                  value="${recordingUnitFormBean.recordingUnit.description}"/>
                                 </div>
                             </div>
                         </p:panel>
                     </div>
                 </div>
+
+                <p:tabView>
+                    <p:tab title="Fiche UE">
+
+                    </p:tab>
+                    <p:tab title="Documents">
+
+                    </p:tab>
+                    <p:tab title="Prèlevements">
+
+                    </p:tab>
+                    <p:tab title="Etudes">
+
+                    </p:tab>
+                </p:tabView>
 
                 <div class="row">
                     <div class="form-panel col-12">
@@ -94,7 +146,8 @@
                     </div>
                 </div>
 
-                <p:commandButton value="Save" update="@form" action="#{recordingUnitFormBean.save}"/>
+                <p:commandButton value='${langBean.msg("button.save")}' update="@form"
+                                 action='#{recordingUnitFormBean.save}'/>
             </h:form>
 
         </h:panelGroup>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2024.12.02-2" author="Grégory Bliault">
+
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="recording_unit" columnName="name"/>
+        </preConditions>
+        <dropColumn
+                tableName="recording_unit">
+            <column name="name"/>
+            <column name="recording_unit_date"/>
+        </dropColumn>
+        <addColumn tableName="recording_unit">
+            <column name="start_date" type="java.sql.types.timestamp_with_timezone"/>
+            <column name="end_date" type="java.sql.types.timestamp_with_timezone"/>
+            <column name="serial_identifier" type="java.sql.types.integer" defaultValue="1">
+                <constraints nullable="false" />
+            </column>
+            <column name="size_length" type="java.sql.types.numeric"/>
+            <column name="size_width" type="java.sql.types.numeric"/>
+            <column name="size_thickness" type="java.sql.types.numeric"/>
+            <column name="size_unit" type="java.sql.Types.VARCHAR"/>
+            <column name="altitude_sup_plus" type="java.sql.types.numeric"/>
+            <column name="altitude_sup_minus" type="java.sql.types.numeric"/>
+            <column name="altitude_inf_plus" type="java.sql.types.numeric"/>
+            <column name="altitude_inf_minus" type="java.sql.types.numeric"/>
+            <column name="altitude_unit" type="java.sql.Types.VARCHAR"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

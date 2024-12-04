@@ -23,19 +23,22 @@ public class RecordingUnit {
     private Long id;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false, cascade=CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "fk_ark_id", nullable = false)
     private Ark ark;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "fk_type")
     private Concept type;
 
-    @Column(name = "recording_unit_date")
-    private OffsetDateTime recordingUnitDate;
+    @Column(name = "start_date")
+    private OffsetDateTime startDate;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "end_date")
+    private OffsetDateTime endDate;
+
+    @Column(name = "serial_identifier")
+    private Integer serial_id;
 
     @Column(name = "description")
     private String description;
@@ -46,11 +49,20 @@ public class RecordingUnit {
     private ActionUnit actionUnit;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade=CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "fk_author_id", nullable = false)
     private Person author;
 
-    // TODO : also add "fouilleur"
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE})
+    @JoinColumn(name = "fk_excavator_id")
+    private Person excavator;
+
+    @Embedded
+    private RecordingUnitSize size;
+
+    @Embedded
+    private RecordingUnitAltimetry altimetry;
 
     //@Column(name = "spatial_extent", columnDefinition = "geometry not null")
     //private Polygon spatialExtent;

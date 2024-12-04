@@ -14,61 +14,69 @@
     <h:outputStylesheet name="resources/css/custom-theme.css"/>
 </h:head>
 
+<!-- Metadata will be inserted here (JSF1103: The metadata facet must be a direct child of the view) -->
+<ui:insert name="metadata"/>
+
 <h:body>
-    <!-- Main Layout -->
-    <div class="layout-container no-gutters">
-        <div class="row g-0">
-            <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
-                <div class="app-name">
-                    <img src="#{resource['img/logo.png']}" alt="SIAMOIS Logo" class="img-fluid"/>
-                </div>
-            </div>
-            <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
-                <!-- Top Menu Bar -->
-                <div class="top-bar">
-                    <p:menubar>
-                        <f:facet name="start">
-                            <form action="${pageContext.request.contextPath}logout" method="post">
-                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                <button type="submit" class="btn btn-danger">${langBean.msg("nav.logout")}</button>
-                            </form>
-                            <h:button value='${langBean.msg("nav.fieldconfig")}' outcome="/pages/field/fieldConfiguration.xhtml"/>
-                        </f:facet>
-                        <p:divider layout="vertical"/>
-                    </p:menubar>
-                </div>
-            </div>
-        </div>
 
-        <h:button value='${langBean.msg("home.save.spatialunit")}' outcome="/pages/create/spatialUnit.xhtml"/>
-        <div class="row g-0" style="min-height: 100%">
+
+
+
+        <!-- Main Layout -->
+        <div class="layout-container no-gutters">
             <div class="row g-0">
-
                 <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
-                    <!-- Left Panel -->
-                    <div class="left-panel">
-
-                        <!--                        <p:menu>
-                                                    <p:submenu styleClass="icon-only-menu" label="">
-                                                        <p:menuitem value="" outcome="/pages/home/home" icon="pi pi-home"/>
-                                                        &lt;!&ndash; Add more menu items as needed &ndash;&gt;
-                                                    </p:submenu>
-                                                </p:menu>-->
+                    <div class="app-name">
+                        <img src="#{resource['img/logo.png']}" alt="SIAMOIS Logo" class="img-fluid"/>
                     </div>
                 </div>
                 <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
-                    <!-- Main Content Area -->
-                    <div class="main-content">
-                        <ui:insert name="content">
-                            <!-- Content will be inserted here -->
-                        </ui:insert>
+                    <!-- Top Menu Bar -->
+                    <div class="top-bar">
+                        <p:menubar>
+                            <f:facet name="start">
+                                <form action="${pageContext.request.contextPath}logout" method="post">
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                    <button type="submit" class="btn btn-danger">${langBean.msg("nav.logout")}</button>
+                                </form>
+                                <h:button value='${langBean.msg("nav.fieldconfig")}'
+                                          outcome="/pages/field/fieldConfiguration.xhtml"/>
+                            </f:facet>
+                            <p:divider layout="vertical"/>
+                        </p:menubar>
                     </div>
                 </div>
             </div>
 
+            <h:button value='${langBean.msg("home.save.spatialunit")}' outcome="/pages/create/spatialUnit.xhtml"/>
+            <div class="row g-0" style="min-height: 100%">
+                <div class="row g-0">
 
+                    <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
+                        <!-- Left Panel -->
+                        <div class="left-panel">
+
+                            <!--                        <p:menu>
+                                                        <p:submenu styleClass="icon-only-menu" label="">
+                                                            <p:menuitem value="" outcome="/pages/home/home" icon="pi pi-home"/>
+                                                            &lt;!&ndash; Add more menu items as needed &ndash;&gt;
+                                                        </p:submenu>
+                                                    </p:menu>-->
+                        </div>
+                    </div>
+                    <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
+                        <!-- Main Content Area -->
+                        <div class="main-content">
+                            <!-- Content will be inserted here -->
+                            <ui:insert name="content"/>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
         </div>
-    </div>
 
 </h:body>
 </html>

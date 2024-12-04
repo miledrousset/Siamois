@@ -6,12 +6,16 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components">
 
-    <ui:define name="content">
+    <ui:define name="metadata">
         <f:metadata>
             <!-- Capture the ID parameter from the URL and bind it to spatialUnitBean -->
             <f:viewParam name="id" value="#{spatialUnitBean.id}" required="true"/>
             <f:event type="preRenderView" listener="#{spatialUnitBean.init}" />
         </f:metadata>
+    </ui:define>
+
+    <ui:define name="content">
+
 
         <!-- Content -->
         <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.spatialUnitErrorMessage}" rendered="#{not empty spatialUnitBean.spatialUnitErrorMessage}" />

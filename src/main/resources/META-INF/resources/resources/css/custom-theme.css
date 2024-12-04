@@ -1,3 +1,8 @@
+:root {
+    --primary-color: #bed730 !important;;
+    --primary-color-text: #bed730 !important;;
+}
+
 .ui-button {
     background-color: #bed730 !important; /* Change button background */
     border-color: #bed730 !important;    /* Change button border */

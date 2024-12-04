@@ -55,7 +55,6 @@ public class SpatialUnitBean implements Serializable {
     public void reinitializeBean() {
         this.spatialUnit = null;
         this.spatialUnitErrorMessage = null;
-
         this.spatialUnitListErrorMessage = null;
         this.recordingUnitListErrorMessage = null;
         this.actionUnitListErrorMessage = null;

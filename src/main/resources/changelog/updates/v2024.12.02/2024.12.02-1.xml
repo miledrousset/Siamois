@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 
-    <changeSet id="2024.12.03-0" author="Grégory Bliault">
+    <changeSet id="2024.12.02-1" author="Grégory Bliault">
         <preConditions onFail="MARK_RAN">
             <columnExists tableName="recording_unit" columnName="fk_spatial_unit_id"/>
         </preConditions>
