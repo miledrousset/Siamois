@@ -8,7 +8,7 @@
     <!-- Import de BOOTSTRAP -->
     <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css"/>
     <script src="resources/js/bootstrap.bundle.min.js"></script>
-    <title>Configuration des champs</title>
+    <title>${langBean.msg("fieldconfig.title")}</title>
 </h:head>
 
 <f:metadata>
@@ -16,23 +16,23 @@
 </f:metadata>
 
 <body>
-<h1>Field Configuration</h1>
-<h:outputText value="Page de configuration de #{spatialUnitConfigurationBean.authenticatedUser}"/>
+<h1>${langBean.msg("fieldconfig.title")}</h1>
+<h:outputText value='${langBean.msg("fieldconfig.description")} ${spatialUnitConfigurationBean.authenticatedUser}'/>
 <h2>Unités spatiales</h2>
 <h3>Types d'unités spatiales</h3>
 <div class="ui-fluid">
     <h:form>
         <div class="field grid">
-            <p:outputLabel for="serverUrl" styleClass="col-12 md:col-2" value="URL du serveur"/>
+            <p:outputLabel for="serverUrl" styleClass="col-12 md:col-2" value='${langBean.msg("fieldconfig.server.label")}'/>
             <div class="col-12 md:col-10">
                 <p:inputText id="serverUrl" value="#{spatialUnitConfigurationBean.serverUrl}"/>
             </div>
-            <p:commandButton value="Accéder au serveur" action="#{spatialUnitConfigurationBean.loadThesaurusValue()}"
+            <p:commandButton value='${langBean.msg("fieldconfig.server.load")}' action="#{spatialUnitConfigurationBean.loadThesaurusValue()}"
                              update="globalThesaurusId,globalCollectionsId"/>
         </div>
         <div class="field grid">
             <p:outputLabel for="globalThesaurusId" styleClass="col-12 md:col-2"
-                           value="Identifiant interne du thésaurus"/>
+                           value='${langBean.msg("fieldconfig.thesaurus.label")}'/>
             <div class="col-12 md:col-10">
                 <p:selectOneMenu id="globalThesaurusId" value="#{spatialUnitConfigurationBean.selectedThesaurus}">
                     <f:selectItems value="#{spatialUnitConfigurationBean.vocabularies}" var="vocab"
@@ -40,24 +40,24 @@
                                    itemValue="#{vocab.externalVocabularyId}"/>
 
                 </p:selectOneMenu>
-                <p:commandButton value="Charger les groupes" action="#{spatialUnitConfigurationBean.loadGroupValue()}"
-                                 update="globalCollectionsId"/>
+                <p:commandButton value='${langBean.msg("fieldconfig.thesaurus.load")}' action="#{spatialUnitConfigurationBean.loadGroupValue()}"
+                                 update="globalCollectionsId selectEntireThesaurus"/>
             </div>
         </div>
 
-        <p:selectBooleanCheckbox value="#{spatialUnitConfigurationBean.selectEntireThesaurus}"
-                                 itemLabel="Selectionner tout le thésaurus">
-            <p:ajax event="change" update="globalCollectionsId" listener="#{spatialUnitConfigurationBean.removeAllSelectedGroups}"/>
+        <p:selectBooleanCheckbox id="selectEntireThesaurus" value="#{spatialUnitConfigurationBean.selectEntireThesaurus}"
+                                 itemLabel='${langBean.msg("fieldconfig.thesaurus.complete")}'>
+            <p:ajax event="change" update="globalCollectionsId @this" listener="#{spatialUnitConfigurationBean.removeAllSelectedGroups}"/>
         </p:selectBooleanCheckbox>
 
         <div class="field grid">
             <p:outputLabel for="globalCollectionsId" styleClass="col-12 md:col-2"
-                           value="Selectionnez la ou les collection à utiliser"/>
+                           value='${langBean.msg("fieldconfig.collections.label")}'/>
             <div class="col-12 md:col-10">
 
                 <p:dataTable id="globalCollectionsId" var="group" value="#{spatialUnitConfigurationBean.collections}"
                              selection="#{spatialUnitConfigurationBean.selectedGroups}" rowKey="#{group.externalId}"
-                             rows="5" selectionPageOnly="false" selectionRowMode="none" cellNavigation="true"
+                             rows="5" selectionPageOnly="false" selectionRowMode="multiple" cellNavigation="true"
                              paginator="true"
                              selectionDisabled="#{spatialUnitConfigurationBean.selectEntireThesaurus == true}">
 
@@ -76,7 +76,7 @@
         </div>
 
 
-        <p:commandButton value="Sauvegarder" action="#{spatialUnitConfigurationBean.processForm()}"
+        <p:commandButton value='${langBean.msg("actions.save")}' action="#{spatialUnitConfigurationBean.processForm()}"
                          update="globalCollectionsId"/>
 
         <p:messages id="messages" showDetail="true" closable="true">
@@ -86,7 +86,7 @@
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </h:form>
 
-    <p:button value="Retour à la page d'accueil" outcome="/index.xhtml"/>
+    <p:button value='${langBean.msg("actions.backhome")}' outcome="/index.xhtml"/>
 </div>
 
 </body>

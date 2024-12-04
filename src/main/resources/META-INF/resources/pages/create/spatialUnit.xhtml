@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css"/>
     <script src="resources/js/bootstrap.bundle.min.js"></script>
 
-    <title>Enregistrement d'une US</title>
+    <title>${langBean.msg("spatialunit.title")}</title>
 </h:head>
 
 <f:metadata>
@@ -19,16 +19,16 @@
 
 <h:body>
 
-    <h1>Enregistrement d'une Unité Spatiale</h1>
+    <h1>${langBean.msg("spatialunit.title")}</h1>
     <h:form id="formId">
         <div class="card">
             <div class="ui-fluid">
                 <div class="field">
-                    <p:outputLabel for="su-name" value="Nom de l'unité spatiale"/>
+                    <p:outputLabel for="su-name" value='${langBean.msg("spatialunit.name.label")}'/>
                     <p:inputText id="su-name" value="#{spatialUnitFieldBean.FName}"/>
                 </div>
 
-                <p:outputLabel for="su-category" value="Catégorie"/>
+                <p:outputLabel for="su-category" value='${langBean.msg("spatialunit.category.label")}'/>
                 <p:autoComplete id="su-category" value="#{spatialUnitFieldBean.FCategory}"
                                 completeMethod="#{spatialUnitFieldBean.completeCategory}"
                                 forceSelection="true"
@@ -37,7 +37,7 @@
 
             </div>
 
-            <p:outputLabel for="su-parents" value="Parents de l'unité spatiale crée"/>
+            <p:outputLabel for="su-parents" value='${langBean.msg("spatialunit.parents.label")}'/>
             <p:dataTable id="su-parents" var="spatialUnit" value="#{spatialUnitFieldBean.refSpatialUnits}"
                          selection="#{spatialUnitFieldBean.FParentsSpatialUnits}" rowKey="#{spatialUnit.id}"
                          rows="5" selectionPageOnly="false" selectionRowMode="none" cellNavigation="true"
@@ -62,14 +62,14 @@
             </p:dataTable>
 
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <p:commandButton value="Enregistrer" action="#{spatialUnitFieldBean.save()}"/>
+            <p:commandButton value='${langBean.msg("actions.save")}' action="#{spatialUnitFieldBean.save()}"/>
         </div>
 
         <p:messages id="messages" showDetail="true" closable="true">
             <p:autoUpdate/>
         </p:messages>
 
-        <p:button value="Retour à la page d'accueil" outcome="/index.xhtml"/>
+        <p:button value='${langBean.msg("actions.backhome")}' outcome="/index.xhtml"/>
 
     </h:form>
 

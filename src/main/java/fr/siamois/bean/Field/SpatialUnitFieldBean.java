@@ -1,5 +1,6 @@
 package fr.siamois.bean.Field;
 
+import fr.siamois.bean.LangBean;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
@@ -40,6 +41,7 @@ public class SpatialUnitFieldBean implements Serializable {
     // Injections
     private final FieldService fieldService;
     private final FieldConfigurationService fieldConfigurationService;
+    private final LangBean langBean;
 
     // Storage
     private List<SpatialUnit> refSpatialUnits = new ArrayList<>();
@@ -55,9 +57,10 @@ public class SpatialUnitFieldBean implements Serializable {
     private String fCategory = "";
     private List<SpatialUnit> fParentsSpatialUnits = new ArrayList<>();
 
-    public SpatialUnitFieldBean(FieldService fieldService, FieldConfigurationService fieldConfigurationService) {
+    public SpatialUnitFieldBean(FieldService fieldService, FieldConfigurationService fieldConfigurationService, LangBean langBean) {
         this.fieldService = fieldService;
         this.fieldConfigurationService = fieldConfigurationService;
+        this.langBean = langBean;
     }
 
     /**
@@ -75,6 +78,7 @@ public class SpatialUnitFieldBean implements Serializable {
         fName = "";
         fCategory = "";
         fParentsSpatialUnits = new ArrayList<>();
+        langcode = langBean.getLanguageCode();
     }
 
     /**
@@ -116,7 +120,7 @@ public class SpatialUnitFieldBean implements Serializable {
             setCurrentCollectionsIfNull(person);
             if (collections != null)
             {
-                concepts = fieldService.fetchAutocomplete(collections, input);
+                concepts = fieldService.fetchAutocomplete(collections, input, langcode);
                 return concepts.stream()
                         .map(ConceptFieldDTO::getLabel)
                         .collect(Collectors.toList());

@@ -1,5 +1,6 @@
 package fr.siamois.config;
 
+import fr.siamois.bean.LangBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +25,7 @@ public class WebSecurityConfig {
      * @throws Exception If any filter configuration fails.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, LangBean langBean) throws Exception {
         log.trace("Security chain ");
         http.authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/", "/index.xhtml").authenticated()
@@ -33,11 +34,12 @@ public class WebSecurityConfig {
                 .anyRequest().permitAll()
         );
         http.formLogin((login) -> login
-                .loginPage("/login").permitAll()
+                .loginPage("/login?lang=" + langBean.getLanguageCode()).permitAll()
+                .loginProcessingUrl("/login")
         );
         http.logout((logout) -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login")
+                .logoutSuccessUrl("/login?lang=" + langBean.getLanguageCode())
         );
         http.sessionManagement((session) -> session.maximumSessions(1)
         );
