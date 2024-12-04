@@ -44,4 +44,7 @@ public class ActionUnit {
     @JoinColumn(name = "fk_spatial_unit_id", nullable = false)
     private SpatialUnit spatialUnit;
 
+    @Column(name = "action_unit_name", length = Integer.MAX_VALUE)
+    private String name;
+
 }
