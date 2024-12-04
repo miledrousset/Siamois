@@ -2,6 +2,7 @@ package fr.siamois.bean.Field;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.api.ClientSideErrorException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
@@ -40,15 +41,16 @@ public class SpatialUnitConfigurationBean implements Serializable {
     private List<Vocabulary> vocabularies = new ArrayList<>();
     private Vocabulary selectedVocab = null;
     private Map<String, String> labels = new HashMap<>();
-    private String lang = "fr";
     private List<VocabularyCollection> cacheSelectedGroups = new ArrayList<>();
     private List<VocabularyCollection> cachedGroups = new ArrayList<>();
+    private List<String> fieldCodes = List.of(SpatialUnit.CATEGORY_FIELD_CODE, Team.ROLE_FIELD_CODE);
 
     // Fields
     private boolean selectEntireThesaurus = false;
     private String serverUrl = "";
     private List<VocabularyCollection> selectedGroups = new ArrayList<>();
     private String selectedThesaurus = "";
+    private String selectedFieldCode = "";
 
     public SpatialUnitConfigurationBean(FieldConfigurationService fieldConfigurationService, LangBean langBean) {
         this.fieldConfigurationService = fieldConfigurationService;
@@ -67,7 +69,6 @@ public class SpatialUnitConfigurationBean implements Serializable {
         serverUrl = "";
         selectedGroups = new ArrayList<>();
         selectedThesaurus = "";
-        lang = langBean.getLanguageCode();
     }
 
     /**
@@ -129,7 +130,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
             selectedVocab = getSelectedVocab().orElseThrow();
             selectedVocab = fieldConfigurationService.saveVocabularyIfNotExists(selectedVocab);
 
-            FieldConfigurationService.VocabularyCollectionsAndLabels result = fieldConfigurationService.fetchCollections(lang, selectedVocab);
+            FieldConfigurationService.VocabularyCollectionsAndLabels result = fieldConfigurationService.fetchCollections(langBean.getLanguageCode(), selectedVocab);
 
             if (result.collections().isEmpty()) {
                 collections = new ArrayList<>();
@@ -259,7 +260,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
         selectedVocab = null;
         selectedThesaurus = null;
 
-        List<Vocabulary> result = fieldConfigurationService.fetchAllPublicThesaurus(lang, serverUrl);
+        List<Vocabulary> result = fieldConfigurationService.fetchAllPublicThesaurus(langBean.getLanguageCode(), serverUrl);
         vocabularies.addAll(result);
 
     }

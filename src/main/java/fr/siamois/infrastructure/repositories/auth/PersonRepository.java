@@ -1,6 +1,8 @@
-package fr.siamois.infrastructure.repositories;
+package fr.siamois.infrastructure.repositories.auth;
 
 import fr.siamois.models.auth.Person;
+import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -40,5 +42,13 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
     List<Person> findPersonsOfTeamWithRole(@Param("teamId") Long teamId, @Param("roleId") Long roleConceptId);
 
     Optional<Person> findPersonByUsername(String username);
+
+    @Transactional
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = "INSERT INTO person_role_team (fk_person_id, fk_team_id, fk_role_concept_id) VALUES (:personId, :teamId, null)"
+    )
+    int addManagerToTeam(Long personId, Long teamId);
 
 }

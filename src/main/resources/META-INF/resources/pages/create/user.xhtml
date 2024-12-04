@@ -5,67 +5,72 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
+    <f:metadata>
+        <f:viewAction action="#{userCreationBean.init}" />
+    </f:metadata>
+
     <ui:define name="content">
         <h:form>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <div class="col-12 md:col-4">
                 <div class="ui-inputgroup">
-                    <div class="ui-inputgroup-addon"><i class="pi pi-user"></i></div>
-                    <p:inputText placeholder="Username" value="#{userCreationBean.VUsername}" />
+                    <div class="ui-inputgroup-addon"><i class="pi pi-user" /></div>
+                    <p:inputText placeholder="Username"
+                                 value="#{userCreationBean.VUsername}"
+                                 required="true"
+                                 maxlength="20"/>
                 </div>
             </div>
             <div class="col-12 md:col-4">
                 <div class="ui-inputgroup">
-                    <div class="ui-inputgroup-addon"><i class="pi pi-envelope"></i></div>
-                    <p:inputText placeholder="Email" value="#{userCreationBean.VEmail}" />
+                    <div class="ui-inputgroup-addon"><i class="pi pi-envelope" /></div>
+                    <p:inputText placeholder="Email" value="#{userCreationBean.VEmail}" required="true" maxlength="50" type="email" />
                 </div>
             </div>
             <div class="col-12 md:col-4">
                 <div class="ui-inputgroup">
-                    <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h"></i></div>
-                    <p:inputText placeholder="Password" value="#{userCreationBean.VPassword}"/>
+                    <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
+                    <p:inputText placeholder="Password" value="#{userCreationBean.VPassword}" required="true" type="password" maxlength="64"/>
                 </div>
             </div>
             <div class="col-12 md:col-4">
                 <div class="ui-inputgroup">
-                    <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h"></i></div>
-                    <p:inputText placeholder="Confirm password" value="#{userCreationBean.VConfirmPassword}" />
+                    <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
+                    <p:inputText placeholder="Confirm password" value="#{userCreationBean.VConfirmPassword}" required="true" type="password" maxlength="64"/>
                 </div>
             </div>
 
-            <p:dataTable var="actionUnit" value="#{userCreationBean.refActionUnits}"
-                         selection="#{userCreationBean.VActionUnits}"
-                         widgetVar="actionUnitTable"
-                         emptyMessage="No action unit found with given criteria"
-                         filteredValue="#{userCreationBean.filteredActionUnits}"
+            <p:dataTable var="team" value="#{userCreationBean.refTeams}"
+                         selection="#{userCreationBean.VTeams}"
+                         widgetVar="teamTable"
+                         emptyMessage="No team found with given criteria"
+                         filteredValue="#{userCreationBean.filteredTeams}"
+                         rowKey="#{team.id}"
+                         selectionMode="multiple"
             >
-                <p:column headerText="ID" filterBy="#{actionUnit.id}" filterMatchMode="contains" filterPlaceholder="Filter by ID">
-                    <h:outputText value="#{actionUnit.id}" />
+                <p:column selectionBox="true" style="width:16px;text-align:center"/>
+
+                <p:column headerText="ID" filterBy="#{team.id}" filterMatchMode="contains" filterPlaceholder="Filter by ID">
+                    <h:outputText value="#{team.id}"/>
                 </p:column>
 
-                <p:column headerText="Name" filterBy="#{actionUnit.name}" filterMatchMode="contains" filterPlaceholder="Filter by name">
-                    <h:outputText value="#{actionUnit.name}" />
+                <p:column headerText="Name" filterBy="#{team.name}" filterMatchMode="contains" filterPlaceholder="Filter by Name">
+                    <h:outputText value="#{team.name}" />
                 </p:column>
 
-                <p:column headerText="Beginning" filterBy="#{actionUnit.beginDate}" filterMatchMode="exact" filterPlaceholder="Filter by beginning date">
-                    <h:outputText value="#{actionUnit.beginDate}" />
+                <p:column headerText="Description" filterBy="#{team.description}" filterMatchMode="contains" filterPlaceholder="Filter by Description">
+                    <h:outputText value="#{team.description}" />
                 </p:column>
 
-                <p:column headerText="End" filterBy="#{actionUnit.endDate}" filterMatchMode="exact" filterPlaceholder="Filter by end date">
-                    <h:outputText value="#{actionUnit.endDate}" />
-                </p:column>
-
-                <p:column headerText="Type" filterBy="#{actionUnit.type.label}" filterMatchMode="contains" filterPlaceholder="Filter by type">
-                    <h:outputText value="#{actionUnit.type.label}" />
-                </p:column>
-
-                <p:column headerText="Author" filterBy="#{actionUnit.owner.username}" filterMatchMode="contains" filterPlaceholder="Filter by author">
-                    <h:outputText value="#{actionUnit.owner.username}" />
-                </p:column>
 
             </p:dataTable>
 
             <h:commandButton value="Create" action="#{userCreationBean.createUser()}" />
+
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+
         </h:form>
     </ui:define>
 

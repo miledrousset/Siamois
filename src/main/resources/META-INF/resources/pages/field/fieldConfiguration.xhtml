@@ -17,7 +17,13 @@
         <h3>Types d'unités spatiales</h3>
         <div class="ui-fluid">
             <h:form>
+
                 <div class="field grid">
+
+                    <p:selectOneMenu id="fieldCode" value="#{spatialUnitConfigurationBean.selectedFieldCode}">
+                        <f:selectItems value="#{spatialUnitConfigurationBean.fieldCodes}"/>
+                    </p:selectOneMenu>
+
                     <p:outputLabel for="serverUrl" styleClass="col-12 md:col-2"
                                    value='${langBean.msg("fieldconfig.server.label")}'/>
                     <div class="col-12 md:col-10">

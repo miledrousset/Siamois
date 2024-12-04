@@ -1,4 +1,4 @@
-package fr.siamois.infrastructure.repositories;
+package fr.siamois.infrastructure.repositories.auth;
 
 import fr.siamois.models.Team;
 import org.springframework.data.jpa.repository.Query;

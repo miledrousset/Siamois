@@ -36,6 +36,7 @@ public class WebSecurityConfig {
         http.formLogin((login) -> login
                 .loginPage("/login?lang=" + langBean.getLanguageCode()).permitAll()
                 .loginProcessingUrl("/login")
+                .failureUrl("/login?error=true&lang=" + langBean.getLanguageCode())
         );
         http.logout((logout) -> logout
                 .logoutUrl("/logout")

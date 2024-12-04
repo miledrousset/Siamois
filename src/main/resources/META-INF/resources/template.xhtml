@@ -25,7 +25,7 @@
                 <div class="top-bar">
                     <p:menubar>
                         <f:facet name="start">
-                            <form action="${pageContext.request.contextPath}logout" method="post">
+                            <form action="${navBean.logoutPath()}" method="post">
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                 <button type="submit" class="btn btn-danger">${langBean.msg("nav.logout")}</button>
                             </form>

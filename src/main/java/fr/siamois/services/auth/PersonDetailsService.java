@@ -1,6 +1,6 @@
 package fr.siamois.services.auth;
 
-import fr.siamois.infrastructure.repositories.PersonRepository;
+import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import fr.siamois.models.auth.Person;
 import lombok.Setter;
 import org.springframework.security.core.userdetails.UserDetails;
