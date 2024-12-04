@@ -1,78 +1,70 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
->
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-<h:head>
-    <!-- Import de BOOTSTRAP -->
-    <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css"/>
-    <script src="resources/js/bootstrap.bundle.min.js"></script>
+    <f:metadata>
+        <f:viewAction action="#{spatialUnitFieldBean.init()}"/>
+    </f:metadata>
 
-    <title>${langBean.msg("spatialunit.title")}</title>
-</h:head>
+    <ui:define name="content">
 
-<f:metadata>
-    <f:viewAction action="#{spatialUnitFieldBean.init()}"/>
-</f:metadata>
 
-<h:body>
+        <h1>${langBean.msg("spatialunit.title")}</h1>
+        <h:form id="formId">
+            <div class="card">
+                <div class="ui-fluid">
+                    <div class="field">
+                        <p:outputLabel for="su-name" value='${langBean.msg("spatialunit.name.label")}'/>
+                        <p:inputText id="su-name" value="#{spatialUnitFieldBean.FName}"/>
+                    </div>
 
-    <h1>${langBean.msg("spatialunit.title")}</h1>
-    <h:form id="formId">
-        <div class="card">
-            <div class="ui-fluid">
-                <div class="field">
-                    <p:outputLabel for="su-name" value='${langBean.msg("spatialunit.name.label")}'/>
-                    <p:inputText id="su-name" value="#{spatialUnitFieldBean.FName}"/>
+                    <p:outputLabel for="su-category" value='${langBean.msg("spatialunit.category.label")}'/>
+                    <p:autoComplete id="su-category" value="#{spatialUnitFieldBean.FCategory}"
+                                    completeMethod="#{spatialUnitFieldBean.completeCategory}"
+                                    forceSelection="true"
+                                    scrollHeight="300"
+                                    dropdown="true"/>
+
                 </div>
 
-                <p:outputLabel for="su-category" value='${langBean.msg("spatialunit.category.label")}'/>
-                <p:autoComplete id="su-category" value="#{spatialUnitFieldBean.FCategory}"
-                                completeMethod="#{spatialUnitFieldBean.completeCategory}"
-                                forceSelection="true"
-                                scrollHeight="300"
-                                dropdown="true"/>
+                <p:outputLabel for="su-parents" value='${langBean.msg("spatialunit.parents.label")}'/>
+                <p:dataTable id="su-parents" var="spatialUnit" value="#{spatialUnitFieldBean.refSpatialUnits}"
+                             selection="#{spatialUnitFieldBean.FParentsSpatialUnits}" rowKey="#{spatialUnit.id}"
+                             rows="5" selectionPageOnly="false" selectionRowMode="none" cellNavigation="true"
+                             paginator="true">
+                    <p:column selectionBox="true" style="width:16px;text-align:center"/>
+                    <p:column headerText="ID">
+                        <h:outputText value="#{spatialUnit.id}"/>
+                    </p:column>
 
+                    <p:column headerText="Categorie">
+                        <h:outputText value="#{spatialUnit.category.label}"/>
+                    </p:column>
+
+                    <p:column headerText="Nom">
+                        <h:outputText value="#{spatialUnit.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Ark">
+                        <h:outputText value="#{spatialUnit.ark.arkId}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <p:commandButton value='${langBean.msg("actions.save")}' action="#{spatialUnitFieldBean.save()}"/>
             </div>
 
-            <p:outputLabel for="su-parents" value='${langBean.msg("spatialunit.parents.label")}'/>
-            <p:dataTable id="su-parents" var="spatialUnit" value="#{spatialUnitFieldBean.refSpatialUnits}"
-                         selection="#{spatialUnitFieldBean.FParentsSpatialUnits}" rowKey="#{spatialUnit.id}"
-                         rows="5" selectionPageOnly="false" selectionRowMode="none" cellNavigation="true"
-                        paginator="true">
-                <p:column selectionBox="true" style="width:16px;text-align:center"/>
-                <p:column headerText="ID">
-                    <h:outputText value="#{spatialUnit.id}" />
-                </p:column>
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
 
-                <p:column headerText="Categorie">
-                    <h:outputText value="#{spatialUnit.category.label}" />
-                </p:column>
+            <p:button value='${langBean.msg("actions.backhome")}' outcome="/index.xhtml"/>
 
-                <p:column headerText="Nom">
-                    <h:outputText value="#{spatialUnit.name}" />
-                </p:column>
+        </h:form>
+    </ui:define>
 
-                <p:column headerText="Ark">
-                    <h:outputText value="#{spatialUnit.ark.arkId}" />
-                </p:column>
-
-            </p:dataTable>
-
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <p:commandButton value='${langBean.msg("actions.save")}' action="#{spatialUnitFieldBean.save()}"/>
-        </div>
-
-        <p:messages id="messages" showDetail="true" closable="true">
-            <p:autoUpdate/>
-        </p:messages>
-
-        <p:button value='${langBean.msg("actions.backhome")}' outcome="/index.xhtml"/>
-
-    </h:form>
-
-</h:body>
-
-</html>
+</ui:composition>
