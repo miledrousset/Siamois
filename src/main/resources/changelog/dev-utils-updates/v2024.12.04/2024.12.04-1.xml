@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2024.11.16-DEV-0" author="Julien Linget">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM system_role_user sru JOIN person p ON sru.person_id = p.person_id WHERE
+                    p.username = 'admin';
+                </sqlCheck>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM system_role WHERE role_name = 'ADMIN';
+                </sqlCheck>
+            </and>
+        </preConditions>
+        <sql>
+            INSERT INTO system_role_user (person_id, role_id)
+            VALUES ((SELECT p.person_id
+                     FROM person p
+                     WHERE p.username = 'admin'), 0);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

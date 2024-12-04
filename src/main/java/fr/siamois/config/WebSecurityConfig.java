@@ -26,11 +26,11 @@ public class WebSecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, LangBean langBean) throws Exception {
-        log.trace("Security chain ");
         http.authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/", "/index.xhtml").authenticated()
                 .requestMatchers("/fieldConfiguration", "/pages/field/fieldConfiguration.xhtml").authenticated()
                 .requestMatchers("/pages/create/spatialUnit.xhtml").authenticated()
+                .requestMatchers("/pages/create/user.xhtml", "/create/user").hasAuthority("ADMIN")
                 .anyRequest().permitAll()
         );
         http.formLogin((login) -> login
