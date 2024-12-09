@@ -1,9 +1,14 @@
 package fr.siamois.bean.user;
 
+import fr.siamois.bean.LangBean;
 import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
+import fr.siamois.models.exceptions.FailedTeamSaveException;
 import fr.siamois.models.exceptions.UserAlreadyExist;
+import fr.siamois.models.exceptions.field.InvalidEmail;
+import fr.siamois.models.exceptions.field.InvalidPassword;
 import fr.siamois.models.exceptions.field.InvalidUserInformation;
+import fr.siamois.models.exceptions.field.InvalidUsername;
 import fr.siamois.services.PersonService;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -22,6 +27,7 @@ import java.util.List;
 @Component
 public class UserCreationBean implements Serializable {
     private final PersonService personService;
+    private final LangBean langBean;
 
     // Injections
 
@@ -36,8 +42,9 @@ public class UserCreationBean implements Serializable {
     private String vConfirmPassword;
     private List<Team> vTeams = new ArrayList<>();
 
-    public UserCreationBean(PersonService personService) {
+    public UserCreationBean(PersonService personService, LangBean langBean) {
         this.personService = personService;
+        this.langBean = langBean;
     }
 
     public void init() {
@@ -58,7 +65,7 @@ public class UserCreationBean implements Serializable {
     public void createUser() {
 
         if (!vPassword.equals(vConfirmPassword)) {
-            displayErrorMessage("Passwords do not match.");
+            displayErrorMessage(langBean.msg("commons.error.password.nomatch"));
             return;
         }
 
@@ -66,13 +73,22 @@ public class UserCreationBean implements Serializable {
             Person person = personService.createPerson(vUsername, vEmail, vPassword);
             person = personService.addPersonToTeamManagers(person);
             personService.addPersonToTeam(person, vTeams.toArray(new Team[0]));
-            displayMessage(FacesMessage.SEVERITY_INFO, "Success", "User created successfully.");
-        } catch (InvalidUserInformation e) {
-            log.error("Invalid user information.", e);
-            displayErrorMessage(e.getUserMessage());
+            displayMessage(FacesMessage.SEVERITY_INFO, langBean.msg("commons.message.state.success"), langBean.msg("commons.message.user.created"));
         } catch (UserAlreadyExist e) {
             log.error("Username already exists.", e);
-            displayErrorMessage("Username already exists.");
+            displayErrorMessage(langBean.msg("commons.error.user.alreadyexist", vUsername));
+        } catch (InvalidUsername e) {
+            log.error("Invalid username.", e);
+            displayErrorMessage(langBean.msg("commons.error.user.username.invalid"));
+        } catch (InvalidEmail e) {
+            log.error("Invalid email.", e);
+            displayErrorMessage(langBean.msg("commons.error.user.email.invalid"));
+        } catch (InvalidPassword e) {
+            log.error("Invalid password.", e);
+            displayErrorMessage(langBean.msg("commons.error.user.password.invalid"));
+        } catch (FailedTeamSaveException e) {
+            log.error("Failed to save team.", e);
+            displayErrorMessage(langBean.msg("commons.error.team.save"));
         }
     }
 
@@ -80,7 +96,7 @@ public class UserCreationBean implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, title, message));
     }
     private void displayErrorMessage(String message) {
-        displayMessage(FacesMessage.SEVERITY_ERROR, "Error", message);
+        displayMessage(FacesMessage.SEVERITY_ERROR, langBean.msg("commons.message.state.error"), message);
     }
 
 }

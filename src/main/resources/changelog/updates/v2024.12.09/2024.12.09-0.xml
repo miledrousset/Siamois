@@ -12,7 +12,7 @@
         </preConditions>
 
         <addColumn tableName="person_role_team">
-            <column type="boolean" name="is_manager" defaultValue="FALSE"></column>
+            <column type="boolean" name="is_manager" defaultValue="FALSE"/>
         </addColumn>
 
     </changeSet>

@@ -42,6 +42,10 @@ public class LangBean implements Serializable {
         return messageSource.getMessage(key, null, locale);
     }
 
+    public String msg(String format, Object... args) {
+        return String.format(msg(format), args);
+    }
+
     public void setLanguage(String lang) {
         log.trace("Setting language to {}", lang);
         locale = new Locale(lang);

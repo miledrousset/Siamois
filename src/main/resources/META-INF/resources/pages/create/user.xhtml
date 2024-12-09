@@ -15,7 +15,7 @@
             <div class="col-12 md:col-4">
                 <div class="ui-inputgroup">
                     <div class="ui-inputgroup-addon"><i class="pi pi-user" /></div>
-                    <p:inputText placeholder="Username"
+                    <p:inputText placeholder='#{langBean.msg("commons.username")}'
                                  value="#{userCreationBean.VUsername}"
                                  required="true"
                                  maxlength="20"/>
@@ -24,48 +24,48 @@
             <div class="col-12 md:col-4">
                 <div class="ui-inputgroup">
                     <div class="ui-inputgroup-addon"><i class="pi pi-envelope" /></div>
-                    <p:inputText placeholder="Email" value="#{userCreationBean.VEmail}" required="true" maxlength="50" type="email" />
+                    <p:inputText placeholder='#{langBean.msg("create.user.email")}' value="#{userCreationBean.VEmail}" required="true" maxlength="50" type="email" />
                 </div>
             </div>
             <div class="col-12 md:col-4">
                 <div class="ui-inputgroup">
                     <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
-                    <p:inputText placeholder="Password" value="#{userCreationBean.VPassword}" required="true" type="password" maxlength="64"/>
+                    <p:inputText placeholder='#{langBean.msg("create.user.password")}' value="#{userCreationBean.VPassword}" required="true" type="password" maxlength="64"/>
                 </div>
             </div>
             <div class="col-12 md:col-4">
                 <div class="ui-inputgroup">
                     <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
-                    <p:inputText placeholder="Confirm password" value="#{userCreationBean.VConfirmPassword}" required="true" type="password" maxlength="64"/>
+                    <p:inputText placeholder='#{langBean.msg("create.user.password.confirm")}' value="#{userCreationBean.VConfirmPassword}" required="true" type="password" maxlength="64"/>
                 </div>
             </div>
 
             <p:dataTable var="team" value="#{userCreationBean.refTeams}"
                          selection="#{userCreationBean.VTeams}"
                          widgetVar="teamTable"
-                         emptyMessage="No team found with given criteria"
+                         emptyMessage='#{langBean.msg("create.user.teams.empty")}'
                          filteredValue="#{userCreationBean.filteredTeams}"
                          rowKey="#{team.id}"
                          selectionMode="multiple"
             >
                 <p:column selectionBox="true" style="width:16px;text-align:center"/>
 
-                <p:column headerText="ID" filterBy="#{team.id}" filterMatchMode="contains" filterPlaceholder="Filter by ID">
+                <p:column headerText="ID" filterBy="#{team.id}" filterMatchMode="contains" filterPlaceholder='#{langBean.msg("commons.filterby.id")}'>
                     <h:outputText value="#{team.id}"/>
                 </p:column>
 
-                <p:column headerText="Name" filterBy="#{team.name}" filterMatchMode="contains" filterPlaceholder="Filter by Name">
+                <p:column headerText='#{langBean.msg("create.team.name")}' filterBy="#{team.name}" filterMatchMode="contains" filterPlaceholder='#{langBean.msg("commons.filterby.name")}'>
                     <h:outputText value="#{team.name}" />
                 </p:column>
 
-                <p:column headerText="Description" filterBy="#{team.description}" filterMatchMode="contains" filterPlaceholder="Filter by Description">
+                    <p:column headerText='#{langBean.msg("commons.description")}' filterBy="#{team.description}" filterMatchMode="contains" filterPlaceholder='#{langBean.msg("commons.filterby.description")}'>
                     <h:outputText value="#{team.description}" />
                 </p:column>
 
 
             </p:dataTable>
 
-            <h:commandButton value="Create" action="#{userCreationBean.createUser()}" />
+            <h:commandButton value='#{langBean.msg("create.team.confirm")}' action="#{userCreationBean.createUser()}" />
 
             <p:messages id="messages" showDetail="true" closable="true">
                 <p:autoUpdate/>

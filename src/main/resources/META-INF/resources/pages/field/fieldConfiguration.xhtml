@@ -86,7 +86,7 @@
                 </div>
 
 
-                <p:commandButton value='${langBean.msg("actions.save")}'
+                <p:commandButton value='${langBean.msg("commons.actions.save")}'
                                  action="#{spatialUnitConfigurationBean.processForm()}"
                                  update="globalCollectionsId"/>
 
@@ -97,7 +97,7 @@
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             </h:form>
 
-            <p:button value='${langBean.msg("actions.backhome")}' outcome="/index.xhtml"/>
+            <p:button value='${langBean.msg("commons.actions.backhome")}' outcome="/index.xhtml"/>
         </div>
     </ui:define>
 

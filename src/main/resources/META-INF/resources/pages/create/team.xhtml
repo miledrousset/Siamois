@@ -13,17 +13,17 @@
         <h:form id="teamform">
             <h1>Nom de l'équipe</h1>
             <p:inputText id="teamName" value="#{teamCreationBean.FTeamName}" required="true"/>
-            <h:outputLabel for="teamName" value="Nom de l'équipe"/>
+            <h:outputLabel for="teamName" value='#{langBean.msg("create.team.name")}'/>
 
             <p:inputTextarea id="teamDescription" value="#{teamCreationBean.FDescription}" required="true"/>
-            <h:outputLabel for="teamDescription" value="Description de l'équipe"/>
+            <h:outputLabel for="teamDescription" value='#{langBean.msg("create.team.description")}'/>
 
             <h2>Choix du gestionnaire</h2>
 
             <p:selectOneMenu value="#{teamCreationBean.FManagerSelectionType}">
                 <f:selectItem itemLabel="" itemValue="#{null}"/>
-                <f:selectItem itemLabel="Choisir un manager" itemValue="select"/>
-                <f:selectItem itemLabel="Créer un manager" itemValue="create"/>
+                <f:selectItem itemLabel='${langBean.msg("create.team.manager.select")}' itemValue="select"/>
+                <f:selectItem itemLabel='${langBean.msg("create.team.manager.create")}' itemValue="create"/>
                 <p:ajax update="selectionGroup"/>
             </p:selectOneMenu>
 
@@ -32,20 +32,20 @@
                     <!-- Choix du manager -->
                     <h3>Sélection</h3>
                     <p:dataTable var="manager" value="#{teamCreationBean.managers}" widgetVar="managerTable"
-                                 emptyMessage="No manager found with the given criterias"
+                                 emptyMessage='#{langBean.msg("create.team.filter.manager.empty")}'
                                  filteredValue="#{teamCreationBean.filteredManagers}"
                                  selectionMode="single"
                                  selection="#{teamCreationBean.FManager}"
                                  rowKey="#{manager.id}"
                     >
 
-                        <p:column headerText="Nom d'utilisateur" filterBy="#{manager.username}" filterMatchMode="contains"
-                                  filterPlaceholder="Rechercher par nom d'utilisateur">
+                        <p:column headerText='#{langBean.msg("commons.username")}' filterBy="#{manager.username}" filterMatchMode="contains"
+                                  filterPlaceholder='#{langBean.msg("create.team.filter.username")}'>
                             <h:outputText value="#{manager.username}"/>
                         </p:column>
 
-                        <p:column headerText="Nom complet"
-                                  filterPlaceholder="Rechercher par nom">
+                        <p:column headerText='#{langBean.msg("commons.name")}'
+                                  filterPlaceholder='#{langBean.msg("create.team.filter.name")}'>
                             <h:outputText value="#{manager.name}"/>
                         </p:column>
 
@@ -57,7 +57,7 @@
                     <div class="col-12 md:col-4">
                         <div class="ui-inputgroup">
                             <div class="ui-inputgroup-addon"><i class="pi pi-user" /></div>
-                            <p:inputText placeholder="Username"
+                            <p:inputText placeholder='#{langBean.msg("commons.username")}'
                                          value="#{teamCreationBean.FManagerUsername}"
                                          required="true"
                                          maxlength="20"/>
@@ -66,19 +66,19 @@
                     <div class="col-12 md:col-4">
                         <div class="ui-inputgroup">
                             <div class="ui-inputgroup-addon"><i class="pi pi-envelope" /></div>
-                            <p:inputText placeholder="Email" value="#{teamCreationBean.FManagerEmail}" required="true" maxlength="50" type="email" />
+                            <p:inputText placeholder='#{langBean.msg("create.user.email")}' value="#{teamCreationBean.FManagerEmail}" required="true" maxlength="50" type="email" />
                         </div>
                     </div>
                     <div class="col-12 md:col-4">
                         <div class="ui-inputgroup">
                             <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
-                            <p:inputText placeholder="Password" value="#{teamCreationBean.FManagerPassword}" required="true" type="password" maxlength="64"/>
+                            <p:inputText placeholder='#{langBean.msg("create.user.password")}' value="#{teamCreationBean.FManagerPassword}" required="true" type="password" maxlength="64"/>
                         </div>
                     </div>
                     <div class="col-12 md:col-4">
                         <div class="ui-inputgroup">
                             <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
-                            <p:inputText placeholder="Confirm password" value="#{teamCreationBean.FManagerConfirmPassword}" required="true" type="password" maxlength="64"/>
+                            <p:inputText placeholder='#{langBean.msg("create.user.password.confirm")}' value="#{teamCreationBean.FManagerConfirmPassword}" required="true" type="password" maxlength="64"/>
                         </div>
                     </div>
                 </h:panelGroup>
@@ -86,7 +86,7 @@
                     <p:messages id="messages" showDetail="true" closable="true">
                         <p:autoUpdate/>
                     </p:messages>
-                    <h:commandButton  value="Créer l'équipe" action="#{teamCreationBean.saveTeamAndManager()}"/>
+                    <h:commandButton  value='#{langBean.msg("create.team.confirm")}' action="#{teamCreationBean.saveTeamAndManager()}"/>
                 </h:panelGroup>
             </h:panelGroup>
 
