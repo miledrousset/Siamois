@@ -16,26 +16,7 @@ import java.util.regex.Pattern;
  * @author julie
  */
 public class LangHelper {
-    
-    public List<String> availableLang() {
-        String path = Thread.currentThread().getContextClassLoader().getResource("language").getPath();
-        File[] files = new File(path).listFiles();
-        List<String> languages = new ArrayList<>();
-           
-        for (File file : files ) {
-            if (file.getName().startsWith("openapi_")) {
-                String currentName = file.getName();
-                currentName = currentName.replace("openapi_", "")
-                        .replace(".properties", "");
 
-                languages.add(currentName.toLowerCase());
-            }
-        }
-   
-        return languages;
-    }
-    
-    
     public String translate(String jsonOAS, ResourceBundle bundle) {
         
         Matcher matcher = Pattern.compile("\\$\\{.*?\\}\\$").matcher(jsonOAS);
