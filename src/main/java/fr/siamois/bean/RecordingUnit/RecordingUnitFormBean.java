@@ -11,8 +11,11 @@ import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.ark.ArkGenerator;
 import fr.siamois.services.auth.PersonDetailsService;
+import fr.siamois.services.auth.PersonService;
 import fr.siamois.services.vocabulary.VocabularyService;
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +28,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -40,6 +44,7 @@ public class RecordingUnitFormBean implements Serializable {
     // Deps
     private final RecordingUnitService recordingUnitService;
     private final ActionUnitService actionUnitService;
+    private final PersonService personService;
 
     // TODO : remove below
     private final ArkServerRepository arkServerRepository;
@@ -56,7 +61,8 @@ public class RecordingUnitFormBean implements Serializable {
     private LocalDate startDate;
     private LocalDate endDate;
     private List<Event> events; // Strati
-    private String author;
+    private Person author;
+    private Person excavator;
 
     @Data
     public static class Event {
@@ -90,23 +96,38 @@ public class RecordingUnitFormBean implements Serializable {
 
     public void save() {
         try {
+            this.recordingUnit.setAuthor(this.author);
+            this.recordingUnit.setExcavator(this.excavator);
             log.info(String.valueOf(this.recordingUnit));
+
             this.recordingUnit = recordingUnitService.save(recordingUnit);
             log.info("Recording unit saved");
             log.info(String.valueOf(this.recordingUnit));
             this.id = this.recordingUnit.getId();
 
         } catch (RuntimeException e) {
-            log.error(e.getMessage());
+            log.error("Error while saving: "+e.getMessage());
         }
+    }
+
+    /**
+     * Display a  message on the page.
+     * @param severityInfo The severity of the message.
+     * @param head  The head of the message.
+     * @param detail The message to display.
+     */
+    private static void displayMessage(FacesMessage.Severity severityInfo, String head, String detail) {
+        FacesContext.getCurrentInstance()
+                .addMessage(null, new FacesMessage(severityInfo, head, detail));
     }
 
 
     public RecordingUnitFormBean(RecordingUnitService recordingUnitService,
-                                 ActionUnitService actionUnitService, ArkServerRepository arkServerRepository,
+                                 ActionUnitService actionUnitService, PersonService personService, ArkServerRepository arkServerRepository,
                                  PersonDetailsService personDetailsService, VocabularyService vocabularyService) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
+        this.personService = personService;
         this.arkServerRepository = arkServerRepository;
         this.personDetailsService = personDetailsService;
         this.vocabularyService = vocabularyService;
@@ -124,18 +145,12 @@ public class RecordingUnitFormBean implements Serializable {
         return offsetDT.toLocalDate();
     }
 
-    public List<String> completeAuthor(String query) {
-        String queryLowerCase = query.toLowerCase();
-        List<String> personList = new ArrayList<>();
-        personList.add("Bob");
-        personList.add("Alice");
-        return personList;
-//        List<Country> countries = countryService.getCountries();
-//        for (Country country : countries) {
-//            countryList.add(country.getName());
-//        }
-//
-//        return countryList.stream().filter(t -> t.toLowerCase().startsWith(queryLowerCase)).collect(Collectors.toList());
+    public List<Person> completePerson(String query) {
+        if (query == null || query.isEmpty()) {
+            return Collections.emptyList();
+        }
+        query = query.toLowerCase();
+        return personService.findAllByNameLastnameContaining(query);
     }
 
     @PostConstruct
@@ -160,9 +175,8 @@ public class RecordingUnitFormBean implements Serializable {
                     Ark ark = new Ark();
                     ark.setArkServer(arkServerRepository.findArkServerByServerArkUri("http://localhost:8099/siamois").orElse(null));
                     ark.setArkId(ArkGenerator.generateArk());
-                    Person p = this.personDetailsService.findPersonByUsername("dummy");
                     this.recordingUnit.setArk(ark);
-                    this.recordingUnit.setAuthor(p);
+                    this.recordingUnit.setSerial_id(1);
 
                     events = new ArrayList<>();
                     events.add(new Event("Anterior", "15/10/2020 10:30", "pi pi-arrow-circle-up", "#9C27B0", "game-controller.jpg"));
