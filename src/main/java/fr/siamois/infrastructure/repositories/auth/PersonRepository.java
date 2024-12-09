@@ -47,7 +47,7 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
     @Modifying
     @Query(
             nativeQuery = true,
-            value = "INSERT INTO person_role_team (fk_person_id, fk_team_id, fk_role_concept_id) VALUES (:personId, :teamId, null)"
+            value = "INSERT INTO person_role_team (fk_person_id, fk_team_id, fk_role_concept_id, is_manager) VALUES (:personId, :teamId, null, TRUE)"
     )
     int addManagerToTeam(Long personId, Long teamId);
 

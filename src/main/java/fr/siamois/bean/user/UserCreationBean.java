@@ -1,7 +1,8 @@
-package fr.siamois.bean.Field;
+package fr.siamois.bean.user;
 
 import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
+import fr.siamois.models.exceptions.UserAlreadyExist;
 import fr.siamois.models.exceptions.field.InvalidUserInformation;
 import fr.siamois.services.PersonService;
 import jakarta.faces.application.FacesMessage;
@@ -67,7 +68,11 @@ public class UserCreationBean implements Serializable {
             personService.addPersonToTeam(person, vTeams.toArray(new Team[0]));
             displayMessage(FacesMessage.SEVERITY_INFO, "Success", "User created successfully.");
         } catch (InvalidUserInformation e) {
+            log.error("Invalid user information.", e);
             displayErrorMessage(e.getUserMessage());
+        } catch (UserAlreadyExist e) {
+            log.error("Username already exists.", e);
+            displayErrorMessage("Username already exists.");
         }
     }
 

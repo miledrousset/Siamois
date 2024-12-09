@@ -16,6 +16,7 @@ public class PageRedirect implements WebMvcConfigurer {
         registry.addViewController("/spatialunit").setViewName("forward:/pages/spatialUnit/spatialUnit.xhtml");
         registry.addViewController("/fieldConfiguration").setViewName("forward:/pages/field/fieldConfiguration.xhtml");
         registry.addViewController("/create/user").setViewName("forward:/pages/create/user.xhtml");
+        registry.addViewController("/create/team").setViewName("forward:/pages/create/team.xhtml");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 

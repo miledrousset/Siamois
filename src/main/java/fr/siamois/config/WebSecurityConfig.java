@@ -31,6 +31,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/fieldConfiguration", "/pages/field/fieldConfiguration.xhtml").authenticated()
                 .requestMatchers("/pages/create/spatialUnit.xhtml").authenticated()
                 .requestMatchers("/pages/create/user.xhtml", "/create/user").hasAuthority("ADMIN")
+                .requestMatchers("/pages/create/team.xhtml", "/create/team").hasAuthority("ADMIN")
                 .anyRequest().permitAll()
         );
         http.formLogin((login) -> login

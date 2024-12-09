@@ -6,6 +6,7 @@ import fr.siamois.infrastructure.repositories.auth.TeamRepository;
 import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.auth.SystemRole;
+import fr.siamois.models.exceptions.UserAlreadyExist;
 import fr.siamois.models.exceptions.field.InvalidUserInformation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -38,7 +39,7 @@ public class PersonService {
         return result;
     }
 
-    public Person createPerson(String username, String email, String password) throws InvalidUserInformation {
+    public Person createPerson(String username, String email, String password) throws InvalidUserInformation, UserAlreadyExist {
         Pattern pattern = Pattern.compile("^[a-zA-Z0-9.]+$");
         Matcher matcher = pattern.matcher(username);
 
@@ -55,7 +56,7 @@ public class PersonService {
         if (password.length() < 8) throw new InvalidUserInformation("Password must be at least 8 characters long.");
 
         Optional<Person> optPerson = personRepository.findPersonByUsername(username);
-        if (optPerson.isPresent()) throw new InvalidUserInformation("Username already exists.");
+        if (optPerson.isPresent()) throw new UserAlreadyExist("Username already exists.");
 
         Person person = new Person();
         person.setUsername(username);

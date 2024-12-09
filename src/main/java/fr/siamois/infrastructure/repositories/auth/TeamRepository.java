@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TeamRepository extends CrudRepository<Team, Long> {
@@ -16,5 +17,7 @@ public interface TeamRepository extends CrudRepository<Team, Long> {
             value = "SELECT prt.* FROM person_role_team prt JOIN team t ON prt.fk_team_id = t.team_id WHERE prt.fk_person_id = :personId"
     )
     List<Team> findTeamsOfPerson(@Param("personId") Long personId);
+
+    Optional<Team> findTeamByNameIgnoreCase(String teamName);
 
 }

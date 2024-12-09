@@ -12,9 +12,4 @@ public class InvalidUserInformation extends Exception {
         userMessage = message;
     }
 
-    public InvalidUserInformation(String systemMessage, String userMessage) {
-        super(systemMessage);
-        this.userMessage = userMessage;
-    }
-
 }
