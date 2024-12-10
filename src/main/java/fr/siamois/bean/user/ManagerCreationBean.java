@@ -5,10 +5,9 @@ import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedTeamSaveException;
 import fr.siamois.models.exceptions.UserAlreadyExist;
-import fr.siamois.models.exceptions.field.InvalidEmail;
-import fr.siamois.models.exceptions.field.InvalidPassword;
-import fr.siamois.models.exceptions.field.InvalidUserInformation;
-import fr.siamois.models.exceptions.field.InvalidUsername;
+import fr.siamois.models.exceptions.auth.InvalidEmail;
+import fr.siamois.models.exceptions.auth.InvalidPassword;
+import fr.siamois.models.exceptions.auth.InvalidUsername;
 import fr.siamois.services.PersonService;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -25,7 +24,7 @@ import java.util.List;
 @Setter
 @Slf4j
 @Component
-public class UserCreationBean implements Serializable {
+public class ManagerCreationBean implements Serializable {
     private final PersonService personService;
     private final LangBean langBean;
 
@@ -42,7 +41,7 @@ public class UserCreationBean implements Serializable {
     private String vConfirmPassword;
     private List<Team> vTeams = new ArrayList<>();
 
-    public UserCreationBean(PersonService personService, LangBean langBean) {
+    public ManagerCreationBean(PersonService personService, LangBean langBean) {
         this.personService = personService;
         this.langBean = langBean;
     }
@@ -73,7 +72,7 @@ public class UserCreationBean implements Serializable {
             Person person = personService.createPerson(vUsername, vEmail, vPassword);
             person = personService.addPersonToTeamManagers(person);
             personService.addPersonToTeam(person, vTeams.toArray(new Team[0]));
-            displayMessage(FacesMessage.SEVERITY_INFO, langBean.msg("commons.message.state.success"), langBean.msg("commons.message.user.created"));
+            displayMessage(FacesMessage.SEVERITY_INFO, langBean.msg("commons.message.state.success"), langBean.msg("create.team.manager.created"));
         } catch (UserAlreadyExist e) {
             log.error("Username already exists.", e);
             displayErrorMessage(langBean.msg("commons.error.user.alreadyexist", vUsername));

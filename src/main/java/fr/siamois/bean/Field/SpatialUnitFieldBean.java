@@ -47,7 +47,6 @@ public class SpatialUnitFieldBean implements Serializable {
     private List<SpatialUnit> refSpatialUnits = new ArrayList<>();
     private List<String> labels;
     private List<ConceptFieldDTO> concepts;
-    private String langcode = "fr";
     private List<VocabularyCollection> collections = null;
     private Vocabulary vocabulary = null;
 
@@ -78,7 +77,6 @@ public class SpatialUnitFieldBean implements Serializable {
         fName = "";
         fCategory = "";
         fParentsSpatialUnits = new ArrayList<>();
-        langcode = langBean.getLanguageCode();
     }
 
     /**
@@ -100,11 +98,11 @@ public class SpatialUnitFieldBean implements Serializable {
             SpatialUnit saved = fieldService.saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, fParentsSpatialUnits);
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-                    "Info", "L'unité spatiale " + saved.getName() + " a été crée."));
+                    "Info", langBean.msg("spatialunit.created", saved.getName())));
         } catch (SpatialUnitAlreadyExistsException e) {
             log.error(e.getMessage(), e);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Error", "L'unité spatiale existe déjà"));
+                    "Error", langBean.msg("commons.error.spatialunit.alreadyexist", fName)));
         }
     }
 
@@ -120,7 +118,7 @@ public class SpatialUnitFieldBean implements Serializable {
             setCurrentCollectionsIfNull(person);
             if (collections != null)
             {
-                concepts = fieldService.fetchAutocomplete(collections, input, langcode);
+                concepts = fieldService.fetchAutocomplete(collections, input, langBean.getLanguageCode());
                 return concepts.stream()
                         .map(ConceptFieldDTO::getLabel)
                         .collect(Collectors.toList());
@@ -128,7 +126,7 @@ public class SpatialUnitFieldBean implements Serializable {
 
             setCurrentVocabularyIfNull(person);
             if (vocabulary != null) {
-                concepts = fieldService.fetchAutocomplete(vocabulary, input, langcode);
+                concepts = fieldService.fetchAutocomplete(vocabulary, input, langBean.getLanguageCode());
                 return concepts.stream()
                         .map(ConceptFieldDTO::getLabel)
                         .collect(Collectors.toList());

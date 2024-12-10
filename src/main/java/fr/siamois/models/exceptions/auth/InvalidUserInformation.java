@@ -1,4 +1,4 @@
-package fr.siamois.models.exceptions.field;
+package fr.siamois.models.exceptions.auth;
 
 public class InvalidUserInformation extends Exception {
     public InvalidUserInformation(String message) {

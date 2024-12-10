@@ -11,14 +11,15 @@
 
     <ui:define name="content">
         <h:form id="teamform">
-            <h1>Nom de l'équipe</h1>
+            <h1>#{langBean.msg("nav.create.team")}</h1>
+            <h2>#{langBean.msg("create.team.name")}</h2>
             <p:inputText id="teamName" value="#{teamCreationBean.FTeamName}" required="true"/>
             <h:outputLabel for="teamName" value='#{langBean.msg("create.team.name")}'/>
 
             <p:inputTextarea id="teamDescription" value="#{teamCreationBean.FDescription}" required="true"/>
             <h:outputLabel for="teamDescription" value='#{langBean.msg("create.team.description")}'/>
 
-            <h2>Choix du gestionnaire</h2>
+            <h2>#{langBean.msg("create.team.manager.select")}</h2>
 
             <p:selectOneMenu value="#{teamCreationBean.FManagerSelectionType}">
                 <f:selectItem itemLabel="" itemValue="#{null}"/>
@@ -66,19 +67,19 @@
                     <div class="col-12 md:col-4">
                         <div class="ui-inputgroup">
                             <div class="ui-inputgroup-addon"><i class="pi pi-envelope" /></div>
-                            <p:inputText placeholder='#{langBean.msg("create.user.email")}' value="#{teamCreationBean.FManagerEmail}" required="true" maxlength="50" type="email" />
+                            <p:inputText placeholder='#{langBean.msg("create.team.manager.email")}' value="#{teamCreationBean.FManagerEmail}" required="true" maxlength="50" type="email" />
                         </div>
                     </div>
                     <div class="col-12 md:col-4">
                         <div class="ui-inputgroup">
                             <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
-                            <p:inputText placeholder='#{langBean.msg("create.user.password")}' value="#{teamCreationBean.FManagerPassword}" required="true" type="password" maxlength="64"/>
+                            <p:inputText placeholder='#{langBean.msg("create.team.manager.password")}' value="#{teamCreationBean.FManagerPassword}" required="true" type="password" maxlength="64"/>
                         </div>
                     </div>
                     <div class="col-12 md:col-4">
                         <div class="ui-inputgroup">
                             <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
-                            <p:inputText placeholder='#{langBean.msg("create.user.password.confirm")}' value="#{teamCreationBean.FManagerConfirmPassword}" required="true" type="password" maxlength="64"/>
+                            <p:inputText placeholder='#{langBean.msg("create.team.manager.password.confirm")}' value="#{teamCreationBean.FManagerConfirmPassword}" required="true" type="password" maxlength="64"/>
                         </div>
                     </div>
                 </h:panelGroup>

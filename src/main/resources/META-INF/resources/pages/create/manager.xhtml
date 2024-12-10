@@ -6,17 +6,18 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <f:metadata>
-        <f:viewAction action="#{userCreationBean.init}" />
+        <f:viewAction action="#{managerCreationBean.init}" />
     </f:metadata>
 
     <ui:define name="content">
+        <h1>#{langBean.msg("nav.create.manager")}</h1>
         <h:form>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <div class="col-12 md:col-4">
                 <div class="ui-inputgroup">
                     <div class="ui-inputgroup-addon"><i class="pi pi-user" /></div>
                     <p:inputText placeholder='#{langBean.msg("commons.username")}'
-                                 value="#{userCreationBean.VUsername}"
+                                 value="#{managerCreationBean.VUsername}"
                                  required="true"
                                  maxlength="20"/>
                 </div>
@@ -24,27 +25,27 @@
             <div class="col-12 md:col-4">
                 <div class="ui-inputgroup">
                     <div class="ui-inputgroup-addon"><i class="pi pi-envelope" /></div>
-                    <p:inputText placeholder='#{langBean.msg("create.user.email")}' value="#{userCreationBean.VEmail}" required="true" maxlength="50" type="email" />
+                    <p:inputText placeholder='#{langBean.msg("create.team.manager.email")}' value="#{managerCreationBean.VEmail}" required="true" maxlength="250" type="email" />
                 </div>
             </div>
             <div class="col-12 md:col-4">
                 <div class="ui-inputgroup">
                     <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
-                    <p:inputText placeholder='#{langBean.msg("create.user.password")}' value="#{userCreationBean.VPassword}" required="true" type="password" maxlength="64"/>
+                    <p:inputText placeholder='#{langBean.msg("create.team.manager.password")}' value="#{managerCreationBean.VPassword}" required="true" type="password" maxlength="64"/>
                 </div>
             </div>
             <div class="col-12 md:col-4">
                 <div class="ui-inputgroup">
                     <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
-                    <p:inputText placeholder='#{langBean.msg("create.user.password.confirm")}' value="#{userCreationBean.VConfirmPassword}" required="true" type="password" maxlength="64"/>
+                    <p:inputText placeholder='#{langBean.msg("create.team.manager.password.confirm")}' value="#{managerCreationBean.VConfirmPassword}" required="true" type="password" maxlength="64"/>
                 </div>
             </div>
 
-            <p:dataTable var="team" value="#{userCreationBean.refTeams}"
-                         selection="#{userCreationBean.VTeams}"
+            <p:dataTable var="team" value="#{managerCreationBean.refTeams}"
+                         selection="#{managerCreationBean.VTeams}"
                          widgetVar="teamTable"
-                         emptyMessage='#{langBean.msg("create.user.teams.empty")}'
-                         filteredValue="#{userCreationBean.filteredTeams}"
+                         emptyMessage='#{langBean.msg("create.team.manager.teams.empty")}'
+                         filteredValue="#{managerCreationBean.filteredTeams}"
                          rowKey="#{team.id}"
                          selectionMode="multiple"
             >
@@ -65,7 +66,7 @@
 
             </p:dataTable>
 
-            <h:commandButton value='#{langBean.msg("create.team.confirm")}' action="#{userCreationBean.createUser()}" />
+            <h:commandButton value='#{langBean.msg("create.team.confirm")}' action="#{managerCreationBean.createUser()}" />
 
             <p:messages id="messages" showDetail="true" closable="true">
                 <p:autoUpdate/>

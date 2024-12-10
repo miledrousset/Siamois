@@ -2,12 +2,12 @@ package fr.siamois.bean.user;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.models.auth.Person;
+import fr.siamois.models.exceptions.FailedTeamSaveException;
 import fr.siamois.models.exceptions.TeamAlreadyExistException;
 import fr.siamois.models.exceptions.UserAlreadyExist;
-import fr.siamois.models.exceptions.field.InvalidEmail;
-import fr.siamois.models.exceptions.field.InvalidPassword;
-import fr.siamois.models.exceptions.field.InvalidUserInformation;
-import fr.siamois.models.exceptions.field.InvalidUsername;
+import fr.siamois.models.exceptions.auth.InvalidEmail;
+import fr.siamois.models.exceptions.auth.InvalidPassword;
+import fr.siamois.models.exceptions.auth.InvalidUsername;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.TeamService;
 import jakarta.faces.application.FacesMessage;
@@ -106,6 +106,9 @@ public class TeamCreationBean implements Serializable {
             } catch (TeamAlreadyExistException e) {
                 log.error("Team already exists.", e);
                 displayMessage(FacesMessage.SEVERITY_ERROR, langBean.msg("commons.message.state.error"), langBean.msg("commons.error.team.alreadyexist", fTeamName));
+            } catch (FailedTeamSaveException e) {
+                log.error("Failed to save team.", e);
+                displayMessage(FacesMessage.SEVERITY_ERROR, langBean.msg("commons.message.state.error"), langBean.msg("commons.error.team.failedsave"));
             }
         }
     }

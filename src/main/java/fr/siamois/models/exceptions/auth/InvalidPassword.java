@@ -1,4 +1,4 @@
-package fr.siamois.models.exceptions.field;
+package fr.siamois.models.exceptions.auth;
 
 public class InvalidPassword extends Exception {
     public InvalidPassword(String message) {

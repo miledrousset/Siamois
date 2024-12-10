@@ -6,6 +6,7 @@ import fr.siamois.infrastructure.repositories.auth.TeamRepository;
 import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.auth.SystemRole;
+import fr.siamois.models.exceptions.FailedTeamSaveException;
 import fr.siamois.models.exceptions.TeamAlreadyExistException;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,7 @@ public class TeamService {
         return personRepository.findPersonsWithSystemRole(managerRole.getId());
     }
 
-    public void createTeam(String teamName, String description, Person teamManager) throws TeamAlreadyExistException {
+    public void createTeam(String teamName, String description, Person teamManager) throws TeamAlreadyExistException, FailedTeamSaveException {
         Optional<Team> existingTeam = teamRepository.findTeamByNameIgnoreCase(teamName);
         if (existingTeam.isPresent()) throw new TeamAlreadyExistException("Team with name " + teamName + " already exists.");
 
@@ -40,7 +41,8 @@ public class TeamService {
 
         team = teamRepository.save(team);
 
-        personRepository.addManagerToTeam(teamManager.getId(), team.getId());
+        int affected = personRepository.addManagerToTeam(teamManager.getId(), team.getId());
+        if (affected == 0) throw new FailedTeamSaveException("Failed to add person to any team");
 
     }
 }
