@@ -42,7 +42,7 @@ class RecordingUnitServiceTest {
         spatialUnit1.setId(1L);
         recordingUnit1.setId(1L);
         recordingUnit2.setId(2L);
-        when(recordingUnitRepository.findAllBySpatialUnit(spatialUnit1)).thenReturn(List.of(recordingUnit1, recordingUnit2));
+        when(recordingUnitRepository.findAllBySpatialUnitId(spatialUnit1.getId())).thenReturn(List.of(recordingUnit1, recordingUnit2));
         //lenient().when(spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit1.getId())).thenReturn(List.of(spatialUnit2));
     }
 
@@ -64,7 +64,7 @@ class RecordingUnitServiceTest {
     void findAllBySpatialUnitId_Exception() {
 
         // Arrange
-        when(recordingUnitRepository.findAllBySpatialUnit(spatialUnit1.getId())).thenThrow(new RuntimeException("Database error"));
+        when(recordingUnitRepository.findAllBySpatialUnitId(spatialUnit1.getId())).thenThrow(new RuntimeException("Database error"));
 
         // Act & Assert
         Exception exception = assertThrows(
