@@ -41,4 +41,8 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
     Optional<Person> findPersonByUsername(String username);
 
+    List<Person> findAllByNameIsContainingIgnoreCaseOrLastnameIsContainingIgnoreCase(String name, String lastname);
+
+    Optional<Person> findById(long id);
+
 }

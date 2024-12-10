@@ -1,8 +1,10 @@
 package fr.siamois.models;
 
 import fr.siamois.models.ark.Ark;
+
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.vocabulary.Concept;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -26,21 +28,21 @@ public class ActionUnit {
     @Column(name = "end_date", nullable = false)
     private OffsetDateTime endDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_type")
     private Concept type;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_ark_id", nullable = false)
     private Ark ark;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_user_id")
     private Person owner;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_spatial_unit_id", nullable = false)
     private SpatialUnit spatialUnit;
 

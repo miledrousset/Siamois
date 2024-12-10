@@ -102,4 +102,9 @@ public class Person implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    // Methods
+    public String displayName() {
+        return name+" "+lastname;
+    }
 }

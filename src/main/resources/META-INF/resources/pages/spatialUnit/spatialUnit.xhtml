@@ -3,18 +3,24 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components">
 
-    <ui:define name="content">
+    <ui:define name="metadata">
         <f:metadata>
             <!-- Capture the ID parameter from the URL and bind it to spatialUnitBean -->
             <f:viewParam name="id" value="#{spatialUnitBean.id}" required="true"/>
             <f:event type="preRenderView" listener="#{spatialUnitBean.init}" />
         </f:metadata>
+    </ui:define>
+
+    <ui:define name="content">
+
 
         <!-- Content -->
         <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.spatialUnitErrorMessage}" rendered="#{not empty spatialUnitBean.spatialUnitErrorMessage}" />
         <h:panelGroup id="contentPanel" rendered="#{spatialUnitBean.spatialUnit != null}">
+
             <h2>Spatial Unit: #{spatialUnitBean.spatialUnit.name}</h2>
             <h3>Category: #{spatialUnitBean.spatialUnit.category.label}</h3>
             <p>ARK ID: #{spatialUnitBean.spatialUnit.ark.arkId}</p>
@@ -22,31 +28,8 @@
         </h:panelGroup>
 
         <p:outputPanel>
-            <h3>Spatial units</h3>
             <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.spatialUnitListErrorMessage}" rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}" />
-            <p:panelGrid columns="3" styleClass="card-grid">
-                <ui:repeat value="#{spatialUnitBean.spatialUnitList}" var="item">
-                    <p:card>
-                        <f:facet name="header">
-                            <!-- <img alt="user header" src="../../resources/img/location.jpg"/> -->
-                        </f:facet>
-                        <f:facet name="title">
-                            #{item.name}
-                        </f:facet>
-                        <f:facet name="subtitle">
-                            ARK: #{item.ark.arkId}
-                        </f:facet>
-
-                        <p>Category : #{item.category.label}</p>
-
-                        <f:facet name="footer">
-                            <p:button value="Go to Spatial Unit"
-                                      icon="pi pi-search"
-                                      outcome="/pages/spatialUnit/spatialUnit.xhtml?id=${item.id}" />
-                        </f:facet>
-                    </p:card>
-                </ui:repeat>
-            </p:panelGrid>
+            <spatialUnit:spatialUnitList spatialUnitList="#{spatialUnitBean.spatialUnitList}" />
         </p:outputPanel>
 
         <p:outputPanel>
@@ -67,6 +50,11 @@
 
                         <p>Category : #{item.type.label}</p>
                         <p>Author : #{item.author.lastname} #{item.author.name}</p>
+
+                        <!-- Button to access recording unit form -->
+                        <p:button value="Go to recording unit"
+                                  icon="pi pi-search"
+                                  outcome="/pages/recordingUnit/recordingUnit.xhtml?id=#{item.id}" />
 
                     </p:card>
                 </ui:repeat>

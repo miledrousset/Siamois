@@ -70,7 +70,7 @@ class SpatialUnitBeanTest {
         when(spatialUnitService.findById(1)).thenReturn(spatialUnit1);
         when(spatialUnitService.findAllChildOfSpatialUnit(spatialUnit1)).thenReturn(List.of(spatialUnit2));
         when(actionUnitService.findAllBySpatialUnitId(spatialUnit1)).thenReturn(List.of(actionUnit1, actionUnit2));
-        when(recordingUnitService.findAllBySpatialUnitId(spatialUnit1)).thenReturn(List.of(recordingUnit1, recordingUnit2));
+        when(recordingUnitService.findAllBySpatialUnit(spatialUnit1)).thenReturn(List.of(recordingUnit1, recordingUnit2));
 
         // When: call the @PostConstruct method (implicitly triggered during bean initialization)
         spatialUnitBean.init();
@@ -118,7 +118,7 @@ class SpatialUnitBeanTest {
         // Given: mock the services
         when(spatialUnitService.findById(1)).thenReturn(spatialUnit1);
         when(spatialUnitService.findAllChildOfSpatialUnit(spatialUnit1)).thenThrow(new RuntimeException("Exception"));
-        when(recordingUnitService.findAllBySpatialUnitId(spatialUnit1)).thenThrow(new RuntimeException("Exception"));
+        when(recordingUnitService.findAllBySpatialUnit(spatialUnit1)).thenThrow(new RuntimeException("Exception"));
         when(actionUnitService.findAllBySpatialUnitId(spatialUnit1)).thenThrow(new RuntimeException("Exception"));
 
         // When: call the @PostConstruct method (implicitly triggered during bean initialization)

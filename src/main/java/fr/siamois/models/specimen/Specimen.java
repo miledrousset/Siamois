@@ -1,10 +1,12 @@
 package fr.siamois.models.specimen;
 
+
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

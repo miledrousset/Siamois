@@ -2,7 +2,9 @@ package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
 import fr.siamois.models.SpatialUnit;
+
 import fr.siamois.models.recordingunit.RecordingUnit;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,8 +15,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,7 +54,7 @@ class RecordingUnitServiceTest {
     void findAllBySpatialUnitId_Success() {
 
         // Act
-        List<RecordingUnit> actualResult = recordingUnitService.findAllBySpatialUnitId(spatialUnit1);
+        List<RecordingUnit> actualResult = recordingUnitService.findAllBySpatialUnit(spatialUnit1);
 
         // Assert
         assertEquals(List.of(recordingUnit1,recordingUnit2), actualResult);
@@ -65,7 +69,7 @@ class RecordingUnitServiceTest {
         // Act & Assert
         Exception exception = assertThrows(
                 Exception.class,
-                () -> recordingUnitService.findAllBySpatialUnitId(spatialUnit1)
+                () -> recordingUnitService.findAllBySpatialUnit(spatialUnit1)
         );
 
         assertEquals("Database error", exception.getMessage());

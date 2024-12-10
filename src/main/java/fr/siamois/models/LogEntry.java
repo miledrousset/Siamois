@@ -1,7 +1,9 @@
 package fr.siamois.models;
 
 import fr.siamois.models.ark.Ark;
+
 import fr.siamois.models.auth.Person;
+
 import jakarta.persistence.*;
 import lombok.Data;
 

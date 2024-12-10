@@ -1,10 +1,12 @@
 package fr.siamois.models.recordingunit;
 
+
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.vocabulary.Concept;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -21,16 +23,25 @@ public class RecordingUnit {
     private Long id;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "fk_ark_id", nullable = false)
     private Ark ark;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "fk_type")
     private Concept type;
 
-    @Column(name = "recording_unit_date")
-    private OffsetDateTime recordingUnitDate;
+    @Column(name = "start_date")
+    private OffsetDateTime startDate;
+
+    @Column(name = "end_date")
+    private OffsetDateTime endDate;
+
+    @Column(name = "serial_identifier")
+    private Integer serial_id;
+
+    @Column(name = "description")
+    private String description;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -38,14 +49,20 @@ public class RecordingUnit {
     private ActionUnit actionUnit;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "fk_spatial_unit_id", nullable = false)
-    private SpatialUnit spatialUnit;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "fk_author_id", nullable = false)
     private Person author;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = {CascadeType.MERGE})
+    @JoinColumn(name = "fk_excavator_id")
+    private Person excavator;
+
+    @Embedded
+    private RecordingUnitSize size;
+
+    @Embedded
+    private RecordingUnitAltimetry altitude;
 
     //@Column(name = "spatial_extent", columnDefinition = "geometry not null")
     //private Polygon spatialExtent;
