@@ -4,10 +4,10 @@ import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.auth.Person;
+import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
 import fr.siamois.models.recordingunit.RecordingUnitSize;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.ark.ArkGenerator;
@@ -23,24 +23,21 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 
 import static java.time.OffsetDateTime.now;
 
 @Data
 @Slf4j
 @Component
-public class RecordingUnitFormBean implements Serializable {
+public class NewRecordingUnitFormBean implements Serializable {
 
 
     // Deps
@@ -59,7 +56,6 @@ public class RecordingUnitFormBean implements Serializable {
 
     @Getter
     @Setter
-    private Long id;  // ID of the requested RU
     private LocalDate startDate;
     private LocalDate endDate;
     private List<Event> events; // Strati
@@ -126,7 +122,7 @@ public class RecordingUnitFormBean implements Serializable {
         }
 
         // Return page with id
-        return "/pages/recordingUnit/recordingUnit.xhtml?id="+this.recordingUnit.getId().toString();
+        return "/pages/recordingUnit/recordingUnit.xhtml?faces-redirect=true&id="+this.recordingUnit.getId().toString();
     }
 
     /**
@@ -141,9 +137,9 @@ public class RecordingUnitFormBean implements Serializable {
     }
 
 
-    public RecordingUnitFormBean(RecordingUnitService recordingUnitService,
-                                 ActionUnitService actionUnitService, PersonService personService, ArkServerRepository arkServerRepository,
-                                 PersonDetailsService personDetailsService, VocabularyService vocabularyService) {
+    public NewRecordingUnitFormBean(RecordingUnitService recordingUnitService,
+                                    ActionUnitService actionUnitService, PersonService personService, ArkServerRepository arkServerRepository,
+                                    PersonDetailsService personDetailsService, VocabularyService vocabularyService) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.personService = personService;
@@ -179,20 +175,36 @@ public class RecordingUnitFormBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        log.error("id"+String.valueOf(this.id));
         try {
-           if(this.id != null) {
-                log.info("Loading RU");
-                reinitializeBean();
-                this.recordingUnit = this.recordingUnitService.findById(this.id);
-                if(this.recordingUnit.getStartDate() != null) {this.startDate = offsetDateTimeToLocalDate(this.recordingUnit.getStartDate());}
-                if(this.recordingUnit.getEndDate()!=null) {this.endDate = offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());}
-                // TODO handle isLocalisationFromSIG properly
-                this.isLocalisationFromSIG = false;
+            if (this.recordingUnit == null) {
+                log.info("Creating RU");
+                    reinitializeBean();
+                    // TODO : clean below, properly get concept
+                    Concept c = new Concept();
+                    c.setLabel("US");
+                    c.setVocabulary(this.vocabularyService.findVocabularyById(14));
+                    this.recordingUnit = new RecordingUnit();
+                    this.recordingUnit.setType(c);
+                    this.recordingUnit.setDescription("Nouvelle description");
+                    //this.recordingUnit.setName("Nouvelle unité d'enregistrement");
+                    this.startDate = offsetDateTimeToLocalDate(now());
+                    // Below is hardcoded but it should not be. TODO
+                    ActionUnit actionUnit = this.actionUnitService.findById(4);
+                    this.recordingUnit.setActionUnit(actionUnit);
+
+                    // todo : implement real algorithm for serial id
+                    this.recordingUnit.setSerial_id(1);
+                    this.recordingUnit.setSize(new RecordingUnitSize());
+                    this.recordingUnit.getSize().setSize_unit("cm");
+                    this.recordingUnit.setAltitude(new RecordingUnitAltimetry());
+                    this.recordingUnit.getAltitude().setAltitude_unit("m");
+
+                    events = new ArrayList<>();
+                    events.add(new Event("Anterior", "15/10/2020 10:30", "pi pi-arrow-circle-up", "#9C27B0", "game-controller.jpg"));
+                    events.add(new Event("Synchronous", "15/10/2020 14:00", "pi pi-sync", "#673AB7"));
+                    events.add(new Event("Posterior", "15/10/2020 16:15", "pi pi-arrow-circle-down", "#FF9800"));
+
             }
-           else {
-               // todo: handle error
-           }
         } catch (RuntimeException err) {
             log.error(String.valueOf(err));
         }

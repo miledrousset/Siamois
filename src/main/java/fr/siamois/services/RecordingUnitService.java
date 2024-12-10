@@ -37,4 +37,8 @@ public class RecordingUnitService {
         return recordingUnitRepository.save(recordingUnit);
     }
 
+    public RecordingUnit findById(long id) {
+        return recordingUnitRepository.findById(id).orElse(null);
+    }
+
 }

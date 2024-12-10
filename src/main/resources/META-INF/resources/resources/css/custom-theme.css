@@ -9,6 +9,14 @@
     color: black; !important;
 }
 
+.ui-tabs-header.ui-state-active {
+    color: #a7484d !important;
+}
+
+.ui-tabs.ui-tabs-top>.ui-tabs-nav li.ui-tabs-header.ui-state-active {
+    color: #a7484d !important;
+    border-color: #a7484d !important;
+}
 .btn-danger {
     background-color: #a7484d !important; /* Change button background */
     border-color: #a7484d !important;    /* Change button border */

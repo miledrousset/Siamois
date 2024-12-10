@@ -15,7 +15,6 @@ import javax.faces.bean.ManagedBean;
 
 @ManagedBean
 @Component
-@FacesConverter("personConverter")
 @Slf4j
 public class PersonConverter implements Converter<Person> {
 

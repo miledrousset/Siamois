@@ -51,6 +51,11 @@
                         <p>Category : #{item.type.label}</p>
                         <p>Author : #{item.author.lastname} #{item.author.name}</p>
 
+                        <!-- Button to access recording unit form -->
+                        <p:button value="Go to recording unit"
+                                  icon="pi pi-search"
+                                  outcome="/pages/recordingUnit/recordingUnit.xhtml?id=#{item.id}" />
+
                     </p:card>
                 </ui:repeat>
             </p:panelGrid>

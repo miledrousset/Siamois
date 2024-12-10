@@ -64,6 +64,10 @@ html, body {
     padding-bottom: 10px;
 }
 
+.form-control {
+    border: none;
+}
+
 .custom-marker {
     display: flex;
     width: 2rem;

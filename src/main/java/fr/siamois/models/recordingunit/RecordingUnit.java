@@ -54,7 +54,7 @@ public class RecordingUnit {
     private Person author;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "fk_excavator_id")
     private Person excavator;
 
@@ -62,7 +62,7 @@ public class RecordingUnit {
     private RecordingUnitSize size;
 
     @Embedded
-    private RecordingUnitAltimetry altimetry;
+    private RecordingUnitAltimetry altitude;
 
     //@Column(name = "spatial_extent", columnDefinition = "geometry not null")
     //private Polygon spatialExtent;
