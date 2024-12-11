@@ -23,8 +23,11 @@ import javax.faces.bean.SessionScoped;
 @SessionScoped
 public class UserAddBean {
 
+    // Injections
     private final LangBean langBean;
     private final PersonService personService;
+
+    // Fields
     private String fManagerUsername;
     private String fManagerEmail;
     private String fManagerPassword;
@@ -52,6 +55,7 @@ public class UserAddBean {
         try {
             Person person = personService.createPerson(fManagerUsername, fManagerEmail, fManagerPassword);
             displayMessage(FacesMessage.SEVERITY_INFO, langBean.msg("commons.message.state.success"), langBean.msg("create.team.manager.created"));
+            resetVariables();
             return person;
         } catch (UserAlreadyExist e) {
             log.error("Username already exists.", e);
