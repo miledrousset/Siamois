@@ -31,7 +31,7 @@
             <h:panelGroup id="selectionGroup" >
                 <h:panelGroup rendered='#{teamCreationBean.FManagerSelectionType.equalsIgnoreCase("select")}'>
                     <!-- Choix du manager -->
-                    <h3>Sélection</h3>
+                    <h3>#{langBean.msg("create.team.manager.select")}</h3>
                     <p:dataTable var="manager" value="#{teamCreationBean.managers}" widgetVar="managerTable"
                                  emptyMessage='#{langBean.msg("create.team.filter.manager.empty")}'
                                  filteredValue="#{teamCreationBean.filteredManagers}"
@@ -54,7 +54,7 @@
                 </h:panelGroup>
                 <h:panelGroup rendered='#{teamCreationBean.FManagerSelectionType.equalsIgnoreCase("create")}'>
                     <!-- Si pas de manager choisit, on crée un manager -->
-                    <h3>Création</h3>
+                    <h3>#{langBean.msg("create.team.manager.create")}</h3>
                     <ui:include src="/pages/shared/form/createUser.xhtml" />
 
                 </h:panelGroup>

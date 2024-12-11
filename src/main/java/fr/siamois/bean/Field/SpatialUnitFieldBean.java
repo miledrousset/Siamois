@@ -7,10 +7,11 @@ import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
-import fr.siamois.services.FieldConfigurationService;
-import fr.siamois.services.FieldService;
+import fr.siamois.services.vocabulary.FieldConfigurationService;
+import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -47,8 +48,7 @@ public class SpatialUnitFieldBean implements Serializable {
     private List<SpatialUnit> refSpatialUnits = new ArrayList<>();
     private List<String> labels;
     private List<ConceptFieldDTO> concepts;
-    private List<VocabularyCollection> collections = null;
-    private Vocabulary vocabulary = null;
+    private FieldConfigurationWrapper configurationWrapper;
 
     // Fields
     private Concept selectedConcept = null;
@@ -71,7 +71,6 @@ public class SpatialUnitFieldBean implements Serializable {
         labels = refSpatialUnits.stream()
                 .map(SpatialUnit::getName)
                 .collect(Collectors.toList());
-        collections = null;
         concepts = null;
         selectedConcept = null;
         fName = "";
@@ -88,11 +87,8 @@ public class SpatialUnitFieldBean implements Serializable {
     public void save() {
         ConceptFieldDTO selectedConceptFieldDTO = getSelectedConceptFieldDTO().orElseThrow(() -> new IllegalStateException("No concept selected"));
 
-        if (collections == null) throw new IllegalStateException("Collections should be defined before saving the spatial unit");
-
-        if (vocabulary == null) {
-            vocabulary = collections.get(0).getVocabulary();
-        }
+        Vocabulary vocabulary = configurationWrapper.vocabularyConfig();
+        if (vocabulary == null) vocabulary = configurationWrapper.vocabularyCollectionsConfig().get(0).getVocabulary();
 
         try {
             SpatialUnit saved = fieldService.saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, fParentsSpatialUnits);
@@ -115,50 +111,18 @@ public class SpatialUnitFieldBean implements Serializable {
         Person person = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("User should be connected"));
 
         try {
-            setCurrentCollectionsIfNull(person);
-            if (collections != null)
-            {
-                concepts = fieldService.fetchAutocomplete(collections, input, langBean.getLanguageCode());
-                return concepts.stream()
-                        .map(ConceptFieldDTO::getLabel)
-                        .collect(Collectors.toList());
+            if (configurationWrapper == null) {
+                configurationWrapper = fieldConfigurationService.fetchConfigurationOfFieldCode(person, SpatialUnit.CATEGORY_FIELD_CODE);
             }
 
-            setCurrentVocabularyIfNull(person);
-            if (vocabulary != null) {
-                concepts = fieldService.fetchAutocomplete(vocabulary, input, langBean.getLanguageCode());
-                return concepts.stream()
-                        .map(ConceptFieldDTO::getLabel)
-                        .collect(Collectors.toList());
-            }
-
-            throw new NoConfigForField(SpatialUnit.CATEGORY_FIELD_CODE);
+            concepts = fieldService.fetchAutocomplete(configurationWrapper, input, langBean.getLanguageCode());
+            return concepts.stream()
+                    .map(ConceptFieldDTO::getLabel)
+                    .collect(Collectors.toList());
 
         } catch (NoConfigForField e) {
             log.error("No collection for field " + SpatialUnit.CATEGORY_FIELD_CODE);
             return new ArrayList<>();
-        }
-    }
-
-    /**
-     * Fetch the current collections if it is not defined.
-     * @param person the current user
-     */
-    private void setCurrentVocabularyIfNull(Person person) {
-        if (vocabulary == null) {
-            Optional<Vocabulary> vocabularyOptional = fieldConfigurationService.fetchVocabularyOfPersonFieldConfiguration(person, SpatialUnit.CATEGORY_FIELD_CODE);
-            vocabulary = vocabularyOptional.orElse(null);
-        }
-    }
-
-    /**
-     * Fetch the current collections if it is not defined.
-     * @param person the current user
-     */
-    private void setCurrentCollectionsIfNull(Person person) {
-        if (collections == null) {
-            collections = fieldConfigurationService.fetchCollectionsOfPersonFieldConfiguration(person, SpatialUnit.CATEGORY_FIELD_CODE);
-            if (collections.isEmpty()) collections = null;
         }
     }
 

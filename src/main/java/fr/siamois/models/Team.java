@@ -20,6 +20,4 @@ public class Team {
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
 
-    public final static String ROLE_FIELD_CODE = "team.role";
-
 }

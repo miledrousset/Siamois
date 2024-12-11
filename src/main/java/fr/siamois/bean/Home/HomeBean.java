@@ -1,7 +1,9 @@
 package fr.siamois.bean.Home;
 
+import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.services.SpatialUnitService;
+import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.stereotype.Component;

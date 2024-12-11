@@ -79,6 +79,17 @@ public class Person implements UserDetails {
     )
     private List<SystemRole> roles = new ArrayList<>();
 
+    public boolean hasRole(String roleName) {
+        return roles.stream().anyMatch(role -> role.getRoleName().equalsIgnoreCase(roleName));
+    }
+
+    public boolean hasRoles(String... roleNames) {
+        for (String roleName : roleNames) {
+            if (!hasRole(roleName)) return false;
+        }
+        return true;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
@@ -103,4 +114,6 @@ public class Person implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public static final String USER_ROLE_FIELD_CODE = "person_role_team.role";
 }

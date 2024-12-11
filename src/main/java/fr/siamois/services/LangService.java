@@ -26,7 +26,6 @@ public class LangService {
      * @return message
      */
     public String msg(String key, Locale locale) {
-        log.trace("Getting message for key: {}", key);
         return messageSource.getMessage(key, null, locale);
     }
 

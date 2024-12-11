@@ -1,4 +1,4 @@
-package fr.siamois.services;
+package fr.siamois.services.vocabulary;
 
 import fr.siamois.infrastructure.api.ConceptApi;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
@@ -11,6 +11,7 @@ import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.services.ark.ArkGenerator;
@@ -53,7 +54,7 @@ public class FieldService {
      * @param collections The list of database saved vocabulary collections to search in
      * @return A list of concept field DTOs
      */
-    public List<ConceptFieldDTO> fetchAutocomplete(List<VocabularyCollection> collections, String input, String langCode) {
+    private List<ConceptFieldDTO> fetchAutocomplete(List<VocabularyCollection> collections, String input, String langCode) {
         List<ConceptFieldDTO> result = conceptApi.fetchAutocomplete(collections, input, langCode);
         if (result == null) return new ArrayList<>();
         return result;
@@ -65,10 +66,18 @@ public class FieldService {
      * @param input The input to search for
      * @return A list of concept field DTOs
      */
-    public List<ConceptFieldDTO> fetchAutocomplete(Vocabulary vocabulary, String input, String langCode) {
+    private List<ConceptFieldDTO> fetchAutocomplete(Vocabulary vocabulary, String input, String langCode) {
         List<ConceptFieldDTO> result = conceptApi.fetchAutocomplete(vocabulary, input, langCode);
         if (result == null) return new ArrayList<>();
         return result;
+    }
+
+    public List<ConceptFieldDTO> fetchAutocomplete(FieldConfigurationWrapper config, String input, String langCode) {
+        if (config.vocabularyConfig() == null) {
+            return fetchAutocomplete(config.vocabularyCollectionsConfig(), input, langCode);
+        } else {
+            return fetchAutocomplete(config.vocabularyConfig(), input, langCode);
+        }
     }
 
     /**
@@ -89,7 +98,7 @@ public class FieldService {
         spatialUnitArk.setArkServer(localServer);
         spatialUnitArk = arkRepository.save(spatialUnitArk);
 
-        Concept concept = saveOrGetConceptFromCategory(vocabulary, category);
+        Concept concept = saveOrGetConceptFromDto(vocabulary, category);
 
         SpatialUnit spatialUnit = new SpatialUnit();
         spatialUnit.setName(name);
@@ -107,7 +116,7 @@ public class FieldService {
      * @param category The API response for the category concept
      * @return The saved concept
      */
-    private Concept saveOrGetConceptFromCategory(Vocabulary vocabulary, ConceptFieldDTO category) {
+    private Concept saveOrGetConceptFromDto(Vocabulary vocabulary, ConceptFieldDTO category) {
         MultiValueMap<String,String> queryParams = UriComponentsBuilder.fromUriString(category.getUri()).build().getQueryParams();
         if (queryParams.containsKey("idt") && queryParams.containsKey("idc")) {
             return processConceptWithExternalIdThesaurusAndIdConcept(vocabulary, category, queryParams);
@@ -236,5 +245,12 @@ public class FieldService {
             spatialUnitRepository.saveSpatialUnitHierarchy(parent.getId(), unit.getId());
         }
         return unit;
+    }
+
+    public Concept saveConceptIfNotExist(FieldConfigurationWrapper fieldConfig, ConceptFieldDTO dto) {
+        Vocabulary vocabulary = fieldConfig.vocabularyConfig();
+        if (vocabulary == null) vocabulary = fieldConfig.vocabularyCollectionsConfig().get(0).getVocabulary();
+
+        return saveOrGetConceptFromDto(vocabulary, dto);
     }
 }
