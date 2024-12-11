@@ -1,0 +1,33 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <div class="col-12 md:col-4">
+        <div class="ui-inputgroup">
+            <div class="ui-inputgroup-addon"><i class="pi pi-user" /></div>
+            <p:inputText placeholder='#{langBean.msg("commons.username")}'
+                         value="#{userAddBean.FManagerUsername}"
+                         required="true"
+                         maxlength="20"/>
+        </div>
+    </div>
+    <div class="col-12 md:col-4">
+        <div class="ui-inputgroup">
+            <div class="ui-inputgroup-addon"><i class="pi pi-envelope" /></div>
+            <p:inputText placeholder='#{langBean.msg("create.team.manager.email")}' value="#{userAddBean.FManagerEmail}" required="true" maxlength="250" type="email" />
+        </div>
+    </div>
+    <div class="col-12 md:col-4">
+        <div class="ui-inputgroup">
+            <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
+            <p:inputText placeholder='#{langBean.msg("create.team.manager.password")}' value="#{userAddBean.FManagerPassword}" required="true" type="password" maxlength="64"/>
+        </div>
+    </div>
+    <div class="col-12 md:col-4">
+        <div class="ui-inputgroup">
+            <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
+            <p:inputText placeholder='#{langBean.msg("create.team.manager.password.confirm")}' value="#{userAddBean.FManagerConfirmPassword}" required="true" type="password" maxlength="64"/>
+        </div>
+    </div>
+
+</ui:composition>

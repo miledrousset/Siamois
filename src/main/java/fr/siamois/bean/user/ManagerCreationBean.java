@@ -27,6 +27,7 @@ import java.util.List;
 public class ManagerCreationBean implements Serializable {
     private final PersonService personService;
     private final LangBean langBean;
+    private final UserAddBean userAddBean;
 
     // Injections
 
@@ -35,15 +36,12 @@ public class ManagerCreationBean implements Serializable {
     List<Team> filteredTeams = new ArrayList<>();
 
     // Fields
-    private String vUsername;
-    private String vPassword;
-    private String vEmail;
-    private String vConfirmPassword;
     private List<Team> vTeams = new ArrayList<>();
 
-    public ManagerCreationBean(PersonService personService, LangBean langBean) {
+    public ManagerCreationBean(PersonService personService, LangBean langBean, UserAddBean userAddBean) {
         this.personService = personService;
         this.langBean = langBean;
+        this.userAddBean = userAddBean;
     }
 
     public void init() {
@@ -54,41 +52,13 @@ public class ManagerCreationBean implements Serializable {
     private void resetVariables() {
         refTeams = new ArrayList<>();
         filteredTeams = new ArrayList<>();
-        vUsername = "";
-        vPassword = "";
-        vEmail = "";
-        vConfirmPassword = "";
+        userAddBean.resetVariables();
         vTeams = new ArrayList<>();
     }
 
     public void createUser() {
-
-        if (!vPassword.equals(vConfirmPassword)) {
-            displayErrorMessage(langBean.msg("commons.error.password.nomatch"));
-            return;
-        }
-
-        try {
-            Person person = personService.createPerson(vUsername, vEmail, vPassword);
-            person = personService.addPersonToTeamManagers(person);
-            personService.addPersonToTeam(person, vTeams.toArray(new Team[0]));
-            displayMessage(FacesMessage.SEVERITY_INFO, langBean.msg("commons.message.state.success"), langBean.msg("create.team.manager.created"));
-        } catch (UserAlreadyExist e) {
-            log.error("Username already exists.", e);
-            displayErrorMessage(langBean.msg("commons.error.user.alreadyexist", vUsername));
-        } catch (InvalidUsername e) {
-            log.error("Invalid username.", e);
-            displayErrorMessage(langBean.msg("commons.error.user.username.invalid"));
-        } catch (InvalidEmail e) {
-            log.error("Invalid email.", e);
-            displayErrorMessage(langBean.msg("commons.error.user.email.invalid"));
-        } catch (InvalidPassword e) {
-            log.error("Invalid password.", e);
-            displayErrorMessage(langBean.msg("commons.error.user.password.invalid"));
-        } catch (FailedTeamSaveException e) {
-            log.error("Failed to save team.", e);
-            displayErrorMessage(langBean.msg("commons.error.team.save"));
-        }
+        Person person = userAddBean.createUser();
+        personService.addPersonToTeamManagers(person);
     }
 
     private void displayMessage(FacesMessage.Severity severity, String title, String message) {

@@ -30,6 +30,7 @@ public class TeamCreationBean implements Serializable {
     private final TeamService teamService;
     private final PersonService personService;
     private final LangBean langBean;
+    private final UserAddBean userAddBean;
 
     // Storage
     private List<Person> managers;
@@ -43,15 +44,11 @@ public class TeamCreationBean implements Serializable {
 
     private Person fManager;
 
-    private String fManagerUsername;
-    private String fManagerEmail;
-    private String fManagerPassword;
-    private String fManagerConfirmPassword;
-
-    public TeamCreationBean(TeamService teamService, PersonService personService, LangBean langBean) {
+    public TeamCreationBean(TeamService teamService, PersonService personService, LangBean langBean, UserAddBean userAddBean) {
         this.teamService = teamService;
         this.personService = personService;
         this.langBean = langBean;
+        this.userAddBean = userAddBean;
     }
 
     public void init() {
@@ -69,34 +66,7 @@ public class TeamCreationBean implements Serializable {
 
     public void saveTeamAndManager() {
         if (fManagerSelectionType.equalsIgnoreCase("create")) {
-
-            String errorTitle = langBean.msg("commons.message.state.error");
-
-            if (!fManagerPassword.equals(fManagerConfirmPassword)) {
-                displayMessage(FacesMessage.SEVERITY_ERROR, errorTitle, langBean.msg("commons.error.password.nomatch"));
-                return;
-            }
-
-            try {
-                fManager = personService.createPerson(fManagerUsername, fManagerEmail, fManagerPassword);
-                fManager = personService.addPersonToTeamManagers(fManager);
-            } catch (UserAlreadyExist e) {
-                log.error("User already exist.", e);
-                displayMessage(FacesMessage.SEVERITY_ERROR, errorTitle,langBean.msg("commons.error.user.alreadyexist", fManagerUsername));
-                return;
-            } catch (InvalidUsername e) {
-                log.error("Invalid username.", e);
-                displayMessage(FacesMessage.SEVERITY_ERROR, errorTitle, langBean.msg("commons.error.username.invalid"));
-                return;
-            } catch (InvalidEmail e) {
-                log.error("Invalid email.", e);
-                displayMessage(FacesMessage.SEVERITY_ERROR, errorTitle, langBean.msg("commons.error.email.invalid"));
-                return;
-            } catch (InvalidPassword e) {
-                log.error("Invalid password.", e);
-                displayMessage(FacesMessage.SEVERITY_ERROR, errorTitle, langBean.msg("commons.error.password.invalid"));
-                return;
-            }
+            fManager = userAddBean.createUser();
         }
 
         if (fManager != null)  {

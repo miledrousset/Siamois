@@ -13,33 +13,8 @@
         <h1>#{langBean.msg("nav.create.manager")}</h1>
         <h:form>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <div class="col-12 md:col-4">
-                <div class="ui-inputgroup">
-                    <div class="ui-inputgroup-addon"><i class="pi pi-user" /></div>
-                    <p:inputText placeholder='#{langBean.msg("commons.username")}'
-                                 value="#{managerCreationBean.VUsername}"
-                                 required="true"
-                                 maxlength="20"/>
-                </div>
-            </div>
-            <div class="col-12 md:col-4">
-                <div class="ui-inputgroup">
-                    <div class="ui-inputgroup-addon"><i class="pi pi-envelope" /></div>
-                    <p:inputText placeholder='#{langBean.msg("create.team.manager.email")}' value="#{managerCreationBean.VEmail}" required="true" maxlength="250" type="email" />
-                </div>
-            </div>
-            <div class="col-12 md:col-4">
-                <div class="ui-inputgroup">
-                    <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
-                    <p:inputText placeholder='#{langBean.msg("create.team.manager.password")}' value="#{managerCreationBean.VPassword}" required="true" type="password" maxlength="64"/>
-                </div>
-            </div>
-            <div class="col-12 md:col-4">
-                <div class="ui-inputgroup">
-                    <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
-                    <p:inputText placeholder='#{langBean.msg("create.team.manager.password.confirm")}' value="#{managerCreationBean.VConfirmPassword}" required="true" type="password" maxlength="64"/>
-                </div>
-            </div>
+
+            <ui:include src="/pages/shared/form/createUser.xhtml" />
 
             <p:dataTable var="team" value="#{managerCreationBean.refTeams}"
                          selection="#{managerCreationBean.VTeams}"

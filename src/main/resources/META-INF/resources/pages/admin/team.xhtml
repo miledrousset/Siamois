@@ -55,33 +55,8 @@
                 <h:panelGroup rendered='#{teamCreationBean.FManagerSelectionType.equalsIgnoreCase("create")}'>
                     <!-- Si pas de manager choisit, on crée un manager -->
                     <h3>Création</h3>
-                    <div class="col-12 md:col-4">
-                        <div class="ui-inputgroup">
-                            <div class="ui-inputgroup-addon"><i class="pi pi-user" /></div>
-                            <p:inputText placeholder='#{langBean.msg("commons.username")}'
-                                         value="#{teamCreationBean.FManagerUsername}"
-                                         required="true"
-                                         maxlength="20"/>
-                        </div>
-                    </div>
-                    <div class="col-12 md:col-4">
-                        <div class="ui-inputgroup">
-                            <div class="ui-inputgroup-addon"><i class="pi pi-envelope" /></div>
-                            <p:inputText placeholder='#{langBean.msg("create.team.manager.email")}' value="#{teamCreationBean.FManagerEmail}" required="true" maxlength="50" type="email" />
-                        </div>
-                    </div>
-                    <div class="col-12 md:col-4">
-                        <div class="ui-inputgroup">
-                            <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
-                            <p:inputText placeholder='#{langBean.msg("create.team.manager.password")}' value="#{teamCreationBean.FManagerPassword}" required="true" type="password" maxlength="64"/>
-                        </div>
-                    </div>
-                    <div class="col-12 md:col-4">
-                        <div class="ui-inputgroup">
-                            <div class="ui-inputgroup-addon"><i class="pi pi-ellipsis-h" /></div>
-                            <p:inputText placeholder='#{langBean.msg("create.team.manager.password.confirm")}' value="#{teamCreationBean.FManagerConfirmPassword}" required="true" type="password" maxlength="64"/>
-                        </div>
-                    </div>
+                    <ui:include src="/pages/shared/form/createUser.xhtml" />
+
                 </h:panelGroup>
                 <h:panelGroup rendered="#{teamCreationBean.FManagerSelectionType != null}">
                     <p:messages id="messages" showDetail="true" closable="true">
