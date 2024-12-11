@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -40,9 +41,11 @@ public class LangService {
     }
 
     public List<String> getAvailableLanguages() {
-        String path = Thread.currentThread().getContextClassLoader().getResource("language").getPath();
+        String path = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("language")).getPath();
         File[] files = new File(path).listFiles();
         List<String> languages = new ArrayList<>();
+
+        if (files == null) return languages;
 
         for (File file : files) {
             if (file.getName().startsWith("messages_") && file.getName().endsWith(".properties")) {
