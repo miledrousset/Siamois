@@ -5,7 +5,6 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -19,18 +18,19 @@ import java.util.Locale;
 public class LangBean implements Serializable {
 
     private final LangService langService;
-    private final MessageSource messageSource;
 
     @Value("${siamois.lang.default}")
     private String defaultLang;
 
     private Locale locale = new Locale("en");
 
-    public LangBean(MessageSource messageSource, LangService langService) {
-        this.messageSource = messageSource;
+    public LangBean(LangService langService) {
         this.langService = langService;
     }
 
+    /**
+     * Load default language from properties file if set
+     */
     @PostConstruct
     public void setPropertiesLang() {
         if (!StringUtils.isEmpty(defaultLang)) {
@@ -38,22 +38,42 @@ public class LangBean implements Serializable {
         }
     }
 
+    /**
+     * Get message from key
+     * @param key key of the message
+     * @return message
+     */
     public String msg(String key) {
-        return messageSource.getMessage(key, null, locale);
+        return langService.msg(key, locale);
     }
 
+    /**
+     * Get message formatted with args. Applies {@link String#format(String, Object...)} on the message with the args.
+     * @param format format of the message
+     * @param args arguments to format
+     * @return formatted message
+     */
     public String msg(String format, Object... args) {
-        return String.format(msg(format), args);
+        return langService.msg(format, locale, args);
     }
 
+    /**
+     * Changes the language with the given language code (e.g. "en", "fr", "de")
+     * @param lang language code
+     */
     public void setLanguage(String lang) {
         log.trace("Setting language to {}", lang);
         locale = new Locale(lang);
     }
 
+    /**
+     * Get the current language code
+     * @return language code
+     */
     public String getLanguageCode() {
         return locale.getLanguage();
     }
+
 
     public List<String> getLangs() {
         return langService.getAvailableLanguages()

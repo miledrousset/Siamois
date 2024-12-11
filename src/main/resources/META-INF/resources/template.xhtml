@@ -32,9 +32,20 @@
                                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                     <button type="submit" class="btn btn-danger">${langBean.msg("nav.logout")}</button>
                                 </form>
-                                <h:button value='${langBean.msg("nav.fieldconfig")}' outcome="/pages/field/fieldConfiguration.xhtml" styleClass="btn btn-primary"/>
-                                <h:button rendered="#{navBean.userIs('ADMIN')}" value='${langBean.msg("nav.create.manager")}' outcome="/pages/create/manager.xhtml" styleClass="btn btn-primary"/>
-                                <h:button rendered="#{navBean.userIs('ADMIN')}" value='${langBean.msg("nav.create.team")}' outcome="/pages/create/team.xhtml" styleClass="btn btn-primary"/>
+                                <h:button value='${langBean.msg("nav.fieldconfig")}'
+                                          outcome="/pages/field/fieldConfiguration.xhtml" styleClass="btn btn-primary"/>
+
+                                <h:button rendered="#{navBean.userIs('ADMIN')}"
+                                          value='${langBean.msg("nav.create.manager")}'
+                                          outcome="/pages/admin/manager.xhtml" styleClass="btn btn-danger"/>
+
+                                <h:button rendered="#{navBean.userIs('ADMIN')}"
+                                          value='${langBean.msg("nav.create.team")}'
+                                          outcome="/pages/admin/team.xhtml" styleClass="btn btn-danger"/>
+
+                                <h:button rendered="#{navBean.userIsAny('TEAM_MANAGER', 'ADMIN')}"
+                                          value="Gérer les utilisateurs"
+                                          outcome="/pages/manager/users.xhtml" styleClass="btn btn btn-warning"/>
                             </nav>
                         </f:facet>
                         <p:divider layout="vertical"/>

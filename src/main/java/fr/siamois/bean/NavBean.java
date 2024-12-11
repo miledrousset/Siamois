@@ -27,7 +27,20 @@ public class NavBean implements Serializable {
                 .stream()
                 .anyMatch(a -> a.getAuthority().equalsIgnoreCase(roleName)))
                 .orElse(false);
-
     }
 
+    public boolean userIsAny(String... roles) {
+        Optional<Person> user = AuthenticatedUserUtils.getAuthenticatedUser();
+        return user.map(person -> person.getAuthorities()
+                .stream()
+                .anyMatch(a -> {
+                    for (String role : roles) {
+                        if (a.getAuthority().equalsIgnoreCase(role)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }))
+                .orElse(false);
+    }
 }

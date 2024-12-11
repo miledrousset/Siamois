@@ -63,7 +63,7 @@ public class TeamCreationBean implements Serializable {
     }
 
     private void displayMessage(FacesMessage.Severity severity, String title, String message) {
-        FacesMessage facesMessage = new FacesMessage(severity, message, message);
+        FacesMessage facesMessage = new FacesMessage(severity, title, message);
         FacesContext.getCurrentInstance().addMessage(null, facesMessage);
     }
 
