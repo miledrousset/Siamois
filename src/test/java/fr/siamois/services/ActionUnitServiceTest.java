@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -38,7 +39,8 @@ class ActionUnitServiceTest {
         spatialUnit1.setId(1L);
         actionUnit1.setId(1L);
         actionUnit2.setId(2L);
-        when(actionUnitRepository.findAllBySpatialUnitId(actionUnit1.getId())).thenReturn(List.of(actionUnit1, actionUnit2));
+
+
     }
 
     @AfterEach
@@ -47,6 +49,9 @@ class ActionUnitServiceTest {
 
     @Test
     void findAllBySpatialUnitId() {
+
+        when(actionUnitRepository.findAllBySpatialUnitId(spatialUnit1.getId())).thenReturn(List.of(actionUnit1, actionUnit2));
+
         // Act
         List<ActionUnit> actualResult = actionUnitService.findAllBySpatialUnitId(spatialUnit1);
 
@@ -67,6 +72,34 @@ class ActionUnitServiceTest {
         );
 
         assertEquals("Database error", exception.getMessage());
+
+    }
+
+    @Test
+    void findById_success() {
+
+        when(actionUnitRepository.findById(actionUnit1.getId())).thenReturn(Optional.ofNullable(actionUnit1));
+
+        // act
+        ActionUnit actualResult = actionUnitService.findById(spatialUnit1.getId());
+
+        // assert
+        assertEquals(actionUnit1, actualResult);
+    }
+
+    @Test
+    void findById_Exception() {
+
+        when(actionUnitRepository.findById(actionUnit1.getId())).thenReturn(Optional.ofNullable(null));
+
+
+        // Act & Assert
+        Exception exception = assertThrows(
+                Exception.class,
+                () -> actionUnitService.findById(spatialUnit1.getId())
+        );
+
+        assertEquals("ActionUnit not found with ID: 1", exception.getMessage());
 
     }
 }

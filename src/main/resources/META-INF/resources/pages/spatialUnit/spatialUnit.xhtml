@@ -35,30 +35,30 @@
         <p:outputPanel>
             <h3>Recording units</h3>
             <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.recordingUnitListErrorMessage}" rendered="#{not empty spatialUnitBean.recordingUnitListErrorMessage}" />
-            <p:panelGrid columns="3" styleClass="card-grid">
-                <ui:repeat value="#{spatialUnitBean.recordingUnitList}" var="item">
-                    <p:card>
-                        <f:facet name="header">
-                            <!-- <img alt="user header" src="../../resources/img/location.jpg"/> -->
-                        </f:facet>
-                        <f:facet name="title">
-                            #{item.ark.arkId}
-                        </f:facet>
-                        <f:facet name="subtitle">
+            <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item" value="#{spatialUnitBean.recordingUnitList}">
+                <p:column headerText="Name">
+                    <p:link outcome="/pages/recordingUnit/recordingUnit.xhtml" value="#{item.serial_id}">
+                        <f:param name="id" value="#{item.id}"/>
+                    </p:link>
+                </p:column>
 
-                        </f:facet>
+                <p:column headerText="ARK">
+                    <h:outputText value="#{item.ark.arkId}" />
+                </p:column>
 
-                        <p>Category : #{item.type.label}</p>
-                        <p>Author : #{item.author.lastname} #{item.author.name}</p>
+                <p:column headerText="Type">
+                    <h:outputText value="#{item.type.label}" />
+                </p:column>
 
-                        <!-- Button to access recording unit form -->
-                        <p:button value="Go to recording unit"
-                                  icon="pi pi-search"
-                                  outcome="/pages/recordingUnit/recordingUnit.xhtml?id=#{item.id}" />
+                <p:column headerText="Auteur">
+                    <h:outputText value="#{item.author.name} #{item.author.lastname}" />
+                </p:column>
 
-                    </p:card>
-                </ui:repeat>
-            </p:panelGrid>
+                <p:column headerText="Fouilleur">
+                    <h:outputText value="#{item.excavator.name} #{item.excavator.lastname}" />
+                </p:column>
+            </p:dataTable>
+
         </p:outputPanel>
 
         <p:outputPanel>

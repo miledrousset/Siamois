@@ -2,15 +2,13 @@ package fr.siamois.bean.RecordingUnit;
 
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.models.ActionUnit;
-import fr.siamois.models.ark.Ark;
-import fr.siamois.models.auth.Person;
+import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtilsBean;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
 import fr.siamois.models.recordingunit.RecordingUnitSize;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.RecordingUnitService;
-import fr.siamois.services.ark.ArkGenerator;
 import fr.siamois.services.auth.PersonDetailsService;
 import fr.siamois.services.auth.PersonService;
 import fr.siamois.services.vocabulary.VocabularyService;
@@ -23,27 +21,27 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+
 
 import static java.time.OffsetDateTime.now;
 
 @Data
 @Slf4j
+@SessionScoped
 @Component
-public class NewRecordingUnitFormBean implements Serializable {
-
+public class NewRecordingUnitFormBean implements Serializable  {
 
     // Deps
     private final RecordingUnitService recordingUnitService;
     private final ActionUnitService actionUnitService;
     private final PersonService personService;
+    private final RecordingUnitUtilsBean recordingUnitUtilsBean;
 
     // TODO : remove below
     private final ArkServerRepository arkServerRepository;
@@ -92,26 +90,14 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
+
     public String save() {
         try {
 
-            log.debug(String.valueOf(this.recordingUnit));
+            log.error(String.valueOf(this.recordingUnit));
 
-            // TODO : handle isLocalisationFromSIG and associated fields
 
-            // Generate ark
-            // Todo : properly generate ARK
-            Ark ark = new Ark();
-            ark.setArkServer(arkServerRepository.findArkServerByServerArkUri("http://localhost:8099/siamois").orElse(null));
-            ark.setArkId(ArkGenerator.generateArk());
-
-            this.recordingUnit.setArk(ark);
-
-            // handle dates
-            if(startDate != null) {this.recordingUnit.setStartDate(localDateToOffsetDateTime(startDate));}
-            if(endDate != null) {this.recordingUnit.setEndDate(localDateToOffsetDateTime(endDate));}
-
-            this.recordingUnit = recordingUnitService.save(recordingUnit);
+            this.recordingUnit = recordingUnitUtilsBean.save(recordingUnit, startDate, endDate);
             log.debug("Recording unit saved");
             log.debug(String.valueOf(this.recordingUnit));
 
@@ -122,7 +108,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         }
 
         // Return page with id
-        return "/pages/recordingUnit/recordingUnit.xhtml?faces-redirect=true&id="+this.recordingUnit.getId().toString();
+        return "/pages/recordingUnit/recordingUnit.xhtml?id="+this.recordingUnit.getId().toString();
     }
 
     /**
@@ -138,11 +124,12 @@ public class NewRecordingUnitFormBean implements Serializable {
 
 
     public NewRecordingUnitFormBean(RecordingUnitService recordingUnitService,
-                                    ActionUnitService actionUnitService, PersonService personService, ArkServerRepository arkServerRepository,
+                                    ActionUnitService actionUnitService, PersonService personService, RecordingUnitUtilsBean recordingUnitUtilsBean, ArkServerRepository arkServerRepository,
                                     PersonDetailsService personDetailsService, VocabularyService vocabularyService) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.personService = personService;
+        this.recordingUnitUtilsBean = recordingUnitUtilsBean;
         this.arkServerRepository = arkServerRepository;
         this.personDetailsService = personDetailsService;
         this.vocabularyService = vocabularyService;
@@ -157,21 +144,8 @@ public class NewRecordingUnitFormBean implements Serializable {
         this.isLocalisationFromSIG = false;
     }
 
-    public LocalDate offsetDateTimeToLocalDate(OffsetDateTime offsetDT) {
-        return offsetDT.toLocalDate();
-    }
 
-    public OffsetDateTime localDateToOffsetDateTime(LocalDate localDate) {
-        return localDate.atTime(LocalTime.NOON).atOffset(ZoneOffset.UTC);
-    }
 
-    public List<Person> completePerson(String query) {
-        if (query == null || query.isEmpty()) {
-            return Collections.emptyList();
-        }
-        query = query.toLowerCase();
-        return personService.findAllByNameLastnameContaining(query);
-    }
 
     @PostConstruct
     public void init() {
@@ -182,12 +156,12 @@ public class NewRecordingUnitFormBean implements Serializable {
                     // TODO : clean below, properly get concept
                     Concept c = new Concept();
                     c.setLabel("US");
-                    c.setVocabulary(this.vocabularyService.findVocabularyById(14));
+                    c.setVocabulary(vocabularyService.findVocabularyById(14));
                     this.recordingUnit = new RecordingUnit();
                     this.recordingUnit.setType(c);
                     this.recordingUnit.setDescription("Nouvelle description");
                     //this.recordingUnit.setName("Nouvelle unité d'enregistrement");
-                    this.startDate = offsetDateTimeToLocalDate(now());
+                    this.startDate = recordingUnitUtilsBean.offsetDateTimeToLocalDate(now());
                     // Below is hardcoded but it should not be. TODO
                     ActionUnit actionUnit = this.actionUnitService.findById(4);
                     this.recordingUnit.setActionUnit(actionUnit);

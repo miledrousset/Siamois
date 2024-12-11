@@ -1,16 +1,10 @@
 package fr.siamois.bean.RecordingUnit;
 
+import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtilsBean;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
-import fr.siamois.models.ActionUnit;
-import fr.siamois.models.ark.Ark;
-import fr.siamois.models.auth.Person;
-import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
-import fr.siamois.models.recordingunit.RecordingUnitSize;
-import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.RecordingUnitService;
-import fr.siamois.services.ark.ArkGenerator;
 import fr.siamois.services.auth.PersonDetailsService;
 import fr.siamois.services.auth.PersonService;
 import fr.siamois.services.vocabulary.VocabularyService;
@@ -24,21 +18,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 
 import static java.time.OffsetDateTime.now;
 
 @Data
 @Slf4j
+@SessionScoped
 @Component
 public class RecordingUnitFormBean implements Serializable {
 
@@ -47,11 +35,13 @@ public class RecordingUnitFormBean implements Serializable {
     private final RecordingUnitService recordingUnitService;
     private final ActionUnitService actionUnitService;
     private final PersonService personService;
+    private final RecordingUnitUtilsBean recordingUnitUtilsBean;
 
     // TODO : remove below
     private final ArkServerRepository arkServerRepository;
     private final PersonDetailsService personDetailsService;
     private final VocabularyService vocabularyService;
+
     // TODO : end to remove
 
     @Getter
@@ -101,21 +91,7 @@ public class RecordingUnitFormBean implements Serializable {
 
             log.debug(String.valueOf(this.recordingUnit));
 
-            // TODO : handle isLocalisationFromSIG and associated fields
-
-            // Generate ark
-            // Todo : properly generate ARK
-            Ark ark = new Ark();
-            ark.setArkServer(arkServerRepository.findArkServerByServerArkUri("http://localhost:8099/siamois").orElse(null));
-            ark.setArkId(ArkGenerator.generateArk());
-
-            this.recordingUnit.setArk(ark);
-
-            // handle dates
-            if(startDate != null) {this.recordingUnit.setStartDate(localDateToOffsetDateTime(startDate));}
-            if(endDate != null) {this.recordingUnit.setEndDate(localDateToOffsetDateTime(endDate));}
-
-            this.recordingUnit = recordingUnitService.save(recordingUnit);
+            this.recordingUnit = recordingUnitUtilsBean.save(recordingUnit, startDate, endDate);
             log.debug("Recording unit saved");
             log.debug(String.valueOf(this.recordingUnit));
 
@@ -142,11 +118,12 @@ public class RecordingUnitFormBean implements Serializable {
 
 
     public RecordingUnitFormBean(RecordingUnitService recordingUnitService,
-                                 ActionUnitService actionUnitService, PersonService personService, ArkServerRepository arkServerRepository,
+                                 ActionUnitService actionUnitService, PersonService personService, RecordingUnitUtilsBean recordingUnitUtilsBean, ArkServerRepository arkServerRepository,
                                  PersonDetailsService personDetailsService, VocabularyService vocabularyService) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.personService = personService;
+        this.recordingUnitUtilsBean = recordingUnitUtilsBean;
         this.arkServerRepository = arkServerRepository;
         this.personDetailsService = personDetailsService;
         this.vocabularyService = vocabularyService;
@@ -161,22 +138,6 @@ public class RecordingUnitFormBean implements Serializable {
         this.isLocalisationFromSIG = false;
     }
 
-    public LocalDate offsetDateTimeToLocalDate(OffsetDateTime offsetDT) {
-        return offsetDT.toLocalDate();
-    }
-
-    public OffsetDateTime localDateToOffsetDateTime(LocalDate localDate) {
-        return localDate.atTime(LocalTime.NOON).atOffset(ZoneOffset.UTC);
-    }
-
-    public List<Person> completePerson(String query) {
-        if (query == null || query.isEmpty()) {
-            return Collections.emptyList();
-        }
-        query = query.toLowerCase();
-        return personService.findAllByNameLastnameContaining(query);
-    }
-
     @PostConstruct
     public void init() {
         log.error("id"+String.valueOf(this.id));
@@ -185,8 +146,8 @@ public class RecordingUnitFormBean implements Serializable {
                 log.info("Loading RU");
                 reinitializeBean();
                 this.recordingUnit = this.recordingUnitService.findById(this.id);
-                if(this.recordingUnit.getStartDate() != null) {this.startDate = offsetDateTimeToLocalDate(this.recordingUnit.getStartDate());}
-                if(this.recordingUnit.getEndDate()!=null) {this.endDate = offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());}
+                if(this.recordingUnit.getStartDate() != null) {this.startDate = recordingUnitUtilsBean.offsetDateTimeToLocalDate(this.recordingUnit.getStartDate());}
+                if(this.recordingUnit.getEndDate()!=null) {this.endDate = recordingUnitUtilsBean.offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());}
                 // TODO handle isLocalisationFromSIG properly
                 this.isLocalisationFromSIG = false;
             }

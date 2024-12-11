@@ -2,6 +2,7 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:cc="http://xmlns.jcp.org/jsf/composite">
     <cc:interface>
         <!-- Attributes to pass the bean's list and optional additional parameters -->
@@ -10,30 +11,23 @@
     <cc:implementation>
         <p:outputPanel>
             <h3>Spatial units</h3>
-            <p:panelGrid columns="3" styleClass="card-grid">
-                <ui:repeat value="#{cc.attrs.spatialUnitList}" var="item">
-                    <p:card>
-                        <f:facet name="header">
-                            <!-- <img alt="user header" src="../../resources/img/location.jpg"/> -->
-                        </f:facet>
-                        <f:facet name="title">
-                            #{item.name}
-                        </f:facet>
-                        <f:facet name="subtitle">
-                            ARK: #{item.ark.arkId}
-                        </f:facet>
+            <div class="card">
+                <p:dataTable paginator="true" paginatorPosition="bottom"  rows="10" var="item" value="#{cc.attrs.spatialUnitList}">
+                    <p:column headerText="Name">
+                        <p:link outcome="/pages/spatialUnit/spatialUnit.xhtml" value="#{item.name}">
+                            <f:param name="id" value="#{item.id}"/>
+                        </p:link>
+                    </p:column>
 
-                        <p>Category : #{item.category.label}</p>
+                    <p:column headerText="ARK">
+                        <h:outputText value="#{item.ark.arkId}" />
+                    </p:column>
 
-
-                        <f:facet name="footer">
-                            <p:button value="Go to Spatial Unit"
-                                      icon="pi pi-search"
-                                      outcome="/pages/spatialUnit/spatialUnit.xhtml?id=${item.id}" />
-                        </f:facet>
-                    </p:card>
-                </ui:repeat>
-            </p:panelGrid>
+                    <p:column headerText="Category">
+                        <h:outputText value="#{item.category.label}" />
+                    </p:column>
+                </p:dataTable>
+            </div>
         </p:outputPanel>
     </cc:implementation>
 </ui:composition>

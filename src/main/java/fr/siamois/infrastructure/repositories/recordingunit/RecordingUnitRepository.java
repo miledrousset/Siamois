@@ -40,7 +40,7 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
     )
     List<RecordingUnit> findAllBySpatialUnitId(Long spatialUnitId);
 
-    Optional<RecordingUnit> findById(long id);
+    //   Optional<RecordingUnit> findById(long id);
 
 //    todo:  @Query(
 //            nativeQuery = true,
