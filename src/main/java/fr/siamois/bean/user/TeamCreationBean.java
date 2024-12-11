@@ -53,6 +53,11 @@ public class TeamCreationBean implements Serializable {
 
     public void init() {
         loadManagers();
+        fTeamName = "";
+        fDescription = "";
+        fManagerSelectionType = "select";
+        fTeamDescription = "";
+        fManager = null;
     }
 
     public void loadManagers() {
