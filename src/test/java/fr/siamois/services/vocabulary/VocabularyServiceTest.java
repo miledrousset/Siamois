@@ -1,10 +1,10 @@
 package fr.siamois.services.vocabulary;
 
-import fr.siamois.infrastructure.repositories.PersonRepository;
+import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.VocabularyRepository;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.vocabulary.Vocabulary;
-import fr.siamois.services.auth.PersonService;
+import fr.siamois.services.PersonService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

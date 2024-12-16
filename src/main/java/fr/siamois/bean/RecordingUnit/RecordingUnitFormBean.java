@@ -1,14 +1,15 @@
 package fr.siamois.bean.RecordingUnit;
 
 import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
+import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.recordingunit.RecordingUnit;
+import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.RecordingUnitService;
-import fr.siamois.services.auth.PersonDetailsService;
 import fr.siamois.services.PersonService;
-import fr.siamois.services.vocabulary.VocabularyService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -38,24 +39,16 @@ public class RecordingUnitFormBean implements Serializable {
     private final PersonService personService;
     private final RecordingUnitUtils recordingUnitUtils;
 
-    // TODO : remove below
-    private final ArkServerRepository arkServerRepository;
-    private final PersonDetailsService personDetailsService;
-    private final VocabularyService vocabularyService;
-
-    // TODO : end to remove
-
-    @Getter
     private RecordingUnit recordingUnit;
-
-    @Getter
-    @Setter
     private Long id;  // ID of the requested RU
     private LocalDate startDate;
     private LocalDate endDate;
     private List<Event> events; // Strati
     private Boolean isLocalisationFromSIG;
-    private String recordingUnitErrorMessage;
+    private String recordingUnitErrorMessage;    private List<ConceptFieldDTO> concepts;
+    private FieldConfigurationWrapper configurationWrapper;
+    private Concept selectedConcept = null;
+    private ConceptFieldDTO fType = null;
 
     @Data
     public static class Event {
@@ -87,26 +80,26 @@ public class RecordingUnitFormBean implements Serializable {
 
     }
 
-    public String save() {
-        try {
-
-            log.error(String.valueOf(this.recordingUnit));
-
-            this.recordingUnit = recordingUnitUtils.save(recordingUnit, startDate, endDate);
-            log.error("Recording unit saved");
-            log.error(String.valueOf(this.recordingUnit));
-
-            return "/pages/recordingUnit/recordingUnit?faces-redirect=true&id="+this.recordingUnit.getId().toString();
-
-        } catch (RuntimeException e) {
-            log.error("Error while saving: "+e.getMessage());
-            // todo : add error message
-            return null;
-        }
-
-        // Return page with id
-
-    }
+//    public String save() {
+//        try {
+//
+//            log.error(String.valueOf(this.recordingUnit));
+//
+//            this.recordingUnit = recordingUnitUtils.save(recordingUnit, startDate, endDate);
+//            log.error("Recording unit saved");
+//            log.error(String.valueOf(this.recordingUnit));
+//
+//            return "/pages/recordingUnit/recordingUnit?faces-redirect=true&id="+this.recordingUnit.getId().toString();
+//
+//        } catch (RuntimeException e) {
+//            log.error("Error while saving: "+e.getMessage());
+//            // todo : add error message
+//            return null;
+//        }
+//
+//        // Return page with id
+//
+//    }
 
     public List<Person> completePerson(String query) {
         return recordingUnitUtils.completePerson(query);
@@ -124,16 +117,16 @@ public class RecordingUnitFormBean implements Serializable {
     }
 
 
-    public RecordingUnitFormBean(RecordingUnitService recordingUnitService,
-                                 ActionUnitService actionUnitService, PersonService personService, RecordingUnitUtils recordingUnitUtils, RecordingUnitUtils recordingUnitUtils1, ArkServerRepository arkServerRepository,
-                                 PersonDetailsService personDetailsService, VocabularyService vocabularyService) {
+    public RecordingUnitFormBean(
+            RecordingUnitService recordingUnitService,
+                                 ActionUnitService actionUnitService,
+                                 PersonService personService,
+                                 RecordingUnitUtils recordingUnitUtils
+                                ) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.personService = personService;
-        this.recordingUnitUtils = recordingUnitUtils1;
-        this.arkServerRepository = arkServerRepository;
-        this.personDetailsService = personDetailsService;
-        this.vocabularyService = vocabularyService;
+        this.recordingUnitUtils = recordingUnitUtils;
 
     }
 

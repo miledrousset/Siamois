@@ -1,5 +1,6 @@
 package fr.siamois.services;
 
+import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.infrastructure.repositories.ark.ArkRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
@@ -7,13 +8,17 @@ import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitStudyRe
 import fr.siamois.models.SpatialUnit;
 
 import fr.siamois.models.ark.Ark;
+import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.ActionUnitNotFoundException;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.exceptions.RecordingUnitNotFoundException;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
 import fr.siamois.models.recordingunit.RecordingUnit;
 
+import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.ark.ArkGenerator;
+import fr.siamois.services.vocabulary.FieldService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,11 +32,13 @@ public class RecordingUnitService {
     private final RecordingUnitRepository recordingUnitRepository;
     private final ArkServerRepository arkServerRepository;
     private final RecordingUnitStudyRepository recordingUnitStudyRepository;
+    private final FieldService fieldService;
 
-    public RecordingUnitService(RecordingUnitRepository recordingUnitRepository, ArkRepository arkRepository, ArkServerRepository arkServerRepository, RecordingUnitStudyRepository recordingUnitStudyRepository) {
+    public RecordingUnitService(RecordingUnitRepository recordingUnitRepository, ArkRepository arkRepository, ArkServerRepository arkServerRepository, RecordingUnitStudyRepository recordingUnitStudyRepository, FieldService fieldService) {
         this.recordingUnitRepository = recordingUnitRepository;
         this.arkServerRepository = arkServerRepository;
         this.recordingUnitStudyRepository = recordingUnitStudyRepository;
+        this.fieldService = fieldService;
     }
 
     /**
@@ -44,19 +51,25 @@ public class RecordingUnitService {
         return recordingUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
     }
 
-
     @Transactional
-    public RecordingUnit save(RecordingUnit recordingUnit) {
+    public RecordingUnit save(RecordingUnit recordingUnit, Vocabulary vocabulary, ConceptFieldDTO typeConceptFieldDTO) {
 
         try {
             // Generate ARK if the recording unit does not have any
             if(recordingUnit.getArk() == null) {
-                // Todo : properly generate ARK using proper ark server
+
+                ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
                 Ark ark = new Ark();
-                ark.setArkServer(arkServerRepository.findArkServerByServerArkUri("http://localhost:8099/siamois").orElse(null));
+                ark.setArkServer(
+                        arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"))
+                );
                 ark.setArkId(ArkGenerator.generateArk());
                 recordingUnit.setArk(ark);
             }
+
+            // Add concept
+            Concept type = fieldService.saveOrGetConceptFromDto(vocabulary, typeConceptFieldDTO);
+            recordingUnit.setType(type);
 
             return recordingUnitRepository.save(recordingUnit);
         } catch(RuntimeException e) {

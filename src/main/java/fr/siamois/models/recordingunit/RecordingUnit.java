@@ -64,6 +64,8 @@ public class RecordingUnit {
     @Embedded
     private RecordingUnitAltimetry altitude;
 
+    public static final String TYPE_FIELD_CODE = "recordingUnit.type";
+
     //@Column(name = "spatial_extent", columnDefinition = "geometry not null")
     //private Polygon spatialExtent;
 

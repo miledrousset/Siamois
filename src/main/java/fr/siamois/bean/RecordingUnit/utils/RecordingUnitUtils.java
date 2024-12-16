@@ -1,15 +1,17 @@
 package fr.siamois.bean.RecordingUnit.utils;
 
+import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.services.RecordingUnitService;
-import fr.siamois.services.auth.PersonService;
+import fr.siamois.services.PersonService;
+import fr.siamois.models.vocabulary.Vocabulary;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
 
-import javax.faces.bean.ApplicationScoped;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
@@ -39,9 +41,12 @@ public class RecordingUnitUtils {
         return personService.findAllByNameLastnameContaining(query);
     }
 
-    public RecordingUnit save(RecordingUnit recordingUnit, LocalDate startDate, LocalDate endDate) {
+    public RecordingUnit save(RecordingUnit recordingUnit,
+                              Vocabulary vocabulary,
+                              ConceptFieldDTO recordingUnitType,
+                              LocalDate startDate,
+                              LocalDate endDate) {
 
-        log.error("im here");
         // TODO : handle isLocalisationFromSIG and associated fields
 
         // handle dates
@@ -52,7 +57,7 @@ public class RecordingUnitUtils {
             recordingUnit.setEndDate(localDateToOffsetDateTime(endDate));
         }
 
-        return recordingUnitService.save(recordingUnit);
+        return recordingUnitService.save(recordingUnit, vocabulary, recordingUnitType);
 
     }
 

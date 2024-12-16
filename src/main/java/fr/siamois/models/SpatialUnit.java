@@ -32,6 +32,6 @@ public class SpatialUnit {
 //    @Column(name = "spatial_extent", columnDefinition = "geometry not null")
 //    private Polygon spatialExtent;
 
-    public static final String CATEGORY_FIELD_CODE = "spatialUnit.category.collection";
+    public static final String CATEGORY_FIELD_CODE = "spatialUnit.category";
 
 }
