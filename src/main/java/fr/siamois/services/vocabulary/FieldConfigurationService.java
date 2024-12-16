@@ -28,6 +28,7 @@ import java.util.Optional;
 
 /**
  * Service to handle the configuration of the field Spatial Unit in the application.
+ *
  * @author Julien Linget
  */
 @Service
@@ -57,11 +58,12 @@ public class FieldConfigurationService {
     /**
      * Save the configuration of the field Spatial Unit for a user for a given collection.
      * Delete the old configuration if it exists, even if it's a VocabularyCollection or a Vocabulary.
-     * @param loggedUser The database saved user
-     * @param fieldCode The field code to save
+     *
+     * @param loggedUser        The database saved user
+     * @param fieldCode         The field code to save
      * @param collectionsToSave The database saved collections
      * @throws FailedFieldUpdateException If the field already exists and the collection is the same
-     * @throws FailedFieldSaveException If the save somehow failed
+     * @throws FailedFieldSaveException   If the save somehow failed
      */
     public void saveThesaurusCollectionFieldConfiguration(Person loggedUser,
                                                           String fieldCode,
@@ -78,11 +80,12 @@ public class FieldConfigurationService {
     /**
      * Save the configuration of the field Spatial Unit for a user for a given vocabulary.
      * Delete the old configuration if it exists, even if it's a VocabularyCollection or a Vocabulary.
+     *
      * @param loggedUser The database saved user
-     * @param fieldCode The field code to save
+     * @param fieldCode  The field code to save
      * @param vocabulary The database saved vocabulary to save
      * @throws FailedFieldUpdateException If the field already exists and the vocabulary is the same
-     * @throws FailedFieldSaveException If the save somehow failed
+     * @throws FailedFieldSaveException   If the save somehow failed
      */
     public void saveThesaurusFieldConfiguration(Person loggedUser,
                                                 String fieldCode,
@@ -96,9 +99,10 @@ public class FieldConfigurationService {
 
     /**
      * Deletes all existing configurations of a field and saves the new configuration.
-     * @param loggedUser The database saved user
-     * @param fieldCode The field code to save
-     * @param vocabulary The database saved vocabulary
+     *
+     * @param loggedUser  The database saved user
+     * @param fieldCode   The field code to save
+     * @param vocabulary  The database saved vocabulary
      * @param collections The database saved collections
      * @return The field to save
      * @throws FailedFieldUpdateException If the field already exists and the configuration is the same
@@ -116,8 +120,9 @@ public class FieldConfigurationService {
 
     /**
      * Return the field if it exists, create it otherwise.
+     *
      * @param loggedUser The database saved user
-     * @param fieldCode The field code to save
+     * @param fieldCode  The field code to save
      * @return The database saved field
      * @throws FailedFieldSaveException If the save somehow failed
      */
@@ -140,12 +145,13 @@ public class FieldConfigurationService {
 
     /**
      * Delete the old configuration when the new configuration is a vocabulary.
-     * @param loggedUser The database saved user
-     * @param fieldCode The field code to save
+     *
+     * @param loggedUser    The database saved user
+     * @param fieldCode     The field code to save
      * @param selectedVocab The database saved vocabulary
      * @throws FailedFieldUpdateException If the field already exists and the vocabulary is the same
      */
-    private void  deleteOldConfigurationIfDifferent(Person loggedUser, String fieldCode, Vocabulary selectedVocab) throws FailedFieldUpdateException {
+    private void deleteOldConfigurationIfDifferent(Person loggedUser, String fieldCode, Vocabulary selectedVocab) throws FailedFieldUpdateException {
         fieldRepository.deleteVocabularyCollectionConfigurationByPersonAndFieldCode(loggedUser.getId(), fieldCode);
 
         Optional<Vocabulary> optVocab = vocabularyRepository.findVocabularyOfUserForField(loggedUser.getId(), fieldCode);
@@ -160,8 +166,9 @@ public class FieldConfigurationService {
 
     /**
      * Delete the old configuration when the new configuration is a collection.
-     * @param loggedUser The database saved user
-     * @param fieldCode The field code to save
+     *
+     * @param loggedUser  The database saved user
+     * @param fieldCode   The field code to save
      * @param collections The database saved collections
      * @throws FailedFieldUpdateException If the field already exists and the collection is the same
      */
@@ -180,14 +187,17 @@ public class FieldConfigurationService {
 
     /**
      * Record to store the collections and their labels.
-     * @param collections The collections
+     *
+     * @param collections     The collections
      * @param localisedLabels The labels
      */
-    public record VocabularyCollectionsAndLabels(List<VocabularyCollection> collections, List<String> localisedLabels) {}
+    public record VocabularyCollectionsAndLabels(List<VocabularyCollection> collections, List<String> localisedLabels) {
+    }
 
     /**
      * Fetch all collections from a vocabulary and return them with their labels in the specified language.
-     * @param lang The language to fetch the labels in
+     *
+     * @param lang       The language to fetch the labels in
      * @param vocabulary The vocabulary to fetch the collections from
      * @return A record containing the collections and their labels
      * @throws ClientSideErrorException If the client sent wrong id or server URL
@@ -203,7 +213,7 @@ public class FieldConfigurationService {
             labels.add(dto.getLabels().stream()
                     .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(lang))
                     .findFirst()
-                            .orElse(dto.getLabels().get(0))
+                    .orElse(dto.getLabels().get(0))
                     .getTitle());
 
             result.add(collection);
@@ -215,8 +225,9 @@ public class FieldConfigurationService {
 
     /**
      * Create a VocabularyCollection if it does not exist in the database.
+     *
      * @param vocabulary The database saved vocabulary
-     * @param dto The DTO to create the collection from
+     * @param dto        The DTO to create the collection from
      * @return The database saved collection
      */
     private VocabularyCollection createVocabularyCollectionIfNotExists(Vocabulary vocabulary, VocabularyCollectionDTO dto) {
@@ -235,7 +246,8 @@ public class FieldConfigurationService {
 
     /**
      * Fetch the configuration of the field Spatial Unit for a user in the database.
-     * @param loggedUser The user
+     *
+     * @param loggedUser        The user
      * @param categoryFieldCode The field code
      * @return The configuration if it exists
      */
@@ -245,7 +257,8 @@ public class FieldConfigurationService {
 
     /**
      * Fetch the configuration of the field Spatial Unit for a user in the database.
-     * @param loggedUser The database saved user
+     *
+     * @param loggedUser        The database saved user
      * @param categoryFieldCode The field code
      * @return Optional of the configuration if it exists
      */
@@ -255,7 +268,8 @@ public class FieldConfigurationService {
 
     /**
      * Fetch all public thesaurus name and labels from the API.
-     * @param lang The language to fetch the labels in
+     *
+     * @param lang      The language to fetch the labels in
      * @param serverUrl The server URL
      * @return A list of thesaurus
      */
@@ -269,10 +283,14 @@ public class FieldConfigurationService {
             vocabulary.setId(-1L);
             vocabulary.setBaseUri(serverUrl);
             vocabulary.setExternalVocabularyId(dto.getIdTheso());
+
+            if (dto.getLabels().isEmpty())
+                throw new RuntimeException("No label found for thesaurus " + dto.getIdTheso());
+
             vocabulary.setVocabularyName(dto.getLabels().stream()
                     .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(lang))
                     .findFirst()
-                    .orElseThrow()
+                    .orElse(dto.getLabels().get(0))
                     .getTitle()
             );
             vocabulary.setType(type);
@@ -285,6 +303,7 @@ public class FieldConfigurationService {
 
     /**
      * Save a vocabulary if it does not exist in the database.
+     *
      * @param vocabulary The vocabulary to save
      * @return The saved vocabulary or the existing one if it exists
      */
@@ -295,6 +314,7 @@ public class FieldConfigurationService {
 
     /**
      * Save a vocabulary collection if it does not exist in the database.
+     *
      * @param vocabularyCollection The vocabulary collection to save
      * @return The saved vocabulary collection or the existing one if it exists
      */
