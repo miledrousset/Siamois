@@ -15,6 +15,11 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.util.List;
 
+/**
+ * <p>This bean handles the spatial unit page</p>
+ *
+ * @author Grégory Bliault
+ */
 @Slf4j
 @Component
 @SessionScoped

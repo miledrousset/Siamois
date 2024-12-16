@@ -4,14 +4,9 @@ import fr.siamois.bean.LangBean;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedTeamSaveException;
 import fr.siamois.models.exceptions.TeamAlreadyExistException;
-import fr.siamois.models.exceptions.UserAlreadyExist;
-import fr.siamois.models.exceptions.auth.InvalidEmail;
-import fr.siamois.models.exceptions.auth.InvalidPassword;
-import fr.siamois.models.exceptions.auth.InvalidUsername;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.TeamService;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
+import fr.siamois.utils.MessageUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +15,12 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * <p>This bean handles the creation of a new team</p>
+ * <p>It is used to create a new team and add a manager to it</p>
+ *
+ * @author Julien Linget
+ */
 @Slf4j
 @Getter
 @Setter
@@ -51,6 +52,9 @@ public class TeamCreationBean implements Serializable {
         this.userAddBean = userAddBean;
     }
 
+    /**
+     * Reset the variables of the bean and load all the managers in the bean
+     */
     public void init() {
         loadManagers();
         fTeamName = "";
@@ -60,15 +64,17 @@ public class TeamCreationBean implements Serializable {
         fManager = null;
     }
 
+    /**
+     * Load all the managers in the bean
+     */
     public void loadManagers() {
         managers = teamService.findAllManagers();
     }
 
-    private void displayMessage(FacesMessage.Severity severity, String title, String message) {
-        FacesMessage facesMessage = new FacesMessage(severity, title, message);
-        FacesContext.getCurrentInstance().addMessage(null, facesMessage);
-    }
 
+    /**
+     * Save the team and the manager in the database
+     */
     public void saveTeamAndManager() {
         if (fManagerSelectionType.equalsIgnoreCase("create")) {
             fManager = userAddBean.createUser();
@@ -77,13 +83,13 @@ public class TeamCreationBean implements Serializable {
         if (fManager != null)  {
             try {
                 teamService.createTeam(fTeamName, fDescription, fManager);
-                displayMessage(FacesMessage.SEVERITY_INFO, langBean.msg("commons.message.state.success"), langBean.msg("create.team.success"));
+                MessageUtils.displayInfoMessage(langBean, langBean.msg("create.team.success"));
             } catch (TeamAlreadyExistException e) {
                 log.error("Team already exists.", e);
-                displayMessage(FacesMessage.SEVERITY_ERROR, langBean.msg("commons.message.state.error"), langBean.msg("commons.error.team.alreadyexist", fTeamName));
+                MessageUtils.displayErrorMessage(langBean, langBean.msg("commons.error.team.alreadyexist", fTeamName));
             } catch (FailedTeamSaveException e) {
                 log.error("Failed to save team.", e);
-                displayMessage(FacesMessage.SEVERITY_ERROR, langBean.msg("commons.message.state.error"), langBean.msg("commons.error.team.failedsave"));
+                MessageUtils.displayErrorMessage(langBean, langBean.msg("commons.error.team.failedsave"));
             }
         }
     }

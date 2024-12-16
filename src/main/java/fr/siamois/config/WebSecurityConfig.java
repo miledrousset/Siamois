@@ -1,27 +1,14 @@
 package fr.siamois.config;
 
 import fr.siamois.bean.LangBean;
-import fr.siamois.bean.NavBean;
-import fr.siamois.bean.SessionSettings;
 import fr.siamois.config.handler.LoginSuccessHandler;
-import fr.siamois.models.auth.Person;
-import fr.siamois.services.TeamService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
-
-import java.io.IOException;
 
 /**
  * Configuration class for the security of the application.

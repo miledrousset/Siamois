@@ -2,7 +2,6 @@ package fr.siamois.bean.Field;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.models.SpatialUnit;
-import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.api.ClientSideErrorException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
@@ -57,6 +56,9 @@ public class TestConfigurationBean implements Serializable {
         this.langBean = langBean;
     }
 
+    /**
+     * Reset the configuration of the page.
+     */
     public void init() {
         collections = new ArrayList<>();
         vocabularies = new ArrayList<>();

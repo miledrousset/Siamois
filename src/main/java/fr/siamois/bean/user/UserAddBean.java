@@ -7,8 +7,8 @@ import fr.siamois.models.exceptions.auth.InvalidEmail;
 import fr.siamois.models.exceptions.auth.InvalidPassword;
 import fr.siamois.models.exceptions.auth.InvalidUsername;
 import fr.siamois.services.PersonService;
+import fr.siamois.utils.MessageUtils;
 import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +16,12 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 
+/**
+ * <p>This bean handles the creation of a new user</p>
+ * <p>It is used to create a new user</p>
+ *
+ * @author Julien Linget
+ */
 @Slf4j
 @Component
 @Getter
@@ -38,6 +44,9 @@ public class UserAddBean {
         this.personService = personService;
     }
 
+    /**
+     * Reset all the variables
+     */
     public void resetVariables() {
         fManagerUsername = "";
         fManagerEmail = "";
@@ -45,6 +54,11 @@ public class UserAddBean {
         fManagerConfirmPassword = "";
     }
 
+    /**
+     * Create a new user with the given information in the database
+     *
+     * @return the created user or null if an error occurred
+     */
     public Person createUser() {
 
         if (!fManagerPassword.equals(fManagerConfirmPassword)) {
@@ -54,7 +68,8 @@ public class UserAddBean {
 
         try {
             Person person = personService.createPerson(fManagerUsername, fManagerEmail, fManagerPassword);
-            displayMessage(FacesMessage.SEVERITY_INFO, langBean.msg("commons.message.state.success"), langBean.msg("create.team.manager.created"));
+            MessageUtils.displayMessage(FacesMessage.SEVERITY_INFO, langBean.msg("commons.message.state.success"), langBean.msg("create.team.manager.created"));
+
             resetVariables();
             return person;
         } catch (UserAlreadyExist e) {
@@ -74,11 +89,8 @@ public class UserAddBean {
         return null;
     }
 
-    private void displayMessage(FacesMessage.Severity severity, String title, String message) {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, title, message));
-    }
     private void displayErrorMessage(String message) {
-        displayMessage(FacesMessage.SEVERITY_ERROR, langBean.msg("commons.message.state.error"), message);
+        MessageUtils.displayErrorMessage(langBean, message);
     }
 
 }

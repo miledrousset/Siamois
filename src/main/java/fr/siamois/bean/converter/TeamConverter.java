@@ -9,6 +9,10 @@ import jakarta.faces.convert.Converter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+/**
+ * PrimeFaces converter for {@link Team} object
+ * @author Julien Linget
+ */
 @Slf4j
 @Component
 public class TeamConverter implements Converter<Team> {

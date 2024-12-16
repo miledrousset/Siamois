@@ -3,8 +3,8 @@ package fr.siamois.bean;
 import fr.siamois.bean.converter.TeamConverter;
 import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
-import fr.siamois.services.TeamTopicSubscriber;
 import fr.siamois.services.TeamService;
+import fr.siamois.services.TeamTopicSubscriber;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
@@ -20,6 +20,11 @@ import java.util.List;
 import java.util.Optional;
 
 
+/**
+ * Bean to manage the navigation bar of the application. Allows the user to select a team.
+ *
+ * @author Julien Linget
+ */
 @Slf4j
 @Component
 @Getter
@@ -47,6 +52,10 @@ public class NavBean implements Serializable {
     }
 
 
+    /**
+     * Builds the logout path with the context path
+     * @return the logout path
+     */
     public String logoutPath() {
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
@@ -54,6 +63,11 @@ public class NavBean implements Serializable {
         return contextPath + "/logout";
     }
 
+    /**
+     * Checks if the user is in the given role
+     * @param roleName the role to check
+     * @return true if the user is in the role, false otherwise
+     */
     public boolean userIs(String roleName) {
         Optional<Person> user = AuthenticatedUserUtils.getAuthenticatedUser();
         return user.map(person -> person.getAuthorities()
@@ -62,6 +76,11 @@ public class NavBean implements Serializable {
                 .orElse(false);
     }
 
+    /**
+     * Checks if the user is in any of the given roles
+     * @param roles the roles to check
+     * @return true if the user is in any of the roles, false otherwise
+     */
     public boolean userIsAny(String... roles) {
         Optional<Person> user = AuthenticatedUserUtils.getAuthenticatedUser();
         return user.map(person -> person.getAuthorities()
@@ -77,6 +96,9 @@ public class NavBean implements Serializable {
                 .orElse(false);
     }
 
+    /**
+     * Notifies all subscribers that the team has changed
+     */
     public void onTeamChange() {
         log.trace("Team changed to {}", selectedTeam.getName());
         sessionSettings.setSelectedTeam(selectedTeam);
@@ -85,6 +107,10 @@ public class NavBean implements Serializable {
         }
     }
 
+    /**
+     * Add a subscriber to the list of subscribers
+     * @param bean the subscriber to add
+     */
     public void addSubscriber(TeamTopicSubscriber bean) {
         subscribers.add(bean);
     }

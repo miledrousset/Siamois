@@ -3,14 +3,7 @@ package fr.siamois.bean.user;
 import fr.siamois.bean.LangBean;
 import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.FailedTeamSaveException;
-import fr.siamois.models.exceptions.UserAlreadyExist;
-import fr.siamois.models.exceptions.auth.InvalidEmail;
-import fr.siamois.models.exceptions.auth.InvalidPassword;
-import fr.siamois.models.exceptions.auth.InvalidUsername;
 import fr.siamois.services.PersonService;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +13,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * <p>This bean handles the creation of a new manager</p>
+ * <p>It is used to create a new manager and add it to a team</p>
+ *
+ * @author Julien Linget
+ */
 @Getter
 @Setter
 @Slf4j
@@ -44,11 +43,17 @@ public class ManagerCreationBean implements Serializable {
         this.userAddBean = userAddBean;
     }
 
+    /**
+     * Reset the variables of the bean and load all the teams in the bean
+     */
     public void init() {
         resetVariables();
         refTeams = personService.findAllTeams();
     }
 
+    /**
+     * Reset the variables of the bean
+     */
     private void resetVariables() {
         refTeams = new ArrayList<>();
         filteredTeams = new ArrayList<>();
@@ -56,16 +61,12 @@ public class ManagerCreationBean implements Serializable {
         vTeams = new ArrayList<>();
     }
 
+    /**
+     * Create a new manager in the database
+     */
     public void createUser() {
         Person person = userAddBean.createUser();
         personService.addPersonToTeamManagers(person);
-    }
-
-    private void displayMessage(FacesMessage.Severity severity, String title, String message) {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, title, message));
-    }
-    private void displayErrorMessage(String message) {
-        displayMessage(FacesMessage.SEVERITY_ERROR, langBean.msg("commons.message.state.error"), message);
     }
 
 }

@@ -1,6 +1,5 @@
 package fr.siamois.services;
 
-import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import fr.siamois.infrastructure.repositories.auth.SystemRoleRepository;
 import fr.siamois.infrastructure.repositories.auth.TeamRepository;

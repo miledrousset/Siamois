@@ -1,9 +1,7 @@
 package fr.siamois.bean.Home;
 
-import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.services.SpatialUnitService;
-import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
@@ -11,6 +9,12 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.util.List;
 
+/**
+ * <p>This bean handles the home page</p>
+ * <p>It is used to display the list of spatial units without parents</p>
+ *
+ * @author Grégory Bliault
+ */
 @Component
 @SessionScoped
 public class HomeBean {
