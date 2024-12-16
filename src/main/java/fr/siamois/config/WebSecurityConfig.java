@@ -45,8 +45,7 @@ public class WebSecurityConfig {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?lang=" + langBean.getLanguageCode())
         );
-        http.sessionManagement((session) -> session.maximumSessions(1)
-        );
+        http.sessionManagement((session) -> session.maximumSessions(1));
 
         return http.build();
     }

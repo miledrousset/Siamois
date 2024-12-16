@@ -6,7 +6,6 @@ import fr.siamois.infrastructure.repositories.auth.TeamRepository;
 import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.auth.SystemRole;
-import fr.siamois.models.exceptions.FailedTeamSaveException;
 import fr.siamois.models.exceptions.UserAlreadyExist;
 import fr.siamois.models.exceptions.auth.InvalidEmail;
 import fr.siamois.models.exceptions.auth.InvalidPassword;

@@ -8,6 +8,7 @@ import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedTeamSaveException;
 import fr.siamois.models.exceptions.NoConfigForField;
+import fr.siamois.models.exceptions.NoTeamSelectedException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
@@ -15,6 +16,7 @@ import fr.siamois.services.TeamService;
 import fr.siamois.services.TeamTopicSubscriber;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
+import fr.siamois.utils.MessageUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -85,7 +87,11 @@ public class UserBean implements Serializable, TeamTopicSubscriber {
             teamMembers = teamService.findTeamMembers(sessionSettings.getSelectedTeam());
             log.trace("Team members : {}", teamMembers);
         } catch (NoConfigForField e) {
-            log.trace("Error while loading member configuration", e);
+            log.error("Error while loading member configuration", e);
+            MessageUtils.displayErrorMessage(langBean, langBean.msg("commons.error.fieldconfig"));
+        } catch (NoTeamSelectedException e) {
+            log.error("No team selected", e);
+            MessageUtils.displayErrorMessage(langBean, langBean.msg("commons.error.team.notselected"));
         }
     }
 
@@ -116,12 +122,16 @@ public class UserBean implements Serializable, TeamTopicSubscriber {
      */
     public void createUser() {
         Concept roleConcept = fieldService.saveConceptIfNotExist(fieldConfig, role);
-        Team team = sessionSettings.getSelectedTeam();
-        Person created = userAddBean.createUser();
         try {
+            Team team = sessionSettings.getSelectedTeam();
+            Person created = userAddBean.createUser();
             teamService.addUserToTeam(created, team, roleConcept);
         } catch (FailedTeamSaveException e) {
-            // TODO: Afficher un message d'erreur
+            log.error("Error while saving team", e);
+            MessageUtils.displayErrorMessage(langBean, langBean.msg("commons.error.team.save"));
+        } catch (NoTeamSelectedException e) {
+            log.error("No team selected", e);
+            MessageUtils.displayErrorMessage(langBean, langBean.msg("commons.error.team.notselected"));
         }
     }
 

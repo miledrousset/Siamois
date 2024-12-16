@@ -12,6 +12,10 @@
     <ui:define name="content">
         <h1>User management</h1>
         <h:form>
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <ui:include src="/pages/shared/form/createUser.xhtml" />
 
