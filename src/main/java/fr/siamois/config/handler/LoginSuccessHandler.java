@@ -5,6 +5,7 @@ import fr.siamois.bean.SessionSettings;
 import fr.siamois.services.TeamService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -13,6 +14,12 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+/**
+ * Handler to manage the redirection after a successful login and setup the session.
+ *
+ * @author Julien Linget
+ */
+@Slf4j
 @Component
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
@@ -26,6 +33,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         this.teamService = teamService;
     }
 
+    /**
+     * Redirects the user to the saved request URL if it exists, otherwise to the home page.
+     * @param request The HTTP request
+     * @param response The HTTP response
+     * @param authentication The authentication object
+     * @throws IOException If the redirection fails
+     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         setupSession();
@@ -59,5 +73,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         if (!navBean.getTeams().isEmpty()) {
             sessionSettings.setSelectedTeam(navBean.getTeams().get(0));
         }
+
+        log.info("User {} logged in", sessionSettings.getAuthenticatedUser().getUsername());
     }
 }

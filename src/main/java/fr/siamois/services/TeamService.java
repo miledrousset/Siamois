@@ -3,15 +3,12 @@ package fr.siamois.services;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import fr.siamois.infrastructure.repositories.auth.SystemRoleRepository;
 import fr.siamois.infrastructure.repositories.auth.TeamRepository;
-import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.auth.SystemRole;
 import fr.siamois.models.exceptions.FailedTeamSaveException;
 import fr.siamois.models.exceptions.TeamAlreadyExistException;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.services.vocabulary.FieldConfigurationService;
-import fr.siamois.services.vocabulary.FieldService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -26,17 +23,11 @@ public class TeamService {
     private final SystemRoleRepository systemRoleRepository;
     private final PersonRepository personRepository;
     private final TeamRepository teamRepository;
-    private final ConceptRepository conceptRepository;
-    private final FieldService fieldService;
-    private final FieldConfigurationService fieldConfigurationService;
 
-    public TeamService(SystemRoleRepository systemRoleRepository, PersonRepository personRepository, TeamRepository teamRepository, ConceptRepository conceptRepository, FieldService fieldService, FieldConfigurationService fieldConfigurationService) {
+    public TeamService(SystemRoleRepository systemRoleRepository, PersonRepository personRepository, TeamRepository teamRepository) {
         this.systemRoleRepository = systemRoleRepository;
         this.personRepository = personRepository;
         this.teamRepository = teamRepository;
-        this.conceptRepository = conceptRepository;
-        this.fieldService = fieldService;
-        this.fieldConfigurationService = fieldConfigurationService;
     }
 
     public List<Person> findAllManagers() {

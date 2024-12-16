@@ -10,6 +10,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+/**
+ * Service to manage the language of the application
+ *
+ * @author Julien Linget
+ */
 @Slf4j
 @Service
 public class LangService {

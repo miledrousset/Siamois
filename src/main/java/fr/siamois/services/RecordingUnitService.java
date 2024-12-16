@@ -1,7 +1,6 @@
 package fr.siamois.services;
 
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
-import fr.siamois.infrastructure.repositories.ark.ArkRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitStudyRepository;
@@ -9,10 +8,8 @@ import fr.siamois.models.SpatialUnit;
 
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
-import fr.siamois.models.exceptions.ActionUnitNotFoundException;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.exceptions.RecordingUnitNotFoundException;
-import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
 import fr.siamois.models.recordingunit.RecordingUnit;
 
 import fr.siamois.models.vocabulary.Concept;
@@ -25,21 +22,26 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service to manage RecordingUnit
+ *
+ * @author Grégory Bliault
+ */
 @Slf4j
 @Service
 public class RecordingUnitService {
 
     private final RecordingUnitRepository recordingUnitRepository;
     private final ArkServerRepository arkServerRepository;
-    private final RecordingUnitStudyRepository recordingUnitStudyRepository;
     private final FieldService fieldService;
 
-    public RecordingUnitService(RecordingUnitRepository recordingUnitRepository, ArkRepository arkRepository, ArkServerRepository arkServerRepository, RecordingUnitStudyRepository recordingUnitStudyRepository, FieldService fieldService) {
+
+    public RecordingUnitService(RecordingUnitRepository recordingUnitRepository, ArkServerRepository arkServerRepository, RecordingUnitStudyRepository recordingUnitStudyRepository, FieldService fieldService) {
         this.recordingUnitRepository = recordingUnitRepository;
         this.arkServerRepository = arkServerRepository;
-        this.recordingUnitStudyRepository = recordingUnitStudyRepository;
         this.fieldService = fieldService;
     }
+
 
     /**
      * Find all the recording units from a spatial unit
@@ -47,16 +49,17 @@ public class RecordingUnitService {
      * @return The List of RecordingUnit
      * @throws RuntimeException If the repository method throws an Exception
      */
-    public List<RecordingUnit> findAllBySpatialUnit(SpatialUnit spatialUnit)   {
+    public List<RecordingUnit> findAllBySpatialUnit(SpatialUnit spatialUnit) {
         return recordingUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
     }
 
     @Transactional
-    public RecordingUnit save(RecordingUnit recordingUnit, Vocabulary vocabulary, ConceptFieldDTO typeConceptFieldDTO) {
+    public RecordingUnit save(RecordingUnit recordingUnit, Vocabulary vocabulary, ConceptFieldDTO
+            typeConceptFieldDTO) {
 
         try {
             // Generate ARK if the recording unit does not have any
-            if(recordingUnit.getArk() == null) {
+            if (recordingUnit.getArk() == null) {
 
                 ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
                 Ark ark = new Ark();
@@ -72,7 +75,7 @@ public class RecordingUnitService {
             recordingUnit.setType(type);
 
             return recordingUnitRepository.save(recordingUnit);
-        } catch(RuntimeException e) {
+        } catch (RuntimeException e) {
             throw new FailedRecordingUnitSaveException(e.getMessage());
         }
     }
@@ -83,7 +86,7 @@ public class RecordingUnitService {
      * @param id The ID of the recording unit
      * @return The RecordingUnit having the given ID
      * @throws RecordingUnitNotFoundException If no recording unit are found for the given id
-     * @throws RuntimeException             If the repository method returns a RuntimeException
+     * @throws RuntimeException               If the repository method returns a RuntimeException
      */
     public RecordingUnit findById(long id) {
         try {
@@ -95,3 +98,5 @@ public class RecordingUnitService {
     }
 
 }
+
+

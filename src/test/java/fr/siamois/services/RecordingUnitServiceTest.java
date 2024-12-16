@@ -4,13 +4,15 @@ import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
+<<<<<<< HEAD
 
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.exceptions.field.FailedFieldSaveException;
+=======
+>>>>>>> e1e6b54c1d3380614db8290c25919490a071e29f
 import fr.siamois.models.recordingunit.RecordingUnit;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,12 +24,18 @@ import org.springframework.boot.test.autoconfigure.webservices.server.AutoConfig
 import java.util.List;
 import java.util.Optional;
 
+<<<<<<< HEAD
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
+=======
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+>>>>>>> e1e6b54c1d3380614db8290c25919490a071e29f
 
 @ExtendWith(MockitoExtension.class)
 class RecordingUnitServiceTest {

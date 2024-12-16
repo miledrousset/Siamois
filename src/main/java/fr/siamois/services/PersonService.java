@@ -20,6 +20,9 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Service to manage Person
+ */
 @Service
 public class PersonService {
 
@@ -35,12 +38,30 @@ public class PersonService {
         this.systemRoleRepository = systemRoleRepository;
     }
 
+    /**
+     * Find all the teams in the database
+     * @return The list of teams in the database
+     */
     public List<Team> findAllTeams() {
         List<Team> result = new ArrayList<>();
         for (Team t : teamRepository.findAll()) result.add(t);
         return result;
     }
 
+    /**
+     * Create a person with the given username, email and password.
+     * The username must contain only letters, numbers and dots.
+     * The email must be a valid email.
+     * The password must be at least 8 characters long.
+     * @param username The username of the person
+     * @param email The email of the person
+     * @param password The plain password of the person
+     * @return The created person in the database
+     * @throws InvalidUsername If the username is invalid
+     * @throws UserAlreadyExist If the username already exists
+     * @throws InvalidEmail If the email is invalid
+     * @throws InvalidPassword If the password is invalid
+     */
     public Person createPerson(String username, String email, String password) throws InvalidUsername, UserAlreadyExist, InvalidEmail, InvalidPassword {
         Pattern pattern = Pattern.compile("^[a-zA-Z0-9.]+$");
         Matcher matcher = pattern.matcher(username);
@@ -68,6 +89,10 @@ public class PersonService {
         return personRepository.save(person);
     }
 
+    /**
+     * Add a person to the team managers
+     * @param person The person to add to the team managers
+     */
     public void addPersonToTeamManagers(Person person) {
         SystemRole role = systemRoleRepository.findSystemRoleByRoleNameIgnoreCase("TEAM_MANAGER").orElseThrow(() -> new IllegalStateException("Team manager role should be created."));
         person.getRoles().add(role);
@@ -84,6 +109,11 @@ public class PersonService {
         return personRepository.findAllByNameIsContainingIgnoreCaseOrLastnameIsContainingIgnoreCase(nameOrLastname, nameOrLastname);
     }
 
+    /**
+     * Find a person by its ID
+     * @param id The ID of the person
+     * @return The person having the given ID
+     */
     public Person findById(long id) {
         return personRepository.findById(id).orElse(null);
     }

@@ -43,7 +43,7 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
      */
     @Query(
             nativeQuery = true,
-            value = "SELECT c.* FROM concept c LEFT JOIN vocabulary v ON v.vocabulary_id = c.fk_vocabulary_id WHERE c.external_id = :idc AND v.external_id = :idt"
+            value = "SELECT c.* FROM concept c WHERE c.external_id = :idc AND c.external_id = :idt"
     )
     Optional<Concept> findConceptByExternalIdIgnoreCase(String idt, String idc);
 }
