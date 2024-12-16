@@ -1,6 +1,7 @@
 package fr.siamois.config;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.ForbiddenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,16 +13,13 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Gestion des erreurs 500
-    @ExceptionHandler(Exception.class)
-    public ModelAndView handleException(HttpServletRequest request, Exception ex, Model model) {
-        if (getHttpStatus(request).equals(HttpStatus.INTERNAL_SERVER_ERROR)) {
+    @ExceptionHandler(ForbiddenException.class)
+    public ModelAndView handleForbiddenException(HttpServletRequest request, Exception ex, Model model) {
+        if(getHttpStatus(request).equals(HttpStatus.FORBIDDEN)) {
             model.addAttribute("errorMessage", ex.getMessage());
-            return new ModelAndView("redirect:/errorPages/error500.xhtml");
+            return new ModelAndView("redirect:/errorPages/error403.xhtml");
         }
-
-        model.addAttribute("errorMessage", ex.getMessage());
-        return new ModelAndView("redirect:/errorPages/errorGeneric.xhtml");
+        return new ModelAndView("redirect:/errorPages/error500.xhtml");
     }
 
     // Gestion des erreurs 404
@@ -34,6 +32,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     public ModelAndView handleNoRessourceFoundException(NoResourceFoundException ex, Model model) {
         return handleNotFoundException(ex, model);
+    }
+
+    // Gestion des erreurs 500
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleException(HttpServletRequest request, Exception ex, Model model) {
+        if (getHttpStatus(request).equals(HttpStatus.INTERNAL_SERVER_ERROR)) {
+            model.addAttribute("errorMessage", ex.getMessage());
+            return new ModelAndView("redirect:/errorPages/error500.xhtml");
+        }
+        return new ModelAndView("redirect:/errorPages/error500.xhtml");
     }
 
     private HttpStatus getHttpStatus(HttpServletRequest request) {

@@ -7,29 +7,67 @@
 
 <h:head>
     <title>Siamois</title>
-    <h:outputStylesheet name="resources/css/bootstrap.min.css"/>
-    <h:outputScript name="resources/js/jquery-3.7.1.js"/>
-    <h:outputScript name="resources/js/bootstrap.bundle.min.js"/>
-    <h:outputStylesheet name="resources/css/styles.css"/>
-    <h:outputStylesheet name="resources/css/custom-theme.css"/>
-    <!-- <h:outputStylesheet name="resources/css/primeflex.min.css"/> -->
+    <h:outputStylesheet library="css" name="bootstrap.min.css"/>
+    <h:outputScript library="js" name="jquery-3.7.1.js"/>
+    <h:outputScript library="js" name="bootstrap.bundle.min.js"/>
+    <h:outputStylesheet library="css" name="styles.css"/>
+    <h:outputStylesheet library="css" name="jquery-ui.css"/>
+    <h:outputScript library="js" name="jquery-ui.js"/>
 </h:head>
 
 <!-- Metadata will be inserted here (JSF1103: The metadata facet must be a direct child of the view) -->
 <ui:insert name="metadata"/>
 
 <h:body>
+    <!-- Main Layout -->
+    <div class="layout-container no-gutters">
+        <div class="row g-0">
+            <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
+                <div class="app-name">SIAMOIS</div>
+            </div>
+            <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
+                <!-- Top Menu Bar -->
+                <div class="top-bar">
+                    <p:menubar>
+                        <f:facet name="start">
+                            <nav>
+                                <form action="${navBean.logoutPath()}" method="post">
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                    <button type="submit" class="btn btn-danger">${langBean.msg("nav.logout")}</button>
+                                </form>
+                                <h:button value='${langBean.msg("nav.fieldconfig")}'
+                                          outcome="/pages/field/fieldConfiguration.xhtml" styleClass="btn btn-primary"/>
 
+                                <h:button rendered="#{navBean.userIs('ADMIN')}"
+                                          value='${langBean.msg("nav.create.manager")}'
+                                          outcome="/pages/admin/manager.xhtml" styleClass="btn btn-danger"/>
 
+                                <h:button rendered="#{navBean.userIs('ADMIN')}"
+                                          value='${langBean.msg("nav.create.team")}'
+                                          outcome="/pages/admin/team.xhtml" styleClass="btn btn-danger"/>
 
+                                <h:button rendered="#{navBean.userIsAny('TEAM_MANAGER', 'ADMIN')}"
+                                          value="Gérer les utilisateurs"
+                                          outcome="/pages/manager/users.xhtml" styleClass="btn btn btn-warning"/>
 
-        <!-- Main Layout -->
-        <div class="layout-container no-gutters">
-            <div class="row g-0">
-                <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
-                    <div class="app-name">
-                        <img src="#{resource['img/logo.png']}" alt="SIAMOIS Logo" class="img-fluid"/>
-                    </div>
+                                <h:form>
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                    <p:selectOneMenu id="teamSelection"
+                                                     value="#{navBean.selectedTeam}"
+                                                     rendered="#{navBean.teams.size() > 1}"
+                                                     converter="#{navBean.converter}">
+                                        <f:selectItems
+                                                value="#{navBean.teams}"
+                                                itemLabel="#{team.name}"
+                                                var="team"/>
+                                        <p:ajax listener="#{navBean.onTeamChange()}" update="main"/>
+                                    </p:selectOneMenu>
+                                </h:form>
+
+                            </nav>
+                        </f:facet>
+                        <p:divider layout="vertical"/>
+                    </p:menubar>
                 </div>
                 <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
                     <!-- Top Menu Bar -->
@@ -76,6 +114,14 @@
                 </div>
 
 
+            </div>
+            <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
+                <!-- Main Content Area -->
+                <h:panelGroup id="main">
+                    <ui:insert name="content">
+                        <!-- Content will be inserted here -->
+                    </ui:insert>
+                </h:panelGroup>
             </div>
         </div>
 

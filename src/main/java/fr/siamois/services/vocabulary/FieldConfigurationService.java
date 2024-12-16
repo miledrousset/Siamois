@@ -1,4 +1,4 @@
-package fr.siamois.services;
+package fr.siamois.services.vocabulary;
 
 import fr.siamois.infrastructure.api.ThesaurusApi;
 import fr.siamois.infrastructure.api.ThesaurusCollectionApi;
@@ -10,9 +10,11 @@ import fr.siamois.infrastructure.repositories.vocabulary.VocabularyRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.VocabularyTypeRepository;
 import fr.siamois.models.Field;
 import fr.siamois.models.auth.Person;
+import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.api.ClientSideErrorException;
 import fr.siamois.models.exceptions.field.FailedFieldSaveException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
+import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.models.vocabulary.VocabularyType;
@@ -301,5 +303,12 @@ public class FieldConfigurationService {
         return opt.orElseGet(() -> vocabularyCollectionRepository.save(vocabularyCollection));
     }
 
+    public FieldConfigurationWrapper fetchConfigurationOfFieldCode(Person loggedUser, String fieldCode) throws NoConfigForField {
+        Optional<Vocabulary> optVocab = fetchVocabularyOfPersonFieldConfiguration(loggedUser, fieldCode);
+        if (optVocab.isPresent()) return new FieldConfigurationWrapper(optVocab.get(), null);
+        List<VocabularyCollection> collections = fetchCollectionsOfPersonFieldConfiguration(loggedUser, fieldCode);
+        if (collections.isEmpty()) throw new NoConfigForField("No configuration found for field " + fieldCode);
+        return new FieldConfigurationWrapper(null, collections);
+    }
 
 }

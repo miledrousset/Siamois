@@ -7,7 +7,7 @@ import fr.siamois.models.exceptions.api.ClientSideErrorException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
-import fr.siamois.services.FieldConfigurationService;
+import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -29,7 +29,7 @@ import java.util.*;
 @Setter
 @Component
 @SessionScoped
-public class SpatialUnitConfigurationBean implements Serializable {
+public class TestConfigurationBean implements Serializable {
 
     // Dependencies
     private final FieldConfigurationService fieldConfigurationService;
@@ -40,21 +40,25 @@ public class SpatialUnitConfigurationBean implements Serializable {
     private List<Vocabulary> vocabularies = new ArrayList<>();
     private Vocabulary selectedVocab = null;
     private Map<String, String> labels = new HashMap<>();
-    private String lang = "fr";
     private List<VocabularyCollection> cacheSelectedGroups = new ArrayList<>();
     private List<VocabularyCollection> cachedGroups = new ArrayList<>();
+    private List<String> fieldCodes = List.of(SpatialUnit.CATEGORY_FIELD_CODE, Person.USER_ROLE_FIELD_CODE);
 
     // Fields
     private boolean selectEntireThesaurus = false;
     private String serverUrl = "";
     private List<VocabularyCollection> selectedGroups = new ArrayList<>();
     private String selectedThesaurus = "";
+    private String selectedFieldCode = "";
 
-    public SpatialUnitConfigurationBean(FieldConfigurationService fieldConfigurationService, LangBean langBean) {
+    public TestConfigurationBean(FieldConfigurationService fieldConfigurationService, LangBean langBean) {
         this.fieldConfigurationService = fieldConfigurationService;
         this.langBean = langBean;
     }
 
+    /**
+     * Reset the configuration of the page.
+     */
     public void init() {
         collections = new ArrayList<>();
         vocabularies = new ArrayList<>();
@@ -67,7 +71,6 @@ public class SpatialUnitConfigurationBean implements Serializable {
         serverUrl = "";
         selectedGroups = new ArrayList<>();
         selectedThesaurus = "";
-        lang = langBean.getLanguageCode();
     }
 
     /**
@@ -79,7 +82,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
         init();
         cacheSelectedGroups = new ArrayList<>(selectedGroups);
         Person loggedUser = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow();
-        Optional<Vocabulary> optionalVocabulary = fieldConfigurationService.fetchVocabularyOfPersonFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE);
+        Optional<Vocabulary> optionalVocabulary = fieldConfigurationService.fetchVocabularyOfPersonFieldConfiguration(loggedUser, selectedFieldCode);
         if (optionalVocabulary.isPresent()) {
             loadThesaurusOnlyConfiguration(optionalVocabulary.get());
         } else {
@@ -93,7 +96,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
      * @param loggedUser The authenticated user.
      */
     private void loadGroupsConfiguration(Person loggedUser) {
-        List<VocabularyCollection> alreadySelectedGroups = fieldConfigurationService.fetchCollectionsOfPersonFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE);
+        List<VocabularyCollection> alreadySelectedGroups = fieldConfigurationService.fetchCollectionsOfPersonFieldConfiguration(loggedUser, selectedFieldCode);
         if (!alreadySelectedGroups.isEmpty()) {
             Vocabulary vocabulary = alreadySelectedGroups.get(0).getVocabulary();
             serverUrl = vocabulary.getBaseUri();
@@ -129,7 +132,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
             selectedVocab = getSelectedVocab().orElseThrow();
             selectedVocab = fieldConfigurationService.saveVocabularyIfNotExists(selectedVocab);
 
-            FieldConfigurationService.VocabularyCollectionsAndLabels result = fieldConfigurationService.fetchCollections(lang, selectedVocab);
+            FieldConfigurationService.VocabularyCollectionsAndLabels result = fieldConfigurationService.fetchCollections(langBean.getLanguageCode(), selectedVocab);
 
             if (result.collections().isEmpty()) {
                 collections = new ArrayList<>();
@@ -175,7 +178,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
 
         if (userHasSelectedEntireThesaurus()) {
             try {
-                fieldConfigurationService.saveThesaurusFieldConfiguration(loggedUser, SpatialUnit.CATEGORY_FIELD_CODE, selectedVocab);
+                fieldConfigurationService.saveThesaurusFieldConfiguration(loggedUser, selectedFieldCode, selectedVocab);
 
                 displayInfoMessage("La configuration a bien été enregistrée");
             } catch (FailedFieldUpdateException e) {
@@ -192,7 +195,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
 
         try {
             fieldConfigurationService.saveThesaurusCollectionFieldConfiguration(loggedUser,
-                    SpatialUnit.CATEGORY_FIELD_CODE,
+                    selectedFieldCode,
                     savedVocabColl);
 
             displayInfoMessage("La configuration a bien été enregistrée");
@@ -259,7 +262,7 @@ public class SpatialUnitConfigurationBean implements Serializable {
         selectedVocab = null;
         selectedThesaurus = null;
 
-        List<Vocabulary> result = fieldConfigurationService.fetchAllPublicThesaurus(lang, serverUrl);
+        List<Vocabulary> result = fieldConfigurationService.fetchAllPublicThesaurus(langBean.getLanguageCode(), serverUrl);
         vocabularies.addAll(result);
 
     }

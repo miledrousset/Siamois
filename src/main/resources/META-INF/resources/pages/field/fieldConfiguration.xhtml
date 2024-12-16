@@ -6,25 +6,31 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <f:metadata>
-        <f:viewAction action="#{spatialUnitConfigurationBean.onLoad()}"/>
+        <f:viewAction action="#{testConfigurationBean.onLoad()}"/>
     </f:metadata>
 
     <ui:define name="content">
         <h1>${langBean.msg("fieldconfig.title")}</h1>
         <h:outputText
-                value='${langBean.msg("fieldconfig.description")} ${spatialUnitConfigurationBean.authenticatedUser}'/>
+                value='${langBean.msg("fieldconfig.description")} ${testConfigurationBean.authenticatedUser}'/>
         <h2>Unités spatiales</h2>
         <h3>Types d'unités spatiales</h3>
         <div class="ui-fluid">
             <h:form>
+
                 <div class="field grid">
+
+                    <p:selectOneMenu id="fieldCode" value="#{testConfigurationBean.selectedFieldCode}">
+                        <f:selectItems value="#{testConfigurationBean.fieldCodes}"/>
+                    </p:selectOneMenu>
+
                     <p:outputLabel for="serverUrl" styleClass="col-12 md:col-2"
                                    value='${langBean.msg("fieldconfig.server.label")}'/>
                     <div class="col-12 md:col-10">
-                        <p:inputText id="serverUrl" value="#{spatialUnitConfigurationBean.serverUrl}"/>
+                        <p:inputText id="serverUrl" value="#{testConfigurationBean.serverUrl}"/>
                     </div>
                     <p:commandButton value='${langBean.msg("fieldconfig.server.load")}'
-                                     action="#{spatialUnitConfigurationBean.loadThesaurusValue()}"
+                                     action="#{testConfigurationBean.loadThesaurusValue()}"
                                      update="globalThesaurusId,globalCollectionsId"/>
                 </div>
                 <div class="field grid">
@@ -32,23 +38,23 @@
                                    value='${langBean.msg("fieldconfig.thesaurus.label")}'/>
                     <div class="col-12 md:col-10">
                         <p:selectOneMenu id="globalThesaurusId"
-                                         value="#{spatialUnitConfigurationBean.selectedThesaurus}">
-                            <f:selectItems value="#{spatialUnitConfigurationBean.vocabularies}" var="vocab"
+                                         value="#{testConfigurationBean.selectedThesaurus}">
+                            <f:selectItems value="#{testConfigurationBean.vocabularies}" var="vocab"
                                            itemLabel="#{vocab.vocabularyName} (#{vocab.externalVocabularyId})"
                                            itemValue="#{vocab.externalVocabularyId}"/>
 
                         </p:selectOneMenu>
                         <p:commandButton value='${langBean.msg("fieldconfig.thesaurus.load")}'
-                                         action="#{spatialUnitConfigurationBean.loadGroupValue()}"
+                                         action="#{testConfigurationBean.loadGroupValue()}"
                                          update="globalCollectionsId selectEntireThesaurus"/>
                     </div>
                 </div>
 
                 <p:selectBooleanCheckbox id="selectEntireThesaurus"
-                                         value="#{spatialUnitConfigurationBean.selectEntireThesaurus}"
+                                         value="#{testConfigurationBean.selectEntireThesaurus}"
                                          itemLabel='${langBean.msg("fieldconfig.thesaurus.complete")}'>
                     <p:ajax event="change" update="globalCollectionsId @this"
-                            listener="#{spatialUnitConfigurationBean.removeAllSelectedGroups}"/>
+                            listener="#{testConfigurationBean.removeAllSelectedGroups}"/>
                 </p:selectBooleanCheckbox>
 
                 <div class="field grid">
@@ -57,13 +63,13 @@
                     <div class="col-12 md:col-10">
 
                         <p:dataTable id="globalCollectionsId" var="group"
-                                     value="#{spatialUnitConfigurationBean.collections}"
-                                     selection="#{spatialUnitConfigurationBean.selectedGroups}"
+                                     value="#{testConfigurationBean.collections}"
+                                     selection="#{testConfigurationBean.selectedGroups}"
                                      rowKey="#{group.externalId}"
                                      rows="5" selectionPageOnly="false" selectionRowMode="multiple"
                                      cellNavigation="true"
                                      paginator="true"
-                                     selectionDisabled="#{spatialUnitConfigurationBean.selectEntireThesaurus == true}">
+                                     selectionDisabled="#{testConfigurationBean.selectEntireThesaurus == true}">
 
                             <p:column selectionBox="true" style="width:16px;text-align:center"/>
                             <p:column headerText="ID">
@@ -71,7 +77,7 @@
                             </p:column>
 
                             <p:column headerText="Nom">
-                                <h:outputText value="#{spatialUnitConfigurationBean.labels.get(group.externalId)}"/>
+                                <h:outputText value="#{testConfigurationBean.labels.get(group.externalId)}"/>
                             </p:column>
 
                         </p:dataTable>
@@ -80,8 +86,8 @@
                 </div>
 
 
-                <p:commandButton value='${langBean.msg("actions.save")}'
-                                 action="#{spatialUnitConfigurationBean.processForm()}"
+                <p:commandButton value='${langBean.msg("commons.actions.save")}'
+                                 action="#{testConfigurationBean.processForm()}"
                                  update="globalCollectionsId"/>
 
                 <p:messages id="messages" showDetail="true" closable="true">
@@ -91,7 +97,7 @@
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             </h:form>
 
-            <p:button value='${langBean.msg("actions.backhome")}' outcome="/index.xhtml"/>
+            <p:button value='${langBean.msg("commons.actions.backhome")}' outcome="/index.xhtml"/>
         </div>
     </ui:define>
 

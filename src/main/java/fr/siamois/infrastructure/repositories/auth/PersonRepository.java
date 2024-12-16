@@ -1,6 +1,8 @@
-package fr.siamois.infrastructure.repositories;
+package fr.siamois.infrastructure.repositories.auth;
 
 import fr.siamois.models.auth.Person;
+import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -45,4 +47,25 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
     Optional<Person> findById(long id);
 
+    @Transactional
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = "INSERT INTO person_role_team (fk_person_id, fk_team_id, fk_role_concept_id, is_manager) VALUES (:personId, :teamId, null, TRUE)"
+    )
+    int addManagerToTeam(Long personId, Long teamId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT p.* FROM person p JOIN person_role_team prt ON p.person_id = prt.fk_person_id WHERE prt.fk_team_id = :teamId"
+    )
+    List<Person> findTeamMembers(Long teamId);
+
+    @Transactional
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = "INSERT INTO person_role_team (fk_person_id, fk_team_id, fk_role_concept_id, is_manager) VALUES (:personId, :teamId, :roleId, FALSE)"
+    )
+    int addUserToTeam(@Param("personId") Long personId, @Param("teamId") Long teamId, @Param("roleId") Long roleId);
 }

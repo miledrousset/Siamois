@@ -55,14 +55,14 @@
                 </p:dataTable>
 
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <p:commandButton value='${langBean.msg("actions.save")}' action="#{spatialUnitFieldBean.save()}"/>
+                <p:commandButton value='${langBean.msg("commons.actions.save")}' action="#{spatialUnitFieldBean.save()}"/>
             </div>
 
             <p:messages id="messages" showDetail="true" closable="true">
                 <p:autoUpdate/>
             </p:messages>
 
-            <p:button value='${langBean.msg("actions.backhome")}' outcome="/index.xhtml"/>
+            <p:button value='${langBean.msg("commons.actions.backhome")}' outcome="/index.xhtml"/>
 
         </h:form>
     </ui:define>

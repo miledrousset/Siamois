@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -76,7 +77,18 @@ public class Person implements UserDetails {
             joinColumns = @JoinColumn(name = "person_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<SystemRole> roles;
+    private List<SystemRole> roles = new ArrayList<>();
+
+    public boolean hasRole(String roleName) {
+        return roles.stream().anyMatch(role -> role.getRoleName().equalsIgnoreCase(roleName));
+    }
+
+    public boolean hasRoles(String... roleNames) {
+        for (String roleName : roleNames) {
+            if (!hasRole(roleName)) return false;
+        }
+        return true;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -107,4 +119,6 @@ public class Person implements UserDetails {
     public String displayName() {
         return name+" "+lastname;
     }
+
+    public static final String USER_ROLE_FIELD_CODE = "person_role_team.role";
 }

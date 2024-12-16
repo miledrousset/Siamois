@@ -1,6 +1,7 @@
 package fr.siamois.config;
 
 import fr.siamois.bean.LangBean;
+import fr.siamois.config.handler.LoginSuccessHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,17 +26,20 @@ public class WebSecurityConfig {
      * @throws Exception If any filter configuration fails.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, LangBean langBean) throws Exception {
-        log.trace("Security chain ");
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, LangBean langBean, LoginSuccessHandler loginSuccessHandler) throws Exception {
         http.authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/", "/index.xhtml").authenticated()
                 .requestMatchers("/fieldConfiguration", "/pages/field/fieldConfiguration.xhtml").authenticated()
                 .requestMatchers("/pages/create/spatialUnit.xhtml").authenticated()
+                .requestMatchers("/pages/admin/**", "/admin/**").hasAuthority("ADMIN")
+                .requestMatchers("/pages/manager/**", "/manager/**").hasAnyAuthority("TEAM_MANAGER", "ADMIN")
                 .anyRequest().permitAll()
         );
         http.formLogin((login) -> login
                 .loginPage("/login?lang=" + langBean.getLanguageCode()).permitAll()
                 .loginProcessingUrl("/login")
+                .failureUrl("/login?error=true&lang=" + langBean.getLanguageCode())
+                .successHandler(loginSuccessHandler)
         );
         http.logout((logout) -> logout
                 .logoutUrl("/logout")
