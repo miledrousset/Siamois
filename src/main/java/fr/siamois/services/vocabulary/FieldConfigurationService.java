@@ -2,6 +2,7 @@ package fr.siamois.services.vocabulary;
 
 import fr.siamois.infrastructure.api.ThesaurusApi;
 import fr.siamois.infrastructure.api.ThesaurusCollectionApi;
+import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.infrastructure.api.dto.ThesaurusDTO;
 import fr.siamois.infrastructure.api.dto.VocabularyCollectionDTO;
 import fr.siamois.infrastructure.repositories.FieldRepository;
@@ -19,6 +20,7 @@ import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.models.vocabulary.VocabularyType;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +43,9 @@ public class FieldConfigurationService {
     private final VocabularyCollectionRepository vocabularyCollectionRepository;
     private final FieldRepository fieldRepository;
     private final ThesaurusCollectionApi thesaurusCollectionApi;
+
+    @Value("${siamois.lang.default}")
+    private String defaultLang;
 
     public FieldConfigurationService(VocabularyTypeRepository vocabularyTypeRepository,
                                      ThesaurusApi thesaurusApi,
@@ -287,18 +292,24 @@ public class FieldConfigurationService {
             if (dto.getLabels().isEmpty())
                 throw new RuntimeException("No label found for thesaurus " + dto.getIdTheso());
 
-            vocabulary.setVocabularyName(dto.getLabels().stream()
-                    .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(lang))
-                    .findFirst()
-                    .orElse(dto.getLabels().get(0))
-                    .getTitle()
-            );
+            Optional<LabelDTO> titleOptSelectedLang = findLabelForGivenLang(dto.getLabels(), lang)
+                    .or(() -> findLabelForGivenLang(dto.getLabels(), defaultLang))
+                    .or(() -> Optional.of(dto.getLabels().get(0)));
+
+            vocabulary.setVocabularyName(titleOptSelectedLang.get().getTitle());
+
             vocabulary.setType(type);
 
             result.add(vocabulary);
         }
 
         return result;
+    }
+
+    private Optional<LabelDTO> findLabelForGivenLang(List<LabelDTO> labels, String langCode) {
+        return labels.stream()
+                .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(langCode))
+                .findFirst();
     }
 
     /**
