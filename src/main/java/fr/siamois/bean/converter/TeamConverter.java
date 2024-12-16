@@ -6,8 +6,10 @@ import fr.siamois.models.Team;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.convert.Converter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class TeamConverter implements Converter<Team> {
 
@@ -18,6 +20,7 @@ public class TeamConverter implements Converter<Team> {
         try {
             return objectMapper.readValue(s, Team.class);
         } catch (JsonProcessingException e) {
+            log.error("Error while converting string to Team object", e);
             throw new RuntimeException(e);
         }
     }
@@ -27,6 +30,7 @@ public class TeamConverter implements Converter<Team> {
         try {
             return objectMapper.writeValueAsString(o);
         } catch (JsonProcessingException e) {
+            log.error("Error while converting string to Team object", e);
             throw new RuntimeException(e);
         }
     }

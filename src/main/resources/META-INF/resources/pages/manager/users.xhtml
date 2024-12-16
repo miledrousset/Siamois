@@ -12,7 +12,15 @@
     <ui:define name="content">
         <h1>User management</h1>
         <h:form>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <ui:include src="/pages/shared/form/createUser.xhtml" />
+
+            <p:autoComplete value="#{userBean.role}"
+                            completeMethod="#{userBean.autocompleteRoles}"
+                            forceSelection="true"
+                            scrollHeight="300"
+                            dropdown="true"/>
+
             <p:commandButton value="Create user" action="#{userBean.createUser()}" update="memberTable" />
 
             <p:dataTable id="memberTable"

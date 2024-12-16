@@ -45,8 +45,8 @@ public class UserBean implements Serializable, TeamTopicSubscriber {
     // Storage
     private Vocabulary vocabularyConfiguration;
     private FieldConfigurationWrapper fieldConfig;
-    private List<ConceptFieldDTO> concepts;
     private List<Person> teamMembers;
+    private List<ConceptFieldDTO> concepts;
 
     // Fields
     private ConceptFieldDTO role = null;
@@ -78,7 +78,8 @@ public class UserBean implements Serializable, TeamTopicSubscriber {
         }
     }
 
-    public List<String> autocompleteRoles(String input) {
+    public List<String> autocompleteRoles(String input) throws NoConfigForField {
+        if (fieldConfig == null) fieldConfig = fieldConfigurationService.fetchConfigurationOfFieldCode(sessionSettings.getAuthenticatedUser(), Person.USER_ROLE_FIELD_CODE);
         concepts = fieldService.fetchAutocomplete(fieldConfig, input, langBean.getLanguageCode());
         return concepts.stream().map(ConceptFieldDTO::getLabel).collect(Collectors.toList());
     }

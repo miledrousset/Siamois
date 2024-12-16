@@ -19,7 +19,7 @@ public class VocabularyCollection {
     private Ark ark;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_vocabulary_id", nullable = false)
     private Vocabulary vocabulary;
 
