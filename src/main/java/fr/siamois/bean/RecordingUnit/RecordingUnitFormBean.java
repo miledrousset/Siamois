@@ -1,18 +1,14 @@
 package fr.siamois.bean.RecordingUnit;
 
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
-import fr.siamois.models.ActionUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
-import fr.siamois.models.recordingunit.RecordingUnitSize;
-import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.ark.ArkGenerator;
 import fr.siamois.services.auth.PersonDetailsService;
-import fr.siamois.services.auth.PersonService;
+import fr.siamois.services.PersonService;
 import fr.siamois.services.vocabulary.VocabularyService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
@@ -23,19 +19,13 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
-
-import static java.time.OffsetDateTime.now;
 
 @Data
 @Slf4j

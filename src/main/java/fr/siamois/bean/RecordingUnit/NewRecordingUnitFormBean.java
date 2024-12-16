@@ -12,7 +12,7 @@ import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.ark.ArkGenerator;
 import fr.siamois.services.auth.PersonDetailsService;
-import fr.siamois.services.auth.PersonService;
+import fr.siamois.services.PersonService;
 import fr.siamois.services.vocabulary.VocabularyService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;

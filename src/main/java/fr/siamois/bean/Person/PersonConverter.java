@@ -1,15 +1,13 @@
 package fr.siamois.bean.Person;
 
 import fr.siamois.models.auth.Person;
-import fr.siamois.services.auth.PersonService;
+import fr.siamois.services.PersonService;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.convert.Converter;
-import jakarta.faces.convert.FacesConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.faces.bean.ManagedBean;
 

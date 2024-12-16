@@ -69,22 +69,24 @@ public class PersonService {
         return personRepository.save(person);
     }
 
-    public Person addPersonToTeamManagers(Person person) {
+    public void addPersonToTeamManagers(Person person) {
         SystemRole role = systemRoleRepository.findSystemRoleByRoleNameIgnoreCase("TEAM_MANAGER").orElseThrow(() -> new IllegalStateException("Team manager role should be created."));
         person.getRoles().add(role);
-        return personRepository.save(person);
+        personRepository.save(person);
     }
 
-    public void addPersonToTeam(Person person, Team... teams) throws FailedTeamSaveException {
-        int affected = 0;
+    /**
+     * Find all the person where name or lastname match the string. Case is ignored.
+     *
+     * @param nameOrLastname The string to look for in name or username
+     * @return The Person list
+     */
+    public List<Person> findAllByNameLastnameContaining(String nameOrLastname) {
+        return personRepository.findAllByNameIsContainingIgnoreCaseOrLastnameIsContainingIgnoreCase(nameOrLastname, nameOrLastname);
+    }
 
-        for (Team t : teams) {
-            int rowAffected = personRepository.addManagerToTeam(person.getId(), t.getId());
-            if (rowAffected == 0) throw new FailedTeamSaveException("Failed to add person to team " + t.getName());
-            affected += rowAffected;
-        }
-
-        if (affected == 0) throw new FailedTeamSaveException("Failed to add person to any team");
+    public Person findById(long id) {
+        return personRepository.findById(id).orElse(null);
     }
 
 }

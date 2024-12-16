@@ -69,22 +69,6 @@
                         <p:divider layout="vertical"/>
                     </p:menubar>
                 </div>
-                <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
-                    <!-- Top Menu Bar -->
-                    <div class="top-bar">
-                        <p:menubar>
-                            <f:facet name="start">
-                                <form action="${pageContext.request.contextPath}logout" method="post">
-                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                    <button type="submit" class="btn btn-danger">${langBean.msg("nav.logout")}</button>
-                                </form>
-                                <h:button value='${langBean.msg("nav.fieldconfig")}'
-                                          outcome="/pages/field/fieldConfiguration.xhtml"/>
-                            </f:facet>
-                            <p:divider layout="vertical"/>
-                        </p:menubar>
-                    </div>
-                </div>
             </div>
 
             <h:button value='${langBean.msg("home.save.spatialunit")}' outcome="/pages/create/spatialUnit.xhtml"/>
@@ -105,25 +89,18 @@
                     </div>
                     <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
                         <!-- Main Content Area -->
-                        <div class="main-content">
-                            <!-- Content will be inserted here -->
-                            <ui:insert name="content"/>
-
-                        </div>
+                        <h:panelGroup id="main">
+                            <ui:insert name="content">
+                                <!-- Content will be inserted here -->
+                            </ui:insert>
+                        </h:panelGroup>
                     </div>
                 </div>
 
 
             </div>
-            <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
-                <!-- Main Content Area -->
-                <h:panelGroup id="main">
-                    <ui:insert name="content">
-                        <!-- Content will be inserted here -->
-                    </ui:insert>
-                </h:panelGroup>
-            </div>
         </div>
+    </div>
 
 </h:body>
 </html>
