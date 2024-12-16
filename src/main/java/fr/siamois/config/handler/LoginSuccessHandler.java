@@ -4,7 +4,6 @@ import fr.siamois.bean.NavBean;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.auth.Person;
 import fr.siamois.services.TeamService;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
@@ -29,7 +28,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         setupSession(authentication);
         redirectRequest(request, response);
     }
@@ -58,6 +57,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         } else {
             navBean.setTeams(teamService.findTeamsOfPerson(sessionSettings.getAuthenticatedUser()));
         }
-        sessionSettings.setSelectedTeam(navBean.getTeams().get(0));
+
+        if (!navBean.getTeams().isEmpty()) {
+            sessionSettings.setSelectedTeam(navBean.getTeams().get(0));
+        }
     }
 }
