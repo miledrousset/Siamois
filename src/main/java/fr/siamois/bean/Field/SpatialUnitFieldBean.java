@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -101,9 +100,8 @@ public class SpatialUnitFieldBean implements Serializable {
             SpatialUnit saved = fieldService.saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, fParentsSpatialUnits);
 
             Person loggedUser = sessionSettings.getAuthenticatedUser();
-            OffsetDateTime date = OffsetDateTime.now();
 
-            logEntryService.saveLog(loggedUser, date, LogAction.CREATE, saved.getArk());
+            logEntryService.saveLog(loggedUser,LogAction.CREATE, saved.getArk());
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
                     "Info", langBean.msg("spatialunit.created", saved.getName())));

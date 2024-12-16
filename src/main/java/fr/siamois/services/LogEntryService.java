@@ -8,6 +8,7 @@ import fr.siamois.models.log.LogAction;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 @Service
 public class LogEntryService {
@@ -18,10 +19,10 @@ public class LogEntryService {
         this.logEntryRepository = logEntryRepository;
     }
 
-    public void saveLog(Person loggedUser, OffsetDateTime date, LogAction action, Ark target) {
+    public void saveLog(Person loggedUser, LogAction action, Ark target) {
         LogEntry logEntry = new LogEntry();
         logEntry.setPerson(loggedUser);
-        logEntry.setLogDate(date);
+        logEntry.setLogDate(OffsetDateTime.now(ZoneId.systemDefault()));
         logEntry.setMessage(action.toString());
         logEntry.setArk(target);
 
