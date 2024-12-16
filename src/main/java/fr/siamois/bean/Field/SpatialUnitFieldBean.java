@@ -1,14 +1,17 @@
 package fr.siamois.bean.Field;
 
 import fr.siamois.bean.LangBean;
+import fr.siamois.bean.SessionSettings;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
+import fr.siamois.models.log.LogAction;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
+import fr.siamois.services.LogEntryService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.AuthenticatedUserUtils;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +46,8 @@ public class SpatialUnitFieldBean implements Serializable {
     private final FieldService fieldService;
     private final FieldConfigurationService fieldConfigurationService;
     private final LangBean langBean;
+    private final LogEntryService logEntryService;
+    private final SessionSettings sessionSettings;
 
     // Storage
     private List<SpatialUnit> refSpatialUnits = new ArrayList<>();
@@ -55,10 +61,12 @@ public class SpatialUnitFieldBean implements Serializable {
     private String fCategory = "";
     private List<SpatialUnit> fParentsSpatialUnits = new ArrayList<>();
 
-    public SpatialUnitFieldBean(FieldService fieldService, FieldConfigurationService fieldConfigurationService, LangBean langBean) {
+    public SpatialUnitFieldBean(FieldService fieldService, FieldConfigurationService fieldConfigurationService, LangBean langBean, LogEntryService logEntryService, SessionSettings sessionSettings) {
         this.fieldService = fieldService;
         this.fieldConfigurationService = fieldConfigurationService;
         this.langBean = langBean;
+        this.logEntryService = logEntryService;
+        this.sessionSettings = sessionSettings;
     }
 
     /**
@@ -91,6 +99,11 @@ public class SpatialUnitFieldBean implements Serializable {
 
         try {
             SpatialUnit saved = fieldService.saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, fParentsSpatialUnits);
+
+            Person loggedUser = sessionSettings.getAuthenticatedUser();
+            OffsetDateTime date = OffsetDateTime.now();
+
+            logEntryService.saveLog(loggedUser, date, LogAction.CREATE, saved.getArk());
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
                     "Info", langBean.msg("spatialunit.created", saved.getName())));
