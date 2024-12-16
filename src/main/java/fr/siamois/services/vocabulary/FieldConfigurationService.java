@@ -19,6 +19,7 @@ import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.models.vocabulary.VocabularyType;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ import java.util.Optional;
  *
  * @author Julien Linget
  */
+@Slf4j
 @Service
 @Transactional
 public class FieldConfigurationService {
@@ -289,14 +291,16 @@ public class FieldConfigurationService {
             vocabulary.setBaseUri(serverUrl);
             vocabulary.setExternalVocabularyId(dto.getIdTheso());
 
-            if (dto.getLabels().isEmpty())
-                throw new RuntimeException("No label found for thesaurus " + dto.getIdTheso());
-
-            Optional<LabelDTO> titleOptSelectedLang = findLabelForGivenLang(dto.getLabels(), lang)
-                    .or(() -> findLabelForGivenLang(dto.getLabels(), defaultLang))
-                    .or(() -> Optional.of(dto.getLabels().get(0)));
-
-            vocabulary.setVocabularyName(titleOptSelectedLang.get().getTitle());
+            if (dto.getLabels() == null || dtos.isEmpty()) {
+                vocabulary.setVocabularyName("");
+            } else {
+                String vocabTitle = findLabelForGivenLang(dto.getLabels(), lang)
+                        .or(() -> findLabelForGivenLang(dto.getLabels(), defaultLang))
+                        .or(() -> Optional.of(dto.getLabels().get(0)))
+                        .get()
+                        .getTitle();
+                vocabulary.setVocabularyName(vocabTitle);
+            }
 
             vocabulary.setType(type);
 
