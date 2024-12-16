@@ -2,7 +2,6 @@ package fr.siamois.config.handler;
 
 import fr.siamois.bean.NavBean;
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.models.auth.Person;
 import fr.siamois.services.TeamService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,7 +28,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        setupSession(authentication);
+        setupSession();
         redirectRequest(request, response);
     }
 
@@ -50,8 +49,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         }
     }
 
-    private void setupSession(Authentication authentication) {
-        sessionSettings.setAuthenticatedUser((Person) authentication.getPrincipal());
+    private void setupSession() {
         if (sessionSettings.getAuthenticatedUser().hasRole("ADMIN")) {
             navBean.setTeams(teamService.findAllTeams());
         } else {

@@ -34,7 +34,7 @@ public class TeamConverter implements Converter<Team> {
         try {
             return objectMapper.writeValueAsString(o);
         } catch (JsonProcessingException e) {
-            log.error("Error while converting string to Team object", e);
+            log.error("Error while converting Team object to string", e);
             throw new RuntimeException(e);
         }
     }
