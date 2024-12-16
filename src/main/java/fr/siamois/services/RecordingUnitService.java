@@ -29,6 +29,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
+@Transactional
 public class RecordingUnitService {
 
     private final RecordingUnitRepository recordingUnitRepository;
