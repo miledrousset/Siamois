@@ -42,10 +42,9 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
      * @return An optional containing the concept if found
      */
     @Query(
-            nativeQuery = true,
-            value = "SELECT c.* FROM concept c " +
-                    "JOIN vocabulary v ON c.fk_vocabulary_id = v.vocabulary_id " +
-                    "WHERE v.external_id = :idt AND c.external_id = :idc"
+            "SELECT c FROM Concept c " +
+                    "JOIN c.vocabulary v " +
+                    "WHERE LOWER(v.externalVocabularyId) = LOWER(:idt) AND LOWER(c.externalId) = LOWER(:idc)"
     )
     Optional<Concept> findConceptByExternalIdIgnoreCase(String idt, String idc);
 
