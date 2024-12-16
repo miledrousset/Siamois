@@ -1,18 +1,18 @@
 package fr.siamois.services;
 
+import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
-import fr.siamois.models.ActionUnit;
+
 import fr.siamois.models.SpatialUnit;
-<<<<<<< HEAD
 
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
-import fr.siamois.models.exceptions.field.FailedFieldSaveException;
-=======
->>>>>>> e1e6b54c1d3380614db8290c25919490a071e29f
+
+
 import fr.siamois.models.recordingunit.RecordingUnit;
+import fr.siamois.models.vocabulary.Vocabulary;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,18 +24,14 @@ import org.springframework.boot.test.autoconfigure.webservices.server.AutoConfig
 import java.util.List;
 import java.util.Optional;
 
-<<<<<<< HEAD
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
-=======
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
->>>>>>> e1e6b54c1d3380614db8290c25919490a071e29f
+
 
 @ExtendWith(MockitoExtension.class)
 class RecordingUnitServiceTest {
@@ -54,6 +50,8 @@ class RecordingUnitServiceTest {
     RecordingUnit recordingUnit2 ;
     Ark newArk;
     ArkServer mockArkServer;
+    Vocabulary vocabulary;
+    ConceptFieldDTO dto;
 
     @BeforeEach
     void setUp() {
@@ -66,6 +64,8 @@ class RecordingUnitServiceTest {
         newArk = new Ark();
         mockArkServer = new ArkServer();
         mockArkServer.setServerArkUri("http://localhost:8099/siamois");
+        vocabulary = new Vocabulary();
+        dto = new ConceptFieldDTO();
 
 
     }
@@ -139,8 +139,10 @@ class RecordingUnitServiceTest {
         when(recordingUnitRepository.save(any(RecordingUnit.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0)); // Return the same object
 
+
+
         // Act
-        RecordingUnit result = recordingUnitService.save(recordingUnit1);
+        RecordingUnit result = recordingUnitService.save(recordingUnit1, vocabulary, dto);
 
         // Assert
         assertNotNull(result.getArk());
@@ -162,7 +164,7 @@ class RecordingUnitServiceTest {
         // Act & Assert
         Exception exception = assertThrows(
                 FailedRecordingUnitSaveException.class,
-                () -> recordingUnitService.save(recordingUnit1)
+                () -> recordingUnitService.save(recordingUnit1, vocabulary, dto)
         );
 
         assertEquals("Database error", exception.getMessage());

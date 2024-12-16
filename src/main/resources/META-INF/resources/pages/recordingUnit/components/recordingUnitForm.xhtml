@@ -7,17 +7,71 @@
     <cc:interface>
         <!-- Attributes to pass the bean's list and optional additional parameters -->
         <cc:attribute name="recordingUnitFormBean" required="true"/>
+        <cc:attribute name="isNew" required="true" type="boolean"/>
     </cc:interface>
     <cc:implementation>
         <h:panelGroup rendered="#{cc.attrs.recordingUnitFormBean.recordingUnit != null}">
             <h:form>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
+                <p:growl id="growl" showDetail="true"/>
+
+                <div class="row" style="padding:1em">
+                    <div class="form-panel">
+                        <p:panel id="panel-identifier"
+                                 header='${langBean.msg("recordingunit.panel.identification")}'
+                                 toggleable="true">
+                            <div class="row">
+                                <!-- Identifier -->
+                                <div class="field col-md-4">
+                                    <h:outputLabel for="output-label-serial-id" value="Identifiant"
+                                                   styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                                    <div class="col-12 md:col-10">
+                                        <p:inputText id="output-label-serial-id" required="false" disabled="true"
+                                                     value="#{cc.attrs.recordingUnitFormBean.recordingUnit.serial_id}"/>
+                                    </div>
+                                </div>
+                                <!-- UE Type -->
+                                <div class="field col-md-4">
+                                    <p:outputLabel for="auto-complete-ue-type" value="Type d'UE"
+                                                   styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                                    <p:autoComplete id="auto-complete-ue-type"
+                                                    value="#{cc.attrs.recordingUnitFormBean.FType}"
+                                                    completeMethod="#{cc.attrs.recordingUnitFormBean.completeRecordingUnitType}"
+                                                    var="field" itemLabel="#{field.label}"
+                                                    itemValue="#{field}"
+                                                    required="true"
+                                                    converter="#{conceptFieldDTOConverter}"
+                                                    forceSelection="true"
+                                                    scrollHeight="300"
+                                                    dropdown="true"/>
+                                </div>
+                                <!-- UE Secondary Type -->
+                                <div class="field col-md-4">
+                                    <p:outputLabel for="select-one-menu-ue-secondary-type" value="Type d'UE"
+                                                   styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                                    <p:selectOneMenu id="select-one-menu-ue-secondary-type" disabled="true">
+                                        <f:selectItem itemLabel="Unité stratigraphique negative"
+                                                      itemValue="US"/>
+                                        <f:selectItems/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+
+                        </p:panel>
+                    </div>
+
+
+                </div>
+
+                <p:commandButton value='${langBean.msg("button.save")}' update="@form"
+                                 action='#{cc.attrs.recordingUnitFormBean.save}'/>
+
 
                 <p:tabView>
 
                     <p:tab title="Fiche UE">
-                        <p:growl id="growl" showDetail="true" />
+
 
                         <div class="row">
                             <div class="form-panel col-12 col-lg-2 col-xl-2">
@@ -291,18 +345,19 @@
 
                         </div>
 
-                        <p:commandButton value='${langBean.msg("button.save")}' update="@form"
-                                         action='#{cc.attrs.recordingUnitFormBean.save}'/>
-                    </p:tab>
-                    <p:tab title="Documents">
 
                     </p:tab>
-                    <p:tab title="Prèlevements">
+
+                    <p:tab title="Documents" rendered="#{!cc.attrs.isNew}">
 
                     </p:tab>
-                    <p:tab title="Etudes">
+                    <p:tab title="Prèlevements" rendered="#{!cc.attrs.isNew}">
 
                     </p:tab>
+                    <p:tab title="Etudes" rendered="#{!cc.attrs.isNew}">
+
+                    </p:tab>
+
                 </p:tabView>
 
 
