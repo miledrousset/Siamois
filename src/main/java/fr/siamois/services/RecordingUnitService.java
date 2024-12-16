@@ -62,7 +62,6 @@ public class RecordingUnitService {
         } catch(RuntimeException e) {
             throw new FailedRecordingUnitSaveException(e.getMessage());
         }
-
     }
 
     /**

@@ -6,10 +6,10 @@ import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.auth.PersonService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.ApplicationScoped;
-import javax.faces.bean.SessionScoped;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
@@ -19,15 +19,14 @@ import java.util.List;
 
 @Data
 @Slf4j
-@ApplicationScoped
 @Component
-public class RecordingUnitUtilsBean {
+public class RecordingUnitUtils {
 
     // Deps
     private final PersonService personService;
     private final RecordingUnitService recordingUnitService;
 
-    public RecordingUnitUtilsBean(PersonService personService, RecordingUnitService recordingUnitService) {
+    public RecordingUnitUtils(PersonService personService, RecordingUnitService recordingUnitService) {
         this.personService = personService;
         this.recordingUnitService = recordingUnitService;
     }

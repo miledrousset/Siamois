@@ -1,8 +1,9 @@
 package fr.siamois.bean.RecordingUnit;
 
+import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.models.ActionUnit;
-import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtilsBean;
+import fr.siamois.models.auth.Person;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
 import fr.siamois.models.recordingunit.RecordingUnitSize;
@@ -41,7 +42,7 @@ public class NewRecordingUnitFormBean implements Serializable  {
     private final RecordingUnitService recordingUnitService;
     private final ActionUnitService actionUnitService;
     private final PersonService personService;
-    private final RecordingUnitUtilsBean recordingUnitUtilsBean;
+    private final RecordingUnitUtils recordingUnitUtils;
 
     // TODO : remove below
     private final ArkServerRepository arkServerRepository;
@@ -90,16 +91,22 @@ public class NewRecordingUnitFormBean implements Serializable  {
 
     }
 
+    public List<Person> completePerson(String query) {
+        return recordingUnitUtils.completePerson(query);
+    }
+
 
     public String save() {
         try {
 
             log.error(String.valueOf(this.recordingUnit));
 
+            this.recordingUnit = recordingUnitUtils.save(recordingUnit, startDate, endDate);
+            log.error("Recording unit saved");
+            log.error(String.valueOf(this.recordingUnit));
 
-            this.recordingUnit = recordingUnitUtilsBean.save(recordingUnit, startDate, endDate);
-            log.debug("Recording unit saved");
-            log.debug(String.valueOf(this.recordingUnit));
+            // Return page with id
+            return "/pages/recordingUnit/recordingUnit?faces-redirect=true&id="+this.recordingUnit.getId().toString();
 
         } catch (RuntimeException e) {
             log.error("Error while saving: "+e.getMessage());
@@ -107,8 +114,6 @@ public class NewRecordingUnitFormBean implements Serializable  {
             return null;
         }
 
-        // Return page with id
-        return "/pages/recordingUnit/recordingUnit.xhtml?id="+this.recordingUnit.getId().toString();
     }
 
     /**
@@ -124,12 +129,12 @@ public class NewRecordingUnitFormBean implements Serializable  {
 
 
     public NewRecordingUnitFormBean(RecordingUnitService recordingUnitService,
-                                    ActionUnitService actionUnitService, PersonService personService, RecordingUnitUtilsBean recordingUnitUtilsBean, ArkServerRepository arkServerRepository,
+                                    ActionUnitService actionUnitService, PersonService personService, RecordingUnitUtils recordingUnitUtils, ArkServerRepository arkServerRepository,
                                     PersonDetailsService personDetailsService, VocabularyService vocabularyService) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.personService = personService;
-        this.recordingUnitUtilsBean = recordingUnitUtilsBean;
+        this.recordingUnitUtils = recordingUnitUtils;
         this.arkServerRepository = arkServerRepository;
         this.personDetailsService = personDetailsService;
         this.vocabularyService = vocabularyService;
@@ -161,7 +166,7 @@ public class NewRecordingUnitFormBean implements Serializable  {
                     this.recordingUnit.setType(c);
                     this.recordingUnit.setDescription("Nouvelle description");
                     //this.recordingUnit.setName("Nouvelle unité d'enregistrement");
-                    this.startDate = recordingUnitUtilsBean.offsetDateTimeToLocalDate(now());
+                    this.startDate = recordingUnitUtils.offsetDateTimeToLocalDate(now());
                     // Below is hardcoded but it should not be. TODO
                     ActionUnit actionUnit = this.actionUnitService.findById(4);
                     this.recordingUnit.setActionUnit(actionUnit);

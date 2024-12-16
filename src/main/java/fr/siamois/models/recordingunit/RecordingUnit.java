@@ -27,7 +27,7 @@ public class RecordingUnit {
     @JoinColumn(name = "fk_ark_id", nullable = false)
     private Ark ark;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_type")
     private Concept type;
 
@@ -49,12 +49,12 @@ public class RecordingUnit {
     private ActionUnit actionUnit;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_author_id", nullable = false)
     private Person author;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = {CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_excavator_id")
     private Person excavator;
 

@@ -84,7 +84,7 @@
                                                styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
 
                                 <p:autoComplete id="auto-complete-author" value="#{cc.attrs.recordingUnitFormBean.recordingUnit.author}"
-                                                completeMethod="#{recordingUnitUtilsBean.completePerson}"
+                                                completeMethod="#{cc.attrs.recordingUnitFormBean.completePerson}"
                                                 forceSelection="true"
                                                 scrollHeight="300"
                                                 required="true"
@@ -98,7 +98,7 @@
                                                styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
 
                                 <p:autoComplete id="auto-complete-excavator" value="#{cc.attrs.recordingUnitFormBean.recordingUnit.excavator}"
-                                                completeMethod="#{recordingUnitUtilsBean.completePerson}"
+                                                completeMethod="#{cc.attrs.recordingUnitFormBean.completePerson}"
                                                 forceSelection="true"
                                                 required="false"
                                                 converter="#{personConverter}"

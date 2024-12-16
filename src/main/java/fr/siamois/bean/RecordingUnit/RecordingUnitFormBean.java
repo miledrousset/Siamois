@@ -1,7 +1,8 @@
 package fr.siamois.bean.RecordingUnit;
 
-import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtilsBean;
+import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
+import fr.siamois.models.auth.Person;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.RecordingUnitService;
@@ -35,7 +36,7 @@ public class RecordingUnitFormBean implements Serializable {
     private final RecordingUnitService recordingUnitService;
     private final ActionUnitService actionUnitService;
     private final PersonService personService;
-    private final RecordingUnitUtilsBean recordingUnitUtilsBean;
+    private final RecordingUnitUtils recordingUnitUtils;
 
     // TODO : remove below
     private final ArkServerRepository arkServerRepository;
@@ -89,11 +90,13 @@ public class RecordingUnitFormBean implements Serializable {
     public String save() {
         try {
 
-            log.debug(String.valueOf(this.recordingUnit));
+            log.error(String.valueOf(this.recordingUnit));
 
-            this.recordingUnit = recordingUnitUtilsBean.save(recordingUnit, startDate, endDate);
-            log.debug("Recording unit saved");
-            log.debug(String.valueOf(this.recordingUnit));
+            this.recordingUnit = recordingUnitUtils.save(recordingUnit, startDate, endDate);
+            log.error("Recording unit saved");
+            log.error(String.valueOf(this.recordingUnit));
+
+            return "/pages/recordingUnit/recordingUnit?faces-redirect=true&id="+this.recordingUnit.getId().toString();
 
         } catch (RuntimeException e) {
             log.error("Error while saving: "+e.getMessage());
@@ -102,7 +105,11 @@ public class RecordingUnitFormBean implements Serializable {
         }
 
         // Return page with id
-        return "/pages/recordingUnit/recordingUnit.xhtml?id="+this.recordingUnit.getId().toString();
+
+    }
+
+    public List<Person> completePerson(String query) {
+        return recordingUnitUtils.completePerson(query);
     }
 
     /**
@@ -118,12 +125,12 @@ public class RecordingUnitFormBean implements Serializable {
 
 
     public RecordingUnitFormBean(RecordingUnitService recordingUnitService,
-                                 ActionUnitService actionUnitService, PersonService personService, RecordingUnitUtilsBean recordingUnitUtilsBean, ArkServerRepository arkServerRepository,
+                                 ActionUnitService actionUnitService, PersonService personService, RecordingUnitUtils recordingUnitUtils, RecordingUnitUtils recordingUnitUtils1, ArkServerRepository arkServerRepository,
                                  PersonDetailsService personDetailsService, VocabularyService vocabularyService) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.personService = personService;
-        this.recordingUnitUtilsBean = recordingUnitUtilsBean;
+        this.recordingUnitUtils = recordingUnitUtils1;
         this.arkServerRepository = arkServerRepository;
         this.personDetailsService = personDetailsService;
         this.vocabularyService = vocabularyService;
@@ -146,8 +153,8 @@ public class RecordingUnitFormBean implements Serializable {
                 log.info("Loading RU");
                 reinitializeBean();
                 this.recordingUnit = this.recordingUnitService.findById(this.id);
-                if(this.recordingUnit.getStartDate() != null) {this.startDate = recordingUnitUtilsBean.offsetDateTimeToLocalDate(this.recordingUnit.getStartDate());}
-                if(this.recordingUnit.getEndDate()!=null) {this.endDate = recordingUnitUtilsBean.offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());}
+                if(this.recordingUnit.getStartDate() != null) {this.startDate = recordingUnitUtils.offsetDateTimeToLocalDate(this.recordingUnit.getStartDate());}
+                if(this.recordingUnit.getEndDate()!=null) {this.endDate = recordingUnitUtils.offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());}
                 // TODO handle isLocalisationFromSIG properly
                 this.isLocalisationFromSIG = false;
             }
