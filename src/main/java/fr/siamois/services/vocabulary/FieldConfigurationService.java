@@ -310,6 +310,12 @@ public class FieldConfigurationService {
         return result;
     }
 
+    /**
+     * Find a label for a given language in a list of labels.
+     * @param labels The list of labels
+     * @param langCode The language code
+     * @return An optional containing the label if it exists
+     */
     private Optional<LabelDTO> findLabelForGivenLang(List<LabelDTO> labels, String langCode) {
         return labels.stream()
                 .filter(labelDTO -> labelDTO.getLang().equalsIgnoreCase(langCode))
@@ -338,6 +344,15 @@ public class FieldConfigurationService {
         return opt.orElseGet(() -> vocabularyCollectionRepository.save(vocabularyCollection));
     }
 
+    /**
+     * Fetch the configuration of the field Spatial Unit for a user in the database.
+     * @param loggedUser The database saved user
+     * @param fieldCode The field code
+     * @return A {@link FieldConfigurationWrapper} containing the configuration.
+     * If the configuration is a vocabulary, {@link FieldConfigurationWrapper#vocabularyCollectionsConfig()} will be null and {@link FieldConfigurationWrapper#vocabularyConfig()} will be the configuration.
+     * If the configuration is a collection, {@link FieldConfigurationWrapper#vocabularyCollectionsConfig()} will be the configuration and {@link FieldConfigurationWrapper#vocabularyConfig()} will be null.
+     * @throws NoConfigForField If no configuration is found for the field
+     */
     public FieldConfigurationWrapper fetchConfigurationOfFieldCode(Person loggedUser, String fieldCode) throws NoConfigForField {
         Optional<Vocabulary> optVocab = fetchVocabularyOfPersonFieldConfiguration(loggedUser, fieldCode);
         if (optVocab.isPresent()) return new FieldConfigurationWrapper(optVocab.get(), null);

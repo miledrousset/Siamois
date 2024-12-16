@@ -2,11 +2,9 @@ package fr.siamois.models.recordingunit;
 
 
 import fr.siamois.models.ActionUnit;
-import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.vocabulary.Concept;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -54,7 +52,7 @@ public class RecordingUnit {
     private Person author;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = {CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "fk_excavator_id")
     private Person excavator;
 

@@ -8,6 +8,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service to manage SpatialUnit
+ *
+ * @author Grégory Bliault
+ */
 @Slf4j
 @Service
 public class SpatialUnitService {

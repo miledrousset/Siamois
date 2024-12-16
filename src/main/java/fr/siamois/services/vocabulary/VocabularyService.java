@@ -1,11 +1,15 @@
 package fr.siamois.services.vocabulary;
 
 import fr.siamois.infrastructure.repositories.vocabulary.VocabularyRepository;
-import fr.siamois.models.exceptions.ActionUnitNotFoundException;
 import fr.siamois.models.exceptions.VocabularyNotFoundException;
 import fr.siamois.models.vocabulary.Vocabulary;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service to manage Vocabulary
+ *
+ * @author Julien Linget
+ */
 @Service
 public class VocabularyService {
 

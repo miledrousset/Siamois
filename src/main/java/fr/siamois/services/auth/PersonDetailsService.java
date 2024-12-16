@@ -2,14 +2,11 @@ package fr.siamois.services.auth;
 
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
 import lombok.Setter;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * <p>This class is a service that handles the authentication of the application.</p>
@@ -36,10 +33,7 @@ public class PersonDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Person> personOptional = personRepository.findPersonByUsername(username);
-        if (personOptional.isEmpty())
-            throw new UsernameNotFoundException("User with username " + username + " not found");
-        return personOptional.get();
+        return findPersonByUsername(username);
     }
 
     /**

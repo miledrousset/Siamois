@@ -72,6 +72,13 @@ public class FieldService {
         return result;
     }
 
+    /**
+     * Fetch the autocomplete results of Opentheso API for a given input on a field configuration.
+     * @param config The field configuration to search in
+     * @param input The input to search for
+     * @param langCode The language code to search in
+     * @return A list of concept field DTOs
+     */
     public List<ConceptFieldDTO> fetchAutocomplete(FieldConfigurationWrapper config, String input, String langCode) {
         if (config.vocabularyConfig() == null) {
             return fetchAutocomplete(config.vocabularyCollectionsConfig(), input, langCode);
@@ -247,6 +254,12 @@ public class FieldService {
         return unit;
     }
 
+    /**
+     * Save a concept if it does not exist in the database.
+     * @param fieldConfig The field configuration to save the concept in
+     * @param dto The API response for the concept
+     * @return The saved concept
+     */
     public Concept saveConceptIfNotExist(FieldConfigurationWrapper fieldConfig, ConceptFieldDTO dto) {
         Vocabulary vocabulary = fieldConfig.vocabularyConfig();
         if (vocabulary == null) vocabulary = fieldConfig.vocabularyCollectionsConfig().get(0).getVocabulary();
