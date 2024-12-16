@@ -5,6 +5,7 @@ import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
+import fr.siamois.services.vocabulary.FieldService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

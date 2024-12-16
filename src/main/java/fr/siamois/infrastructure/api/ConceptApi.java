@@ -8,13 +8,9 @@ import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.utils.builder.AutocompletionRequestBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +25,8 @@ public class ConceptApi {
 
     private final RestTemplate restTemplate;
 
-    public ConceptApi(RestTemplateBuilder builder) {
-        this.restTemplate = builder.requestFactory(() -> new SimpleClientHttpRequestFactory() {
-            @Override
-            protected void prepareConnection(HttpURLConnection connection, String httpMethod) throws IOException {
-                super.prepareConnection(connection, httpMethod);
-                connection.setInstanceFollowRedirects(true);
-            }
-        }).build();
+    public ConceptApi(RequestFactory factory) {
+        restTemplate = factory.buildRestTemplate();
     }
 
     /**

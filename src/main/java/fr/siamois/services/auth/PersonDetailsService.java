@@ -1,7 +1,6 @@
 package fr.siamois.services.auth;
 
-import fr.siamois.infrastructure.repositories.PersonRepository;
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
 import lombok.Setter;

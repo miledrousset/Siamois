@@ -10,6 +10,12 @@ import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * <p>This bean handles the home page</p>
+ * <p>It is used to display the list of spatial units without parents</p>
+ *
+ * @author Grégory Bliault
+ */
 @Component
 @SessionScoped
 public class HomeBean implements Serializable {

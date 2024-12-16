@@ -20,6 +20,12 @@ import java.util.List;
 @Service
 public class ThesaurusCollectionApi {
 
+    private final RestTemplate restTemplate;
+
+    public ThesaurusCollectionApi(RequestFactory requestFactory) {
+        this.restTemplate = requestFactory.buildRestTemplate();
+    }
+
     /**
      * Send a request to the API to fetch all collections from a vocabulary.
      * @param server The server URL
@@ -29,7 +35,6 @@ public class ThesaurusCollectionApi {
      */
     public List<VocabularyCollectionDTO> fetchAllCollectionsFrom(String server, String vocabularyId) throws ClientSideErrorException {
         String uri = String.format("%s/openapi/v1/group/%s", server, vocabularyId);
-        RestTemplate restTemplate = new RestTemplate();
         try {
             VocabularyCollectionDTO[] data = restTemplate.getForObject(uri, VocabularyCollectionDTO[].class);
             if (data == null) return new ArrayList<>();

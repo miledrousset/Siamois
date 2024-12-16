@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2024.12.04-2" author="Julien Linget">
+        <preConditions onFail="MARK_RAN">
+            <primaryKeyExists tableName="person_role_team"/>
+        </preConditions>
+        <dropPrimaryKey tableName="person_role_team"/>
+        <addPrimaryKey tableName="person_role_team" columnNames="fk_team_id,fk_person_id"/>
+        <dropNotNullConstraint tableName="person_role_team" columnName="fk_role_concept_id"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -7,7 +7,7 @@ import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.auth.PersonDetailsService;
-import fr.siamois.services.auth.PersonService;
+import fr.siamois.services.PersonService;
 import fr.siamois.services.vocabulary.VocabularyService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
@@ -18,12 +18,12 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-import static java.time.OffsetDateTime.now;
 
 @Data
 @Slf4j

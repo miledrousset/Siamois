@@ -15,6 +15,12 @@ import java.util.List;
 @Service
 public class ThesaurusApi {
 
+    private final RestTemplate restTemplate;
+
+    public ThesaurusApi(RequestFactory requestFactory) {
+        this.restTemplate = requestFactory.buildRestTemplate();
+    }
+
     /**
      * Send a request to the API to fetch all public thesaurus names, ids and labels.
      * @param server The server URL
@@ -22,7 +28,6 @@ public class ThesaurusApi {
      */
     public List<ThesaurusDTO> fetchAllPublicThesaurus(String server) {
         String uri = server + "/openapi/v1/thesaurus";
-        RestTemplate restTemplate = new RestTemplate();
         ThesaurusDTO[] data = restTemplate.getForObject(uri, ThesaurusDTO[].class);
         if (data == null) return new ArrayList<>();
         return Arrays.asList(data);

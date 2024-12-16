@@ -1,7 +1,7 @@
 package fr.siamois.bean.Converter;
 
 import fr.siamois.models.auth.Person;
-import fr.siamois.services.auth.PersonService;
+import fr.siamois.services.PersonService;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.convert.Converter;

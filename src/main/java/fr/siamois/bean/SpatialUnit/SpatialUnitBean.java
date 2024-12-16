@@ -16,6 +16,11 @@ import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * <p>This bean handles the spatial unit page</p>
+ *
+ * @author Grégory Bliault
+ */
 @Slf4j
 @Component
 @SessionScoped

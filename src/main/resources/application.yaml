@@ -13,6 +13,10 @@ server:
     whitelabel:
       enabled: false
 
+siamois:
+  lang:
+    default: en
+
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -37,6 +41,10 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:/changelog/db.changelog.xml
+
+  messages:
+    basename: language/messages
+    encoding: UTF-8
 
 logging:
   level:

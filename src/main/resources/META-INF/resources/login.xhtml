@@ -60,31 +60,40 @@
 
     <script>
         const lang = document.getElementById('lang');
+        const langsRef = ${langBean.getLangs()}
+
         function loadLoginPage() {
             const base = window.location.href
             const context = base.substring(0, base.lastIndexOf('/'));
             window.location.href = context + '/login?lang=' + lang.value;
         }
 
+        function capitalizeFirstLetter(val) {
+            return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+        }
+
+        function langCodeName(langCode) {
+            const langObj = new Intl.DisplayNames([langCode], {type: 'language'});
+            return capitalizeFirstLetter(langObj.of(langCode));
+        }
+
         function addOptions() {
-            const enLang = document.createElement('option');
-            enLang.value = 'en';
-            enLang.innerHTML = 'English';
-
-            const frLang = document.createElement('option');
-            frLang.value = 'fr';
-            frLang.innerHTML = 'Français';
-
             const params = new URLSearchParams(window.location.search);
-            const paramLang = params.get('lang');
+            let paramLang = params.get('lang');
+            if (!paramLang) paramLang = "${langBean.getLanguageCode()}";
 
-            if (paramLang === 'fr') {
-                lang.appendChild(frLang);
-                lang.appendChild(enLang);
-            } else {
-                lang.appendChild(enLang);
-                lang.appendChild(frLang);
-            }
+            langsRef.forEach(langCode => {
+                const option = document.createElement('option');
+                option.value = langCode;
+                option.innerHTML = langCodeName(langCode);
+
+                if (langCode === paramLang) {
+                    lang.prepend(option);
+                    option.selected = true;
+                } else {
+                    lang.appendChild(option);
+                }
+            });
         }
 
         addOptions()

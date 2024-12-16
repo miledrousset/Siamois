@@ -12,7 +12,6 @@ import org.springframework.security.core.GrantedAuthority;
 })
 public class SystemRole implements GrantedAuthority {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "system_role_id", nullable = false)
     private Long id;
 
