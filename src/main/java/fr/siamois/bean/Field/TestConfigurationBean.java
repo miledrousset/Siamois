@@ -266,9 +266,8 @@ public class TestConfigurationBean implements Serializable {
         selectedVocab = null;
         selectedThesaurus = null;
 
-        List<Vocabulary> result = null;
         try {
-            result = fieldConfigurationService.fetchAllPublicThesaurus(langBean.getLanguageCode(), serverUrl);
+            List<Vocabulary> result = fieldConfigurationService.fetchAllPublicThesaurus(langBean.getLanguageCode(), serverUrl);
             vocabularies.addAll(result);
         } catch (InvalidEndpointException e) {
             MessageUtils.displayErrorMessage(langBean, "fieldconfig.server.invalid", serverUrl);
