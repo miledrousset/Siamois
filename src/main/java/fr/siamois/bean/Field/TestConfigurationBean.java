@@ -1,14 +1,16 @@
 package fr.siamois.bean.Field;
 
 import fr.siamois.bean.LangBean;
+import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.api.ClientSideErrorException;
+import fr.siamois.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
-import fr.siamois.utils.AuthenticatedUserUtils;
+import fr.siamois.utils.MessageUtils;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Getter;
@@ -34,6 +36,7 @@ public class TestConfigurationBean implements Serializable {
     // Dependencies
     private final FieldConfigurationService fieldConfigurationService;
     private final LangBean langBean;
+    private final SessionSettings sessionSettings;
 
     // Configuration storage
     private List<VocabularyCollection> collections = new ArrayList<>();
@@ -51,9 +54,10 @@ public class TestConfigurationBean implements Serializable {
     private String selectedThesaurus = "";
     private String selectedFieldCode = "";
 
-    public TestConfigurationBean(FieldConfigurationService fieldConfigurationService, LangBean langBean) {
+    public TestConfigurationBean(FieldConfigurationService fieldConfigurationService, LangBean langBean, SessionSettings sessionSettings) {
         this.fieldConfigurationService = fieldConfigurationService;
         this.langBean = langBean;
+        this.sessionSettings = sessionSettings;
     }
 
     /**
@@ -81,7 +85,7 @@ public class TestConfigurationBean implements Serializable {
     public void onLoad() {
         init();
         cacheSelectedGroups = new ArrayList<>(selectedGroups);
-        Person loggedUser = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow();
+        Person loggedUser = sessionSettings.getAuthenticatedUser();
         Optional<Vocabulary> optionalVocabulary = fieldConfigurationService.fetchVocabularyOfPersonFieldConfiguration(loggedUser, selectedFieldCode);
         if (optionalVocabulary.isPresent()) {
             loadThesaurusOnlyConfiguration(optionalVocabulary.get());
@@ -164,8 +168,8 @@ public class TestConfigurationBean implements Serializable {
      * @return The username of the User
      * @throws IllegalStateException Throws when no user is authenticated as this page should only be visible to authenticated user.
      */
-    public String getAuthenticatedUser() {
-        Person loggedUser = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("No user logged in"));
+    public String getAuthenticatedUsername() {
+        Person loggedUser = sessionSettings.getAuthenticatedUser();
         return loggedUser.getUsername();
     }
 
@@ -174,7 +178,7 @@ public class TestConfigurationBean implements Serializable {
      * Refresh the groups list if the selected groups are empty or contain the empty collection.
      */
     public void processForm() {
-        Person loggedUser = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow();
+        Person loggedUser = sessionSettings.getAuthenticatedUser();
 
         if (userHasSelectedEntireThesaurus()) {
             try {
@@ -262,8 +266,13 @@ public class TestConfigurationBean implements Serializable {
         selectedVocab = null;
         selectedThesaurus = null;
 
-        List<Vocabulary> result = fieldConfigurationService.fetchAllPublicThesaurus(langBean.getLanguageCode(), serverUrl);
-        vocabularies.addAll(result);
+        List<Vocabulary> result = null;
+        try {
+            result = fieldConfigurationService.fetchAllPublicThesaurus(langBean.getLanguageCode(), serverUrl);
+            vocabularies.addAll(result);
+        } catch (InvalidEndpointException e) {
+            MessageUtils.displayErrorMessage(langBean, "fieldconfig.server.invalid", serverUrl);
+        }
 
     }
 

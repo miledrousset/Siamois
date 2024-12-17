@@ -14,9 +14,7 @@ import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.LogEntryService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
-import fr.siamois.utils.AuthenticatedUserUtils;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
+import fr.siamois.utils.MessageUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -103,12 +101,10 @@ public class SpatialUnitFieldBean implements Serializable {
 
             logEntryService.saveLog(loggedUser,LogAction.CREATE, saved.getArk());
 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-                    "Info", langBean.msg("spatialunit.created", saved.getName())));
+            MessageUtils.displayInfoMessage(langBean, "spatialunit.created", saved.getName());
         } catch (SpatialUnitAlreadyExistsException e) {
             log.error(e.getMessage(), e);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Error", langBean.msg("commons.error.spatialunit.alreadyexist", fName)));
+            MessageUtils.displayErrorMessage(langBean, "commons.error.spatialunit.alreadyexist", fName);
         }
     }
 
@@ -118,7 +114,7 @@ public class SpatialUnitFieldBean implements Serializable {
      * @return the list of concepts that match the input to display in the autocomplete
      */
     public List<String> completeCategory(String input) {
-        Person person = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("User should be connected"));
+        Person person = sessionSettings.getAuthenticatedUser();
 
         try {
             if (configurationWrapper == null) {

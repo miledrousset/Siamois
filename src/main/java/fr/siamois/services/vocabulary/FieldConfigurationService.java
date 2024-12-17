@@ -13,6 +13,7 @@ import fr.siamois.models.Field;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.api.ClientSideErrorException;
+import fr.siamois.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.models.exceptions.field.FailedFieldSaveException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
@@ -280,7 +281,7 @@ public class FieldConfigurationService {
      * @param serverUrl The server URL
      * @return A list of thesaurus
      */
-    public List<Vocabulary> fetchAllPublicThesaurus(String lang, String serverUrl) {
+    public List<Vocabulary> fetchAllPublicThesaurus(String lang, String serverUrl) throws InvalidEndpointException {
         List<Vocabulary> result = new ArrayList<>();
         List<ThesaurusDTO> dtos = thesaurusApi.fetchAllPublicThesaurus(serverUrl);
         VocabularyType type = vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus").orElseThrow();

@@ -83,13 +83,13 @@ public class TeamCreationBean implements Serializable {
         if (fManager != null)  {
             try {
                 teamService.createTeam(fTeamName, fDescription, fManager);
-                MessageUtils.displayInfoMessage(langBean, langBean.msg("create.team.success"));
+                MessageUtils.displayInfoMessage(langBean, "create.team.success");
             } catch (TeamAlreadyExistException e) {
                 log.error("Team already exists.", e);
-                MessageUtils.displayErrorMessage(langBean, langBean.msg("commons.error.team.alreadyexist", fTeamName));
+                MessageUtils.displayErrorMessage(langBean, "commons.error.team.alreadyexist", fTeamName);
             } catch (FailedTeamSaveException e) {
                 log.error("Failed to save team.", e);
-                MessageUtils.displayErrorMessage(langBean, langBean.msg("commons.error.team.failedsave"));
+                MessageUtils.displayErrorMessage(langBean, "commons.error.team.failedsave");
             }
         }
     }
