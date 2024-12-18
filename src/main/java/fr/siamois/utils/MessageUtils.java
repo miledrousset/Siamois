@@ -4,40 +4,39 @@ import fr.siamois.bean.LangBean;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MessageUtils {
 
-    public static void displayMessage(LangBean langBean, FacesMessage.Severity severity, String message) {
-        String titleCode = null;
+    private static final Map<FacesMessage.Severity, String> titlesCodes = new HashMap<>();
 
-        if (severity.equals(FacesMessage.SEVERITY_INFO)) {
-            titleCode = "commons.message.state.info";
-        } else if (severity.equals(FacesMessage.SEVERITY_WARN)) {
-            titleCode = "commons.message.state.warning";
-        } else if (severity.equals(FacesMessage.SEVERITY_ERROR)) {
-            titleCode = "commons.message.state.error";
-        } else if (severity.equals(FacesMessage.SEVERITY_FATAL)) {
-            titleCode = "commons.message.state.fatal";
-        }
-
-        String title = message;
-        if (titleCode != null) {
-            title = langBean.msg(titleCode);
-        }
-
-        displayMessage(severity, title, message);
+    static {
+        titlesCodes.put(FacesMessage.SEVERITY_INFO, "commons.message.state.info");
+        titlesCodes.put(FacesMessage.SEVERITY_ERROR, "commons.message.state.error");
     }
 
-    public static void displayMessage(FacesMessage.Severity severity, String title, String message) {
-        FacesMessage facesMessage = new FacesMessage(severity, title, message);
+    public static void displayMessage(LangBean langBean, FacesMessage.Severity severity, String messageCode, Object... args) {
+        String title = messageCode;
+        if (titlesCodes.containsKey(severity))
+            title = langBean.msg(titlesCodes.get(severity));
+
+        displayMessage(severity, title, langBean.msg(messageCode, args));
+
+        if (!titlesCodes.containsKey(severity))
+            throw new IllegalArgumentException("Unknown severity: " + severity + ". Replaced by messageCode");
+    }
+
+    public static void displayMessage(FacesMessage.Severity severity, String title, String msgCode) {
+        FacesMessage facesMessage = new FacesMessage(severity, title, msgCode);
         FacesContext.getCurrentInstance().addMessage(null, facesMessage);
     }
 
-
-    public static void displayInfoMessage(LangBean langBean, String message) {
-        displayMessage(langBean, FacesMessage.SEVERITY_INFO, message);
+    public static void displayInfoMessage(LangBean langBean, String msgCode, Object... args) {
+        displayMessage(langBean, FacesMessage.SEVERITY_INFO, msgCode, args);
     }
 
-    public static void displayErrorMessage(LangBean langBean, String msg) {
-        displayMessage(langBean, FacesMessage.SEVERITY_ERROR, msg);
+    public static void displayErrorMessage(LangBean langBean, String msgCode, Object... args) {
+        displayMessage(langBean, FacesMessage.SEVERITY_ERROR, msgCode, args);
     }
 }

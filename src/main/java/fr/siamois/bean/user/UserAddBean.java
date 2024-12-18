@@ -90,7 +90,7 @@ public class UserAddBean {
     }
 
     private void displayErrorMessage(String message) {
-        MessageUtils.displayErrorMessage(langBean, message);
+        MessageUtils.displayMessage(FacesMessage.SEVERITY_ERROR, langBean.msg("commons.message.state.error"), message);
     }
 
 }

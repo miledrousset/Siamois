@@ -102,9 +102,7 @@ public class NavBean implements Serializable {
     public void onTeamChange() {
         log.trace("Team changed to {}", selectedTeam.getName());
         sessionSettings.setSelectedTeam(selectedTeam);
-        for (TeamTopicSubscriber subscriber : subscribers) {
-            subscriber.onTeamChange();
-        }
+        subscribers.forEach(TeamTopicSubscriber::onTeamChange);
     }
 
     /**

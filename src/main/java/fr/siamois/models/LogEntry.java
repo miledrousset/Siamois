@@ -4,6 +4,8 @@ import fr.siamois.models.ark.Ark;
 import fr.siamois.models.auth.Person;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.TimeZoneStorage;
+import org.hibernate.annotations.TimeZoneStorageType;
 
 import java.time.OffsetDateTime;
 
@@ -24,6 +26,7 @@ public class LogEntry {
     @JoinColumn(name = "fk_user_id")
     private Person person;
 
+    @TimeZoneStorage(TimeZoneStorageType.NATIVE)
     @Column(name = "log_date")
     private OffsetDateTime logDate;
 

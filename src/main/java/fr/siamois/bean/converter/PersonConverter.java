@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:src/main/java/fr/siamois/bean/Converter/PersonConverter.java
 package fr.siamois.bean.Converter;
+========
+package fr.siamois.bean.converter;
+>>>>>>>> 1075af7a47ee63362cfcf34a4c7018693a99b59d:src/main/java/fr/siamois/bean/converter/PersonConverter.java
 
 import fr.siamois.models.auth.Person;
 import fr.siamois.services.PersonService;
@@ -6,7 +10,6 @@ import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.convert.Converter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -14,15 +17,18 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class PersonConverter implements Converter<Person> {
 
+    private final PersonService personService;
 
-    @Autowired
-    private PersonService personService;
+    public PersonConverter(PersonService personService) {
+        this.personService = personService;
+    }
 
     @Override
     public Person getAsObject(FacesContext context, UIComponent component, String value) {
         if (value == null || value.isEmpty()) {
             return null;
         }
+
         // Convert ID (String) to Person object
         return personService.findById(Long.parseLong(value));
     }

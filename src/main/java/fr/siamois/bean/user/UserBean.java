@@ -88,10 +88,10 @@ public class UserBean implements Serializable, TeamTopicSubscriber {
             log.trace("Team members : {}", teamMembers);
         } catch (NoConfigForField e) {
             log.error("Error while loading member configuration", e);
-            MessageUtils.displayErrorMessage(langBean, langBean.msg("commons.error.fieldconfig"));
+            MessageUtils.displayErrorMessage(langBean, "commons.error.fieldconfig");
         } catch (NoTeamSelectedException e) {
             log.error("No team selected", e);
-            MessageUtils.displayErrorMessage(langBean, langBean.msg("commons.error.team.notselected"));
+            MessageUtils.displayErrorMessage(langBean, "commons.error.team.notselected");
         }
     }
 
@@ -128,10 +128,10 @@ public class UserBean implements Serializable, TeamTopicSubscriber {
             teamService.addUserToTeam(created, team, roleConcept);
         } catch (FailedTeamSaveException e) {
             log.error("Error while saving team", e);
-            MessageUtils.displayErrorMessage(langBean, langBean.msg("commons.error.team.save"));
+            MessageUtils.displayErrorMessage(langBean, "commons.error.team.save");
         } catch (NoTeamSelectedException e) {
             log.error("No team selected", e);
-            MessageUtils.displayErrorMessage(langBean, langBean.msg("commons.error.team.notselected"));
+            MessageUtils.displayErrorMessage(langBean, "commons.error.team.notselected");
         }
     }
 
