@@ -47,9 +47,13 @@ html, body {
 }
 
 .label-icon {
-    margin-right: 4px; /* Adjust spacing between the image and label */
+    margin-left: 4px; /* Adjust spacing between the image and label */
     max-height: 16px; /* Prevent image from exceeding the container's height */
     width: auto; /* Maintain aspect ratio of the image */
+}
+
+.siamois-row {
+    margin-bottom: 1rem;
 }
 
 .shadow {

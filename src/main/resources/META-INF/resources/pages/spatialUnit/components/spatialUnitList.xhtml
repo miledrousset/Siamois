@@ -8,20 +8,29 @@
     <cc:interface>
         <!-- Attributes to pass the bean's list and optional additional parameters -->
         <cc:attribute name="spatialUnitList" required="true"/>
+        <cc:attribute name="header" />
     </cc:interface>
     <cc:implementation>
-        <form>
+        <h:form>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <p:outputPanel>
-                <h3>Spatial units</h3>
+
 
                 <div class="card">
                     <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
                                  value="#{cc.attrs.spatialUnitList}">
+                        <f:facet name="header">
+                            #{cc.attrs.header}
+                        </f:facet>
+
                         <p:column headerText="Name">
-                            <p:link outcome="/pages/spatialUnit/spatialUnit.xhtml" value="#{item.name}">
-                                <f:param name="id" value="#{item.id}"/>
-                            </p:link>
+                            <p:commandLink
+                                    action="#{spatialUnitBean.goToSpatialUnitById(item.id)}"
+
+                                    actionListener="#{breadcrumbBean.addBreadcrumbItem(item.name, '/pages/spatialUnit/spatialUnit', 'pi pi-map-marker')}"
+                                    >
+                                <h:outputText value="#{item.name}" />
+                            </p:commandLink>
                         </p:column>
 
                         <p:column headerText="ARK">
@@ -34,7 +43,7 @@
                     </p:dataTable>
                 </div>
             </p:outputPanel>
-        </form>
+        </h:form>
     </cc:implementation>
 </ui:composition>
 

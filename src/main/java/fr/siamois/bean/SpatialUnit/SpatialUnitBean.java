@@ -7,8 +7,7 @@ import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.SpatialUnitService;
 import jakarta.annotation.PostConstruct;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -24,31 +23,24 @@ import java.util.List;
 @Slf4j
 @Component
 @SessionScoped
+@Data
 public class SpatialUnitBean implements Serializable {
 
     private final SpatialUnitService spatialUnitService;
     private final RecordingUnitService recordingUnitService;
     private final ActionUnitService actionUnitService;
 
-    @Getter
     private SpatialUnit spatialUnit;
-    @Getter
-    String spatialUnitErrorMessage;
-    @Getter
+    private String spatialUnitErrorMessage;
     private List<SpatialUnit> spatialUnitList;
-    @Getter
+    private List<SpatialUnit> spatialUnitParentsList;
     private List<RecordingUnit> recordingUnitList;
-    @Getter
     private List<ActionUnit> actionUnitList;
-    @Getter
-    String spatialUnitListErrorMessage;
-    @Getter
-    String actionUnitListErrorMessage;
-    @Getter
-    String recordingUnitListErrorMessage;
+    private String spatialUnitListErrorMessage;
+    private String spatialUnitParentsListErrorMessage;
+    private String actionUnitListErrorMessage;
+    private String recordingUnitListErrorMessage;
 
-    @Getter
-    @Setter
     private Long id;  // ID of the spatial unit
 
     public SpatialUnitBean(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService) {
@@ -66,6 +58,13 @@ public class SpatialUnitBean implements Serializable {
         this.spatialUnitList = null;
         this.recordingUnitList = null;
         this.actionUnitList = null;
+        this.spatialUnitParentsList = null;
+        this.spatialUnitParentsListErrorMessage = null;
+    }
+
+    public String goToSpatialUnitById(Long id) {
+        log.error("go to spatial unit");
+        return "/pages/spatialUnit/spatialUnit.xhtml?id=" + id+"&faces-redirect=true";
     }
 
     @PostConstruct
@@ -88,6 +87,13 @@ public class SpatialUnitBean implements Serializable {
                 } catch (RuntimeException e) {
                     this.spatialUnitList = null;
                     this.spatialUnitListErrorMessage = "Unable to load spatial units: " + e.getMessage();
+                }
+                try {
+                    this.spatialUnitParentsListErrorMessage = null;
+                    this.spatialUnitParentsList = spatialUnitService.findAllParentsOfSpatialUnit(spatialUnit);
+                } catch (RuntimeException e) {
+                    this.spatialUnitParentsList = null;
+                    this.spatialUnitParentsListErrorMessage = "Unable to load the parents: " + e.getMessage();
                 }
                 try {
                     this.recordingUnitListErrorMessage = null;

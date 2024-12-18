@@ -48,6 +48,20 @@ public class SpatialUnitService {
     }
 
     /**
+     * Find all the parents of a spatial unit
+     *
+     * @return The List of SpatialUnit
+     * @throws RuntimeException             If the repository method throws an Exception
+     */
+    public List<SpatialUnit> findAllParentsOfSpatialUnit(SpatialUnit spatialUnit) {
+        try {
+            return spatialUnitRepository.findAllParentsOfSpatialUnit(spatialUnit.getId());
+        } catch (RuntimeException e) {
+            throw e;
+        }
+    }
+
+    /**
      * Find a spatial unit by its ID
      *
      * @param id The ID of the spatial unit

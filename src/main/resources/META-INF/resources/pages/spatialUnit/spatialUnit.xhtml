@@ -23,83 +23,99 @@
                          rendered="#{not empty spatialUnitBean.spatialUnitErrorMessage}"/>
         <h:panelGroup id="contentPanel" rendered="#{spatialUnitBean.spatialUnit != null}">
 
-            <h2>Spatial Unit: #{spatialUnitBean.spatialUnit.name}</h2>
-            <h3>Category: #{spatialUnitBean.spatialUnit.category.label}</h3>
+            <h2>#{spatialUnitBean.spatialUnit.name} (#{spatialUnitBean.spatialUnit.category.label})</h2>
             <p>ARK ID: #{spatialUnitBean.spatialUnit.ark.arkId}</p>
 
+
+            <div class="row siamois-row">
+                <div class="col-md-6">
+                    <p:staticMessage severity="error" summary="Error" closable="false"
+                                     detail="#{spatialUnitBean.spatialUnitListErrorMessage}"
+                                     rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
+                    <spatialUnit:spatialUnitList header="Contient"
+                                                 spatialUnitList="#{spatialUnitBean.spatialUnitList}"
+                                                 breadcrumbBean="#{breadcrumbBean}"/>
+                </div>
+                <div class="col-md-6">
+                    <p:staticMessage severity="error" summary="Error" closable="false"
+                                     detail="#{spatialUnitBean.spatialUnitListErrorMessage}"
+                                     rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
+                    <spatialUnit:spatialUnitList header="Fait partie de"
+                                                 spatialUnitList="#{spatialUnitBean.spatialUnitParentsList}"/>
+                </div>
+            </div>
+            <div class="row siamois-row">
+                <div class="col-md-12">
+                    <form>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <p:outputPanel>
+                            <div class="card">
+                                <p:staticMessage severity="error" summary="Error" closable="false"
+                                                 detail="#{spatialUnitBean.recordingUnitListErrorMessage}"
+                                                 rendered="#{not empty spatialUnitBean.recordingUnitListErrorMessage}"/>
+                                <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
+                                             value="#{spatialUnitBean.recordingUnitList}">
+                                    <f:facet name="header">
+                                        Unités d'enregistrement
+                                    </f:facet>
+                                    <p:column headerText="Name">
+                                        <p:link outcome="/pages/recordingUnit/recordingUnit.xhtml"
+                                                value="#{item.serial_id}">
+                                            <f:param name="id" value="#{item.id}"/>
+                                        </p:link>
+                                    </p:column>
+
+                                    <p:column headerText="ARK">
+                                        <h:outputText value="#{item.ark.arkId}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Type">
+                                        <h:outputText value="#{item.type.label}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Auteur">
+                                        <h:outputText value="#{item.author.name} #{item.author.lastname}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Fouilleur">
+                                        <h:outputText value="#{item.excavator.name} #{item.excavator.lastname}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </p:outputPanel>
+                    </form>
+                </div>
+
+            </div>
+            <div class="row siamois-rows">
+                <div class="col-md-12">
+                    <p:staticMessage severity="error" summary="Error" closable="false"
+                                     detail="#{spatialUnitBean.actionUnitListErrorMessage}"
+                                     rendered="#{not empty spatialUnitBean.actionUnitListErrorMessage}"/>
+                    <form>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <p:outputPanel>
+                            <div class="card">
+
+                                <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
+                                             value="#{spatialUnitBean.actionUnitList}">
+                                    <f:facet name="header">
+                                        Actions
+                                    </f:facet>
+                                    <p:column headerText="Type">
+                                        <p:link outcome="/pages/recordingUnit/recordingUnit.xhtml"
+                                                value="#{item.type.label}">
+                                            <f:param name="id" value="#{item.id}"/>
+                                        </p:link>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </div>
+                        </p:outputPanel>
+                    </form>
+                </div>
+            </div>
+
         </h:panelGroup>
-
-        <p:outputPanel>
-            <p:staticMessage severity="error" summary="Error" closable="false"
-                             detail="#{spatialUnitBean.spatialUnitListErrorMessage}"
-                             rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
-            <spatialUnit:spatialUnitList spatialUnitList="#{spatialUnitBean.spatialUnitList}"/>
-        </p:outputPanel>
-
-        <form>
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <p:outputPanel>
-
-                <h3>Recording units</h3>
-                <p:staticMessage severity="error" summary="Error" closable="false"
-                                 detail="#{spatialUnitBean.recordingUnitListErrorMessage}"
-                                 rendered="#{not empty spatialUnitBean.recordingUnitListErrorMessage}"/>
-                <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
-                             value="#{spatialUnitBean.recordingUnitList}">
-                    <p:column headerText="Name">
-                        <p:link outcome="/pages/recordingUnit/recordingUnit.xhtml" value="#{item.serial_id}">
-                            <f:param name="id" value="#{item.id}"/>
-                        </p:link>
-                    </p:column>
-
-                    <p:column headerText="ARK">
-                        <h:outputText value="#{item.ark.arkId}"/>
-                    </p:column>
-
-                    <p:column headerText="Type">
-                        <h:outputText value="#{item.type.label}"/>
-                    </p:column>
-
-                    <p:column headerText="Auteur">
-                        <h:outputText value="#{item.author.name} #{item.author.lastname}"/>
-                    </p:column>
-
-                    <p:column headerText="Fouilleur">
-                        <h:outputText value="#{item.excavator.name} #{item.excavator.lastname}"/>
-                    </p:column>
-                </p:dataTable>
-
-            </p:outputPanel>
-        </form>
-
-        <p:outputPanel>
-            <h3>Actions</h3>
-            <p:staticMessage severity="error" summary="Error" closable="false"
-                             detail="#{spatialUnitBean.actionUnitListErrorMessage}"
-                             rendered="#{not empty spatialUnitBean.actionUnitListErrorMessage}"/>
-            <p:panelGrid columns="3" styleClass="card-grid">
-                <ui:repeat value="#{spatialUnitBean.actionUnitList}" var="item">
-                    <p:card>
-                        <f:facet name="header">
-
-                        </f:facet>
-                        <f:facet name="title">
-                            #{item.ark.arkId}
-                        </f:facet>
-
-                        <f:facet name="subtitle">
-
-                        </f:facet>
-
-                        <p>Category : #{item.type.label}</p>
-
-
-                        <f:facet name="footer">
-
-                        </f:facet>
-                    </p:card>
-                </ui:repeat>
-            </p:panelGrid>
-        </p:outputPanel>
     </ui:define>
 </ui:composition>

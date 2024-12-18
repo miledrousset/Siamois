@@ -88,9 +88,7 @@
 
                     <h:form>
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                        <p:breadCrumb style="border:none;background:transparent;border-radius:0;">
-                            <p:menuitem value="Home" outcome="/pages/home/home"/>
-                        </p:breadCrumb>
+                        <p:breadCrumb model="#{breadcrumbBean.model}" style="border:none;background:transparent;border-radius:0;"/>
                     </h:form>
 
                 <p:card id="main" class="shadow" style="margin:1em;">
