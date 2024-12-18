@@ -10,7 +10,7 @@
         <f:metadata>
             <!-- Capture the ID parameter from the URL and bind it to spatialUnitBean -->
             <f:viewParam name="id" value="#{spatialUnitBean.id}" required="true"/>
-            <f:event type="preRenderView" listener="#{spatialUnitBean.init}" />
+            <f:event type="preRenderView" listener="#{spatialUnitBean.init}"/>
         </f:metadata>
     </ui:define>
 
@@ -18,7 +18,9 @@
 
 
         <!-- Content -->
-        <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.spatialUnitErrorMessage}" rendered="#{not empty spatialUnitBean.spatialUnitErrorMessage}" />
+        <p:staticMessage severity="error" summary="Error" closable="false"
+                         detail="#{spatialUnitBean.spatialUnitErrorMessage}"
+                         rendered="#{not empty spatialUnitBean.spatialUnitErrorMessage}"/>
         <h:panelGroup id="contentPanel" rendered="#{spatialUnitBean.spatialUnit != null}">
 
             <h2>Spatial Unit: #{spatialUnitBean.spatialUnit.name}</h2>
@@ -28,42 +30,53 @@
         </h:panelGroup>
 
         <p:outputPanel>
-            <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.spatialUnitListErrorMessage}" rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}" />
-            <spatialUnit:spatialUnitList spatialUnitList="#{spatialUnitBean.spatialUnitList}" />
+            <p:staticMessage severity="error" summary="Error" closable="false"
+                             detail="#{spatialUnitBean.spatialUnitListErrorMessage}"
+                             rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
+            <spatialUnit:spatialUnitList spatialUnitList="#{spatialUnitBean.spatialUnitList}"/>
         </p:outputPanel>
 
-        <p:outputPanel>
-            <h3>Recording units</h3>
-            <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.recordingUnitListErrorMessage}" rendered="#{not empty spatialUnitBean.recordingUnitListErrorMessage}" />
-            <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item" value="#{spatialUnitBean.recordingUnitList}">
-                <p:column headerText="Name">
-                    <p:link outcome="/pages/recordingUnit/recordingUnit.xhtml" value="#{item.serial_id}">
-                        <f:param name="id" value="#{item.id}"/>
-                    </p:link>
-                </p:column>
+        <form>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <p:outputPanel>
 
-                <p:column headerText="ARK">
-                    <h:outputText value="#{item.ark.arkId}" />
-                </p:column>
+                <h3>Recording units</h3>
+                <p:staticMessage severity="error" summary="Error" closable="false"
+                                 detail="#{spatialUnitBean.recordingUnitListErrorMessage}"
+                                 rendered="#{not empty spatialUnitBean.recordingUnitListErrorMessage}"/>
+                <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
+                             value="#{spatialUnitBean.recordingUnitList}">
+                    <p:column headerText="Name">
+                        <p:link outcome="/pages/recordingUnit/recordingUnit.xhtml" value="#{item.serial_id}">
+                            <f:param name="id" value="#{item.id}"/>
+                        </p:link>
+                    </p:column>
 
-                <p:column headerText="Type">
-                    <h:outputText value="#{item.type.label}" />
-                </p:column>
+                    <p:column headerText="ARK">
+                        <h:outputText value="#{item.ark.arkId}"/>
+                    </p:column>
 
-                <p:column headerText="Auteur">
-                    <h:outputText value="#{item.author.name} #{item.author.lastname}" />
-                </p:column>
+                    <p:column headerText="Type">
+                        <h:outputText value="#{item.type.label}"/>
+                    </p:column>
 
-                <p:column headerText="Fouilleur">
-                    <h:outputText value="#{item.excavator.name} #{item.excavator.lastname}" />
-                </p:column>
-            </p:dataTable>
+                    <p:column headerText="Auteur">
+                        <h:outputText value="#{item.author.name} #{item.author.lastname}"/>
+                    </p:column>
 
-        </p:outputPanel>
+                    <p:column headerText="Fouilleur">
+                        <h:outputText value="#{item.excavator.name} #{item.excavator.lastname}"/>
+                    </p:column>
+                </p:dataTable>
+
+            </p:outputPanel>
+        </form>
 
         <p:outputPanel>
             <h3>Actions</h3>
-            <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.actionUnitListErrorMessage}" rendered="#{not empty spatialUnitBean.actionUnitListErrorMessage}" />
+            <p:staticMessage severity="error" summary="Error" closable="false"
+                             detail="#{spatialUnitBean.actionUnitListErrorMessage}"
+                             rendered="#{not empty spatialUnitBean.actionUnitListErrorMessage}"/>
             <p:panelGrid columns="3" styleClass="card-grid">
                 <ui:repeat value="#{spatialUnitBean.actionUnitList}" var="item">
                     <p:card>

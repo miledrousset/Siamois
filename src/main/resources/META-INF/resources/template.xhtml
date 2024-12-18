@@ -13,6 +13,11 @@
     <h:outputStylesheet library="css" name="styles.css"/>
     <h:outputStylesheet library="css" name="jquery-ui.css"/>
     <h:outputScript library="js" name="jquery-ui.js"/>
+
+    <script type="text/javascript">
+        window.csrfTokenName = "{{ craft.config.csrfTokenName }}";
+        window.csrfTokenValue = "{{ craft.request.csrfTokenValue }}";
+    </script>
 </h:head>
 
 <!-- Metadata will be inserted here (JSF1103: The metadata facet must be a direct child of the view) -->
@@ -22,12 +27,23 @@
     <!-- Main Layout -->
     <div class="layout-container no-gutters">
         <div class="row g-0">
-            <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
-                <div class="app-name">SIAMOIS</div>
+            <div class="col-md-1">
+
+                <div class="left-panel shadow">
+                    <div class="app-name">SIAMOIS</div>
+                    <h:button value='${langBean.msg("home.save.spatialunit")}' outcome="/pages/create/spatialUnit.xhtml"/>
+
+                    <!--                        <p:menu>
+                                                <p:submenu styleClass="icon-only-menu" label="">
+                                                    <p:menuitem value="" outcome="/pages/home/home" icon="pi pi-home"/>
+                                                    &lt;!&ndash; Add more menu items as needed &ndash;&gt;
+                                                </p:submenu>
+                                            </p:menu>-->
+                </div>
             </div>
-            <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
+            <div class="col">
                 <!-- Top Menu Bar -->
-                <div class="top-bar">
+                <div class="top-bar shadow">
                     <p:menubar>
                         <f:facet name="start">
                             <nav>
@@ -69,36 +85,21 @@
                         <p:divider layout="vertical"/>
                     </p:menubar>
                 </div>
+
+                    <h:form>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <p:breadCrumb style="border:none;background:transparent;border-radius:0;">
+                            <p:menuitem value="Home" outcome="/pages/home/home"/>
+                        </p:breadCrumb>
+                    </h:form>
+
+                <p:card id="main" class="shadow" style="margin:1em;">
+                    <ui:insert name="content">
+                        <!-- Content will be inserted here -->
+                    </ui:insert>
+                </p:card>
             </div>
 
-            <h:button value='${langBean.msg("home.save.spatialunit")}' outcome="/pages/create/spatialUnit.xhtml"/>
-            <div class="row g-0" style="min-height: 100%">
-                <div class="row g-0">
-
-                    <div class="col-xl-1 col-lg-1 col-md-2 col-sm-2 col-3">
-                        <!-- Left Panel -->
-                        <div class="left-panel">
-
-                            <!--                        <p:menu>
-                                                        <p:submenu styleClass="icon-only-menu" label="">
-                                                            <p:menuitem value="" outcome="/pages/home/home" icon="pi pi-home"/>
-                                                            &lt;!&ndash; Add more menu items as needed &ndash;&gt;
-                                                        </p:submenu>
-                                                    </p:menu>-->
-                        </div>
-                    </div>
-                    <div class="col-xl-11 col-lg-11 col-md-10 col-sm-10 col-9">
-                        <!-- Main Content Area -->
-                        <h:panelGroup id="main">
-                            <ui:insert name="content">
-                                <!-- Content will be inserted here -->
-                            </ui:insert>
-                        </h:panelGroup>
-                    </div>
-                </div>
-
-
-            </div>
         </div>
     </div>
 

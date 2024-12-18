@@ -3,7 +3,8 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+                xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+                xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label">
     <cc:interface>
         <!-- Attributes to pass the bean's list and optional additional parameters -->
         <cc:attribute name="recordingUnitFormBean" required="true"/>
@@ -17,55 +18,57 @@
                 <p:growl id="growl" showDetail="true"/>
 
                 <div class="row" style="padding:1em">
-                    <div class="form-panel">
-                        <p:panel id="panel-identifier"
-                                 header='${langBean.msg("recordingunit.panel.identification")}'
-                                 toggleable="true">
-                            <div class="row">
-                                <!-- Identifier -->
-                                <div class="field col-md-4">
-                                    <h:outputLabel for="output-label-serial-id" value="Identifiant"
-                                                   styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
-                                    <div class="col-12 md:col-10">
-                                        <p:inputText id="output-label-serial-id" required="false" disabled="true"
-                                                     value="#{cc.attrs.recordingUnitFormBean.recordingUnit.serial_id}"/>
+
+                    <div class="field col-md-10">
+                        <div class="form-panel">
+                            <p:panel id="panel-identifier"
+                                     header='${langBean.msg("recordingunit.panel.identification")}'
+                                     toggleable="true">
+                                <div class="row">
+                                    <!-- Identifier -->
+                                    <div class="field col-md-4">
+                                        <h:outputLabel for="output-label-serial-id" value="Identifiant"
+                                                       styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                                        <div class="col-12 md:col-10">
+                                            <p:inputText id="output-label-serial-id" required="false" disabled="true"
+                                                         value="#{cc.attrs.recordingUnitFormBean.recordingUnit.serial_id}"/>
+                                        </div>
+                                    </div>
+                                    <!-- UE Type -->
+                                    <div class="field col-md-4">
+                                        <sharedLabel:openthesoLabel for="auto-complete-ue-type" label="Type d'ue"/>
+                                        <p:autoComplete id="auto-complete-ue-type"
+                                                        value="#{cc.attrs.recordingUnitFormBean.FType}"
+                                                        completeMethod="#{cc.attrs.recordingUnitFormBean.completeRecordingUnitType}"
+                                                        var="field" itemLabel="#{field.label}"
+                                                        itemValue="#{field}"
+                                                        required="true"
+                                                        converter="#{conceptFieldDTOConverter}"
+                                                        forceSelection="true"
+                                                        scrollHeight="300"
+                                                        dropdown="true"/>
+                                    </div>
+                                    <!-- UE Secondary Type -->
+                                    <div class="field col-md-4">
+                                        <sharedLabel:openthesoLabel forId="select-one-menu-ue-secondary-type" label="Sous type d'ue"/>
+                                        <p:selectOneMenu id="select-one-menu-ue-secondary-type" disabled="true">
+                                            <f:selectItem itemLabel="Unité stratigraphique negative"
+                                                          itemValue="US"/>
+                                            <f:selectItems/>
+                                        </p:selectOneMenu>
                                     </div>
                                 </div>
-                                <!-- UE Type -->
-                                <div class="field col-md-4">
-                                    <p:outputLabel for="auto-complete-ue-type" value="Type d'UE"
-                                                   styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
-                                    <p:autoComplete id="auto-complete-ue-type"
-                                                    value="#{cc.attrs.recordingUnitFormBean.FType}"
-                                                    completeMethod="#{cc.attrs.recordingUnitFormBean.completeRecordingUnitType}"
-                                                    var="field" itemLabel="#{field.label}"
-                                                    itemValue="#{field}"
-                                                    required="true"
-                                                    converter="#{conceptFieldDTOConverter}"
-                                                    forceSelection="true"
-                                                    scrollHeight="300"
-                                                    dropdown="true"/>
-                                </div>
-                                <!-- UE Secondary Type -->
-                                <div class="field col-md-4">
-                                    <p:outputLabel for="select-one-menu-ue-secondary-type" value="Type d'UE"
-                                                   styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
-                                    <p:selectOneMenu id="select-one-menu-ue-secondary-type" disabled="true">
-                                        <f:selectItem itemLabel="Unité stratigraphique negative"
-                                                      itemValue="US"/>
-                                        <f:selectItems/>
-                                    </p:selectOneMenu>
-                                </div>
-                            </div>
 
-                        </p:panel>
+                            </p:panel>
+                        </div>
+                    </div>
+                    <div class="field col-md-2">
+                        <p:commandButton value='${langBean.msg("button.save")}' update="@form"
+                                         action='#{cc.attrs.recordingUnitFormBean.save}'/>
                     </div>
 
 
                 </div>
-
-                <p:commandButton value='${langBean.msg("button.save")}' update="@form"
-                                 action='#{cc.attrs.recordingUnitFormBean.save}'/>
 
 
                 <p:tabView>
@@ -74,50 +77,8 @@
 
 
                         <div class="row">
-                            <div class="form-panel col-12 col-lg-2 col-xl-2">
-                                <p:panel id="panel-identifier"
-                                         header='${langBean.msg("recordingunit.panel.identification")}'
-                                         toggleable="true">
-                                    <div class="field grid">
-                                        <!-- Identifier -->
-                                        <h:outputLabel for="output-label-serial-id" value="Identifiant"
-                                                       styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
-                                        <div class="col-12 md:col-10">
-                                            <p:inputText id="output-label-serial-id" required="false" disabled="true"
-                                                         value="#{cc.attrs.recordingUnitFormBean.recordingUnit.serial_id}"/>
-                                        </div>
-                                        <!-- UE Type -->
-                                        <div class="field col-12 md:col-4">
-                                            <p:outputLabel for="auto-complete-ue-type" value="Type d'UE"
-                                                           styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
-                                            <p:autoComplete id="auto-complete-ue-type"
-                                                            value="#{cc.attrs.recordingUnitFormBean.FType}"
-                                                            completeMethod="#{cc.attrs.recordingUnitFormBean.completeRecordingUnitType}"
-                                                            var="field" itemLabel="#{field.label}"
-                                                            itemValue="#{field}"
-                                                            required="true"
-                                                            converter="#{conceptFieldDTOConverter}"
-                                                            forceSelection="true"
-                                                            scrollHeight="300"
-                                                            dropdown="true"/>
-                                        </div>
-                                        <!-- UE Secondary Type -->
-                                        <div class="field col-12 md:col-4">
-                                            <p:outputLabel for="select-one-menu-ue-secondary-type" value="Type d'UE"
-                                                           styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
-                                            <p:selectOneMenu id="select-one-menu-ue-secondary-type" disabled="true">
-                                                <f:selectItem itemLabel="Unité stratigraphique negative"
-                                                              itemValue="US"/>
-                                                <f:selectItems/>
-                                            </p:selectOneMenu>
-                                        </div>
 
-
-                                    </div>
-                                </p:panel>
-                            </div>
-
-                            <div class="form-panel col-12 col-lg-2 col-xl-2">
+                            <div class="form-panel col-12 col-lg-4 col-xl-4">
                                 <p:panel id="panel-general" header='${langBean.msg("recordingunit.panel.general")}'
                                          toggleable="true">
                                     <div class="field grid">
@@ -168,8 +129,17 @@
                             </div>
 
                             <div class="form-panel col-12 col-lg-8 col-xl-8">
-                                <p:panel id="panel-type" header='${langBean.msg("recordingunit.panel.type")}'
+                                <p:panel id="panel-description" header='${langBean.msg("recordingunit.panel.description")}'
                                          toggleable="true">
+                                    <!-- Interpretation -->
+                                    <div class="field col-md-4">
+                                        <sharedLabel:openthesoLabel forId="select-one-menu-ue-interpretation" label="Interpretation"/>
+                                        <p:selectOneMenu id="select-one-menu-ue-interpretation" disabled="true">
+                                            <f:selectItem itemLabel="Mur"
+                                                          itemValue="Mur"/>
+                                            <f:selectItems/>
+                                        </p:selectOneMenu>
+                                    </div>
                                     <div class="field grid">
                                         <h:outputLabel for="description" value="Description"
                                                        styleClass="col-12 mb-2 md:col-2 md:mb-0"/>

@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:src/main/java/fr/siamois/bean/Converter/PersonConverter.java
 package fr.siamois.bean.Converter;
-========
-package fr.siamois.bean.converter;
->>>>>>>> 1075af7a47ee63362cfcf34a4c7018693a99b59d:src/main/java/fr/siamois/bean/converter/PersonConverter.java
 
 import fr.siamois.models.auth.Person;
 import fr.siamois.services.PersonService;
@@ -12,7 +8,9 @@ import jakarta.faces.convert.Converter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.faces.bean.ManagedBean;
 
+@ManagedBean
 @Component
 @Slf4j
 public class PersonConverter implements Converter<Person> {
@@ -43,4 +41,3 @@ public class PersonConverter implements Converter<Person> {
         }
     }
 }
-

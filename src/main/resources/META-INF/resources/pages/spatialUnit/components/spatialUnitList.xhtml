@@ -3,32 +3,38 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+                xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+                >
     <cc:interface>
         <!-- Attributes to pass the bean's list and optional additional parameters -->
-        <cc:attribute name="spatialUnitList" required="true" />
+        <cc:attribute name="spatialUnitList" required="true"/>
     </cc:interface>
     <cc:implementation>
-        <p:outputPanel>
-            <h3>Spatial units</h3>
-            <div class="card">
-                <p:dataTable paginator="true" paginatorPosition="bottom"  rows="10" var="item" value="#{cc.attrs.spatialUnitList}">
-                    <p:column headerText="Name">
-                        <p:link outcome="/pages/spatialUnit/spatialUnit.xhtml" value="#{item.name}">
-                            <f:param name="id" value="#{item.id}"/>
-                        </p:link>
-                    </p:column>
+        <form>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <p:outputPanel>
+                <h3>Spatial units</h3>
 
-                    <p:column headerText="ARK">
-                        <h:outputText value="#{item.ark.arkId}" />
-                    </p:column>
+                <div class="card">
+                    <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
+                                 value="#{cc.attrs.spatialUnitList}">
+                        <p:column headerText="Name">
+                            <p:link outcome="/pages/spatialUnit/spatialUnit.xhtml" value="#{item.name}">
+                                <f:param name="id" value="#{item.id}"/>
+                            </p:link>
+                        </p:column>
 
-                    <p:column headerText="Category">
-                        <h:outputText value="#{item.category.label}" />
-                    </p:column>
-                </p:dataTable>
-            </div>
-        </p:outputPanel>
+                        <p:column headerText="ARK">
+                            <h:outputText value="#{item.ark.arkId}"/>
+                        </p:column>
+
+                        <p:column headerText="Category">
+                            <h:outputText value="#{item.category.label}"/>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </p:outputPanel>
+        </form>
     </cc:implementation>
 </ui:composition>
 
