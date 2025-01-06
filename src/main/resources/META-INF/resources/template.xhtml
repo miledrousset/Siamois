@@ -24,81 +24,119 @@
 <ui:insert name="metadata"/>
 
 <h:body>
+
+    <!-- Sidebar -->
+    <p:sidebar widgetVar="sidebar">
+        <div style='background-color: "EEEEEE"'>
+            <h5>SIAMOIS</h5>
+            <p:menu>
+                <p:submenu>
+                    <p:menuitem value="Recherche" icon="pi pi-search"/>
+                </p:submenu>
+                <p:submenu label="Principal">
+                    <p:menuitem value="Tableau de bord" outcome="/pages/home/home"
+                                icon="pi pi-home"/>
+                    <p:menuitem value="Mes sites" action="#{menuView.save}" ajax="false"
+                                icon="pi pi-map-marker"/>
+                    <p:menuitem value="Mes actions" action="#{menuView.update}" icon="pi pi-play"/>
+                    <p:menuitem value="Mes équipes" action="#{menuView.delete}" icon="pi pi-users"/>
+                </p:submenu>
+
+
+                <p:submenu label="Administration">
+                    <p:tieredMenu>
+                        <p:submenu value="Gerer les utilisateurs" icon="pi pi-user-edit">
+                            <p:menuitem rendered="#{navBean.userIs('ADMIN')}"
+                                        value='${langBean.msg("nav.create.manager")}'
+                                        outcome="/pages/admin/manager.xhtml"/>
+                            <p:menuitem value="Video"/>
+                        </p:submenu>
+                    </p:tieredMenu>
+                    <p:menuitem value='${langBean.msg("nav.fieldconfig")}' outcome="/pages/field/fieldConfiguration"
+                                icon="pi pi-pencil"/>
+                </p:submenu>
+            </p:menu>
+
+        </div>
+
+    </p:sidebar>
+
     <!-- Main Layout -->
     <div class="layout-container no-gutters">
         <div class="row g-0">
-            <div class="col-md-1">
+            <!--<div class="col-md-1">
 
                 <div class="left-panel shadow">
                     <div class="app-name">SIAMOIS</div>
                     <h:button value='${langBean.msg("home.save.spatialunit")}' outcome="/pages/create/spatialUnit.xhtml"/>
 
-                    <!--                        <p:menu>
+                    &lt;!&ndash;                        <p:menu>
                                                 <p:submenu styleClass="icon-only-menu" label="">
                                                     <p:menuitem value="" outcome="/pages/home/home" icon="pi pi-home"/>
                                                     &lt;!&ndash; Add more menu items as needed &ndash;&gt;
                                                 </p:submenu>
-                                            </p:menu>-->
+                                            </p:menu>&ndash;&gt;
                 </div>
-            </div>
-            <div class="col">
+            </div>-->
+            <div class="col shadow top-bar">
                 <!-- Top Menu Bar -->
-                <div class="top-bar shadow">
-                    <p:menubar>
-                        <f:facet name="start">
-                            <nav>
-                                <form action="${navBean.logoutPath()}" method="post">
-                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                    <button type="submit" class="btn btn-danger">${langBean.msg("nav.logout")}</button>
-                                </form>
-                                <h:button value='${langBean.msg("nav.fieldconfig")}'
-                                          outcome="/pages/field/fieldConfiguration.xhtml" styleClass="btn btn-primary"/>
 
-                                <h:button rendered="#{navBean.userIs('ADMIN')}"
-                                          value='${langBean.msg("nav.create.manager")}'
-                                          outcome="/pages/admin/manager.xhtml" styleClass="btn btn-danger"/>
+                <p:menubar>
+                    <f:facet name="start">
+                        <p:commandButton icon="pi pi-bars" type="button" onclick="PF('sidebar').show()"
+                                         styleClass="mr-2"/>
+                        <h1>SIAMOIS</h1>
+                    </f:facet>
 
-                                <h:button rendered="#{navBean.userIs('ADMIN')}"
-                                          value='${langBean.msg("nav.create.team")}'
-                                          outcome="/pages/admin/team.xhtml" styleClass="btn btn-danger"/>
+                    <f:facet name="end">
+                        <nav>
+                            <form action="${navBean.logoutPath()}" method="post">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <button type="submit" class="btn btn-danger">${langBean.msg("nav.logout")}</button>
+                            </form>
 
-                                <h:button rendered="#{navBean.userIsAny('TEAM_MANAGER', 'ADMIN')}"
-                                          value="Gérer les utilisateurs"
-                                          outcome="/pages/manager/users.xhtml" styleClass="btn btn btn-warning"/>
 
-                                <h:form>
-                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                    <p:selectOneMenu id="teamSelection"
-                                                     value="#{navBean.selectedTeam}"
-                                                     rendered="#{navBean.teams.size() > 1}"
-                                                     converter="#{navBean.converter}">
-                                        <f:selectItems
-                                                value="#{navBean.teams}"
-                                                itemLabel="#{team.name}"
-                                                var="team"/>
-                                        <p:ajax listener="#{navBean.onTeamChange()}" update="main"/>
-                                    </p:selectOneMenu>
-                                </h:form>
+                            <h:button rendered="#{navBean.userIs('ADMIN')}"
+                                      value='${langBean.msg("nav.create.team")}'
+                                      outcome="/pages/admin/team.xhtml" styleClass="btn btn-danger"/>
 
-                            </nav>
-                        </f:facet>
-                        <p:divider layout="vertical"/>
-                    </p:menubar>
-                </div>
+                            <h:button rendered="#{navBean.userIsAny('TEAM_MANAGER', 'ADMIN')}"
+                                      value="Gérer les utilisateurs"
+                                      outcome="/pages/manager/users.xhtml" styleClass="btn btn btn-warning"/>
 
-                    <h:form>
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                        <p:breadCrumb model="#{breadcrumbBean.model}" style="border:none;background:transparent;border-radius:0;"/>
-                    </h:form>
+                            <h:form>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <p:selectOneMenu id="teamSelection"
+                                                 value="#{navBean.selectedTeam}"
+                                                 rendered="#{navBean.teams.size() > 1}"
+                                                 converter="#{navBean.converter}">
+                                    <f:selectItems
+                                            value="#{navBean.teams}"
+                                            itemLabel="#{team.name}"
+                                            var="team"/>
+                                    <p:ajax listener="#{navBean.onTeamChange()}" update="main"/>
+                                </p:selectOneMenu>
+                            </h:form>
 
-                <p:card id="main" class="shadow" style="margin:1em;">
-                    <ui:insert name="content">
-                        <!-- Content will be inserted here -->
-                    </ui:insert>
-                </p:card>
+                        </nav>
+                    </f:facet>
+                </p:menubar>
             </div>
 
+
+            <h:form>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <p:breadCrumb model="#{breadcrumbBean.model}"
+                              style="border:none;background:transparent;border-radius:0;"/>
+            </h:form>
+
+            <p:card id="main" class="shadow" style="margin:1em;">
+                <ui:insert name="content">
+                    <!-- Content will be inserted here -->
+                </ui:insert>
+            </p:card>
         </div>
+
     </div>
 
 </h:body>

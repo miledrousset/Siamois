@@ -23,7 +23,7 @@
                          rendered="#{not empty spatialUnitBean.spatialUnitErrorMessage}"/>
         <h:panelGroup id="contentPanel" rendered="#{spatialUnitBean.spatialUnit != null}">
 
-            <h2>#{spatialUnitBean.spatialUnit.name} (#{spatialUnitBean.spatialUnit.category.label})</h2>
+            <h2>#{spatialUnitBean.spatialUnit.name} <p:chip label="#{spatialUnitBean.spatialUnit.category.label}" icon="pi pi-map-marker" styleClass="mr-2"/></h2>
             <p>ARK ID: #{spatialUnitBean.spatialUnit.ark.arkId}</p>
 
 

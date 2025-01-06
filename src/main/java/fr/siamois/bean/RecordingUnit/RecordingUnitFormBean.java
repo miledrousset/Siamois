@@ -49,12 +49,12 @@ public class RecordingUnitFormBean implements Serializable {
     private final LangBean langBean;
 
     private RecordingUnit recordingUnit;
+    private String recordingUnitErrorMessage; // If error while initing the recording unit
     private Long id;  // ID of the requested RU
     private LocalDate startDate;
     private LocalDate endDate;
     private List<Event> events; // Strati
     private Boolean isLocalisationFromSIG;
-    private String recordingUnitErrorMessage;
     private List<ConceptFieldDTO> concepts;
     private FieldConfigurationWrapper configurationWrapper;
     private ConceptFieldDTO fType = null;
@@ -160,6 +160,7 @@ public class RecordingUnitFormBean implements Serializable {
         this.isLocalisationFromSIG = false;
         this.concepts = null;
         this.fType = null;
+        recordingUnitErrorMessage = null;
         Person person = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("User should be connected"));
 
         try {
@@ -205,10 +206,10 @@ public class RecordingUnitFormBean implements Serializable {
                 fType.setUri(typeConcept.getVocabulary().getBaseUri()+"?idc="+typeConcept.getExternalId()+"&idt="+typeConcept.getVocabulary().getExternalVocabularyId());
 
             } else {
-                // todo: handle error
+                recordingUnitErrorMessage = "Invalid recording unit ID";
             }
         } catch (RuntimeException err) {
-            log.error(String.valueOf(err));
+            recordingUnitErrorMessage = "Unable to get recording unit";
         }
     }
 }

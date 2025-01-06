@@ -50,11 +50,12 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     // Local
     private RecordingUnit recordingUnit;
+    private String recordingUnitErrorMessage;
     private LocalDate startDate;
     private LocalDate endDate;
     private List<Event> events; // Strati
     private Boolean isLocalisationFromSIG;
-    private String recordingUnitErrorMessage;
+
     private List<ConceptFieldDTO> concepts;
     private ConceptFieldDTO fType = null;
     private FieldConfigurationWrapper configurationWrapper;
@@ -209,7 +210,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                 events.add(new Event("Posterior", "15/10/2020 16:15", "pi pi-arrow-circle-down", "#FF9800"));
             }
         } catch (RuntimeException err) {
-            log.error(String.valueOf(err));
+            recordingUnitErrorMessage = "Error initializing the form";
         }
     }
 }
