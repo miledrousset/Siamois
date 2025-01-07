@@ -4,11 +4,16 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:cc="http://xmlns.jcp.org/jsf/composite"
-                >
+>
     <cc:interface>
         <!-- Attributes to pass the bean's list and optional additional parameters -->
         <cc:attribute name="spatialUnitList" required="true"/>
-        <cc:attribute name="header" />
+        <cc:attribute name="header"/>
+        <cc:attribute name="newButtonCallback"/>
+        <cc:attribute name="newButtonLabel"/>
+        <cc:attribute name="new2ButtonCallback"/>
+        <cc:attribute name="new2ButtonLabel"/>
+        <cc:attribute name="header"/>
     </cc:interface>
     <cc:implementation>
         <h:form>
@@ -17,6 +22,26 @@
 
 
                 <div class="card">
+
+                    <p:toolbar>
+                        <p:toolbarGroup>
+
+                            <h:button value='${langBean.msg("spatialunit.button.new")}' icon="pi pi-plus"
+                                             outcome="/pages/create/spatialUnit.xhtml"
+                                             style="margin-right: .5rem">
+                            </h:button>
+
+                            <h:button value='${langBean.msg("spatialunit.button.add_from_existing")}'
+                                             icon="pi pi-plus" outcome="/pages/create/spatialUnit.xhtml"
+
+                                             style="margin-right: .5rem">
+                            </h:button>
+
+
+                        </p:toolbarGroup>
+
+                    </p:toolbar>
+
                     <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
                                  value="#{cc.attrs.spatialUnitList}">
                         <f:facet name="header">
@@ -28,8 +53,8 @@
                                     action="#{spatialUnitBean.goToSpatialUnitById(item.id)}"
 
                                     actionListener="#{breadcrumbBean.addBreadcrumbItem(item.name, '/pages/spatialUnit/spatialUnit', 'pi pi-map-marker')}"
-                                    >
-                                <h:outputText value="#{item.name}" />
+                            >
+                                <h:outputText value="#{item.name}"/>
                             </p:commandLink>
                         </p:column>
 

@@ -10,9 +10,9 @@
     <h:outputStylesheet library="css" name="bootstrap.min.css"/>
     <h:outputScript library="js" name="jquery-3.7.1.js"/>
     <h:outputScript library="js" name="bootstrap.bundle.min.js"/>
-    <h:outputStylesheet library="css" name="styles.css"/>
     <h:outputStylesheet library="css" name="jquery-ui.css"/>
     <h:outputScript library="js" name="jquery-ui.js"/>
+    <h:outputStylesheet library="css" name="styles.css"/>
 
     <script type="text/javascript">
         window.csrfTokenName = "{{ craft.config.csrfTokenName }}";
@@ -27,35 +27,37 @@
 
     <!-- Sidebar -->
     <p:sidebar widgetVar="sidebar">
-        <div style='background-color: "EEEEEE"'>
+        <div >
             <h5>SIAMOIS</h5>
-            <p:menu>
-                <p:submenu>
-                    <p:menuitem value="Recherche" icon="pi pi-search"/>
-                </p:submenu>
-                <p:submenu label="Principal">
-                    <p:menuitem value="Tableau de bord" outcome="/pages/home/home"
-                                icon="pi pi-home"/>
-                    <p:menuitem value="Mes sites" action="#{menuView.save}" ajax="false"
-                                icon="pi pi-map-marker"/>
-                    <p:menuitem value="Mes actions" action="#{menuView.update}" icon="pi pi-play"/>
-                    <p:menuitem value="Mes équipes" action="#{menuView.delete}" icon="pi pi-users"/>
+            <p:tieredMenu styleClass="left-menu">
+
+                <p:menuitem value="Recherche" icon="pi pi-search"/>
+
+                <p:divider/>
+
+                <p:menuitem value="Tableau de bord" outcome="/pages/home/home"
+                            icon="pi pi-home"/>
+                <p:menuitem value="Mes sites" action="#{menuView.save}" ajax="false"
+                            icon="pi pi-map-marker"/>
+                <p:menuitem value="Mes actions" action="#{menuView.update}" icon="pi pi-play"/>
+                <p:menuitem value="Mes équipes" action="#{menuView.delete}" icon="pi pi-users"/>
+                <p:divider/>
+
+
+                <p:submenu label="Gerer les utilisateurs" icon="pi pi-user-edit">
+                    <p:menuitem rendered="#{navBean.userIs('ADMIN')}"
+                                value='${langBean.msg("nav.create.manager")}'
+                                outcome="/pages/admin/manager.xhtml"/>
+                    <p:menuitem rendered="#{navBean.userIsAny('TEAM_MANAGER', 'ADMIN')}"
+                                value="Gérer les utilisateurs"
+                                outcome="/pages/manager/users.xhtml"/>
                 </p:submenu>
 
 
-                <p:submenu label="Administration">
-                    <p:tieredMenu>
-                        <p:submenu value="Gerer les utilisateurs" icon="pi pi-user-edit">
-                            <p:menuitem rendered="#{navBean.userIs('ADMIN')}"
-                                        value='${langBean.msg("nav.create.manager")}'
-                                        outcome="/pages/admin/manager.xhtml"/>
-                            <p:menuitem value="Video"/>
-                        </p:submenu>
-                    </p:tieredMenu>
-                    <p:menuitem value='${langBean.msg("nav.fieldconfig")}' outcome="/pages/field/fieldConfiguration"
-                                icon="pi pi-pencil"/>
-                </p:submenu>
-            </p:menu>
+                <p:menuitem value='${langBean.msg("nav.fieldconfig")}' outcome="/pages/field/fieldConfiguration"
+                            icon="pi pi-pencil"/>
+
+            </p:tieredMenu>
 
         </div>
 
@@ -100,9 +102,7 @@
                                       value='${langBean.msg("nav.create.team")}'
                                       outcome="/pages/admin/team.xhtml" styleClass="btn btn-danger"/>
 
-                            <h:button rendered="#{navBean.userIsAny('TEAM_MANAGER', 'ADMIN')}"
-                                      value="Gérer les utilisateurs"
-                                      outcome="/pages/manager/users.xhtml" styleClass="btn btn btn-warning"/>
+
 
                             <h:form>
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>

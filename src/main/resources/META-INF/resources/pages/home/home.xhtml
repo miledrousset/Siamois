@@ -14,7 +14,7 @@
     <ui:define name="content">
         <!-- Conditionally render the message if it's set in the bean -->
         <p:staticMessage severity="error" summary="Error" closable="false" detail="#{homeBean.spatialUnitListErrorMessage}" rendered="#{not empty homeBean.spatialUnitListErrorMessage}" />
-        <spatialUnit:spatialUnitList spatialUnitList="#{homeBean.spatialUnitList}"
+        <spatialUnit:spatialUnitList spatialUnitList="#{homeBean.spatialUnitList}" header='${langBean.msg("spatialunit.label")}'
                                      breadcrumbBean="#{breadcrumbBean}" />
 
         <!-- Button to access recording unit form -->

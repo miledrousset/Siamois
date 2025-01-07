@@ -109,3 +109,8 @@ html, body {
     color: var(--primary-color-text);
 }
 
+.left-menu {
+    border: none; !important;
+    width: 100%; !important;
+}
+

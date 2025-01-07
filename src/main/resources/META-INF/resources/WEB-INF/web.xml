@@ -1,4 +1,4 @@
 <context-param>
-    <param-name>primefaces.FONT_AWESOME</param-name>
-    <param-value>true</param-value>
+    <param-name>primefaces.THEME</param-name>
+    <param-value>mytheme</param-value>
 </context-param>
