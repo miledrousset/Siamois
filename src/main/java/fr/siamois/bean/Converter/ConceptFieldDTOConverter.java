@@ -20,9 +20,10 @@ public class ConceptFieldDTOConverter implements Converter<ConceptFieldDTO> {
     @Override
     public ConceptFieldDTO getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
         try {
-            return objectMapper.readValue(s, ConceptFieldDTO.class);
+            ConceptFieldDTO cfdto = objectMapper.readValue(s, ConceptFieldDTO.class);
+            return cfdto;
         } catch (JsonProcessingException e) {
-            log.error("Error while converting string to Team object", e);
+            log.error("Error while converting string to  object", e);
             throw new RuntimeException(e);
         }
     }
@@ -32,7 +33,7 @@ public class ConceptFieldDTOConverter implements Converter<ConceptFieldDTO> {
         try {
             return objectMapper.writeValueAsString(o);
         } catch (JsonProcessingException e) {
-            log.error("Error while converting Team object to string", e);
+            log.error("Error while converting object to string", e);
             throw new RuntimeException(e);
         }
     }

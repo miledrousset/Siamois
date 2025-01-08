@@ -2,6 +2,7 @@ package fr.siamois.bean.Field;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
+import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.api.ClientSideErrorException;
@@ -49,7 +50,8 @@ public class TestConfigurationBean implements Serializable {
     private List<String> fieldCodes = List.of(
             SpatialUnit.CATEGORY_FIELD_CODE,
             Person.USER_ROLE_FIELD_CODE,
-            RecordingUnit.TYPE_FIELD_CODE
+            RecordingUnit.TYPE_FIELD_CODE,
+            ActionUnit.TYPE_FIELD_CODE
     );
 
     // Fields

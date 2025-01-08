@@ -17,6 +17,7 @@
 
     <ui:define name="content">
 
+        <p:growl id="growl" showDetail="true"/>
 
         <!-- Content -->
         <p:staticMessage severity="error" summary="Error" closable="false"
@@ -90,13 +91,14 @@
                     </form>
                 </div>
 
+                <!-- Table des unités spatiale -->
             </div>
             <div class="row siamois-rows">
                 <div class="col-md-12">
                     <p:staticMessage severity="error" summary="Error" closable="false"
                                      detail="#{spatialUnitBean.actionUnitListErrorMessage}"
                                      rendered="#{not empty spatialUnitBean.actionUnitListErrorMessage}"/>
-                    <form>
+                    <h:form>
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         <p:outputPanel>
                             <div class="card">
@@ -105,8 +107,8 @@
                                     <p:toolbarGroup>
 
                                         <p:commandButton value='Nouveau' icon="pi pi-plus"
-
-                                                         update=":dialogs:new-action"
+                                                         update="dialogs"
+                                                         action="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"
                                                          oncomplete="PF('newActionDialog').show()"
                                                          style="margin-right: .5rem">
                                         </p:commandButton>
@@ -121,7 +123,7 @@
                                         Actions
                                     </f:facet>
                                     <p:column headerText="Name">
-                                        <p:link outcome="/pages/recordingUnit/recordingUnit.xhtml"
+                                        <p:link outcome="/pages/actionUnit/actionUnit.xhtml"
                                                 value="#{item.type.label}">
                                             <f:param name="id" value="#{item.id}"/>
                                         </p:link>
@@ -134,54 +136,125 @@
                                 </p:dataTable>
                             </div>
                         </p:outputPanel>
-                    </form>
+                    </h:form>
                 </div>
             </div>
 
         </h:panelGroup>
 
         <h:form id="dialogs">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <p:dialog showEffect="fade" modal="true" widgetVar="newActionDialog"
                       responsive="true">
+
                 <f:facet name="header">
                     <div>
                         <span class="custom-header">
                             Nouvelle unité d'action pour #{spatialUnitBean.spatialUnit.name}
                 <p:chip label="#{spatialUnitBean.spatialUnit.category.label}" icon="pi pi-map-marker"
-                        actionListener="#{newActionUnitBean.init(spatialUnitBean.spatialUnit)}"
+
                         styleClass="mr-2"/>
                         </span>
 
                     </div>
                 </f:facet>
+
                 <p:outputPanel id="new-action" class="ui-fluid">
                     <p:outputPanel>
                         <div class="field">
                             <p:outputLabel for="name">Name</p:outputLabel>
-                            <p:inputText id="name" required="true" value="#{newSpatialUnitBean.name}"/>
+                            <p:inputText id="name" required="true" value="#{newActionUnitBean.actionUnit.name}"/>
                         </div>
 
                         <!-- Action Type -->
-                        <div class="field col-md-4">
+                        <div class="field">
                             <sharedLabel:openthesoLabel for="auto-complete-action-type" label="Type"/>
                             <p:autoComplete id="auto-complete-action-type"
-                                            required="false"
+                                            value="#{newActionUnitBean.fieldType}"
+                                            completeMethod="#{newActionUnitBean.completeActionUnitType}"
+                                            var="field" itemLabel="#{field.label}"
+                                            itemValue="#{field}"
+                                            required="true"
+                                            converter="#{conceptFieldDTOConverter}"
                                             forceSelection="true"
                                             scrollHeight="300"
                                             dropdown="true"/>
                         </div>
 
                     </p:outputPanel>
+
+                    <p:commandButton
+                            value='${langBean.msg("actionunit.button.create")}'
+                            icon="pi pi-check"
+                            action="#{newActionUnitBean.save}"
+                            update="@form"
+                            ajax="true"
+                            process="@this"
+                    />
+                    <p:commandButton value='${langBean.msg("button.cancel")}' icon="pi pi-times" onclick="PF('newActionDialog').hide()"
+                                     class="ui-button-secondary" type="button"/>
+
                 </p:outputPanel>
 
                 <f:facet name="footer">
-                    <p:commandButton value="Créer l'action" icon="pi pi-check"
-                                     update="new-action"/>
-                    <p:commandButton value="Annuler" icon="pi pi-times" onclick="PF('newActionDialog').hide()"
-                                     class="ui-button-secondary" type="button"/>
+
                 </f:facet>
+
             </p:dialog>
         </h:form>
+
+        <h:form id="form-new-action">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+                    <div>
+                        <span class="custom-header">
+                            Nouvelle unité d'action pour #{spatialUnitBean.spatialUnit.name}
+                <p:chip label="#{spatialUnitBean.spatialUnit.category.label}" icon="pi pi-map-marker"
+
+                        styleClass="mr-2"/>
+                        </span>
+
+                    </div>
+
+
+                <p:outputPanel id="new-action" class="ui-fluid">
+                    <p:outputPanel>
+                        <div class="field">
+                            <p:outputLabel for="name">Name</p:outputLabel>
+                            <p:inputText id="name" required="true" value="#{newActionUnitBean.actionUnit.name}"/>
+                        </div>
+
+                        <!-- Action Type -->
+                        <div class="field">
+                            <sharedLabel:openthesoLabel for="auto-complete-action-type" label="Type"/>
+                            <p:autoComplete id="auto-complete-action-type"
+                                            value="#{newActionUnitBean.fieldType}"
+                                            completeMethod="#{newActionUnitBean.completeActionUnitType}"
+                                            var="field" itemLabel="#{field.label}"
+                                            itemValue="#{field}"
+                                            required="true"
+                                            converter="#{conceptFieldDTOConverter}"
+                                            forceSelection="true"
+                                            scrollHeight="300"
+                                            dropdown="true"/>
+                        </div>
+
+                    </p:outputPanel>
+
+                    <p:commandButton
+                            value='${langBean.msg("actionunit.button.create")}'
+                            icon="pi pi-check"
+                            action="#{newActionUnitBean.save}"
+                            update="@form"
+                    />
+                    <p:commandButton value='${langBean.msg("button.cancel")}' icon="pi pi-times"
+                                     class="ui-button-secondary" type="button"/>
+
+                </p:outputPanel>
+
+
+        </h:form>
+
 
 
     </ui:define>
