@@ -4,89 +4,198 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components">
+                xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components"
+                xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label">
 
     <ui:define name="metadata">
         <f:metadata>
             <!-- Capture the ID parameter from the URL and bind it to spatialUnitBean -->
             <f:viewParam name="id" value="#{spatialUnitBean.id}" required="true"/>
-            <f:event type="preRenderView" listener="#{spatialUnitBean.init}" />
+            <f:event type="preRenderView" listener="#{spatialUnitBean.init}"/>
         </f:metadata>
     </ui:define>
 
     <ui:define name="content">
 
+        <p:growl id="growl" showDetail="true"/>
 
         <!-- Content -->
-        <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.spatialUnitErrorMessage}" rendered="#{not empty spatialUnitBean.spatialUnitErrorMessage}" />
+        <p:staticMessage severity="error" summary="Error" closable="false"
+                         detail="#{spatialUnitBean.spatialUnitErrorMessage}"
+                         rendered="#{not empty spatialUnitBean.spatialUnitErrorMessage}"/>
         <h:panelGroup id="contentPanel" rendered="#{spatialUnitBean.spatialUnit != null}">
 
-            <h2>Spatial Unit: #{spatialUnitBean.spatialUnit.name}</h2>
-            <h3>Category: #{spatialUnitBean.spatialUnit.category.label}</h3>
+            <h2>#{spatialUnitBean.spatialUnit.name}
+                <p:chip label="#{spatialUnitBean.spatialUnit.category.label}" icon="pi pi-map-marker"
+                        styleClass="mr-2"/>
+            </h2>
             <p>ARK ID: #{spatialUnitBean.spatialUnit.ark.arkId}</p>
+
+
+            <div class="row siamois-row">
+                <div class="col-md-6">
+                    <p:staticMessage severity="error" summary="Error" closable="false"
+                                     detail="#{spatialUnitBean.spatialUnitListErrorMessage}"
+                                     rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
+                    <spatialUnit:spatialUnitList header="Contient"
+                                                 spatialUnitList="#{spatialUnitBean.spatialUnitList}"
+                                                 breadcrumbBean="#{breadcrumbBean}"/>
+                </div>
+                <div class="col-md-6">
+                    <p:staticMessage severity="error" summary="Error" closable="false"
+                                     detail="#{spatialUnitBean.spatialUnitListErrorMessage}"
+                                     rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
+                    <spatialUnit:spatialUnitList header="Fait partie de"
+                                                 spatialUnitList="#{spatialUnitBean.spatialUnitParentsList}"/>
+                </div>
+            </div>
+            <div class="row siamois-row">
+                <div class="col-md-12">
+                    <form>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <p:outputPanel>
+                            <div class="card">
+                                <p:staticMessage severity="error" summary="Error" closable="false"
+                                                 detail="#{spatialUnitBean.recordingUnitListErrorMessage}"
+                                                 rendered="#{not empty spatialUnitBean.recordingUnitListErrorMessage}"/>
+                                <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
+                                             value="#{spatialUnitBean.recordingUnitList}">
+                                    <f:facet name="header">
+                                        Unités d'enregistrement
+                                    </f:facet>
+                                    <p:column headerText="Name">
+                                        <p:link outcome="/pages/recordingUnit/recordingUnit.xhtml"
+                                                value="#{item.serial_id}">
+                                            <f:param name="id" value="#{item.id}"/>
+                                        </p:link>
+                                    </p:column>
+
+                                    <p:column headerText="ARK">
+                                        <h:outputText value="#{item.ark.arkId}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Type">
+                                        <p:chip label="#{item.type.label}" icon="pi pi-file" styleClass="mr-2"/>
+                                    </p:column>
+
+                                    <p:column headerText="Auteur">
+                                        <h:outputText value="#{item.author.name} #{item.author.lastname}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Fouilleur">
+                                        <h:outputText value="#{item.excavator.name} #{item.excavator.lastname}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </p:outputPanel>
+                    </form>
+                </div>
+
+                <!-- Table des unités spatiale -->
+            </div>
+            <div class="row siamois-rows">
+                <div class="col-md-12">
+                    <p:staticMessage severity="error" summary="Error" closable="false"
+                                     detail="#{spatialUnitBean.actionUnitListErrorMessage}"
+                                     rendered="#{not empty spatialUnitBean.actionUnitListErrorMessage}"/>
+                    <h:form>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <p:outputPanel>
+                            <div class="card">
+
+                                <p:toolbar>
+                                    <p:toolbarGroup>
+
+<!--                                        <p:commandButton value='Nouveau' icon="pi pi-plus"-->
+<!--                                                         update="dialogs"-->
+<!--                                                         action="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"-->
+<!--                                                         oncomplete="PF('newActionDialog').show()"-->
+<!--                                                         style="margin-right: .5rem">-->
+<!--                                        </p:commandButton>-->
+
+                                    </p:toolbarGroup>
+
+                                </p:toolbar>
+
+                                <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
+                                             value="#{spatialUnitBean.actionUnitList}">
+                                    <f:facet name="header">
+                                        Actions
+                                    </f:facet>
+                                    <p:column headerText="Name">
+                                        <p:link outcome="/pages/actionUnit/actionUnit.xhtml"
+                                                value="#{item.type.label}">
+                                            <f:param name="id" value="#{item.id}"/>
+                                        </p:link>
+                                    </p:column>
+
+                                    <p:column headerText="Type">
+                                        <p:chip label="#{item.type.label}" icon="pi pi-play" styleClass="mr-2"/>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </div>
+                        </p:outputPanel>
+                    </h:form>
+                </div>
+            </div>
 
         </h:panelGroup>
 
-        <p:outputPanel>
-            <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.spatialUnitListErrorMessage}" rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}" />
-            <spatialUnit:spatialUnitList spatialUnitList="#{spatialUnitBean.spatialUnitList}" />
-        </p:outputPanel>
+        <h:form id="form-new-action">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
-        <p:outputPanel>
-            <h3>Recording units</h3>
-            <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.recordingUnitListErrorMessage}" rendered="#{not empty spatialUnitBean.recordingUnitListErrorMessage}" />
-            <p:panelGrid columns="3" styleClass="card-grid">
-                <ui:repeat value="#{spatialUnitBean.recordingUnitList}" var="item">
-                    <p:card>
-                        <f:facet name="header">
-                            <!-- <img alt="user header" src="../../resources/img/location.jpg"/> -->
-                        </f:facet>
-                        <f:facet name="title">
-                            #{item.ark.arkId}
-                        </f:facet>
-                        <f:facet name="subtitle">
+                    <div>
+                        <span class="custom-header">
+                            Nouvelle unité d'action pour #{spatialUnitBean.spatialUnit.name}
+                <p:chip label="#{spatialUnitBean.spatialUnit.category.label}" icon="pi pi-map-marker"
 
-                        </f:facet>
+                        styleClass="mr-2"/>
+                        </span>
 
-                        <p>Category : #{item.type.label}</p>
-                        <p>Author : #{item.author.lastname} #{item.author.name}</p>
-
-                        <!-- Button to access recording unit form -->
-                        <p:button value="Go to recording unit"
-                                  icon="pi pi-search"
-                                  outcome="/pages/recordingUnit/recordingUnit.xhtml?id=#{item.id}" />
-
-                    </p:card>
-                </ui:repeat>
-            </p:panelGrid>
-        </p:outputPanel>
-
-        <p:outputPanel>
-            <h3>Actions</h3>
-            <p:staticMessage severity="error" summary="Error" closable="false" detail="#{spatialUnitBean.actionUnitListErrorMessage}" rendered="#{not empty spatialUnitBean.actionUnitListErrorMessage}" />
-            <p:panelGrid columns="3" styleClass="card-grid">
-                <ui:repeat value="#{spatialUnitBean.actionUnitList}" var="item">
-                    <p:card>
-                        <f:facet name="header">
-
-                        </f:facet>
-                        <f:facet name="title">
-                            #{item.ark.arkId}
-                        </f:facet>
-
-                        <f:facet name="subtitle">
-
-                        </f:facet>
-
-                        <p>Category : #{item.type.label}</p>
+                    </div>
 
 
-                        <f:facet name="footer">
+                <p:outputPanel id="new-action" class="ui-fluid">
+                    <p:outputPanel>
+                        <div class="field">
+                            <p:outputLabel for="name">Name</p:outputLabel>
+                            <p:inputText id="name" required="true" value="#{newActionUnitBean.actionUnit.name}"/>
+                        </div>
 
-                        </f:facet>
-                    </p:card>
-                </ui:repeat>
-            </p:panelGrid>
-        </p:outputPanel>
+                        <!-- Action Type -->
+                        <div class="field">
+                            <sharedLabel:openthesoLabel for="auto-complete-action-type" label="Type"/>
+                            <p:autoComplete id="auto-complete-action-type"
+                                            value="#{newActionUnitBean.fieldType}"
+                                            completeMethod="#{newActionUnitBean.completeActionUnitType}"
+                                            var="field" itemLabel="#{field.label}"
+                                            itemValue="#{field}"
+                                            required="true"
+                                            converter="#{conceptFieldDTOConverter}"
+                                            forceSelection="true"
+                                            scrollHeight="300"
+                                            dropdown="true"/>
+                        </div>
+
+                    </p:outputPanel>
+
+                    <p:commandButton
+                            value='${langBean.msg("actionunit.button.create")}'
+                            icon="pi pi-check"
+                            action="#{newActionUnitBean.save}"
+                            actionListener="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"
+                            update="@form"
+                    />
+                    <p:commandButton value='${langBean.msg("button.cancel")}' icon="pi pi-times"
+                                     class="ui-button-secondary" type="button"/>
+
+                </p:outputPanel>
+
+
+        </h:form>
+
+
+
     </ui:define>
 </ui:composition>
