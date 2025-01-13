@@ -107,9 +107,8 @@
                                     <p:toolbarGroup>
 
 <!--                                        <p:commandButton value='Nouveau' icon="pi pi-plus"-->
-<!--                                                         update="dialogs"-->
 <!--                                                         action="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"-->
-<!--                                                         oncomplete="PF('newActionDialog').show()"-->
+<!--                                                         oncomplete="PF('dlg1').show()"-->
 <!--                                                         style="margin-right: .5rem">-->
 <!--                                        </p:commandButton>-->
 
@@ -188,12 +187,15 @@
                             update="@form"
                     />
                     <p:commandButton value='${langBean.msg("button.cancel")}' icon="pi pi-times"
-                                     class="ui-button-secondary" type="button"/>
+                                     class="ui-button-secondary" update="form-new-action" type="button"/>
 
                 </p:outputPanel>
 
 
         </h:form>
+
+<!--        <p:dialog header="Header" widgetVar="dlg1" minHeight="40" width="350" showEffect="fade" closeOnEscape="true">-->
+<!--        </p:dialog>-->
 
 
 

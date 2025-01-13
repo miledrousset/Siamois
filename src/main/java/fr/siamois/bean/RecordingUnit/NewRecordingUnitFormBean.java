@@ -185,7 +185,12 @@ public class NewRecordingUnitFormBean implements Serializable {
     }
 
 
-    public void init() {
+    public String goToNewRecordingUnitPage() {
+        return "/pages/create/recordingUnit.xhtml?faces-redirect=true";
+    }
+
+
+    public void init(ActionUnit actionUnit) {
         try {
             if (this.recordingUnit == null) {
                 log.info("Creating RU");
@@ -193,8 +198,6 @@ public class NewRecordingUnitFormBean implements Serializable {
                 this.recordingUnit = new RecordingUnit();
                 this.recordingUnit.setDescription("Nouvelle description");
                 this.startDate = recordingUnitUtils.offsetDateTimeToLocalDate(now());
-                // Below is hardcoded but it should not be. TODO
-                ActionUnit actionUnit = this.actionUnitService.findById(4);
                 this.recordingUnit.setActionUnit(actionUnit);
                 // todo : implement real algorithm for serial id
                 this.recordingUnit.setSerial_id(1);

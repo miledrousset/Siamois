@@ -31,6 +31,15 @@
                         styleClass="mr-2"/>
             </h2>
             <p>ARK ID: #{actionUnitBean.actionUnit.ark.arkId}</p>
+            <!-- Button to access recording unit form -->
+            <h:form>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <p:commandButton value="Nouvelle unité d'enregistrement"
+                                 icon="pi pi-add"
+                                 actionListener="#{newRecordingUnitFormBean.init(actionUnitBean.actionUnit)}"
+                                 action="#{newRecordingUnitFormBean.goToNewRecordingUnitPage}" />
+            </h:form>
+
 
             <p:tabView>
 
