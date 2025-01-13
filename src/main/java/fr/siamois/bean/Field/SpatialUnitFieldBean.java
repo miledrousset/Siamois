@@ -11,7 +11,6 @@ import fr.siamois.models.log.LogAction;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
-import fr.siamois.services.LogEntryService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.MessageUtils;
@@ -43,7 +42,6 @@ public class SpatialUnitFieldBean implements Serializable {
     private final FieldService fieldService;
     private final FieldConfigurationService fieldConfigurationService;
     private final LangBean langBean;
-    private final LogEntryService logEntryService;
     private final SessionSettings sessionSettings;
 
     // Storage
@@ -58,11 +56,10 @@ public class SpatialUnitFieldBean implements Serializable {
     private String fCategory = "";
     private List<SpatialUnit> fParentsSpatialUnits = new ArrayList<>();
 
-    public SpatialUnitFieldBean(FieldService fieldService, FieldConfigurationService fieldConfigurationService, LangBean langBean, LogEntryService logEntryService, SessionSettings sessionSettings) {
+    public SpatialUnitFieldBean(FieldService fieldService, FieldConfigurationService fieldConfigurationService, LangBean langBean, SessionSettings sessionSettings) {
         this.fieldService = fieldService;
         this.fieldConfigurationService = fieldConfigurationService;
         this.langBean = langBean;
-        this.logEntryService = logEntryService;
         this.sessionSettings = sessionSettings;
     }
 
@@ -96,10 +93,6 @@ public class SpatialUnitFieldBean implements Serializable {
 
         try {
             SpatialUnit saved = fieldService.saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, fParentsSpatialUnits);
-
-            Person loggedUser = sessionSettings.getAuthenticatedUser();
-
-            logEntryService.saveLog(loggedUser,LogAction.CREATE, saved.getArk());
 
             MessageUtils.displayInfoMessage(langBean, "spatialunit.created", saved.getName());
         } catch (SpatialUnitAlreadyExistsException e) {
