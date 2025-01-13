@@ -12,7 +12,9 @@ import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 
 
 import fr.siamois.models.recordingunit.RecordingUnit;
+import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
+import fr.siamois.services.vocabulary.FieldService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +44,9 @@ class RecordingUnitServiceTest {
     @Mock
     private ArkServerRepository arkServerRepository;
 
+    @Mock
+    private FieldService fieldService;
+
     @InjectMocks
     private RecordingUnitService recordingUnitService;
 
@@ -52,6 +57,7 @@ class RecordingUnitServiceTest {
     ArkServer mockArkServer;
     Vocabulary vocabulary;
     ConceptFieldDTO dto;
+    Concept concept;
 
     @BeforeEach
     void setUp() {
@@ -61,6 +67,7 @@ class RecordingUnitServiceTest {
         spatialUnit1.setId(1L);
         recordingUnit1.setId(1L);
         recordingUnit2.setId(2L);
+        concept = new Concept();
         newArk = new Ark();
         mockArkServer = new ArkServer();
         mockArkServer.setServerArkUri("http://localhost:8099/siamois");
@@ -133,13 +140,15 @@ class RecordingUnitServiceTest {
 
     @Test
     void save_success() {
-        when(arkServerRepository.findArkServerByServerArkUri("http://localhost:8099/siamois"))
-                .thenReturn(Optional.of(mockArkServer));
+
 
         when(recordingUnitRepository.save(any(RecordingUnit.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0)); // Return the same object
 
 
+        when(arkServerRepository.findLocalServer()).thenReturn(Optional.ofNullable(mockArkServer));
+
+        when(fieldService.saveOrGetConceptFromDto(vocabulary, dto)).thenReturn(concept);
 
         // Act
         RecordingUnit result = recordingUnitService.save(recordingUnit1, vocabulary, dto);
@@ -148,15 +157,16 @@ class RecordingUnitServiceTest {
         assertNotNull(result.getArk());
         assertEquals(mockArkServer, result.getArk().getArkServer());
         assertNotNull(result.getArk().getArkId());
-        verify(arkServerRepository, times(1))
-                .findArkServerByServerArkUri("http://localhost:8099/siamois");
         verify(recordingUnitRepository, times(1)).save(any(RecordingUnit.class));
     }
 
     @Test
     void save_Exception() {
-        when(arkServerRepository.findArkServerByServerArkUri("http://localhost:8099/siamois"))
-                .thenReturn(Optional.of(mockArkServer));
+
+
+        when(arkServerRepository.findLocalServer()).thenReturn(Optional.ofNullable(mockArkServer));
+
+        when(fieldService.saveOrGetConceptFromDto(vocabulary, dto)).thenReturn(concept);
 
         when(recordingUnitRepository.save(any(RecordingUnit.class)))
                 .thenThrow(new RuntimeException("Database error"));
