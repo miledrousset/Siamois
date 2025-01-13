@@ -42,8 +42,8 @@
             ALTER TABLE history_recording_unit
             DROP CONSTRAINT history_recording_unit_pkey;
 
-            ALTER TABLE history_recording_unit
-            DROP CONSTRAINT history_recording_unit_fk_ark_id_key;
+            CREATE INDEX history_recording_unit_pk_idx
+            ON history_recording_unit(recording_unit_id);
 
             CREATE TABLE history_recording_unit_study
             (
@@ -54,8 +54,8 @@
             ALTER TABLE history_recording_unit_study
             DROP CONSTRAINT history_recording_unit_study_pkey;
 
-            alter table history_recording_unit_study
-                drop constraint history_recording_unit_study_fk_ark_id_key cascade;
+            create index history_recording_unit_study_id_index
+                on history_recording_unit_study (recording_unit_study_id);
 
             CREATE TABLE history_specimen_study
             (
@@ -66,8 +66,8 @@
             ALTER TABLE history_specimen_study
             DROP CONSTRAINT history_specimen_study_pkey;
 
-            alter table history_specimen_study
-                drop constraint history_specimen_study_fk_ark_id_key cascade;
+            create index history_specimen_study_id_index
+                on history_specimen_study (specimen_study_id);
 
             CREATE TABLE history_specimen
             (
@@ -78,8 +78,8 @@
             ALTER TABLE history_specimen
             DROP CONSTRAINT history_specimen_pkey;
 
-            alter table history_specimen
-                drop constraint history_specimen_fk_ark_id_key cascade;
+            create index history_specimen_id_index
+                on public.history_specimen (specimen_id);
 
             CREATE TABLE history_siamois_document
             (
@@ -90,9 +90,8 @@
             ALTER TABLE history_siamois_document
             DROP CONSTRAINT history_siamois_document_pkey;
 
-            alter table history_siamois_document
-                drop constraint history_siamois_document_fk_ark_id_key cascade;
-
+            create index history_siamois_document_id_index
+                on history_siamois_document (document_id);
 
             CREATE TABLE history_action_unit
             (
@@ -103,8 +102,8 @@
             ALTER TABLE history_action_unit
             DROP CONSTRAINT history_action_unit_pkey;
 
-            alter table history_action_unit
-                drop constraint history_action_unit_fk_ark_id_key cascade;
+            create index history_action_unit_id_index
+                on history_action_unit (action_unit_id);
 
             CREATE TABLE history_spatial_unit
             (
@@ -115,8 +114,8 @@
             ALTER TABLE history_spatial_unit
             DROP CONSTRAINT history_spatial_unit_pkey;
 
-            alter table history_spatial_unit
-                drop constraint history_spatial_unit_fk_ark_id_key cascade;
+            create index history_spatial_unit_id_index
+                on history_spatial_unit (spatial_unit_id);
 
         </sql>
 

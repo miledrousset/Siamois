@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2025.01.13-1" author="Julien Linget">
+
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="history_recording_unit"/>
+                <tableExists tableName="history_recording_unit_study"/>
+                <tableExists tableName="history_specimen_study"/>
+                <tableExists tableName="history_specimen"/>
+                <tableExists tableName="history_siamois_document"/>
+                <tableExists tableName="history_action_unit"/>
+                <tableExists tableName="history_spatial_unit"/>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*)
+                    FROM pg_trigger
+                    WHERE LOWER(tgname) = 'save_history_action_unit';
+                </sqlCheck>
+            </and>
+        </preConditions>
+
+
+
+    </changeSet>
+
+</databaseChangeLog>
