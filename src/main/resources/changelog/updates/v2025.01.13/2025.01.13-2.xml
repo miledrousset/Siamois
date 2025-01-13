@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2025.01.13-1" author="Julien Linget">
+
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="history_recording_unit"/>
+                <tableExists tableName="history_recording_unit_study"/>
+                <tableExists tableName="history_specimen_study"/>
+                <tableExists tableName="history_specimen"/>
+                <tableExists tableName="history_siamois_document"/>
+                <tableExists tableName="history_action_unit"/>
+                <tableExists tableName="history_spatial_unit"/>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*)
+                    FROM pg_trigger
+                    WHERE LOWER(tgname) = 'save_history_action_unit';
+                </sqlCheck>
+            </and>
+        </preConditions>
+
+        <sql>
+            CREATE
+            OR REPLACE FUNCTION save_history_recording_unit() RETURNS TRIGGER AS
+$$
+            BEGIN
+            INSERT INTO history_recording_unit
+            SELECT OLD.*;
+            RETURN NEW;
+            END
+$$
+            LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_save_history_recording_unit
+                AFTER UPDATE OR
+            DELETE
+            ON recording_unit
+    FOR EACH ROW
+EXECUTE FUNCTION save_history_recording_unit();
+
+CREATE
+            OR REPLACE FUNCTION save_history_recording_unit_study() RETURNS TRIGGER AS
+$$
+            BEGIN
+            INSERT INTO history_recording_unit_study
+            SELECT OLD.*;
+            RETURN NEW;
+            END
+$$
+            LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_save_history_recording_unit_study
+                AFTER UPDATE OR
+            DELETE
+            ON recording_unit_study
+    FOR EACH ROW
+EXECUTE FUNCTION save_history_recording_unit_study();
+
+CREATE
+            OR REPLACE FUNCTION save_history_specimen_study() RETURNS TRIGGER AS
+$$
+            BEGIN
+            INSERT INTO history_specimen_study
+            SELECT OLD.*;
+            RETURN NEW;
+            END
+$$
+            LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_save_history_specimen_study
+                AFTER UPDATE OR
+            DELETE
+            ON specimen_study
+    FOR EACH ROW
+EXECUTE FUNCTION save_history_specimen_study();
+
+CREATE
+            OR REPLACE FUNCTION save_history_specimen() RETURNS TRIGGER AS
+$$
+            BEGIN
+            INSERT INTO history_specimen
+            SELECT OLD.*;
+            RETURN NEW;
+            END
+$$
+            LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_save_history_specimen
+                AFTER UPDATE OR
+            DELETE
+            ON specimen
+    FOR EACH ROW
+EXECUTE FUNCTION save_history_specimen();
+
+CREATE
+            OR REPLACE FUNCTION save_history_siamois_document() RETURNS TRIGGER AS
+$$
+            BEGIN
+            INSERT INTO history_siamois_document
+            SELECT OLD.*;
+            RETURN NEW;
+            END
+$$
+            LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_save_history_siamois_document
+                AFTER UPDATE OR
+            DELETE
+            ON siamois_document
+    FOR EACH ROW
+EXECUTE FUNCTION save_history_siamois_document();
+
+CREATE
+            OR REPLACE FUNCTION save_history_action_unit() RETURNS TRIGGER AS
+$$
+            BEGIN
+            INSERT INTO history_action_unit
+            SELECT OLD.*;
+            RETURN NEW;
+            END
+$$
+            LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_save_history_action_unit
+                AFTER UPDATE OR
+            DELETE
+            ON action_unit
+    FOR EACH ROW
+EXECUTE FUNCTION save_history_action_unit();
+
+CREATE
+            OR REPLACE FUNCTION save_history_spatial_unit() RETURNS TRIGGER AS
+$$
+            BEGIN
+            INSERT INTO history_spatial_unit
+            SELECT OLD.*;
+            RETURN NEW;
+            END
+$$
+            LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_save_history_spatial_unit
+                AFTER UPDATE OR
+            DELETE
+            ON spatial_unit
+    FOR EACH ROW
+EXECUTE FUNCTION save_history_spatial_unit();
+        </sql>
+
+    </changeSet>
+
+</databaseChangeLog>

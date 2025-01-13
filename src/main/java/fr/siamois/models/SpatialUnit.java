@@ -1,6 +1,7 @@
 package fr.siamois.models;
 
 import fr.siamois.models.ark.Ark;
+import fr.siamois.models.auth.Person;
 import fr.siamois.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -27,6 +28,10 @@ public class SpatialUnit {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_concept_category_id")
     private Concept category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_author_id")
+    private Person owner;
 
 //    @Column(name = "spatial_extent", columnDefinition = "geometry not null")
 //    private Polygon spatialExtent;

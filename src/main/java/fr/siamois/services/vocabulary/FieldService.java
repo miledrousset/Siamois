@@ -9,6 +9,7 @@ import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
+import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
@@ -96,7 +97,8 @@ public class FieldService {
      */
     public SpatialUnit saveSpatialUnit(String name,
                                        Vocabulary vocabulary,
-                                       ConceptFieldDTO category) {
+                                       ConceptFieldDTO category,
+                                       Person author) {
 
         ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
 
@@ -111,6 +113,8 @@ public class FieldService {
         spatialUnit.setName(name);
         spatialUnit.setArk(spatialUnitArk);
         spatialUnit.setCategory(concept);
+
+        spatialUnit.setOwner(author);
 
         spatialUnit = spatialUnitRepository.save(spatialUnit);
 
@@ -247,8 +251,8 @@ public class FieldService {
      * @return The saved spatial unit
      * @throws SpatialUnitAlreadyExistsException If the spatial unit already exists in the database
      */
-    public SpatialUnit saveSpatialUnit(String fName, @NotNull Vocabulary vocabulary, ConceptFieldDTO selectedConceptFieldDTO, List<SpatialUnit> parentsSpatialUnit) throws SpatialUnitAlreadyExistsException {
-        SpatialUnit unit = saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO);
+    public SpatialUnit saveSpatialUnit(String fName, @NotNull Vocabulary vocabulary, ConceptFieldDTO selectedConceptFieldDTO, List<SpatialUnit> parentsSpatialUnit, Person author) throws SpatialUnitAlreadyExistsException {
+        SpatialUnit unit = saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, author);
         for (SpatialUnit parent : parentsSpatialUnit) {
             spatialUnitRepository.saveSpatialUnitHierarchy(parent.getId(), unit.getId());
         }

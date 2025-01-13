@@ -40,7 +40,7 @@ public class ActionUnit {
     private Ark ark;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fk_user_id")
+    @JoinColumn(name = "fk_author_id")
     private Person owner;
 
     @NotNull
