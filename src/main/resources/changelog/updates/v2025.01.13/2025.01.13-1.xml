@@ -40,10 +40,11 @@
             );
 
             ALTER TABLE history_recording_unit
-            DROP CONSTRAINT history_recording_unit_pkey;
+            DROP
+            CONSTRAINT history_recording_unit_pkey;
 
             CREATE INDEX history_recording_unit_pk_idx
-            ON history_recording_unit(recording_unit_id);
+                ON history_recording_unit (recording_unit_id);
 
             CREATE TABLE history_recording_unit_study
             (
@@ -52,7 +53,8 @@
             );
 
             ALTER TABLE history_recording_unit_study
-            DROP CONSTRAINT history_recording_unit_study_pkey;
+            DROP
+            CONSTRAINT history_recording_unit_study_pkey;
 
             create index history_recording_unit_study_id_index
                 on history_recording_unit_study (recording_unit_study_id);
@@ -64,7 +66,8 @@
             );
 
             ALTER TABLE history_specimen_study
-            DROP CONSTRAINT history_specimen_study_pkey;
+            DROP
+            CONSTRAINT history_specimen_study_pkey;
 
             create index history_specimen_study_id_index
                 on history_specimen_study (specimen_study_id);
@@ -76,7 +79,8 @@
             );
 
             ALTER TABLE history_specimen
-            DROP CONSTRAINT history_specimen_pkey;
+            DROP
+            CONSTRAINT history_specimen_pkey;
 
             create index history_specimen_id_index
                 on public.history_specimen (specimen_id);
@@ -88,7 +92,8 @@
             );
 
             ALTER TABLE history_siamois_document
-            DROP CONSTRAINT history_siamois_document_pkey;
+            DROP
+            CONSTRAINT history_siamois_document_pkey;
 
             create index history_siamois_document_id_index
                 on history_siamois_document (document_id);
@@ -100,7 +105,8 @@
             );
 
             ALTER TABLE history_action_unit
-            DROP CONSTRAINT history_action_unit_pkey;
+            DROP
+            CONSTRAINT history_action_unit_pkey;
 
             create index history_action_unit_id_index
                 on history_action_unit (action_unit_id);
@@ -112,11 +118,57 @@
             );
 
             ALTER TABLE history_spatial_unit
-            DROP CONSTRAINT history_spatial_unit_pkey;
+            DROP
+            CONSTRAINT history_spatial_unit_pkey;
 
             create index history_spatial_unit_id_index
                 on history_spatial_unit (spatial_unit_id);
 
+        </sql>
+
+        <sql>
+
+            alter table history_recording_unit
+                drop constraint history_recording_unit_fk_ark_id_key cascade;
+
+            CREATE INDEX history_recording_unit_fk_ark_id_idx
+                ON history_recording_unit (fk_ark_id);
+
+            ALTER TABLE history_recording_unit_study
+                DROP CONSTRAINT history_recording_unit_study_fk_ark_id_key CASCADE;
+
+            CREATE INDEX history_recording_unit_study_fk_ark_id_idx
+                ON history_recording_unit_study (fk_ark_id);
+
+            ALTER TABLE history_specimen_study
+                DROP CONSTRAINT history_specimen_study_fk_ark_id_key CASCADE;
+
+            CREATE INDEX history_specimen_study_fk_ark_id_idx
+                ON history_specimen_study (fk_ark_id);
+
+            ALTER TABLE history_specimen
+                DROP CONSTRAINT history_specimen_fk_ark_id_key CASCADE;
+
+            CREATE INDEX history_specimen_fk_ark_id_idx
+                ON history_specimen (fk_ark_id);
+
+            ALTER TABLE history_siamois_document
+                DROP CONSTRAINT history_siamois_document_fk_ark_id_key CASCADE;
+
+            CREATE INDEX history_siamois_document_fk_ark_id_idx
+                ON history_siamois_document (fk_ark_id);
+
+            ALTER TABLE history_action_unit
+                DROP CONSTRAINT history_action_unit_fk_ark_id_key CASCADE;
+
+            CREATE INDEX history_action_unit_fk_ark_id_idx
+                ON history_action_unit (fk_ark_id);
+
+            ALTER TABLE history_spatial_unit
+                DROP CONSTRAINT history_spatial_unit_fk_ark_id_key CASCADE;
+
+            CREATE INDEX history_spatial_unit_fk_ark_id_idx
+                ON history_spatial_unit (fk_ark_id);
         </sql>
 
     </changeSet>
