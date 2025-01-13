@@ -24,7 +24,7 @@ public class VocabularyService {
      *
      * @param id The ID to fetch
      * @return The Vocabulary having the given ID
-     * @throws VocabularyNotFoundException If no action unit are found for the given id
+     * @throws VocabularyNotFoundException If no vocabulary is found for the given id
      */
     public Vocabulary findVocabularyById(long id) {
         return this.vocabularyRepository.findById(id).orElseThrow(() -> new VocabularyNotFoundException("Vocabulary not found with ID: " + id));

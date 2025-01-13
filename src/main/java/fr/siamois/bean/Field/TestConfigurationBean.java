@@ -2,11 +2,13 @@ package fr.siamois.bean.Field;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
+import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.api.ClientSideErrorException;
 import fr.siamois.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
+import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
@@ -45,7 +47,12 @@ public class TestConfigurationBean implements Serializable {
     private Map<String, String> labels = new HashMap<>();
     private List<VocabularyCollection> cacheSelectedGroups = new ArrayList<>();
     private List<VocabularyCollection> cachedGroups = new ArrayList<>();
-    private List<String> fieldCodes = List.of(SpatialUnit.CATEGORY_FIELD_CODE, Person.USER_ROLE_FIELD_CODE);
+    private List<String> fieldCodes = List.of(
+            SpatialUnit.CATEGORY_FIELD_CODE,
+            Person.USER_ROLE_FIELD_CODE,
+            RecordingUnit.TYPE_FIELD_CODE,
+            ActionUnit.TYPE_FIELD_CODE
+    );
 
     // Fields
     private boolean selectEntireThesaurus = false;

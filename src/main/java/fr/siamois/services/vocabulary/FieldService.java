@@ -117,18 +117,19 @@ public class FieldService {
         return spatialUnit;
     }
 
+
     /**
      * Save or get a concept from a category field DTO.
-     * @param vocabulary The database saved vocabularys
-     * @param category The API response for the category concept
+     * @param vocabulary The database saved vocabularies
+     * @param conceptFieldDTO The API response for the concept
      * @return The saved concept
      */
-    private Concept saveOrGetConceptFromDto(Vocabulary vocabulary, ConceptFieldDTO category) {
-        MultiValueMap<String,String> queryParams = UriComponentsBuilder.fromUriString(category.getUri()).build().getQueryParams();
+    public Concept saveOrGetConceptFromDto(Vocabulary vocabulary, ConceptFieldDTO conceptFieldDTO) {
+        MultiValueMap<String,String> queryParams = UriComponentsBuilder.fromUriString(conceptFieldDTO.getUri()).build().getQueryParams();
         if (queryParams.containsKey("idt") && queryParams.containsKey("idc")) {
-            return processConceptWithExternalIdThesaurusAndIdConcept(vocabulary, category, queryParams);
+            return processConceptWithExternalIdThesaurusAndIdConcept(vocabulary, conceptFieldDTO, queryParams);
         } else {
-            return processConceptWithArkUri(vocabulary, category);
+            return processConceptWithArkUri(vocabulary, conceptFieldDTO);
         }
     }
 

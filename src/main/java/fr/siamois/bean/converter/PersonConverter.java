@@ -1,4 +1,4 @@
-package fr.siamois.bean.converter;
+package fr.siamois.bean.Converter;
 
 import fr.siamois.models.auth.Person;
 import fr.siamois.services.PersonService;
@@ -41,4 +41,3 @@ public class PersonConverter implements Converter<Person> {
         }
     }
 }
-

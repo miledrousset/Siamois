@@ -1,15 +1,20 @@
 package fr.siamois.bean.RecordingUnit;
 
+import fr.siamois.bean.LangBean;
+import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
+import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
-import fr.siamois.models.ark.Ark;
 import fr.siamois.models.auth.Person;
+import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.recordingunit.RecordingUnit;
+import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.RecordingUnitService;
-import fr.siamois.services.ark.ArkGenerator;
-import fr.siamois.services.auth.PersonDetailsService;
-import fr.siamois.services.vocabulary.VocabularyService;
+import fr.siamois.services.vocabulary.FieldConfigurationService;
+import fr.siamois.services.vocabulary.FieldService;
+import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -19,16 +24,17 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+
+import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+
 
 @Data
 @Slf4j
+@SessionScoped
 @Component
 public class RecordingUnitFormBean implements Serializable {
 
@@ -37,24 +43,21 @@ public class RecordingUnitFormBean implements Serializable {
     private final RecordingUnitService recordingUnitService;
     private final ActionUnitService actionUnitService;
     private final PersonService personService;
+    private final RecordingUnitUtils recordingUnitUtils;
+    private final FieldConfigurationService fieldConfigurationService;
+    private final FieldService fieldService;
+    private final LangBean langBean;
 
-    // TODO : remove below
-    private final ArkServerRepository arkServerRepository;
-    private final PersonDetailsService personDetailsService;
-    private final VocabularyService vocabularyService;
-    // TODO : end to remove
-
-    @Getter
     private RecordingUnit recordingUnit;
-
-    @Getter
-    @Setter
+    private String recordingUnitErrorMessage; // If error while initing the recording unit
     private Long id;  // ID of the requested RU
     private LocalDate startDate;
     private LocalDate endDate;
     private List<Event> events; // Strati
     private Boolean isLocalisationFromSIG;
-    private String recordingUnitErrorMessage;
+    private List<ConceptFieldDTO> concepts;
+    private FieldConfigurationWrapper configurationWrapper;
+    private ConceptFieldDTO fType = null;
 
     @Data
     public static class Event {
@@ -89,41 +92,43 @@ public class RecordingUnitFormBean implements Serializable {
     public String save() {
         try {
 
-            log.debug(String.valueOf(this.recordingUnit));
+            this.recordingUnit = recordingUnitUtils.save(recordingUnit, configurationWrapper, fType, startDate, endDate);
 
-            // TODO : handle isLocalisationFromSIG and associated fields
-
-            // Generate ark
-            // Todo : properly generate ARK
-            Ark ark = new Ark();
-            ark.setArkServer(arkServerRepository.findArkServerByServerArkUri("http://localhost:8099/siamois").orElse(null));
-            ark.setArkId(ArkGenerator.generateArk());
-
-            this.recordingUnit.setArk(ark);
-
-            // handle dates
-            if(startDate != null) {this.recordingUnit.setStartDate(localDateToOffsetDateTime(startDate));}
-            if(endDate != null) {this.recordingUnit.setEndDate(localDateToOffsetDateTime(endDate));}
-
-            this.recordingUnit = recordingUnitService.save(recordingUnit);
-            log.debug("Recording unit saved");
-            log.debug(String.valueOf(this.recordingUnit));
+            // Return page with id
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_INFO,
+                            "Info",
+                            langBean.msg("recordingunit.updated", this.recordingUnit.getSerial_id())));
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+            return "/pages/recordingUnit/recordingUnit?faces-redirect=true&id=" + this.recordingUnit.getId().toString();
 
         } catch (RuntimeException e) {
-            log.error("Error while saving: "+e.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_ERROR,
+                            "Error",
+                            langBean.msg("recordingunit.updatefailed", this.recordingUnit.getSerial_id())));
+
+            log.error("Error while saving: " + e.getMessage());
             // todo : add error message
             return null;
         }
 
         // Return page with id
-        return "/pages/recordingUnit/recordingUnit.xhtml?id="+this.recordingUnit.getId().toString();
+
+    }
+
+    public List<Person> completePerson(String query) {
+        return recordingUnitUtils.completePerson(query);
     }
 
     /**
      * Display a  message on the page.
+     *
      * @param severityInfo The severity of the message.
-     * @param head  The head of the message.
-     * @param detail The message to display.
+     * @param head         The head of the message.
+     * @param detail       The message to display.
      */
     private static void displayMessage(FacesMessage.Severity severityInfo, String head, String detail) {
         FacesContext.getCurrentInstance()
@@ -131,16 +136,20 @@ public class RecordingUnitFormBean implements Serializable {
     }
 
 
-    public RecordingUnitFormBean(RecordingUnitService recordingUnitService,
-                                 ActionUnitService actionUnitService, PersonService personService, ArkServerRepository arkServerRepository,
-                                 PersonDetailsService personDetailsService, VocabularyService vocabularyService) {
+    public RecordingUnitFormBean(
+            RecordingUnitService recordingUnitService,
+            ActionUnitService actionUnitService,
+            PersonService personService,
+            RecordingUnitUtils recordingUnitUtils, FieldConfigurationService fieldConfigurationService, FieldService fieldService, LangBean langBean
+    ) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.personService = personService;
-        this.arkServerRepository = arkServerRepository;
-        this.personDetailsService = personDetailsService;
-        this.vocabularyService = vocabularyService;
+        this.recordingUnitUtils = recordingUnitUtils;
 
+        this.fieldConfigurationService = fieldConfigurationService;
+        this.fieldService = fieldService;
+        this.langBean = langBean;
     }
 
     public void reinitializeBean() {
@@ -149,42 +158,58 @@ public class RecordingUnitFormBean implements Serializable {
         this.startDate = null;
         this.endDate = null;
         this.isLocalisationFromSIG = false;
-    }
+        this.concepts = null;
+        this.fType = null;
+        recordingUnitErrorMessage = null;
+        Person person = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("User should be connected"));
 
-    public LocalDate offsetDateTimeToLocalDate(OffsetDateTime offsetDT) {
-        return offsetDT.toLocalDate();
-    }
-
-    public OffsetDateTime localDateToOffsetDateTime(LocalDate localDate) {
-        return localDate.atTime(LocalTime.NOON).atOffset(ZoneOffset.UTC);
-    }
-
-    public List<Person> completePerson(String query) {
-        if (query == null || query.isEmpty()) {
-            return Collections.emptyList();
+        try {
+            this.configurationWrapper = fieldConfigurationService.fetchConfigurationOfFieldCode(person, RecordingUnit.TYPE_FIELD_CODE);
+        } catch (NoConfigForField e) {
+            log.error("No collection for field " + RecordingUnit.TYPE_FIELD_CODE);
         }
-        query = query.toLowerCase();
-        return personService.findAllByNameLastnameContaining(query);
+    }
+
+    /**
+     * Fetch the autocomplete results on API for the type field and add them to the list of concepts.
+     *
+     * @param input the input of the user
+     * @return the list of concepts that match the input to display in the autocomplete
+     */
+    public List<ConceptFieldDTO> completeRecordingUnitType(String input) {
+
+        concepts = fieldService.fetchAutocomplete(configurationWrapper, input, langBean.getLanguageCode());
+        return concepts;
     }
 
     @PostConstruct
     public void init() {
-        log.error("id"+String.valueOf(this.id));
+
         try {
-           if(this.id != null) {
+            if (this.id != null) {
                 log.info("Loading RU");
                 reinitializeBean();
                 this.recordingUnit = this.recordingUnitService.findById(this.id);
-                if(this.recordingUnit.getStartDate() != null) {this.startDate = offsetDateTimeToLocalDate(this.recordingUnit.getStartDate());}
-                if(this.recordingUnit.getEndDate()!=null) {this.endDate = offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());}
+                if (this.recordingUnit.getStartDate() != null) {
+                    this.startDate = recordingUnitUtils.offsetDateTimeToLocalDate(this.recordingUnit.getStartDate());
+                }
+                if (this.recordingUnit.getEndDate() != null) {
+                    this.endDate = recordingUnitUtils.offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());
+                }
                 // TODO handle isLocalisationFromSIG properly
                 this.isLocalisationFromSIG = false;
+                // Init type field
+                Concept typeConcept = this.recordingUnit.getType();
+                fType = new ConceptFieldDTO();
+                fType.setLabel(typeConcept.getLabel());
+                // If thesaurus we can reconstruct the DTO
+                fType.setUri(typeConcept.getVocabulary().getBaseUri()+"?idc="+typeConcept.getExternalId()+"&idt="+typeConcept.getVocabulary().getExternalVocabularyId());
+
+            } else {
+                recordingUnitErrorMessage = "Invalid recording unit ID";
             }
-           else {
-               // todo: handle error
-           }
         } catch (RuntimeException err) {
-            log.error(String.valueOf(err));
+            recordingUnitErrorMessage = "Unable to get recording unit";
         }
     }
 }

@@ -35,11 +35,29 @@ html, body {
     flex-grow: 1;
     background-color: #bed730;
     padding: 10px;
-    min-height: 100%;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.label-container {
+    display: flex;
+    align-items: center; /* Ensures vertical alignment */
+}
+
+.label-icon {
+    margin-left: 4px; /* Adjust spacing between the image and label */
+    max-height: 16px; /* Prevent image from exceeding the container's height */
+    width: auto; /* Maintain aspect ratio of the image */
+}
+
+.siamois-row {
+    margin-bottom: 1rem;
+}
+
+.shadow {
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
 }
 
 .main-content {
@@ -89,5 +107,10 @@ html, body {
 .ui-chip.custom-chip {
     background: var(--primary-color);
     color: var(--primary-color-text);
+}
+
+.left-menu {
+    border: none; !important;
+    width: 100%; !important;
 }
 
