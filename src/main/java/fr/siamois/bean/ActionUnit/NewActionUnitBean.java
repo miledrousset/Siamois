@@ -113,13 +113,10 @@ public class NewActionUnitBean implements Serializable {
     public void init() {
         fieldType = null;
         actionUnit = new ActionUnit();
-        actionUnit.setName("Nom avant reinit");
+        actionUnit.setName("Nouvelle action");
     }
 
     public void reinit(SpatialUnit spatialUnit) {
-        this.fieldType = null;
-        this.actionUnit = new ActionUnit();
-        this.actionUnit.setName("Nouvelle action");
         this.actionUnit.setSpatialUnit(spatialUnit);
     }
 
