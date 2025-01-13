@@ -91,7 +91,7 @@ public class SpatialUnitFieldBean implements Serializable {
         if (vocabulary == null) vocabulary = configurationWrapper.vocabularyCollectionsConfig().get(0).getVocabulary();
 
         try {
-            SpatialUnit saved = fieldService.saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, fParentsSpatialUnits);
+            SpatialUnit saved = fieldService.saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, fParentsSpatialUnits, sessionSettings.getAuthenticatedUser());
 
             MessageUtils.displayInfoMessage(langBean, "spatialunit.created", saved.getName());
         } catch (SpatialUnitAlreadyExistsException e) {

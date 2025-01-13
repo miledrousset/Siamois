@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2025.01.13-0" author="Julien Linget">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <not>
+                    <columnExists tableName="action_unit" columnName="fk_author_id"/>
+                </not>
+                <not>
+                    <columnExists tableName="spatial_unit" columnName="fk_author_id"/>
+                </not>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*)
+                    FROM pg_trigger
+                    WHERE LOWER(tgname) IN ('t_insert_spatial_unit_log', 't_update_spatial_unit_log', 't_delete_spatial_unit_log')
+                </sqlCheck>
+            </and>
+        </preConditions>
+
+        <renameColumn tableName="action_unit" oldColumnName="fk_user_id" newColumnName="fk_author_id"/>
+
+        <addColumn tableName="spatial_unit">
+            <column name="fk_author_id" type="BIGINT">
+                <constraints foreignKeyName="fk_spatial_unit_person" references="person(person_id)"/>
+            </column>
+        </addColumn>
+
+        <sqlFile path="changelog/updates/v2025.01.13/trigger_log.sql"/>
+    </changeSet>
+
+</databaseChangeLog>
