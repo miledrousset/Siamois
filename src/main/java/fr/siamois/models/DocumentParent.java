@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @MappedSuperclass
-public class DocumentParent extends TraceableEntity {
+public abstract class DocumentParent extends TraceableEntity {
 
     @NotNull
     @OneToOne(fetch = FetchType.EAGER, optional = false)
