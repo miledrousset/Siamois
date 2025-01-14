@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 /**
  * A {@link TraceableEntity} stores the creation time and the creator of an entity. The {@link TraceableEntity} is most likely to have a history
@@ -27,6 +28,6 @@ public abstract class TraceableEntity {
     protected Person author;
 
     @Column(name = "creation_time")
-    protected OffsetDateTime creationTime;
+    protected OffsetDateTime creationTime = OffsetDateTime.now(ZoneId.systemDefault());
 
 }

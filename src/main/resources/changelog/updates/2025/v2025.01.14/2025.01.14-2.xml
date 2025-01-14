@@ -11,7 +11,7 @@
                     <columnExists tableName="history_recording_unit" columnName="history_id"/>
                 </not>
                 <not>
-                    <columnExists tableName="history_recording_unit" columnName="creation_time"/>
+                    <columnExists tableName="history_recording_unit" columnName="update_time"/>
                 </not>
             </and>
         </preConditions>
@@ -20,49 +20,49 @@
             <column name="history_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="creation_time" type="TIMESTAMPTZ"/>
+            <column name="update_time" type="TIMESTAMPTZ"/>
         </addColumn>
 
         <addColumn tableName="history_recording_unit_study">
             <column name="history_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="creation_time" type="TIMESTAMPTZ"/>
+            <column name="update_time" type="TIMESTAMPTZ"/>
         </addColumn>
 
         <addColumn tableName="history_specimen_study">
             <column name="history_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="creation_time" type="TIMESTAMPTZ"/>
+            <column name="update_time" type="TIMESTAMPTZ"/>
         </addColumn>
 
         <addColumn tableName="history_specimen">
             <column name="history_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="creation_time" type="TIMESTAMPTZ"/>
+            <column name="update_time" type="TIMESTAMPTZ"/>
         </addColumn>
 
         <addColumn tableName="history_siamois_document">
             <column name="history_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="creation_time" type="TIMESTAMPTZ"/>
+            <column name="update_time" type="TIMESTAMPTZ"/>
         </addColumn>
 
         <addColumn tableName="history_action_unit">
             <column name="history_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="creation_time" type="TIMESTAMPTZ"/>
+            <column name="update_time" type="TIMESTAMPTZ"/>
         </addColumn>
 
         <addColumn tableName="history_spatial_unit">
             <column name="history_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="creation_time" type="TIMESTAMPTZ"/>
+            <column name="update_time" type="TIMESTAMPTZ"/>
         </addColumn>
 
     </changeSet>

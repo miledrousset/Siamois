@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2025.01.14-3" author="Julien Linget">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*)
+                    FROM information_schema.triggers
+                    WHERE UPPER(trigger_name) LIKE '%LOG%';
+                </sqlCheck>
+            </not>
+        </preConditions>
+
+        <sql>
+            drop function insert_log() cascade;
+            drop function insert_deletion_log() cascade;
+        </sql>
+
+    </changeSet>
+
+</databaseChangeLog>

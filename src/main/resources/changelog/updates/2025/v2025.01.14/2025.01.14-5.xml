@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2025.01.14-5" author="Julien Linget">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="history_recording_unit" columnName="update_time"/>
+            </not>
+        </preConditions>
+
+        <addDefaultValue tableName="history_recording_unit" columnName="update_time" defaultValue="NOW()"/>
+        <addDefaultValue tableName="history_recording_unit_study" columnName="update_time" defaultValue="NOW()"/>
+        <addDefaultValue tableName="history_specimen_study" columnName="update_time" defaultValue="NOW()"/>
+        <addDefaultValue tableName="history_specimen" columnName="update_time" defaultValue="NOW()"/>
+        <addDefaultValue tableName="history_siamois_document" columnName="update_time" defaultValue="NOW()"/>
+        <addDefaultValue tableName="history_action_unit" columnName="update_time" defaultValue="NOW()"/>
+        <addDefaultValue tableName="history_spatial_unit" columnName="update_time" defaultValue="NOW()"/>
+
+    </changeSet>
+
+</databaseChangeLog>

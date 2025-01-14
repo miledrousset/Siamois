@@ -12,31 +12,25 @@
         </preConditions>
 
         <addColumn tableName="recording_unit">
-            <column name="creation_time" type="TIMESTAMPTZ" defaultValue="NOW()"/>
+            <column name="creation_time" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
         </addColumn>
-
         <addColumn tableName="recording_unit_study">
-            <column name="creation_time" type="TIMESTAMPTZ" defaultValue="NOW()"/>
+            <column name="creation_time" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
         </addColumn>
-
         <addColumn tableName="specimen_study">
-            <column name="creation_time" type="TIMESTAMPTZ" defaultValue="NOW()"/>
+            <column name="creation_time" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
         </addColumn>
-
         <addColumn tableName="specimen">
-            <column name="creation_time" type="TIMESTAMPTZ" defaultValue="NOW()"/>
+            <column name="creation_time" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
         </addColumn>
-
         <addColumn tableName="siamois_document">
-            <column name="creation_time" type="TIMESTAMPTZ" defaultValue="NOW()"/>
+            <column name="creation_time" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
         </addColumn>
-
         <addColumn tableName="action_unit">
-            <column name="creation_time" type="TIMESTAMPTZ" defaultValue="NOW()"/>
+            <column name="creation_time" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
         </addColumn>
-
         <addColumn tableName="spatial_unit">
-            <column name="creation_time" type="TIMESTAMPTZ" defaultValue="NOW()"/>
+            <column name="creation_time" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
         </addColumn>
 
     </changeSet>
