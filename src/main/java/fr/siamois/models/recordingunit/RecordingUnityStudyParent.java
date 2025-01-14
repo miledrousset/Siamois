@@ -17,23 +17,23 @@ import java.time.OffsetDateTime;
 public abstract class RecordingUnityStudyParent extends TraceableEntity {
 
     @Column(name = "study_date")
-    private OffsetDateTime studyDate;
+    protected OffsetDateTime studyDate;
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_ark_id", nullable = false)
-    private Ark ark;
+    protected Ark ark;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_method")
-    private Concept method;
+    protected Concept method;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_action_unit_id")
-    private ActionUnit actionUnit;
+    protected ActionUnit actionUnit;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_recording_unit_id")
-    private RecordingUnit recordingUnit;
+    protected RecordingUnit recordingUnit;
 
 }
