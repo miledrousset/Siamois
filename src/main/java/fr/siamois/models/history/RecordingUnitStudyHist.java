@@ -1,6 +1,5 @@
 package fr.siamois.models.history;
 
-import fr.siamois.models.ReadOnlyEntity;
 import fr.siamois.models.recordingunit.RecordingUnityStudyParent;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
