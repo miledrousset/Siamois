@@ -11,7 +11,7 @@ import org.hibernate.annotations.Immutable;
 @Entity
 @Table(name = "history_specimen_study")
 @Immutable
-public class SpecimentStudyHist extends SpecimentStudyParent {
+public class SpecimenStudyHist extends SpecimentStudyParent {
 
     @Id
     @Column(name = "history_id")
