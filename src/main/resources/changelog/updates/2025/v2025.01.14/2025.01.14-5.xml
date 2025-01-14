@@ -6,9 +6,7 @@
 
     <changeSet id="2025.01.14-5" author="Julien Linget">
         <preConditions onFail="MARK_RAN">
-            <not>
-                <columnExists tableName="history_recording_unit" columnName="update_time"/>
-            </not>
+            <columnExists tableName="history_recording_unit" columnName="update_time"/>
         </preConditions>
 
         <addDefaultValue tableName="history_recording_unit" columnName="update_time" defaultValue="NOW()"/>
