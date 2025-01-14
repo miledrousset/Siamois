@@ -7,12 +7,14 @@ import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.recordingunit.RecordingUnit;
+import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.annotation.PostConstruct;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +29,7 @@ import static java.time.OffsetDateTime.now;
 
 
 @Slf4j
-@Getter
-@Setter
+@Data
 @Component
 @SessionScoped
 public class ActionUnitBean implements Serializable {
@@ -41,9 +42,20 @@ public class ActionUnitBean implements Serializable {
     private String actionUnitErrorMessage;
     private Long id;  // ID of the action unit requested
 
+    // Field related
+    private Boolean editType;
+    private ConceptFieldDTO fType;
+
+
     public ActionUnitBean(ActionUnitService actionUnitService) {
         this.actionUnitService = actionUnitService;
     }
+
+    @PostConstruct
+    public void postConstruct() {
+        editType = false;
+    }
+
 
     public void init() {
 
@@ -51,10 +63,16 @@ public class ActionUnitBean implements Serializable {
         actionUnitErrorMessage = null;
         actionUnit = null;
 
-       // Get the request action from DB
+       // Get the requested action from DB
         try {
             if(id!=null) {
                 actionUnit = actionUnitService.findById(id);
+                Concept typeConcept = actionUnit.getType();
+                fType = new ConceptFieldDTO();
+                fType.setLabel(typeConcept.getLabel());
+                // If thesaurus we can reconstruct the DTO
+                fType.setUri(typeConcept.getVocabulary().getBaseUri()+"?idc="+typeConcept.getExternalId()+"&idt="+typeConcept.getVocabulary().getExternalVocabularyId());
+
             }
             else {
                 this.actionUnitErrorMessage = "No action unit ID specified";

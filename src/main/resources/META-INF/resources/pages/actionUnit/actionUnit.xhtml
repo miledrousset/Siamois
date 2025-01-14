@@ -25,11 +25,27 @@
                          rendered="#{not empty actionUnitBean.actionUnitErrorMessage}"/>
 
         <h:panelGroup id="contentPanel" rendered="#{actionUnitBean.actionUnit != null}">
+            <h:form>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <h2>#{actionUnitBean.actionUnit.name}
+                    <p:chip rendered="#{!actionUnitBean.editType}" label="#{actionUnitBean.actionUnit.type.label}" icon="pi pi-play"
+                            styleClass="edit-type-chip">
+                        <p:ajax event="select" listener="#{actionUnitBean.setEditType(true)}" update="@form"/>
+                    </p:chip>
+                    <p:autoComplete id="auto-complete-action-type"
+                                    rendered="#{actionUnitBean.editType}"
+                                    value="#{actionUnitBean.FType}"
+                                    completeMethod="#{newActionUnitBean.completeActionUnitType}"
+                                    var="field" itemLabel="#{field.label}"
+                                    itemValue="#{field}"
+                                    required="true"
+                                    converter="#{conceptFieldDTOConverter}"
+                                    forceSelection="true"
+                                    scrollHeight="300"
+                                    dropdown="true"/>
+                </h2>
+            </h:form>
 
-            <h2>#{actionUnitBean.actionUnit.name}
-                <p:chip label="#{actionUnitBean.actionUnit.type.label}" icon="pi pi-play"
-                        styleClass="mr-2"/>
-            </h2>
             <p>ARK ID: #{actionUnitBean.actionUnit.ark.arkId}</p>
             <!-- Button to access recording unit form -->
             <h:form>
