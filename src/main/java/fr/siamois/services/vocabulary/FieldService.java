@@ -114,7 +114,7 @@ public class FieldService {
         spatialUnit.setArk(spatialUnitArk);
         spatialUnit.setCategory(concept);
 
-        spatialUnit.setOwner(author);
+        spatialUnit.setAuthor(author);
 
         spatialUnit = spatialUnitRepository.save(spatialUnit);
 

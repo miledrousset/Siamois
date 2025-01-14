@@ -6,11 +6,13 @@ import fr.siamois.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "spatial_unit")
-public class SpatialUnit {
+public class SpatialUnit extends TraceableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "spatial_unit_id", nullable = false)
@@ -28,10 +30,6 @@ public class SpatialUnit {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_concept_category_id")
     private Concept category;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_author_id")
-    private Person owner;
 
 //    @Column(name = "spatial_extent", columnDefinition = "geometry not null")
 //    private Polygon spatialExtent;

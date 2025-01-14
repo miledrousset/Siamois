@@ -2,19 +2,22 @@ package fr.siamois.models.recordingunit;
 
 
 import fr.siamois.models.ActionUnit;
+import fr.siamois.models.TraceableEntity;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "recording_unit")
-public class RecordingUnit {
+public class RecordingUnit extends TraceableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recording_unit_id", nullable = false)
@@ -45,11 +48,6 @@ public class RecordingUnit {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_action_unit_id", nullable = false)
     private ActionUnit actionUnit;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "fk_author_id", nullable = false)
-    private Person author;
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)

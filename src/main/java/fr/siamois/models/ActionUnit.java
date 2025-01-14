@@ -6,13 +6,15 @@ import fr.siamois.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "action_unit")
-public class ActionUnit {
+public class ActionUnit extends TraceableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "action_unit_id", nullable = false)
@@ -38,10 +40,6 @@ public class ActionUnit {
     @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "fk_ark_id", nullable = false)
     private Ark ark;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fk_author_id")
-    private Person owner;
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

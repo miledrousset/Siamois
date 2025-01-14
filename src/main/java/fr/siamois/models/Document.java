@@ -6,13 +6,15 @@ import fr.siamois.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "siamois_document", schema = "public", uniqueConstraints = {
         @UniqueConstraint(name = "siamois_document_fk_ark_id_key", columnNames = {"fk_ark_id"})
 })
-public class Document {
+public class Document extends TraceableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "document_id", nullable = false)
@@ -44,10 +46,6 @@ public class Document {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_parent")
     private Document parent;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fk_author_id")
-    private Person author;
 
     @Column(name = "url", length = Integer.MAX_VALUE)
     private String url;
