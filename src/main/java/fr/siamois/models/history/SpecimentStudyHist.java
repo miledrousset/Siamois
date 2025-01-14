@@ -1,7 +1,6 @@
 package fr.siamois.models.history;
 
-import fr.siamois.models.ReadOnlyEntity;
-import fr.siamois.models.recordingunit.RecordingUnitParent;
+import fr.siamois.models.specimen.SpecimentStudyParent;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,15 +9,15 @@ import org.hibernate.annotations.Immutable;
 @EqualsAndHashCode(callSuper = true)
 @Getter
 @Entity
-@Table(name = "history_recording_unit")
+@Table(name = "history_specimen_study")
 @Immutable
-public class RecordingUnitHist extends RecordingUnitParent {
+public class SpecimentStudyHist extends SpecimentStudyParent {
 
     @Id
     @Column(name = "history_id")
     private Long id;
 
-    @Column(name = "recording_unit_id", nullable = false)
+    @Column(name = "specimen_study_id", nullable = false)
     private Long tableId;
 
     @Column(name = "update_type", length = 10)

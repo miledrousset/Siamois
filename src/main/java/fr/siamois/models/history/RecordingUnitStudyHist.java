@@ -5,17 +5,21 @@ import fr.siamois.models.recordingunit.RecordingUnityStudyParent;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.hibernate.annotations.Immutable;
 
 @EqualsAndHashCode(callSuper = true)
 @Getter
 @Entity
-@Table(name = "history_recording_unit")
-@EntityListeners(ReadOnlyEntity.class)
+@Table(name = "history_recording_unit_study")
+@Immutable
 public class RecordingUnitStudyHist extends RecordingUnityStudyParent {
 
     @Id
     @Column(name = "history_id")
     private Long id;
+
+    @Column(name = "recording_unit_study_id", nullable = false)
+    private Long tableId;
 
     @Column(name = "update_type", length = 10)
     @Enumerated(EnumType.STRING)
