@@ -4,6 +4,10 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 
+    <!--
+    Creates triggers that saves old version of entities after UPDATE or DELETE.
+    -->
+
     <changeSet id="2025.01.13-2" author="Julien Linget">
 
         <preConditions onFail="MARK_RAN">

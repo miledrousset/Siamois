@@ -4,6 +4,10 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 
+    <!--
+    Creates a column for a primary_key in each history table and an update_time column.
+    -->
+
     <changeSet id="2025.01.14-2" author="Julien Linget">
         <preConditions onFail="MARK_RAN">
             <and>

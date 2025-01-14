@@ -4,6 +4,10 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 
+    <!--
+    Updates triggers for history saving after an UPDATE or DELETE on watched tables.
+    -->
+
     <changeSet id="2025.01.14-7" author="Julien Linget">
         <sql>
             CREATE OR REPLACE FUNCTION save_history_recording_unit() RETURNS TRIGGER AS

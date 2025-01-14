@@ -4,6 +4,10 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 
+    <!--
+    Creates a column creation_time for the tables that will be saved.
+    -->
+
     <changeSet id="2025.01.14-0" author="Julien Linget">
         <preConditions onFail="MARK_RAN">
             <not>

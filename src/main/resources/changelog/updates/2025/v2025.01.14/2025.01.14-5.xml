@@ -4,6 +4,10 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 
+    <!--
+    Sets the default value for all update_time columns in history tables.
+    -->
+
     <changeSet id="2025.01.14-5" author="Julien Linget">
         <preConditions onFail="MARK_RAN">
             <columnExists tableName="history_recording_unit" columnName="update_time"/>

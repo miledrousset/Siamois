@@ -4,6 +4,12 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 
+    <!--
+    Creates history tables for recording_unit, recording_unit_study, specimen_study, speciment, siamois_document,
+    action_unit, spatial_unit.
+    The history tables have the same attributes as the original tables with a creation_date attribute.
+    -->
+
     <changeSet id="2025.01.13-1" author="Julien Linget">
 
         <preConditions onFail="MARK_RAN">
