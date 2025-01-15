@@ -7,17 +7,12 @@ import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitReposit
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitStudyRepository;
 import fr.siamois.infrastructure.repositories.specimen.SpecimenRepository;
 import fr.siamois.infrastructure.repositories.specimen.SpecimenStudyRepository;
-import fr.siamois.models.ActionUnit;
-import fr.siamois.models.TraceableEntity;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.history.HistoryOperation;
 import fr.siamois.models.history.HistoryUpdateType;
-import fr.siamois.models.recordingunit.RecordingUnit;
-import fr.siamois.models.recordingunit.RecordingUnitStudy;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 

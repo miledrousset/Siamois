@@ -1,6 +1,5 @@
 package fr.siamois.infrastructure.repositories.recordingunit;
 
-import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitStudy;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

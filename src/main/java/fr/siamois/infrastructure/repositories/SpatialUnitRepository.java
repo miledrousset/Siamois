@@ -1,6 +1,5 @@
 package fr.siamois.infrastructure.repositories;
 
-import fr.siamois.models.Document;
 import fr.siamois.models.SpatialUnit;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
