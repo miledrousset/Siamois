@@ -2,26 +2,21 @@ package fr.siamois.bean.RecordingUnit.utils;
 
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
-import fr.siamois.services.RecordingUnitService;
-import fr.siamois.services.PersonService;
 import fr.siamois.models.vocabulary.Vocabulary;
+import fr.siamois.services.PersonService;
+import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
-import fr.siamois.utils.AuthenticatedUserUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.stereotype.Component;
-
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

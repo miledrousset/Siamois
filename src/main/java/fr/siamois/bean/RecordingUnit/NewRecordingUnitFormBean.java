@@ -10,7 +10,6 @@ import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
 import fr.siamois.models.recordingunit.RecordingUnitSize;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
-import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.RecordingUnitService;
@@ -28,8 +27,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 import static java.time.OffsetDateTime.now;
 

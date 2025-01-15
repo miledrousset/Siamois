@@ -1,15 +1,12 @@
 package fr.siamois.bean.RecordingUnit;
 
-import fr.siamois.bean.SpatialUnit.SpatialUnitBean;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
-import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.RecordingUnitService;
-import fr.siamois.services.SpatialUnitService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
