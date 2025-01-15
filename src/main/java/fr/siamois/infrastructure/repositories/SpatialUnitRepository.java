@@ -1,5 +1,6 @@
 package fr.siamois.infrastructure.repositories;
 
+import fr.siamois.models.Document;
 import fr.siamois.models.SpatialUnit;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
@@ -8,6 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,5 +49,11 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "VALUES (:parentSpatialUnitId, :childSpatialUnitId)"
     )
     void saveSpatialUnitHierarchy(Long parentSpatialUnitId, Long childSpatialUnitId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT su.* FROM spatial_unit su WHERE fk_author_id = :author AND creation_time BETWEEN :start AND :end"
+    )
+    List<SpatialUnit> findAllCreatedBetweenByUser(@Param("start") OffsetDateTime start, @Param("end") OffsetDateTime end, @Param("author") Long personId);
 }
 

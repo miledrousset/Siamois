@@ -8,8 +8,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, Long> {
@@ -39,6 +39,12 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
                     "WHERE su.spatial_unit_id = :spatialUnitId"
     )
     List<RecordingUnit> findAllBySpatialUnitId(Long spatialUnitId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT ru.* FROM recording_unit ru WHERE fk_author_id = :author AND creation_time BETWEEN :start AND :end"
+    )
+    List<RecordingUnit> findAllCreatedBetweenByUser(@Param("start") OffsetDateTime start, @Param("end") OffsetDateTime end, @Param("author") Long personId);
 
     //   Optional<RecordingUnit> findById(long id);
 
