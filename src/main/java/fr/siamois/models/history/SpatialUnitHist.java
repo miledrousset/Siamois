@@ -5,7 +5,6 @@ import fr.siamois.models.SpatialUnitParent;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import org.hibernate.annotations.Immutable;
 
 import java.time.OffsetDateTime;

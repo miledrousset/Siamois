@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.hibernate.annotations.Immutable;
 
-import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 
 @EqualsAndHashCode(callSuper = true)

@@ -2,7 +2,6 @@ package fr.siamois.models.history;
 
 import fr.siamois.utils.HistoryCopyUtils;
 
-import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 
 public interface HistoryEntry<T> {

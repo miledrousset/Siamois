@@ -2,14 +2,12 @@ package fr.siamois.models.history;
 
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.ActionUnitParent;
-import fr.siamois.utils.HistoryCopyUtils;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.hibernate.annotations.Immutable;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 
 @EqualsAndHashCode(callSuper = true)
 @Getter
