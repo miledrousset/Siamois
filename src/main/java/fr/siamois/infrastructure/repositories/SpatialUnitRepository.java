@@ -1,5 +1,6 @@
 package fr.siamois.infrastructure.repositories;
 
+import fr.siamois.infrastructure.repositories.history.TraceableEntries;
 import fr.siamois.models.SpatialUnit;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long> {
+public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>, TraceableEntries {
 
     @Query(
             nativeQuery = true,

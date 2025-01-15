@@ -30,4 +30,5 @@ public abstract class TraceableEntity {
     @Column(name = "creation_time")
     protected OffsetDateTime creationTime = OffsetDateTime.now(ZoneId.systemDefault());
 
+    public abstract Long getId();
 }

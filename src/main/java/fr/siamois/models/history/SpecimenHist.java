@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "history_specimen")
 @Immutable
-public class SpecimenHist extends SpecimenParent {
+public class SpecimenHist extends SpecimenParent implements HistoryEntry {
 
     @Id
     @Column(name = "history_id")

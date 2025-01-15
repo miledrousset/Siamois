@@ -14,7 +14,7 @@ import java.time.OffsetDateTime;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @MappedSuperclass
-public abstract class SpecimentStudyParent extends TraceableEntity {
+public abstract class SpecimenStudyParent extends TraceableEntity {
 
     @Column(name = "study_date")
     protected OffsetDateTime studyDate;

@@ -1,5 +1,6 @@
 package fr.siamois.infrastructure.repositories.specimen;
 
+import fr.siamois.infrastructure.repositories.history.TraceableEntries;
 import fr.siamois.models.specimen.SpecimenStudy;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -10,7 +11,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
-public interface SpecimenStudyRepository extends CrudRepository<SpecimenStudy, Long> {
+public interface SpecimenStudyRepository extends CrudRepository<SpecimenStudy, Long>, TraceableEntries {
 
     @Query(
             nativeQuery = true,

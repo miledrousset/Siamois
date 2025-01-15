@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "history_spatial_unit")
 @Immutable
-public class SpatialUnitHist extends SpatialUnitParent {
+public class SpatialUnitHist extends SpatialUnitParent implements HistoryEntry{
 
     @Id
     @Column(name = "history_id")

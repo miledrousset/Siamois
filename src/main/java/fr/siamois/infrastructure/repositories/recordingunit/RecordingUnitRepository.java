@@ -2,6 +2,7 @@ package fr.siamois.infrastructure.repositories.recordingunit;
 
 
 
+import fr.siamois.infrastructure.repositories.history.TraceableEntries;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -12,7 +13,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
-public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, Long> {
+public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, Long>, TraceableEntries {
 
     @Query(
             nativeQuery = true,

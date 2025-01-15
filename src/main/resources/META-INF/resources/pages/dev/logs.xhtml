@@ -27,7 +27,7 @@
             </p:datePicker>
             <h:panelGroup id="operations">
                 <c:forEach var="log" items="#{logsBean.operations}">
-                    <p>#{log.type().toString()} #{log.entityName()} n°#{log.entityNumber()} at #{logsBean.formatter.format(log.actionDate())}</p>
+                    <p>#{log.type().toString()} #{log.entityName()} n°#{log.entityNumber()} at #{logsBean.formatOffsetDateTime(log.actionDatetime())}</p>
                 </c:forEach>
             </h:panelGroup>
         </h:form>

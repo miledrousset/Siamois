@@ -70,4 +70,14 @@ public class LogsBean implements Serializable {
         operations = historyService.findAllOperationsOfUserBetween(authenticatedUser, start, end);
     }
 
+    /**
+     * offsetDateTime to {@link String} representation with format `YYYY-MM-DD HH:MM` with the system time zone.
+     * @param offsetDateTime The {@link OffsetDateTime} to convert
+     * @return The string representation of the offsetDateTime at the system time zone
+     */
+    public String formatOffsetDateTime(OffsetDateTime offsetDateTime) {
+        LocalDateTime dateTime = offsetDateTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+        return formatter.format(dateTime);
+    }
+
 }

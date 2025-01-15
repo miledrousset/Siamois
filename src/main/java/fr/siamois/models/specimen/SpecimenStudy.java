@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @Table(name = "specimen_study")
-public class SpecimenStudy extends SpecimentStudyParent {
+public class SpecimenStudy extends SpecimenStudyParent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

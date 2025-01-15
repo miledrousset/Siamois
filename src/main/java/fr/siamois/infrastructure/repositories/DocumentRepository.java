@@ -1,5 +1,6 @@
 package fr.siamois.infrastructure.repositories;
 
+import fr.siamois.infrastructure.repositories.history.TraceableEntries;
 import fr.siamois.models.Document;
 import fr.siamois.models.recordingunit.RecordingUnitStudy;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +12,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
-public interface DocumentRepository extends CrudRepository<Document, Long> {
+public interface DocumentRepository extends CrudRepository<Document, Long>, TraceableEntries {
 
     @Query(
             nativeQuery = true,
