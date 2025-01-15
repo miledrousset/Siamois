@@ -1,11 +1,13 @@
 package fr.siamois.models.history;
 
+import fr.siamois.models.Document;
 import fr.siamois.models.DocumentParent;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.hibernate.annotations.Immutable;
 
+import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 
 @EqualsAndHashCode(callSuper = true)
@@ -13,7 +15,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "history_siamois_document")
 @Immutable
-public class DocumentHist extends DocumentParent implements HistoryEntry {
+public class DocumentHist extends DocumentParent implements HistoryEntry<Document> {
 
     @Id
     @Column(name = "history_id")

@@ -1,7 +1,9 @@
 package fr.siamois.models.history;
 
+import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.SpatialUnitParent;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.hibernate.annotations.Immutable;
@@ -9,11 +11,11 @@ import org.hibernate.annotations.Immutable;
 import java.time.OffsetDateTime;
 
 @EqualsAndHashCode(callSuper = true)
-@Getter
+@Data
 @Entity
 @Table(name = "history_spatial_unit")
 @Immutable
-public class SpatialUnitHist extends SpatialUnitParent implements HistoryEntry{
+public class SpatialUnitHist extends SpatialUnitParent implements HistoryEntry<SpatialUnit> {
 
     @Id
     @Column(name = "history_id")

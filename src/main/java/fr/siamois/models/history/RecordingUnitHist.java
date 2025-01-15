@@ -1,5 +1,6 @@
 package fr.siamois.models.history;
 
+import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitParent;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
@@ -13,7 +14,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "history_recording_unit")
 @Immutable
-public class RecordingUnitHist extends RecordingUnitParent implements HistoryEntry {
+public class RecordingUnitHist extends RecordingUnitParent implements HistoryEntry<RecordingUnit> {
 
     @Id
     @Column(name = "history_id")

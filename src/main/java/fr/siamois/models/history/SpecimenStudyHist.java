@@ -1,5 +1,6 @@
 package fr.siamois.models.history;
 
+import fr.siamois.models.specimen.SpecimenStudy;
 import fr.siamois.models.specimen.SpecimenStudyParent;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
@@ -13,7 +14,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "history_specimen_study")
 @Immutable
-public class SpecimenStudyHist extends SpecimenStudyParent implements HistoryEntry {
+public class SpecimenStudyHist extends SpecimenStudyParent implements HistoryEntry<SpecimenStudy> {
 
     @Id
     @Column(name = "history_id")
