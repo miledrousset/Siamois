@@ -55,6 +55,8 @@ public class NewRecordingUnitFormBean implements Serializable {
     private LocalDate endDate;
     private List<Event> events; // Strati
     private Boolean isLocalisationFromSIG;
+    private List<RecordingUnit> recordingUnitList;
+    private List<RecordingUnit> stratigraphySelectedRecordingUnit;
 
     private List<ConceptFieldDTO> concepts;
     private ConceptFieldDTO fType = null;
@@ -189,6 +191,13 @@ public class NewRecordingUnitFormBean implements Serializable {
         return "/pages/create/recordingUnit.xhtml?faces-redirect=true";
     }
 
+    public void fetchAllRecordingUnitsInSameActionUnit() {
+        this.recordingUnitList = recordingUnitService.findAllByActionUnit(recordingUnit.getActionUnit());
+    }
+
+    public void addStratigraphicRelationshipFromSelection() {
+
+    }
 
     public void init(ActionUnit actionUnit) {
         try {
@@ -211,6 +220,9 @@ public class NewRecordingUnitFormBean implements Serializable {
                 events.add(new Event("Anterior", "15/10/2020 10:30", "pi pi-arrow-circle-up", "#9C27B0", "game-controller.jpg"));
                 events.add(new Event("Synchronous", "15/10/2020 14:00", "pi pi-sync", "#673AB7"));
                 events.add(new Event("Posterior", "15/10/2020 16:15", "pi pi-arrow-circle-down", "#FF9800"));
+                this.recordingUnitList = recordingUnitService.findAllByActionUnit(recordingUnit.getActionUnit());
+                log.info("here");
+
             }
         } catch (RuntimeException err) {
             recordingUnitErrorMessage = "Error initializing the form";

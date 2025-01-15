@@ -2,7 +2,10 @@ package fr.siamois.infrastructure.repositories.recordingunit;
 
 
 
+import fr.siamois.models.ActionUnit;
 import fr.siamois.models.recordingunit.RecordingUnit;
+import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -39,6 +42,19 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
                     "WHERE su.spatial_unit_id = :spatialUnitId"
     )
     List<RecordingUnit> findAllBySpatialUnitId(Long spatialUnitId);
+
+    List<RecordingUnit> findAllByActionUnit(ActionUnit actionUnit);
+
+    @Transactional
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = "INSERT INTO stratigraphic_relationship(fk_recording_unit_1_id, fk_recording_unit_2_id, fk_relationship_concept_id) " +
+                    "VALUES (:recordingUnitId1, :recordingUnitId2, :conceptId)"
+    )
+    void saveStratigraphicRelationship(Long recordingUnitId1, Long recordingUnitId2, Long conceptId);
+
+
 
     //   Optional<RecordingUnit> findById(long id);
 

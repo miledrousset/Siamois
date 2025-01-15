@@ -5,6 +5,7 @@ import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitStudyRepository;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.ActionUnit;
 
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
@@ -52,6 +53,16 @@ public class RecordingUnitService {
      */
     public List<RecordingUnit> findAllBySpatialUnit(SpatialUnit spatialUnit) {
         return recordingUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
+    }
+
+    /**
+     * Find all the recording units from an action unit
+     *
+     * @return The List of RecordingUnit
+     * @throws RuntimeException If the repository method throws an Exception
+     */
+    public List<RecordingUnit> findAllByActionUnit(ActionUnit actionUnit) {
+        return recordingUnitRepository.findAllByActionUnit(actionUnit);
     }
 
     @Transactional
