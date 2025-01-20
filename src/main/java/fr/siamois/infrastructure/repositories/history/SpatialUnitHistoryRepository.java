@@ -15,4 +15,10 @@ public interface SpatialUnitHistoryRepository extends CrudRepository<SpatialUnit
     )
     List<SpatialUnitHist> findAllOfUserBetween(OffsetDateTime start, OffsetDateTime end, Long personId);
 
+    @Query(
+            nativeQuery = true,
+            value = "SELECT * FROM history_spatial_unit WHERE spatial_unit_id = :tableId ORDER BY update_time DESC"
+    )
+    List<SpatialUnitHist> findAllByTableId(Long tableId);
+
 }

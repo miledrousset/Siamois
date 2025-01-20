@@ -8,9 +8,13 @@ import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitReposit
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitStudyRepository;
 import fr.siamois.infrastructure.repositories.specimen.SpecimenRepository;
 import fr.siamois.infrastructure.repositories.specimen.SpecimenStudyRepository;
+import fr.siamois.models.ActionUnit;
+import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
+import fr.siamois.models.history.ActionUnitHist;
 import fr.siamois.models.history.HistoryOperation;
 import fr.siamois.models.history.HistoryUpdateType;
+import fr.siamois.models.history.SpatialUnitHist;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -100,6 +104,10 @@ public class HistoryService {
         addCreateOperation(spatialUnitRepository, operations, "Spatial Unit", person, beginTime, endTime);
         addCreateOperation(specimenRepository, operations, "Specimen", person, beginTime, endTime);
         addCreateOperation(specimenStudyRepository, operations, "Specimen Study", person, beginTime, endTime);
+    }
+
+    public List<SpatialUnitHist> findSpatialUnitHistory(SpatialUnit current) {
+        return spatialUnitHistoryRepository.findAllByTableId(current.getId());
     }
 
 }

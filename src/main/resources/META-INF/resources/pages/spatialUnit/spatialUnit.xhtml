@@ -32,6 +32,49 @@
             <p>ARK ID: #{spatialUnitBean.spatialUnit.ark.arkId}</p>
 
 
+            <p:dataTable var="version" value="#{spatialUnitBean.historyVersion}" rows="5" paginator="true">
+                <p:column headerText="Operation">
+                    <h:outputText value="#{version.updateType.toString()}"/>
+                </p:column>
+                <p:column headerText="Datetime">
+                    <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
+                </p:column>
+                <p:column>
+                    <h:form>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <p:commandButton
+                                value="Visualiser"
+                                action="#{spatialUnitBean.visualise(version)}"
+                                update="version-visualizer"
+                        />
+                    </h:form>
+                </p:column>
+                <p:column>
+                    <h:form>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <p:commandButton
+                                value="Restaurer"
+                                action="#{spatialUnitBean.restore(version)}"
+                                oncomplete="PF('restored-dlg').show()"/>
+                    </h:form>
+                </p:column>
+
+            </p:dataTable>
+
+
+            <p:dialog widgetVar="display-version" closeOnEscape="true">
+                <h:panelGroup id="version-visualizer" rendered="#{spatialUnitBean.revisionToDisplay != null}">
+                    <p>Name : #{spatialUnitBean.revisionToDisplay.name}</p>
+                    <p>Ark : #{spatialUnitBean.revisionToDisplay.ark.arkId}</p>
+                    <p>Category : #{spatialUnitBean.revisionToDisplay.category.label}</p>
+                </h:panelGroup>
+            </p:dialog>
+
+            <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
+                <h:outputText value="Version restaurée"/>
+            </p:dialog>
+
+
             <div class="row siamois-row">
                 <div class="col-md-6">
                     <p:staticMessage severity="error" summary="Error" closable="false"
@@ -106,12 +149,12 @@
                                 <p:toolbar>
                                     <p:toolbarGroup>
 
-<!--                                        <p:commandButton value='Nouveau' icon="pi pi-plus"-->
-<!--                                                         update="dialogs"-->
-<!--                                                         action="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"-->
-<!--                                                         oncomplete="PF('newActionDialog').show()"-->
-<!--                                                         style="margin-right: .5rem">-->
-<!--                                        </p:commandButton>-->
+                                        <!--                                        <p:commandButton value='Nouveau' icon="pi pi-plus"-->
+                                        <!--                                                         update="dialogs"-->
+                                        <!--                                                         action="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"-->
+                                        <!--                                                         oncomplete="PF('newActionDialog').show()"-->
+                                        <!--                                                         style="margin-right: .5rem">-->
+                                        <!--                                        </p:commandButton>-->
 
                                     </p:toolbarGroup>
 
@@ -145,56 +188,55 @@
         <h:form id="form-new-action">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
-                    <div>
+            <div>
                         <span class="custom-header">
                             Nouvelle unité d'action pour #{spatialUnitBean.spatialUnit.name}
-                <p:chip label="#{spatialUnitBean.spatialUnit.category.label}" icon="pi pi-map-marker"
+                            <p:chip label="#{spatialUnitBean.spatialUnit.category.label}" icon="pi pi-map-marker"
 
-                        styleClass="mr-2"/>
+                                    styleClass="mr-2"/>
                         </span>
 
+            </div>
+
+
+            <p:outputPanel id="new-action" class="ui-fluid">
+                <p:outputPanel>
+                    <div class="field">
+                        <p:outputLabel for="name">Name</p:outputLabel>
+                        <p:inputText id="name" required="true" value="#{newActionUnitBean.actionUnit.name}"/>
                     </div>
 
-
-                <p:outputPanel id="new-action" class="ui-fluid">
-                    <p:outputPanel>
-                        <div class="field">
-                            <p:outputLabel for="name">Name</p:outputLabel>
-                            <p:inputText id="name" required="true" value="#{newActionUnitBean.actionUnit.name}"/>
-                        </div>
-
-                        <!-- Action Type -->
-                        <div class="field">
-                            <sharedLabel:openthesoLabel for="auto-complete-action-type" label="Type"/>
-                            <p:autoComplete id="auto-complete-action-type"
-                                            value="#{newActionUnitBean.fieldType}"
-                                            completeMethod="#{newActionUnitBean.completeActionUnitType}"
-                                            var="field" itemLabel="#{field.label}"
-                                            itemValue="#{field}"
-                                            required="true"
-                                            converter="#{conceptFieldDTOConverter}"
-                                            forceSelection="true"
-                                            scrollHeight="300"
-                                            dropdown="true"/>
-                        </div>
-
-                    </p:outputPanel>
-
-                    <p:commandButton
-                            value='${langBean.msg("actionunit.button.create")}'
-                            icon="pi pi-check"
-                            action="#{newActionUnitBean.save}"
-                            actionListener="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"
-                            update="@form"
-                    />
-                    <p:commandButton value='${langBean.msg("button.cancel")}' icon="pi pi-times"
-                                     class="ui-button-secondary" type="button"/>
+                    <!-- Action Type -->
+                    <div class="field">
+                        <sharedLabel:openthesoLabel for="auto-complete-action-type" label="Type"/>
+                        <p:autoComplete id="auto-complete-action-type"
+                                        value="#{newActionUnitBean.fieldType}"
+                                        completeMethod="#{newActionUnitBean.completeActionUnitType}"
+                                        var="field" itemLabel="#{field.label}"
+                                        itemValue="#{field}"
+                                        required="true"
+                                        converter="#{conceptFieldDTOConverter}"
+                                        forceSelection="true"
+                                        scrollHeight="300"
+                                        dropdown="true"/>
+                    </div>
 
                 </p:outputPanel>
 
+                <p:commandButton
+                        value='${langBean.msg("actionunit.button.create")}'
+                        icon="pi pi-check"
+                        action="#{newActionUnitBean.save}"
+                        actionListener="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"
+                        update="@form"
+                />
+                <p:commandButton value='${langBean.msg("button.cancel")}' icon="pi pi-times"
+                                 class="ui-button-secondary" type="button"/>
+
+            </p:outputPanel>
+
 
         </h:form>
-
 
 
     </ui:define>

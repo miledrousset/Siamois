@@ -4,6 +4,7 @@ import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.history.HistoryOperation;
 import fr.siamois.services.HistoryService;
+import fr.siamois.utils.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,6 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -29,9 +29,9 @@ public class LogsBean implements Serializable {
     private final SessionSettings sessionSettings;
 
     private List<HistoryOperation> operations;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    private final LocalDateTime endOfToday = dateEndOfToday();
+
+    private final LocalDateTime endOfToday = dateEndOfCurrentDay();
 
     private LocalDateTime vEndDateTime = LocalDateTime.now(ZoneId.systemDefault());
     private LocalDateTime vStartDateTime = dayBeforeAtMidnight(vEndDateTime);
@@ -49,7 +49,7 @@ public class LogsBean implements Serializable {
                 .withNano(0);
     }
 
-    private LocalDateTime dateEndOfToday() {
+    private LocalDateTime dateEndOfCurrentDay() {
         return LocalDateTime.now(ZoneId.systemDefault())
                 .withHour(23)
                 .withMinute(59)
@@ -70,14 +70,8 @@ public class LogsBean implements Serializable {
         operations = historyService.findAllOperationsOfUserBetween(authenticatedUser, start, end);
     }
 
-    /**
-     * offsetDateTime to {@link String} representation with format `YYYY-MM-DD HH:MM` with the system time zone.
-     * @param offsetDateTime The {@link OffsetDateTime} to convert
-     * @return The string representation of the offsetDateTime at the system time zone
-     */
-    public String formatOffsetDateTime(OffsetDateTime offsetDateTime) {
-        LocalDateTime dateTime = offsetDateTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
-        return formatter.format(dateTime);
+    public String formatDate(OffsetDateTime offsetDateTime) {
+        return DateUtils.formatOffsetDateTime(offsetDateTime);
     }
 
 }

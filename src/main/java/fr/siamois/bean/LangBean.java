@@ -22,7 +22,7 @@ public class LangBean implements Serializable {
     @Value("${siamois.lang.default}")
     private String defaultLang;
 
-    private Locale locale = new Locale("fr");
+    private Locale locale = new Locale("en");
 
     public LangBean(LangService langService) {
         this.langService = langService;

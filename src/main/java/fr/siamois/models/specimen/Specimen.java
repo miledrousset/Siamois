@@ -1,7 +1,6 @@
 package fr.siamois.models.specimen;
 
 
-import fr.siamois.models.TraceableEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,7 +9,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @Table(name = "specimen")
-public class Specimen extends TraceableEntity {
+public class Specimen extends SpecimenParent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

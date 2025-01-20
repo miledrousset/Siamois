@@ -17,7 +17,7 @@ $$
                                                description, start_date, end_date, size_length,
                                                size_width, size_thickness, size_unit, altitude_sup_plus,
                                                altitude_sup_minus, altitude_inf_plus, altitude_inf_minus,
-                                               altitude_unit, fk_excavator_id, update_type, update_time, creation_time)
+                                               altitude_unit, fk_excavator_id, update_type, update_time, creation_time, recording_unit_id)
             SELECT OLD.fk_ark_id,
                    OLD.fk_type,
                    OLD.fk_action_unit_id,
@@ -37,7 +37,8 @@ $$
                    OLD.fk_excavator_id,
                    TG_OP,
                    NOW(),
-                   OLD.creation_time;
+                   OLD.creation_time,
+                   OLD.recording_unit_id;
             RETURN NEW;
             END
 $$
@@ -54,7 +55,7 @@ $$
             BEGIN
             INSERT INTO history_recording_unit_study(author, study_date, fk_ark_id, fk_method, fk_action_unit_id,
                                                      fk_recording_unit_id, fk_author_id, update_type, update_time,
-                                                     creation_time)
+                                                     creation_time, recording_unit_study_id)
             SELECT OLD.author,
                    OLD.study_date,
                    OLD.fk_ark_id,
@@ -64,7 +65,8 @@ $$
                    OLD.fk_author_id,
                    TG_OP,
                    NOW(),
-                   OLD.creation_time;
+                   OLD.creation_time,
+                   OLD.recording_unit_study_id;
             RETURN NEW;
             END
 $$
@@ -80,7 +82,7 @@ CREATE OR REPLACE TRIGGER trg_save_history_recording_unit_study
 $$
             BEGIN
             INSERT INTO history_specimen_study(study_date, fk_ark_id, fk_method, fk_specimen_group_id, fk_action_unit_id,
-                                               fk_author_id, update_type, update_time, creation_time)
+                                               fk_author_id, update_type, update_time, creation_time, specimen_study_id)
             SELECT OLD.study_date,
                    OLD.fk_ark_id,
                    OLD.fk_method,
@@ -89,7 +91,8 @@ $$
                    OLD.fk_author_id,
                    TG_OP,
                    NOW(),
-                   OLD.creation_time;
+                   OLD.creation_time,
+                   OLD.specimen_study_id;
             RETURN NEW;
             END
 $$
@@ -106,7 +109,7 @@ $$
             BEGIN
             INSERT INTO history_specimen(fk_recording_unit_id, fk_ark_id, fk_specimen_category, fk_collection_method,
                                          collection_date, fk_action_unit_id, fk_author_id, update_type, update_time,
-                                         creation_time)
+                                         creation_time,specimen_id)
             SELECT OLD.fk_recording_unit_id,
                    OLD.fk_ark_id,
                    OLD.fk_specimen_category,
@@ -116,7 +119,8 @@ $$
                    OLD.fk_author_id,
                    TG_OP,
                    NOW(),
-                   OLD.creation_time;
+                   OLD.creation_time,
+                   OLD.specimen_id;
             RETURN NEW;
             END
 $$
@@ -132,7 +136,7 @@ CREATE OR REPLACE TRIGGER trg_save_history_specimen
 $$
             BEGIN
             INSERT INTO history_siamois_document(fk_ark_id, title, doc_description, fk_nature, fk_scale, fk_author_id,
-                                                 fk_format, fk_parent, url, update_type, update_time, creation_time)
+                                                 fk_format, fk_parent, url, update_type, update_time, creation_time, document_id)
             SELECT OLD.fk_ark_id,
                    OLD.title,
                    OLD.doc_description,
@@ -144,7 +148,8 @@ $$
                    OLD.url,
                    TG_OP,
                    NOW(),
-                   OLD.creation_time;
+                   OLD.creation_time,
+                   OLD.document_id;
             RETURN NEW;
             END
 $$
@@ -160,7 +165,7 @@ CREATE OR REPLACE TRIGGER trg_save_history_siamois_document
 $$
             BEGIN
             INSERT INTO history_action_unit(begin_date, end_date, fk_type, fk_ark_id, fk_author_id, fk_spatial_unit_id,
-                                            action_unit_name, name, description, update_type, update_time, creation_time)
+                                            action_unit_name, name, description, update_type, update_time, creation_time, action_unit_id)
             SELECT OLD.begin_date,
                    OLD.end_date,
                    OLD.fk_type,
@@ -172,7 +177,8 @@ $$
                    OLD.description,
                    TG_OP,
                    NOW(),
-                   OLD.creation_time;
+                   OLD.creation_time,
+                   OLD.action_unit_id;
             RETURN NEW;
             END
 $$
@@ -188,8 +194,8 @@ CREATE OR REPLACE TRIGGER trg_save_history_action_unit
 $$
             BEGIN
             INSERT INTO history_spatial_unit(name, fk_ark_id, fk_concept_category_id, fk_author_id, update_type, update_time,
-                                             creation_time)
-            SELECT OLD.name, OLD.fk_ark_id, OLD.fk_concept_category_id, OLD.fk_author_id, TG_OP, NOW(), OLD.creation_time;
+                                             creation_time, spatial_unit_id)
+            SELECT OLD.name, OLD.fk_ark_id, OLD.fk_concept_category_id, OLD.fk_author_id, TG_OP, NOW(), OLD.creation_time, OLD.spatial_unit_id;
             RETURN NEW;
             END
 $$
