@@ -45,7 +45,8 @@
                         <p:commandButton
                                 value="Visualiser"
                                 action="#{spatialUnitBean.visualise(version)}"
-                                update="version-visualizer"
+                                update="idDisplayVersion"
+                                oncomplete="PF('displayVersion').show()"
                         />
                     </h:form>
                 </p:column>
@@ -62,12 +63,14 @@
             </p:dataTable>
 
 
-            <p:dialog widgetVar="display-version" closeOnEscape="true">
-                <h:panelGroup id="version-visualizer" rendered="#{spatialUnitBean.revisionToDisplay != null}">
-                    <p>Name : #{spatialUnitBean.revisionToDisplay.name}</p>
-                    <p>Ark : #{spatialUnitBean.revisionToDisplay.ark.arkId}</p>
-                    <p>Category : #{spatialUnitBean.revisionToDisplay.category.label}</p>
-                </h:panelGroup>
+            <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true">
+                <h:form id="displayVersionForm">
+                    <h:panelGroup id="version-visualizer" rendered="#{spatialUnitBean.revisionToDisplay != null}">
+                        <p>Name : #{spatialUnitBean.revisionToDisplay.name}</p>
+                        <p>Ark : #{spatialUnitBean.revisionToDisplay.ark.arkId}</p>
+                        <p>Category : #{spatialUnitBean.revisionToDisplay.category.label}</p>
+                    </h:panelGroup>
+                </h:form>
             </p:dialog>
 
             <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">

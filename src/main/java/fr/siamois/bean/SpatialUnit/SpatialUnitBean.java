@@ -136,7 +136,7 @@ public class SpatialUnitBean implements Serializable {
     public void visualise(SpatialUnitHist history) {
         log.trace("History version changed to {}", history.toString());
         revisionToDisplay = history;
-        PrimeFaces.current().executeScript("PF('display-version').show()");
+     //   PrimeFaces.current().executeScript("PF('display-version').show()");
     }
 
     public void restore(SpatialUnitHist history) {
