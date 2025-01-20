@@ -8,10 +8,8 @@ import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitReposit
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitStudyRepository;
 import fr.siamois.infrastructure.repositories.specimen.SpecimenRepository;
 import fr.siamois.infrastructure.repositories.specimen.SpecimenStudyRepository;
-import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.history.ActionUnitHist;
 import fr.siamois.models.history.HistoryOperation;
 import fr.siamois.models.history.HistoryUpdateType;
 import fr.siamois.models.history.SpatialUnitHist;
