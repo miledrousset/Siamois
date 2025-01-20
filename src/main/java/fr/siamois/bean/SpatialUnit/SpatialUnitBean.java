@@ -74,7 +74,7 @@ public class SpatialUnitBean implements Serializable {
     }
 
     public String goToSpatialUnitById(Long id) {
-        log.error("go to spatial unit");
+        log.trace("go to spatial unit");
         return "/pages/spatialUnit/spatialUnit.xhtml?id=" + id+"&faces-redirect=true";
     }
 
