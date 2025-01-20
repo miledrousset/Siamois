@@ -30,7 +30,6 @@ public class LogsBean implements Serializable {
 
     private List<HistoryOperation> operations;
 
-
     private final LocalDateTime endOfToday = dateEndOfCurrentDay();
 
     private LocalDateTime vEndDateTime = LocalDateTime.now(ZoneId.systemDefault());

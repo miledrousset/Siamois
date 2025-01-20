@@ -63,9 +63,10 @@
             </p:dataTable>
 
 
-            <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true">
+            <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true" onHide="location.reload();">
                 <h:form id="displayVersionForm">
-                    <h:panelGroup id="version-visualizer" rendered="#{spatialUnitBean.revisionToDisplay != null}">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <h:panelGroup id="versionVisualizer" rendered="#{spatialUnitBean.revisionToDisplay != null}">
                         <p>Name : #{spatialUnitBean.revisionToDisplay.name}</p>
                         <p>Ark : #{spatialUnitBean.revisionToDisplay.ark.arkId}</p>
                         <p>Category : #{spatialUnitBean.revisionToDisplay.category.label}</p>
