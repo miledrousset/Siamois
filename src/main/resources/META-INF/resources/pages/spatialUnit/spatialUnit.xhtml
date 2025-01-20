@@ -31,36 +31,31 @@
             </h2>
             <p>ARK ID: #{spatialUnitBean.spatialUnit.ark.arkId}</p>
 
-
-            <p:dataTable var="version" value="#{spatialUnitBean.historyVersion}" rows="5" paginator="true">
-                <p:column headerText="Operation">
-                    <h:outputText value="#{version.updateType.toString()}"/>
-                </p:column>
-                <p:column headerText="Datetime">
-                    <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
-                </p:column>
-                <p:column>
-                    <h:form>
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <h:form>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <p:dataTable var="version" value="#{spatialUnitBean.historyVersion}" rows="5" paginator="true">
+                    <p:column headerText="Operation">
+                        <h:outputText value="#{version.updateType.toString()}"/>
+                    </p:column>
+                    <p:column headerText="Datetime">
+                        <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
+                    </p:column>
+                    <p:column>
                         <p:commandButton
                                 value="Visualiser"
                                 action="#{spatialUnitBean.visualise(version)}"
                                 update="idDisplayVersion"
                                 oncomplete="PF('displayVersion').show()"
                         />
-                    </h:form>
-                </p:column>
-                <p:column>
-                    <h:form>
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    </p:column>
+                    <p:column>
                         <p:commandButton
                                 value="Restaurer"
                                 action="#{spatialUnitBean.restore(version)}"
                                 oncomplete="PF('restored-dlg').show()"/>
-                    </h:form>
-                </p:column>
-
-            </p:dataTable>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
 
 
             <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true" onHide="location.reload();">
