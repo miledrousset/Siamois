@@ -114,3 +114,9 @@ html, body {
     width: 100%; !important;
 }
 
+
+.edit-type-chip:hover {
+    background: #2196f3;
+    color: white;
+}
+

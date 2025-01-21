@@ -147,12 +147,11 @@
                                 <p:toolbar>
                                     <p:toolbarGroup>
 
-                                        <!--                                        <p:commandButton value='Nouveau' icon="pi pi-plus"-->
-                                        <!--                                                         update="dialogs"-->
-                                        <!--                                                         action="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"-->
-                                        <!--                                                         oncomplete="PF('newActionDialog').show()"-->
-                                        <!--                                                         style="margin-right: .5rem">-->
-                                        <!--                                        </p:commandButton>-->
+<!--                                        <p:commandButton value='Nouveau' icon="pi pi-plus"-->
+<!--                                                         action="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"-->
+<!--                                                         oncomplete="PF('dlg1').show()"-->
+<!--                                                         style="margin-right: .5rem">-->
+<!--                                        </p:commandButton>-->
 
                                     </p:toolbarGroup>
 
@@ -221,21 +220,23 @@
 
                 </p:outputPanel>
 
-                <p:commandButton
-                        value='${langBean.msg("actionunit.button.create")}'
-                        icon="pi pi-check"
-                        action="#{newActionUnitBean.save}"
-                        actionListener="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"
-                        update="@form"
-                />
-                <p:commandButton value='${langBean.msg("button.cancel")}' icon="pi pi-times"
-                                 class="ui-button-secondary" type="button"/>
+                    <p:commandButton
+                            value='${langBean.msg("actionunit.button.create")}'
+                            icon="pi pi-check"
+                            action="#{newActionUnitBean.save}"
+                            actionListener="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"
+                            update="@form"
+                    />
+                    <p:commandButton value='${langBean.msg("button.cancel")}' icon="pi pi-times"
+                                     class="ui-button-secondary" update="form-new-action" type="button"/>
 
             </p:outputPanel>
 
 
         </h:form>
 
+<!--        <p:dialog header="Header" widgetVar="dlg1" minHeight="40" width="350" showEffect="fade" closeOnEscape="true">-->
+<!--        </p:dialog>-->
 
     </ui:define>
 </ui:composition>

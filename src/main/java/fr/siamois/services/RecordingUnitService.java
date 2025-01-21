@@ -52,6 +52,16 @@ public class RecordingUnitService {
         return recordingUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
     }
 
+    /**
+     * Find all the recording units from an action unit
+     *
+     * @return The List of RecordingUnit
+     * @throws RuntimeException If the repository method throws an Exception
+     */
+    public List<RecordingUnit> findAllByActionUnit(ActionUnit actionUnit) {
+        return recordingUnitRepository.findAllByActionUnit(actionUnit);
+    }
+
     @Transactional
     public RecordingUnit save(RecordingUnit recordingUnit, Vocabulary vocabulary, ConceptFieldDTO
             typeConceptFieldDTO) {

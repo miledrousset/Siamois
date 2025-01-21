@@ -35,6 +35,7 @@ public class BreadcrumbBean implements Serializable {
 
         DefaultMenuItem item = DefaultMenuItem.builder()
                 .value(label)
+                .id("site-item-1")
                 .icon(icon)
                 .outcome(outcome)
                 .build();

@@ -11,18 +11,29 @@
         <cc:attribute name="isNew" required="true" type="boolean"/>
     </cc:interface>
     <cc:implementation>
-        <h:panelGroup rendered="#{cc.attrs.recordingUnitFormBean.recordingUnit != null}">
-            <h:form>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <h:panelGroup id="recordingUnitFormPanelGroup" rendered="#{cc.attrs.recordingUnitFormBean.recordingUnit != null}">
+
+            <h:form id="recordingUnitForm">
+                <input type="hidden" name="#{_csrf.parameterName}" value="#{_csrf.token}"/>
 
                 <p:growl id="growl" showDetail="true"/>
+
+                <div>
+                        <span class="custom-header">
+                            Nouvelle enregistrement pour #{cc.attrs.recordingUnitFormBean.recordingUnit.actionUnit.name}
+                <p:chip label="#{cc.attrs.recordingUnitFormBean.recordingUnit.actionUnit.type.label}" icon="pi pi-play"
+
+                        styleClass="mr-2"/>
+                        </span>
+
+                </div>
 
                 <div class="row" style="padding:1em">
 
                     <div class="field col-md-10">
                         <div class="form-panel">
                             <p:panel id="panel-identifier"
-                                     header='${langBean.msg("recordingunit.panel.identification")}'
+                                     header='#{langBean.msg("recordingunit.panel.identification")}'
                                      toggleable="true">
                                 <div class="row">
                                     <!-- Identifier -->
@@ -63,7 +74,7 @@
                         </div>
                     </div>
                     <div class="field col-md-2">
-                        <p:commandButton value='${langBean.msg("button.save")}' update="@form"
+                        <p:commandButton value='#{langBean.msg("button.save")}' update="@form"
                                          action='#{cc.attrs.recordingUnitFormBean.save}'/>
                     </div>
 
@@ -71,20 +82,20 @@
                 </div>
 
 
-                <p:tabView>
+                <p:tabView id="recordingUnitFormTabView">
 
-                    <p:tab title="Fiche UE">
+                    <p:tab id="recordingUnitDetailsTab" title="Fiche UE">
 
 
                         <div class="row">
 
                             <div class="form-panel col-12 col-lg-4 col-xl-4">
-                                <p:panel id="panel-general" header='${langBean.msg("recordingunit.panel.general")}'
+                                <p:panel id="panel-general" header='#{langBean.msg("recordingunit.panel.general")}'
                                          toggleable="true">
                                     <div class="field grid">
                                         <!-- Owner/Excavator -->
                                         <p:outputLabel for="auto-complete-author"
-                                                       value='${langBean.msg("recordingunit.field.author")}'
+                                                       value='#{langBean.msg("recordingunit.field.author")}'
                                                        styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
 
                                         <p:autoComplete id="auto-complete-author"
@@ -99,7 +110,7 @@
                                                         dropdown="false"/>
 
                                         <p:outputLabel for="auto-complete-excavator"
-                                                       value='${langBean.msg("recordingunit.field.excavator")}'
+                                                       value='#{langBean.msg("recordingunit.field.excavator")}'
                                                        styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
 
                                         <p:autoComplete id="auto-complete-excavator"
@@ -129,7 +140,7 @@
                             </div>
 
                             <div class="form-panel col-12 col-lg-8 col-xl-8">
-                                <p:panel id="panel-description" header='${langBean.msg("recordingunit.panel.description")}'
+                                <p:panel id="panel-description" header='#{langBean.msg("recordingunit.panel.description")}'
                                          toggleable="true">
                                     <!-- Interpretation -->
                                     <div class="field col-md-4">
@@ -147,7 +158,7 @@
                                             <!-- <p:inputTextarea rows="6" cols="33" id="description"/> -->
                                             <!-- TODO : make is secure or remove it -->
                                             <p:textEditor id="description" secure='false' height="200px"
-                                                          value="${cc.attrs.recordingUnitFormBean.recordingUnit.description}"/>
+                                                          value="#{cc.attrs.recordingUnitFormBean.recordingUnit.description}"/>
                                         </div>
                                     </div>
                                 </p:panel>
@@ -171,13 +182,22 @@
                                         class="#{event.icon}"/></span>
                                         </f:facet>
 
-                                        <p:button value="Add"
-                                                  icon="pi pi-plus-circle"/>
+
+                                        <p:menuButton value="Add" buttonStyle="background: #{event.color};border-color: #{event.color};" icon="pi pi-plus-circle">
+                                            <p:menuitem
+                                                    value="Relation certaine"
+                                                    immediate="true"
+                                                    action="#{cc.attrs.recordingUnitFormBean.fetchAllRecordingUnitsInSameActionUnit}"
+                                                    update="newRecordingUnitFormComponent:idSearchRecordingUnitInActionUnit"
+                                                    oncomplete="PF('searchRecordingUnitInActionUnit').show();"/>
+                                            <p:menuitem
+                                                    value="Relation incertaine"
+                                                    oncomplete="PF('searchRecordingUnitInActionUnit').show();"/>
+                                        </p:menuButton>
                                         <div class="flex align-items-center flex-wrap" id="slot">
-                                            <p:chip label="US1" styleClass="mr-2"/>
-                                            <p:chip label="US2" styleClass="mr-2"/>
-                                            <p:chip label="US3" styleClass="mr-2"/>
-                                            <p:chip label="US4" removable="true"/>
+                                            <ui:repeat value="#{cc.attrs.recordingUnitFormBean.stratigraphySelectedRecordingUnit}" var="value">
+                                                <p:chip label="#{value.id}" removable="true"/>
+                                            </ui:repeat>
                                         </div>
 
                                     </p:chronoline>
@@ -187,7 +207,7 @@
 
                         <div class="row">
                             <div class="form-panel col-12 col-lg-4 col-xl-4">
-                                <p:panel id="panel-location" header='${langBean.msg("recordingunit.panel.location")}'>
+                                <p:panel id="panel-location" header='#{langBean.msg("recordingunit.panel.location")}'>
                                     <h5>SIG</h5>
                                     <p:toggleSwitch value="#{cc.attrs.recordingUnitFormBean.isLocalisationFromSIG}"
                                                     onIcon="pi pi-check"
@@ -197,12 +217,12 @@
 
                             </div>
                             <div class="form-panel col-12 col-lg-4 col-xl-4">
-                                <p:panel id="panel-dimension" header='${langBean.msg("recordingunit.panel.dimension")}'>
+                                <p:panel id="panel-dimension" header='#{langBean.msg("recordingunit.panel.dimension")}'>
                                     <div class="field grid">
                                         <div class="row">
                                             <div class="field col-12 md:col-4">
                                                 <p:outputLabel for="select-one-menu-size-unit"
-                                                               value="${langBean.msg('recordingunit.field.size.unit')}"
+                                                               value="#{langBean.msg('recordingunit.field.size.unit')}"
                                                                styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
                                                 <p:selectOneMenu id="select-one-menu-size-unit"
                                                                  value="#{cc.attrs.recordingUnitFormBean.recordingUnit.size.size_unit}"
@@ -216,26 +236,26 @@
                                         <p:panelGrid columns="2">
 
                                             <p:outputLabel for="input-number-length"
-                                                           value="${langBean.msg('recordingunit.field.size.length')}"
+                                                           value="#{langBean.msg('recordingunit.field.size.length')}"
                                             />
                                             <p:inputNumber id="input-number-length"
-                                                           value="${cc.attrs.recordingUnitFormBean.recordingUnit.size.size_length}"
+                                                           value="#{cc.attrs.recordingUnitFormBean.recordingUnit.size.size_length}"
 
                                                            decimalSeparator="," thousandSeparator="."/>
 
                                             <p:outputLabel for="input-number-width"
-                                                           value="${langBean.msg('recordingunit.field.size.width')}"
+                                                           value="#{langBean.msg('recordingunit.field.size.width')}"
                                             />
                                             <p:inputNumber id="input-number-width"
-                                                           value="${cc.attrs.recordingUnitFormBean.recordingUnit.size.size_width}"
+                                                           value="#{cc.attrs.recordingUnitFormBean.recordingUnit.size.size_width}"
 
                                                            decimalSeparator="," thousandSeparator="."/>
 
                                             <p:outputLabel for="input-number-thickness"
-                                                           value="${langBean.msg('recordingunit.field.size.thickness')}"
+                                                           value="#{langBean.msg('recordingunit.field.size.thickness')}"
                                             />
                                             <p:inputNumber id="input-number-thickness"
-                                                           value="${cc.attrs.recordingUnitFormBean.recordingUnit.size.size_thickness}"
+                                                           value="#{cc.attrs.recordingUnitFormBean.recordingUnit.size.size_thickness}"
 
                                                            decimalSeparator="," thousandSeparator="."/>
 
@@ -246,12 +266,12 @@
                             </div>
 
                             <div class="form-panel col-12 col-lg-4 col-xl-4">
-                                <p:panel id="panel-altimetry" header='${langBean.msg("recordingunit.panel.altimetry")}'>
+                                <p:panel id="panel-altimetry" header='#{langBean.msg("recordingunit.panel.altimetry")}'>
                                     <div class="field grid">
                                         <div class="row">
                                             <div class="field col-12 md:col-4">
                                                 <p:outputLabel for="select-one-menu-alti-unit"
-                                                               value="${langBean.msg('recordingunit.field.size.unit')}"
+                                                               value="#{langBean.msg('recordingunit.field.size.unit')}"
                                                                styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
                                                 <p:selectOneMenu id="select-one-menu-alti-unit"
                                                                  value="#{cc.attrs.recordingUnitFormBean.recordingUnit.size.size_unit}"
@@ -264,41 +284,41 @@
                                         <div class="row g-3">
                                             <div class="field col-md-6">
                                                 <p:outputLabel for="input-number-alti-sup-plus" class="form-label"
-                                                               value="${langBean.msg('recordingunit.field.altitude.sup+')}"
+                                                               value="#{langBean.msg('recordingunit.field.altitude.sup+')}"
                                                 />
                                                 <p:inputNumber id="input-number-alti-sup-plus" class="form-control"
-                                                               value="${cc.attrs.recordingUnitFormBean.recordingUnit.altitude.altitude_sup_plus}"
+                                                               value="#{cc.attrs.recordingUnitFormBean.recordingUnit.altitude.altitude_sup_plus}"
 
                                                                decimalSeparator=","
                                                                thousandSeparator="."/>
                                             </div>
                                             <div class="field col-md-6">
                                                 <p:outputLabel for="input-number-alti-inf-plus" class="form-label"
-                                                               value="${langBean.msg('recordingunit.field.altitude.inf+')}"
+                                                               value="#{langBean.msg('recordingunit.field.altitude.inf+')}"
                                                 />
                                                 <p:inputNumber id="input-number-alti-inf-plus" class="form-control"
-                                                               value="${cc.attrs.recordingUnitFormBean.recordingUnit.altitude.altitude_inf_plus}"
+                                                               value="#{cc.attrs.recordingUnitFormBean.recordingUnit.altitude.altitude_inf_plus}"
 
                                                                decimalSeparator=","
                                                                thousandSeparator="."/>
                                             </div>
                                             <div class="field col-md-6">
                                                 <p:outputLabel for="input-number-alti-sup-moins" class="form-label"
-                                                               value="${langBean.msg('recordingunit.field.altitude.sup-')}"
+                                                               value="#{langBean.msg('recordingunit.field.altitude.sup-')}"
                                                 />
                                                 <p:inputNumber id="input-number-alti-sup-moins" class="form-control"
-                                                               value="${cc.attrs.recordingUnitFormBean.recordingUnit.altitude.altitude_sup_minus}"
+                                                               value="#{cc.attrs.recordingUnitFormBean.recordingUnit.altitude.altitude_sup_minus}"
 
                                                                decimalSeparator=","
                                                                thousandSeparator="."/>
                                             </div>
                                             <div class="field col-md-6">
                                                 <p:outputLabel for="input-number-alti-inf_minus" class="form-label"
-                                                               value="${langBean.msg('recordingunit.field.altitude.inf-')}"
+                                                               value="#{langBean.msg('recordingunit.field.altitude.inf-')}"
                                                 />
 
                                                 <p:inputNumber id="input-number-alti-inf_minus" class="form-control"
-                                                               value="${cc.attrs.recordingUnitFormBean.recordingUnit.altitude.altitude_inf_minus}"
+                                                               value="#{cc.attrs.recordingUnitFormBean.recordingUnit.altitude.altitude_inf_minus}"
 
                                                                decimalSeparator=","
                                                                thousandSeparator="."/>
@@ -318,22 +338,28 @@
 
                     </p:tab>
 
-                    <p:tab title="Documents" rendered="#{!cc.attrs.isNew}">
 
-                    </p:tab>
-                    <p:tab title="Prèlevements" rendered="#{!cc.attrs.isNew}">
-
-                    </p:tab>
-                    <p:tab title="Etudes" rendered="#{!cc.attrs.isNew}">
-
-                    </p:tab>
 
                 </p:tabView>
 
 
+
+
             </h:form>
 
+<!--            <h:form id="searchRecordingUnitInActionUnitFormNoDialog">-->
+<!--                <input type="hidden" name="#{_csrf.parameterName}" value="#{_csrf.token}"/>-->
+<!--                <p:dataTable var="recordingUnit" value="#{cc.attrs.recordingUnitFormBean.recordingUnitList}">-->
+<!--                    <p:column headerText="Identifiant">-->
+<!--                        <h:outputText value="#{recordingUnit.serial_id}" />-->
+<!--                    </p:column>-->
+<!--                </p:dataTable>-->
+<!--            </h:form>-->
+
+            <ui:include src="../../../dialog/recordingUnit/searchRecordingUnitInActionUnit.xhtml" />
+
         </h:panelGroup>
+
     </cc:implementation>
 </ui:composition>
 
