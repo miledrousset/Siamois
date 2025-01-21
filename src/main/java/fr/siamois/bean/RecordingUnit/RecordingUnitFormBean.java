@@ -3,7 +3,6 @@ package fr.siamois.bean.RecordingUnit;
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
-import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.recordingunit.RecordingUnit;
@@ -19,16 +18,12 @@ import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 

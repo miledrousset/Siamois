@@ -31,10 +31,11 @@ public class BreadcrumbBean implements Serializable {
     }
 
     public void addBreadcrumbItem(String label, String outcome, String icon) {
-        log.error("Modifying BC");
+        log.trace("Modifying BC");
 
         DefaultMenuItem item = DefaultMenuItem.builder()
                 .value(label)
+                .id("site-item-1")
                 .icon(icon)
                 .outcome(outcome)
                 .build();

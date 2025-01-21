@@ -26,8 +26,8 @@
 <h:body>
 
     <!-- Sidebar -->
-    <p:sidebar widgetVar="sidebar">
-        <div >
+    <p:sidebar id="leftNavSidebar" widgetVar="sidebar">
+        <div>
             <h5>SIAMOIS</h5>
             <p:tieredMenu styleClass="left-menu">
 
@@ -41,6 +41,7 @@
                             icon="pi pi-map-marker"/>
                 <p:menuitem value="Mes actions" action="#{menuView.update}" icon="pi pi-play"/>
                 <p:menuitem value="Mes équipes" action="#{menuView.delete}" icon="pi pi-users"/>
+                <p:menuitem value="Historique opération (DEV)" icon="pi pi-book" outcome="/pages/dev/logs"/>
                 <p:divider/>
 
 
@@ -83,7 +84,7 @@
             <div class="col shadow top-bar">
                 <!-- Top Menu Bar -->
 
-                <p:menubar>
+                <p:menubar id="topBarMenubar">
                     <f:facet name="start">
                         <p:commandButton icon="pi pi-bars" type="button" onclick="PF('sidebar').show()"
                                          styleClass="mr-2"/>
@@ -101,7 +102,6 @@
                             <h:button rendered="#{navBean.userIs('ADMIN')}"
                                       value='${langBean.msg("nav.create.team")}'
                                       outcome="/pages/admin/team.xhtml" styleClass="btn btn-danger"/>
-
 
 
                             <h:form>
@@ -124,14 +124,28 @@
             </div>
 
 
-            <h:form>
+            <h:form id="breadcrumbLeftClickForm">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <p:breadCrumb model="#{breadcrumbBean.model}"
                               style="border:none;background:transparent;border-radius:0;"/>
+                <p:contextMenu for="site-item-1">
+                    <p:menuitem value="Voir graphe depuis ce lieu"
+                                icon="fa-solid fa-sitemap"/>
+                    <p:submenu label="Chercher dans ce lieu" icon="pi pi-refresh">
+                        <p:menuitem value="UE"
+                                    icon="pi pi-chevron-left"/>
+                    </p:submenu>
+                    <p:menuitem value="Action"
+                                icon="pi pi-chevron-left"/>
+                    <p:menuitem value="Un autre lieu"
+                                icon="pi pi-chevron-search"/>
+
+                </p:contextMenu>
             </h:form>
 
-            <p:card id="main" class="shadow" style="margin:1em;">
-                <ui:insert name="content">
+            <p:card  id="mainCard" class="shadow" style="margin:1em;">
+                <!-- Content will be inserted here -->
+                <ui:insert description="The main content" name="content">
                     <!-- Content will be inserted here -->
                 </ui:insert>
             </p:card>

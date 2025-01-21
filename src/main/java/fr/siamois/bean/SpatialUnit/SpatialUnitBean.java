@@ -2,17 +2,22 @@ package fr.siamois.bean.SpatialUnit;
 
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.history.SpatialUnitHist;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.services.ActionUnitService;
+import fr.siamois.services.HistoryService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.SpatialUnitService;
+import fr.siamois.utils.DateUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -29,6 +34,7 @@ public class SpatialUnitBean implements Serializable {
     private final SpatialUnitService spatialUnitService;
     private final RecordingUnitService recordingUnitService;
     private final ActionUnitService actionUnitService;
+    private final HistoryService historyService;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -41,12 +47,17 @@ public class SpatialUnitBean implements Serializable {
     private String actionUnitListErrorMessage;
     private String recordingUnitListErrorMessage;
 
+    private List<SpatialUnitHist> historyVersion;
+
+    private SpatialUnitHist revisionToDisplay = null;
+
     private Long id;  // ID of the spatial unit
 
-    public SpatialUnitBean(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService) {
+    public SpatialUnitBean(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, HistoryService historyService) {
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
+        this.historyService = historyService;
     }
 
     public void reinitializeBean() {
@@ -63,7 +74,7 @@ public class SpatialUnitBean implements Serializable {
     }
 
     public String goToSpatialUnitById(Long id) {
-        log.error("go to spatial unit");
+        log.trace("go to spatial unit");
         return "/pages/spatialUnit/spatialUnit.xhtml?id=" + id+"&faces-redirect=true";
     }
 
@@ -73,7 +84,6 @@ public class SpatialUnitBean implements Serializable {
         reinitializeBean();
 
         if (id != null) {
-
             try {
                 this.spatialUnit = spatialUnitService.findById(id);
             } catch (RuntimeException e) {
@@ -109,12 +119,28 @@ public class SpatialUnitBean implements Serializable {
                     this.actionUnitList = null;
                     this.actionUnitListErrorMessage = "Unable to load action units: " + e.getMessage();
                 }
+                historyVersion = historyService.findSpatialUnitHistory(spatialUnit);
             }
 
         }
         else {
             this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
         }
+    }
+
+    public String formatDate(OffsetDateTime offsetDateTime) {
+        return DateUtils.formatOffsetDateTime(offsetDateTime);
+    }
+
+    public void visualise(SpatialUnitHist history) {
+        log.trace("History version changed to {}", history.toString());
+        revisionToDisplay = history;
+    }
+
+    public void restore(SpatialUnitHist history) {
+        log.trace("Restore order received");
+        spatialUnitService.restore(history);
+        PrimeFaces.current().executeScript("PF('restored-dlg').show()");
     }
 
 }

@@ -31,6 +31,47 @@
             </h2>
             <p>ARK ID: #{spatialUnitBean.spatialUnit.ark.arkId}</p>
 
+            <h:form>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <p:dataTable var="version" value="#{spatialUnitBean.historyVersion}" rows="5" paginator="true">
+                    <p:column headerText="Date de la version">
+                        <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
+                    </p:column>
+                    <p:column>
+                        <p:commandButton
+                                value="Visualiser"
+                                immediate="true"
+                                action="#{spatialUnitBean.visualise(version)}"
+                                update="idDisplayVersion"
+                                oncomplete="PF('displayVersion').show()"
+                        />
+                    </p:column>
+                    <p:column>
+                        <p:commandButton
+                                value="Restaurer"
+                                immediate="true"
+                                action="#{spatialUnitBean.restore(version)}"
+                                oncomplete="PF('restored-dlg').show()"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+
+
+            <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true">
+                <h:form id="displayVersionForm">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <h:panelGroup id="versionVisualizer" rendered="#{spatialUnitBean.revisionToDisplay != null}">
+                        <p>Name : #{spatialUnitBean.revisionToDisplay.name}</p>
+                        <p>Ark : #{spatialUnitBean.revisionToDisplay.ark.arkId}</p>
+                        <p>Category : #{spatialUnitBean.revisionToDisplay.category.label}</p>
+                    </h:panelGroup>
+                </h:form>
+            </p:dialog>
+
+            <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
+                <h:outputText value="Version restaurée"/>
+            </p:dialog>
+
 
             <div class="row siamois-row">
                 <div class="col-md-6">
@@ -107,9 +148,8 @@
                                     <p:toolbarGroup>
 
 <!--                                        <p:commandButton value='Nouveau' icon="pi pi-plus"-->
-<!--                                                         update="dialogs"-->
 <!--                                                         action="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"-->
-<!--                                                         oncomplete="PF('newActionDialog').show()"-->
+<!--                                                         oncomplete="PF('dlg1').show()"-->
 <!--                                                         style="margin-right: .5rem">-->
 <!--                                        </p:commandButton>-->
 
@@ -145,40 +185,40 @@
         <h:form id="form-new-action">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
-                    <div>
+            <div>
                         <span class="custom-header">
                             Nouvelle unité d'action pour #{spatialUnitBean.spatialUnit.name}
-                <p:chip label="#{spatialUnitBean.spatialUnit.category.label}" icon="pi pi-map-marker"
+                            <p:chip label="#{spatialUnitBean.spatialUnit.category.label}" icon="pi pi-map-marker"
 
-                        styleClass="mr-2"/>
+                                    styleClass="mr-2"/>
                         </span>
 
+            </div>
+
+
+            <p:outputPanel id="new-action" class="ui-fluid">
+                <p:outputPanel>
+                    <div class="field">
+                        <p:outputLabel for="name">Name</p:outputLabel>
+                        <p:inputText id="name" required="true" value="#{newActionUnitBean.actionUnit.name}"/>
                     </div>
 
+                    <!-- Action Type -->
+                    <div class="field">
+                        <sharedLabel:openthesoLabel for="auto-complete-action-type" label="Type"/>
+                        <p:autoComplete id="auto-complete-action-type"
+                                        value="#{newActionUnitBean.fieldType}"
+                                        completeMethod="#{newActionUnitBean.completeActionUnitType}"
+                                        var="field" itemLabel="#{field.label}"
+                                        itemValue="#{field}"
+                                        required="true"
+                                        converter="#{conceptFieldDTOConverter}"
+                                        forceSelection="true"
+                                        scrollHeight="300"
+                                        dropdown="true"/>
+                    </div>
 
-                <p:outputPanel id="new-action" class="ui-fluid">
-                    <p:outputPanel>
-                        <div class="field">
-                            <p:outputLabel for="name">Name</p:outputLabel>
-                            <p:inputText id="name" required="true" value="#{newActionUnitBean.actionUnit.name}"/>
-                        </div>
-
-                        <!-- Action Type -->
-                        <div class="field">
-                            <sharedLabel:openthesoLabel for="auto-complete-action-type" label="Type"/>
-                            <p:autoComplete id="auto-complete-action-type"
-                                            value="#{newActionUnitBean.fieldType}"
-                                            completeMethod="#{newActionUnitBean.completeActionUnitType}"
-                                            var="field" itemLabel="#{field.label}"
-                                            itemValue="#{field}"
-                                            required="true"
-                                            converter="#{conceptFieldDTOConverter}"
-                                            forceSelection="true"
-                                            scrollHeight="300"
-                                            dropdown="true"/>
-                        </div>
-
-                    </p:outputPanel>
+                </p:outputPanel>
 
                     <p:commandButton
                             value='${langBean.msg("actionunit.button.create")}'
@@ -188,14 +228,15 @@
                             update="@form"
                     />
                     <p:commandButton value='${langBean.msg("button.cancel")}' icon="pi pi-times"
-                                     class="ui-button-secondary" type="button"/>
+                                     class="ui-button-secondary" update="form-new-action" type="button"/>
 
-                </p:outputPanel>
+            </p:outputPanel>
 
 
         </h:form>
 
-
+<!--        <p:dialog header="Header" widgetVar="dlg1" minHeight="40" width="350" showEffect="fade" closeOnEscape="true">-->
+<!--        </p:dialog>-->
 
     </ui:define>
 </ui:composition>

@@ -30,7 +30,7 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/", "/index.xhtml").authenticated()
                 .requestMatchers("/fieldConfiguration", "/pages/field/fieldConfiguration.xhtml").authenticated()
-                .requestMatchers("/pages/create/spatialUnit.xhtml").authenticated()
+                .requestMatchers("/pages/**").authenticated()
                 .requestMatchers("/pages/admin/**", "/admin/**").hasAuthority("ADMIN")
                 .requestMatchers("/pages/manager/**", "/manager/**").hasAnyAuthority("TEAM_MANAGER", "ADMIN")
                 .anyRequest().permitAll()

@@ -3,15 +3,13 @@ package fr.siamois.services;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
-import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitStudyRepository;
+import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
-
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.exceptions.RecordingUnitNotFoundException;
 import fr.siamois.models.recordingunit.RecordingUnit;
-
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.ark.ArkGenerator;
@@ -37,7 +35,7 @@ public class RecordingUnitService {
     private final FieldService fieldService;
 
 
-    public RecordingUnitService(RecordingUnitRepository recordingUnitRepository, ArkServerRepository arkServerRepository, RecordingUnitStudyRepository recordingUnitStudyRepository, FieldService fieldService) {
+    public RecordingUnitService(RecordingUnitRepository recordingUnitRepository, ArkServerRepository arkServerRepository, FieldService fieldService) {
         this.recordingUnitRepository = recordingUnitRepository;
         this.arkServerRepository = arkServerRepository;
         this.fieldService = fieldService;
@@ -54,6 +52,16 @@ public class RecordingUnitService {
         return recordingUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
     }
 
+    /**
+     * Find all the recording units from an action unit
+     *
+     * @return The List of RecordingUnit
+     * @throws RuntimeException If the repository method throws an Exception
+     */
+    public List<RecordingUnit> findAllByActionUnit(ActionUnit actionUnit) {
+        return recordingUnitRepository.findAllByActionUnit(actionUnit);
+    }
+
     @Transactional
     public RecordingUnit save(RecordingUnit recordingUnit, Vocabulary vocabulary, ConceptFieldDTO
             typeConceptFieldDTO) {
@@ -64,9 +72,7 @@ public class RecordingUnitService {
 
                 ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
                 Ark ark = new Ark();
-                ark.setArkServer(
-                        arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"))
-                );
+                ark.setArkServer(localServer);
                 ark.setArkId(ArkGenerator.generateArk());
                 recordingUnit.setArk(ark);
             }

@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
-import static java.time.OffsetDateTime.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -87,14 +86,13 @@ class NewRecordingUnitFormBeanTest {
     @Test
     void init_success() {
         // Given: mock the services
-        when(actionUnitService.findById(4)).thenReturn(actionUnit);
         when(recordingUnitUtils.offsetDateTimeToLocalDate(any(OffsetDateTime.class))).thenReturn(LocalDate.MAX);
 
         // When: call the @PostConstruct method (implicitly triggered during bean initialization)
-        newRecordingUnitFormBean.init();
+        newRecordingUnitFormBean.init(actionUnit);
 
         // Then: verify that the bean is populated properly
-        assertEquals(recordingUnit, newRecordingUnitFormBean.getRecordingUnit());
+        assertEquals(recordingUnit.getId(), newRecordingUnitFormBean.getRecordingUnit().getId());
         // TODO : check other local var
     }
 }

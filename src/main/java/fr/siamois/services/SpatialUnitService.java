@@ -3,6 +3,7 @@ package fr.siamois.services;
 import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
+import fr.siamois.models.history.SpatialUnitHist;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -40,11 +41,7 @@ public class SpatialUnitService {
      * @throws RuntimeException             If the repository method throws an Exception
      */
     public List<SpatialUnit> findAllChildOfSpatialUnit(SpatialUnit spatialUnit) {
-        try {
-            return spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit.getId());
-        } catch (RuntimeException e) {
-            throw e;
-        }
+        return spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit.getId());
     }
 
     /**
@@ -54,11 +51,7 @@ public class SpatialUnitService {
      * @throws RuntimeException             If the repository method throws an Exception
      */
     public List<SpatialUnit> findAllParentsOfSpatialUnit(SpatialUnit spatialUnit) {
-        try {
-            return spatialUnitRepository.findAllParentsOfSpatialUnit(spatialUnit.getId());
-        } catch (RuntimeException e) {
-            throw e;
-        }
+        return spatialUnitRepository.findAllParentsOfSpatialUnit(spatialUnit.getId());
     }
 
     /**
@@ -78,4 +71,9 @@ public class SpatialUnitService {
         }
     }
 
+    public void restore(SpatialUnitHist history) {
+        SpatialUnit spatialUnit = history.createOriginal(SpatialUnit.class);
+        log.trace(spatialUnit.toString());
+        spatialUnitRepository.save(spatialUnit);
+    }
 }

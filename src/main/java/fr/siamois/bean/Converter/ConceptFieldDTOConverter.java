@@ -1,15 +1,13 @@
-package fr.siamois.bean.Converter;
+package fr.siamois.bean.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
-import fr.siamois.models.Team;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.convert.Converter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Slf4j
 @Component

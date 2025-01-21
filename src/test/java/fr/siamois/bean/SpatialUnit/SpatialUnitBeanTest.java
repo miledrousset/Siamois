@@ -4,6 +4,7 @@ import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.services.ActionUnitService;
+import fr.siamois.services.HistoryService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.SpatialUnitService;
 import org.junit.jupiter.api.AfterEach;
@@ -23,6 +24,7 @@ class SpatialUnitBeanTest {
     @Mock private SpatialUnitService spatialUnitService;  // Mock the SpatialUnitService
     @Mock private ActionUnitService actionUnitService;  // Mock the SpatialUnitService
     @Mock private RecordingUnitService recordingUnitService;  // Mock the SpatialUnitService
+    @Mock private HistoryService historyService;
 
     @InjectMocks
     private SpatialUnitBean spatialUnitBean;  // HomeBean under test

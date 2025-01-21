@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--
+    Updates triggers for history saving after an UPDATE or DELETE on watched tables.
+    -->
+
+    <changeSet id="2025.01.14-7" author="Julien Linget">
+        <sql>
+            CREATE OR REPLACE FUNCTION save_history_recording_unit() RETURNS TRIGGER AS
+$$
+            BEGIN
+            INSERT INTO history_recording_unit(fk_ark_id, fk_type, fk_action_unit_id, fk_author_id,
+                                               description, start_date, end_date, size_length,
+                                               size_width, size_thickness, size_unit, altitude_sup_plus,
+                                               altitude_sup_minus, altitude_inf_plus, altitude_inf_minus,
+                                               altitude_unit, fk_excavator_id, update_type, update_time, creation_time, recording_unit_id)
+            SELECT OLD.fk_ark_id,
+                   OLD.fk_type,
+                   OLD.fk_action_unit_id,
+                   OLD.fk_author_id,
+                   OLD.description,
+                   OLD.start_date,
+                   OLD.end_date,
+                   OLD.size_length,
+                   OLD.size_width,
+                   OLD.size_thickness,
+                   OLD.size_unit,
+                   OLD.altitude_sup_plus,
+                   OLD.altitude_sup_minus,
+                   OLD.altitude_inf_plus,
+                   OLD.altitude_inf_minus,
+                   OLD.altitude_unit,
+                   OLD.fk_excavator_id,
+                   TG_OP,
+                   NOW(),
+                   OLD.creation_time,
+                   OLD.recording_unit_id;
+            RETURN NEW;
+            END
+$$
+            LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_save_history_recording_unit
+    AFTER UPDATE OR DELETE
+          ON recording_unit
+              FOR EACH ROW
+              EXECUTE FUNCTION save_history_recording_unit();
+
+            CREATE OR REPLACE FUNCTION save_history_recording_unit_study() RETURNS TRIGGER AS
+$$
+            BEGIN
+            INSERT INTO history_recording_unit_study(author, study_date, fk_ark_id, fk_method, fk_action_unit_id,
+                                                     fk_recording_unit_id, fk_author_id, update_type, update_time,
+                                                     creation_time, recording_unit_study_id)
+            SELECT OLD.author,
+                   OLD.study_date,
+                   OLD.fk_ark_id,
+                   OLD.fk_method,
+                   OLD.fk_action_unit_id,
+                   OLD.fk_recording_unit_id,
+                   OLD.fk_author_id,
+                   TG_OP,
+                   NOW(),
+                   OLD.creation_time,
+                   OLD.recording_unit_study_id;
+            RETURN NEW;
+            END
+$$
+            LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_save_history_recording_unit_study
+    AFTER UPDATE OR DELETE
+          ON recording_unit_study
+              FOR EACH ROW
+              EXECUTE FUNCTION save_history_recording_unit_study();
+
+            CREATE OR REPLACE FUNCTION save_history_specimen_study() RETURNS TRIGGER AS
+$$
+            BEGIN
+            INSERT INTO history_specimen_study(study_date, fk_ark_id, fk_method, fk_specimen_group_id, fk_action_unit_id,
+                                               fk_author_id, update_type, update_time, creation_time, specimen_study_id)
+            SELECT OLD.study_date,
+                   OLD.fk_ark_id,
+                   OLD.fk_method,
+                   OLD.fk_specimen_group_id,
+                   OLD.fk_action_unit_id,
+                   OLD.fk_author_id,
+                   TG_OP,
+                   NOW(),
+                   OLD.creation_time,
+                   OLD.specimen_study_id;
+            RETURN NEW;
+            END
+$$
+            LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_save_history_specimen_study
+    AFTER UPDATE OR DELETE
+          ON specimen_study
+              FOR EACH ROW
+              EXECUTE FUNCTION save_history_specimen_study();
+
+            CREATE OR REPLACE FUNCTION save_history_specimen() RETURNS TRIGGER AS
+$$
+            BEGIN
+            INSERT INTO history_specimen(fk_recording_unit_id, fk_ark_id, fk_specimen_category, fk_collection_method,
+                                         collection_date, fk_action_unit_id, fk_author_id, update_type, update_time,
+                                         creation_time,specimen_id)
+            SELECT OLD.fk_recording_unit_id,
+                   OLD.fk_ark_id,
+                   OLD.fk_specimen_category,
+                   OLD.fk_collection_method,
+                   OLD.collection_date,
+                   OLD.fk_action_unit_id,
+                   OLD.fk_author_id,
+                   TG_OP,
+                   NOW(),
+                   OLD.creation_time,
+                   OLD.specimen_id;
+            RETURN NEW;
+            END
+$$
+            LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_save_history_specimen
+    AFTER UPDATE OR DELETE
+          ON specimen
+              FOR EACH ROW
+              EXECUTE FUNCTION save_history_specimen();
+
+            CREATE OR REPLACE FUNCTION save_history_siamois_document() RETURNS TRIGGER AS
+$$
+            BEGIN
+            INSERT INTO history_siamois_document(fk_ark_id, title, doc_description, fk_nature, fk_scale, fk_author_id,
+                                                 fk_format, fk_parent, url, update_type, update_time, creation_time, document_id)
+            SELECT OLD.fk_ark_id,
+                   OLD.title,
+                   OLD.doc_description,
+                   OLD.fk_nature,
+                   OLD.fk_scale,
+                   OLD.fk_author_id,
+                   OLD.fk_format,
+                   OLD.fk_parent,
+                   OLD.url,
+                   TG_OP,
+                   NOW(),
+                   OLD.creation_time,
+                   OLD.document_id;
+            RETURN NEW;
+            END
+$$
+            LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_save_history_siamois_document
+    AFTER UPDATE OR DELETE
+          ON siamois_document
+              FOR EACH ROW
+              EXECUTE FUNCTION save_history_siamois_document();
+
+            CREATE OR REPLACE FUNCTION save_history_action_unit() RETURNS TRIGGER AS
+$$
+            BEGIN
+            INSERT INTO history_action_unit(begin_date, end_date, fk_type, fk_ark_id, fk_author_id, fk_spatial_unit_id,
+                                            action_unit_name, name, description, update_type, update_time, creation_time, action_unit_id)
+            SELECT OLD.begin_date,
+                   OLD.end_date,
+                   OLD.fk_type,
+                   OLD.fk_ark_id,
+                   OLD.fk_author_id,
+                   OLD.fk_spatial_unit_id,
+                   OLD.action_unit_name,
+                   OLD.name,
+                   OLD.description,
+                   TG_OP,
+                   NOW(),
+                   OLD.creation_time,
+                   OLD.action_unit_id;
+            RETURN NEW;
+            END
+$$
+            LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_save_history_action_unit
+    AFTER UPDATE OR DELETE
+          ON action_unit
+              FOR EACH ROW
+              EXECUTE FUNCTION save_history_action_unit();
+
+            CREATE OR REPLACE FUNCTION save_history_spatial_unit() RETURNS TRIGGER AS
+$$
+            BEGIN
+            INSERT INTO history_spatial_unit(name, fk_ark_id, fk_concept_category_id, fk_author_id, update_type, update_time,
+                                             creation_time, spatial_unit_id)
+            SELECT OLD.name, OLD.fk_ark_id, OLD.fk_concept_category_id, OLD.fk_author_id, TG_OP, NOW(), OLD.creation_time, OLD.spatial_unit_id;
+            RETURN NEW;
+            END
+$$
+            LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_save_history_spatial_unit
+    AFTER UPDATE OR DELETE
+          ON spatial_unit
+              FOR EACH ROW
+              EXECUTE FUNCTION save_history_spatial_unit();
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

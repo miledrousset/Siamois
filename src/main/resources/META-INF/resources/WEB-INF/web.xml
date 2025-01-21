@@ -1,4 +1,7 @@
 <context-param>
     <param-name>primefaces.THEME</param-name>
     <param-value>mytheme</param-value>
+
+    <param-name>javax.faces.CONFIG_FILES</param-name>
+    <param-value>WEB-INF/META-INF/faces-config.xml</param-value>
 </context-param>

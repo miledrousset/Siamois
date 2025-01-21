@@ -7,7 +7,7 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{newRecordingUnitFormBean.init}"/>
+<!--            <f:event type="preRenderView" listener="#{newRecordingUnitFormBean.init}"/>-->
         </f:metadata>
     </ui:define>
 
@@ -15,7 +15,7 @@
         <h:outputScript library="primefaces" name="jquery/jquery.js"/>
 
         <!-- Content -->
-        <recordingUnit:recordingUnitForm recordingUnitFormBean="#{newRecordingUnitFormBean}" isNew="true" />
+        <recordingUnit:recordingUnitForm id="newRecordingUnitFormComponent" recordingUnitFormBean="#{newRecordingUnitFormBean}" isNew="true" />
 
 
     </ui:define>
