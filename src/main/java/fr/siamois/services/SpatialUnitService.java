@@ -2,6 +2,7 @@ package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.Team;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
 import fr.siamois.models.history.SpatialUnitHist;
 import lombok.extern.slf4j.Slf4j;
@@ -75,5 +76,9 @@ public class SpatialUnitService {
         SpatialUnit spatialUnit = history.createOriginal(SpatialUnit.class);
         log.trace(spatialUnit.toString());
         spatialUnitRepository.save(spatialUnit);
+    }
+
+    public List<SpatialUnit> findAllWithoutParentsOfTeam(Team selectedTeam) {
+        return spatialUnitRepository.findAllWithoutParentsOfTeam(selectedTeam.getId());
     }
 }

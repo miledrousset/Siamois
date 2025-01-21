@@ -4,7 +4,7 @@ import fr.siamois.bean.converter.TeamConverter;
 import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
 import fr.siamois.services.TeamService;
-import fr.siamois.services.TeamTopicSubscriber;
+import fr.siamois.services.Subscriber;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
@@ -35,8 +35,8 @@ public class NavBean implements Serializable {
     private final SessionSettings sessionSettings;
     private final TeamService teamService;
     private final TeamConverter converter;
-
-    private final List<TeamTopicSubscriber> subscribers;
+    private final ObserverBean observerBean;
+    private final TeamConverter teamConverter;
 
     private List<Team> allTeams;
 
@@ -44,11 +44,12 @@ public class NavBean implements Serializable {
 
     private Team selectedTeam;
 
-    public NavBean(SessionSettings sessionSettings, TeamService teamService, TeamConverter converter) {
+    public NavBean(SessionSettings sessionSettings, TeamService teamService, TeamConverter converter, ObserverBean observerBean, TeamConverter teamConverter) {
         this.sessionSettings = sessionSettings;
         this.teamService = teamService;
         this.converter = converter;
-        subscribers = new ArrayList<>();
+        this.observerBean = observerBean;
+        this.teamConverter = teamConverter;
     }
 
 
@@ -69,11 +70,8 @@ public class NavBean implements Serializable {
      * @return true if the user is in the role, false otherwise
      */
     public boolean userIs(String roleName) {
-        Optional<Person> user = AuthenticatedUserUtils.getAuthenticatedUser();
-        return user.map(person -> person.getAuthorities()
-                .stream()
-                .anyMatch(a -> a.getAuthority().equalsIgnoreCase(roleName)))
-                .orElse(false);
+        Optional<Person> optUser = AuthenticatedUserUtils.getAuthenticatedUser();
+        return optUser.map(person -> person.hasRole(roleName)).orElse(false);
     }
 
     /**
@@ -82,34 +80,18 @@ public class NavBean implements Serializable {
      * @return true if the user is in any of the roles, false otherwise
      */
     public boolean userIsAny(String... roles) {
-        Optional<Person> user = AuthenticatedUserUtils.getAuthenticatedUser();
-        return user.map(person -> person.getAuthorities()
-                .stream()
-                .anyMatch(a -> {
-                    for (String role : roles) {
-                        if (a.getAuthority().equalsIgnoreCase(role)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }))
-                .orElse(false);
+        Optional<Person> optUser = AuthenticatedUserUtils.getAuthenticatedUser();
+        if (optUser.isEmpty()) return false;
+
+        Person user = optUser.get();
+        for (String role : roles) {
+            if (user.hasRole(role)) return true;
+        }
+        return false;
     }
 
-    /**
-     * Notifies all subscribers that the team has changed
-     */
-    public void onTeamChange() {
-        log.trace("Team changed to {}", selectedTeam.getName());
+    public void changeSelectedTeam() {
         sessionSettings.setSelectedTeam(selectedTeam);
-        subscribers.forEach(TeamTopicSubscriber::onTeamChange);
-    }
-
-    /**
-     * Add a subscriber to the list of subscribers
-     * @param bean the subscriber to add
-     */
-    public void addSubscriber(TeamTopicSubscriber bean) {
-        subscribers.add(bean);
+        observerBean.notify("teamChange");
     }
 }

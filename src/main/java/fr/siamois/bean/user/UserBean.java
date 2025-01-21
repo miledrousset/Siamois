@@ -13,7 +13,7 @@ import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.TeamService;
-import fr.siamois.services.TeamTopicSubscriber;
+import fr.siamois.services.Subscriber;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.MessageUtils;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @SessionScoped
-public class UserBean implements Serializable, TeamTopicSubscriber {
+public class UserBean implements Serializable {
 
     // Injections
     private final SessionSettings sessionSettings;
@@ -73,7 +73,6 @@ public class UserBean implements Serializable, TeamTopicSubscriber {
      * Initialize the bean. Reset the fields and load the team members
      */
     public void init() {
-        navBean.addSubscriber(this);
         resetFields();
         loadTeamMembers();
     }
@@ -135,8 +134,4 @@ public class UserBean implements Serializable, TeamTopicSubscriber {
         }
     }
 
-    @Override
-    public void onTeamChange() {
-        loadTeamMembers();
-    }
 }

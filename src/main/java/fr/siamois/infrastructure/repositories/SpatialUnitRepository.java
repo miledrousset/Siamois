@@ -38,9 +38,6 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
     )
     List<SpatialUnit> findAllWithoutParents();
 
-    @Query(value = "SELECT su FROM SpatialUnit su WHERE UPPER(su.ark) = UPPER(:arkId)")
-    Optional<SpatialUnit> findSpatialUnitByArkId(String arkId);
-
     @Transactional
     @Modifying
     @Query(
@@ -55,5 +52,16 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
             value = "SELECT su.* FROM spatial_unit su WHERE fk_author_id = :author AND creation_time BETWEEN :start AND :end"
     )
     List<SpatialUnit> findAllCreatedBetweenByUser(@Param("start") OffsetDateTime start, @Param("end") OffsetDateTime end, @Param("author") Long personId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT su.* " +
+                    "FROM spatial_unit su " +
+                    "         JOIN person_role_team prt ON su.fk_author_id = prt.fk_person_id " +
+                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
+                    "WHERE prt.fk_team_id = :teamId " +
+                    "  AND sh.fk_parent_id IS NULL"
+    )
+    List<SpatialUnit> findAllWithoutParentsOfTeam(Long teamId);
 }
 

@@ -18,8 +18,7 @@ public class ConceptFieldDTOConverter implements Converter<ConceptFieldDTO> {
     @Override
     public ConceptFieldDTO getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
         try {
-            ConceptFieldDTO cfdto = objectMapper.readValue(s, ConceptFieldDTO.class);
-            return cfdto;
+            return objectMapper.readValue(s, ConceptFieldDTO.class);
         } catch (JsonProcessingException e) {
             log.error("Error while converting string to  object", e);
             throw new RuntimeException(e);

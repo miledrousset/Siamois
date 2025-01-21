@@ -60,6 +60,14 @@
 
             </p:tieredMenu>
 
+            <h:form>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <p:selectOneMenu value="#{navBean.selectedTeam}" converter="#{navBean.teamConverter}">
+                    <f:selectItems value="#{navBean.teams}" var="team" itemLabel="#{team.name}" />
+                    <p:ajax event="itemSelect" listener="#{navBean.changeSelectedTeam()}"/>
+                </p:selectOneMenu>
+            </h:form>
+
         </div>
 
     </p:sidebar>
