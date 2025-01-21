@@ -3,7 +3,7 @@ package fr.siamois.services;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
-import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitStudyRepository;
+import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
@@ -35,7 +35,7 @@ public class RecordingUnitService {
     private final FieldService fieldService;
 
 
-    public RecordingUnitService(RecordingUnitRepository recordingUnitRepository, ArkServerRepository arkServerRepository, RecordingUnitStudyRepository recordingUnitStudyRepository, FieldService fieldService) {
+    public RecordingUnitService(RecordingUnitRepository recordingUnitRepository, ArkServerRepository arkServerRepository, FieldService fieldService) {
         this.recordingUnitRepository = recordingUnitRepository;
         this.arkServerRepository = arkServerRepository;
         this.fieldService = fieldService;
@@ -72,9 +72,7 @@ public class RecordingUnitService {
 
                 ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
                 Ark ark = new Ark();
-                ark.setArkServer(
-                        arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"))
-                );
+                ark.setArkServer(localServer);
                 ark.setArkId(ArkGenerator.generateArk());
                 recordingUnit.setArk(ark);
             }
