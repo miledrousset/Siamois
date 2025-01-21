@@ -43,6 +43,8 @@
                     <p:column>
                         <p:commandButton
                                 value="Visualiser"
+                                ajax="true" process="@this"
+                                immediate="true"
                                 action="#{spatialUnitBean.visualise(version)}"
                                 update="idDisplayVersion"
                                 oncomplete="PF('displayVersion').show()"
@@ -51,6 +53,8 @@
                     <p:column>
                         <p:commandButton
                                 value="Restaurer"
+                                ajax="true" process="@this"
+                                immediate="true"
                                 action="#{spatialUnitBean.restore(version)}"
                                 oncomplete="PF('restored-dlg').show()"/>
                     </p:column>
@@ -58,7 +62,7 @@
             </h:form>
 
 
-            <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true" onHide="location.reload();">
+            <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true">
                 <h:form id="displayVersionForm">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <h:panelGroup id="versionVisualizer" rendered="#{spatialUnitBean.revisionToDisplay != null}">

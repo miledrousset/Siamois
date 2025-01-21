@@ -84,7 +84,6 @@ public class SpatialUnitBean implements Serializable {
         reinitializeBean();
 
         if (id != null) {
-
             try {
                 this.spatialUnit = spatialUnitService.findById(id);
             } catch (RuntimeException e) {
