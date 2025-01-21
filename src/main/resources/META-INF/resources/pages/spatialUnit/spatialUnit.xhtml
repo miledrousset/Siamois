@@ -34,16 +34,12 @@
             <h:form>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <p:dataTable var="version" value="#{spatialUnitBean.historyVersion}" rows="5" paginator="true">
-                    <p:column headerText="Operation">
-                        <h:outputText value="#{version.updateType.toString()}"/>
-                    </p:column>
-                    <p:column headerText="Datetime">
+                    <p:column headerText="Date de la version">
                         <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
                     </p:column>
                     <p:column>
                         <p:commandButton
                                 value="Visualiser"
-                                ajax="true" process="@this"
                                 immediate="true"
                                 action="#{spatialUnitBean.visualise(version)}"
                                 update="idDisplayVersion"
@@ -53,7 +49,6 @@
                     <p:column>
                         <p:commandButton
                                 value="Restaurer"
-                                ajax="true" process="@this"
                                 immediate="true"
                                 action="#{spatialUnitBean.restore(version)}"
                                 oncomplete="PF('restored-dlg').show()"/>

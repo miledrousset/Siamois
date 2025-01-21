@@ -8,6 +8,4 @@ import java.util.List;
  * @param vocabularyCollectionsConfig Contains a list of vocabulary collections if the configuration is a vocabulary collection based. The vocabularyConfig should be null.
  */
 public record FieldConfigurationWrapper(Vocabulary vocabularyConfig,
-                                        List<VocabularyCollection> vocabularyCollectionsConfig) {
-
-}
+                                        List<VocabularyCollection> vocabularyCollectionsConfig) { }
