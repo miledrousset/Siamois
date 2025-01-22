@@ -47,7 +47,7 @@ public class HistoryTriggerInitializer {
         }
     }
 
-    public void createSQLHistTrigger(Connection connection, String tableName, String historyTableName) throws SQLException, WrongTableNameException {
+    public void createSQLHistTrigger(Connection connection, String tableName, String historyTableName) throws SQLException {
         StringBuilder columnList = new StringBuilder();
         StringBuilder selectList = new StringBuilder();
 
@@ -95,7 +95,7 @@ public class HistoryTriggerInitializer {
         }
     }
 
-    private void addColumnNamesToLists(Connection connection, String tableName, StringBuilder columnList, StringBuilder selectList) throws SQLException, WrongTableNameException {
+    private void addColumnNamesToLists(Connection connection, String tableName, StringBuilder columnList, StringBuilder selectList) throws SQLException {
         String query = "SELECT column_name FROM information_schema.columns WHERE table_name = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1, tableName);
