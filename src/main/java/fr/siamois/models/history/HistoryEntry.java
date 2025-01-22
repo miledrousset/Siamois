@@ -1,5 +1,6 @@
 package fr.siamois.models.history;
 
+import fr.siamois.models.Team;
 import fr.siamois.utils.HistoryCopyUtils;
 
 import java.time.OffsetDateTime;
@@ -17,4 +18,5 @@ public interface HistoryEntry<T> {
             throw new RuntimeException("Failed to create original instance", e);
         }
     }
+    Team getAuthorTeam();
 }
