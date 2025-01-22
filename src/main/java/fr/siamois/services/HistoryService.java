@@ -47,11 +47,11 @@ public class HistoryService {
 
     private void addAllHistoryOperations(Person person, Team team, List<HistoryOperation> operations, OffsetDateTime beginTime, OffsetDateTime endTime) {
         for (int i = 0; i < entityName.size(); i++)
-            addHistoryOperation(operations, tableNames.get(i), entityName.get(i), person, beginTime, endTime);
+            addHistoryOperation(operations, tableNames.get(i), entityName.get(i), person, team, beginTime, endTime);
     }
 
-    private void addHistoryOperation(List<HistoryOperation> operations, String tableName, String entityName, Person person, OffsetDateTime start, OffsetDateTime end) {
-        globalHistoryRepository.findAllHistoryOfUserBetween("history_" + tableName, person, start, end).forEach((entry) ->
+    private void addHistoryOperation(List<HistoryOperation> operations, String tableName, String entityName, Person person, Team team, OffsetDateTime start, OffsetDateTime end) {
+        globalHistoryRepository.findAllHistoryOfUserBetween("history_" + tableName, person, team, start, end).forEach((entry) ->
                 operations.add(new HistoryOperation(entry.getUpdateType(),
                         entityName,
                         entry.getTableId(),
@@ -59,8 +59,8 @@ public class HistoryService {
                 );
     }
 
-    private void addCreateOperation(List<HistoryOperation> operations, String tableName, String entityName, Person person, OffsetDateTime start, OffsetDateTime end) {
-        globalHistoryRepository.findAllCreationOfUserBetween(tableName, person, start, end).forEach((entity) ->
+    private void addCreateOperation(List<HistoryOperation> operations, String tableName, String entityName, Person person, Team team, OffsetDateTime start, OffsetDateTime end) {
+        globalHistoryRepository.findAllCreationOfUserBetween(tableName, person, team,  start, end).forEach((entity) ->
                 operations.add(new HistoryOperation(HistoryUpdateType.CREATE,
                         entityName,
                         entity.getId(),
@@ -70,7 +70,7 @@ public class HistoryService {
 
     private void addAllCreationOperations(Person person, Team team, List<HistoryOperation> operations, OffsetDateTime beginTime, OffsetDateTime endTime) {
         for (int i = 0; i < entityName.size(); i++)
-            addCreateOperation(operations, tableNames.get(i), entityName.get(i), person, beginTime, endTime);
+            addCreateOperation(operations, tableNames.get(i), entityName.get(i), person, team, beginTime, endTime);
     }
 
     public List<SpatialUnitHist> findSpatialUnitHistory(SpatialUnit current) {

@@ -1,6 +1,5 @@
 package fr.siamois.models.history;
 
-import fr.siamois.models.Team;
 import fr.siamois.utils.HistoryCopyUtils;
 
 import java.time.OffsetDateTime;

@@ -68,20 +68,17 @@ public class GlobalHistoryRepository {
         return "history_id";
     }
 
-    public List<GlobalHistoryEntry> findAllHistoryOfUserBetween(String tableName, Person author, OffsetDateTime start, OffsetDateTime end) {
+    public List<GlobalHistoryEntry> findAllHistoryOfUserBetween(String tableName, Person author, Team team, OffsetDateTime start, OffsetDateTime end) {
         List<GlobalHistoryEntry> entries = new ArrayList<>();
 
         if (tablenameNotExist(tableName)) {
-            log.error("Table name {} does not exist", tableName);
+            logNotExistTable(tableName);
             return entries;
         }
 
         try (Connection connection = hikariDataSource.getConnection()) {
-            String query = "SELECT * FROM " + tableName +" WHERE fk_author_id = ? AND update_time BETWEEN ? AND ?";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setLong(1, author.getId());
-            statement.setObject(2, start);
-            statement.setObject(3, end);
+            String query = "SELECT * FROM " + tableName +" WHERE fk_author_id = ? AND fk_team_id = ? AND  update_time BETWEEN ? AND ?";
+            PreparedStatement statement = prepareQueryStatement(author, team, start, end, connection, query);
 
             ResultSet resultSet = statement.executeQuery();
             String idColumnName = findColumnTableIdNameInResultSet(resultSet);
@@ -102,44 +99,39 @@ public class GlobalHistoryRepository {
         return entries;
     }
 
+    private void logNotExistTable(String tableName) {
+        log.error("Table name {} does not exist", tableName);
+    }
+
     @EqualsAndHashCode(callSuper = true)
     @Data
     private static class LocalTraceableEntity extends TraceableEntity {
         private Long id;
     }
 
-    public List<TraceableEntity> findAllCreationOfUserBetween(String tableName, Person author, OffsetDateTime start, OffsetDateTime end) {
+    public List<TraceableEntity> findAllCreationOfUserBetween(String tableName, Person author, Team team, OffsetDateTime start, OffsetDateTime end) {
         List<TraceableEntity> entries = new ArrayList<>();
 
         if (tablenameNotExist(tableName)) {
-            log.error("Table name {} does not exist", tableName);
+            logNotExistTable(tableName);
             return entries;
         }
 
         try (Connection connection = hikariDataSource.getConnection()) {
-            String query = "SELECT * FROM " + tableName + " WHERE fk_author_id = ? AND creation_time BETWEEN ? AND ?";
-            PreparedStatement statement = connection.prepareStatement(query);
-
-            statement.setLong(1, author.getId());
-            statement.setObject(2, start);
-            statement.setObject(3, end);
+            String query = "SELECT * FROM " + tableName + " WHERE fk_author_id = ? AND fk_team_id = ? AND creation_time BETWEEN ? AND ?";
+            PreparedStatement statement = prepareQueryStatement(author, team, start, end, connection, query);
 
             ResultSet resultSet = statement.executeQuery();
             String idColumnName = findColumnTableIdNameInResultSet(resultSet);
 
             while (resultSet.next()) {
                 OffsetDateTime creationTime = resultSet.getObject("creation_time", OffsetDateTime.class);
-                Long teamId = resultSet.getLong("fk_team_id");
                 Long tableId = resultSet.getLong(idColumnName);
 
                 LocalTraceableEntity entity = new LocalTraceableEntity();
                 entity.setAuthor(author);
                 entity.setCreationTime(creationTime);
                 entity.setId(tableId);
-
-                Team team = new Team();
-                team.setId(teamId);
-
                 entity.setAuthorTeam(team);
 
                 entries.add(entity);
@@ -151,6 +143,16 @@ public class GlobalHistoryRepository {
         }
 
         return entries;
+    }
+
+    private PreparedStatement prepareQueryStatement(Person author, Team team, OffsetDateTime start, OffsetDateTime end, Connection connection, String query) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(query);
+
+        statement.setLong(1, author.getId());
+        statement.setLong(2, team.getId());
+        statement.setObject(3, start);
+        statement.setObject(4, end);
+        return statement;
     }
 
 }
