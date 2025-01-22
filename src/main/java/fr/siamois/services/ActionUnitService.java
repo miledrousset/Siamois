@@ -5,6 +5,7 @@ import fr.siamois.infrastructure.repositories.ActionUnitRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.Team;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.ActionUnitNotFoundException;
@@ -35,6 +36,10 @@ public class ActionUnitService {
 
     public List<ActionUnit> findAllBySpatialUnitId(SpatialUnit spatialUnit)   {
         return actionUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
+    }
+
+    public List<ActionUnit> findAllBySpatialUnitIdOfTeam(SpatialUnit spatialUnit, Team team)   {
+        return actionUnitRepository.findAllBySpatialUnitIdOfTeam(spatialUnit.getId(), team.getId());
     }
 
     /**

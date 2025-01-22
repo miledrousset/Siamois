@@ -123,7 +123,7 @@ public class UserBean implements Serializable {
         Concept roleConcept = fieldService.saveConceptIfNotExist(fieldConfig, role);
         try {
             Team team = sessionSettings.getSelectedTeam();
-            Person created = userAddBean.createUser();
+            Person created = userAddBean.createUser(false);
             teamService.addUserToTeam(created, team, roleConcept);
         } catch (FailedTeamSaveException e) {
             log.error("Error while saving team", e);

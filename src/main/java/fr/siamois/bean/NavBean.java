@@ -3,6 +3,7 @@ package fr.siamois.bean;
 import fr.siamois.bean.converter.TeamConverter;
 import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
+import fr.siamois.models.exceptions.NoTeamSelectedException;
 import fr.siamois.services.TeamService;
 import fr.siamois.services.Subscriber;
 import fr.siamois.utils.AuthenticatedUserUtils;
@@ -50,6 +51,7 @@ public class NavBean implements Serializable {
         this.converter = converter;
         this.observerBean = observerBean;
         this.teamConverter = teamConverter;
+        log.trace("Nav bean constructor called");
     }
 
 
@@ -91,7 +93,13 @@ public class NavBean implements Serializable {
     }
 
     public void changeSelectedTeam() {
-        sessionSettings.setSelectedTeam(selectedTeam);
-        observerBean.notify("teamChange");
+        try {
+            Team oldTeam = sessionSettings.getSelectedTeam();
+            sessionSettings.setSelectedTeam(selectedTeam);
+            observerBean.notify("teamChange");
+            log.trace("Team changed from {} to {}", oldTeam.toString(), selectedTeam.toString());
+        } catch (NoTeamSelectedException e) {
+            log.error("No team selected", e);
+        }
     }
 }

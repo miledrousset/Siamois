@@ -59,7 +59,7 @@ public class UserAddBean {
      *
      * @return the created user or null if an error occurred
      */
-    public Person createUser() {
+    public Person createUser(boolean isManager) {
 
         if (!fManagerPassword.equals(fManagerConfirmPassword)) {
             displayErrorMessage(langBean.msg("commons.error.password.nomatch"));
@@ -68,21 +68,26 @@ public class UserAddBean {
 
         try {
             Person person = personService.createPerson(fManagerUsername, fManagerEmail, fManagerPassword);
+
+            if (isManager) {
+                personService.addPersonToTeamManagers(person);
+            }
+
             MessageUtils.displayMessage(FacesMessage.SEVERITY_INFO, langBean.msg("commons.message.state.success"), langBean.msg("create.team.manager.created"));
 
             resetVariables();
             return person;
         } catch (UserAlreadyExist e) {
-            log.error("Username already exists.", e);
+            log.error("Username already exists.");
             displayErrorMessage(langBean.msg("commons.error.user.alreadyexist", fManagerUsername));
         } catch (InvalidUsername e) {
-            log.error("Invalid username.", e);
+            log.error("Invalid username.");
             displayErrorMessage(langBean.msg("commons.error.user.username.invalid"));
         } catch (InvalidEmail e) {
-            log.error("Invalid email.", e);
+            log.error("Invalid email.");
             displayErrorMessage(langBean.msg("commons.error.user.email.invalid"));
         } catch (InvalidPassword e) {
-            log.error("Invalid password.", e);
+            log.error("Invalid password.");
             displayErrorMessage(langBean.msg("commons.error.user.password.invalid"));
         }
 

@@ -77,7 +77,7 @@ public class TeamCreationBean implements Serializable {
      */
     public void saveTeamAndManager() {
         if (fManagerSelectionType.equalsIgnoreCase("create")) {
-            fManager = userAddBean.createUser();
+            fManager = userAddBean.createUser(true);
         }
 
         if (fManager != null)  {

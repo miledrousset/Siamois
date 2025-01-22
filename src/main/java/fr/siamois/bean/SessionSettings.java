@@ -22,7 +22,7 @@ public class SessionSettings {
         return AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new RuntimeException("No authenticated user"));
     }
 
-    public Team getSelectedTeam() throws NoTeamSelectedException {
+    public Team getSelectedTeam() {
         if (selectedTeam == null) {
             throw new NoTeamSelectedException();
         }

@@ -1,7 +1,9 @@
 package fr.siamois.bean.SpatialUnit;
 
+import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.Team;
 import fr.siamois.models.history.SpatialUnitHist;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.services.ActionUnitService;
@@ -35,6 +37,7 @@ public class SpatialUnitBean implements Serializable {
     private final RecordingUnitService recordingUnitService;
     private final ActionUnitService actionUnitService;
     private final HistoryService historyService;
+    private final SessionSettings sessionSettings;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -53,11 +56,12 @@ public class SpatialUnitBean implements Serializable {
 
     private Long id;  // ID of the spatial unit
 
-    public SpatialUnitBean(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, HistoryService historyService) {
+    public SpatialUnitBean(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, HistoryService historyService, SessionSettings sessionSettings) {
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.historyService = historyService;
+        this.sessionSettings = sessionSettings;
     }
 
     public void reinitializeBean() {
@@ -84,6 +88,9 @@ public class SpatialUnitBean implements Serializable {
         reinitializeBean();
 
         if (id != null) {
+
+            Team team = sessionSettings.getSelectedTeam();
+
             try {
                 this.spatialUnit = spatialUnitService.findById(id);
             } catch (RuntimeException e) {
@@ -93,14 +100,14 @@ public class SpatialUnitBean implements Serializable {
             if (this.spatialUnit != null) {
                 try {
                     this.spatialUnitListErrorMessage = null;
-                    this.spatialUnitList = spatialUnitService.findAllChildOfSpatialUnit(spatialUnit);
+                    this.spatialUnitList = spatialUnitService.findAllChildOfSpatialUnitOfTeam(spatialUnit, team);
                 } catch (RuntimeException e) {
                     this.spatialUnitList = null;
                     this.spatialUnitListErrorMessage = "Unable to load spatial units: " + e.getMessage();
                 }
                 try {
                     this.spatialUnitParentsListErrorMessage = null;
-                    this.spatialUnitParentsList = spatialUnitService.findAllParentsOfSpatialUnit(spatialUnit);
+                    this.spatialUnitParentsList = spatialUnitService.findAllParentsOfSpatialUnitOfTeam(spatialUnit, team);
                 } catch (RuntimeException e) {
                     this.spatialUnitParentsList = null;
                     this.spatialUnitParentsListErrorMessage = "Unable to load the parents: " + e.getMessage();
@@ -114,7 +121,7 @@ public class SpatialUnitBean implements Serializable {
                 }
                 try {
                     this.actionUnitListErrorMessage = null;
-                    this.actionUnitList = actionUnitService.findAllBySpatialUnitId(spatialUnit);
+                    this.actionUnitList = actionUnitService.findAllBySpatialUnitIdOfTeam(spatialUnit, team);
                 } catch (RuntimeException e) {
                     this.actionUnitList = null;
                     this.actionUnitListErrorMessage = "Unable to load action units: " + e.getMessage();

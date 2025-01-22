@@ -53,18 +53,16 @@ public class HomeBean implements Serializable, Subscriber {
             log.error(e.getMessage(), e);
             spatialUnitList = null;
             spatialUnitListErrorMessage = "Failed to load spatial units: " + e.getMessage();
-        } catch (NoTeamSelectedException e) {
-            log.error("Failed to load teams", e);
-            spatialUnitList = null;
-            spatialUnitListErrorMessage = "Failed to load team";
         }
     }
 
     @Override
     public void onSignal(String signal) {
+        log.trace("Signal received : {}. Updating teams", signal);
         if (signal.equalsIgnoreCase("teamChange")) {
             try {
                 spatialUnitList = spatialUnitService.findAllWithoutParentsOfTeam(sessionSettings.getSelectedTeam());
+                spatialUnitListErrorMessage = null;
             } catch (NoTeamSelectedException e) {
                 log.error("Failed to load teams", e);
                 spatialUnitList = null;

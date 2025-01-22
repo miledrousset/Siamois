@@ -65,8 +65,7 @@ public class ManagerCreationBean implements Serializable {
      * Create a new manager in the database
      */
     public void createUser() {
-        Person person = userAddBean.createUser();
-        personService.addPersonToTeamManagers(person);
+        userAddBean.createUser(true);
     }
 
 }
