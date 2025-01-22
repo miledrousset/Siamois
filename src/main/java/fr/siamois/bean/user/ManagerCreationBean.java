@@ -2,7 +2,6 @@ package fr.siamois.bean.user;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.models.Team;
-import fr.siamois.models.auth.Person;
 import fr.siamois.services.PersonService;
 import lombok.Getter;
 import lombok.Setter;
@@ -65,8 +64,7 @@ public class ManagerCreationBean implements Serializable {
      * Create a new manager in the database
      */
     public void createUser() {
-        Person person = userAddBean.createUser();
-        personService.addPersonToTeamManagers(person);
+        userAddBean.createUser(true);
     }
 
 }

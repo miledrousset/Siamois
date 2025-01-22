@@ -60,6 +60,20 @@
 
             </p:tieredMenu>
 
+            <h:form>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <p:selectOneMenu id="teamSelection"
+                                 value="#{navBean.selectedTeam}"
+                                 rendered="#{navBean.teams.size() > 1}"
+                                 converter="#{navBean.converter}">
+                    <f:selectItems
+                            value="#{navBean.teams}"
+                            itemLabel="#{team.name}"
+                            var="team"/>
+                    <p:ajax listener="#{navBean.changeSelectedTeam()}" update="main"/>
+                </p:selectOneMenu>
+            </h:form>
+
         </div>
 
     </p:sidebar>
@@ -103,21 +117,6 @@
                                       value='${langBean.msg("nav.create.team")}'
                                       outcome="/pages/admin/team.xhtml" styleClass="btn btn-danger"/>
 
-
-                            <h:form>
-                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                <p:selectOneMenu id="teamSelection"
-                                                 value="#{navBean.selectedTeam}"
-                                                 rendered="#{navBean.teams.size() > 1}"
-                                                 converter="#{navBean.converter}">
-                                    <f:selectItems
-                                            value="#{navBean.teams}"
-                                            itemLabel="#{team.name}"
-                                            var="team"/>
-                                    <p:ajax listener="#{navBean.onTeamChange()}" update="main"/>
-                                </p:selectOneMenu>
-                            </h:form>
-
                         </nav>
                     </f:facet>
                 </p:menubar>
@@ -144,10 +143,12 @@
             </h:form>
 
             <p:card  id="mainCard" class="shadow" style="margin:1em;">
-                <!-- Content will be inserted here -->
-                <ui:insert description="The main content" name="content">
+                <h:panelGroup id="main">
                     <!-- Content will be inserted here -->
-                </ui:insert>
+                    <ui:insert description="The main content" name="content">
+                        <!-- Content will be inserted here -->
+                    </ui:insert>
+                </h:panelGroup>
             </p:card>
         </div>
 

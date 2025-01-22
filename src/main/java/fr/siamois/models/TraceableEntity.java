@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -27,8 +28,13 @@ public abstract class TraceableEntity {
     @JoinColumn(name = "fk_author_id", nullable = false)
     protected Person author;
 
+    @ColumnDefault("NOW()")
     @Column(name = "creation_time")
     protected OffsetDateTime creationTime = OffsetDateTime.now(ZoneId.systemDefault());
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fk_team_id")
+    protected Team authorTeam;
 
     public abstract Long getId();
 }

@@ -7,6 +7,7 @@ import fr.siamois.infrastructure.repositories.ark.ArkRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.Team;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.auth.Person;
@@ -98,7 +99,8 @@ public class FieldService {
     public SpatialUnit saveSpatialUnit(String name,
                                        Vocabulary vocabulary,
                                        ConceptFieldDTO category,
-                                       Person author) {
+                                       Person author,
+                                       Team teamAuthor) {
 
         ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
 
@@ -113,6 +115,7 @@ public class FieldService {
         spatialUnit.setName(name);
         spatialUnit.setArk(spatialUnitArk);
         spatialUnit.setCategory(concept);
+        spatialUnit.setAuthorTeam(teamAuthor);
 
         spatialUnit.setAuthor(author);
 
@@ -251,8 +254,12 @@ public class FieldService {
      * @return The saved spatial unit
      * @throws SpatialUnitAlreadyExistsException If the spatial unit already exists in the database
      */
-    public SpatialUnit saveSpatialUnit(String fName, @NotNull Vocabulary vocabulary, ConceptFieldDTO selectedConceptFieldDTO, List<SpatialUnit> parentsSpatialUnit, Person author) throws SpatialUnitAlreadyExistsException {
-        SpatialUnit unit = saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, author);
+    public SpatialUnit saveSpatialUnit(String fName, @NotNull Vocabulary vocabulary,
+                                       ConceptFieldDTO selectedConceptFieldDTO,
+                                       List<SpatialUnit> parentsSpatialUnit,
+                                       Person author,
+                                       Team teamAuthor) throws SpatialUnitAlreadyExistsException {
+        SpatialUnit unit = saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, author, teamAuthor);
         for (SpatialUnit parent : parentsSpatialUnit) {
             spatialUnitRepository.saveSpatialUnitHierarchy(parent.getId(), unit.getId());
         }

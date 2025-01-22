@@ -28,7 +28,6 @@ public abstract class ActionUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_type")
     protected Concept type;
 
-
     @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "fk_ark_id", nullable = false)
     protected Ark ark;
