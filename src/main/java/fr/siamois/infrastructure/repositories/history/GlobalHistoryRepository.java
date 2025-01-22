@@ -53,12 +53,26 @@ public class GlobalHistoryRepository {
                 .isEmpty();
     }
 
+    private boolean isNotAForeignKey(String columnName) {
+        columnName = columnName.toLowerCase();
+        return !columnName.startsWith("fk_");
+    }
+
+    private boolean isNotHistoryKey(String columnName) {
+        return !columnName.equalsIgnoreCase("history_id");
+    }
+
+    private boolean isIdKey(String columnName) {
+        columnName = columnName.toLowerCase();
+        return columnName.endsWith("id") || columnName.startsWith("id");
+    }
+
     private String findColumnTableIdNameInResultSet(ResultSet resultSet) {
         try {
             ResultSetMetaData metaData = resultSet.getMetaData();
             for (int i = 1; i <= metaData.getColumnCount(); i++) {
                 String columnName = metaData.getColumnName(i);
-                if (columnName.endsWith("id") && !columnName.equalsIgnoreCase("history_id")) {
+                if (isIdKey(columnName) && isNotHistoryKey(columnName) && isNotAForeignKey(columnName)) {
                     return columnName;
                 }
             }
