@@ -1,0 +1,36 @@
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <f:metadata>
+        <f:viewAction action="#{logsBean.init()}"/>
+    </f:metadata>
+
+    <ui:define name="content">
+        <h1>Fil d'actualité</h1>
+        <h:form>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+            <p>Opérations réalisés entre</p>
+            <p:outputLabel for="timeStart" value="Début" />
+            <p:datePicker id="timeStart" value="#{logsBean.VStartDateTime}" showTime="true" maxdate="#{logsBean.endOfToday}">
+                <p:ajax event="change" listener="#{logsBean.refreshOperation()}" update="operations"/>
+            </p:datePicker>
+            <p>Et</p>
+            <p:outputLabel for="timeEnd" value="Fin" />
+            <p:datePicker id="timeEnd" value="#{logsBean.VEndDateTime}" showTime="true" maxdate="#{logsBean.endOfToday}">
+                <p:ajax event="change" listener="#{logsBean.refreshOperation()}" update="operations"/>
+            </p:datePicker>
+            <h:panelGroup id="operations">
+                <c:forEach var="log" items="#{logsBean.operations}">
+                    <p>#{log.type().toString()} #{log.entityName()} n°#{log.entityNumber()} at #{logsBean.formatDate(log.actionDatetime())}</p>
+                </c:forEach>
+            </h:panelGroup>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

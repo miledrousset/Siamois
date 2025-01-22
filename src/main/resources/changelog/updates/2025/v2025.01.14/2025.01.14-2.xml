@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--
+    Creates a column for a primary_key in each history table and an update_time column.
+    -->
+
+    <changeSet id="2025.01.14-2" author="Julien Linget">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <not>
+                    <columnExists tableName="history_recording_unit" columnName="history_id"/>
+                </not>
+                <not>
+                    <columnExists tableName="history_recording_unit" columnName="update_time"/>
+                </not>
+            </and>
+        </preConditions>
+
+        <addColumn tableName="history_recording_unit">
+            <column name="history_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="update_time" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <addColumn tableName="history_recording_unit_study">
+            <column name="history_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="update_time" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <addColumn tableName="history_specimen_study">
+            <column name="history_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="update_time" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <addColumn tableName="history_specimen">
+            <column name="history_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="update_time" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <addColumn tableName="history_siamois_document">
+            <column name="history_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="update_time" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <addColumn tableName="history_action_unit">
+            <column name="history_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="update_time" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <addColumn tableName="history_spatial_unit">
+            <column name="history_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="update_time" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+    </changeSet>
+
+</databaseChangeLog>

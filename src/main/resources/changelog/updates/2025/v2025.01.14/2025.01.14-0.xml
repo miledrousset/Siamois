@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--
+    Creates a column creation_time for the tables that will be saved.
+    -->
+
+    <changeSet id="2025.01.14-0" author="Julien Linget">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="action_unit" columnName="creation_time"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="recording_unit">
+            <column name="creation_time" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
+        </addColumn>
+        <addColumn tableName="recording_unit_study">
+            <column name="creation_time" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
+        </addColumn>
+        <addColumn tableName="specimen_study">
+            <column name="creation_time" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
+        </addColumn>
+        <addColumn tableName="specimen">
+            <column name="creation_time" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
+        </addColumn>
+        <addColumn tableName="siamois_document">
+            <column name="creation_time" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
+        </addColumn>
+        <addColumn tableName="action_unit">
+            <column name="creation_time" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
+        </addColumn>
+        <addColumn tableName="spatial_unit">
+            <column name="creation_time" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
+        </addColumn>
+
+    </changeSet>
+
+</databaseChangeLog>

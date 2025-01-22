@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--
+    Creates history tables for recording_unit, recording_unit_study, specimen_study, speciment, siamois_document,
+    action_unit, spatial_unit.
+    The history tables have the same attributes as the original tables with a creation_date attribute.
+    -->
+
+    <changeSet id="2025.01.13-1" author="Julien Linget">
+
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <not>
+                    <tableExists tableName="history_recording_unit"/>
+                </not>
+                <not>
+                    <tableExists tableName="history_recording_unit_study"/>
+                </not>
+                <not>
+                    <tableExists tableName="history_specimen_study"/>
+                </not>
+                <not>
+                    <tableExists tableName="history_specimen"/>
+                </not>
+                <not>
+                    <tableExists tableName="history_siamois_document"/>
+                </not>
+                <not>
+                    <tableExists tableName="history_action_unit"/>
+                </not>
+                <not>
+                    <tableExists tableName="history_spatial_unit"/>
+                </not>
+            </and>
+        </preConditions>
+
+        <sql>
+            CREATE TABLE history_recording_unit
+            (
+                LIKE recording_unit INCLUDING ALL,
+                creation_date timestamptz DEFAULT NOW()
+            );
+
+            ALTER TABLE history_recording_unit
+            DROP
+            CONSTRAINT history_recording_unit_pkey;
+
+            CREATE INDEX history_recording_unit_pk_idx
+                ON history_recording_unit (recording_unit_id);
+
+            CREATE TABLE history_recording_unit_study
+            (
+                LIKE recording_unit_study INCLUDING ALL,
+                creation_date timestamptz DEFAULT NOW()
+            );
+
+            ALTER TABLE history_recording_unit_study
+            DROP
+            CONSTRAINT history_recording_unit_study_pkey;
+
+            create index history_recording_unit_study_id_index
+                on history_recording_unit_study (recording_unit_study_id);
+
+            CREATE TABLE history_specimen_study
+            (
+                LIKE specimen_study INCLUDING ALL,
+                creation_date timestamptz DEFAULT NOW()
+            );
+
+            ALTER TABLE history_specimen_study
+            DROP
+            CONSTRAINT history_specimen_study_pkey;
+
+            create index history_specimen_study_id_index
+                on history_specimen_study (specimen_study_id);
+
+            CREATE TABLE history_specimen
+            (
+                LIKE specimen INCLUDING ALL,
+                creation_date timestamptz DEFAULT NOW()
+            );
+
+            ALTER TABLE history_specimen
+            DROP
+            CONSTRAINT history_specimen_pkey;
+
+            create index history_specimen_id_index
+                on public.history_specimen (specimen_id);
+
+            CREATE TABLE history_siamois_document
+            (
+                LIKE siamois_document INCLUDING ALL,
+                creation_date timestamptz DEFAULT NOW()
+            );
+
+            ALTER TABLE history_siamois_document
+            DROP
+            CONSTRAINT history_siamois_document_pkey;
+
+            create index history_siamois_document_id_index
+                on history_siamois_document (document_id);
+
+            CREATE TABLE history_action_unit
+            (
+                LIKE action_unit INCLUDING ALL,
+                creation_date timestamptz DEFAULT NOW()
+            );
+
+            ALTER TABLE history_action_unit
+            DROP
+            CONSTRAINT history_action_unit_pkey;
+
+            create index history_action_unit_id_index
+                on history_action_unit (action_unit_id);
+
+            CREATE TABLE history_spatial_unit
+            (
+                LIKE spatial_unit INCLUDING ALL,
+                creation_date timestamptz DEFAULT NOW()
+            );
+
+            ALTER TABLE history_spatial_unit
+            DROP
+            CONSTRAINT history_spatial_unit_pkey;
+
+            create index history_spatial_unit_id_index
+                on history_spatial_unit (spatial_unit_id);
+
+        </sql>
+
+        <sql>
+
+            alter table history_recording_unit
+                drop constraint history_recording_unit_fk_ark_id_key cascade;
+
+            CREATE INDEX history_recording_unit_fk_ark_id_idx
+                ON history_recording_unit (fk_ark_id);
+
+            ALTER TABLE history_recording_unit_study
+                DROP CONSTRAINT history_recording_unit_study_fk_ark_id_key CASCADE;
+
+            CREATE INDEX history_recording_unit_study_fk_ark_id_idx
+                ON history_recording_unit_study (fk_ark_id);
+
+            ALTER TABLE history_specimen_study
+                DROP CONSTRAINT history_specimen_study_fk_ark_id_key CASCADE;
+
+            CREATE INDEX history_specimen_study_fk_ark_id_idx
+                ON history_specimen_study (fk_ark_id);
+
+            ALTER TABLE history_specimen
+                DROP CONSTRAINT history_specimen_fk_ark_id_key CASCADE;
+
+            CREATE INDEX history_specimen_fk_ark_id_idx
+                ON history_specimen (fk_ark_id);
+
+            ALTER TABLE history_siamois_document
+                DROP CONSTRAINT history_siamois_document_fk_ark_id_key CASCADE;
+
+            CREATE INDEX history_siamois_document_fk_ark_id_idx
+                ON history_siamois_document (fk_ark_id);
+
+            ALTER TABLE history_action_unit
+                DROP CONSTRAINT history_action_unit_fk_ark_id_key CASCADE;
+
+            CREATE INDEX history_action_unit_fk_ark_id_idx
+                ON history_action_unit (fk_ark_id);
+
+            ALTER TABLE history_spatial_unit
+                DROP CONSTRAINT history_spatial_unit_fk_ark_id_key CASCADE;
+
+            CREATE INDEX history_spatial_unit_fk_ark_id_idx
+                ON history_spatial_unit (fk_ark_id);
+        </sql>
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2024.12.02-3" author="Grégory Bliault">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="recording_unit" columnName="fk_excavator_id"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="recording_unit">
+            <column name="fk_excavator_id" type="java.sql.Types.BIGINT">
+                <constraints foreignKeyName="fk_excavator_id" referencedColumnNames="person_id" referencedTableName="person"/>
+            </column>
+        </addColumn>
+
+    </changeSet>
+
+</databaseChangeLog>

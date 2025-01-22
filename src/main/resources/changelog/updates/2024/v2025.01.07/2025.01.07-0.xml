@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2025.01.07-0" author="Grégory Bliault">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="action_unit" columnName="name"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="action_unit">
+            <column name="name" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="action_unit">
+            <column name="description" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <update tableName="action_unit">
+            <column name="name" value="Action sans nom"/>
+        </update>
+
+        <sql>
+            ALTER TABLE action_unit ALTER COLUMN name SET NOT NULL;
+        </sql>
+
+    </changeSet>
+
+</databaseChangeLog>

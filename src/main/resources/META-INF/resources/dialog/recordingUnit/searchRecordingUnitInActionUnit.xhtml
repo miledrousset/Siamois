@@ -1,0 +1,51 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://java.sun.com/jsf/facelets"
+             xmlns:h="http://xmlns.jcp.org/jsf/html"
+             xmlns:p="http://primefaces.org/ui"
+>
+
+    <p:dialog id="idSearchRecordingUnitInActionUnit"
+              header="Rechercher unité d'enregistrement relationtype relationcertainty"
+              widgetVar="searchRecordingUnitInActionUnit" width="80%" showEffect="fade" modal="true"
+          style="margin-top: 30px">
+
+        <h:form id="searchRecordingUnitInActionUnitForm">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+            <p:dataTable id="recordingUnitListInSameActionTable" value="#{cc.attrs.recordingUnitFormBean.recordingUnitList}"
+                         var="recordingUnit" paginator="true" rows="5" selectionMode="multiple" rowKey="#{recordingUnit.id}"
+                         selectionPageOnly="false" selectionRowMode="none" cellNavigation="true"
+                         selection="#{cc.attrs.recordingUnitFormBean.stratigraphySelectedRecordingUnit}">
+
+                <p:column selectionBox="true" style="width:16px;text-align:center"/>
+
+                <p:column headerText="Name">
+                    <h:outputText value="#{recordingUnit.id}"/>
+                </p:column>
+
+                <p:column headerText="Type">
+                    <p:chip label="#{recordingUnit.type.label}" icon="pi pi-file" styleClass="mr-2"/>
+                </p:column>
+
+            </p:dataTable>
+
+            <p:toolbar>
+                <p:toolbarGroup>
+
+                    <p:commandButton value='Creer les relations stratigraphique' icon="pi pi-check"
+                                     action="#{cc.attrs.recordingUnitFormBean.addStratigraphicRelationshipFromSelection}"
+                                     update="newRecordingUnitFormComponent:recordingUnitForm:recordingUnitFormTabView:panel-stratigraphy"
+                                     oncomplete="PF('searchRecordingUnitInActionUnit').hide();"
+                                     style="margin-right: .5rem">
+                    </p:commandButton>
+
+                </p:toolbarGroup>
+
+            </p:toolbar>
+
+
+        </h:form>
+    </p:dialog>
+</ui:fragment>
+
+
