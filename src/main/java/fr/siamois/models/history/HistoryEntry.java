@@ -20,3 +20,4 @@ public interface HistoryEntry<T> {
     }
     Team getAuthorTeam();
 }
+

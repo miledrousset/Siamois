@@ -1,10 +1,10 @@
 package fr.siamois.infrastructure.database;
 
+import com.zaxxer.hikari.HikariDataSource;
 import fr.siamois.models.exceptions.database.WrongTableNameException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.List;
 
@@ -17,9 +17,9 @@ import java.util.List;
 @Component
 public class HistoryTriggerInitializer {
 
-    private final DataSource dataSource;
+    private final HikariDataSource dataSource;
 
-    public HistoryTriggerInitializer(DataSource dataSource) {
+    public HistoryTriggerInitializer(HikariDataSource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -65,6 +65,7 @@ public class HistoryTriggerInitializer {
         try {
             Statement triggerStatement = connection.createStatement();
             triggerStatement.execute(triggerBuilder.toString());
+            triggerStatement.close();
         } catch (SQLException e) {
             log.trace(triggerBuilder.toString());
             throw e;
@@ -87,6 +88,7 @@ public class HistoryTriggerInitializer {
         try {
             Statement functionStatement = connection.createStatement();
             functionStatement.execute(functionBuilder.toString());
+            functionStatement.close();
         } catch (SQLException e) {
             log.trace(functionBuilder.toString());
             throw e;
