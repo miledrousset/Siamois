@@ -1,28 +1,23 @@
-package fr.siamois.config.database;
+package fr.siamois.config.events;
 
 import fr.siamois.infrastructure.database.HistoryTriggerInitializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
 
-/**
- * Initialise all the history triggers when application is ready
- *
- * @author Julien Linget
- */
 @Slf4j
-@Component
-public class HistoryTriggerConfig {
+@Configuration
+public class ApplicationReadyListener {
 
     private final HistoryTriggerInitializer historyTriggerInitializer;
 
-    public HistoryTriggerConfig(HistoryTriggerInitializer historyTriggerInitializer) {
+    public ApplicationReadyListener(HistoryTriggerInitializer historyTriggerInitializer) {
         this.historyTriggerInitializer = historyTriggerInitializer;
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    public void setupHistoryTriggers() {
+    public void onApplicationReady() {
         historyTriggerInitializer.createHistoryTriggers();
         log.info("History trigger created");
     }

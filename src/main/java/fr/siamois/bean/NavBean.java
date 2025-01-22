@@ -5,6 +5,7 @@ import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoTeamSelectedException;
 import fr.siamois.services.TeamService;
+import fr.siamois.services.publisher.TeamChangeEventPublisher;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
@@ -34,8 +35,8 @@ public class NavBean implements Serializable {
     private final SessionSettings sessionSettings;
     private final TeamService teamService;
     private final TeamConverter converter;
-    private final ObserverBean observerBean;
     private final TeamConverter teamConverter;
+    private final TeamChangeEventPublisher teamChangeEventPublisher;
 
     private List<Team> allTeams;
 
@@ -43,13 +44,13 @@ public class NavBean implements Serializable {
 
     private Team selectedTeam;
 
-    public NavBean(SessionSettings sessionSettings, TeamService teamService, TeamConverter converter, ObserverBean observerBean, TeamConverter teamConverter) {
+    public NavBean(SessionSettings sessionSettings, TeamService teamService, TeamConverter converter, TeamConverter teamConverter, TeamChangeEventPublisher teamChangeEventPublisher) {
         this.sessionSettings = sessionSettings;
         this.teamService = teamService;
         this.converter = converter;
-        this.observerBean = observerBean;
         this.teamConverter = teamConverter;
         log.trace("Nav bean constructor called");
+        this.teamChangeEventPublisher = teamChangeEventPublisher;
     }
 
 
@@ -94,7 +95,7 @@ public class NavBean implements Serializable {
         try {
             Team oldTeam = sessionSettings.getSelectedTeam();
             sessionSettings.setSelectedTeam(selectedTeam);
-            observerBean.notify("teamChange");
+            teamChangeEventPublisher.publishTeamChangeEvent();
             log.trace("Team changed from {} to {}", oldTeam.toString(), selectedTeam.toString());
         } catch (NoTeamSelectedException e) {
             log.error("No team selected", e);
