@@ -7,7 +7,6 @@ import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoTeamSelectedException;
 import fr.siamois.services.SpatialUnitService;
 import fr.siamois.services.Subscriber;
-import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

@@ -2,7 +2,6 @@ package fr.siamois.bean.user;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.models.Team;
-import fr.siamois.models.auth.Person;
 import fr.siamois.services.PersonService;
 import lombok.Getter;
 import lombok.Setter;

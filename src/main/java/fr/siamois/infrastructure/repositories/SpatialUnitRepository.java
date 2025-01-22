@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>, TraceableEntries {
