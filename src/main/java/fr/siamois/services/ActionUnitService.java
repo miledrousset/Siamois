@@ -69,9 +69,7 @@ public class ActionUnitService {
 
                 ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
                 Ark ark = new Ark();
-                ark.setArkServer(
-                        arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"))
-                );
+                ark.setArkServer(localServer);
                 ark.setArkId(ArkGenerator.generateArk());
                 actionUnit.setArk(ark);
             }

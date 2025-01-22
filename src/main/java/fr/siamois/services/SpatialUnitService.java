@@ -49,16 +49,6 @@ public class SpatialUnitService {
         return spatialUnitRepository.findAllChildOfSpatialUnitOfTeam(spatialUnit.getId(), team.getId());
     }
 
-    /**
-     * Find all the parents of a spatial unit
-     *
-     * @return The List of SpatialUnit
-     * @throws RuntimeException             If the repository method throws an Exception
-     */
-    public List<SpatialUnit> findAllParentsOfSpatialUnit(SpatialUnit spatialUnit) {
-        return spatialUnitRepository.findAllParentsOfSpatialUnit(spatialUnit.getId());
-    }
-
     public List<SpatialUnit> findAllParentsOfSpatialUnitOfTeam(SpatialUnit spatialUnit, Team team) {
         return spatialUnitRepository.findAllParentsOfSpatialUnitOfTeam(spatialUnit.getId(), team.getId());
     }
