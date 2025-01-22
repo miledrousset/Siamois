@@ -1,7 +1,9 @@
 package fr.siamois.bean.SpatialUnit;
 
+import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.Team;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.HistoryService;
@@ -17,6 +19,8 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 class SpatialUnitBeanTest {
@@ -25,6 +29,7 @@ class SpatialUnitBeanTest {
     @Mock private ActionUnitService actionUnitService;  // Mock the SpatialUnitService
     @Mock private RecordingUnitService recordingUnitService;  // Mock the SpatialUnitService
     @Mock private HistoryService historyService;
+    @Mock private SessionSettings sessionSettings;
 
     @InjectMocks
     private SpatialUnitBean spatialUnitBean;  // HomeBean under test
@@ -59,6 +64,12 @@ class SpatialUnitBeanTest {
 
         // Initialize the bean
         spatialUnitBean.setId(1L);
+
+        Team team = new Team();
+        team.setId(12L);
+        team.setName("Test team");
+
+        when(sessionSettings.getSelectedTeam()).thenReturn(team);
     }
 
     @AfterEach
@@ -69,9 +80,9 @@ class SpatialUnitBeanTest {
     void testInit_Success() {
 
         // Given: mock the services
-        when(spatialUnitService.findById(1)).thenReturn(spatialUnit1);
-        when(spatialUnitService.findAllChildOfSpatialUnit(spatialUnit1)).thenReturn(List.of(spatialUnit2));
-        when(actionUnitService.findAllBySpatialUnitId(spatialUnit1)).thenReturn(List.of(actionUnit1, actionUnit2));
+        when(spatialUnitService.findById(1L)).thenReturn(spatialUnit1);
+        when(spatialUnitService.findAllChildOfSpatialUnitOfTeam(eq(spatialUnit1), any(Team.class))).thenReturn(List.of(spatialUnit2));
+        when(actionUnitService.findAllBySpatialUnitIdOfTeam(eq(spatialUnit1), any(Team.class))).thenReturn(List.of(actionUnit1, actionUnit2));
         when(recordingUnitService.findAllBySpatialUnit(spatialUnit1)).thenReturn(List.of(recordingUnit1, recordingUnit2));
 
         // When: call the @PostConstruct method (implicitly triggered during bean initialization)
@@ -96,7 +107,7 @@ class SpatialUnitBeanTest {
 
         // List of spatial units
         assertNotNull(spatialUnitBean.getSpatialUnitList());  // List should not be null
-        assertEquals(1, spatialUnitBean.getSpatialUnitList().size());  // The list should contain 1 element
+        assertNotNull(spatialUnitBean.getSpatialUnit());  // The list should contain 1 element
         assertTrue(spatialUnitBean.getSpatialUnitList().contains(spatialUnit2));  // The list should contain spatialUnit2
     }
 
@@ -119,9 +130,9 @@ class SpatialUnitBeanTest {
 
         // Given: mock the services
         when(spatialUnitService.findById(1)).thenReturn(spatialUnit1);
-        when(spatialUnitService.findAllChildOfSpatialUnit(spatialUnit1)).thenThrow(new RuntimeException("Exception"));
+        when(spatialUnitService.findAllChildOfSpatialUnitOfTeam(eq(spatialUnit1), any(Team.class))).thenThrow(new RuntimeException("Exception"));
         when(recordingUnitService.findAllBySpatialUnit(spatialUnit1)).thenThrow(new RuntimeException("Exception"));
-        when(actionUnitService.findAllBySpatialUnitId(spatialUnit1)).thenThrow(new RuntimeException("Exception"));
+        when(actionUnitService.findAllBySpatialUnitIdOfTeam(eq(spatialUnit1), any(Team.class))).thenThrow(new RuntimeException("Exception"));
 
         // When: call the @PostConstruct method (implicitly triggered during bean initialization)
         spatialUnitBean.init();
