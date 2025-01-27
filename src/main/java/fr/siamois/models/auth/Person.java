@@ -120,5 +120,5 @@ public class Person implements UserDetails {
         return name+" "+lastname;
     }
 
-    public static final String USER_ROLE_FIELD_CODE = "person_role_team.role";
+    public static final String USER_ROLE_FIELD_CODE = "SIAP.ROLE";
 }

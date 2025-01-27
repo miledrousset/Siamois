@@ -2,6 +2,9 @@ package fr.siamois.bean.Field;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
+import fr.siamois.infrastructure.api.ConceptApi;
+import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
+import fr.siamois.infrastructure.concept.ConceptSettingsTree;
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
@@ -39,6 +42,7 @@ public class TestConfigurationBean implements Serializable {
     private final FieldConfigurationService fieldConfigurationService;
     private final LangBean langBean;
     private final SessionSettings sessionSettings;
+    private final ConceptApi conceptApi;
 
     // Configuration storage
     private List<VocabularyCollection> collections = new ArrayList<>();
@@ -61,10 +65,11 @@ public class TestConfigurationBean implements Serializable {
     private String selectedThesaurus = "";
     private String selectedFieldCode = "";
 
-    public TestConfigurationBean(FieldConfigurationService fieldConfigurationService, LangBean langBean, SessionSettings sessionSettings) {
+    public TestConfigurationBean(FieldConfigurationService fieldConfigurationService, LangBean langBean, SessionSettings sessionSettings, ConceptApi conceptApi) {
         this.fieldConfigurationService = fieldConfigurationService;
         this.langBean = langBean;
         this.sessionSettings = sessionSettings;
+        this.conceptApi = conceptApi;
     }
 
     /**
@@ -303,6 +308,18 @@ public class TestConfigurationBean implements Serializable {
             selectedGroups = new ArrayList<>(cacheSelectedGroups);
             collections = new ArrayList<>(cachedGroups);
         }
+    }
+
+    public void loadModelThesaurus() {
+        log.trace("loadModelThesaurus");
+        ConceptBranchDTO dto = conceptApi.fetchFieldsBranch(selectedVocab);
+        ConceptSettingsTree tree = new ConceptSettingsTree(dto);
+        log.trace(
+                tree.searchConceptNodeForConfig(selectedFieldCode).stream()
+                        .map((conceptNode -> conceptNode.getConcept().getPrefLabel()[0].getValue()))
+                        .toList()
+                        .toString()
+        );
     }
 
 

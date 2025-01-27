@@ -15,6 +15,6 @@ public class RecordingUnit extends RecordingUnitParent {
     @Column(name = "recording_unit_id", nullable = false)
     private Long id;
 
-    public static final String TYPE_FIELD_CODE = "recordingUnit.type";
+    public static final String TYPE_FIELD_CODE = "SIARU.TYPE";
 
 }
