@@ -78,13 +78,25 @@ public class SpatialUnitFieldBean implements Serializable {
         fParentsSpatialUnits = new ArrayList<>();
     }
 
+    public void init(List<SpatialUnit> parents) {
+        refSpatialUnits = fieldService.fetchAllSpatialUnits();
+        labels = refSpatialUnits.stream()
+                .map(SpatialUnit::getName)
+                .collect(Collectors.toList());
+        concepts = null;
+        selectedConcept = null;
+        fName = "";
+        fCategory = "";
+        fParentsSpatialUnits = parents;
+    }
+
     /**
      * Save the spatial unit in the database.
      * Display a message if the spatial unit already exists.
      * Display a message if the spatial unit has been created.
      * @throws IllegalStateException if the collections are not defined
      */
-    public void save() {
+    public String save() {
         ConceptFieldDTO selectedConceptFieldDTO = getSelectedConceptFieldDTO().orElseThrow(() -> new IllegalStateException("No concept selected"));
 
         Vocabulary vocabulary = configurationWrapper.vocabularyConfig();
@@ -99,9 +111,12 @@ public class SpatialUnitFieldBean implements Serializable {
                     sessionSettings.getSelectedTeam());
 
             MessageUtils.displayInfoMessage(langBean, "spatialunit.created", saved.getName());
+
+            return "/pages/spatialUnit/spatialUnit?faces-redirect=true&id=" + saved.getId().toString();
         } catch (SpatialUnitAlreadyExistsException e) {
             log.error(e.getMessage(), e);
             MessageUtils.displayErrorMessage(langBean, "commons.error.spatialunit.alreadyexist", fName);
+            return null;
         }
     }
 

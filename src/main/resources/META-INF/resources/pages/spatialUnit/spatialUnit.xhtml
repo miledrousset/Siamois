@@ -69,16 +69,30 @@
                             <p:staticMessage severity="error" summary="Error" closable="false"
                                              detail="#{spatialUnitBean.spatialUnitListErrorMessage}"
                                              rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
-                            <spatialUnit:spatialUnitList header="Contient"
-                                                         spatialUnitList="#{spatialUnitBean.spatialUnitList}"
-                                                         breadcrumbBean="#{breadcrumbBean}"/>
+                            <spatialUnit:spatialUnitList
+                                    header="Contient"
+                                    spatialUnitList="#{spatialUnitBean.spatialUnitList}">
+                                <f:facet name="toolbar">
+                                    <p:toolbar>
+                                        <p:toolbarGroup>
+                                            <p:commandButton value='Nouveau lieu enfant' icon="pi pi-plus"
+                                                             action="#{spatialUnitFieldBean.init([spatialUnitBean.spatialUnit])}"
+                                                             oncomplete="PF('new-spatial-unit-dialog').show()"
+                                                             style="margin-right: .5rem">
+                                            </p:commandButton>
+                                        </p:toolbarGroup>
+
+                                    </p:toolbar>
+                                </f:facet>
+                            </spatialUnit:spatialUnitList>
                         </div>
                         <div class="col-md-6">
                             <p:staticMessage severity="error" summary="Error" closable="false"
                                              detail="#{spatialUnitBean.spatialUnitListErrorMessage}"
                                              rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
-                            <spatialUnit:spatialUnitList header="Fait partie de"
-                                                         spatialUnitList="#{spatialUnitBean.spatialUnitParentsList}"/>
+                            <spatialUnit:spatialUnitList
+                                    header="Fait partie de"
+                                    spatialUnitList="#{spatialUnitBean.spatialUnitParentsList}"/>
                         </div>
                     </div>
 
@@ -233,6 +247,7 @@
 
 
         <ui:include src="../../dialog/actionUnit/actionUnitDialog.xhtml"/>
+        <ui:include src="../../dialog/spatialUnit/newSpatialUnitDialog.xhtml"/>
 
 
     </ui:define>
