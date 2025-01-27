@@ -1,6 +1,7 @@
 package fr.siamois.bean.ActionUnit;
 
 import fr.siamois.bean.LangBean;
+import fr.siamois.bean.SessionSettings;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 
@@ -35,6 +37,7 @@ public class NewActionUnitBean implements Serializable {
     private final FieldConfigurationService fieldConfigurationService;
     private final FieldService fieldService;
     private final LangBean langBean;
+    private final SessionSettings sessionSettings;
 
     // Local
     private ActionUnit actionUnit;
@@ -43,17 +46,21 @@ public class NewActionUnitBean implements Serializable {
     private FieldConfigurationWrapper configurationWrapper;
 
 
-    public NewActionUnitBean(ActionUnitService actionUnitService, FieldConfigurationService fieldConfigurationService, FieldService fieldService, LangBean langBean) {
+    public NewActionUnitBean(ActionUnitService actionUnitService, FieldConfigurationService fieldConfigurationService, FieldService fieldService, LangBean langBean, SessionSettings sessionSettings) {
         this.actionUnitService = actionUnitService;
         this.fieldConfigurationService = fieldConfigurationService;
         this.fieldService = fieldService;
         this.langBean = langBean;
+        this.sessionSettings = sessionSettings;
     }
 
 
     public String save() {
         try {
-
+            Person author = sessionSettings.getAuthenticatedUser();
+            actionUnit.setAuthor(author);
+            actionUnit.setBeginDate(OffsetDateTime.now()); // todo : implement
+            actionUnit.setEndDate(OffsetDateTime.now());  // todo : implement
             Vocabulary vocabulary = configurationWrapper.vocabularyConfig();
             if (vocabulary == null) vocabulary = configurationWrapper.vocabularyCollectionsConfig().get(0).getVocabulary();
 
