@@ -5,12 +5,12 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components"
-                xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label">
+>
 
     <ui:define name="metadata">
         <f:metadata>
             <!-- Capture the ID parameter from the URL and bind it to spatialUnitBean -->
-            <f:viewParam name="id" value="#{spatialUnitBean.id}" required="true"/>
+            <f:viewParam name="id" value="#{spatialUnitBean.id}" required="#{!facesContext.postback}"/>
             <f:event type="preRenderView" listener="#{spatialUnitBean.init}"/>
         </f:metadata>
     </ui:define>
@@ -33,210 +33,207 @@
 
             <h:form>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <p:dataTable var="version" value="#{spatialUnitBean.historyVersion}" rows="5" paginator="true">
-                    <p:column headerText="Date de la version">
-                        <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
-                    </p:column>
-                    <p:column>
-                        <p:commandButton
-                                value="Visualiser"
-                                immediate="true"
-                                action="#{spatialUnitBean.visualise(version)}"
-                                update="idDisplayVersion"
-                                oncomplete="PF('displayVersion').show()"
-                        />
-                    </p:column>
-                    <p:column>
-                        <p:commandButton
-                                value="Restaurer"
-                                immediate="true"
-                                action="#{spatialUnitBean.restore(version)}"
-                                oncomplete="PF('restored-dlg').show()"/>
-                    </p:column>
-                </p:dataTable>
+                <p:outputPanel>
+                    <div class="card">
+
+                        <p:toolbar>
+                            <p:toolbarGroup>
+
+                                <p:commandButton value='Nouvelle action' icon="pi pi-plus"
+                                                 action="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"
+                                                 oncomplete="PF('new-action-unit-dialog').show()"
+                                                 style="margin-right: .5rem">
+                                </p:commandButton>
+
+                            </p:toolbarGroup>
+
+                        </p:toolbar>
+                    </div>
+                </p:outputPanel>
             </h:form>
 
+            <p:tabView>
 
-            <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true">
-                <h:form id="displayVersionForm">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <h:panelGroup id="versionVisualizer" rendered="#{spatialUnitBean.revisionToDisplay != null}">
-                        <p>Name : #{spatialUnitBean.revisionToDisplay.name}</p>
-                        <p>Ark : #{spatialUnitBean.revisionToDisplay.ark.arkId}</p>
-                        <p>Category : #{spatialUnitBean.revisionToDisplay.category.label}</p>
-                    </h:panelGroup>
-                </h:form>
-            </p:dialog>
+                <p:tab title="Aperçu">
 
-            <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
-                <h:outputText value="Version restaurée"/>
-            </p:dialog>
+                </p:tab>
+
+                <p:tab title="Détails">
+
+                </p:tab>
+
+                <p:tab title="Hierarchie">
+
+                    <div class="row siamois-row">
+                        <div class="col-md-6">
+                            <p:staticMessage severity="error" summary="Error" closable="false"
+                                             detail="#{spatialUnitBean.spatialUnitListErrorMessage}"
+                                             rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
+                            <spatialUnit:spatialUnitList header="Contient"
+                                                         spatialUnitList="#{spatialUnitBean.spatialUnitList}"
+                                                         breadcrumbBean="#{breadcrumbBean}"/>
+                        </div>
+                        <div class="col-md-6">
+                            <p:staticMessage severity="error" summary="Error" closable="false"
+                                             detail="#{spatialUnitBean.spatialUnitListErrorMessage}"
+                                             rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
+                            <spatialUnit:spatialUnitList header="Fait partie de"
+                                                         spatialUnitList="#{spatialUnitBean.spatialUnitParentsList}"/>
+                        </div>
+                    </div>
+
+                </p:tab>
+
+                <p:tab title="Actions">
+                    <div class="row siamois-rows">
+                        <div class="col-md-12">
+                            <p:staticMessage severity="error" summary="Error" closable="false"
+                                             detail="#{spatialUnitBean.actionUnitListErrorMessage}"
+                                             rendered="#{not empty spatialUnitBean.actionUnitListErrorMessage}"/>
+                            <h:form>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <p:outputPanel>
+                                    <div class="card">
+
+                                        <p:toolbar>
+                                            <p:toolbarGroup>
+
+                                                <p:commandButton value='Nouveau' icon="pi pi-plus"
+                                                                 action="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"
+                                                                 oncomplete="PF('new-action-unit-dialog').show()"
+                                                                 style="margin-right: .5rem">
+                                                </p:commandButton>
+
+                                            </p:toolbarGroup>
+
+                                        </p:toolbar>
+
+                                        <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
+                                                     value="#{spatialUnitBean.actionUnitList}">
+                                            <f:facet name="header">
+                                                Actions
+                                            </f:facet>
+                                            <p:column headerText="Name">
+                                                <p:link outcome="/pages/actionUnit/actionUnit.xhtml"
+                                                        value="#{item.name}">
+                                                    <f:param name="id" value="#{item.id}"/>
+                                                </p:link>
+                                            </p:column>
+
+                                            <p:column headerText="Type">
+                                                <p:chip label="#{item.type.label}" icon="pi pi-play" styleClass="mr-2"/>
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </div>
+                                </p:outputPanel>
+                            </h:form>
+                        </div>
+                    </div>
+                </p:tab>
 
 
-            <div class="row siamois-row">
-                <div class="col-md-6">
-                    <p:staticMessage severity="error" summary="Error" closable="false"
-                                     detail="#{spatialUnitBean.spatialUnitListErrorMessage}"
-                                     rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
-                    <spatialUnit:spatialUnitList header="Contient"
-                                                 spatialUnitList="#{spatialUnitBean.spatialUnitList}"
-                                                 breadcrumbBean="#{breadcrumbBean}"/>
-                </div>
-                <div class="col-md-6">
-                    <p:staticMessage severity="error" summary="Error" closable="false"
-                                     detail="#{spatialUnitBean.spatialUnitListErrorMessage}"
-                                     rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
-                    <spatialUnit:spatialUnitList header="Fait partie de"
-                                                 spatialUnitList="#{spatialUnitBean.spatialUnitParentsList}"/>
-                </div>
-            </div>
-            <div class="row siamois-row">
-                <div class="col-md-12">
-                    <form>
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                        <p:outputPanel>
-                            <div class="card">
-                                <p:staticMessage severity="error" summary="Error" closable="false"
-                                                 detail="#{spatialUnitBean.recordingUnitListErrorMessage}"
-                                                 rendered="#{not empty spatialUnitBean.recordingUnitListErrorMessage}"/>
-                                <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
-                                             value="#{spatialUnitBean.recordingUnitList}">
-                                    <f:facet name="header">
-                                        Unités d'enregistrement
-                                    </f:facet>
-                                    <p:column headerText="Name">
-                                        <p:link outcome="/pages/recordingUnit/recordingUnit.xhtml"
-                                                value="#{item.serial_id}">
-                                            <f:param name="id" value="#{item.id}"/>
-                                        </p:link>
-                                    </p:column>
+                <p:tab title="Enregistrements">
+                    <div class="row siamois-row">
+                        <div class="col-md-12">
+                            <form>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <p:outputPanel>
+                                    <div class="card">
+                                        <p:staticMessage severity="error" summary="Error" closable="false"
+                                                         detail="#{spatialUnitBean.recordingUnitListErrorMessage}"
+                                                         rendered="#{not empty spatialUnitBean.recordingUnitListErrorMessage}"/>
+                                        <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
+                                                     value="#{spatialUnitBean.recordingUnitList}">
+                                            <f:facet name="header">
+                                                Unités d'enregistrement
+                                            </f:facet>
+                                            <p:column headerText="Name">
+                                                <p:link outcome="/pages/recordingUnit/recordingUnit.xhtml"
+                                                        value="#{item.serial_id}">
+                                                    <f:param name="id" value="#{item.id}"/>
+                                                </p:link>
+                                            </p:column>
 
-                                    <p:column headerText="ARK">
-                                        <h:outputText value="#{item.ark.arkId}"/>
-                                    </p:column>
+                                            <p:column headerText="ARK">
+                                                <h:outputText value="#{item.ark.arkId}"/>
+                                            </p:column>
 
-                                    <p:column headerText="Type">
-                                        <p:chip label="#{item.type.label}" icon="pi pi-file" styleClass="mr-2"/>
-                                    </p:column>
+                                            <p:column headerText="Type">
+                                                <p:chip label="#{item.type.label}" icon="pi pi-file" styleClass="mr-2"/>
+                                            </p:column>
 
-                                    <p:column headerText="Auteur">
-                                        <h:outputText value="#{item.author.name} #{item.author.lastname}"/>
-                                    </p:column>
+                                            <p:column headerText="Auteur">
+                                                <h:outputText value="#{item.author.name} #{item.author.lastname}"/>
+                                            </p:column>
 
-                                    <p:column headerText="Fouilleur">
-                                        <h:outputText value="#{item.excavator.name} #{item.excavator.lastname}"/>
-                                    </p:column>
-                                </p:dataTable>
-                            </div>
-                        </p:outputPanel>
-                    </form>
-                </div>
+                                            <p:column headerText="Fouilleur">
+                                                <h:outputText
+                                                        value="#{item.excavator.name} #{item.excavator.lastname}"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </p:outputPanel>
+                            </form>
+                        </div>
 
-                <!-- Table des unités spatiale -->
-            </div>
-            <div class="row siamois-rows">
-                <div class="col-md-12">
-                    <p:staticMessage severity="error" summary="Error" closable="false"
-                                     detail="#{spatialUnitBean.actionUnitListErrorMessage}"
-                                     rendered="#{not empty spatialUnitBean.actionUnitListErrorMessage}"/>
+                        <!-- Table des unités action -->
+                    </div>
+                </p:tab>
+
+                <p:tab title="Prelevements">
+
+                </p:tab>
+
+                <p:tab title="Versions">
                     <h:form>
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                        <p:outputPanel>
-                            <div class="card">
-
-                                <p:toolbar>
-                                    <p:toolbarGroup>
-
-<!--                                        <p:commandButton value='Nouveau' icon="pi pi-plus"-->
-<!--                                                         action="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"-->
-<!--                                                         oncomplete="PF('dlg1').show()"-->
-<!--                                                         style="margin-right: .5rem">-->
-<!--                                        </p:commandButton>-->
-
-                                    </p:toolbarGroup>
-
-                                </p:toolbar>
-
-                                <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
-                                             value="#{spatialUnitBean.actionUnitList}">
-                                    <f:facet name="header">
-                                        Actions
-                                    </f:facet>
-                                    <p:column headerText="Name">
-                                        <p:link outcome="/pages/actionUnit/actionUnit.xhtml"
-                                                value="#{item.type.label}">
-                                            <f:param name="id" value="#{item.id}"/>
-                                        </p:link>
-                                    </p:column>
-
-                                    <p:column headerText="Type">
-                                        <p:chip label="#{item.type.label}" icon="pi pi-play" styleClass="mr-2"/>
-                                    </p:column>
-
-                                </p:dataTable>
-                            </div>
-                        </p:outputPanel>
+                        <p:dataTable var="version" value="#{spatialUnitBean.historyVersion}" rows="5" paginator="true">
+                            <p:column headerText="Date de la version">
+                                <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
+                            </p:column>
+                            <p:column>
+                                <p:commandButton
+                                        value="Visualiser"
+                                        action="#{spatialUnitBean.visualise(version)}"
+                                        update="idDisplayVersion"
+                                        oncomplete="PF('displayVersion').show()"
+                                />
+                            </p:column>
+                            <p:column>
+                                <p:commandButton
+                                        value="Restaurer"
+                                        immediate="true"
+                                        action="#{spatialUnitBean.restore(version)}"
+                                        oncomplete="PF('restored-dlg').show()"/>
+                            </p:column>
+                        </p:dataTable>
                     </h:form>
-                </div>
-            </div>
+                </p:tab>
+
+            </p:tabView>
+
 
         </h:panelGroup>
 
-        <h:form id="form-new-action">
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true">
+            <h:form id="displayVersionForm">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <h:panelGroup id="versionVisualizer" rendered="#{spatialUnitBean.revisionToDisplay != null}">
+                    <p>Name : #{spatialUnitBean.revisionToDisplay.name}</p>
+                    <p>Ark : #{spatialUnitBean.revisionToDisplay.ark.arkId}</p>
+                    <p>Category : #{spatialUnitBean.revisionToDisplay.category.label}</p>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
 
-            <div>
-                        <span class="custom-header">
-                            Nouvelle unité d'action pour #{spatialUnitBean.spatialUnit.name}
-                            <p:chip label="#{spatialUnitBean.spatialUnit.category.label}" icon="pi pi-map-marker"
-
-                                    styleClass="mr-2"/>
-                        </span>
-
-            </div>
-
-
-            <p:outputPanel id="new-action" class="ui-fluid">
-                <p:outputPanel>
-                    <div class="field">
-                        <p:outputLabel for="name">Name</p:outputLabel>
-                        <p:inputText id="name" required="true" value="#{newActionUnitBean.actionUnit.name}"/>
-                    </div>
-
-                    <!-- Action Type -->
-                    <div class="field">
-                        <sharedLabel:openthesoLabel for="auto-complete-action-type" label="Type"/>
-                        <p:autoComplete id="auto-complete-action-type"
-                                        value="#{newActionUnitBean.fieldType}"
-                                        completeMethod="#{newActionUnitBean.completeActionUnitType}"
-                                        var="field" itemLabel="#{field.label}"
-                                        itemValue="#{field}"
-                                        required="true"
-                                        converter="#{conceptFieldDTOConverter}"
-                                        forceSelection="true"
-                                        scrollHeight="300"
-                                        dropdown="true"/>
-                    </div>
-
-                </p:outputPanel>
-
-                    <p:commandButton
-                            value='${langBean.msg("actionunit.button.create")}'
-                            icon="pi pi-check"
-                            action="#{newActionUnitBean.save}"
-                            actionListener="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"
-                            update="@form"
-                    />
-                    <p:commandButton value='${langBean.msg("button.cancel")}' icon="pi pi-times"
-                                     class="ui-button-secondary" update="form-new-action" type="button"/>
-
-            </p:outputPanel>
+        <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
+            <h:outputText value="Version restaurée"/>
+        </p:dialog>
 
 
-        </h:form>
+        <ui:include src="../../dialog/actionUnit/actionUnitDialog.xhtml"/>
 
-<!--        <p:dialog header="Header" widgetVar="dlg1" minHeight="40" width="350" showEffect="fade" closeOnEscape="true">-->
-<!--        </p:dialog>-->
 
     </ui:define>
 </ui:composition>

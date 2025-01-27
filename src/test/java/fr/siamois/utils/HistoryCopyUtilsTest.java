@@ -4,7 +4,7 @@ import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.history.SpatialUnitHist;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HistoryCopyUtilsTest {
 

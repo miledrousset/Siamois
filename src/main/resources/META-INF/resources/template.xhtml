@@ -3,6 +3,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:head>
@@ -59,6 +60,20 @@
                             icon="pi pi-pencil"/>
 
             </p:tieredMenu>
+
+            <h:form>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <p:selectOneMenu id="teamSelection"
+                                 value="#{navBean.selectedTeam}"
+                                 rendered="#{navBean.teams.size() > 1}"
+                                 converter="#{navBean.converter}">
+                    <f:selectItems
+                            value="#{navBean.teams}"
+                            itemLabel="#{team.name}"
+                            var="team"/>
+                    <p:ajax listener="#{navBean.changeSelectedTeam()}" update="main"/>
+                </p:selectOneMenu>
+            </h:form>
 
         </div>
 
@@ -143,14 +158,17 @@
             </h:form>
 
             <p:card  id="mainCard" class="shadow" style="margin:1em;">
-                <!-- Content will be inserted here -->
-                <ui:insert description="The main content" name="content">
+                <h:panelGroup id="main">
                     <!-- Content will be inserted here -->
-                </ui:insert>
+                    <ui:insert description="The main content" name="content">
+                        <!-- Content will be inserted here -->
+                    </ui:insert>
+                </h:panelGroup>
             </p:card>
         </div>
 
     </div>
 
+  
 </h:body>
 </html>

@@ -1,6 +1,5 @@
 package fr.siamois.ws.api.v1.routes;
 
-import fr.siamois.ws.api.helper.CustomMediaType;
 import jakarta.json.Json;
 import jakarta.json.JsonObjectBuilder;
 import org.springframework.http.MediaType;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(methods = { RequestMethod.GET })
 public class PingController {
 
-    @GetMapping(value = "ping", produces = CustomMediaType.APPLICATION_JSON_UTF_8)
+    @GetMapping(value = "ping", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> ping() {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         builder.add("message", "pong");

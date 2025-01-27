@@ -13,18 +13,6 @@ import java.util.List;
 @Repository
 public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long>, TraceableEntries {
 
-    @Query(
-            nativeQuery = true,
-            value = "SELECT au.* FROM action_unit au JOIN action_hierarchy auh ON au.action_unit_id = auh.fk_child_id WHERE auh.fk_parent_id = :actionUnitId"
-    )
-    List<ActionUnit> findAllChildOfActionUnit(@Param("actionUnitId") Long actionUnitId);
-
-    @Query(
-            nativeQuery = true,
-            value = "SELECT au.* FROM action_unit au JOIN action_hierarchy auh ON au.action_unit_id = auh.fk_parent_id WHERE auh.fk_child_id = :actionUnitId"
-    )
-    List<ActionUnit> findAllParentsOfActionUnit(@Param("actionUnitId") Long actionUnitId);
-
     List<ActionUnit> findAllBySpatialUnitId(Long id);
 
     @Query(
@@ -32,4 +20,10 @@ public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long>, 
             value = "SELECT au.* FROM action_unit au WHERE fk_author_id = :author AND creation_time BETWEEN :start AND :end"
     )
     List<ActionUnit> findAllCreatedBetweenByUser(@Param("start") OffsetDateTime start, @Param("end") OffsetDateTime end, @Param("author") Long personId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT au.* FROM action_unit au WHERE au.fk_spatial_unit_id = :spatialUnitId AND au.fk_team_id = :teamId"
+    )
+    List<ActionUnit> findAllBySpatialUnitIdOfTeam(Long spatialUnitId, Long teamId);
 }

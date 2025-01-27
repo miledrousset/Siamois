@@ -5,7 +5,6 @@ import fr.siamois.utils.HistoryCopyUtils;
 import java.time.OffsetDateTime;
 
 public interface HistoryEntry<T> {
-    HistoryUpdateType getUpdateType();
     Long getTableId();
     OffsetDateTime getUpdateTime();
     default T createOriginal(Class<T> originalClass) {
@@ -18,3 +17,4 @@ public interface HistoryEntry<T> {
         }
     }
 }
+

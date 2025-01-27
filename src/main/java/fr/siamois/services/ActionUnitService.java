@@ -5,6 +5,7 @@ import fr.siamois.infrastructure.repositories.ActionUnitRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.Team;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.ActionUnitNotFoundException;
@@ -37,6 +38,10 @@ public class ActionUnitService {
         return actionUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
     }
 
+    public List<ActionUnit> findAllBySpatialUnitIdOfTeam(SpatialUnit spatialUnit, Team team)   {
+        return actionUnitRepository.findAllBySpatialUnitIdOfTeam(spatialUnit.getId(), team.getId());
+    }
+
     /**
      * Find an action unit by its ID
      *
@@ -64,9 +69,7 @@ public class ActionUnitService {
 
                 ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
                 Ark ark = new Ark();
-                ark.setArkServer(
-                        arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"))
-                );
+                ark.setArkServer(localServer);
                 ark.setArkId(ArkGenerator.generateArk());
                 actionUnit.setArk(ark);
             }

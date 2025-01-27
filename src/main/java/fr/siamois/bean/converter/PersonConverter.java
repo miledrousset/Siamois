@@ -1,4 +1,4 @@
-package fr.siamois.bean.Converter;
+package fr.siamois.bean.converter;
 
 import fr.siamois.models.auth.Person;
 import fr.siamois.services.PersonService;
