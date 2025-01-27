@@ -15,6 +15,7 @@ public class ActionUnit extends ActionUnitParent {
     @Column(name = "action_unit_id", nullable = false)
     private Long id;
 
+    @FieldCode
     public static final String TYPE_FIELD_CODE = "SIAAU.TYPE";
 
 }

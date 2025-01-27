@@ -1,5 +1,6 @@
 package fr.siamois.models.auth;
 
+import fr.siamois.models.FieldCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -108,5 +109,6 @@ public class Person implements UserDetails {
         return true;
     }
 
+    @FieldCode
     public static final String USER_ROLE_FIELD_CODE = "SIAP.ROLE";
 }

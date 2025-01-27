@@ -15,6 +15,7 @@ public class SpatialUnit extends SpatialUnitParent {
     @Column(name = "spatial_unit_id", nullable = false)
     private Long id;
 
+    @FieldCode
     public static final String CATEGORY_FIELD_CODE = "SIASU.TYPE";
 
 }
