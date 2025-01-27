@@ -65,7 +65,6 @@
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <p:selectOneMenu id="teamSelection"
                                  value="#{navBean.selectedTeam}"
-                                 rendered="#{navBean.teams.size() > 1}"
                                  converter="#{navBean.converter}">
                     <f:selectItems
                             value="#{navBean.teams}"
@@ -117,20 +116,6 @@
                             <h:button rendered="#{navBean.userIs('ADMIN')}"
                                       value='${langBean.msg("nav.create.team")}'
                                       outcome="/pages/admin/team.xhtml" styleClass="btn btn-danger"/>
-
-
-                            <h:form>
-                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                <p:selectOneMenu id="teamSelection"
-                                                 value="#{navBean.selectedTeam}"
-                                                 converter="#{navBean.converter}">
-                                    <f:selectItems
-                                            value="#{navBean.teams}"
-                                            itemLabel="#{team.name}"
-                                            var="team"/>
-                                    <p:ajax listener="#{navBean.onTeamChange()}" update="mainCard"/>
-                                </p:selectOneMenu>
-                            </h:form>
 
                         </nav>
                     </f:facet>
