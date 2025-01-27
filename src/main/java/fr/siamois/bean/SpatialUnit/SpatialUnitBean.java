@@ -121,7 +121,7 @@ public class SpatialUnitBean implements Serializable {
                 }
                 try {
                     this.actionUnitListErrorMessage = null;
-                    this.actionUnitList = actionUnitService.findAllBySpatialUnitIdOfTeam(spatialUnit, team);
+                    this.actionUnitList = actionUnitService.findAllBySpatialUnitId(spatialUnit);
                 } catch (RuntimeException e) {
                     this.actionUnitList = null;
                     this.actionUnitListErrorMessage = "Unable to load action units: " + e.getMessage();
