@@ -65,6 +65,9 @@ public class TestConfigurationBean implements Serializable {
     private String selectedThesaurus = "";
     private String selectedFieldCode = "";
 
+    // Tree
+    private ConceptSettingsTree tree = null;
+
     public TestConfigurationBean(FieldConfigurationService fieldConfigurationService, LangBean langBean, SessionSettings sessionSettings, ConceptApi conceptApi) {
         this.fieldConfigurationService = fieldConfigurationService;
         this.langBean = langBean;
@@ -313,7 +316,7 @@ public class TestConfigurationBean implements Serializable {
     public void loadModelThesaurus() {
         log.trace("loadModelThesaurus");
         ConceptBranchDTO dto = conceptApi.fetchFieldsBranch(selectedVocab);
-        ConceptSettingsTree tree = new ConceptSettingsTree(dto);
+        if (tree == null) tree = new ConceptSettingsTree(dto);
         log.trace(
                 tree.searchConceptNodeForConfig(selectedFieldCode).stream()
                         .map((conceptNode -> conceptNode.getConcept().getPrefLabel()[0].getValue()))
