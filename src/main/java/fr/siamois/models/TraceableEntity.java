@@ -36,5 +36,7 @@ public abstract class TraceableEntity {
     @JoinColumn(name = "fk_team_id")
     protected Team authorTeam;
 
+    // TODO: AJouter lastModifiedBy
+
     public abstract Long getId();
 }
