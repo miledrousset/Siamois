@@ -96,10 +96,7 @@ public class ConceptSettingsTree {
     private static boolean genericNodeHasNoChildWithCode(ConceptNode value) {
         boolean isGenericNode = value.getCode() != null;
         boolean hasNoChildWithCode = value.getChilds().stream()
-                .filter((conceptNode -> {
-                    String prefLabel = conceptNode.getConcept().getPrefLabel()[0].getValue();
-                    return prefLabel.contains("(") && prefLabel.contains(")");
-                }))
+                .filter(child -> child.getCode() != null)
                 .findFirst()
                 .isEmpty();
         return isGenericNode && hasNoChildWithCode;
