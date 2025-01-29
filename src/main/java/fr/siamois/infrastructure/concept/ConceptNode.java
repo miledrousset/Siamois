@@ -18,7 +18,7 @@ public class ConceptNode {
     public ConceptNode(FullConceptDTO concept) {
         this.concept = concept;
 
-        String regex = "\\(([^)]+)\\)";
+        String regex = "\\(([^)]+)\\)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(concept.getPrefLabel()[0].getValue());
         if (matcher.find()) {
