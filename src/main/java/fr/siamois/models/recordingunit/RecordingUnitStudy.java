@@ -1,6 +1,7 @@
 package fr.siamois.models.recordingunit;
 
 
+import fr.siamois.models.FieldCode;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,5 +16,8 @@ public class RecordingUnitStudy extends RecordingUnityStudyParent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recording_unit_study_id", nullable = false)
     private Long id;
+
+    @FieldCode
+    public static final String TYPE_FIELD = "SIASRU.TYPE";
 
 }

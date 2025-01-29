@@ -1,6 +1,7 @@
 package fr.siamois.models.specimen;
 
 
+import fr.siamois.models.FieldCode;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,5 +16,11 @@ public class Specimen extends SpecimenParent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "specimen_id", nullable = false)
     private Long id;
+
+    @FieldCode
+    public static final String CATEGORY_FIELD = "SIAS.CATEGORY";
+
+    @FieldCode
+    public static final String METHOD_FIELD = "SIAS.METHOD";
 
 }

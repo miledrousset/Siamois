@@ -24,7 +24,7 @@ public class ConceptNode {
         if (matcher.find()) {
             code = matcher.group(1);
         } else {
-            code = concept.getPrefLabel()[0].getValue();
+            code = null;
         }
     }
 

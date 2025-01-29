@@ -41,4 +41,7 @@ public class FullConceptDTO {
     @JsonProperty("http://www.w3.org/2004/02/skos/core#altLabel")
     private PurlInfoDTO[] altLabel;
 
+    @JsonProperty("http://www.w3.org/2004/02/skos/core#notation")
+    private PurlInfoDTO[] notation;
+
 }

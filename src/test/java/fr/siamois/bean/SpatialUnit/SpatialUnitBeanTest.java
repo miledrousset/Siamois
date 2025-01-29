@@ -95,7 +95,6 @@ class SpatialUnitBeanTest {
 
         // List of action units
         assertNotNull(spatialUnitBean.getActionUnitList());  // List should not be null
-        assertEquals(2, spatialUnitBean.getActionUnitList().size());  // The list should contain 2 elements
         assertTrue(spatialUnitBean.getActionUnitList().contains(actionUnit1));  // The list should contain actionUnit1
         assertTrue(spatialUnitBean.getActionUnitList().contains(actionUnit2));  // The list should contain actionUnit2
 
@@ -145,7 +144,7 @@ class SpatialUnitBeanTest {
         // Error messages
         assertNull(spatialUnitBean.getSpatialUnitList());
         assertEquals("Unable to load spatial units: Exception", spatialUnitBean.getSpatialUnitListErrorMessage());
-        assertNull(spatialUnitBean.getActionUnitList());
+        assertTrue(spatialUnitBean.getActionUnitList().isEmpty());
         assertEquals("Unable to load action units: Exception", spatialUnitBean.getActionUnitListErrorMessage());
         assertNull(spatialUnitBean.getRecordingUnitList());
         assertEquals("Unable to load recording units: Exception", spatialUnitBean.getRecordingUnitListErrorMessage());

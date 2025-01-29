@@ -19,4 +19,10 @@ public class RecordingUnit extends RecordingUnitParent {
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIARU.TYPE";
 
+    @FieldCode
+    public static final String METHOD_FIELD_CODE = "SIARU.TYPE";
+
+    @FieldCode
+    public static final String STRATI_FIELD_CODE = "SIARU.STRATI";
+
 }

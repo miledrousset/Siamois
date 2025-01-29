@@ -120,7 +120,7 @@ public class ConceptApi {
             ConceptDTO[] array = mapper.readValue(conceptDTO, ConceptDTO[].class);
 
             ConceptDTO autocompleteParent = Arrays.stream(array)
-                    .filter((conceptDTO1 -> Arrays.stream(conceptDTO1.labels).anyMatch((labelDTO -> labelDTO.getTitle().toUpperCase().contains("SIAAUTO")))))
+                    .filter((conceptDTO1 -> Arrays.stream(conceptDTO1.labels).anyMatch((labelDTO -> labelDTO.getTitle().toUpperCase().contains("(SIAAUTO")))))
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Concept with code SIAAUTO not found"));
 
@@ -130,11 +130,9 @@ public class ConceptApi {
             headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
             HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-
             ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, String.class);
 
             TypeReference<Map<String,FullConceptDTO>> typeReference = new TypeReference<>() {};
-
             Map<String, FullConceptDTO> result = mapper.readValue(response.getBody(), typeReference);
 
             ConceptBranchDTO branch = new ConceptBranchDTO();

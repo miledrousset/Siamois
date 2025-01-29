@@ -301,17 +301,21 @@ public class FieldService {
         List<String> fieldCodes = new ArrayList<>();
 
         for (Field field : fieldsWithFieldCode) {
-            if (field.getType().equals(String.class) &&
-                    Modifier.isStatic(field.getModifiers()) &&
-                    Modifier.isFinal(field.getModifiers())) {
+            if (isValidFieldCode(field)) {
                 try {
                     fieldCodes.add((String) field.get(null));
                 } catch (IllegalAccessException e) {
-                    log.info("Error while searching for field code {}", field.getName());
+                    log.error("Error while searching for field code {}", field.getName());
                 }
             }
         }
 
         return fieldCodes;
+    }
+
+    private static boolean isValidFieldCode(Field field) {
+        return field.getType().equals(String.class) &&
+                Modifier.isStatic(field.getModifiers()) &&
+                Modifier.isFinal(field.getModifiers());
     }
 }

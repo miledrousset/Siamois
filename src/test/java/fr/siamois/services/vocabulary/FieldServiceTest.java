@@ -33,10 +33,10 @@ class FieldServiceTest {
     }
 
     @Test
-    public void testSearchAllFieldCodes_isNotEmpty() {
+    public void testSearchAllFieldCodes_hasAtLeaseThreeFields() {
         List<String> result = fieldService.searchAllFieldCodes();
 
-        assertThat(result).isNotEmpty();
+        assertThat(result.size()).isGreaterThanOrEqualTo(3);
     }
 
 }

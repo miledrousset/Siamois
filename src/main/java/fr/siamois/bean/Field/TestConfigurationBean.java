@@ -15,6 +15,7 @@ import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
+import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -43,6 +44,7 @@ public class TestConfigurationBean implements Serializable {
     private final LangBean langBean;
     private final SessionSettings sessionSettings;
     private final ConceptApi conceptApi;
+    private final FieldService fieldService;
 
     // Configuration storage
     private List<VocabularyCollection> collections = new ArrayList<>();
@@ -66,13 +68,15 @@ public class TestConfigurationBean implements Serializable {
     private String selectedFieldCode = "";
 
     // Tree
-    private ConceptSettingsTree tree = null;
+    private final ConceptSettingsTree tree;
 
-    public TestConfigurationBean(FieldConfigurationService fieldConfigurationService, LangBean langBean, SessionSettings sessionSettings, ConceptApi conceptApi) {
+    public TestConfigurationBean(FieldConfigurationService fieldConfigurationService, LangBean langBean, SessionSettings sessionSettings, ConceptApi conceptApi, FieldService fieldService, ConceptSettingsTree tree) {
         this.fieldConfigurationService = fieldConfigurationService;
         this.langBean = langBean;
         this.sessionSettings = sessionSettings;
         this.conceptApi = conceptApi;
+        this.fieldService = fieldService;
+        this.tree = tree;
     }
 
     /**
@@ -316,7 +320,8 @@ public class TestConfigurationBean implements Serializable {
     public void loadModelThesaurus() {
         log.trace("loadModelThesaurus");
         ConceptBranchDTO dto = conceptApi.fetchFieldsBranch(selectedVocab);
-        if (tree == null) tree = new ConceptSettingsTree(dto);
+        if (tree.isEmpty()) tree.buildTreeFromBranch(dto);
+
         log.trace(
                 tree.searchConceptNodeForConfig(selectedFieldCode).stream()
                         .map((conceptNode -> conceptNode.getConcept().getPrefLabel()[0].getValue()))
