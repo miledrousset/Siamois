@@ -113,14 +113,13 @@ public class ConceptSettingsTree {
             StringBuilder codeBuilder = new StringBuilder(node.getCode());
             ConceptNode currentNode = node;
 
-            while (!isRootNode(currentNode)) {
-                log.trace("Current node code: {}", currentNode.getCode());
+            while (isNotRootNode(currentNode)) {
                 Optional<ConceptNode> parent = getParentOf(currentNode);
 
                 if (parent.isPresent()) {
                     ConceptNode parentNode = parent.get();
 
-                    if (!isRootNode(parentNode)) {
+                    if (isNotRootNode(parentNode)) {
                         codeBuilder.insert(0, ".")
                                 .insert(0, parentNode.getCode());
                     }
@@ -140,8 +139,8 @@ public class ConceptSettingsTree {
         return fieldCodes;
     }
 
-    private static boolean isRootNode(ConceptNode currentNode) {
-        return currentNode.getCode().equalsIgnoreCase("SIAAUTO");
+    private static boolean isNotRootNode(ConceptNode currentNode) {
+        return !currentNode.getCode().equalsIgnoreCase("SIAAUTO");
     }
 
     public boolean treeIsValid() {
