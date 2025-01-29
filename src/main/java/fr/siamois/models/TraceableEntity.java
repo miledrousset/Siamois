@@ -36,7 +36,10 @@ public abstract class TraceableEntity {
     @JoinColumn(name = "fk_team_id")
     protected Team authorTeam;
 
-    // TODO: AJouter lastModifiedBy
+    @ColumnDefault("NULL")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_last_modification_person_id")
+    protected Person lastModifiedBy = null;
 
     public abstract Long getId();
 }
