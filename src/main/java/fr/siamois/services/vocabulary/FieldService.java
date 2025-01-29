@@ -6,6 +6,7 @@ import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
+import fr.siamois.models.FieldCode;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.Team;
 import fr.siamois.models.ark.Ark;
@@ -18,20 +19,24 @@ import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.services.ark.ArkGenerator;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
+import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 /**
  * Service to handle the fields in the application.
+ *
  * @author Julien Linget
  */
+@Slf4j
 @Service
 @Transactional
 public class FieldService {
@@ -52,7 +57,8 @@ public class FieldService {
 
     /**
      * Fetch the autocomplete results of Opentheso API for a given input on multiple vocabulary collection.
-     * @param input The input to search for
+     *
+     * @param input       The input to search for
      * @param collections The list of database saved vocabulary collections to search in
      * @return A list of concept field DTOs
      */
@@ -64,8 +70,9 @@ public class FieldService {
 
     /**
      * Fetch the autocomplete results of Opentheso API for a given input on a vocabulary.
+     *
      * @param vocabulary The database saved vocabulary to search in
-     * @param input The input to search for
+     * @param input      The input to search for
      * @return A list of concept field DTOs
      */
     private List<ConceptFieldDTO> fetchAutocomplete(Vocabulary vocabulary, String input, String langCode) {
@@ -76,8 +83,9 @@ public class FieldService {
 
     /**
      * Fetch the autocomplete results of Opentheso API for a given input on a field configuration.
-     * @param config The field configuration to search in
-     * @param input The input to search for
+     *
+     * @param config   The field configuration to search in
+     * @param input    The input to search for
      * @param langCode The language code to search in
      * @return A list of concept field DTOs
      */
@@ -91,9 +99,10 @@ public class FieldService {
 
     /**
      * Generate an ARK for a spatial unit. Create or save the category concept and save the spatial unit.
-     * @param name The name of the spatial unit
+     *
+     * @param name       The name of the spatial unit
      * @param vocabulary The database saved vocabulary
-     * @param category The API response for the category concept
+     * @param category   The API response for the category concept
      * @return The saved spatial unit
      */
     public SpatialUnit saveSpatialUnit(String name,
@@ -127,12 +136,13 @@ public class FieldService {
 
     /**
      * Save or get a concept from a category field DTO.
-     * @param vocabulary The database saved vocabularies
+     *
+     * @param vocabulary      The database saved vocabularies
      * @param conceptFieldDTO The API response for the concept
      * @return The saved concept
      */
     public Concept saveOrGetConceptFromDto(Vocabulary vocabulary, ConceptFieldDTO conceptFieldDTO) {
-        MultiValueMap<String,String> queryParams = UriComponentsBuilder.fromUriString(conceptFieldDTO.getUri()).build().getQueryParams();
+        MultiValueMap<String, String> queryParams = UriComponentsBuilder.fromUriString(conceptFieldDTO.getUri()).build().getQueryParams();
         if (queryParams.containsKey("idt") && queryParams.containsKey("idc")) {
             return processConceptWithExternalIdThesaurusAndIdConcept(vocabulary, conceptFieldDTO, queryParams);
         } else {
@@ -142,8 +152,9 @@ public class FieldService {
 
     /**
      * The save or get concept method for a category field DTO with an external ID and thesaurus ID.
-     * @param vocabulary The database saved vocabulary
-     * @param category The API response for the category concept
+     *
+     * @param vocabulary  The database saved vocabulary
+     * @param category    The API response for the category concept
      * @param queryParams The query parameters of the URI
      * @return The saved concept
      */
@@ -164,8 +175,9 @@ public class FieldService {
 
     /**
      * The save or get concept method for a category field DTO with an ARK URI.
+     *
      * @param vocabulary The database saved vocabulary
-     * @param category The API response for the category concept
+     * @param category   The API response for the category concept
      * @return The saved concept
      */
     private Concept processConceptWithArkUri(Vocabulary vocabulary, ConceptFieldDTO category) {
@@ -209,6 +221,7 @@ public class FieldService {
 
     /**
      * Extract the ARK ID from an URI.
+     *
      * @param uri The URI to extract the ARK ID from
      * @return The ARK ID with the format "naan/arkId" without the "ark:/" prefix
      */
@@ -232,6 +245,7 @@ public class FieldService {
 
     /**
      * Fetch all the spatial units in the database.
+     *
      * @return A list of all the spatial units
      */
     public List<SpatialUnit> fetchAllSpatialUnits() {
@@ -247,10 +261,11 @@ public class FieldService {
 
     /**
      * Save the spatial unit and its hierarchy.
-     * @param fName The name of the spatial unit
-     * @param vocabulary The database saved vocabulary
+     *
+     * @param fName                   The name of the spatial unit
+     * @param vocabulary              The database saved vocabulary
      * @param selectedConceptFieldDTO The API response for the category concept
-     * @param parentsSpatialUnit The list of database saved parent spatial units
+     * @param parentsSpatialUnit      The list of database saved parent spatial units
      * @return The saved spatial unit
      * @throws SpatialUnitAlreadyExistsException If the spatial unit already exists in the database
      */
@@ -268,8 +283,9 @@ public class FieldService {
 
     /**
      * Save a concept if it does not exist in the database.
+     *
      * @param fieldConfig The field configuration to save the concept in
-     * @param dto The API response for the concept
+     * @param dto         The API response for the concept
      * @return The saved concept
      */
     public Concept saveConceptIfNotExist(FieldConfigurationWrapper fieldConfig, ConceptFieldDTO dto) {
@@ -277,5 +293,29 @@ public class FieldService {
         if (vocabulary == null) vocabulary = fieldConfig.vocabularyCollectionsConfig().get(0).getVocabulary();
 
         return saveOrGetConceptFromDto(vocabulary, dto);
+    }
+
+    public List<String> searchAllFieldCodes() {
+        Reflections reflections = new Reflections("fr.siamois.models", Scanners.FieldsAnnotated);
+        Set<Field> fieldsWithFieldCode = reflections.getFieldsAnnotatedWith(FieldCode.class);
+        List<String> fieldCodes = new ArrayList<>();
+
+        for (Field field : fieldsWithFieldCode) {
+            if (isValidFieldCode(field)) {
+                try {
+                    fieldCodes.add((String) field.get(null));
+                } catch (IllegalAccessException e) {
+                    log.error("Error while searching for field code {}", field.getName());
+                }
+            }
+        }
+
+        return fieldCodes;
+    }
+
+    private static boolean isValidFieldCode(Field field) {
+        return field.getType().equals(String.class) &&
+                Modifier.isStatic(field.getModifiers()) &&
+                Modifier.isFinal(field.getModifiers());
     }
 }
