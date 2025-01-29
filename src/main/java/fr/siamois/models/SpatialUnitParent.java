@@ -17,8 +17,8 @@ public abstract class SpatialUnitParent extends TraceableEntity {
     protected String name;
 
     @NotNull
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "fk_ark_id", nullable = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "fk_ark_id", nullable = true)
     protected Ark ark;
 
     @ManyToOne(fetch = FetchType.EAGER)

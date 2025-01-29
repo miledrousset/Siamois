@@ -22,8 +22,8 @@ public abstract class SpecimenParent extends TraceableEntity {
     protected RecordingUnit recordingUnit;
 
     @NotNull
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "fk_ark_id", nullable = false)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fk_ark_id")
     protected Ark ark;
 
     @ManyToOne(fetch = FetchType.EAGER)
