@@ -23,8 +23,8 @@ import java.time.OffsetDateTime;
 public abstract class RecordingUnitParent extends TraceableEntity {
 
     @NotNull
-    @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "fk_ark_id", nullable = false)
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "fk_ark_id")
     protected Ark ark;
 
     @ManyToOne(fetch = FetchType.EAGER)

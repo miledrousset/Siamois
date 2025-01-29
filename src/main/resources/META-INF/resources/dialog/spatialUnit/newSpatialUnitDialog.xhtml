@@ -1,0 +1,51 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://java.sun.com/jsf/facelets"
+             xmlns:h="http://xmlns.jcp.org/jsf/html"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label"
+             xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="dialog-new-spatial-unit" header="Header" widgetVar="new-spatial-unit-dialog" minHeight="40"
+              width="350" showEffect="fade" closeOnEscape="true" appendToBody="true">
+        <h:messages id="messages-new-spatial-unit"/>
+        <h:form id="form-new-spatial-unit">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+            <div>
+                <span class="custom-header">
+                    Nouvelle unité spatiale
+                </span>
+            </div>
+
+
+            <p:outputPanel id="new-spatial-unit-output-panel" class="ui-fluid">
+                <p:outputPanel>
+                    <div class="field">
+                        <p:outputLabel for="name">Name</p:outputLabel>
+                        <p:inputText id="name" required="true" value="#{spatialUnitFieldBean.FName}"/>
+                    </div>
+
+                    <!-- Action Type -->
+                    <div class="field">
+                        <sharedLabel:openthesoLabel for="auto-complete-action-type" label="Type"/>
+                        <p:autoComplete id="su-category" value="#{spatialUnitFieldBean.FCategory}"
+                                        completeMethod="#{spatialUnitFieldBean.completeCategory}"
+                                        forceSelection="true"
+                                        scrollHeight="300"
+                                        dropdown="true"/>
+                    </div>
+
+                </p:outputPanel>
+
+                <p:commandButton value='${langBean.msg("commons.actions.save")}' action="#{spatialUnitFieldBean.save()}"/>
+                <p:commandButton value='${langBean.msg("button.cancel")}' icon="pi pi-times"
+                                 class="ui-button-secondary" update="form-new-action" type="button"/>
+
+            </p:outputPanel>
+
+
+        </h:form>
+    </p:dialog>
+
+
+</ui:fragment>

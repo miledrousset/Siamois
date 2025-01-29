@@ -45,6 +45,10 @@ public class SpatialUnitService {
         return spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit.getId());
     }
 
+    public List<SpatialUnit> findAllParentsOfSpatialUnit(SpatialUnit spatialUnit) {
+        return spatialUnitRepository.findAllParentsOfSpatialUnit(spatialUnit.getId());
+    }
+
     public List<SpatialUnit> findAllChildOfSpatialUnitOfTeam(SpatialUnit spatialUnit, Team team) {
         return spatialUnitRepository.findAllChildOfSpatialUnitOfTeam(spatialUnit.getId(), team.getId());
     }

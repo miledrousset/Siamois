@@ -81,8 +81,8 @@ class SpatialUnitBeanTest {
 
         // Given: mock the services
         when(spatialUnitService.findById(1L)).thenReturn(spatialUnit1);
-        when(spatialUnitService.findAllChildOfSpatialUnitOfTeam(eq(spatialUnit1), any(Team.class))).thenReturn(List.of(spatialUnit2));
-        when(actionUnitService.findAllBySpatialUnitIdOfTeam(eq(spatialUnit1), any(Team.class))).thenReturn(List.of(actionUnit1, actionUnit2));
+        when(spatialUnitService.findAllChildOfSpatialUnit(eq(spatialUnit1))).thenReturn(List.of(spatialUnit2));
+        when(actionUnitService.findAllBySpatialUnitId(eq(spatialUnit1))).thenReturn(List.of(actionUnit1, actionUnit2));
         when(recordingUnitService.findAllBySpatialUnit(spatialUnit1)).thenReturn(List.of(recordingUnit1, recordingUnit2));
 
         // When: call the @PostConstruct method (implicitly triggered during bean initialization)
@@ -130,9 +130,9 @@ class SpatialUnitBeanTest {
 
         // Given: mock the services
         when(spatialUnitService.findById(1)).thenReturn(spatialUnit1);
-        when(spatialUnitService.findAllChildOfSpatialUnitOfTeam(eq(spatialUnit1), any(Team.class))).thenThrow(new RuntimeException("Exception"));
+        when(spatialUnitService.findAllChildOfSpatialUnit(eq(spatialUnit1))).thenThrow(new RuntimeException("Exception"));
         when(recordingUnitService.findAllBySpatialUnit(spatialUnit1)).thenThrow(new RuntimeException("Exception"));
-        when(actionUnitService.findAllBySpatialUnitIdOfTeam(eq(spatialUnit1), any(Team.class))).thenThrow(new RuntimeException("Exception"));
+        when(actionUnitService.findAllBySpatialUnitId(eq(spatialUnit1))).thenThrow(new RuntimeException("Exception"));
 
         // When: call the @PostConstruct method (implicitly triggered during bean initialization)
         spatialUnitBean.init();

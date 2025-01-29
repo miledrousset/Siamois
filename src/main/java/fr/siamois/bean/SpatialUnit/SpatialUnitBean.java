@@ -100,14 +100,14 @@ public class SpatialUnitBean implements Serializable {
             if (this.spatialUnit != null) {
                 try {
                     this.spatialUnitListErrorMessage = null;
-                    this.spatialUnitList = spatialUnitService.findAllChildOfSpatialUnitOfTeam(spatialUnit, team);
+                    this.spatialUnitList = spatialUnitService.findAllChildOfSpatialUnit(spatialUnit);
                 } catch (RuntimeException e) {
                     this.spatialUnitList = null;
                     this.spatialUnitListErrorMessage = "Unable to load spatial units: " + e.getMessage();
                 }
                 try {
                     this.spatialUnitParentsListErrorMessage = null;
-                    this.spatialUnitParentsList = spatialUnitService.findAllParentsOfSpatialUnitOfTeam(spatialUnit, team);
+                    this.spatialUnitParentsList = spatialUnitService.findAllParentsOfSpatialUnit(spatialUnit);
                 } catch (RuntimeException e) {
                     this.spatialUnitParentsList = null;
                     this.spatialUnitParentsListErrorMessage = "Unable to load the parents: " + e.getMessage();
@@ -121,7 +121,7 @@ public class SpatialUnitBean implements Serializable {
                 }
                 try {
                     this.actionUnitListErrorMessage = null;
-                    this.actionUnitList = actionUnitService.findAllBySpatialUnitIdOfTeam(spatialUnit, team);
+                    this.actionUnitList = actionUnitService.findAllBySpatialUnitId(spatialUnit);
                 } catch (RuntimeException e) {
                     this.actionUnitList = null;
                     this.actionUnitListErrorMessage = "Unable to load action units: " + e.getMessage();

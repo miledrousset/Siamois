@@ -9,32 +9,17 @@
         <!-- Attributes to pass the bean's list and optional additional parameters -->
         <cc:attribute name="spatialUnitList" required="true"/>
         <cc:attribute name="header"/>
-        <cc:attribute name="newButtonCallback"/>
-        <cc:attribute name="newButtonLabel"/>
-        <cc:attribute name="new2ButtonCallback"/>
-        <cc:attribute name="new2ButtonLabel"/>
-        <cc:attribute name="header"/>
+
     </cc:interface>
     <cc:implementation>
         <h:form>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <p:outputPanel>
                 <div class="card">
-                    <p:toolbar>
-                        <p:toolbarGroup>
 
-                            <h:button value='${langBean.msg("spatialunit.button.new")}' icon="pi pi-plus"
-                                             outcome="/pages/create/spatialUnit.xhtml"
-                                             style="margin-right: .5rem">
-                            </h:button>
+                    <cc:renderFacet name="toolbar" />
 
-                            <h:button value='${langBean.msg("spatialunit.button.add_from_existing")}'
-                                             icon="pi pi-plus" outcome="/pages/create/spatialUnit.xhtml"
 
-                                             style="margin-right: .5rem">
-                            </h:button>
-                        </p:toolbarGroup>
-                    </p:toolbar>
 
                     <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
                                  value="#{cc.attrs.spatialUnitList}">
