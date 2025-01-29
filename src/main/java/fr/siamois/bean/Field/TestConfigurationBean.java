@@ -2,6 +2,9 @@ package fr.siamois.bean.Field;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
+import fr.siamois.infrastructure.api.ConceptApi;
+import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
+import fr.siamois.infrastructure.concept.ConceptSettingsTree;
 import fr.siamois.models.ActionUnit;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
@@ -12,6 +15,7 @@ import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
+import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -39,6 +43,8 @@ public class TestConfigurationBean implements Serializable {
     private final FieldConfigurationService fieldConfigurationService;
     private final LangBean langBean;
     private final SessionSettings sessionSettings;
+    private final ConceptApi conceptApi;
+    private final FieldService fieldService;
 
     // Configuration storage
     private List<VocabularyCollection> collections = new ArrayList<>();
@@ -61,10 +67,16 @@ public class TestConfigurationBean implements Serializable {
     private String selectedThesaurus = "";
     private String selectedFieldCode = "";
 
-    public TestConfigurationBean(FieldConfigurationService fieldConfigurationService, LangBean langBean, SessionSettings sessionSettings) {
+    // Tree
+    private final ConceptSettingsTree tree;
+
+    public TestConfigurationBean(FieldConfigurationService fieldConfigurationService, LangBean langBean, SessionSettings sessionSettings, ConceptApi conceptApi, FieldService fieldService, ConceptSettingsTree tree) {
         this.fieldConfigurationService = fieldConfigurationService;
         this.langBean = langBean;
         this.sessionSettings = sessionSettings;
+        this.conceptApi = conceptApi;
+        this.fieldService = fieldService;
+        this.tree = tree;
     }
 
     /**
@@ -303,6 +315,19 @@ public class TestConfigurationBean implements Serializable {
             selectedGroups = new ArrayList<>(cacheSelectedGroups);
             collections = new ArrayList<>(cachedGroups);
         }
+    }
+
+    public void loadModelThesaurus() {
+        log.trace("loadModelThesaurus");
+        ConceptBranchDTO dto = conceptApi.fetchFieldsBranch(selectedVocab);
+        if (tree.isEmpty()) tree.buildTreeFromBranch(dto);
+
+        log.trace(
+                tree.searchConceptNodeForConfig(selectedFieldCode).stream()
+                        .map((conceptNode -> conceptNode.getConcept().getPrefLabel()[0].getValue()))
+                        .toList()
+                        .toString()
+        );
     }
 
 

@@ -32,6 +32,9 @@
                     <p:commandButton value='${langBean.msg("fieldconfig.server.load")}'
                                      action="#{testConfigurationBean.loadThesaurusValue()}"
                                      update="globalThesaurusId,globalCollectionsId"/>
+                    <p:commandButton value="Charger le thésaurus modèle"
+                    action="#{testConfigurationBean.loadModelThesaurus()}"/>
+
                 </div>
                 <div class="field grid">
                     <p:outputLabel for="globalThesaurusId" styleClass="col-12 md:col-2"
