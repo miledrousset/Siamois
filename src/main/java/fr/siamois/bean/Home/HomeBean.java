@@ -3,7 +3,7 @@ package fr.siamois.bean.Home;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.events.TeamChangeEvent;
+import fr.siamois.models.events.InstitutionChangeEvent;
 import fr.siamois.models.exceptions.NoTeamSelectedException;
 import fr.siamois.services.SpatialUnitService;
 import lombok.Getter;
@@ -45,7 +45,7 @@ public class HomeBean implements Serializable {
             if (author.hasRole("ADMIN")) {
                 spatialUnitList = spatialUnitService.findAllWithoutParents();
             } else {
-                spatialUnitList = spatialUnitService.findAllWithoutParentsOfTeam(sessionSettings.getSelectedTeam());
+                spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettings.getSelectedInstitution());
             }
         } catch (RuntimeException e) {
             log.error(e.getMessage(), e);
@@ -54,11 +54,11 @@ public class HomeBean implements Serializable {
         }
     }
 
-    @EventListener(TeamChangeEvent.class)
+    @EventListener(InstitutionChangeEvent.class)
     public void onTeamChangeEvent() {
         log.trace("TeamChangeEvent received. Updating teams");
         try {
-            spatialUnitList = spatialUnitService.findAllWithoutParentsOfTeam(sessionSettings.getSelectedTeam());
+            spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettings.getSelectedInstitution());
             spatialUnitListErrorMessage = null;
         } catch (NoTeamSelectedException e) {
             log.error("Failed to load teams", e);

@@ -2,8 +2,8 @@ package fr.siamois.models.events;
 
 import org.springframework.context.ApplicationEvent;
 
-public class TeamChangeEvent extends ApplicationEvent {
-    public TeamChangeEvent(Object source) {
+public class InstitutionChangeEvent extends ApplicationEvent {
+    public InstitutionChangeEvent(Object source) {
         super(source);
     }
 }

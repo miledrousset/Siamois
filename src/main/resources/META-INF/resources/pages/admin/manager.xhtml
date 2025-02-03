@@ -16,11 +16,11 @@
 
             <ui:include src="/pages/shared/form/createUser.xhtml" />
 
-            <p:dataTable var="team" value="#{managerCreationBean.refTeams}"
+            <p:dataTable var="team" value="#{managerCreationBean.refInstitutions}"
                          selection="#{managerCreationBean.VTeams}"
                          widgetVar="teamTable"
                          emptyMessage='#{langBean.msg("create.team.manager.teams.empty")}'
-                         filteredValue="#{managerCreationBean.filteredTeams}"
+                         filteredValue="#{managerCreationBean.filteredInstitutions}"
                          rowKey="#{team.id}"
                          selectionMode="multiple"
             >

@@ -107,8 +107,7 @@ public class SpatialUnitFieldBean implements Serializable {
                     vocabulary,
                     selectedConceptFieldDTO,
                     fParentsSpatialUnits,
-                    sessionSettings.getAuthenticatedUser(),
-                    sessionSettings.getSelectedTeam());
+                    sessionSettings.getAuthenticatedUser());
 
             MessageUtils.displayInfoMessage(langBean, "spatialunit.created", saved.getName());
 

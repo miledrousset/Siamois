@@ -1,8 +1,8 @@
 package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
+import fr.siamois.models.Institution;
 import fr.siamois.models.SpatialUnit;
-import fr.siamois.models.Team;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
 import fr.siamois.models.history.SpatialUnitHist;
 import lombok.extern.slf4j.Slf4j;
@@ -49,14 +49,6 @@ public class SpatialUnitService {
         return spatialUnitRepository.findAllParentsOfSpatialUnit(spatialUnit.getId());
     }
 
-    public List<SpatialUnit> findAllChildOfSpatialUnitOfTeam(SpatialUnit spatialUnit, Team team) {
-        return spatialUnitRepository.findAllChildOfSpatialUnitOfTeam(spatialUnit.getId(), team.getId());
-    }
-
-    public List<SpatialUnit> findAllParentsOfSpatialUnitOfTeam(SpatialUnit spatialUnit, Team team) {
-        return spatialUnitRepository.findAllParentsOfSpatialUnitOfTeam(spatialUnit.getId(), team.getId());
-    }
-
     /**
      * Find a spatial unit by its ID
      *
@@ -80,7 +72,7 @@ public class SpatialUnitService {
         spatialUnitRepository.save(spatialUnit);
     }
 
-    public List<SpatialUnit> findAllWithoutParentsOfTeam(Team selectedTeam) {
-        return spatialUnitRepository.findAllWithoutParentsOfTeam(selectedTeam.getId());
+    public List<SpatialUnit> findAllWithoutParentsOfInstitution(Institution institution) {
+        return spatialUnitRepository.findAllWithoutParentsOfInstitution(institution.getId());
     }
 }

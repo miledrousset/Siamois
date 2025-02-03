@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--
+    Creates institution and person_role_institution tables.
+    -->
+
+    <changeSet id="2025.02.03-2" author="Julien Linget">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="institution"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="institution">
+            <column name="institution_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="institution_name" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="institution_description" type="VARCHAR"/>
+            <column name="fk_manager_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_manager_id" references="person(person_id)"/>
+            </column>
+            <column name="institution_code" type="VARCHAR">
+                <constraints unique="true" nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="person_role_institution">
+            <column name="fk_person_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_person_id" references="person(person_id)"/>
+            </column>
+            <column name="fk_role_concept_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_role_concept_id" references="concept(concept_id)"/>
+            </column>
+            <column name="fk_institution_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_institution_id" references="institution(institution_id)"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey
+                tableName="person_role_institution"
+                columnNames="fk_institution_id, fk_person_id, fk_role_concept_id"
+                constraintName="pk_person_role_institution"/>
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -2,7 +2,8 @@ package fr.siamois.config.handler;
 
 import fr.siamois.bean.NavBean;
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.services.TeamService;
+import fr.siamois.models.auth.Person;
+import fr.siamois.services.InstitutionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +26,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final SessionSettings sessionSettings;
     private final NavBean navBean;
-    private final TeamService teamService;
+    private final InstitutionService institutionService;
 
-    public LoginSuccessHandler(SessionSettings sessionSettings, NavBean navBean, TeamService teamService) {
+    public LoginSuccessHandler(SessionSettings sessionSettings, NavBean navBean, InstitutionService institutionService) {
         this.sessionSettings = sessionSettings;
         this.navBean = navBean;
-        this.teamService = teamService;
+        this.institutionService = institutionService;
     }
 
     /**
@@ -65,13 +66,17 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private void setupSession() {
         if (sessionSettings.getAuthenticatedUser().hasRole("ADMIN")) {
-            navBean.setTeams(teamService.findAllTeams());
+            navBean.setInstitutions(institutionService.findAll());
         } else {
-            navBean.setTeams(teamService.findTeamsOfPerson(sessionSettings.getAuthenticatedUser()));
+            Person authUser = sessionSettings.getAuthenticatedUser();
+            navBean.setInstitutions(institutionService.findInstitutionsOfPerson(authUser));
         }
 
-        if (!navBean.getTeams().isEmpty()) {
-            sessionSettings.setSelectedTeam(navBean.getTeams().get(0));
+        navBean.getInstitutions()
+                .sort(((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName())));
+
+        if (!navBean.getInstitutions().isEmpty()) {
+            navBean.setSelectedInstitution(navBean.getInstitutions().get(0));
         }
 
         log.info("User {} logged in", sessionSettings.getAuthenticatedUser().getUsername());

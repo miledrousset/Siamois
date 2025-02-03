@@ -1,9 +1,10 @@
 package fr.siamois.bean.logs;
 
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.models.Team;
+import fr.siamois.models.Institution;
+import fr.siamois.models.TraceInfo;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.events.TeamChangeEvent;
+import fr.siamois.models.events.InstitutionChangeEvent;
 import fr.siamois.models.history.HistoryOperation;
 import fr.siamois.services.HistoryService;
 import fr.siamois.utils.DateUtils;
@@ -63,15 +64,15 @@ public class LogsBean implements Serializable {
         refreshOperation();
     }
 
-    @EventListener(TeamChangeEvent.class)
+    @EventListener(InstitutionChangeEvent.class)
     public void refreshOperation() {
         log.trace("Date changed. Is now {} to {}", vStartDateTime.toString(), vEndDateTime.toString());
         Person authenticatedUser = sessionSettings.getAuthenticatedUser();
-        Team team = sessionSettings.getSelectedTeam();
+        Institution institution = sessionSettings.getSelectedInstitution();
         ZoneOffset offset = ZoneId.systemDefault().getRules().getOffset(vStartDateTime);
         OffsetDateTime start = OffsetDateTime.of(vStartDateTime, offset);
         OffsetDateTime end = OffsetDateTime.of(vEndDateTime, offset);
-        operations = historyService.findAllOperationsOfUserAndTeamBetween(authenticatedUser, team, start, end);
+        operations = historyService.findAllOperationsOfUserAndTeamBetween(new TraceInfo(institution, authenticatedUser), start, end);
     }
 
     public String formatDate(OffsetDateTime offsetDateTime) {
