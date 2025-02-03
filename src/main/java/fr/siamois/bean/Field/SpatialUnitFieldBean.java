@@ -3,7 +3,7 @@ package fr.siamois.bean.Field;
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
@@ -54,6 +54,7 @@ public class SpatialUnitFieldBean implements Serializable {
     private String fName = "";
     private String fCategory = "";
     private List<SpatialUnit> fParentsSpatialUnits = new ArrayList<>();
+    private List<SpatialUnit> fChildrenSpatialUnits = new ArrayList<>();
 
     public SpatialUnitFieldBean(FieldService fieldService, FieldConfigurationService fieldConfigurationService, LangBean langBean, SessionSettings sessionSettings) {
         this.fieldService = fieldService;
@@ -67,18 +68,10 @@ public class SpatialUnitFieldBean implements Serializable {
      * Reset all fields.
      */
     public void init() {
-        refSpatialUnits = fieldService.fetchAllSpatialUnits();
-        labels = refSpatialUnits.stream()
-                .map(SpatialUnit::getName)
-                .collect(Collectors.toList());
-        concepts = null;
-        selectedConcept = null;
-        fName = "";
-        fCategory = "";
-        fParentsSpatialUnits = new ArrayList<>();
+        init(new ArrayList<>(),new ArrayList<>());
     }
 
-    public void init(List<SpatialUnit> parents) {
+    public void init(List<SpatialUnit> parents, List<SpatialUnit> children) {
         refSpatialUnits = fieldService.fetchAllSpatialUnits();
         labels = refSpatialUnits.stream()
                 .map(SpatialUnit::getName)
@@ -88,6 +81,7 @@ public class SpatialUnitFieldBean implements Serializable {
         fName = "";
         fCategory = "";
         fParentsSpatialUnits = parents;
+        fChildrenSpatialUnits = children;
     }
 
     /**
@@ -107,6 +101,7 @@ public class SpatialUnitFieldBean implements Serializable {
                     vocabulary,
                     selectedConceptFieldDTO,
                     fParentsSpatialUnits,
+                    fChildrenSpatialUnits,
                     sessionSettings.getAuthenticatedUser(),
                     sessionSettings.getSelectedTeam());
 

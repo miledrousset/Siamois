@@ -1,7 +1,7 @@
 package fr.siamois.models.history;
 
-import fr.siamois.models.SpatialUnit;
-import fr.siamois.models.SpatialUnitParent;
+import fr.siamois.models.spatialunit.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnitParent;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

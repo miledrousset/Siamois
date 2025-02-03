@@ -4,7 +4,7 @@ import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.infrastructure.repositories.ActionUnitRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.Team;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;

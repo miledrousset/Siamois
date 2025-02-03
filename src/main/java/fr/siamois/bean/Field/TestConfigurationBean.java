@@ -6,7 +6,7 @@ import fr.siamois.infrastructure.api.ConceptApi;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.concept.ConceptSettingsTree;
 import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.api.ClientSideErrorException;
 import fr.siamois.models.exceptions.api.InvalidEndpointException;

@@ -7,7 +7,7 @@ import fr.siamois.infrastructure.repositories.vocabulary.VocabularyCollectionRep
 import fr.siamois.infrastructure.repositories.vocabulary.VocabularyRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.VocabularyTypeRepository;
 import fr.siamois.models.Field;
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.field.FailedFieldSaveException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;

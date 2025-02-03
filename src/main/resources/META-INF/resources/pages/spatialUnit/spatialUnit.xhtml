@@ -76,7 +76,7 @@
                                     <p:toolbar>
                                         <p:toolbarGroup>
                                             <p:commandButton value='Nouveau lieu enfant' icon="pi pi-plus"
-                                                             action="#{spatialUnitFieldBean.init([spatialUnitBean.spatialUnit])}"
+                                                             actionListener="#{spatialUnitFieldBean.init([spatialUnitBean.spatialUnit],[])}"
                                                              oncomplete="PF('new-spatial-unit-dialog').show()"
                                                              style="margin-right: .5rem">
                                             </p:commandButton>
@@ -92,7 +92,20 @@
                                              rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
                             <spatialUnit:spatialUnitList
                                     header="Fait partie de"
-                                    spatialUnitList="#{spatialUnitBean.spatialUnitParentsList}"/>
+                                    spatialUnitList="#{spatialUnitBean.spatialUnitParentsList}">
+                                <f:facet name="toolbar">
+                                    <p:toolbar>
+                                        <p:toolbarGroup>
+                                            <p:commandButton value='Nouveau lieu parent' icon="pi pi-plus"
+                                                             actionListener="#{spatialUnitFieldBean.init([],[spatialUnitBean.spatialUnit])}"
+                                                             oncomplete="PF('new-spatial-unit-dialog').show()"
+                                                             style="margin-right: .5rem">
+                                            </p:commandButton>
+                                        </p:toolbarGroup>
+
+                                    </p:toolbar>
+                                </f:facet>
+                            </spatialUnit:spatialUnitList>
                         </div>
                     </div>
 

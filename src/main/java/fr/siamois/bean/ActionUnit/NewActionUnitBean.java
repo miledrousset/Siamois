@@ -4,7 +4,7 @@ import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
@@ -110,6 +110,10 @@ public class NewActionUnitBean implements Serializable {
 
         concepts = fieldService.fetchAutocomplete(configurationWrapper, input, langBean.getLanguageCode());
         return concepts;
+    }
+
+    public void generateRandomActionUnitIdentifier() {
+        actionUnit.setCode("2025");
     }
 
     @PostConstruct

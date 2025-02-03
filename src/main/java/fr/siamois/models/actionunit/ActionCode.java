@@ -12,10 +12,10 @@ public class ActionCode {
 
     @Id
     @Column(name = "action_code_id", nullable = false)
-    private String id;
+    private String code;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fk_type")
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "fk_type", nullable = true)
     protected Concept type;
 
 

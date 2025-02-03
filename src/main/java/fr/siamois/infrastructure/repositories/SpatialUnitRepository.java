@@ -1,7 +1,7 @@
 package fr.siamois.infrastructure.repositories;
 
 import fr.siamois.infrastructure.repositories.history.TraceableEntries;
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

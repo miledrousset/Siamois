@@ -28,7 +28,8 @@
             <h:form>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <h2>#{actionUnitBean.actionUnit.name}
-                    <p:chip rendered="#{!actionUnitBean.editType}" label="#{actionUnitBean.actionUnit.type.label}" icon="pi pi-play"
+                    <p:chip rendered="#{!actionUnitBean.editType}" label="#{actionUnitBean.actionUnit.type.label}"
+                            icon="pi pi-play"
                             styleClass="edit-type-chip">
                         <p:ajax event="select" listener="#{actionUnitBean.setEditType(true)}" update="@form"/>
                     </p:chip>
@@ -53,7 +54,7 @@
                 <p:commandButton value="Nouvelle unité d'enregistrement"
                                  icon="pi pi-add"
                                  actionListener="#{newRecordingUnitFormBean.init(actionUnitBean.actionUnit)}"
-                                 action="#{newRecordingUnitFormBean.goToNewRecordingUnitPage}" />
+                                 action="#{newRecordingUnitFormBean.goToNewRecordingUnitPage}"/>
             </h:form>
 
 
@@ -64,6 +65,70 @@
                 </p:tab>
 
                 <p:tab title="Détails">
+
+                    <h:form id="codesForm">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <!-- Action codes (OA, OP, ...) -->
+                        <h3>Manage Codes</h3>
+                        <!-- The primary code attached to this action -->
+                        <h4>Primary code</h4>
+                        <div style="display:flex;">
+                            <p:chip id="primaryActionCodeTypeId"  label="#{actionCode.type.label}" icon="pi pi-qrcode"
+                                    styleClass="edit-type-chip"/>
+                            <p:autoComplete id="auto-complete-action-type"
+                                            value="#{actionUnitBean.actionUnit.primaryActionCode}"
+                                            var="actionCode" itemLabel="#{actionCode.code}"
+                                            completeMethod="#{actionUnitBean.completeActionCode}"
+                                            itemValue="#{actionCode}"
+                                            required="true"
+                                            forceSelection="true"
+                                            scrollHeight="300"
+                                            dropdown="false">
+                                <p:ajax event="itemSelect" update="primaryActionCodeTypeId" />
+                                <p:column>
+                                    <div style="display:flex;align-items: center;">
+                                        <p:chip label="#{actionCode.type.label}" icon="pi pi-qrcode"
+                                                styleClass="edit-type-chip"/>
+                                        <span>
+                                            #{actionCode.code}
+                                        </span>
+
+                                    </div>
+                                </p:column>
+                                <f:facet name="footer">
+                                    <div class="ui-fluid" style="padding:0.5rem 1rem 1rem 1rem">
+                                        <p:button value="Add new code" onclick="alert('This could open a dialog')"/>
+                                    </div>
+                                </f:facet>
+                            </p:autoComplete>
+                        </div>
+
+
+
+                        <!--                            <p:repeat var="codeEntry" value="#{codeBean.codes}" varStatus="status">-->
+                        <!--                                <h:panelGrid columns="3">-->
+                        <!--                                    &lt;!&ndash; Autocomplete Field for Type &ndash;&gt;-->
+                        <!--                                    <p:autoComplete value="#{codeEntry.type}" completeMethod="#{codeBean.completeType}"-->
+                        <!--                                                    placeholder="Select Type" minQueryLength="1" forceSelection="true"/>-->
+
+                        <!--                                    &lt;!&ndash; Text Input for Code &ndash;&gt;-->
+                        <!--                                    <p:inputText value="#{codeEntry.code}" placeholder="Enter Code"/>-->
+
+                        <!--                                    &lt;!&ndash; Remove Button &ndash;&gt;-->
+                        <!--                                    <p:commandButton value="Remove" action="#{codeBean.removeCode(status.index)}"-->
+                        <!--                                                     update="codesForm" process="@this" icon="ui-icon-trash"/>-->
+                        <!--                                </h:panelGrid>-->
+                        <!--                            </p:repeat>-->
+
+                        <!--                            &lt;!&ndash; Add New Code Button &ndash;&gt;-->
+                        <!--                            <p:commandButton value="Add Code" action="#{codeBean.addCode}" update="codesForm"-->
+                        <!--                                             icon="ui-icon-plus"/>-->
+
+                        <!--                            &lt;!&ndash; Submit Button &ndash;&gt;-->
+                        <!--                            <p:commandButton value="Submit" action="#{codeBean.submit}" update="messages"-->
+                        <!--                                             icon="ui-icon-check" />-->
+                    </h:form>
+
 
                 </p:tab>
 

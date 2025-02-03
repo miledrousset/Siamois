@@ -1,6 +1,6 @@
 package fr.siamois.models.history;
 
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;

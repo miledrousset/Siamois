@@ -7,7 +7,7 @@ import fr.siamois.infrastructure.repositories.ark.ArkRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import fr.siamois.models.FieldCode;
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.Team;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
@@ -272,12 +272,17 @@ public class FieldService {
     public SpatialUnit saveSpatialUnit(String fName, @NotNull Vocabulary vocabulary,
                                        ConceptFieldDTO selectedConceptFieldDTO,
                                        List<SpatialUnit> parentsSpatialUnit,
+                                       List<SpatialUnit> childrenSpatialUnit,
                                        Person author,
                                        Team teamAuthor) throws SpatialUnitAlreadyExistsException {
         SpatialUnit unit = saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, author, teamAuthor);
         for (SpatialUnit parent : parentsSpatialUnit) {
             spatialUnitRepository.saveSpatialUnitHierarchy(parent.getId(), unit.getId());
         }
+        for (SpatialUnit children : childrenSpatialUnit) {
+            spatialUnitRepository.saveSpatialUnitHierarchy(unit.getId(), children.getId());
+        }
+
         return unit;
     }
 

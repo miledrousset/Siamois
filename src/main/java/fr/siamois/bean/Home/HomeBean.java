@@ -1,7 +1,7 @@
 package fr.siamois.bean.Home;
 
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.events.TeamChangeEvent;
 import fr.siamois.models.exceptions.NoTeamSelectedException;

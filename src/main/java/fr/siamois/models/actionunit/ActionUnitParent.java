@@ -1,6 +1,6 @@
 package fr.siamois.models.actionunit;
 
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.TraceableEntity;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.vocabulary.Concept;
@@ -10,12 +10,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @MappedSuperclass
 public abstract class ActionUnitParent extends TraceableEntity {
+
+
+    public ActionUnitParent() {
+        this.maxRecordingUnitCode = 2147483647;
+        this.minRecordingUnitCode = 1;
+    }
 
     @Column(name = "begin_date")
     protected OffsetDateTime beginDate;
@@ -49,7 +54,7 @@ public abstract class ActionUnitParent extends TraceableEntity {
     protected String code;
 
     @NotNull
-    @Column(name="max_recording_unit_code")
+    @Column(name="max_recording_unit_code", nullable = false)
     protected Integer maxRecordingUnitCode;
 
     @NotNull

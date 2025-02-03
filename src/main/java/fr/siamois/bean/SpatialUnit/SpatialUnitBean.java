@@ -2,7 +2,7 @@ package fr.siamois.bean.SpatialUnit;
 
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.Team;
 import fr.siamois.models.history.SpatialUnitHist;
 import fr.siamois.models.recordingunit.RecordingUnit;
