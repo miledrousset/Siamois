@@ -3,7 +3,7 @@ package fr.siamois.bean.Home;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.events.TeamChangeEvent;
+import fr.siamois.models.events.InstitutionChangeEvent;
 import fr.siamois.models.exceptions.NoTeamSelectedException;
 import fr.siamois.services.SpatialUnitService;
 import lombok.Getter;
@@ -54,7 +54,7 @@ public class HomeBean implements Serializable {
         }
     }
 
-    @EventListener(TeamChangeEvent.class)
+    @EventListener(InstitutionChangeEvent.class)
     public void onTeamChangeEvent() {
         log.trace("TeamChangeEvent received. Updating teams");
         try {

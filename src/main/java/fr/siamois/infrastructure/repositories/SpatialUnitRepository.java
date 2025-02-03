@@ -61,23 +61,5 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "  AND sh.fk_parent_id IS NULL"
     )
     List<SpatialUnit> findAllWithoutParentsOfInstitution(Long institutionId);
-
-    @Query(
-            nativeQuery = true,
-            value = "SELECT su.* " +
-                    "FROM spatial_unit su " +
-                    "JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_parent_id " +
-                    "WHERE su.spatial_unit_id = :spatialUnitId AND su.fk_team_id = :teamId"
-    )
-    List<SpatialUnit> findAllChildOfSpatialUnitOfTeam(Long spatialUnitId, Long teamId);
-
-    @Query(
-            nativeQuery = true,
-            value = "SELECT su.* " +
-                    "FROM spatial_unit su " +
-                    "JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
-                    "WHERE su.spatial_unit_id = :spatialUnitId AND su.fk_team_id = :teamId"
-    )
-    List<SpatialUnit> findAllParentsOfSpatialUnitOfTeam(Long spatialUnitId, Long teamId);
 }
 

@@ -66,10 +66,10 @@
                                  value="#{navBean.selectedInstitution}"
                                  converter="#{navBean.converter}">
                     <f:selectItems
-                            value="#{navBean.teams}"
+                            value="#{navBean.institutions}"
                             itemLabel="#{team.name}"
                             var="team"/>
-                    <p:ajax listener="#{navBean.changeSelectedTeam()}" update="main"/>
+                    <p:ajax listener="#{navBean.changeSelectedInstitution()}" update="main"/>
                 </p:selectOneMenu>
             </h:form>
 
