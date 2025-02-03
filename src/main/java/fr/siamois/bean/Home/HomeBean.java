@@ -4,7 +4,7 @@ import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.events.InstitutionChangeEvent;
-import fr.siamois.models.exceptions.NoTeamSelectedException;
+import fr.siamois.models.exceptions.NoInstitutionSelectedException;
 import fr.siamois.services.SpatialUnitService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +60,7 @@ public class HomeBean implements Serializable {
         try {
             spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettings.getSelectedInstitution());
             spatialUnitListErrorMessage = null;
-        } catch (NoTeamSelectedException e) {
+        } catch (NoInstitutionSelectedException e) {
             log.error("Failed to load teams", e);
             spatialUnitList = null;
             spatialUnitListErrorMessage = "Failed to load team";

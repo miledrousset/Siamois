@@ -3,7 +3,7 @@ package fr.siamois.bean;
 import fr.siamois.bean.converter.InstitutionConverter;
 import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.NoTeamSelectedException;
+import fr.siamois.models.exceptions.NoInstitutionSelectedException;
 import fr.siamois.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.faces.context.ExternalContext;
@@ -89,7 +89,7 @@ public class NavBean implements Serializable {
             sessionSettings.setSelectedInstitution(selectedInstitution);
             institutionChangeEventPublisher.publishTeamChangeEvent();
             log.trace("Institution changed from {} to {}", oldInstit.toString(), selectedInstitution.toString());
-        } catch (NoTeamSelectedException e) {
+        } catch (NoInstitutionSelectedException e) {
             log.error("No institution selected", e);
         }
     }
