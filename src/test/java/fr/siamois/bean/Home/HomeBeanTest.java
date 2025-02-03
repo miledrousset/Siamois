@@ -40,11 +40,12 @@ class HomeBeanTest {
         spatialUnit2 = new SpatialUnit();
         spatialUnit2.setId(2L);
 
-        Team team = new Team();
-        team.setId(12L);
-        team.setName("Test team");
+        Institution institution = new Institution();
+        institution.setId(1L);
+        institution.setCode("test.code");
+        institution.setName("test.name");
 
-        when(sessionSettings.getSelectedTeam()).thenReturn(team);
+        when(sessionSettings.getSelectedInstitution()).thenReturn(institution);
 
         Person person = new Person();
         person.setId(13L);

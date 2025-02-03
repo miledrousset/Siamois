@@ -6,22 +6,22 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <f:metadata>
-        <f:viewAction action="#{teamCreationBean.init()}"/>
+        <f:viewAction action="#{institutionCreationBean.init()}"/>
     </f:metadata>
 
     <ui:define name="content">
         <h:form id="teamform">
             <h1>#{langBean.msg("nav.create.team")}</h1>
             <h2>#{langBean.msg("create.team.name")}</h2>
-            <p:inputText id="teamName" value="#{teamCreationBean.FTeamName}" required="true"/>
+            <p:inputText id="teamName" value="#{institutionCreationBean.FTeamName}" required="true"/>
             <h:outputLabel for="teamName" value='#{langBean.msg("create.team.name")}'/>
 
-            <p:inputTextarea id="teamDescription" value="#{teamCreationBean.FDescription}" required="true"/>
+            <p:inputTextarea id="teamDescription" value="#{institutionCreationBean.FDescription}" required="true"/>
             <h:outputLabel for="teamDescription" value='#{langBean.msg("create.team.description")}'/>
 
             <h2>#{langBean.msg("create.team.manager.select")}</h2>
 
-            <p:selectOneMenu value="#{teamCreationBean.FManagerSelectionType}">
+            <p:selectOneMenu value="#{institutionCreationBean.FManagerSelectionType}">
                 <f:selectItem itemLabel="" itemValue="#{null}"/>
                 <f:selectItem itemLabel='${langBean.msg("create.team.manager.select")}' itemValue="select"/>
                 <f:selectItem itemLabel='${langBean.msg("create.team.manager.create")}' itemValue="create"/>
@@ -29,14 +29,14 @@
             </p:selectOneMenu>
 
             <h:panelGroup id="selectionGroup" >
-                <h:panelGroup rendered='#{teamCreationBean.FManagerSelectionType.equalsIgnoreCase("select")}'>
+                <h:panelGroup rendered='#{institutionCreationBean.FManagerSelectionType.equalsIgnoreCase("select")}'>
                     <!-- Choix du manager -->
                     <h3>#{langBean.msg("create.team.manager.select")}</h3>
-                    <p:dataTable var="manager" value="#{teamCreationBean.managers}" widgetVar="managerTable"
+                    <p:dataTable var="manager" value="#{institutionCreationBean.managers}" widgetVar="managerTable"
                                  emptyMessage='#{langBean.msg("create.team.filter.manager.empty")}'
-                                 filteredValue="#{teamCreationBean.filteredManagers}"
+                                 filteredValue="#{institutionCreationBean.filteredManagers}"
                                  selectionMode="single"
-                                 selection="#{teamCreationBean.FManager}"
+                                 selection="#{institutionCreationBean.FManager}"
                                  rowKey="#{manager.id}"
                     >
 
@@ -52,17 +52,17 @@
 
                     </p:dataTable>
                 </h:panelGroup>
-                <h:panelGroup rendered='#{teamCreationBean.FManagerSelectionType.equalsIgnoreCase("create")}'>
+                <h:panelGroup rendered='#{institutionCreationBean.FManagerSelectionType.equalsIgnoreCase("create")}'>
                     <!-- Si pas de manager choisit, on crée un manager -->
                     <h3>#{langBean.msg("create.team.manager.create")}</h3>
                     <ui:include src="/pages/shared/form/createUser.xhtml" />
 
                 </h:panelGroup>
-                <h:panelGroup rendered="#{teamCreationBean.FManagerSelectionType != null}">
+                <h:panelGroup rendered="#{institutionCreationBean.FManagerSelectionType != null}">
                     <p:messages id="messages" showDetail="true" closable="true">
                         <p:autoUpdate/>
                     </p:messages>
-                    <h:commandButton  value='#{langBean.msg("create.team.confirm")}' action="#{teamCreationBean.saveTeamAndManager()}"/>
+                    <h:commandButton  value='#{langBean.msg("create.team.confirm")}' action="#{institutionCreationBean.saveTeamAndManager()}"/>
                 </h:panelGroup>
             </h:panelGroup>
 

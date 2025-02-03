@@ -68,4 +68,28 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
             value = "INSERT INTO person_role_team (fk_person_id, fk_team_id, fk_role_concept_id, is_manager) VALUES (:personId, :teamId, :roleId, FALSE)"
     )
     int addUserToTeam(@Param("personId") Long personId, @Param("teamId") Long teamId, @Param("roleId") Long roleId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT p.* FROM person p " +
+                    "JOIN institution i ON p.person_id = i.fk_manager_id;"
+    )
+    List<Person> findAllInstitutionManagers();
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT p.* FROM person p " +
+                    "JOIN person_role_institution pri ON pri.fk_person_id = p.person_id " +
+                    "WHERE pri.fk_institution_id = :institutionId"
+    )
+    List<Person> findMembersOfInstitution(Long institutionId);
+
+    @Modifying
+    @Transactional
+    @Query(
+            nativeQuery = true,
+            value = "INSERT INTO person_role_institution(fk_person_id, fk_role_concept_id, fk_institution_id) " +
+                    "VALUES (:personId, :concept:Id, :institutionId)"
+    )
+    int addPersonToInstitution(Long personId, Long institutionId, Long conceptId);
 }

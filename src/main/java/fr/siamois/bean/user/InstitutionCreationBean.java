@@ -1,11 +1,14 @@
 package fr.siamois.bean.user;
 
 import fr.siamois.bean.LangBean;
+import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.FailedTeamSaveException;
-import fr.siamois.models.exceptions.TeamAlreadyExistException;
+import fr.siamois.models.exceptions.FailedInstitutionSaveException;
+import fr.siamois.models.exceptions.InstitutionAlreadyExist;
+import fr.siamois.services.InstitutionService;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.TeamService;
+import fr.siamois.utils.CodeUtils;
 import fr.siamois.utils.MessageUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,13 +28,14 @@ import java.util.List;
 @Getter
 @Setter
 @Component
-public class TeamCreationBean implements Serializable {
+public class InstitutionCreationBean implements Serializable {
 
     // Injections
     private final TeamService teamService;
     private final PersonService personService;
     private final LangBean langBean;
     private final UserAddBean userAddBean;
+    private final InstitutionService institutionService;
 
     // Storage
     private List<Person> managers;
@@ -42,14 +46,16 @@ public class TeamCreationBean implements Serializable {
     private String fDescription;
     private String fManagerSelectionType;
     private String fTeamDescription;
+    private String fInstCode = CodeUtils.generateCode(6);
 
     private Person fManager;
 
-    public TeamCreationBean(TeamService teamService, PersonService personService, LangBean langBean, UserAddBean userAddBean) {
+    public InstitutionCreationBean(TeamService teamService, PersonService personService, LangBean langBean, UserAddBean userAddBean, InstitutionService institutionService) {
         this.teamService = teamService;
         this.personService = personService;
         this.langBean = langBean;
         this.userAddBean = userAddBean;
+        this.institutionService = institutionService;
     }
 
     /**
@@ -68,7 +74,7 @@ public class TeamCreationBean implements Serializable {
      * Load all the managers in the bean
      */
     public void loadManagers() {
-        managers = teamService.findAllManagers();
+        managers = institutionService.findAllManagers();
     }
 
 
@@ -82,12 +88,17 @@ public class TeamCreationBean implements Serializable {
 
         if (fManager != null)  {
             try {
-                teamService.createTeam(fTeamName, fDescription, fManager);
+                Institution institution = new Institution();
+                institution.setName(fTeamName);
+                institution.setDescription(fDescription);
+                institution.setManager(fManager);
+                institution.setCode(fInstCode);
+                institutionService.createInstitution(institution);
                 MessageUtils.displayInfoMessage(langBean, "create.team.success");
-            } catch (TeamAlreadyExistException e) {
-                log.error("Team already exists.", e);
+            } catch (InstitutionAlreadyExist e) {
+                log.error("Institution already exists.", e);
                 MessageUtils.displayErrorMessage(langBean, "commons.error.team.alreadyexist", fTeamName);
-            } catch (FailedTeamSaveException e) {
+            } catch (FailedInstitutionSaveException e) {
                 log.error("Failed to save team.", e);
                 MessageUtils.displayErrorMessage(langBean, "commons.error.team.failedsave");
             }

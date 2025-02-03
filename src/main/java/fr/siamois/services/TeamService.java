@@ -6,8 +6,8 @@ import fr.siamois.infrastructure.repositories.auth.TeamRepository;
 import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.auth.SystemRole;
-import fr.siamois.models.exceptions.FailedTeamSaveException;
-import fr.siamois.models.exceptions.TeamAlreadyExistException;
+import fr.siamois.models.exceptions.FailedInstitutionSaveException;
+import fr.siamois.models.exceptions.InstitutionAlreadyExist;
 import fr.siamois.models.vocabulary.Concept;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,9 +35,9 @@ public class TeamService {
         return personRepository.findPersonsWithSystemRole(managerRole.getId());
     }
 
-    public void createTeam(String teamName, String description, Person teamManager) throws TeamAlreadyExistException, FailedTeamSaveException {
+    public void createTeam(String teamName, String description, Person teamManager) throws InstitutionAlreadyExist, FailedInstitutionSaveException {
         Optional<Team> existingTeam = teamRepository.findTeamByNameIgnoreCase(teamName);
-        if (existingTeam.isPresent()) throw new TeamAlreadyExistException("Team with name " + teamName + " already exists.");
+        if (existingTeam.isPresent()) throw new InstitutionAlreadyExist("Team with name " + teamName + " already exists.");
 
         Team team = new Team();
         team.setName(teamName);
@@ -46,13 +46,13 @@ public class TeamService {
         team = teamRepository.save(team);
 
         int affected = personRepository.addManagerToTeam(teamManager.getId(), team.getId());
-        if (affected == 0) throw new FailedTeamSaveException("Failed to add person to any team");
+        if (affected == 0) throw new FailedInstitutionSaveException("Failed to add person to any team");
 
     }
 
-    public void addUserToTeam(Person person, Team team, Concept role) throws FailedTeamSaveException {
+    public void addUserToTeam(Person person, Team team, Concept role) throws FailedInstitutionSaveException {
         int affectedRows = personRepository.addUserToTeam(person.getId(), team.getId(), role.getId());
-        if (affectedRows == 0) throw new FailedTeamSaveException("Failed to add user to team " + team.getName());
+        if (affectedRows == 0) throw new FailedInstitutionSaveException("Failed to add user to team " + team.getName());
     }
 
     public List<Person> findTeamMembers(Team team) {

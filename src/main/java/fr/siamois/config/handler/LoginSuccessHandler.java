@@ -2,6 +2,7 @@ package fr.siamois.config.handler;
 
 import fr.siamois.bean.NavBean;
 import fr.siamois.bean.SessionSettings;
+import fr.siamois.models.auth.Person;
 import fr.siamois.services.InstitutionService;
 import fr.siamois.services.TeamService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -70,7 +71,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         if (sessionSettings.getAuthenticatedUser().hasRole("ADMIN")) {
             navBean.setInstitutions(institutionService.findAll());
         } else {
-            navBean.setInstitutions(institutionService.findInstitutionsOfPerson(sessionSettings.getAuthenticatedUser()));
+            Person authUser = sessionSettings.getAuthenticatedUser();
+            navBean.setInstitutions(institutionService.findInstitutionsOfPerson(authUser));
         }
 
         navBean.getInstitutions()

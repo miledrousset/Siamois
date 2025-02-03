@@ -27,7 +27,7 @@
                 <constraints nullable="false" foreignKeyName="fk_manager_id" references="person(person_id)"/>
             </column>
             <column name="institution_code" type="VARCHAR">
-                <constraints nullable="false"/>
+                <constraints unique="true" nullable="false"/>
             </column>
         </createTable>
 
