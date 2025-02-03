@@ -12,7 +12,6 @@ import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.InstitutionService;
-import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.MessageUtils;
 import lombok.Getter;
@@ -41,7 +40,6 @@ public class UserBean implements Serializable {
     // Injections
     private final SessionSettings sessionSettings;
     private final UserAddBean userAddBean;
-    private final FieldConfigurationService fieldConfigurationService;
     private final FieldService fieldService;
     private final LangBean langBean;
     private final NavBean navBean;
@@ -59,13 +57,11 @@ public class UserBean implements Serializable {
 
     public UserBean(UserAddBean userAddBean,
                     SessionSettings sessionSettings,
-                    FieldConfigurationService fieldConfigurationService,
                     FieldService fieldService,
                     LangBean langBean,
                     NavBean navBean, InstitutionService institutionService) {
         this.userAddBean = userAddBean;
         this.sessionSettings = sessionSettings;
-        this.fieldConfigurationService = fieldConfigurationService;
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.navBean = navBean;

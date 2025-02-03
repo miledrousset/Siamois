@@ -1,28 +1,22 @@
 package fr.siamois.bean.RecordingUnit;
 
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
-import fr.siamois.utils.AuthenticatedUserUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RecordingUnitFormBeanTest {
@@ -74,23 +68,4 @@ class RecordingUnitFormBeanTest {
     void completePerson() {
     }
 
-    @Test
-    void init_success() throws NoConfigForField {
-        // Given: mock the services
-        when(recordingUnitService.findById(1)).thenReturn(recordingUnit);
-        when(fieldConfigurationService.fetchConfigurationOfFieldCode(authenticatedUser,RecordingUnit.TYPE_FIELD_CODE)).thenReturn(fieldConfigWrapper);
-
-        try (MockedStatic<AuthenticatedUserUtils> utilities = Mockito.mockStatic(AuthenticatedUserUtils.class)) {
-            utilities.when(AuthenticatedUserUtils::getAuthenticatedUser).thenReturn(Optional.of(authenticatedUser));
-            // When: call the @PostConstruct method (implicitly triggered during bean initialization)
-            recordingUnitFormBean.init();
-            // Then: verify that the bean is populated properly
-            assertEquals(recordingUnit, recordingUnitFormBean.getRecordingUnit());
-        }
-
-
-
-
-        // TODO : check other local var
-    }
 }

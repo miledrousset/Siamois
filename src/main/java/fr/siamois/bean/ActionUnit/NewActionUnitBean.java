@@ -10,7 +10,6 @@ import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.ActionUnitService;
-import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.annotation.PostConstruct;
@@ -34,7 +33,6 @@ public class NewActionUnitBean implements Serializable {
 
     // Deps
     private final ActionUnitService actionUnitService;
-    private final FieldConfigurationService fieldConfigurationService;
     private final FieldService fieldService;
     private final LangBean langBean;
     private final SessionSettings sessionSettings;
@@ -46,9 +44,8 @@ public class NewActionUnitBean implements Serializable {
     private FieldConfigurationWrapper configurationWrapper;
 
 
-    public NewActionUnitBean(ActionUnitService actionUnitService, FieldConfigurationService fieldConfigurationService, FieldService fieldService, LangBean langBean, SessionSettings sessionSettings) {
+    public NewActionUnitBean(ActionUnitService actionUnitService, FieldService fieldService, LangBean langBean, SessionSettings sessionSettings) {
         this.actionUnitService = actionUnitService;
-        this.fieldConfigurationService = fieldConfigurationService;
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.sessionSettings = sessionSettings;

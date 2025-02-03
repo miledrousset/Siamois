@@ -13,7 +13,6 @@ import fr.siamois.models.exceptions.field.FailedFieldSaveException;
 import fr.siamois.models.exceptions.field.FailedFieldUpdateException;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.VocabularyCollection;
-import fr.siamois.services.vocabulary.FieldConfigurationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +42,6 @@ class FieldConfigurationWrapperServiceTest {
     @Mock
     private ThesaurusCollectionApi thesaurusCollectionApi;
 
-    private FieldConfigurationService service;
 
     private Person person;
 
@@ -53,12 +51,6 @@ class FieldConfigurationWrapperServiceTest {
 
     @BeforeEach
     public void setUp() {
-        service = new FieldConfigurationService(vocabularyTypeRepository,
-                thesaurusApi,
-                vocabularyRepository,
-                vocabularyCollectionRepository,
-                fieldRepository,
-                thesaurusCollectionApi);
 
         person = new Person();
         person.setId(1L);

@@ -18,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Service to fetch concept information from the API.
@@ -107,6 +104,33 @@ public class ConceptApi {
         private LabelDTO[] labels;
     }
 
+    public FullConceptDTO fetchConceptInfo(Vocabulary vocabulary, String conceptId) {
+        URI uri = URI.create(vocabulary.getBaseUri() + String.format("/openapi/v1/concept/%s/%s", vocabulary.getExternalVocabularyId(), conceptId));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+        ResponseEntity<FullConceptDTO> response = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, FullConceptDTO.class);
+
+        return response.getBody();
+    }
+
+    private boolean isAutocompleteTopTerm(FullConceptDTO concept) {
+        return concept.getNotation() != null
+                && Arrays.stream(concept.getNotation())
+                .anyMatch(notation -> notation.getValue().equalsIgnoreCase("SIAMOIS#SIAAUTO"));
+    }
+
+    private Optional<ConceptDTO> findAutocompleteTopTerm(Vocabulary vocabulary, ConceptDTO[] array) {
+        for (ConceptDTO conceptDTO : array) {
+            FullConceptDTO fullConceptDTO = fetchConceptInfo(vocabulary, conceptDTO.idConcept);
+            if (isAutocompleteTopTerm(fullConceptDTO)) {
+                return Optional.of(conceptDTO);
+            }
+        }
+        return Optional.empty();
+    }
+
     public ConceptBranchDTO fetchFieldsBranch(Vocabulary vocabulary) {
         URI uri = URI.create(vocabulary.getBaseUri() + String.format("/openapi/v1/thesaurus/%s/topconcept", vocabulary.getExternalVocabularyId()));
 
@@ -119,12 +143,9 @@ public class ConceptApi {
         try {
             ConceptDTO[] array = mapper.readValue(conceptDTO, ConceptDTO[].class);
 
-            ConceptDTO autocompleteParent = Arrays.stream(array)
-                    .filter((conceptDTO1 -> Arrays.stream(conceptDTO1.labels).anyMatch((labelDTO -> labelDTO.getTitle().toUpperCase().contains("(SIAAUTO")))))
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Concept with code SIAAUTO not found"));
+            ConceptDTO autocompleteParent = findAutocompleteTopTerm(vocabulary, array).orElseThrow(() -> new IllegalArgumentException("Concept with notation SIAMOIS#SIAAUTO not found"));
 
-            uri = URI.create(vocabulary.getBaseUri() + String.format("/openapi/v1/concept/%s/%s/expansion?way=down", vocabulary.getExternalVocabularyId(), autocompleteParent.idConcept));
+            uri = URI.create(String.format("%s/openapi/v1/concept/%s/%s/expansion?way=down", vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId(), autocompleteParent.idConcept));
 
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(List.of(MediaType.APPLICATION_JSON));

@@ -13,7 +13,6 @@ import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.RecordingUnitService;
-import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.faces.application.FacesMessage;
@@ -41,7 +40,6 @@ public class NewRecordingUnitFormBean implements Serializable {
     private final ActionUnitService actionUnitService;
     private final PersonService personService;
     private final RecordingUnitUtils recordingUnitUtils;
-    private final FieldConfigurationService fieldConfigurationService;
     private final FieldService fieldService;
     private final LangBean langBean;
 
@@ -139,13 +137,12 @@ public class NewRecordingUnitFormBean implements Serializable {
     public NewRecordingUnitFormBean(RecordingUnitService recordingUnitService,
                                     ActionUnitService actionUnitService,
                                     PersonService personService,
-                                    RecordingUnitUtils recordingUnitUtils, FieldConfigurationService fieldConfigurationService, FieldService fieldService, LangBean langBean
+                                    RecordingUnitUtils recordingUnitUtils, FieldService fieldService, LangBean langBean
     ) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.personService = personService;
         this.recordingUnitUtils = recordingUnitUtils;
-        this.fieldConfigurationService = fieldConfigurationService;
         this.fieldService = fieldService;
         this.langBean = langBean;
     }

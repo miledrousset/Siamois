@@ -3,6 +3,9 @@ package fr.siamois.infrastructure.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 @Data
 public class FullConceptDTO {
     @JsonProperty("http://purl.org/dc/terms/contributor")
@@ -43,5 +46,13 @@ public class FullConceptDTO {
 
     @JsonProperty("http://www.w3.org/2004/02/skos/core#notation")
     private PurlInfoDTO[] notation;
+
+    public Optional<String> getFieldcode() {
+        if (notation == null) return Optional.empty();
+        return Arrays.stream(notation)
+                .map(PurlInfoDTO::getValue)
+                .filter(value -> value.startsWith("SIAMOIS#"))
+                .findFirst();
+    }
 
 }

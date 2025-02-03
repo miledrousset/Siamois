@@ -84,4 +84,14 @@ public interface FieldRepository extends CrudRepository<Field, Long> {
                     "WHERE field_id = :fieldId"
     )
     int saveVocabularyWithField(Long fieldId, Long vocabId);
+
+    @Transactional
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = "INSERT INTO concept_field_config(fk_institution_id, fk_field_id, fk_concept_id) " +
+                    "VALUES (:institutionId, :fieldId, :conceptId)"
+    )
+    int saveConceptForFieldOfInstitution(Long institutionId, Long fieldId, Long conceptId);
+
 }

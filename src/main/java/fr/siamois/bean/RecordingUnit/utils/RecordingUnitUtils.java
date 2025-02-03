@@ -7,8 +7,6 @@ import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.RecordingUnitService;
-import fr.siamois.services.vocabulary.FieldConfigurationService;
-import fr.siamois.services.vocabulary.FieldService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -32,7 +30,7 @@ public class RecordingUnitUtils {
 
     private FieldConfigurationWrapper configurationWrapper;
 
-    public RecordingUnitUtils(PersonService personService, RecordingUnitService recordingUnitService, FieldConfigurationService fieldConfigurationService, FieldService fieldService) {
+    public RecordingUnitUtils(PersonService personService, RecordingUnitService recordingUnitService) {
         this.personService = personService;
         this.recordingUnitService = recordingUnitService;
     }

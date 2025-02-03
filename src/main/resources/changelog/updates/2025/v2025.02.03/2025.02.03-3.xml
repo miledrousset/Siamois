@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--
+    Creates institution and person_role_institution tables.
+    -->
+
+    <changeSet id="2025.02.03-3" author="Julien Linget">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="concept_field_config"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="concept_field_config">
+            <column name="config_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="fk_institution_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_institution_id" references="institution(institution_id)"/>
+            </column>
+            <column name="fk_user_id" type="BIGINT" defaultValue="NULL">
+                <constraints nullable="true" foreignKeyName="fk_user_id" references="user(user_id)"/>
+            </column>
+            <column name="fk_concept_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_concept_id" references="concept(concept_id)"/>
+            </column>
+            <column name="fk_field_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_field_id" references="field(field_id)"/>
+            </column>
+        </createTable>
+
+        <dropColumn tableName="field">
+            <column name="fk_vocabulary_id"/>
+        </dropColumn>
+
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -10,7 +10,6 @@ import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
-import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.MessageUtils;
 import lombok.Getter;
@@ -39,7 +38,6 @@ public class SpatialUnitFieldBean implements Serializable {
 
     // Injections
     private final FieldService fieldService;
-    private final FieldConfigurationService fieldConfigurationService;
     private final LangBean langBean;
     private final SessionSettings sessionSettings;
 
@@ -55,9 +53,8 @@ public class SpatialUnitFieldBean implements Serializable {
     private String fCategory = "";
     private List<SpatialUnit> fParentsSpatialUnits = new ArrayList<>();
 
-    public SpatialUnitFieldBean(FieldService fieldService, FieldConfigurationService fieldConfigurationService, LangBean langBean, SessionSettings sessionSettings) {
+    public SpatialUnitFieldBean(FieldService fieldService, LangBean langBean, SessionSettings sessionSettings) {
         this.fieldService = fieldService;
-        this.fieldConfigurationService = fieldConfigurationService;
         this.langBean = langBean;
         this.sessionSettings = sessionSettings;
     }
