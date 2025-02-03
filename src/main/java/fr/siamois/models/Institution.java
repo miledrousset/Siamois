@@ -22,7 +22,7 @@ public class Institution {
     private String description;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_manager_id", nullable = false)
     private Person manager;
 
