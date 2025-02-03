@@ -1,7 +1,7 @@
 package fr.siamois.bean.RecordingUnit;
 
 import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
-import fr.siamois.models.ActionUnit;
+import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
 import fr.siamois.models.recordingunit.RecordingUnitSize;

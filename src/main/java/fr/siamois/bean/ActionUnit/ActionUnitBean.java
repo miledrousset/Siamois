@@ -1,7 +1,7 @@
 package fr.siamois.bean.ActionUnit;
 
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
-import fr.siamois.models.ActionUnit;
+import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.ActionUnitService;
 import jakarta.annotation.PostConstruct;

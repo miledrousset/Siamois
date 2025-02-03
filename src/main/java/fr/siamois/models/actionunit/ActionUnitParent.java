@@ -1,5 +1,7 @@
-package fr.siamois.models;
+package fr.siamois.models.actionunit;
 
+import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.TraceableEntity;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.vocabulary.Concept;
 import jakarta.persistence.*;
@@ -8,6 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -37,6 +40,17 @@ public abstract class ActionUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_spatial_unit_id", nullable = false)
     protected SpatialUnit spatialUnit;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fk_primary_action_code")
+    protected ActionCode primaryActionCode;
+
+//    @ManyToMany(fetch = FetchType.EAGER)
+//    @JoinTable(
+//            name = "action_action_code",
+//            joinColumns = { @JoinColumn(name = "fk_action_unit_id") },
+//            inverseJoinColumns = { @JoinColumn(name = "fk_action_code_id") }
+//    )
+//    protected ArrayList<ActionCode> secondaryActionCodes;
 
 
 }
