@@ -25,6 +25,8 @@
 
 <h:body>
 
+    <f:event type="preRenderView" listener="#{navBean.init()}"/>
+
     <!-- Sidebar -->
     <p:sidebar id="leftNavSidebar" widgetVar="sidebar">
         <div>
