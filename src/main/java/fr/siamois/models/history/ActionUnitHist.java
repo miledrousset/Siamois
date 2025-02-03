@@ -1,7 +1,7 @@
 package fr.siamois.models.history;
 
-import fr.siamois.models.ActionUnit;
-import fr.siamois.models.ActionUnitParent;
+import fr.siamois.models.actionunit.ActionUnit;
+import fr.siamois.models.actionunit.ActionUnitParent;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

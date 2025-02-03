@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--
+    Add secondary action code join table
+    -->
+
+    <changeSet id="2025.02.03-1" author="Gregory Bliault">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="action_action_code"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="action_code">
+            <column name="action_code_id" type="VARCHAR"
+            >
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="fk_type" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="action_code"
+                baseColumnNames="fk_type"
+                referencedTableName="concept"
+                referencedColumnNames="concept_id"
+                constraintName="fk_type_concept_id"
+        />
+
+
+
+
+        <createTable tableName="action_action_code">
+                <column name="fk_action_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fk_action_code_id" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="action_action_code" columnNames="fk_action_id, fk_action_code_id" />
+
+
+        <addForeignKeyConstraint
+                baseTableName="action_action_code"
+                baseColumnNames="fk_action_id"
+                referencedTableName="action_unit"
+                referencedColumnNames="action_unit_id"
+                constraintName="fk_action_id_action_id"
+        />
+
+
+        <addForeignKeyConstraint
+                baseTableName="action_action_code"
+                baseColumnNames="fk_action_code_id"
+                referencedTableName="action_code"
+                referencedColumnNames="action_code_id"
+                constraintName="fk_action_code_id_action_code_id"
+        />
+
+
+    </changeSet>
+
+</databaseChangeLog>

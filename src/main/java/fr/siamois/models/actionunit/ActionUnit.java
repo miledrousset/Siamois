@@ -1,5 +1,6 @@
-package fr.siamois.models;
+package fr.siamois.models.actionunit;
 
+import fr.siamois.models.FieldCode;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
