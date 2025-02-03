@@ -2,6 +2,7 @@ package fr.siamois.bean.SpatialUnit;
 
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.ActionUnit;
+import fr.siamois.models.Institution;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.Team;
 import fr.siamois.models.history.SpatialUnitHist;
@@ -88,9 +89,6 @@ public class SpatialUnitBean implements Serializable {
         reinitializeBean();
 
         if (id != null) {
-
-            Team team = sessionSettings.getSelectedTeam();
-
             try {
                 this.spatialUnit = spatialUnitService.findById(id);
             } catch (RuntimeException e) {

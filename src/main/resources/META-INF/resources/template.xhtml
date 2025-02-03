@@ -63,7 +63,7 @@
             <h:form>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <p:selectOneMenu id="teamSelection"
-                                 value="#{navBean.selectedTeam}"
+                                 value="#{navBean.selectedInstitution}"
                                  converter="#{navBean.converter}">
                     <f:selectItems
                             value="#{navBean.teams}"

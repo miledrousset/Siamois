@@ -1,6 +1,7 @@
 package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
+import fr.siamois.models.Institution;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.Team;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
@@ -80,7 +81,7 @@ public class SpatialUnitService {
         spatialUnitRepository.save(spatialUnit);
     }
 
-    public List<SpatialUnit> findAllWithoutParentsOfTeam(Team selectedTeam) {
-        return spatialUnitRepository.findAllWithoutParentsOfTeam(selectedTeam.getId());
+    public List<SpatialUnit> findAllWithoutParentsOfInstitution(Institution institution) {
+        return spatialUnitRepository.findAllWithoutParentsOfInstitution(institution.getId());
     }
 }

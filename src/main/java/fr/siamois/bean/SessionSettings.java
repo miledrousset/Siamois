@@ -27,10 +27,7 @@ public class SessionSettings {
 
     @Deprecated
     public Team getSelectedTeam() {
-        if (selectedTeam == null) {
-            throw new NoTeamSelectedException();
-        }
-        return selectedTeam;
+        return null;
     }
 
 }

@@ -1,6 +1,7 @@
 package fr.siamois.bean;
 
 import fr.siamois.bean.converter.TeamConverter;
+import fr.siamois.models.Institution;
 import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoTeamSelectedException;
@@ -42,7 +43,7 @@ public class NavBean implements Serializable {
 
     private List<Team> teams;
 
-    private Team selectedTeam;
+    private Institution selectedInstitution;
 
     public NavBean(SessionSettings sessionSettings, TeamService teamService, TeamConverter converter, TeamConverter teamConverter, TeamChangeEventPublisher teamChangeEventPublisher) {
         this.sessionSettings = sessionSettings;
@@ -93,12 +94,12 @@ public class NavBean implements Serializable {
 
     public void changeSelectedTeam() {
         try {
-            Team oldTeam = sessionSettings.getSelectedTeam();
-            sessionSettings.setSelectedTeam(selectedTeam);
+            Institution oldInstit = sessionSettings.getSelectedInstitution();
+            sessionSettings.setSelectedInstitution(selectedInstitution);
             teamChangeEventPublisher.publishTeamChangeEvent();
-            log.trace("Team changed from {} to {}", oldTeam.toString(), selectedTeam.toString());
+            log.trace("Institution changed from {} to {}", oldInstit.toString(), selectedInstitution.toString());
         } catch (NoTeamSelectedException e) {
-            log.error("No team selected", e);
+            log.error("No institution selected", e);
         }
     }
 }
