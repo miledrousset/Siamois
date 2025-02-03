@@ -33,8 +33,8 @@ public abstract class TraceableEntity {
     protected OffsetDateTime creationTime = OffsetDateTime.now(ZoneId.systemDefault());
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fk_team_id")
-    protected Team authorTeam;
+    @JoinColumn(name = "fk_institution_id")
+    protected Institution createdByInstitution;
 
     @ColumnDefault("NULL")
     @ManyToOne(fetch = FetchType.LAZY)

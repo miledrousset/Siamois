@@ -124,7 +124,6 @@ public class FieldService {
         spatialUnit.setName(name);
         spatialUnit.setArk(spatialUnitArk);
         spatialUnit.setCategory(concept);
-        spatialUnit.setAuthorTeam(teamAuthor);
 
         spatialUnit.setAuthor(author);
 
