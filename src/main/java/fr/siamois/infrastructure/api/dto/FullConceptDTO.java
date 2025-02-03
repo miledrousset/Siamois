@@ -52,6 +52,7 @@ public class FullConceptDTO {
         return Arrays.stream(notation)
                 .map(PurlInfoDTO::getValue)
                 .filter(value -> value.startsWith("SIAMOIS#"))
+                .map(value -> value.replace("SIAMOIS#", ""))
                 .findFirst();
     }
 

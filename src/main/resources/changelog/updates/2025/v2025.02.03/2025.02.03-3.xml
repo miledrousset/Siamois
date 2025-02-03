@@ -37,6 +37,9 @@
             <column name="fk_vocabulary_id"/>
         </dropColumn>
 
+        <addColumn tableName="vocabulary">
+            <column name="last_lang" type="VARCHAR"/>
+        </addColumn>
 
     </changeSet>
 

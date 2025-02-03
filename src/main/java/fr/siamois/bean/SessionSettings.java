@@ -54,7 +54,9 @@ public class SessionSettings {
 
         result.sort(((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName())));
 
-        selectedInstitution = result.get(0);
+        if (!result.isEmpty())
+            selectedInstitution = result.get(0);
+
         referencedInstitutions = result;
     }
 

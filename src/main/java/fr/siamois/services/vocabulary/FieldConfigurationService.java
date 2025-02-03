@@ -51,23 +51,25 @@ public class FieldConfigurationService {
     }
 
     private GlobalFieldConfig createConfigOfThesaurus(ConceptBranchDTO conceptBranchDTO) {
-        List<String> existingFieldCodes = fieldService.searchAllFieldCodes();
-        List<FullConceptDTO> allConceptsWithPotentialFieldCode = conceptBranchDTO.getData().values().stream()
+        final List<String> existingFieldCodes = fieldService.searchAllFieldCodes();
+        final List<FullConceptDTO> allConceptsWithPotentialFieldCode = conceptBranchDTO.getData().values().stream()
                 .filter(this::containsFieldCode)
                 .toList();
 
-        List<String> notExistingFieldCode = allConceptsWithPotentialFieldCode.stream()
-                .map(concept -> concept.getFieldcode().orElseThrow(() -> new IllegalStateException("Field code not found")).toUpperCase())
-                .filter(fieldCode -> !existingFieldCodes.contains(fieldCode))
-                .toList();
-
-        List<String> missingFieldCode = existingFieldCodes.stream()
+        final List<String> missingFieldCode = existingFieldCodes.stream()
                 .filter(fieldCode -> allConceptsWithPotentialFieldCode.stream()
                         .map(concept -> concept.getFieldcode().orElseThrow(() -> new IllegalStateException("Field code not found")).toUpperCase())
                         .noneMatch(fieldCode::equals))
                 .toList();
 
-        return new GlobalFieldConfig(missingFieldCode, notExistingFieldCode, allConceptsWithPotentialFieldCode);
+        final List<FullConceptDTO> validConcept = allConceptsWithPotentialFieldCode.stream()
+                .filter(concept -> {
+                    String fieldCode = concept.getFieldcode().orElseThrow(() -> new IllegalStateException("Field code not found")).toUpperCase();
+                    return existingFieldCodes.contains(fieldCode);
+                })
+                .toList();
+
+        return new GlobalFieldConfig(missingFieldCode, validConcept);
     }
 
     public void setupFieldConfigurationForUser(TraceInfo info, String fieldCode, Concept topTerm) {

@@ -110,9 +110,19 @@ public class ConceptApi {
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-        ResponseEntity<FullConceptDTO> response = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, FullConceptDTO.class);
+        ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, String.class);
 
-        return response.getBody();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        TypeReference<Map<String,FullConceptDTO>> typeReference = new TypeReference<>() {};
+
+        try {
+            Map<String, FullConceptDTO> result = mapper.readValue(response.getBody(), typeReference);
+            return result.values().stream().findFirst().orElseThrow(() -> new RuntimeException("Invalid concept"));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private boolean isAutocompleteTopTerm(FullConceptDTO concept) {
