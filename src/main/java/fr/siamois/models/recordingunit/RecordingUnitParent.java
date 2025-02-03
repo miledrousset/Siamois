@@ -53,6 +53,10 @@ public abstract class RecordingUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_excavator_id")
     protected Person excavator;
 
+    @NotNull
+    @Column(name = "code")
+    protected Integer code;
+
     @Embedded
     protected RecordingUnitSize size;
 
