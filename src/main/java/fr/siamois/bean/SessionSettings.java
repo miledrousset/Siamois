@@ -18,7 +18,7 @@ public class SessionSettings {
     private Institution selectedInstitution;
 
     public Person getAuthenticatedUser() {
-        return AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new RuntimeException("No authenticated user"));
+        return AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("No authenticated user but user should be authenticated"));
     }
 
 }
