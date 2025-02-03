@@ -1,7 +1,6 @@
 package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.history.GlobalHistoryRepository;
-import fr.siamois.infrastructure.repositories.history.GlobalHistoryTeamRepository;
 import fr.siamois.infrastructure.repositories.history.SpatialUnitHistoryRepository;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.TraceInfo;
@@ -27,7 +26,7 @@ public class HistoryService {
     private static final List<String> tableNames = List.of("action_unit", "recording_unit",
             "recording_unit_study", "siamois_document", "spatial_unit", "specimen", "specimen_study");
 
-    public HistoryService(SpatialUnitHistoryRepository spatialUnitHistoryRepository, GlobalHistoryTeamRepository globalHistoryRepository) {
+    public HistoryService(SpatialUnitHistoryRepository spatialUnitHistoryRepository, GlobalHistoryRepository globalHistoryRepository) {
         this.spatialUnitHistoryRepository = spatialUnitHistoryRepository;
         this.globalHistoryRepository = globalHistoryRepository;
     }

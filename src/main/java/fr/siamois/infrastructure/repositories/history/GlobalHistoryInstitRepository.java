@@ -1,10 +1,8 @@
 package fr.siamois.infrastructure.repositories.history;
 
 import com.zaxxer.hikari.HikariDataSource;
-import fr.siamois.models.Team;
 import fr.siamois.models.TraceInfo;
 import fr.siamois.models.TraceableEntity;
-import fr.siamois.models.auth.Person;
 import fr.siamois.models.history.GlobalHistoryEntry;
 import fr.siamois.models.history.HistoryUpdateType;
 import lombok.Data;
@@ -17,21 +15,21 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Slf4j
 @Repository
-public class GlobalHistoryTeamRepository implements GlobalHistoryRepository {
+public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
 
     private final HikariDataSource hikariDataSource;
 
-    private static final List<String> existingTablenames = new ArrayList<>();
+    private static final List<String> existingTableNames = new ArrayList<>();
 
-    public GlobalHistoryTeamRepository(HikariDataSource hikariDataSource) {
+    public GlobalHistoryInstitRepository(HikariDataSource hikariDataSource) {
         this.hikariDataSource = hikariDataSource;
-        populateTablenameList();
     }
 
     private void populateTablenameList() {
-        if (!existingTablenames.isEmpty()) return;
+        if (!existingTableNames.isEmpty()) return;
 
         String query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'";
         try (Connection connection = hikariDataSource.getConnection();
@@ -39,16 +37,16 @@ public class GlobalHistoryTeamRepository implements GlobalHistoryRepository {
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                existingTablenames.add(resultSet.getString("table_name"));
+                existingTableNames.add(resultSet.getString("table_name"));
             }
         } catch (SQLException e) {
             log.error("Error while populating table names", e);
-            existingTablenames.clear();
+            existingTableNames.clear();
         }
     }
 
-    private boolean tablenameNotExist(String tablename) {
-        return existingTablenames.stream()
+    private boolean tableNameNotExist(String tablename) {
+        return existingTableNames.stream()
                 .filter((name) -> name.equalsIgnoreCase(tablename))
                 .findFirst()
                 .isEmpty();
@@ -83,18 +81,33 @@ public class GlobalHistoryTeamRepository implements GlobalHistoryRepository {
         return "history_id";
     }
 
-    @Deprecated
-    public List<GlobalHistoryEntry> findAllHistoryOfUserBetween(String tableName, Person author, Team team, OffsetDateTime start, OffsetDateTime end) {
-        List<GlobalHistoryEntry> entries = new ArrayList<>();
+    private void logNotExistTable(String tableName) {
+        log.error("Table name {} does not exist", tableName);
+    }
 
-        if (tablenameNotExist(tableName)) {
+    private PreparedStatement prepareQueryStatement(TraceInfo traceInfo, OffsetDateTime start, OffsetDateTime end, Connection connection, String query) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(query);
+
+        statement.setLong(1, traceInfo.author().getId());
+        statement.setLong(2, traceInfo.institution().getId());
+        statement.setObject(3, start);
+        statement.setObject(4, end);
+        return statement;
+    }
+
+    @Override
+    public List<GlobalHistoryEntry> findAllHistoryOfUserBetween(String tableName, TraceInfo traceInfo, OffsetDateTime start, OffsetDateTime end) {
+        List<GlobalHistoryEntry> entries = new ArrayList<>();
+        populateTablenameList();
+
+        if (tableNameNotExist(tableName)) {
             logNotExistTable(tableName);
             return entries;
         }
 
         try (Connection connection = hikariDataSource.getConnection()) {
-            String query = "SELECT * FROM " + tableName +" WHERE fk_author_id = ? AND fk_team_id = ? AND  update_time BETWEEN ? AND ?";
-            PreparedStatement statement = prepareQueryStatement(author, team, start, end, connection, query);
+            String query = "SELECT * FROM " + tableName +" WHERE fk_author_id = ? AND fk_institution_id = ? AND update_time BETWEEN ? AND ?";
+            PreparedStatement statement = prepareQueryStatement(traceInfo, start, end, connection, query);
 
             ResultSet resultSet = statement.executeQuery();
             String idColumnName = findColumnTableIdNameInResultSet(resultSet);
@@ -115,38 +128,25 @@ public class GlobalHistoryTeamRepository implements GlobalHistoryRepository {
         return entries;
     }
 
-    private void logNotExistTable(String tableName) {
-        log.error("Table name {} does not exist", tableName);
-    }
-
-    @Override
-    public List<GlobalHistoryEntry> findAllHistoryOfUserBetween(String tableName, TraceInfo traceInfo, OffsetDateTime start, OffsetDateTime end) {
-        return List.of();
-    }
-
-    @Override
-    public List<TraceableEntity> findAllCreationOfUserBetween(String tableName, TraceInfo traceInfo, OffsetDateTime start, OffsetDateTime end) {
-        return List.of();
-    }
-
     @EqualsAndHashCode(callSuper = true)
     @Data
     private static class LocalTraceableEntity extends TraceableEntity {
         private Long id;
     }
 
-    @Deprecated
-    public List<TraceableEntity> findAllCreationOfUserBetween(String tableName, Person author, Team team, OffsetDateTime start, OffsetDateTime end) {
+    @Override
+    public List<TraceableEntity> findAllCreationOfUserBetween(String tableName, TraceInfo traceInfo, OffsetDateTime start, OffsetDateTime end) {
         List<TraceableEntity> entries = new ArrayList<>();
+        populateTablenameList();
 
-        if (tablenameNotExist(tableName)) {
+        if (tableNameNotExist(tableName)) {
             logNotExistTable(tableName);
             return entries;
         }
 
         try (Connection connection = hikariDataSource.getConnection()) {
-            String query = "SELECT * FROM " + tableName + " WHERE fk_author_id = ? AND fk_team_id = ? AND creation_time BETWEEN ? AND ?";
-            PreparedStatement statement = prepareQueryStatement(author, team, start, end, connection, query);
+            String query = "SELECT * FROM " + tableName +" WHERE fk_author_id = ? AND fk_institution_id = ? AND update_time BETWEEN ? AND ?";
+            PreparedStatement statement = prepareQueryStatement(traceInfo, start, end, connection, query);
 
             ResultSet resultSet = statement.executeQuery();
             String idColumnName = findColumnTableIdNameInResultSet(resultSet);
@@ -155,8 +155,8 @@ public class GlobalHistoryTeamRepository implements GlobalHistoryRepository {
                 OffsetDateTime creationTime = resultSet.getObject("creation_time", OffsetDateTime.class);
                 Long tableId = resultSet.getLong(idColumnName);
 
-                LocalTraceableEntity entity = new LocalTraceableEntity();
-                entity.setAuthor(author);
+                GlobalHistoryInstitRepository.LocalTraceableEntity entity = new GlobalHistoryInstitRepository.LocalTraceableEntity();
+                entity.setAuthor(traceInfo.author());
                 entity.setCreationTime(creationTime);
                 entity.setId(tableId);
 
@@ -170,15 +170,4 @@ public class GlobalHistoryTeamRepository implements GlobalHistoryRepository {
 
         return entries;
     }
-
-    private PreparedStatement prepareQueryStatement(Person author, Team team, OffsetDateTime start, OffsetDateTime end, Connection connection, String query) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(query);
-
-        statement.setLong(1, author.getId());
-        statement.setLong(2, team.getId());
-        statement.setObject(3, start);
-        statement.setObject(4, end);
-        return statement;
-    }
-
 }
