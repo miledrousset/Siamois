@@ -108,8 +108,7 @@ public class FieldService {
     public SpatialUnit saveSpatialUnit(String name,
                                        Vocabulary vocabulary,
                                        ConceptFieldDTO category,
-                                       Person author,
-                                       Team teamAuthor) {
+                                       Person author) {
 
         ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
 
@@ -271,9 +270,8 @@ public class FieldService {
     public SpatialUnit saveSpatialUnit(String fName, @NotNull Vocabulary vocabulary,
                                        ConceptFieldDTO selectedConceptFieldDTO,
                                        List<SpatialUnit> parentsSpatialUnit,
-                                       Person author,
-                                       Team teamAuthor) throws SpatialUnitAlreadyExistsException {
-        SpatialUnit unit = saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, author, teamAuthor);
+                                       Person author) throws SpatialUnitAlreadyExistsException {
+        SpatialUnit unit = saveSpatialUnit(fName, vocabulary, selectedConceptFieldDTO, author);
         for (SpatialUnit parent : parentsSpatialUnit) {
             spatialUnitRepository.saveSpatialUnitHierarchy(parent.getId(), unit.getId());
         }

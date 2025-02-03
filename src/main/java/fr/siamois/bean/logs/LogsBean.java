@@ -2,7 +2,6 @@ package fr.siamois.bean.logs;
 
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.Institution;
-import fr.siamois.models.Team;
 import fr.siamois.models.TraceInfo;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.events.TeamChangeEvent;
