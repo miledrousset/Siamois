@@ -39,7 +39,7 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
     @Query(
             nativeQuery = true,
             value = "INSERT INTO person_role_institution(fk_person_id, fk_role_concept_id, fk_institution_id) " +
-                    "VALUES (:personId, :concept:Id, :institutionId)"
+                    "VALUES (:personId, :conceptId, :institutionId)"
     )
     void addPersonToInstitution(Long personId, Long institutionId, Long conceptId);
 }
