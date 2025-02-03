@@ -3,7 +3,7 @@ package fr.siamois.bean.ActionUnit;
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
-import fr.siamois.models.ActionUnit;
+import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;

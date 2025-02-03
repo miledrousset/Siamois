@@ -1,7 +1,7 @@
 package fr.siamois.infrastructure.repositories;
 
 import fr.siamois.infrastructure.repositories.history.TraceableEntries;
-import fr.siamois.models.ActionUnit;
+import fr.siamois.models.actionunit.ActionUnit;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
