@@ -8,7 +8,7 @@
     Creates institution and person_role_institution tables.
     -->
 
-    <changeSet id="2025.02.03-1" author="Julien Linget">
+    <changeSet id="2025.02.03-0" author="Julien Linget">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="institution"/>
