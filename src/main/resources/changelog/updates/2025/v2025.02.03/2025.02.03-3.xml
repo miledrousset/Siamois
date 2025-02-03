@@ -23,7 +23,7 @@
                 <constraints nullable="false" foreignKeyName="fk_institution_id" references="institution(institution_id)"/>
             </column>
             <column name="fk_user_id" type="BIGINT" defaultValue="NULL">
-                <constraints nullable="true" foreignKeyName="fk_user_id" references="user(user_id)"/>
+                <constraints nullable="true" foreignKeyName="fk_user_id" references="person(person_id)"/>
             </column>
             <column name="fk_concept_id" type="bigint">
                 <constraints nullable="false" foreignKeyName="fk_concept_id" references="concept(concept_id)"/>
