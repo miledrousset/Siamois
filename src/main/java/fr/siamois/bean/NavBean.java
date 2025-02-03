@@ -4,7 +4,6 @@ import fr.siamois.bean.converter.InstitutionConverter;
 import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoTeamSelectedException;
-import fr.siamois.services.TeamService;
 import fr.siamois.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.faces.context.ExternalContext;
@@ -33,7 +32,6 @@ import java.util.Optional;
 public class NavBean implements Serializable {
 
     private final SessionSettings sessionSettings;
-    private final TeamService teamService;
     private final InstitutionChangeEventPublisher institutionChangeEventPublisher;
     private final InstitutionConverter converter;
 
@@ -41,9 +39,8 @@ public class NavBean implements Serializable {
 
     private Institution selectedInstitution;
 
-    public NavBean(SessionSettings sessionSettings, TeamService teamService, InstitutionChangeEventPublisher institutionChangeEventPublisher, InstitutionConverter converter) {
+    public NavBean(SessionSettings sessionSettings, InstitutionChangeEventPublisher institutionChangeEventPublisher, InstitutionConverter converter) {
         this.sessionSettings = sessionSettings;
-        this.teamService = teamService;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
         this.converter = converter;
     }

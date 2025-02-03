@@ -3,7 +3,6 @@ package fr.siamois.bean.Home;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.Institution;
 import fr.siamois.models.SpatialUnit;
-import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
 import fr.siamois.services.SpatialUnitService;
 import org.junit.jupiter.api.BeforeEach;

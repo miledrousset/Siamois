@@ -7,7 +7,6 @@ import fr.siamois.models.exceptions.FailedInstitutionSaveException;
 import fr.siamois.models.exceptions.InstitutionAlreadyExist;
 import fr.siamois.services.InstitutionService;
 import fr.siamois.services.PersonService;
-import fr.siamois.services.TeamService;
 import fr.siamois.utils.CodeUtils;
 import fr.siamois.utils.MessageUtils;
 import lombok.Getter;
@@ -31,7 +30,6 @@ import java.util.List;
 public class InstitutionCreationBean implements Serializable {
 
     // Injections
-    private final TeamService teamService;
     private final PersonService personService;
     private final LangBean langBean;
     private final UserAddBean userAddBean;
@@ -50,8 +48,7 @@ public class InstitutionCreationBean implements Serializable {
 
     private Person fManager;
 
-    public InstitutionCreationBean(TeamService teamService, PersonService personService, LangBean langBean, UserAddBean userAddBean, InstitutionService institutionService) {
-        this.teamService = teamService;
+    public InstitutionCreationBean(PersonService personService, LangBean langBean, UserAddBean userAddBean, InstitutionService institutionService) {
         this.personService = personService;
         this.langBean = langBean;
         this.userAddBean = userAddBean;
