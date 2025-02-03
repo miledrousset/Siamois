@@ -3,7 +3,6 @@ package fr.siamois.bean;
 import fr.siamois.models.Institution;
 import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.NoTeamSelectedException;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +16,6 @@ import javax.faces.bean.SessionScoped;
 @SessionScoped
 public class SessionSettings {
 
-    private Team selectedTeam;
     @Getter
     private Institution selectedInstitution;
 

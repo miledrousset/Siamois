@@ -57,10 +57,10 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
             value = "SELECT su.* " +
                     "FROM spatial_unit su " +
                     "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
-                    "WHERE su.fk_institution_id = :teamId " +
+                    "WHERE su.fk_institution_id = :institutionId " +
                     "  AND sh.fk_parent_id IS NULL"
     )
-    List<SpatialUnit> findAllWithoutParentsOfInstitution(Long teamId);
+    List<SpatialUnit> findAllWithoutParentsOfInstitution(Long institutionId);
 
     @Query(
             nativeQuery = true,
