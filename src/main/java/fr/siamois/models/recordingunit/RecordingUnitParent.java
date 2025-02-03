@@ -37,9 +37,6 @@ public abstract class RecordingUnitParent extends TraceableEntity {
     @Column(name = "end_date")
     protected OffsetDateTime endDate;
 
-    @Column(name = "serial_identifier")
-    protected Integer serial_id;
-
     @Column(name = "description")
     protected String description;
 

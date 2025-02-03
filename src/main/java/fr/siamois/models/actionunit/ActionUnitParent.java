@@ -44,6 +44,18 @@ public abstract class ActionUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_primary_action_code")
     protected ActionCode primaryActionCode;
 
+    @NotNull
+    @Column(name="code")
+    protected String code;
+
+    @NotNull
+    @Column(name="max_recording_unit_code")
+    protected Integer maxRecordingUnitCode;
+
+    @NotNull
+    @Column(name="min_recording_unit_code")
+    protected Integer minRecordingUnitCode;
+
 //    @ManyToMany(fetch = FetchType.EAGER)
 //    @JoinTable(
 //            name = "action_action_code",

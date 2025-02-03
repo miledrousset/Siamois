@@ -103,7 +103,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                     new FacesMessage(
                             FacesMessage.SEVERITY_INFO,
                             "Info",
-                            langBean.msg("recordingunit.created", this.recordingUnit.getSerial_id())));
+                            langBean.msg("recordingunit.created", this.recordingUnit.getCode())));
 
             FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
 
@@ -114,7 +114,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                     new FacesMessage(
                             FacesMessage.SEVERITY_ERROR,
                             "Error",
-                            langBean.msg("recordingunit.creationfailed", this.recordingUnit.getSerial_id())));
+                            langBean.msg("recordingunit.creationfailed", this.recordingUnit.getCode())));
 
             log.error("Error while saving: " + e.getMessage());
             // todo : add error message
@@ -206,7 +206,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                 this.startDate = recordingUnitUtils.offsetDateTimeToLocalDate(now());
                 this.recordingUnit.setActionUnit(actionUnit);
                 // todo : implement real algorithm for serial id
-                this.recordingUnit.setSerial_id(1);
+                this.recordingUnit.setCode(1);
                 // Init size & altimetry
                 this.recordingUnit.setSize(new RecordingUnitSize());
                 this.recordingUnit.getSize().setSize_unit("cm");

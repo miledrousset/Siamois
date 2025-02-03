@@ -94,7 +94,7 @@ public class RecordingUnitFormBean implements Serializable {
                     new FacesMessage(
                             FacesMessage.SEVERITY_INFO,
                             "Info",
-                            langBean.msg("recordingunit.updated", this.recordingUnit.getSerial_id())));
+                            langBean.msg("recordingunit.updated", this.recordingUnit.getCode())));
             FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
             return "/pages/recordingUnit/recordingUnit?faces-redirect=true&id=" + this.recordingUnit.getId().toString();
 
@@ -103,7 +103,7 @@ public class RecordingUnitFormBean implements Serializable {
                     new FacesMessage(
                             FacesMessage.SEVERITY_ERROR,
                             "Error",
-                            langBean.msg("recordingunit.updatefailed", this.recordingUnit.getSerial_id())));
+                            langBean.msg("recordingunit.updatefailed", this.recordingUnit.getCode())));
 
             log.error("Error while saving: " + e.getMessage());
             // todo : add error message
