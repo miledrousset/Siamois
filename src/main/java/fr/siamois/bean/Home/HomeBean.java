@@ -4,7 +4,6 @@ import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.events.InstitutionChangeEvent;
-import fr.siamois.models.exceptions.NoTeamSelectedException;
 import fr.siamois.services.SpatialUnitService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -57,13 +56,7 @@ public class HomeBean implements Serializable {
     @EventListener(InstitutionChangeEvent.class)
     public void onTeamChangeEvent() {
         log.trace("TeamChangeEvent received. Updating teams");
-        try {
-            spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettings.getSelectedInstitution());
-            spatialUnitListErrorMessage = null;
-        } catch (NoTeamSelectedException e) {
-            log.error("Failed to load teams", e);
-            spatialUnitList = null;
-            spatialUnitListErrorMessage = "Failed to load team";
-        }
+        spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettings.getSelectedInstitution());
+        spatialUnitListErrorMessage = null;
     }
 }

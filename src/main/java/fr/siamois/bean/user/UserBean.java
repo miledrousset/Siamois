@@ -8,7 +8,6 @@ import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedInstitutionSaveException;
 import fr.siamois.models.exceptions.NoConfigForField;
-import fr.siamois.models.exceptions.NoTeamSelectedException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
@@ -92,9 +91,6 @@ public class UserBean implements Serializable {
         } catch (NoConfigForField e) {
             log.error("Error while loading member configuration", e);
             MessageUtils.displayErrorMessage(langBean, "commons.error.fieldconfig");
-        } catch (NoTeamSelectedException e) {
-            log.error("No team selected", e);
-            MessageUtils.displayErrorMessage(langBean, "commons.error.team.notselected");
         }
     }
 
