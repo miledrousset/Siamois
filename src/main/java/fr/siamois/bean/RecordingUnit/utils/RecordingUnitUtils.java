@@ -3,7 +3,6 @@ package fr.siamois.bean.RecordingUnit.utils;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.RecordingUnitService;
 import lombok.Data;
@@ -25,9 +24,6 @@ public class RecordingUnitUtils {
     // Deps
     private final PersonService personService;
     private final RecordingUnitService recordingUnitService;
-
-
-    private FieldConfigurationWrapper configurationWrapper;
 
     public RecordingUnitUtils(PersonService personService, RecordingUnitService recordingUnitService) {
         this.personService = personService;

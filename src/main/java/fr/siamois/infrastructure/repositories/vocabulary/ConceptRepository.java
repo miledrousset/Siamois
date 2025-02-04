@@ -50,7 +50,6 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
 
     /**
      * Find the top term configuration for a field code of a user.
-     * @param id The id of the user
      * @param fieldCode The code of the field
      * @return An optional containing the concept if found
      */
@@ -58,8 +57,9 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
             nativeQuery = true,
             value = "SELECT c.* FROM concept c " +
                     "JOIN concept_field_config cfc ON cfc.fk_concept_id = c.concept_id " +
-                    "JOIN field f ON cfc.fk_field_id = f.field_id " +
-                    "WHERE cfc.fk_institution_id = :institutionId AND cfc.fk_user_id = :userId AND f.field_code = :fieldCode "
+                    "WHERE cfc.fk_institution_id = :institutionId AND " +
+                    "cfc.fk_user_id = :userId AND " +
+                    "cfc.field_code = :fieldCode"
     )
     Optional<Concept> findTopTermConfigForFieldCodeOfUser(Long institutionId, Long userId, String fieldCode);
 
@@ -67,8 +67,7 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
             nativeQuery = true,
             value = "SELECT c.* FROM concept c " +
                     "JOIN concept_field_config cfc ON cfc.fk_concept_id = c.concept_id " +
-                    "JOIN field f ON cfc.fk_field_id = f.field_id " +
-                    "WHERE cfc.fk_institution_id = :institutionId AND f.field_code = :fieldCode "
+                    "WHERE cfc.fk_institution_id = :institutionId AND cfc.field_code = :fieldCode "
     )
     Optional<Concept> findTopTermConfigForFieldCodeOfInstitution(Long institutionId, String fieldCode);
 }

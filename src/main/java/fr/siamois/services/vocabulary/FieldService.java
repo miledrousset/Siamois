@@ -29,11 +29,9 @@ import java.util.*;
 public class FieldService {
 
     private final ConceptRepository conceptRepository;
-    private final FieldRepository fieldRepository;
 
-    public FieldService(ConceptRepository conceptRepository, FieldRepository fieldRepository) {
+    public FieldService(ConceptRepository conceptRepository) {
         this.conceptRepository = conceptRepository;
-        this.fieldRepository = fieldRepository;
     }
 
     public List<String> searchAllFieldCodes() {
@@ -98,17 +96,6 @@ public class FieldService {
         concept.setExternalId(conceptDTO.getIdentifier()[0].getValue());
 
         return conceptRepository.save(concept);
-    }
-
-    public fr.siamois.models.Field createOrGetFieldFromCode(UserInfo info, String fieldCode) {
-        Optional<fr.siamois.models.Field> optField = fieldRepository.findByUserAndFieldCode(info.getUser(), fieldCode);
-        if (optField.isPresent()) return optField.get();
-
-        fr.siamois.models.Field field = new fr.siamois.models.Field();
-        field.setFieldCode(fieldCode);
-        field.setUser(info.getUser());
-
-        return fieldRepository.save(field);
     }
 
 }

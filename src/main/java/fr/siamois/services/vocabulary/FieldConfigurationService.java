@@ -5,7 +5,6 @@ import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullConceptDTO;
 import fr.siamois.infrastructure.repositories.FieldRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
-import fr.siamois.models.Field;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.vocabulary.Concept;
@@ -43,9 +42,8 @@ public class FieldConfigurationService {
         for (FullConceptDTO conceptDTO : config.conceptWithValidFieldCode()) {
             Concept concept = fieldService.createOrGetConceptFromFullDTO(info, vocabulary, conceptDTO);
             String fieldCode = conceptDTO.getFieldcode().orElseThrow(() -> new IllegalStateException("Field code not found"));
-            Field field = fieldService.createOrGetFieldFromCode(info, fieldCode);
 
-            fieldRepository.saveConceptForFieldOfInstitution(info.getInstitution().getId(), field.getId(), concept.getId());
+            fieldRepository.saveConceptForFieldOfInstitution(info.getInstitution().getId(), fieldCode, concept.getId());
         }
 
         return Optional.empty();
@@ -74,7 +72,12 @@ public class FieldConfigurationService {
     }
 
     public void setupFieldConfigurationForUser(UserInfo info, String fieldCode, Concept topTerm) {
-        // TODO: Field configuration for user
+        List<String> codes = fieldService.searchAllFieldCodes();
+        if (!codes.contains(fieldCode))
+            throw new IllegalStateException(String.format("The fieldCode %s does not exist", fieldCode));
+
+        fieldRepository.deleteConfigurationOfUser(info.getInstitution().getId(), info.getUser().getId(), fieldCode);
+        fieldRepository.saveConceptForFieldOfUser(info.getInstitution().getId(), info.getUser().getId(), fieldCode, topTerm.getId());
     }
 
     public Concept findConfigurationForFieldCode(UserInfo info, String fieldCode) throws NoConfigForField {

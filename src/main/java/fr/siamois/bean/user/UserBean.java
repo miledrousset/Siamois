@@ -8,7 +8,6 @@ import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedInstitutionSaveException;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.InstitutionService;
 import fr.siamois.services.vocabulary.ConceptService;
@@ -48,7 +47,6 @@ public class UserBean implements Serializable {
 
     // Storage
     private Vocabulary vocabularyConfiguration;
-    private FieldConfigurationWrapper fieldConfig;
     private List<Person> teamMembers;
     private List<Concept> concepts;
 
@@ -103,7 +101,6 @@ public class UserBean implements Serializable {
      */
     private void resetFields() {
         vocabularyConfiguration = null;
-        fieldConfig = null;
         concepts = new ArrayList<>();
     }
 

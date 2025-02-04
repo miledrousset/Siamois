@@ -50,6 +50,7 @@ public class InstitutionService {
         try {
             institutionRepository.save(institution);
         } catch (Exception e) {
+            log.error("Error while saving institution", e);
             throw new FailedInstitutionSaveException("Institution with code " + institution.getIdentifier() + " already exists");
         }
     }

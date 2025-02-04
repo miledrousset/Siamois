@@ -6,7 +6,6 @@ import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.services.SpatialUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldService;
@@ -45,7 +44,6 @@ public class SpatialUnitFieldBean implements Serializable {
     private List<SpatialUnit> refSpatialUnits = new ArrayList<>();
     private List<String> labels;
     private List<Concept> concepts;
-    private FieldConfigurationWrapper configurationWrapper;
 
     // Fields
     private Concept selectedConcept = null;
