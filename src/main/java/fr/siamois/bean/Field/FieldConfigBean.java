@@ -133,7 +133,7 @@ public class FieldConfigBean implements Serializable {
         Vocabulary databaseVocab = vocabularyService.saveOrGetVocabulary(fUserSelectedVocab);
 
         UserInfo info = sessionSettings.getUserInfo();
-        Optional<GlobalFieldConfig> config = null;
+        Optional<GlobalFieldConfig> config;
         try {
             config = fieldConfigurationService.setupFieldConfigurationForUser(info, databaseVocab);
         } catch (NotSiamoisThesaurusException e) {

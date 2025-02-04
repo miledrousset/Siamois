@@ -129,8 +129,6 @@ public class ConceptApi {
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error while parsing branch", e);
-        } catch (NotSiamoisThesaurusException e) {
-            throw e;
         }
     }
 

@@ -2,7 +2,6 @@ package fr.siamois.bean.logs;
 
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.Institution;
-import fr.siamois.models.UserInfo;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.events.InstitutionChangeEvent;
 import fr.siamois.models.history.HistoryOperation;
@@ -67,8 +66,6 @@ public class LogsBean implements Serializable {
     @EventListener(InstitutionChangeEvent.class)
     public void refreshOperation() {
         log.trace("Date changed. Is now {} to {}", vStartDateTime.toString(), vEndDateTime.toString());
-        Person authenticatedUser = sessionSettings.getAuthenticatedUser();
-        Institution institution = sessionSettings.getSelectedInstitution();
         ZoneOffset offset = ZoneId.systemDefault().getRules().getOffset(vStartDateTime);
         OffsetDateTime start = OffsetDateTime.of(vStartDateTime, offset);
         OffsetDateTime end = OffsetDateTime.of(vEndDateTime, offset);
