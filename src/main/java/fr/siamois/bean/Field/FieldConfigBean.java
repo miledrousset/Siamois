@@ -5,6 +5,7 @@ import fr.siamois.bean.SessionSettings;
 import fr.siamois.bean.converter.VocabularyConverter;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.UserInfo;
+import fr.siamois.models.events.InstitutionChangeEvent;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.NotSiamoisThesaurusException;
 import fr.siamois.models.exceptions.api.InvalidEndpointException;
@@ -19,6 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -57,6 +59,15 @@ public class FieldConfigBean implements Serializable {
         this.fieldConfigurationService = fieldConfigurationService;
         this.sessionSettings = sessionSettings;
         this.vocabularyConverter = vocabularyConverter;
+    }
+
+    public void resetVariables() {
+        vocabularies = null;
+        userVocab = null;
+        fInstance = null;
+        fSelectedVocab = null;
+        fUserInstance = null;
+        fUserSelectedVocab = null;
     }
 
     public void onLoad() {
@@ -160,5 +171,10 @@ public class FieldConfigBean implements Serializable {
             if (!StringUtils.isEmpty(fInstance)) loadInstance();
         }
         return vocabularies;
+    }
+
+    @EventListener(InstitutionChangeEvent.class)
+    public void onInstitutionChange() {
+        resetVariables();
     }
 }
