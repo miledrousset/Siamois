@@ -54,8 +54,8 @@ public class HomeBean implements Serializable {
     }
 
     @EventListener(InstitutionChangeEvent.class)
-    public void onTeamChangeEvent() {
-        log.trace("TeamChangeEvent received. Updating teams");
+    public void onInstitutionChangeEvent() {
+        log.trace("InstitutionChangeEvent received. Updating teams");
         spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettings.getSelectedInstitution());
         spatialUnitListErrorMessage = null;
     }

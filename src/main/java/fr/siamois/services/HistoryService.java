@@ -3,7 +3,7 @@ package fr.siamois.services;
 import fr.siamois.infrastructure.repositories.history.GlobalHistoryRepository;
 import fr.siamois.infrastructure.repositories.history.SpatialUnitHistoryRepository;
 import fr.siamois.models.SpatialUnit;
-import fr.siamois.models.TraceInfo;
+import fr.siamois.models.UserInfo;
 import fr.siamois.models.history.HistoryOperation;
 import fr.siamois.models.history.HistoryUpdateType;
 import fr.siamois.models.history.SpatialUnitHist;
@@ -32,7 +32,7 @@ public class HistoryService {
     }
 
 
-    public List<HistoryOperation> findAllOperationsOfUserAndTeamBetween(TraceInfo info, OffsetDateTime start, OffsetDateTime end) {
+    public List<HistoryOperation> findAllOperationsOfUserAndTeamBetween(UserInfo info, OffsetDateTime start, OffsetDateTime end) {
         if (start.isAfter(end)) return new ArrayList<>();
 
         List<HistoryOperation> operations = new ArrayList<>();
@@ -44,12 +44,12 @@ public class HistoryService {
         return operations;
     }
 
-    private void addAllHistoryOperations(TraceInfo info, List<HistoryOperation> operations, OffsetDateTime beginTime, OffsetDateTime endTime) {
+    private void addAllHistoryOperations(UserInfo info, List<HistoryOperation> operations, OffsetDateTime beginTime, OffsetDateTime endTime) {
         for (int i = 0; i < entityName.size(); i++)
             addHistoryOperation(operations, tableNames.get(i), entityName.get(i), info, beginTime, endTime);
     }
 
-    private void addHistoryOperation(List<HistoryOperation> operations, String tableName, String entityName, TraceInfo info, OffsetDateTime start, OffsetDateTime end) {
+    private void addHistoryOperation(List<HistoryOperation> operations, String tableName, String entityName, UserInfo info, OffsetDateTime start, OffsetDateTime end) {
         globalHistoryRepository.findAllHistoryOfUserBetween("history_" + tableName, info, start, end).forEach((entry) ->
                 operations.add(new HistoryOperation(entry.getUpdateType(),
                         entityName,
@@ -58,7 +58,7 @@ public class HistoryService {
                 );
     }
 
-    private void addCreateOperation(List<HistoryOperation> operations, String tableName, String entityName, TraceInfo info, OffsetDateTime start, OffsetDateTime end) {
+    private void addCreateOperation(List<HistoryOperation> operations, String tableName, String entityName, UserInfo info, OffsetDateTime start, OffsetDateTime end) {
         globalHistoryRepository.findAllCreationOfUserBetween(tableName, info,  start, end).forEach((entity) ->
                 operations.add(new HistoryOperation(HistoryUpdateType.CREATE,
                         entityName,
@@ -67,7 +67,7 @@ public class HistoryService {
                 );
     }
 
-    private void addAllCreationOperations(TraceInfo info, List<HistoryOperation> operations, OffsetDateTime beginTime, OffsetDateTime endTime) {
+    private void addAllCreationOperations(UserInfo info, List<HistoryOperation> operations, OffsetDateTime beginTime, OffsetDateTime endTime) {
         for (int i = 0; i < entityName.size(); i++)
             addCreateOperation(operations, tableNames.get(i), entityName.get(i), info, beginTime, endTime);
     }

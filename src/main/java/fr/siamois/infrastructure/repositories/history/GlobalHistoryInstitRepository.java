@@ -1,8 +1,8 @@
 package fr.siamois.infrastructure.repositories.history;
 
 import com.zaxxer.hikari.HikariDataSource;
-import fr.siamois.models.TraceInfo;
 import fr.siamois.models.TraceableEntity;
+import fr.siamois.models.UserInfo;
 import fr.siamois.models.history.GlobalHistoryEntry;
 import fr.siamois.models.history.HistoryUpdateType;
 import lombok.Data;
@@ -85,18 +85,18 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
         log.error("Table name {} does not exist", tableName);
     }
 
-    private PreparedStatement prepareQueryStatement(TraceInfo traceInfo, OffsetDateTime start, OffsetDateTime end, Connection connection, String query) throws SQLException {
+    private PreparedStatement prepareQueryStatement(UserInfo userInfo, OffsetDateTime start, OffsetDateTime end, Connection connection, String query) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(query);
 
-        statement.setLong(1, traceInfo.author().getId());
-        statement.setLong(2, traceInfo.institution().getId());
+        statement.setLong(1, userInfo.getUser().getId());
+        statement.setLong(2, userInfo.getInstitution().getId());
         statement.setObject(3, start);
         statement.setObject(4, end);
         return statement;
     }
 
     @Override
-    public List<GlobalHistoryEntry> findAllHistoryOfUserBetween(String tableName, TraceInfo traceInfo, OffsetDateTime start, OffsetDateTime end) {
+    public List<GlobalHistoryEntry> findAllHistoryOfUserBetween(String tableName, UserInfo userInfo, OffsetDateTime start, OffsetDateTime end) {
         List<GlobalHistoryEntry> entries = new ArrayList<>();
         populateTablenameList();
 
@@ -107,7 +107,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
 
         try (Connection connection = hikariDataSource.getConnection()) {
             String query = "SELECT * FROM " + tableName +" WHERE fk_author_id = ? AND fk_institution_id = ? AND update_time BETWEEN ? AND ?";
-            PreparedStatement statement = prepareQueryStatement(traceInfo, start, end, connection, query);
+            PreparedStatement statement = prepareQueryStatement(userInfo, start, end, connection, query);
 
             ResultSet resultSet = statement.executeQuery();
             String idColumnName = findColumnTableIdNameInResultSet(resultSet);
@@ -135,7 +135,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
     }
 
     @Override
-    public List<TraceableEntity> findAllCreationOfUserBetween(String tableName, TraceInfo traceInfo, OffsetDateTime start, OffsetDateTime end) {
+    public List<TraceableEntity> findAllCreationOfUserBetween(String tableName, UserInfo userInfo, OffsetDateTime start, OffsetDateTime end) {
         List<TraceableEntity> entries = new ArrayList<>();
         populateTablenameList();
 
@@ -146,7 +146,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
 
         try (Connection connection = hikariDataSource.getConnection()) {
             String query = "SELECT * FROM " + tableName +" WHERE fk_author_id = ? AND fk_institution_id = ? AND update_time BETWEEN ? AND ?";
-            PreparedStatement statement = prepareQueryStatement(traceInfo, start, end, connection, query);
+            PreparedStatement statement = prepareQueryStatement(userInfo, start, end, connection, query);
 
             ResultSet resultSet = statement.executeQuery();
             String idColumnName = findColumnTableIdNameInResultSet(resultSet);
@@ -156,7 +156,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
                 Long tableId = resultSet.getLong(idColumnName);
 
                 GlobalHistoryInstitRepository.LocalTraceableEntity entity = new GlobalHistoryInstitRepository.LocalTraceableEntity();
-                entity.setAuthor(traceInfo.author());
+                entity.setAuthor(userInfo.getUser());
                 entity.setCreationTime(creationTime);
                 entity.setId(tableId);
 

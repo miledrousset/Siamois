@@ -36,7 +36,7 @@ public class ThesaurusApi {
             ThesaurusDTO[] data = restTemplate.getForObject(uri, ThesaurusDTO[].class);
             if (data == null) return new ArrayList<>();
             return Arrays.asList(data);
-        } catch (RestClientException e) {
+        } catch (RestClientException | IllegalArgumentException e) {
             throw new InvalidEndpointException("Could not fetch thesaurus data from the API");
         }
     }

@@ -89,7 +89,7 @@ public class InstitutionCreationBean implements Serializable {
                 institution.setName(fTeamName);
                 institution.setDescription(fDescription);
                 institution.setManager(fManager);
-                institution.setCode(fInstCode);
+                institution.setIdentifier(fInstCode);
                 institutionService.createInstitution(institution);
                 MessageUtils.displayInfoMessage(langBean, "create.team.success");
             } catch (InstitutionAlreadyExist e) {

@@ -27,7 +27,7 @@ public class Institution {
     private Person manager;
 
     @NotNull
-    @Column(name = "institution_code", nullable = false, length = Integer.MAX_VALUE)
-    private String code;
+    @Column(name = "identifier", nullable = false, length = Integer.MAX_VALUE)
+    private String identifier;
 
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>, TraceableEntries {
@@ -37,15 +38,6 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
     )
     List<SpatialUnit> findAllWithoutParents();
 
-    @Transactional
-    @Modifying
-    @Query(
-            nativeQuery = true,
-            value = "INSERT INTO spatial_hierarchy(fk_parent_id, fk_child_id) " +
-                    "VALUES (:parentSpatialUnitId, :childSpatialUnitId)"
-    )
-    void saveSpatialUnitHierarchy(Long parentSpatialUnitId, Long childSpatialUnitId);
-
     @Query(
             nativeQuery = true,
             value = "SELECT su.* FROM spatial_unit su WHERE fk_author_id = :author AND creation_time BETWEEN :start AND :end"
@@ -61,5 +53,27 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "  AND sh.fk_parent_id IS NULL"
     )
     List<SpatialUnit> findAllWithoutParentsOfInstitution(Long institutionId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT su.* FROM spatial_unit su WHERE su.fk_institution_id = :institutionId"
+    )
+    List<SpatialUnit> findAllOfInstitution(Long institutionId);
+
+    @Transactional
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = "INSERT INTO spatial_hierarchy(fk_parent_id, fk_child_id) " +
+                    "VALUES (:parentId, :childId)"
+    )
+    void addParentToSpatialUnit(Long childId, Long parentId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT su.* FROM spatial_unit su " +
+                    "WHERE UPPER(su.name) = UPPER(:spatialUnitName) AND su.fk_institution_id = :institutionId"
+    )
+    Optional<SpatialUnit> findByNameAndInstitution(String spatialUnitName, Long institutionId);
 }
 

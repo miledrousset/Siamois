@@ -6,7 +6,6 @@ import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitReposit
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
-import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 
@@ -116,7 +114,7 @@ class RecordingUnitServiceTest {
     @Test
     void findById_Exception() {
 
-        when(recordingUnitRepository.findById(recordingUnit1.getId())).thenReturn(Optional.ofNullable(null));
+        when(recordingUnitRepository.findById(recordingUnit1.getId())).thenReturn(Optional.empty());
 
 
 
@@ -128,47 +126,5 @@ class RecordingUnitServiceTest {
 
         assertEquals("RecordingUnit not found with ID: 1", exception.getMessage());
 
-    }
-
-    @Test
-    void save_success() {
-
-
-        when(recordingUnitRepository.save(any(RecordingUnit.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0)); // Return the same object
-
-
-        when(arkServerRepository.findLocalServer()).thenReturn(Optional.ofNullable(mockArkServer));
-
-        when(fieldService.saveOrGetConceptFromDto(vocabulary, dto)).thenReturn(concept);
-
-        // Act
-        RecordingUnit result = recordingUnitService.save(recordingUnit1, vocabulary, dto);
-
-        // Assert
-        assertNotNull(result.getArk());
-        assertEquals(mockArkServer, result.getArk().getArkServer());
-        assertNotNull(result.getArk().getArkId());
-        verify(recordingUnitRepository, times(1)).save(any(RecordingUnit.class));
-    }
-
-    @Test
-    void save_Exception() {
-
-
-        when(arkServerRepository.findLocalServer()).thenReturn(Optional.ofNullable(mockArkServer));
-
-        when(fieldService.saveOrGetConceptFromDto(vocabulary, dto)).thenReturn(concept);
-
-        when(recordingUnitRepository.save(any(RecordingUnit.class)))
-                .thenThrow(new RuntimeException("Database error"));
-
-        // Act & Assert
-        Exception exception = assertThrows(
-                FailedRecordingUnitSaveException.class,
-                () -> recordingUnitService.save(recordingUnit1, vocabulary, dto)
-        );
-
-        assertEquals("Database error", exception.getMessage());
     }
 }

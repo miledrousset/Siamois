@@ -1,7 +1,7 @@
 package fr.siamois.models.recordingunit;
 
-import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.TraceableEntity;
+import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.vocabulary.Concept;
 import jakarta.persistence.*;

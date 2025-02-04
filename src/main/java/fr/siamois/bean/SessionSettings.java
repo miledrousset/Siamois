@@ -1,6 +1,7 @@
 package fr.siamois.bean;
 
 import fr.siamois.models.Institution;
+import fr.siamois.models.UserInfo;
 import fr.siamois.models.auth.Person;
 import fr.siamois.services.InstitutionService;
 import fr.siamois.utils.AuthenticatedUserUtils;
@@ -18,11 +19,13 @@ import java.util.List;
 public class SessionSettings {
 
     private final InstitutionService institutionService;
+    private final LangBean langBean;
     private Institution selectedInstitution;
     private List<Institution> referencedInstitutions;
 
-    public SessionSettings(InstitutionService institutionService) {
+    public SessionSettings(InstitutionService institutionService, LangBean langBean) {
         this.institutionService = institutionService;
+        this.langBean = langBean;
     }
 
     public Person getAuthenticatedUser() {
@@ -44,6 +47,18 @@ public class SessionSettings {
     }
 
     public void setupSession() {
+        setupInstitution();
+    }
+
+    public String getLanguageCode() {
+        return langBean.getLanguageCode();
+    }
+
+    public UserInfo getUserInfo() {
+        return new UserInfo(selectedInstitution, getAuthenticatedUser(), getLanguageCode());
+    }
+
+    private void setupInstitution() {
         Person authUser = getAuthenticatedUser();
         List<Institution> result;
         if (authUser.hasRole("ADMIN")) {
@@ -54,7 +69,9 @@ public class SessionSettings {
 
         result.sort(((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName())));
 
-        selectedInstitution = result.get(0);
+        if (!result.isEmpty())
+            selectedInstitution = result.get(0);
+
         referencedInstitutions = result;
     }
 

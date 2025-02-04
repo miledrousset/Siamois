@@ -18,7 +18,7 @@ public interface InstitutionRepository extends CrudRepository<Institution, Long>
     )
     List<Institution> findAllOfPerson(Long personId);
 
-    Optional<Institution> findInstitutionByCode(@NotNull String code);
+    Optional<Institution> findInstitutionByIdentifier(@NotNull String identifier);
 
     @Query(
             nativeQuery = true,
