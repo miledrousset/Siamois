@@ -74,15 +74,28 @@ public class FieldConfigurationService {
         return new GlobalFieldConfig(missingFieldCode, validConcept);
     }
 
-    public void setupFieldConfigurationForUser(UserInfo info, String fieldCode, Concept topTerm) {
-        List<String> codes = fieldService.searchAllFieldCodes();
-        if (!codes.contains(fieldCode))
-            throw new IllegalStateException(String.format("The fieldCode %s does not exist", fieldCode));
+    public Optional<GlobalFieldConfig> setupFieldConfigurationForUser(UserInfo info, Vocabulary vocabulary) {
+        ConceptBranchDTO conceptBranchDTO =  conceptApi.fetchFieldsBranch(vocabulary);
+        GlobalFieldConfig config = createConfigOfThesaurus(conceptBranchDTO);
+        if (config.isWrongConfig()) return Optional.of(config);
 
-        int rowAffected = fieldRepository.updateConfigForFieldOfUser(info.getInstitution().getId(), info.getUser().getId(), fieldCode, topTerm.getId());
-        if (rowAffected == 0) {
-            fieldRepository.saveConceptForFieldOfUser(info.getInstitution().getId(), info.getUser().getId(), fieldCode, topTerm.getId());
+        for (FullConceptDTO conceptDTO : config.conceptWithValidFieldCode()) {
+            Concept concept = fieldService.createOrGetConceptFromFullDTO(info, vocabulary, conceptDTO);
+            String fieldCode = conceptDTO.getFieldcode().orElseThrow(() -> new IllegalStateException("Field code not found"));
+
+            int rowAffected = fieldRepository.updateConfigForFieldOfUser(info.getInstitution().getId(),
+                    info.getUser().getId(),
+                    fieldCode,
+                    concept.getId());
+            if (rowAffected == 0) {
+                fieldRepository.saveConceptForFieldOfUser(info.getInstitution().getId(),
+                        info.getUser().getId(),
+                        fieldCode,
+                        concept.getId());
+            }
         }
+
+        return Optional.empty();
     }
 
     public Concept findConfigurationForFieldCode(UserInfo info, String fieldCode) throws NoConfigForField {

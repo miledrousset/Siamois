@@ -17,6 +17,7 @@ import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -40,10 +41,14 @@ public class FieldConfigBean implements Serializable {
 
     // Storage
     private List<Vocabulary> vocabularies;
+    private List<Vocabulary> userVocab;
 
     // Fields
     private String fInstance;
     private Vocabulary fSelectedVocab;
+
+    private String fUserInstance;
+    private Vocabulary fUserSelectedVocab;
 
     public FieldConfigBean(VocabularyService vocabularyService, LangBean langBean, FieldConfigurationService fieldConfigurationService, SessionSettings sessionSettings, VocabularyConverter vocabularyConverter) {
         this.vocabularyService = vocabularyService;
@@ -72,6 +77,7 @@ public class FieldConfigBean implements Serializable {
             fInstance = fInstance.substring(0, fInstance.length() - 1);
         try {
             vocabularies = vocabularyService.findAllPublicThesaurus(fInstance, langBean.getLanguageCode());
+            if (!vocabularies.isEmpty()) fSelectedVocab = vocabularies.get(0);
         } catch (InvalidEndpointException e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "URL is invalid"));
         }
@@ -91,10 +97,51 @@ public class FieldConfigBean implements Serializable {
         GlobalFieldConfig wrongConfig = config.get();
 
         if (!wrongConfig.missingFieldCode().isEmpty())
-            log.trace("Missing codes : {}", wrongConfig.missingFieldCode());
+            traceMissingFieldCode(wrongConfig);
 
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Error in thesaurus config"));
 
     }
 
+    private static void traceMissingFieldCode(GlobalFieldConfig wrongConfig) {
+        log.trace("Missing codes : {}", wrongConfig.missingFieldCode());
+    }
+
+    public void loadUserInstance() {
+        if (fUserInstance.endsWith("/"))
+            fUserInstance = fUserInstance.substring(0, fUserInstance.length() - 1);
+        try {
+            userVocab = vocabularyService.findAllPublicThesaurus(fUserInstance, langBean.getLanguageCode());
+            if (!userVocab.isEmpty()) fUserSelectedVocab = userVocab.get(0);
+        } catch (InvalidEndpointException | RuntimeException e) {
+            log.error("Error while loading instance", e);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "URL is invalid"));
+        }
+    }
+
+    public void loadUserConfig() {
+        Vocabulary databaseVocab = vocabularyService.saveOrGetVocabulary(fUserSelectedVocab);
+
+        UserInfo info = sessionSettings.getUserInfo();
+        Optional<GlobalFieldConfig> config = fieldConfigurationService.setupFieldConfigurationForUser(info, databaseVocab);
+
+        if (config.isEmpty()) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Configuration saved for USER"));
+            return;
+        }
+
+        GlobalFieldConfig wrongConfig = config.get();
+
+        if (!wrongConfig.missingFieldCode().isEmpty())
+            traceMissingFieldCode(wrongConfig);
+
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Error in thesaurus config"));
+    }
+
+    public List<Vocabulary> completeMethod() {
+        if (vocabularies == null) {
+            if (!StringUtils.isEmpty(fInstance)) loadInstance();
+        }
+        return vocabularies;
+    }
 }
