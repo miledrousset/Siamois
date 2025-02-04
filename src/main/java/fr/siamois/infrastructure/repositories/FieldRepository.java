@@ -1,26 +1,14 @@
 package fr.siamois.infrastructure.repositories;
 
 import fr.siamois.models.Field;
-import fr.siamois.models.auth.Person;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
 public interface FieldRepository extends CrudRepository<Field, Long> {
-
-    /**
-     * Find a field by its user and field code.
-     * @param user The user
-     * @param fieldCode The code of the field
-     * @return An optional containing the field if found
-     */
-    Optional<Field> findByUserAndFieldCode(Person user, @NotNull String fieldCode);
 
     @Transactional
     @Modifying

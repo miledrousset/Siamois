@@ -1,6 +1,5 @@
 package fr.siamois.bean.RecordingUnit.utils;
 
-import fr.siamois.models.auth.Person;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.PersonService;
@@ -13,8 +12,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Collections;
-import java.util.List;
 
 @Data
 @Slf4j
@@ -29,15 +26,6 @@ public class RecordingUnitUtils {
         this.personService = personService;
         this.recordingUnitService = recordingUnitService;
     }
-
-    public List<Person> completePerson(String query) {
-        if (query == null || query.isEmpty()) {
-            return Collections.emptyList();
-        }
-        query = query.toLowerCase();
-        return personService.findAllByNameLastnameContaining(query);
-    }
-
 
     public RecordingUnit save(RecordingUnit recordingUnit,
                               Concept typeConcept,

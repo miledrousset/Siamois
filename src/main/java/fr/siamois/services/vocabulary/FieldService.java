@@ -2,7 +2,6 @@ package fr.siamois.services.vocabulary;
 
 import fr.siamois.infrastructure.api.dto.FullConceptDTO;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
-import fr.siamois.infrastructure.repositories.FieldRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import fr.siamois.models.FieldCode;
 import fr.siamois.models.UserInfo;
