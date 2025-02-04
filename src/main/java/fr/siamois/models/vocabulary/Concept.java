@@ -1,5 +1,6 @@
 package fr.siamois.models.vocabulary;
 
+import fr.siamois.infrastructure.api.dto.FullConceptDTO;
 import fr.siamois.models.ark.Ark;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

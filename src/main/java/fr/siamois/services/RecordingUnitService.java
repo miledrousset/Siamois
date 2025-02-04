@@ -13,6 +13,7 @@ import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.ark.ArkGenerator;
+import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -33,12 +34,14 @@ public class RecordingUnitService {
     private final RecordingUnitRepository recordingUnitRepository;
     private final ArkServerRepository arkServerRepository;
     private final FieldService fieldService;
+    private final ConceptService conceptService;
 
-
-    public RecordingUnitService(RecordingUnitRepository recordingUnitRepository, ArkServerRepository arkServerRepository, FieldService fieldService) {
+    public RecordingUnitService(RecordingUnitRepository recordingUnitRepository,
+                                ArkServerRepository arkServerRepository, FieldService fieldService, ConceptService conceptService) {
         this.recordingUnitRepository = recordingUnitRepository;
         this.arkServerRepository = arkServerRepository;
         this.fieldService = fieldService;
+        this.conceptService = conceptService;
     }
 
 
@@ -63,8 +66,7 @@ public class RecordingUnitService {
     }
 
     @Transactional
-    public RecordingUnit save(RecordingUnit recordingUnit, Vocabulary vocabulary, ConceptFieldDTO
-            typeConceptFieldDTO) {
+    public RecordingUnit save(RecordingUnit recordingUnit, Concept concept) {
 
         try {
             // Generate ARK if the recording unit does not have any
@@ -78,7 +80,7 @@ public class RecordingUnitService {
             }
 
             // Add concept
-            Concept type = fieldService.saveOrGetConceptFromDto(vocabulary, typeConceptFieldDTO);
+            Concept type = conceptService.saveOrGetConcept(concept);
             recordingUnit.setType(type);
 
             return recordingUnitRepository.save(recordingUnit);

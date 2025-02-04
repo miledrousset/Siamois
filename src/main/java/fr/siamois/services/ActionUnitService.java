@@ -13,6 +13,7 @@ import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.ark.ArkGenerator;
+import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +28,13 @@ public class ActionUnitService {
     private final ActionUnitRepository actionUnitRepository;
     private final ArkServerRepository arkServerRepository;
     private final FieldService fieldService;
+    private final ConceptService conceptService;
 
-    public ActionUnitService(ActionUnitRepository actionUnitRepository, ArkServerRepository arkServerRepository, FieldService fieldService) {
+    public ActionUnitService(ActionUnitRepository actionUnitRepository, ArkServerRepository arkServerRepository, FieldService fieldService, ConceptService conceptService) {
         this.actionUnitRepository = actionUnitRepository;
         this.arkServerRepository = arkServerRepository;
         this.fieldService = fieldService;
+        this.conceptService = conceptService;
     }
 
     public List<ActionUnit> findAllBySpatialUnitId(SpatialUnit spatialUnit)   {
@@ -60,13 +63,11 @@ public class ActionUnitService {
     }
 
     @Transactional
-    public ActionUnit save(ActionUnit actionUnit, Vocabulary vocabulary, ConceptFieldDTO
-            typeConceptFieldDTO) {
+    public ActionUnit save(ActionUnit actionUnit, Concept typeConcept) {
 
         try {
             // Generate ARK if the action unit does not have any
             if (actionUnit.getArk() == null) {
-
                 ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
                 Ark ark = new Ark();
                 ark.setArkServer(localServer);
@@ -75,7 +76,7 @@ public class ActionUnitService {
             }
 
             // Add concept
-            Concept type = fieldService.saveOrGetConceptFromDto(vocabulary, typeConceptFieldDTO);
+            Concept type = conceptService.saveOrGetConcept(typeConcept);
             actionUnit.setType(type);
 
             return actionUnitRepository.save(actionUnit);

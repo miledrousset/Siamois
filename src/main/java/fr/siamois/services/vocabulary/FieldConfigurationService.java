@@ -6,7 +6,8 @@ import fr.siamois.infrastructure.api.dto.FullConceptDTO;
 import fr.siamois.infrastructure.repositories.FieldRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import fr.siamois.models.Field;
-import fr.siamois.models.TraceInfo;
+import fr.siamois.models.UserInfo;
+import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.GlobalFieldConfig;
@@ -34,7 +35,7 @@ public class FieldConfigurationService {
         return conceptDTO.getFieldcode().isPresent();
     }
 
-    public Optional<GlobalFieldConfig> setupFieldConfigurationForInstitution(TraceInfo info, Vocabulary vocabulary) {
+    public Optional<GlobalFieldConfig> setupFieldConfigurationForInstitution(UserInfo info, Vocabulary vocabulary) {
         ConceptBranchDTO conceptBranchDTO =  conceptApi.fetchFieldsBranch(vocabulary);
         GlobalFieldConfig config = createConfigOfThesaurus(conceptBranchDTO);
         if (config.isWrongConfig()) return Optional.of(config);
@@ -72,22 +73,26 @@ public class FieldConfigurationService {
         return new GlobalFieldConfig(missingFieldCode, validConcept);
     }
 
-    public void setupFieldConfigurationForUser(TraceInfo info, String fieldCode, Concept topTerm) {
-        // TODO:
+    public void setupFieldConfigurationForUser(UserInfo info, String fieldCode, Concept topTerm) {
+        // TODO: Field configuration for user
     }
 
-    public Optional<Concept> findConfigurationForFieldCode(TraceInfo info, String fieldCode) {
+    public Concept findConfigurationForFieldCode(UserInfo info, String fieldCode) throws NoConfigForField {
         Optional<Concept> optConcept = conceptRepository
                 .findTopTermConfigForFieldCodeOfUser(info.getInstitution().getId(),
                         info.getUser().getId(),
                         fieldCode);
 
-        if (optConcept.isPresent()) return optConcept;
+        if (optConcept.isPresent()) return optConcept.get();
 
         optConcept = conceptRepository
                 .findTopTermConfigForFieldCodeOfInstitution(info.getInstitution().getId(), fieldCode);
 
-        return optConcept;
+        if (optConcept.isEmpty())
+            throw new NoConfigForField(String.format("User %s from %s has no config for fieldCode %s",
+                    info.getUser().getName(), info.getInstitution().getName(), fieldCode));
+
+        return optConcept.get();
     }
 
 }

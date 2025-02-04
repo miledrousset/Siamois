@@ -5,7 +5,7 @@ import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.infrastructure.repositories.FieldRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import fr.siamois.models.FieldCode;
-import fr.siamois.models.TraceInfo;
+import fr.siamois.models.UserInfo;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
 import lombok.extern.slf4j.Slf4j;
@@ -82,7 +82,7 @@ public class FieldService {
         return labelDTO;
     }
 
-    public Concept createOrGetConceptFromFullDTO(TraceInfo info, Vocabulary vocabulary, FullConceptDTO conceptDTO) {
+    public Concept createOrGetConceptFromFullDTO(UserInfo info, Vocabulary vocabulary, FullConceptDTO conceptDTO) {
         Optional<Concept> optConcept = conceptRepository
                 .findConceptByExternalIdIgnoreCase(
                         vocabulary.getExternalVocabularyId(),
@@ -100,7 +100,7 @@ public class FieldService {
         return conceptRepository.save(concept);
     }
 
-    public fr.siamois.models.Field createOrGetFieldFromCode(TraceInfo info, String fieldCode) {
+    public fr.siamois.models.Field createOrGetFieldFromCode(UserInfo info, String fieldCode) {
         Optional<fr.siamois.models.Field> optField = fieldRepository.findByUserAndFieldCode(info.getUser(), fieldCode);
         if (optField.isPresent()) return optField.get();
 
@@ -110,4 +110,5 @@ public class FieldService {
 
         return fieldRepository.save(field);
     }
+
 }

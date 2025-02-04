@@ -140,7 +140,7 @@ class RecordingUnitServiceTest {
 
         when(arkServerRepository.findLocalServer()).thenReturn(Optional.ofNullable(mockArkServer));
 
-        when(fieldService.saveOrGetConceptFromDto(vocabulary, dto)).thenReturn(concept);
+        //TODO: when(fieldService.saveOrGetConceptFromDto(vocabulary, dto)).thenReturn(concept);
 
         // Act
         RecordingUnit result = recordingUnitService.save(recordingUnit1, vocabulary, dto);
@@ -154,11 +154,9 @@ class RecordingUnitServiceTest {
 
     @Test
     void save_Exception() {
-
-
         when(arkServerRepository.findLocalServer()).thenReturn(Optional.ofNullable(mockArkServer));
 
-        when(fieldService.saveOrGetConceptFromDto(vocabulary, dto)).thenReturn(concept);
+        // TODO: when(fieldService.saveOrGetConceptFromDto(vocabulary, dto)).thenReturn(concept);
 
         when(recordingUnitRepository.save(any(RecordingUnit.class)))
                 .thenThrow(new RuntimeException("Database error"));

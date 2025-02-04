@@ -41,7 +41,7 @@ class HomeBeanTest {
 
         Institution institution = new Institution();
         institution.setId(1L);
-        institution.setCode("test.code");
+        institution.setIdentifier("test.code");
         institution.setName("test.name");
 
         when(sessionSettings.getSelectedInstitution()).thenReturn(institution);

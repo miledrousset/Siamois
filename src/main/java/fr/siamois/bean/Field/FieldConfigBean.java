@@ -3,7 +3,7 @@ package fr.siamois.bean.Field;
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.bean.converter.VocabularyConverter;
-import fr.siamois.models.TraceInfo;
+import fr.siamois.models.UserInfo;
 import fr.siamois.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.models.vocabulary.Vocabulary;
@@ -67,7 +67,7 @@ public class FieldConfigBean implements Serializable {
     public void loadConfig() {
         Vocabulary databaseVocab = vocabularyService.saveOrGetVocabulary(fSelectedVocab);
 
-        TraceInfo info = new TraceInfo(sessionSettings.getSelectedInstitution(), sessionSettings.getAuthenticatedUser());
+        UserInfo info = new UserInfo(sessionSettings.getSelectedInstitution(), sessionSettings.getAuthenticatedUser());
         Optional<GlobalFieldConfig> config = fieldConfigurationService.setupFieldConfigurationForInstitution(info, databaseVocab);
 
         if (config.isEmpty()) {

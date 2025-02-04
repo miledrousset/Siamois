@@ -1,15 +1,18 @@
 package fr.siamois.bean;
 
 import fr.siamois.models.Institution;
+import fr.siamois.models.UserInfo;
 import fr.siamois.models.auth.Person;
 import fr.siamois.services.InstitutionService;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.util.List;
+import java.util.Locale;
 
 @Setter
 @Getter
@@ -18,11 +21,13 @@ import java.util.List;
 public class SessionSettings {
 
     private final InstitutionService institutionService;
+    private final LangBean langBean;
     private Institution selectedInstitution;
     private List<Institution> referencedInstitutions;
 
-    public SessionSettings(InstitutionService institutionService) {
+    public SessionSettings(InstitutionService institutionService, LangBean langBean) {
         this.institutionService = institutionService;
+        this.langBean = langBean;
     }
 
     public Person getAuthenticatedUser() {
@@ -44,6 +49,19 @@ public class SessionSettings {
     }
 
     public void setupSession() {
+        setupInstitution();
+    }
+
+    public String getLanguageCode() {
+        return langBean.getLanguageCode();
+    }
+
+    public UserInfo getUserInfo() {
+        return new UserInfo(selectedInstitution, getAuthenticatedUser(), getLanguageCode());
+    }
+
+
+    private void setupInstitution() {
         Person authUser = getAuthenticatedUser();
         List<Institution> result;
         if (authUser.hasRole("ADMIN")) {

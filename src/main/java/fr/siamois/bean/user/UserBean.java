@@ -12,6 +12,7 @@ import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.InstitutionService;
+import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.MessageUtils;
 import lombok.Getter;
@@ -44,28 +45,30 @@ public class UserBean implements Serializable {
     private final LangBean langBean;
     private final NavBean navBean;
     private final InstitutionService institutionService;
+    private final ConceptService conceptService;
 
     // Storage
     private Vocabulary vocabularyConfiguration;
     private FieldConfigurationWrapper fieldConfig;
     private List<Person> teamMembers;
-    private List<ConceptFieldDTO> concepts;
+    private List<Concept> concepts;
 
     // Fields
-    private ConceptFieldDTO role = null;
+    private Concept role = null;
     private Institution adminInstitutionSelection = null;
 
     public UserBean(UserAddBean userAddBean,
                     SessionSettings sessionSettings,
                     FieldService fieldService,
                     LangBean langBean,
-                    NavBean navBean, InstitutionService institutionService) {
+                    NavBean navBean, InstitutionService institutionService, ConceptService conceptService) {
         this.userAddBean = userAddBean;
         this.sessionSettings = sessionSettings;
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.navBean = navBean;
         this.institutionService = institutionService;
+        this.conceptService = conceptService;
     }
 
     /**
@@ -80,14 +83,8 @@ public class UserBean implements Serializable {
      * Load the team members
      */
     private void loadTeamMembers() {
-        try {
-            fieldConfig = fieldConfigurationService.fetchConfigurationOfFieldCode(sessionSettings.getAuthenticatedUser(), Person.USER_ROLE_FIELD_CODE);
-            teamMembers = institutionService.findMembersOf(sessionSettings.getSelectedInstitution());
-            log.trace("Team members : {}", teamMembers);
-        } catch (NoConfigForField e) {
-            log.error("Error while loading member configuration", e);
-            MessageUtils.displayErrorMessage(langBean, "commons.error.fieldconfig");
-        }
+        teamMembers = institutionService.findMembersOf(sessionSettings.getSelectedInstitution());
+        log.trace("Team members : {}", teamMembers);
     }
 
     /**
@@ -98,9 +95,8 @@ public class UserBean implements Serializable {
      * @throws NoConfigForField if the field configuration is not found
      */
     public List<String> autocompleteRoles(String input) throws NoConfigForField {
-        if (fieldConfig == null) fieldConfig = fieldConfigurationService.fetchConfigurationOfFieldCode(sessionSettings.getAuthenticatedUser(), Person.USER_ROLE_FIELD_CODE);
-        concepts = fieldService.fetchAutocomplete(fieldConfig, input, langBean.getLanguageCode());
-        return concepts.stream().map(ConceptFieldDTO::getLabel).collect(Collectors.toList());
+        concepts = conceptService.fetchAutocomplete(sessionSettings.getUserInfo(), Person.USER_ROLE_FIELD_CODE, input);
+        return concepts.stream().map(Concept::getLabel).collect(Collectors.toList());
     }
 
     /**
@@ -116,7 +112,7 @@ public class UserBean implements Serializable {
      * Create a user
      */
     public void createUser() {
-        Concept roleConcept = fieldService.saveConceptIfNotExist(fieldConfig, role);
+        Concept roleConcept = conceptService.saveOrGetConcept(role);
         try {
             Institution institution = sessionSettings.getSelectedInstitution();
             Person created = userAddBean.createUser(false);

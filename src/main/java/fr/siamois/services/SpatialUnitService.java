@@ -3,8 +3,11 @@ package fr.siamois.services;
 import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
 import fr.siamois.models.Institution;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.UserInfo;
+import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
 import fr.siamois.models.history.SpatialUnitHist;
+import fr.siamois.models.vocabulary.Concept;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -75,4 +78,14 @@ public class SpatialUnitService {
     public List<SpatialUnit> findAllWithoutParentsOfInstitution(Institution institution) {
         return spatialUnitRepository.findAllWithoutParentsOfInstitution(institution.getId());
     }
+
+    public List<SpatialUnit> findAllOfInstitution(Institution institution) {
+        return spatialUnitRepository.findAllOfInstitution(institution.getId());
+    }
+
+    public SpatialUnit save(UserInfo info, String name, Concept type, List<SpatialUnit> parents) throws SpatialUnitAlreadyExistsException {
+        // TODO: Implement SAVE
+        return null;
+    }
+
 }

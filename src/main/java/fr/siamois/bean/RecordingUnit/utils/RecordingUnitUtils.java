@@ -3,6 +3,7 @@ package fr.siamois.bean.RecordingUnit.utils;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.recordingunit.RecordingUnit;
+import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.PersonService;
@@ -45,15 +46,11 @@ public class RecordingUnitUtils {
 
 
     public RecordingUnit save(RecordingUnit recordingUnit,
-                              FieldConfigurationWrapper configurationWrapper,
-                              ConceptFieldDTO recordingUnitType,
+                              Concept typeConcept,
                               LocalDate startDate,
                               LocalDate endDate) {
 
         // TODO : handle isLocalisationFromSIG and associated fields
-
-        Vocabulary vocabulary = configurationWrapper.vocabularyConfig();
-        if (vocabulary == null) vocabulary = configurationWrapper.vocabularyCollectionsConfig().get(0).getVocabulary();
 
         // handle dates
         if (startDate != null) {
@@ -63,7 +60,7 @@ public class RecordingUnitUtils {
             recordingUnit.setEndDate(localDateToOffsetDateTime(endDate));
         }
 
-        return recordingUnitService.save(recordingUnit, vocabulary, recordingUnitType);
+        return recordingUnitService.save(recordingUnit, typeConcept);
 
     }
 

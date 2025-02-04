@@ -2,6 +2,7 @@ package fr.siamois.bean.RecordingUnit;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
+import fr.siamois.bean.SessionSettings;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
@@ -11,6 +12,7 @@ import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.RecordingUnitService;
+import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.annotation.PostConstruct;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -40,6 +43,8 @@ public class RecordingUnitFormBean implements Serializable {
     private final RecordingUnitUtils recordingUnitUtils;
     private final FieldService fieldService;
     private final LangBean langBean;
+    private final ConceptService conceptService;
+    private final SessionSettings sessionSettings;
 
     private RecordingUnit recordingUnit;
     private String recordingUnitErrorMessage; // If error while initing the recording unit
@@ -48,9 +53,8 @@ public class RecordingUnitFormBean implements Serializable {
     private LocalDate endDate;
     private List<Event> events; // Strati
     private Boolean isLocalisationFromSIG;
-    private List<ConceptFieldDTO> concepts;
-    private FieldConfigurationWrapper configurationWrapper;
-    private ConceptFieldDTO fType = null;
+    private List<Concept> concepts;
+    private Concept fType = null;
 
     @Data
     public static class Event {
@@ -85,7 +89,7 @@ public class RecordingUnitFormBean implements Serializable {
     public String save() {
         try {
 
-            this.recordingUnit = recordingUnitUtils.save(recordingUnit, configurationWrapper, fType, startDate, endDate);
+            this.recordingUnit = recordingUnitUtils.save(recordingUnit, fType, startDate, endDate);
 
             // Return page with id
             FacesContext.getCurrentInstance().addMessage(null,
@@ -133,8 +137,8 @@ public class RecordingUnitFormBean implements Serializable {
             RecordingUnitService recordingUnitService,
             ActionUnitService actionUnitService,
             PersonService personService,
-            RecordingUnitUtils recordingUnitUtils, FieldService fieldService, LangBean langBean
-    ) {
+            RecordingUnitUtils recordingUnitUtils, FieldService fieldService, LangBean langBean,
+            ConceptService conceptService, SessionSettings sessionSettings) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.personService = personService;
@@ -142,6 +146,8 @@ public class RecordingUnitFormBean implements Serializable {
 
         this.fieldService = fieldService;
         this.langBean = langBean;
+        this.conceptService = conceptService;
+        this.sessionSettings = sessionSettings;
     }
 
     public void reinitializeBean() {
@@ -153,13 +159,6 @@ public class RecordingUnitFormBean implements Serializable {
         this.concepts = null;
         this.fType = null;
         recordingUnitErrorMessage = null;
-        Person person = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("User should be connected"));
-
-        try {
-            this.configurationWrapper = fieldConfigurationService.fetchConfigurationOfFieldCode(person, RecordingUnit.TYPE_FIELD_CODE);
-        } catch (NoConfigForField e) {
-            log.error("No collection for field " + RecordingUnit.TYPE_FIELD_CODE);
-        }
     }
 
     /**
@@ -168,9 +167,14 @@ public class RecordingUnitFormBean implements Serializable {
      * @param input the input of the user
      * @return the list of concepts that match the input to display in the autocomplete
      */
-    public List<ConceptFieldDTO> completeRecordingUnitType(String input) {
+    public List<Concept> completeRecordingUnitType(String input) {
 
-        concepts = fieldService.fetchAutocomplete(configurationWrapper, input, langBean.getLanguageCode());
+        try {
+            concepts = conceptService.fetchAutocomplete(sessionSettings.getUserInfo(), RecordingUnit.TYPE_FIELD_CODE, input);
+        } catch (NoConfigForField e) {
+            return new ArrayList<>();
+        }
+
         return concepts;
     }
 
@@ -191,11 +195,7 @@ public class RecordingUnitFormBean implements Serializable {
                 // TODO handle isLocalisationFromSIG properly
                 this.isLocalisationFromSIG = false;
                 // Init type field
-                Concept typeConcept = this.recordingUnit.getType();
-                fType = new ConceptFieldDTO();
-                fType.setLabel(typeConcept.getLabel());
-                // If thesaurus we can reconstruct the DTO
-                fType.setUri(typeConcept.getVocabulary().getBaseUri()+"?idc="+typeConcept.getExternalId()+"&idt="+typeConcept.getVocabulary().getExternalVocabularyId());
+                fType = this.recordingUnit.getType();
 
             } else {
                 recordingUnitErrorMessage = "Invalid recording unit ID";

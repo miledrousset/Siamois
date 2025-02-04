@@ -61,5 +61,11 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "  AND sh.fk_parent_id IS NULL"
     )
     List<SpatialUnit> findAllWithoutParentsOfInstitution(Long institutionId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT su.* FROM spatial_unit su WHERE su.fk_institution_id = :institutionId"
+    )
+    List<SpatialUnit> findAllOfInstitution(Long institutionId);
 }
 

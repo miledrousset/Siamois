@@ -2,7 +2,7 @@ package fr.siamois.bean.logs;
 
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.Institution;
-import fr.siamois.models.TraceInfo;
+import fr.siamois.models.UserInfo;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.events.InstitutionChangeEvent;
 import fr.siamois.models.history.HistoryOperation;
@@ -72,7 +72,7 @@ public class LogsBean implements Serializable {
         ZoneOffset offset = ZoneId.systemDefault().getRules().getOffset(vStartDateTime);
         OffsetDateTime start = OffsetDateTime.of(vStartDateTime, offset);
         OffsetDateTime end = OffsetDateTime.of(vEndDateTime, offset);
-        operations = historyService.findAllOperationsOfUserAndTeamBetween(new TraceInfo(institution, authenticatedUser), start, end);
+        operations = historyService.findAllOperationsOfUserAndTeamBetween(new UserInfo(institution, authenticatedUser), start, end);
     }
 
     public String formatDate(OffsetDateTime offsetDateTime) {

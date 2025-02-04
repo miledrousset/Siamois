@@ -32,4 +32,7 @@ public class Vocabulary {
     @Column(name = "base_uri", nullable = false)
     private String baseUri;
 
+    @Column(name = "last_lang")
+    private String lastLang;
+
 }

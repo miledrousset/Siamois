@@ -28,13 +28,10 @@ public class LangBean implements Serializable {
         this.langService = langService;
     }
 
-    /**
-     * Load default language from properties file if set
-     */
     @PostConstruct
-    public void setPropertiesLang() {
-        if (!StringUtils.isEmpty(defaultLang)) {
-            setLanguage(defaultLang);
+    public void initLang() {
+        if (defaultLang != null) {
+            locale = new Locale(defaultLang);
         }
     }
 
