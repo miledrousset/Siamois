@@ -3,18 +3,15 @@ package fr.siamois.bean.RecordingUnit;
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldService;
-import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -58,32 +55,11 @@ public class RecordingUnitFormBean implements Serializable {
 
     @Data
     public static class Event {
-
         private String status;
         private String date;
         private String icon;
         private String color;
         private String image;
-
-        public Event() {
-
-        }
-
-        public Event(String status, String date, String icon, String color) {
-            this.status = status;
-            this.date = date;
-            this.icon = icon;
-            this.color = color;
-        }
-
-        public Event(String status, String date, String icon, String color, String image) {
-            this.status = status;
-            this.date = date;
-            this.icon = icon;
-            this.color = color;
-            this.image = image;
-        }
-
     }
 
     public String save() {

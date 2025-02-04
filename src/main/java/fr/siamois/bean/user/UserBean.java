@@ -3,7 +3,6 @@ package fr.siamois.bean.user;
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.NavBean;
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedInstitutionSaveException;

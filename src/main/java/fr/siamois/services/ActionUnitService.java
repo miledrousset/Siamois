@@ -1,20 +1,16 @@
 package fr.siamois.services;
 
-import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.infrastructure.repositories.ActionUnitRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
-import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.SpatialUnit;
-import fr.siamois.models.Team;
+import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.ActionUnitNotFoundException;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.ark.ArkGenerator;
 import fr.siamois.services.vocabulary.ConceptService;
-import fr.siamois.services.vocabulary.FieldService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,22 +23,18 @@ public class ActionUnitService {
 
     private final ActionUnitRepository actionUnitRepository;
     private final ArkServerRepository arkServerRepository;
-    private final FieldService fieldService;
     private final ConceptService conceptService;
 
-    public ActionUnitService(ActionUnitRepository actionUnitRepository, ArkServerRepository arkServerRepository, FieldService fieldService, ConceptService conceptService) {
+    public ActionUnitService(ActionUnitRepository actionUnitRepository,
+                             ArkServerRepository arkServerRepository,
+                             ConceptService conceptService) {
         this.actionUnitRepository = actionUnitRepository;
         this.arkServerRepository = arkServerRepository;
-        this.fieldService = fieldService;
         this.conceptService = conceptService;
     }
 
     public List<ActionUnit> findAllBySpatialUnitId(SpatialUnit spatialUnit)   {
         return actionUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
-    }
-
-    public List<ActionUnit> findAllBySpatialUnitIdOfTeam(SpatialUnit spatialUnit, Team team)   {
-        return actionUnitRepository.findAllBySpatialUnitIdOfTeam(spatialUnit.getId(), team.getId());
     }
 
     /**

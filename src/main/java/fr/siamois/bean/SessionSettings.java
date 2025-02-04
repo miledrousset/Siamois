@@ -7,12 +7,10 @@ import fr.siamois.services.InstitutionService;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.util.List;
-import java.util.Locale;
 
 @Setter
 @Getter

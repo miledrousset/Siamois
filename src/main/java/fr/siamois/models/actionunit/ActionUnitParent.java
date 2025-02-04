@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -31,8 +30,8 @@ public abstract class ActionUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_type")
     protected Concept type;
 
-    @OneToOne(fetch = FetchType.EAGER, optional = true, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "fk_ark_id", nullable = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "fk_ark_id")
     protected Ark ark;
 
     @NotNull

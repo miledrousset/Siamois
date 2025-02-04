@@ -37,15 +37,6 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
     )
     List<SpatialUnit> findAllWithoutParents();
 
-    @Transactional
-    @Modifying
-    @Query(
-            nativeQuery = true,
-            value = "INSERT INTO spatial_hierarchy(fk_parent_id, fk_child_id) " +
-                    "VALUES (:parentSpatialUnitId, :childSpatialUnitId)"
-    )
-    void saveSpatialUnitHierarchy(Long parentSpatialUnitId, Long childSpatialUnitId);
-
     @Query(
             nativeQuery = true,
             value = "SELECT su.* FROM spatial_unit su WHERE fk_author_id = :author AND creation_time BETWEEN :start AND :end"

@@ -9,8 +9,8 @@ import fr.siamois.models.Field;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.models.vocabulary.GlobalFieldConfig;
+import fr.siamois.models.vocabulary.Vocabulary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

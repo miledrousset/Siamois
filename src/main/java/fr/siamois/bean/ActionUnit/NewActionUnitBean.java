@@ -2,10 +2,9 @@ package fr.siamois.bean.ActionUnit;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
+import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.vocabulary.Concept;
@@ -13,13 +12,11 @@ import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
-import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -92,7 +89,7 @@ public class NewActionUnitBean implements Serializable {
     public List<Concept> completeActionUnitType(String input) {
         UserInfo info = sessionSettings.getUserInfo();
         try {
-            concepts = conceptService.fetchAllValues(info, ActionUnit.TYPE_FIELD_CODE);
+            concepts = conceptService.fetchAutocomplete(info, ActionUnit.TYPE_FIELD_CODE, input);
         } catch (NoConfigForField e) {
             log.error(e.getMessage(), e);
         }

@@ -1,11 +1,9 @@
 package fr.siamois.bean.RecordingUnit.utils;
 
-import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
-import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.RecordingUnitService;
 import lombok.Data;

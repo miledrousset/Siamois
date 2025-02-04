@@ -1,8 +1,8 @@
 package fr.siamois.infrastructure.repositories.history;
 
 import com.zaxxer.hikari.HikariDataSource;
-import fr.siamois.models.UserInfo;
 import fr.siamois.models.TraceableEntity;
+import fr.siamois.models.UserInfo;
 import fr.siamois.models.history.GlobalHistoryEntry;
 import fr.siamois.models.history.HistoryUpdateType;
 import lombok.Data;

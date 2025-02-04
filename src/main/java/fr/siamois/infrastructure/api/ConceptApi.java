@@ -5,21 +5,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
-import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.infrastructure.api.dto.FullConceptDTO;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
-import fr.siamois.models.vocabulary.VocabularyCollection;
-import fr.siamois.utils.builder.AutocompletionRequestBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Service to fetch concept information from the API.
@@ -47,7 +46,7 @@ public class ConceptApi {
         ResponseEntity<String> response = sendRequestAcceptJson(uri);
 
         TypeReference<Map<String,FullConceptDTO>> typeReference = new TypeReference<>() {};
-        Map<String, FullConceptDTO> result = null;
+        Map<String, FullConceptDTO> result;
         try {
             result = mapper.readValue(response.getBody(), typeReference);
             ConceptBranchDTO branch = new ConceptBranchDTO();
