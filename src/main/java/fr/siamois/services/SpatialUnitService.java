@@ -8,6 +8,7 @@ import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
 import fr.siamois.models.history.SpatialUnitHist;
 import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.services.vocabulary.ConceptService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +27,11 @@ import java.util.Optional;
 public class SpatialUnitService {
 
     private final SpatialUnitRepository spatialUnitRepository;
+    private final ConceptService conceptService;
 
-    public SpatialUnitService(SpatialUnitRepository spatialUnitRepository) {
+    public SpatialUnitService(SpatialUnitRepository spatialUnitRepository, ConceptService conceptService) {
         this.spatialUnitRepository = spatialUnitRepository;
+        this.conceptService = conceptService;
     }
 
     /**
@@ -92,6 +95,8 @@ public class SpatialUnitService {
             throw new SpatialUnitAlreadyExistsException(
                     String.format("Spatial Unit with name %s already exist in institution %s", name, info.getInstitution().getName()));
 
+        type = conceptService.saveOrGetConcept(type);
+
         SpatialUnit spatialUnit = new SpatialUnit();
         spatialUnit.setName(name);
         spatialUnit.setCreatedByInstitution(info.getInstitution());
@@ -105,7 +110,7 @@ public class SpatialUnitService {
             spatialUnitRepository.addParentToSpatialUnit(spatialUnit.getId(), parent.getId());
         }
 
-        return null;
+        return spatialUnit;
     }
 
 }

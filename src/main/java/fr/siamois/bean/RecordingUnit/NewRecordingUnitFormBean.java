@@ -4,6 +4,7 @@ import fr.siamois.bean.LangBean;
 import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.actionunit.ActionUnit;
+import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
 import fr.siamois.models.recordingunit.RecordingUnitSize;
@@ -12,6 +13,7 @@ import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
+import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -42,6 +44,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     private final LangBean langBean;
     private final ConceptService conceptService;
     private final SessionSettings sessionSettings;
+    private final FieldConfigurationService fieldConfigurationService;
 
     // Local
     private RecordingUnit recordingUnit;
@@ -119,7 +122,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                                     FieldService fieldService,
                                     LangBean langBean,
                                     ConceptService conceptService,
-                                    SessionSettings sessionSettings) {
+                                    SessionSettings sessionSettings, FieldConfigurationService fieldConfigurationService) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.personService = personService;
@@ -128,6 +131,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         this.langBean = langBean;
         this.conceptService = conceptService;
         this.sessionSettings = sessionSettings;
+        this.fieldConfigurationService = fieldConfigurationService;
     }
 
     public void reinitializeBean() {
@@ -172,6 +176,16 @@ public class NewRecordingUnitFormBean implements Serializable {
             }
         } catch (RuntimeException err) {
             recordingUnitErrorMessage = "Error initializing the form";
+        }
+    }
+
+    public List<Concept> completeRecordingUnitType(String input) {
+        log.trace("completeRecordingUnitType called");
+        try {
+            return fieldConfigurationService.fetchAutocomplete(sessionSettings.getUserInfo(), RecordingUnit.TYPE_FIELD_CODE, input);
+        } catch (NoConfigForField e) {
+            log.error(e.getMessage(), e);
+            return new ArrayList<>();
         }
     }
 }

@@ -22,11 +22,17 @@
                     </div>
 
                     <p:outputLabel for="su-category" value='${langBean.msg("spatialunit.category.label")}'/>
-                    <p:autoComplete id="su-category" value="#{spatialUnitFieldBean.FCategory}"
+                    <p:autoComplete id="su-category"
+                                    value="#{spatialUnitFieldBean.selectedConcept}"
                                     completeMethod="#{spatialUnitFieldBean.completeCategory}"
                                     forceSelection="true"
                                     scrollHeight="300"
-                                    dropdown="true"/>
+                                    dropdown="true"
+                                    var="concept"
+                                    converter="#{spatialUnitFieldBean.conceptConverter}"
+                                    itemValue="#{concept}"
+                                    itemLabel="#{concept.label}"
+                    />
 
                 </div>
 

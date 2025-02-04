@@ -27,12 +27,6 @@ import java.util.*;
 @Transactional
 public class FieldService {
 
-    private final ConceptRepository conceptRepository;
-
-    public FieldService(ConceptRepository conceptRepository) {
-        this.conceptRepository = conceptRepository;
-    }
-
     public List<String> searchAllFieldCodes() {
         Reflections reflections = new Reflections("fr.siamois.models", Scanners.FieldsAnnotated);
         Set<Field> fieldsWithFieldCode = reflections.getFieldsAnnotatedWith(FieldCode.class);
@@ -56,45 +50,6 @@ public class FieldService {
         return field.getType().equals(String.class) &&
                 Modifier.isStatic(field.getModifiers()) &&
                 Modifier.isFinal(field.getModifiers());
-    }
-
-    private Optional<LabelDTO> findLabelOfLang(FullConceptDTO conceptDTO, String lang) {
-        if (lang == null) return Optional.empty();
-
-        return Arrays.stream(conceptDTO.getPrefLabel())
-                .filter(purlInfoDTO -> purlInfoDTO.getLang().equals(lang))
-                .map((elt) -> {
-                    LabelDTO labelDTO = new LabelDTO();
-                    labelDTO.setTitle(elt.getValue());
-                    labelDTO.setLang(elt.getLang());
-                    return labelDTO;
-                })
-                .findFirst();
-    }
-
-    private LabelDTO firstAvailableLabel(FullConceptDTO fullConceptDTO) {
-        LabelDTO labelDTO = new LabelDTO();
-        labelDTO.setTitle(fullConceptDTO.getPrefLabel()[0].getValue());
-        labelDTO.setLang(fullConceptDTO.getPrefLabel()[0].getLang());
-        return labelDTO;
-    }
-
-    public Concept createOrGetConceptFromFullDTO(UserInfo info, Vocabulary vocabulary, FullConceptDTO conceptDTO) {
-        Optional<Concept> optConcept = conceptRepository
-                .findConceptByExternalIdIgnoreCase(
-                        vocabulary.getExternalVocabularyId(),
-                        conceptDTO.getIdentifier()[0].getValue()
-                );
-        if (optConcept.isPresent()) return optConcept.get();
-
-        Concept concept = new Concept();
-        LabelDTO labelDTO = findLabelOfLang(conceptDTO, info.getLang()).orElse(firstAvailableLabel(conceptDTO));
-        concept.setLabel(labelDTO.getTitle());
-        concept.setLangCode(labelDTO.getLang());
-        concept.setVocabulary(vocabulary);
-        concept.setExternalId(conceptDTO.getIdentifier()[0].getValue());
-
-        return conceptRepository.save(concept);
     }
 
 }

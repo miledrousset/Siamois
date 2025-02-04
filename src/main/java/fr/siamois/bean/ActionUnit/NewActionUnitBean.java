@@ -2,6 +2,7 @@ package fr.siamois.bean.ActionUnit;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.converter.ConceptConverter;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionUnit;
@@ -38,6 +39,7 @@ public class NewActionUnitBean implements Serializable {
     private final SessionSettings sessionSettings;
     private final FieldConfigurationService fieldConfigurationService;
     private final ConceptService conceptService;
+    private final ConceptConverter conceptConverter;
 
     // Local
     private ActionUnit actionUnit;
@@ -46,13 +48,19 @@ public class NewActionUnitBean implements Serializable {
     private Concept typeParent;
 
 
-    public NewActionUnitBean(ActionUnitService actionUnitService, FieldService fieldService, LangBean langBean, SessionSettings sessionSettings, FieldConfigurationService fieldConfigurationService, ConceptService conceptService) {
+    public NewActionUnitBean(ActionUnitService actionUnitService,
+                             FieldService fieldService,
+                             LangBean langBean,
+                             SessionSettings sessionSettings,
+                             FieldConfigurationService fieldConfigurationService,
+                             ConceptService conceptService, ConceptConverter conceptConverter) {
         this.actionUnitService = actionUnitService;
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.sessionSettings = sessionSettings;
         this.fieldConfigurationService = fieldConfigurationService;
         this.conceptService = conceptService;
+        this.conceptConverter = conceptConverter;
     }
 
 
@@ -63,7 +71,7 @@ public class NewActionUnitBean implements Serializable {
             actionUnit.setBeginDate(OffsetDateTime.now()); // todo : implement
             actionUnit.setEndDate(OffsetDateTime.now());  // todo : implement
 
-            this.actionUnit = actionUnitService.save(actionUnit, fieldType);
+            this.actionUnit = actionUnitService.save(sessionSettings.getUserInfo() ,actionUnit, fieldType);
 
             return "/pages/actionUnit/actionUnit?faces-redirect=true&id=" + this.actionUnit.getId().toString();
 
@@ -89,7 +97,7 @@ public class NewActionUnitBean implements Serializable {
     public List<Concept> completeActionUnitType(String input) {
         UserInfo info = sessionSettings.getUserInfo();
         try {
-            concepts = conceptService.fetchAutocomplete(info, ActionUnit.TYPE_FIELD_CODE, input);
+            concepts = fieldConfigurationService.fetchAutocomplete(info, ActionUnit.TYPE_FIELD_CODE, input);
         } catch (NoConfigForField e) {
             log.error(e.getMessage(), e);
         }

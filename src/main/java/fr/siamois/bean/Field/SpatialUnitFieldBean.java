@@ -2,12 +2,14 @@ package fr.siamois.bean.Field;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.converter.ConceptConverter;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.SpatialUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
+import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.MessageUtils;
 import lombok.Getter;
@@ -39,6 +41,8 @@ public class SpatialUnitFieldBean implements Serializable {
     private final SessionSettings sessionSettings;
     private final SpatialUnitService spatialUnitService;
     private final ConceptService conceptService;
+    private final ConceptConverter conceptConverter;
+    private final FieldConfigurationService fieldConfigurationService;
 
     // Storage
     private List<SpatialUnit> refSpatialUnits = new ArrayList<>();
@@ -50,12 +54,19 @@ public class SpatialUnitFieldBean implements Serializable {
     private String fName = "";
     private List<SpatialUnit> fParentsSpatialUnits = new ArrayList<>();
 
-    public SpatialUnitFieldBean(FieldService fieldService, LangBean langBean, SessionSettings sessionSettings, SpatialUnitService spatialUnitService, ConceptService conceptService) {
+    public SpatialUnitFieldBean(FieldService fieldService,
+                                LangBean langBean,
+                                SessionSettings sessionSettings,
+                                SpatialUnitService spatialUnitService,
+                                ConceptService conceptService,
+                                ConceptConverter conceptConverter, FieldConfigurationService fieldConfigurationService) {
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.sessionSettings = sessionSettings;
         this.spatialUnitService = spatialUnitService;
         this.conceptService = conceptService;
+        this.conceptConverter = conceptConverter;
+        this.fieldConfigurationService = fieldConfigurationService;
     }
 
     /**
@@ -111,7 +122,7 @@ public class SpatialUnitFieldBean implements Serializable {
      */
     public List<Concept> completeCategory(String input) {
         try {
-            return conceptService.fetchAutocomplete(sessionSettings.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE, input);
+            return fieldConfigurationService.fetchAutocomplete(sessionSettings.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE, input);
         } catch (NoConfigForField e) {
             log.error(e.getMessage(), e);
             return new ArrayList<>();

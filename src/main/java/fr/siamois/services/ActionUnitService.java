@@ -3,6 +3,7 @@ package fr.siamois.services;
 import fr.siamois.infrastructure.repositories.ActionUnitRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
@@ -55,7 +56,7 @@ public class ActionUnitService {
     }
 
     @Transactional
-    public ActionUnit save(ActionUnit actionUnit, Concept typeConcept) {
+    public ActionUnit save(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
 
         try {
             // Generate ARK if the action unit does not have any
@@ -70,6 +71,10 @@ public class ActionUnitService {
             // Add concept
             Concept type = conceptService.saveOrGetConcept(typeConcept);
             actionUnit.setType(type);
+
+
+            actionUnit.setAuthor(info.getUser());
+            actionUnit.setCreatedByInstitution(info.getInstitution());
 
             return actionUnitRepository.save(actionUnit);
         } catch (RuntimeException e) {

@@ -11,6 +11,7 @@ import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.InstitutionService;
 import fr.siamois.services.vocabulary.ConceptService;
+import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.MessageUtils;
 import lombok.Getter;
@@ -44,6 +45,7 @@ public class UserBean implements Serializable {
     private final NavBean navBean;
     private final InstitutionService institutionService;
     private final ConceptService conceptService;
+    private final FieldConfigurationService fieldConfigurationService;
 
     // Storage
     private Vocabulary vocabularyConfiguration;
@@ -58,7 +60,7 @@ public class UserBean implements Serializable {
                     SessionSettings sessionSettings,
                     FieldService fieldService,
                     LangBean langBean,
-                    NavBean navBean, InstitutionService institutionService, ConceptService conceptService) {
+                    NavBean navBean, InstitutionService institutionService, ConceptService conceptService, FieldConfigurationService fieldConfigurationService) {
         this.userAddBean = userAddBean;
         this.sessionSettings = sessionSettings;
         this.fieldService = fieldService;
@@ -66,6 +68,7 @@ public class UserBean implements Serializable {
         this.navBean = navBean;
         this.institutionService = institutionService;
         this.conceptService = conceptService;
+        this.fieldConfigurationService = fieldConfigurationService;
     }
 
     /**
@@ -92,7 +95,7 @@ public class UserBean implements Serializable {
      * @throws NoConfigForField if the field configuration is not found
      */
     public List<String> autocompleteRoles(String input) throws NoConfigForField {
-        concepts = conceptService.fetchAutocomplete(sessionSettings.getUserInfo(), Person.USER_ROLE_FIELD_CODE, input);
+        concepts = fieldConfigurationService.fetchAutocomplete(sessionSettings.getUserInfo(), Person.USER_ROLE_FIELD_CODE, input);
         return concepts.stream().map(Concept::getLabel).collect(Collectors.toList());
     }
 
