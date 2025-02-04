@@ -43,7 +43,10 @@ public class FieldConfigurationService {
             Concept concept = fieldService.createOrGetConceptFromFullDTO(info, vocabulary, conceptDTO);
             String fieldCode = conceptDTO.getFieldcode().orElseThrow(() -> new IllegalStateException("Field code not found"));
 
-            fieldRepository.saveConceptForFieldOfInstitution(info.getInstitution().getId(), fieldCode, concept.getId());
+            int rowAffected = fieldRepository.updateConfigForFieldOfInstitution(info.getInstitution().getId(), fieldCode, concept.getId());
+            if (rowAffected == 0) {
+                fieldRepository.saveConceptForFieldOfInstitution(info.getInstitution().getId(), fieldCode, concept.getId());
+            }
         }
 
         return Optional.empty();
@@ -76,8 +79,10 @@ public class FieldConfigurationService {
         if (!codes.contains(fieldCode))
             throw new IllegalStateException(String.format("The fieldCode %s does not exist", fieldCode));
 
-        fieldRepository.deleteConfigurationOfUser(info.getInstitution().getId(), info.getUser().getId(), fieldCode);
-        fieldRepository.saveConceptForFieldOfUser(info.getInstitution().getId(), info.getUser().getId(), fieldCode, topTerm.getId());
+        int rowAffected = fieldRepository.updateConfigForFieldOfUser(info.getInstitution().getId(), info.getUser().getId(), fieldCode, topTerm.getId());
+        if (rowAffected == 0) {
+            fieldRepository.saveConceptForFieldOfUser(info.getInstitution().getId(), info.getUser().getId(), fieldCode, topTerm.getId());
+        }
     }
 
     public Concept findConfigurationForFieldCode(UserInfo info, String fieldCode) throws NoConfigForField {

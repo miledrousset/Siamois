@@ -3,8 +3,13 @@ package fr.siamois.bean.Field;
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.bean.converter.VocabularyConverter;
+import fr.siamois.models.Institution;
+import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.UserInfo;
+import fr.siamois.models.auth.Person;
+import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.api.InvalidEndpointException;
+import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
@@ -51,7 +56,17 @@ public class FieldConfigBean implements Serializable {
     }
 
     public void onLoad() {
-
+        log.trace("On Load called");
+        UserInfo info = sessionSettings.getUserInfo();
+        try {
+            Concept config = fieldConfigurationService.findConfigurationForFieldCode(info, SpatialUnit.CATEGORY_FIELD_CODE);
+            fInstance = config.getVocabulary().getBaseUri();
+            fSelectedVocab = config.getVocabulary();
+        } catch (NoConfigForField e) {
+            log.trace("No config set for user {} of institution {}",
+                    info.getUser().getUsername(),
+                    info.getInstitution().getName());
+        }
     }
 
     public void loadInstance() {

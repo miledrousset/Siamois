@@ -32,10 +32,19 @@ public interface FieldRepository extends CrudRepository<Field, Long> {
     @Modifying
     @Query(
             nativeQuery = true,
-            value = "DELETE FROM concept_field_config cfc " +
-                    "WHERE cfc.fk_institution_id = :institutionId AND " +
-                    "cfc.fk_user_id = :personId AND " +
-                    "cfc.field_code = :fieldCode"
+            value = "UPDATE concept_field_config " +
+                    "SET fk_concept_id = :conceptId " +
+                    "WHERE fk_institution_id = :institutionId AND field_code = :fieldCode AND fk_user_id IS NULL"
     )
-    void deleteConfigurationOfUser(Long institutionId, Long personId, String fieldCode);
+    int updateConfigForFieldOfInstitution(Long institutionId, String fieldCode, Long conceptId);
+
+    @Transactional
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = "UPDATE concept_field_config " +
+                    "SET fk_concept_id = :conceptId " +
+                    "WHERE fk_institution_id = :institutionId AND field_code = :fieldCode AND fk_user_id = :userId"
+    )
+    int updateConfigForFieldOfUser(Long institutionId, Long userId, String fieldCode, Long conceptId);
 }

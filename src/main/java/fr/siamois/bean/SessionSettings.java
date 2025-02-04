@@ -58,7 +58,6 @@ public class SessionSettings {
         return new UserInfo(selectedInstitution, getAuthenticatedUser(), getLanguageCode());
     }
 
-
     private void setupInstitution() {
         Person authUser = getAuthenticatedUser();
         List<Institution> result;
