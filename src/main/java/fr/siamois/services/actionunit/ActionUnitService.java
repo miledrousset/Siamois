@@ -1,24 +1,23 @@
-package fr.siamois.services;
+package fr.siamois.services.actionunit;
 
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
-import fr.siamois.infrastructure.repositories.ActionUnitRepository;
+import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
+import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.Team;
-import fr.siamois.models.ark.Ark;
-import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.ActionUnitNotFoundException;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
-import fr.siamois.services.ark.ArkGenerator;
 import fr.siamois.services.vocabulary.FieldService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -64,19 +63,38 @@ public class ActionUnitService {
             typeConceptFieldDTO) {
 
         try {
-            // Generate ARK if the action unit does not have any
-            if (actionUnit.getArk() == null) {
-
-                ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
-                Ark ark = new Ark();
-                ark.setArkServer(localServer);
-                ark.setArkId(ArkGenerator.generateArk());
-                actionUnit.setArk(ark);
-            }
 
             // Add concept
             Concept type = fieldService.saveOrGetConceptFromDto(vocabulary, typeConceptFieldDTO);
             actionUnit.setType(type);
+
+            return actionUnitRepository.save(actionUnit);
+        } catch (RuntimeException e) {
+            throw new FailedRecordingUnitSaveException(e.getMessage());
+        }
+    }
+
+    @Transactional
+    public ActionUnit save(ActionUnit actionUnit, List<ActionCode> secondaryActionCodes) {
+
+        try {
+
+            // Get the old version of the actionUnit
+            ActionUnit currentVersion = actionUnitRepository.findById(actionUnit.getId()).get();
+
+            // Get the old list of secondaryActionCodes
+            Set<ActionCode> currentSecondaryActionCodes = currentVersion.getSecondaryActionCodes();
+            // Handle codes
+            // 1. Remove the ones that are not linked to the action unit anymore
+            currentSecondaryActionCodes.removeIf(actionCode -> !secondaryActionCodes.contains(actionCode));
+            // 2. Add the ones that were not present
+            secondaryActionCodes.forEach(actionCode -> {
+                if (!currentSecondaryActionCodes.contains(actionCode)) {
+                    currentSecondaryActionCodes.add(actionCode);
+                }
+            });
+
+            actionUnit.setSecondaryActionCodes(currentSecondaryActionCodes);
 
             return actionUnitRepository.save(actionUnit);
         } catch (RuntimeException e) {

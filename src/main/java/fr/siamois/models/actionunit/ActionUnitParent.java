@@ -45,7 +45,7 @@ public abstract class ActionUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_spatial_unit_id", nullable = false)
     protected SpatialUnit spatialUnit;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "fk_primary_action_code")
     protected ActionCode primaryActionCode;
 
@@ -61,13 +61,7 @@ public abstract class ActionUnitParent extends TraceableEntity {
     @Column(name="min_recording_unit_code")
     protected Integer minRecordingUnitCode;
 
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinTable(
-//            name = "action_action_code",
-//            joinColumns = { @JoinColumn(name = "fk_action_unit_id") },
-//            inverseJoinColumns = { @JoinColumn(name = "fk_action_code_id") }
-//    )
-//    protected ArrayList<ActionCode> secondaryActionCodes;
+
 
 
 }

@@ -1,14 +1,15 @@
 package fr.siamois.bean.ActionUnit;
 
+import fr.siamois.bean.LangBean;
+import fr.siamois.bean.SessionSettings;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.services.ActionUnitService;
-import fr.siamois.utils.AuthenticatedUserUtils;
+import fr.siamois.services.actionunit.ActionUnitService;
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.application.FacesMessage;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import jakarta.faces.context.FacesContext;
 
@@ -28,6 +28,8 @@ public class ActionUnitBean implements Serializable {
 
     // Deps
     private final ActionUnitService actionUnitService;
+    private final LangBean langBean;
+    private final SessionSettings sessionSettings;
 
     // Local
     private ActionUnit actionUnit;
@@ -45,8 +47,10 @@ public class ActionUnitBean implements Serializable {
     private List<ActionCode> secondaryActionCodes ;
 
 
-    public ActionUnitBean(ActionUnitService actionUnitService) {
+    public ActionUnitBean(ActionUnitService actionUnitService, LangBean langBean, SessionSettings sessionSettings) {
         this.actionUnitService = actionUnitService;
+        this.langBean = langBean;
+        this.sessionSettings = sessionSettings;
     }
 
     @PostConstruct
@@ -86,6 +90,39 @@ public class ActionUnitBean implements Serializable {
         secondaryActionCodes.add(code);
     }
 
+    public void removeSecondaryCode(int index) {
+        secondaryActionCodes.remove(index);
+    }
+
+    public void save() {
+        try {
+            Person author = sessionSettings.getAuthenticatedUser();
+            actionUnit.setLastModifiedBy(author);
+
+            this.actionUnit = actionUnitService.save(actionUnit, secondaryActionCodes);
+
+            // Display message
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_INFO,
+                            "Info",
+                            langBean.msg("actionunit.created", this.actionUnit.getName())));
+//
+//            FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+
+            //return "/pages/actionUnit/actionUnit?faces-redirect=true&id=" + this.actionUnit.getId().toString();
+
+        } catch (RuntimeException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_ERROR,
+                            "Error",
+                            langBean.msg("actionunit.creationfailed", this.actionUnit.getName())));
+
+            log.error("Error while saving: " + e.getMessage());
+        }
+    }
+
     public void init() {
 
         if (!FacesContext.getCurrentInstance().isPostback()) {
@@ -96,13 +133,14 @@ public class ActionUnitBean implements Serializable {
             c1.setLabel("Code OA");
             c2.setLabel("Code OP");
             actionCodeTypeOptions = List.of(c1,c2);
+            secondaryActionCodes = new ArrayList<>();
             // Get the requested action from DB
             try {
                 if(id!=null) {
                     actionUnit = actionUnitService.findById(id);
                     ActionCode primaryActionCode = new ActionCode();
                     actionUnit.setPrimaryActionCode(primaryActionCode);
-                    secondaryActionCodes = new ArrayList<>();
+
                     Concept typeConcept = actionUnit.getType();
                     fType = new ConceptFieldDTO();
                     fType.setLabel(typeConcept.getLabel());

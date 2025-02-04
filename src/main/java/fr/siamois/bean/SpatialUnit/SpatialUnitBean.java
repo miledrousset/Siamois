@@ -6,7 +6,7 @@ import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.Team;
 import fr.siamois.models.history.SpatialUnitHist;
 import fr.siamois.models.recordingunit.RecordingUnit;
-import fr.siamois.services.ActionUnitService;
+import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.HistoryService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.SpatialUnitService;

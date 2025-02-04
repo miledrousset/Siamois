@@ -4,7 +4,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:actionCode="http://xmlns.jcp.org/jsf/composite/pages/actionUnit/components">
+                >
 
     <ui:define name="metadata">
         <f:metadata>
@@ -59,13 +59,13 @@
             </h:form>
 
 
-            <p:tabView>
+            <p:tabView id="spatialUnitTabsId">
 
                 <p:tab title="Aperçu">
 
                 </p:tab>
 
-                <p:tab title="Détails">
+                <p:tab title="Détails" id="spatialUnitDetailsTabId">
                     <!-- Action codes (OA, OP, ...) -->
                     <h3>Manage Codes</h3>
                     <!-- The primary code attached to this action -->
@@ -77,7 +77,6 @@
                         <div style="display:flex;">
                             <p:selectOneMenu id="primaryActionCodeTypeOption"
                                              value="#{actionUnitBean.actionUnit.primaryActionCode.type}">
-                                <f:selectItem itemLabel="Code libre" itemValue="null"/>
                                 <f:selectItems value="#{actionUnitBean.actionCodeTypeOptions}"
                                                var="option" itemLabel="#{option.label}" itemValue="#{option}"/>
                             </p:selectOneMenu>
@@ -139,17 +138,68 @@
                     <!--                            <p:commandButton value="Submit" action="#{codeBean.submit}" update="messages"-->
                     <!--                                             icon="ui-icon-check" />-->
                     <h4>Secondary codes</h4>
+                    <h:messages id="msg"></h:messages>
                     <h:form id="secondaryCodesForm">
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                        <p:commandButton value="Add new code" icon="pi pi-plus" process="@this" update="@form"
+                        <p:commandButton value="Add new code" icon="pi pi-plus" process="@this" update="secondaryCodesForm"
                                          action="#{actionUnitBean.addNewSecondaryCode}"/>
-                        <ui:repeat var="secondaryCode" value="#{actionUnitBean.secondaryActionCodes}">
-                            <actionCode:actionCodeEditor actionCode="#{secondaryCode}" />
-                            <span>#{secondaryCode.type} #{secondaryCode.code}</span>
+                        <ui:repeat id="secondaryCodeRepeat" var="secondaryCode" value="#{actionUnitBean.secondaryActionCodes}" varStatus="status">
+                            <h:panelGroup style="display:flex;" id="secondaryCodeField">
+                                <p:selectOneMenu id="secondaryActionCodeTypeOption"
+                                                 converter="#{conceptConverter}"
+                                                 value="#{actionUnitBean.secondaryActionCodes[status.index].type}"
+                                >
+                                    <f:selectItems value="#{actionUnitBean.actionCodeTypeOptions}"
+                                                   var="option" itemLabel="#{option.label}" itemValue="#{option}"/>
+                                    <p:ajax event="valueChange"
+                                            update="@this msg main-growl"
+                                    />
+                                </p:selectOneMenu>
+                                <p:autoComplete id="SecondaryCodeAutoCompleteId"
+                                                value="#{actionUnitBean.secondaryActionCodes[status.index]}"
+                                                var="actionCode"
+                                                itemLabel="#{actionCode.code}"
+                                                completeMethod="#{actionUnitBean.completeActionCode}"
+                                                converter="#{actionCodeConverter}"
+                                                itemValue="#{actionCode}"
+                                                required="true"
+                                                forceSelection="true"
+                                                scrollHeight="300"
+                                                dropdown="false">
+<!--                                    <p:ajax event="itemSelect"-->
+<!--                                            listener="#{actionUnitBean.handleSelectPrimaryCode}"-->
+<!--                                          -->
+                                    <p:ajax event="itemSelect"
+                                            update="spatialUnitTabsId:secondaryCodesForm:secondaryCodeRepeat:#{status.index}:secondaryCodeField"/>
+                                            />
+                                    <p:column>
+                                        <div style="display:flex;">
+                                            <span class="pi pi-qrcode ui-chip ui-chip-icon"/>
+                                            <div style="width:max-content;" class="ui-chip-text">#{actionCode.type.label}
+                                            </div>
+                                        </div>
 
+                                    </p:column>
+                                    <p:column>
+                                        <span>
+                                            #{actionCode.code}
+                                        </span>
+                                    </p:column>
+                                    <!--                                <f:facet name="footer">-->
+                                    <!--                                    <div class="ui-fluid" style="padding:0.5rem 1rem 1rem 1rem">-->
+                                    <!--                                        <p:button value="Add new code" onclick="alert('This could open a dialog')"/>-->
+                                    <!--                                    </div>-->
+                                    <!--                                </f:facet>-->
+                                </p:autoComplete>
+                                <p:commandButton icon="pi pi-minus" process="@this" update="@form"
+                                                 action="#{actionUnitBean.removeSecondaryCode(status.index)}"/>
+                            </h:panelGroup>
                         </ui:repeat>
-
-
+                    </h:form>
+                    <h:form>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <p:commandButton icon="pi pi-save" update="primaryCodeForm secondaryCodeForm main-growl"
+                                         action="#{actionUnitBean.save()}"/>
                     </h:form>
 
 

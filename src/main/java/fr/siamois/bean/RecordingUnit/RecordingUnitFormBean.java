@@ -8,7 +8,7 @@ import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
-import fr.siamois.services.ActionUnitService;
+import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;

@@ -9,7 +9,7 @@ import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
-import fr.siamois.services.ActionUnitService;
+import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.AuthenticatedUserUtils;

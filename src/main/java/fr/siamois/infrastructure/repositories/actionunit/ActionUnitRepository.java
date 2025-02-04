@@ -1,4 +1,4 @@
-package fr.siamois.infrastructure.repositories;
+package fr.siamois.infrastructure.repositories.actionunit;
 
 import fr.siamois.infrastructure.repositories.history.TraceableEntries;
 import fr.siamois.models.actionunit.ActionUnit;
