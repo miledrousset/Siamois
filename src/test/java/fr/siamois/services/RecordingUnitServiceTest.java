@@ -6,7 +6,6 @@ import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitReposit
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
-import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 
@@ -116,7 +114,7 @@ class RecordingUnitServiceTest {
     @Test
     void findById_Exception() {
 
-        when(recordingUnitRepository.findById(recordingUnit1.getId())).thenReturn(Optional.ofNullable(null));
+        when(recordingUnitRepository.findById(recordingUnit1.getId())).thenReturn(Optional.empty());
 
 
 

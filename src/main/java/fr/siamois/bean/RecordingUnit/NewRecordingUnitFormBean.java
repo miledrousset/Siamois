@@ -84,11 +84,6 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
-
-    public List<Person> completePerson(String query) {
-        return recordingUnitUtils.completePerson(query);
-    }
-
     public String save() {
         try {
 
@@ -116,18 +111,6 @@ public class NewRecordingUnitFormBean implements Serializable {
             return null;
         }
 
-    }
-
-    /**
-     * Display a  message on the page.
-     *
-     * @param severityInfo The severity of the message.
-     * @param head         The head of the message.
-     * @param detail       The message to display.
-     */
-    private static void displayMessage(FacesMessage.Severity severityInfo, String head, String detail) {
-        FacesContext.getCurrentInstance()
-                .addMessage(null, new FacesMessage(severityInfo, head, detail));
     }
 
 
@@ -159,24 +142,6 @@ public class NewRecordingUnitFormBean implements Serializable {
         this.fType = null;
 
     }
-
-    /**
-     * Fetch the autocomplete results on API for the type field and add them to the list of concepts.
-     *
-     * @param input the input of the user
-     * @return the list of concepts that match the input to display in the autocomplete
-     */
-    public List<Concept> completeRecordingUnitType(String input) {
-
-        try {
-            concepts = conceptService.fetchAutocomplete(sessionSettings.getUserInfo(), RecordingUnit.TYPE_FIELD_CODE, input);
-        } catch (NoConfigForField e) {
-            log.error("No collection for field " + RecordingUnit.TYPE_FIELD_CODE);
-        }
-
-        return concepts;
-    }
-
 
     public String goToNewRecordingUnitPage() {
         return "/pages/create/recordingUnit.xhtml?faces-redirect=true";

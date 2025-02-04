@@ -91,19 +91,4 @@ public class ConceptService {
         return !fullConcept.getIdentifier()[0].getValue().equalsIgnoreCase(parentConcept.getExternalId());
     }
 
-    public List<Concept> fetchAllValues(UserInfo info, String fieldCode) throws NoConfigForField {
-        List<Concept> concepts = new ArrayList<>();
-        Concept parentConcept = fieldConfigurationService.findConfigurationForFieldCode(info, fieldCode);
-        ConceptBranchDTO conceptBranchDTO = conceptApi.fetchConceptsUnderTopTerm(parentConcept);
-
-        for (FullConceptDTO fullConcept : conceptBranchDTO.getData().values()) {
-            if (isNotParentConcept(fullConcept, parentConcept)) {
-                PurlInfoDTO label = getPrefLabelOfLang(info, fullConcept);
-                concepts.add(createConceptFromDTO(parentConcept.getVocabulary(), label, fullConcept));
-            }
-        }
-
-        return concepts;
-    }
-
 }

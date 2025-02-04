@@ -92,23 +92,6 @@ public class RecordingUnitFormBean implements Serializable {
 
     }
 
-    public List<Person> completePerson(String query) {
-        return recordingUnitUtils.completePerson(query);
-    }
-
-    /**
-     * Display a  message on the page.
-     *
-     * @param severityInfo The severity of the message.
-     * @param head         The head of the message.
-     * @param detail       The message to display.
-     */
-    private static void displayMessage(FacesMessage.Severity severityInfo, String head, String detail) {
-        FacesContext.getCurrentInstance()
-                .addMessage(null, new FacesMessage(severityInfo, head, detail));
-    }
-
-
     public RecordingUnitFormBean(
             RecordingUnitService recordingUnitService,
             ActionUnitService actionUnitService,
@@ -135,23 +118,6 @@ public class RecordingUnitFormBean implements Serializable {
         this.concepts = null;
         this.fType = null;
         recordingUnitErrorMessage = null;
-    }
-
-    /**
-     * Fetch the autocomplete results on API for the type field and add them to the list of concepts.
-     *
-     * @param input the input of the user
-     * @return the list of concepts that match the input to display in the autocomplete
-     */
-    public List<Concept> completeRecordingUnitType(String input) {
-
-        try {
-            concepts = conceptService.fetchAutocomplete(sessionSettings.getUserInfo(), RecordingUnit.TYPE_FIELD_CODE, input);
-        } catch (NoConfigForField e) {
-            return new ArrayList<>();
-        }
-
-        return concepts;
     }
 
     @PostConstruct
