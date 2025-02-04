@@ -3,8 +3,6 @@ package fr.siamois.bean.RecordingUnit;
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.ActionUnitService;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 
