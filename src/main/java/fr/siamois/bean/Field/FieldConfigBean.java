@@ -6,6 +6,7 @@ import fr.siamois.bean.converter.VocabularyConverter;
 import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.exceptions.NoConfigForField;
+import fr.siamois.models.exceptions.NotSiamoisThesaurusException;
 import fr.siamois.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.GlobalFieldConfig;
@@ -86,8 +87,15 @@ public class FieldConfigBean implements Serializable {
     public void loadConfig() {
         Vocabulary databaseVocab = vocabularyService.saveOrGetVocabulary(fSelectedVocab);
 
-        UserInfo info = new UserInfo(sessionSettings.getSelectedInstitution(), sessionSettings.getAuthenticatedUser());
-        Optional<GlobalFieldConfig> config = fieldConfigurationService.setupFieldConfigurationForInstitution(info, databaseVocab);
+        UserInfo info = sessionSettings.getUserInfo();
+        Optional<GlobalFieldConfig> config;
+        try {
+            config = fieldConfigurationService.setupFieldConfigurationForInstitution(info, databaseVocab);
+        } catch (NotSiamoisThesaurusException e) {
+            log.error(e.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Thesaurus is not valid"));
+            return;
+        }
 
         if (config.isEmpty()) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Configuration saved"));
@@ -97,14 +105,16 @@ public class FieldConfigBean implements Serializable {
         GlobalFieldConfig wrongConfig = config.get();
 
         if (!wrongConfig.missingFieldCode().isEmpty())
-            traceMissingFieldCode(wrongConfig);
+            missingFieldCodes(wrongConfig);
 
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Error in thesaurus config"));
 
     }
 
-    private static void traceMissingFieldCode(GlobalFieldConfig wrongConfig) {
-        log.trace("Missing codes : {}", wrongConfig.missingFieldCode());
+    private static void missingFieldCodes(GlobalFieldConfig wrongConfig) {
+        log.error("Error in config. Missing codes : {}", wrongConfig.missingFieldCode());
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", String.format("The codes %s are not in the thesaurus", wrongConfig.missingFieldCode())));
+
     }
 
     public void loadUserInstance() {
@@ -123,7 +133,14 @@ public class FieldConfigBean implements Serializable {
         Vocabulary databaseVocab = vocabularyService.saveOrGetVocabulary(fUserSelectedVocab);
 
         UserInfo info = sessionSettings.getUserInfo();
-        Optional<GlobalFieldConfig> config = fieldConfigurationService.setupFieldConfigurationForUser(info, databaseVocab);
+        Optional<GlobalFieldConfig> config = null;
+        try {
+            config = fieldConfigurationService.setupFieldConfigurationForUser(info, databaseVocab);
+        } catch (NotSiamoisThesaurusException e) {
+            log.error(e.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Thesaurus is not valid"));
+            return;
+        }
 
         if (config.isEmpty()) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Configuration saved for USER"));
@@ -133,7 +150,7 @@ public class FieldConfigBean implements Serializable {
         GlobalFieldConfig wrongConfig = config.get();
 
         if (!wrongConfig.missingFieldCode().isEmpty())
-            traceMissingFieldCode(wrongConfig);
+            missingFieldCodes(wrongConfig);
 
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Error in thesaurus config"));
     }

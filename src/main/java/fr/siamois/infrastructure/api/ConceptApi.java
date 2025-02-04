@@ -3,10 +3,12 @@ package fr.siamois.infrastructure.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullConceptDTO;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
+import fr.siamois.models.exceptions.NotSiamoisThesaurusException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
 import lombok.extern.slf4j.Slf4j;
@@ -30,10 +32,12 @@ public class ConceptApi {
 
     private final RestTemplate restTemplate;
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
     public ConceptApi(RequestFactory factory) {
         restTemplate = factory.buildRestTemplate();
+        mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public ConceptBranchDTO fetchConceptsUnderTopTerm(Concept concept) {
@@ -71,9 +75,6 @@ public class ConceptApi {
         URI uri = URI.create(vocabulary.getBaseUri() + String.format("/openapi/v1/concept/%s/%s", vocabulary.getExternalVocabularyId(), conceptId));
         ResponseEntity<String> response = sendRequestAcceptJson(uri);
 
-
-        ObjectMapper mapper = new ObjectMapper();
-
         TypeReference<Map<String,FullConceptDTO>> typeReference = new TypeReference<>() {};
 
         try {
@@ -108,7 +109,7 @@ public class ConceptApi {
         return Optional.empty();
     }
 
-    public ConceptBranchDTO fetchFieldsBranch(Vocabulary vocabulary) {
+    public ConceptBranchDTO fetchFieldsBranch(Vocabulary vocabulary) throws NotSiamoisThesaurusException {
         URI uri = URI.create(vocabulary.getBaseUri() + String.format("/openapi/v1/thesaurus/%s/topconcept", vocabulary.getExternalVocabularyId()));
 
         String conceptDTO = restTemplate.getForObject(uri, String.class);
@@ -120,12 +121,16 @@ public class ConceptApi {
         try {
             ConceptDTO[] array = mapper.readValue(conceptDTO, ConceptDTO[].class);
 
-            ConceptDTO autocompleteParent = findAutocompleteTopTerm(vocabulary, array).orElseThrow(() -> new IllegalArgumentException("Concept with notation SIAMOIS#SIAAUTO not found"));
+            ConceptDTO autocompleteParent = findAutocompleteTopTerm(vocabulary, array)
+                    .orElseThrow(() -> new NotSiamoisThesaurusException("Concept with notation SIAMOIS#SIAAUTO not found in thesaurus %s",
+                            vocabulary.getExternalVocabularyId()));
 
             return fetchDownExpansion(vocabulary, autocompleteParent.idConcept);
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error while parsing branch", e);
+        } catch (NotSiamoisThesaurusException e) {
+            throw e;
         }
     }
 

@@ -8,6 +8,7 @@ import fr.siamois.infrastructure.repositories.FieldRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.exceptions.NoConfigForField;
+import fr.siamois.models.exceptions.NotSiamoisThesaurusException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.models.vocabulary.Vocabulary;
@@ -44,7 +45,7 @@ public class FieldConfigurationService {
         return conceptDTO.getFieldcode().isPresent();
     }
 
-    public Optional<GlobalFieldConfig> setupFieldConfigurationForInstitution(UserInfo info, Vocabulary vocabulary) {
+    public Optional<GlobalFieldConfig> setupFieldConfigurationForInstitution(UserInfo info, Vocabulary vocabulary) throws NotSiamoisThesaurusException {
         ConceptBranchDTO conceptBranchDTO =  conceptApi.fetchFieldsBranch(vocabulary);
         GlobalFieldConfig config = createConfigOfThesaurus(conceptBranchDTO);
         if (config.isWrongConfig()) return Optional.of(config);
@@ -84,7 +85,7 @@ public class FieldConfigurationService {
         return new GlobalFieldConfig(missingFieldCode, validConcept);
     }
 
-    public Optional<GlobalFieldConfig> setupFieldConfigurationForUser(UserInfo info, Vocabulary vocabulary) {
+    public Optional<GlobalFieldConfig> setupFieldConfigurationForUser(UserInfo info, Vocabulary vocabulary) throws NotSiamoisThesaurusException {
         ConceptBranchDTO conceptBranchDTO =  conceptApi.fetchFieldsBranch(vocabulary);
         GlobalFieldConfig config = createConfigOfThesaurus(conceptBranchDTO);
         if (config.isWrongConfig()) return Optional.of(config);

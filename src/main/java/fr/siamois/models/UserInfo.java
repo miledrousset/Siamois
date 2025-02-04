@@ -18,10 +18,6 @@ public class UserInfo {
         this.lang = lang;
     }
 
-    public UserInfo(Institution institution, Person user) {
-        this(institution, user, null);
-    }
-
     public UserInfo(SessionSettings sessionSettings, LangBean langBean) {
         this(sessionSettings.getSelectedInstitution(), sessionSettings.getAuthenticatedUser(), langBean.getLanguageCode());
     }

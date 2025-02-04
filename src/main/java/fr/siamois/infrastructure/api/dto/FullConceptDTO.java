@@ -47,6 +47,9 @@ public class FullConceptDTO {
     @JsonProperty("http://www.w3.org/2004/02/skos/core#notation")
     private PurlInfoDTO[] notation;
 
+    @JsonProperty("http://purl.org/umu/uneskos#memberOf")
+    private PurlInfoDTO[] memberOf;
+
     public Optional<String> getFieldcode() {
         if (notation == null) return Optional.empty();
         return Arrays.stream(notation)

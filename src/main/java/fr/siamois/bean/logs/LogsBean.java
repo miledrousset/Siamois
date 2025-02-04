@@ -72,7 +72,7 @@ public class LogsBean implements Serializable {
         ZoneOffset offset = ZoneId.systemDefault().getRules().getOffset(vStartDateTime);
         OffsetDateTime start = OffsetDateTime.of(vStartDateTime, offset);
         OffsetDateTime end = OffsetDateTime.of(vEndDateTime, offset);
-        operations = historyService.findAllOperationsOfUserAndTeamBetween(new UserInfo(institution, authenticatedUser), start, end);
+        operations = historyService.findAllOperationsOfUserAndTeamBetween(sessionSettings.getUserInfo(), start, end);
     }
 
     public String formatDate(OffsetDateTime offsetDateTime) {
