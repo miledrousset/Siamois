@@ -11,7 +11,10 @@ import fr.siamois.models.vocabulary.Concept;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service to manage SpatialUnit
@@ -84,7 +87,24 @@ public class SpatialUnitService {
     }
 
     public SpatialUnit save(UserInfo info, String name, Concept type, List<SpatialUnit> parents) throws SpatialUnitAlreadyExistsException {
-        // TODO: Implement SAVE
+        Optional<SpatialUnit> optSpatialUnit = spatialUnitRepository.findByNameAndInstitution(name, info.getInstitution().getId());
+        if (optSpatialUnit.isPresent())
+            throw new SpatialUnitAlreadyExistsException(
+                    String.format("Spatial Unit with name %s already exist in institution %s", name, info.getInstitution().getName()));
+
+        SpatialUnit spatialUnit = new SpatialUnit();
+        spatialUnit.setName(name);
+        spatialUnit.setCreatedByInstitution(info.getInstitution());
+        spatialUnit.setAuthor(info.getUser());
+        spatialUnit.setCategory(type);
+        spatialUnit.setCreationTime(OffsetDateTime.now(ZoneId.systemDefault()));
+
+        spatialUnit = spatialUnitRepository.save(spatialUnit);
+
+        for (SpatialUnit parent : parents) {
+            spatialUnitRepository.addParentToSpatialUnit(spatialUnit.getId(), parent.getId());
+        }
+
         return null;
     }
 
