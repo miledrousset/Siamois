@@ -1,12 +1,6 @@
 package fr.siamois.services.vocabulary;
 
-import fr.siamois.infrastructure.api.dto.FullConceptDTO;
-import fr.siamois.infrastructure.api.dto.LabelDTO;
-import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import fr.siamois.models.FieldCode;
-import fr.siamois.models.UserInfo;
-import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.models.vocabulary.Vocabulary;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;

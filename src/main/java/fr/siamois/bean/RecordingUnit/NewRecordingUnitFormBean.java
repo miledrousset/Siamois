@@ -179,6 +179,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         }
     }
 
+
     public List<Concept> completeRecordingUnitType(String input) {
         log.trace("completeRecordingUnitType called");
         try {
