@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -68,19 +69,26 @@ class NewRecordingUnitFormBeanTest {
 
     @Test
     void save() {
-
+        // TO IMPLEMENT
+        assertTrue(true);
     }
 
     @Test
     void offsetDateTimeToLocalDate() {
+        // TO IMPLEMENT
+        assertTrue(true);
     }
 
     @Test
     void localDateToOffsetDateTime() {
+        // TO IMPLEMENT
+        assertTrue(true);
     }
 
     @Test
     void completePerson() {
+        // TO IMPLEMENT
+        assertTrue(true);
     }
 
     @Test
