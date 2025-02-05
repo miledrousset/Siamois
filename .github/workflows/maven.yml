@@ -28,16 +28,3 @@ jobs:
 
       - name: Create code coverage
         run: mvn sonar:sonar -Pcoverage
-
-  sonarqube:
-    name: SonarQube
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: SonarQubeScan
-        uses: SonarSource/sonarqube-scan-action@v4
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
