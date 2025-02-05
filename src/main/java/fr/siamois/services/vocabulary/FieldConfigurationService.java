@@ -30,7 +30,7 @@ public class FieldConfigurationService {
     private final ConceptRepository conceptRepository;
     private final ConceptService conceptService;
 
-    private static final double SIMILARITY_CAP = 0.5;
+    private static final double SIMILARITY_CAP = 0.7;
 
 
     public FieldConfigurationService(ConceptApi conceptApi, FieldService fieldService, FieldRepository fieldRepository, ConceptRepository conceptRepository, ConceptService conceptService) {
@@ -134,23 +134,20 @@ public class FieldConfigurationService {
 
         ConceptBranchDTO terms = conceptApi.fetchConceptsUnderTopTerm(parentConcept);
         List<Concept> result = new ArrayList<>();
-        List<FullConceptDTO> ignoredConcept = new ArrayList<>();
 
         for (FullConceptDTO fullConcept : terms.getData().values()) {
             if (isNotParentConcept(fullConcept, parentConcept)) {
                 PurlInfoDTO label = getPrefLabelOfLang(info, fullConcept);
                 if (label.getValue().contains(input)) {
                     result.add(createConceptFromDTO(parentConcept.getVocabulary(), label, fullConcept));
-                } else {
-                    ignoredConcept.add(fullConcept);
                 }
             }
         }
 
         if (result.isEmpty()) {
-            for (FullConceptDTO fullConceptDTO : ignoredConcept) {
+            for (FullConceptDTO fullConceptDTO : terms.getData().values()) {
                 PurlInfoDTO label = getPrefLabelOfLang(info, fullConceptDTO);
-                double similarity = stringSimilarity(label.getValue(), input);
+                double similarity = stringSimilarity(label.getValue().toLowerCase(), input.toLowerCase());
                 if (similarity >= SIMILARITY_CAP) {
                     result.add(createConceptFromDTO(parentConcept.getVocabulary(), label, fullConceptDTO));
                 }
