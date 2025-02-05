@@ -25,6 +25,3 @@ jobs:
 
       - name: Integration test with Maven
         run: mvn -B test -Dgroups=integration
-
-      - name: Create code coverage
-        run: mvn sonar:sonar -Pcoverage
