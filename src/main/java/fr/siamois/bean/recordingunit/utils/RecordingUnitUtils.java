@@ -1,4 +1,4 @@
-package fr.siamois.bean.RecordingUnit.utils;
+package fr.siamois.bean.recordingunit.utils;
 
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
@@ -19,8 +19,8 @@ import java.time.ZoneOffset;
 public class RecordingUnitUtils {
 
     // Deps
-    private final PersonService personService;
-    private final RecordingUnitService recordingUnitService;
+    private final transient PersonService personService;
+    private final transient RecordingUnitService recordingUnitService;
 
     public RecordingUnitUtils(PersonService personService, RecordingUnitService recordingUnitService) {
         this.personService = personService;

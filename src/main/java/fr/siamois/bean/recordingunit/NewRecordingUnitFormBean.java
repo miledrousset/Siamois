@@ -1,7 +1,7 @@
-package fr.siamois.bean.RecordingUnit;
+package fr.siamois.bean.recordingunit;
 
 import fr.siamois.bean.LangBean;
-import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
+import fr.siamois.bean.recordingunit.utils.RecordingUnitUtils;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.exceptions.NoConfigForField;
@@ -36,27 +36,27 @@ import static java.time.OffsetDateTime.now;
 public class NewRecordingUnitFormBean implements Serializable {
 
     // Deps
-    private final RecordingUnitService recordingUnitService;
-    private final ActionUnitService actionUnitService;
-    private final PersonService personService;
+    private final transient RecordingUnitService recordingUnitService;
+    private final transient ActionUnitService actionUnitService;
+    private final transient PersonService personService;
     private final RecordingUnitUtils recordingUnitUtils;
-    private final FieldService fieldService;
+    private final transient FieldService fieldService;
     private final LangBean langBean;
-    private final ConceptService conceptService;
+    private final transient ConceptService conceptService;
     private final SessionSettings sessionSettings;
-    private final FieldConfigurationService fieldConfigurationService;
+    private final transient FieldConfigurationService fieldConfigurationService;
 
     // Local
     private RecordingUnit recordingUnit;
     private String recordingUnitErrorMessage;
     private LocalDate startDate;
     private LocalDate endDate;
-    private List<Event> events; // Strati
+    private transient List<Event> events; // Strati
     private Boolean isLocalisationFromSIG;
-    private List<RecordingUnit> recordingUnitList;
-    private List<RecordingUnit> stratigraphySelectedRecordingUnit;
+    private transient List<RecordingUnit> recordingUnitList;
+    private transient List<RecordingUnit> stratigraphySelectedRecordingUnit;
 
-    private List<Concept> concepts;
+    private transient List<Concept> concepts;
     private Concept fType = null;
 
     @Data

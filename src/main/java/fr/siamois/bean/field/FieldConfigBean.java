@@ -1,4 +1,4 @@
-package fr.siamois.bean.Field;
+package fr.siamois.bean.field;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
@@ -36,9 +36,9 @@ import java.util.Optional;
 public class FieldConfigBean implements Serializable {
 
     // Injections
-    private final VocabularyService vocabularyService;
+    private final transient VocabularyService vocabularyService;
     private final LangBean langBean;
-    private final FieldConfigurationService fieldConfigurationService;
+    private final transient FieldConfigurationService fieldConfigurationService;
     private final SessionSettings sessionSettings;
     private final VocabularyConverter vocabularyConverter;
 
@@ -167,9 +167,7 @@ public class FieldConfigBean implements Serializable {
     }
 
     public List<Vocabulary> completeMethod() {
-        if (vocabularies == null) {
-            if (!StringUtils.isEmpty(fInstance)) loadInstance();
-        }
+        if (vocabularies == null && !StringUtils.isEmpty(fInstance)) loadInstance();
         return vocabularies;
     }
 

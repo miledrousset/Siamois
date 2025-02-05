@@ -1,4 +1,4 @@
-package fr.siamois.bean.Breadcrumb;
+package fr.siamois.bean.breadcrumb;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Component
 @Slf4j
 public class BreadcrumbBean implements Serializable {
-    private MenuModel model;
+    private transient MenuModel model;
 
     @PostConstruct
     public void init() {

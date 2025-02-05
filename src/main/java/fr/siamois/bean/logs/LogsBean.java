@@ -28,10 +28,10 @@ import java.util.List;
 @SessionScoped
 public class LogsBean implements Serializable {
 
-    private final HistoryService historyService;
+    private final transient HistoryService historyService;
     private final SessionSettings sessionSettings;
 
-    private List<HistoryOperation> operations;
+    private transient List<HistoryOperation> operations;
 
     private final LocalDateTime endOfToday = dateEndOfCurrentDay();
 

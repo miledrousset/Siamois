@@ -1,4 +1,4 @@
-package fr.siamois.bean.ActionUnit;
+package fr.siamois.bean.actionunit;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
@@ -7,13 +7,10 @@ import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
-import fr.siamois.models.recordingunit.RecordingUnit;
-import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
-import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import lombok.Data;
@@ -33,12 +30,11 @@ import jakarta.faces.context.FacesContext;
 public class ActionUnitBean implements Serializable {
 
     // Deps
-    private final ActionUnitService actionUnitService;
+    private final transient ActionUnitService actionUnitService;
     private final LangBean langBean;
     private final SessionSettings sessionSettings;
-    private final FieldConfigurationService fieldConfigurationService;
-    private final FieldService fieldService;
-
+    private final transient FieldConfigurationService fieldConfigurationService;
+    private final transient FieldService fieldService;
 
     // Local
     private ActionUnit actionUnit;
@@ -52,8 +48,8 @@ public class ActionUnitBean implements Serializable {
     // todo: remove below and implement properly
     private Concept c1 = new Concept();
     private Concept c2 = new Concept();
-    private List<Concept> actionCodeTypeOptions ;
-    private List<ActionCode> secondaryActionCodes ;
+    private transient List<Concept> actionCodeTypeOptions ;
+    private transient List<ActionCode> secondaryActionCodes ;
 
 
     public ActionUnitBean(ActionUnitService actionUnitService, LangBean langBean, SessionSettings sessionSettings, FieldConfigurationService fieldConfigurationService, FieldService fieldService) {
@@ -77,14 +73,12 @@ public class ActionUnitBean implements Serializable {
      */
     public List<ActionCode> completeActionCode(String input) {
 
-//        codes = fieldService.fetchAutocomplete(configurationWrapper, input, langBean.getLanguageCode());
         ActionCode code = new ActionCode();
         code.setCode("1115613");
         Concept c = new Concept();
         c.setLabel("Code OA");
         code.setType(c);
-        List<ActionCode> codes = List.of(code);
-        return codes;
+        return List.of(code);
 
     }
 
@@ -106,7 +100,7 @@ public class ActionUnitBean implements Serializable {
     }
 
     public void handleSelectPrimaryCode() {
-        return;
+        // To implement
     }
 
     public void addNewSecondaryCode() {
@@ -135,10 +129,6 @@ public class ActionUnitBean implements Serializable {
                             FacesMessage.SEVERITY_INFO,
                             "Info",
                             langBean.msg("actionunit.created", this.actionUnit.getName())));
-//
-//            FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
-
-            //return "/pages/actionUnit/actionUnit?faces-redirect=true&id=" + this.actionUnit.getId().toString();
 
         } catch (RuntimeException e) {
             FacesContext.getCurrentInstance().addMessage(null,

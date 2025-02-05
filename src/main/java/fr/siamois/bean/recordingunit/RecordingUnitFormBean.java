@@ -1,7 +1,7 @@
-package fr.siamois.bean.RecordingUnit;
+package fr.siamois.bean.recordingunit;
 
 import fr.siamois.bean.LangBean;
-import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
+import fr.siamois.bean.recordingunit.utils.RecordingUnitUtils;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
@@ -29,25 +29,24 @@ import java.util.List;
 @Component
 public class RecordingUnitFormBean implements Serializable {
 
-
     // Deps
-    private final RecordingUnitService recordingUnitService;
-    private final ActionUnitService actionUnitService;
-    private final PersonService personService;
+    private final transient RecordingUnitService recordingUnitService;
+    private final transient ActionUnitService actionUnitService;
+    private final transient PersonService personService;
     private final RecordingUnitUtils recordingUnitUtils;
-    private final FieldService fieldService;
+    private final transient FieldService fieldService;
     private final LangBean langBean;
-    private final ConceptService conceptService;
-    private final SessionSettings sessionSettings;
+    private final transient ConceptService conceptService;
+    private final transient SessionSettings sessionSettings;
 
     private RecordingUnit recordingUnit;
     private String recordingUnitErrorMessage; // If error while initing the recording unit
     private Long id;  // ID of the requested RU
     private LocalDate startDate;
     private LocalDate endDate;
-    private List<Event> events; // Strati
+    private transient List<Event> events; // Strati
     private Boolean isLocalisationFromSIG;
-    private List<Concept> concepts;
+    private transient List<Concept> concepts;
     private Concept fType = null;
 
     @Data

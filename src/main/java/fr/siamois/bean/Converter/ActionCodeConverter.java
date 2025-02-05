@@ -1,4 +1,4 @@
-package fr.siamois.bean.Converter;
+package fr.siamois.bean.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,13 +9,15 @@ import jakarta.faces.convert.Converter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 /**
  * PrimeFaces converter for {@link ActionCode} object
  * @author Grégory Bliault
  */
 @Slf4j
 @Component
-public class ActionCodeConverter implements Converter<ActionCode> {
+public class ActionCodeConverter implements Converter<ActionCode>, Serializable {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -25,7 +27,7 @@ public class ActionCodeConverter implements Converter<ActionCode> {
             return objectMapper.readValue(s, ActionCode.class);
         } catch (JsonProcessingException e) {
             log.error("Error while converting string to ActionCode object", e);
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
@@ -35,7 +37,7 @@ public class ActionCodeConverter implements Converter<ActionCode> {
             return objectMapper.writeValueAsString(o);
         } catch (JsonProcessingException e) {
             log.error("Error while converting Team object to string", e);
-            throw new RuntimeException(e);
+            return null;
         }
     }
 }

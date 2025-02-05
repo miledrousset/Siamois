@@ -1,4 +1,4 @@
-package fr.siamois.bean.Home;
+package fr.siamois.bean.home;
 
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.spatialunit.SpatialUnit;
@@ -25,11 +25,11 @@ import java.util.List;
 @SessionScoped
 public class HomeBean implements Serializable {
 
-    private final SpatialUnitService spatialUnitService;
+    private final transient SpatialUnitService spatialUnitService;
     private final SessionSettings sessionSettings;
 
     @Getter
-    private List<SpatialUnit> spatialUnitList;
+    private transient List<SpatialUnit> spatialUnitList;
 
     @Getter private String spatialUnitListErrorMessage;
 

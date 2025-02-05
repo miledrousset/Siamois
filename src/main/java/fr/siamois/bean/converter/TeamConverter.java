@@ -9,13 +9,15 @@ import jakarta.faces.convert.Converter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 /**
  * PrimeFaces converter for {@link Team} object
  * @author Julien Linget
  */
 @Slf4j
 @Component
-public class TeamConverter implements Converter<Team> {
+public class TeamConverter implements Converter<Team>, Serializable {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -25,7 +27,7 @@ public class TeamConverter implements Converter<Team> {
             return objectMapper.readValue(s, Team.class);
         } catch (JsonProcessingException e) {
             log.error("Error while converting string to Team object", e);
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
@@ -35,7 +37,7 @@ public class TeamConverter implements Converter<Team> {
             return objectMapper.writeValueAsString(o);
         } catch (JsonProcessingException e) {
             log.error("Error while converting Team object to string", e);
-            throw new RuntimeException(e);
+            return null;
         }
     }
 }

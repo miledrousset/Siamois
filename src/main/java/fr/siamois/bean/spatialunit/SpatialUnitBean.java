@@ -1,10 +1,8 @@
-package fr.siamois.bean.SpatialUnit;
+package fr.siamois.bean.spatialunit;
 
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.spatialunit.SpatialUnit;
-import fr.siamois.models.Team;
-import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.history.SpatialUnitHist;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.services.actionunit.ActionUnitService;
@@ -34,24 +32,24 @@ import java.util.List;
 @Data
 public class SpatialUnitBean implements Serializable {
 
-    private final SpatialUnitService spatialUnitService;
-    private final RecordingUnitService recordingUnitService;
-    private final ActionUnitService actionUnitService;
-    private final HistoryService historyService;
+    private final transient SpatialUnitService spatialUnitService;
+    private final transient RecordingUnitService recordingUnitService;
+    private final transient ActionUnitService actionUnitService;
+    private final transient HistoryService historyService;
     private final SessionSettings sessionSettings;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
-    private List<SpatialUnit> spatialUnitList;
-    private List<SpatialUnit> spatialUnitParentsList;
-    private List<RecordingUnit> recordingUnitList;
-    private List<ActionUnit> actionUnitList;
+    private transient List<SpatialUnit> spatialUnitList;
+    private transient List<SpatialUnit> spatialUnitParentsList;
+    private transient List<RecordingUnit> recordingUnitList;
+    private transient List<ActionUnit> actionUnitList;
     private String spatialUnitListErrorMessage;
     private String spatialUnitParentsListErrorMessage;
     private String actionUnitListErrorMessage;
     private String recordingUnitListErrorMessage;
 
-    private List<SpatialUnitHist> historyVersion;
+    private transient List<SpatialUnitHist> historyVersion;
 
     private SpatialUnitHist revisionToDisplay = null;
 
