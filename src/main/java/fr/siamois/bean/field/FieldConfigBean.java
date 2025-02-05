@@ -43,8 +43,8 @@ public class FieldConfigBean implements Serializable {
     private final VocabularyConverter vocabularyConverter;
 
     // Storage
-    private List<Vocabulary> vocabularies;
-    private List<Vocabulary> userVocab;
+    private transient List<Vocabulary> vocabularies;
+    private transient List<Vocabulary> userVocab;
 
     // Fields
     private String fInstance;
@@ -91,41 +91,27 @@ public class FieldConfigBean implements Serializable {
             vocabularies = vocabularyService.findAllPublicThesaurus(fInstance, langBean.getLanguageCode());
             if (!vocabularies.isEmpty()) fSelectedVocab = vocabularies.get(0);
         } catch (InvalidEndpointException e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "URL is invalid"));
+            displayErrorMessage("URL is invalid");
         }
+    }
+
+    private static void displayErrorMessage(String message) {
+        displayMessage(FacesMessage.SEVERITY_ERROR, "Error", message);
+    }
+
+    private static void displayMessage(FacesMessage.Severity severity, String title, String message) {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, title, message));
     }
 
     public void loadConfig() {
         Vocabulary databaseVocab = vocabularyService.saveOrGetVocabulary(fSelectedVocab);
-
         UserInfo info = sessionSettings.getUserInfo();
-        Optional<GlobalFieldConfig> config;
-        try {
-            config = fieldConfigurationService.setupFieldConfigurationForInstitution(info, databaseVocab);
-        } catch (NotSiamoisThesaurusException e) {
-            log.error(e.getMessage());
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Thesaurus is not valid"));
-            return;
-        }
-
-        if (config.isEmpty()) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Configuration saved"));
-            return;
-        }
-
-        GlobalFieldConfig wrongConfig = config.get();
-
-        if (!wrongConfig.missingFieldCode().isEmpty())
-            missingFieldCodes(wrongConfig);
-
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Error in thesaurus config"));
-
+        saveConfiguration(info, databaseVocab);
     }
 
     private static void missingFieldCodes(GlobalFieldConfig wrongConfig) {
         log.error("Error in config. Missing codes : {}", wrongConfig.missingFieldCode());
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", String.format("The codes %s are not in the thesaurus", wrongConfig.missingFieldCode())));
-
+        displayErrorMessage(String.format("The codes %s are not in the thesaurus", wrongConfig.missingFieldCode()));
     }
 
     public void loadUserInstance() {
@@ -136,7 +122,7 @@ public class FieldConfigBean implements Serializable {
             if (!userVocab.isEmpty()) fUserSelectedVocab = userVocab.get(0);
         } catch (InvalidEndpointException | RuntimeException e) {
             log.error("Error while loading instance", e);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "URL is invalid"));
+            displayErrorMessage(e.getMessage());
         }
     }
 
@@ -144,26 +130,30 @@ public class FieldConfigBean implements Serializable {
         Vocabulary databaseVocab = vocabularyService.saveOrGetVocabulary(fUserSelectedVocab);
 
         UserInfo info = sessionSettings.getUserInfo();
-        Optional<GlobalFieldConfig> config;
+
+        saveConfiguration(info, databaseVocab);
+    }
+
+    private void saveConfiguration(UserInfo info, Vocabulary databaseVocab) {
         try {
-            config = fieldConfigurationService.setupFieldConfigurationForUser(info, databaseVocab);
+            Optional<GlobalFieldConfig> config = fieldConfigurationService.setupFieldConfigurationForUser(info, databaseVocab);
+
+            if (config.isEmpty()) {
+                displayMessage(FacesMessage.SEVERITY_INFO, "Info", "Configuration saved for USER");
+                return;
+            }
+
+            GlobalFieldConfig wrongConfig = config.get();
+
+            if (!wrongConfig.missingFieldCode().isEmpty())
+                missingFieldCodes(wrongConfig);
+
+            displayErrorMessage("Error in thesaurus config");
+
         } catch (NotSiamoisThesaurusException e) {
             log.error(e.getMessage());
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Thesaurus is not valid"));
-            return;
+            displayErrorMessage("Thesaurus is not valid");
         }
-
-        if (config.isEmpty()) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Configuration saved for USER"));
-            return;
-        }
-
-        GlobalFieldConfig wrongConfig = config.get();
-
-        if (!wrongConfig.missingFieldCode().isEmpty())
-            missingFieldCodes(wrongConfig);
-
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Error in thesaurus config"));
     }
 
     public List<Vocabulary> completeMethod() {
