@@ -135,10 +135,12 @@ public class FieldConfigurationService {
         ConceptBranchDTO terms = conceptApi.fetchConceptsUnderTopTerm(parentConcept);
         List<Concept> result = new ArrayList<>();
 
+        input = input.toLowerCase();
+
         for (FullConceptDTO fullConcept : terms.getData().values()) {
             if (isNotParentConcept(fullConcept, parentConcept)) {
                 PurlInfoDTO label = getPrefLabelOfLang(info, fullConcept);
-                if (label.getValue().contains(input)) {
+                if (label.getValue().toLowerCase().contains(input)) {
                     result.add(createConceptFromDTO(parentConcept.getVocabulary(), label, fullConcept));
                 }
             }
@@ -147,7 +149,7 @@ public class FieldConfigurationService {
         if (result.isEmpty()) {
             for (FullConceptDTO fullConceptDTO : terms.getData().values()) {
                 PurlInfoDTO label = getPrefLabelOfLang(info, fullConceptDTO);
-                double similarity = stringSimilarity(label.getValue().toLowerCase(), input.toLowerCase());
+                double similarity = stringSimilarity(label.getValue().toLowerCase(), input);
                 if (similarity >= SIMILARITY_CAP) {
                     result.add(createConceptFromDTO(parentConcept.getVocabulary(), label, fullConceptDTO));
                 }
