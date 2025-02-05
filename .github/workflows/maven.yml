@@ -1,38 +1,30 @@
-name: Java CI with Maven
-
+name: SonarQube
 on:
   push:
-    branches: [ "main", "dev" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main", "dev" ]
-
+    types: [opened, synchronize, reopened]
 jobs:
   build:
+    name: Build and analyze
     runs-on: ubuntu-latest
+    environment: 'SONAR'
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml -DskipTests
-
-      - name: Unit Test with Maven
-        run: mvn -B test -Dgroups=!integration
-
-      - name: Integration test with Maven
-        run: mvn -B test -Dgroups=integration
-
+          java-version: 17
+          distribution: 'zulu' # Alternative distribution options are available.
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:

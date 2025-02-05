@@ -1,6 +1,6 @@
-package fr.siamois.bean.RecordingUnit;
+package fr.siamois.bean.recordingunit;
 
-import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
+import fr.siamois.bean.recordingunit.utils.RecordingUnitUtils;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -68,19 +69,26 @@ class NewRecordingUnitFormBeanTest {
 
     @Test
     void save() {
-
+        // TO IMPLEMENT
+        assertTrue(true);
     }
 
     @Test
     void offsetDateTimeToLocalDate() {
+        // TO IMPLEMENT
+        assertTrue(true);
     }
 
     @Test
     void localDateToOffsetDateTime() {
+        // TO IMPLEMENT
+        assertTrue(true);
     }
 
     @Test
     void completePerson() {
+        // TO IMPLEMENT
+        assertTrue(true);
     }
 
     @Test

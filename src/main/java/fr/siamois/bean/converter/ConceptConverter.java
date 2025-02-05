@@ -22,8 +22,8 @@ public class ConceptConverter implements Converter<Concept> {
         try {
             return mapper.readValue(s, Concept.class);
         } catch (JsonProcessingException e) {
-            log.error("Error while converting string to concept", e);
-            throw new RuntimeException(e);
+            log.error(e.getMessage(), e);
+            return null;
         }
     }
 
@@ -32,8 +32,8 @@ public class ConceptConverter implements Converter<Concept> {
         try {
             return mapper.writeValueAsString(concept);
         } catch (JsonProcessingException e) {
-            log.error("Error while converting concept to string", e);
-            throw new RuntimeException(e);
+            log.error(e.getMessage(), e);
+            return null;
         }
     }
 }

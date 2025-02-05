@@ -1,4 +1,4 @@
-package fr.siamois.bean.Field;
+package fr.siamois.bean.field;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 public class SpatialUnitFieldBean implements Serializable {
 
     // Injections
-    private final FieldService fieldService;
+    private final transient FieldService fieldService;
     private final LangBean langBean;
     private final SessionSettings sessionSettings;
     private final SpatialUnitService spatialUnitService;

@@ -10,18 +10,19 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
+import java.io.Serializable;
 import java.util.List;
 
 @Setter
 @Getter
 @Component
 @SessionScoped
-public class SessionSettings {
+public class SessionSettings implements Serializable {
 
-    private final InstitutionService institutionService;
+    private final transient InstitutionService institutionService;
     private final LangBean langBean;
     private Institution selectedInstitution;
-    private List<Institution> referencedInstitutions;
+    private transient List<Institution> referencedInstitutions;
 
     public SessionSettings(InstitutionService institutionService, LangBean langBean) {
         this.institutionService = institutionService;

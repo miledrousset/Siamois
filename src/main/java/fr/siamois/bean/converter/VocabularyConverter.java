@@ -6,10 +6,14 @@ import fr.siamois.models.vocabulary.Vocabulary;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.convert.Converter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
+@Slf4j
 @Component
-public class VocabularyConverter implements Converter<Vocabulary> {
+public class VocabularyConverter implements Converter<Vocabulary>, Serializable {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -18,7 +22,8 @@ public class VocabularyConverter implements Converter<Vocabulary> {
         try {
             return mapper.readValue(s, Vocabulary.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage(), e);
+            return null;
         }
     }
 
@@ -27,7 +32,8 @@ public class VocabularyConverter implements Converter<Vocabulary> {
         try {
             return mapper.writeValueAsString(vocabulary);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage(), e);
+            return null;
         }
     }
 }

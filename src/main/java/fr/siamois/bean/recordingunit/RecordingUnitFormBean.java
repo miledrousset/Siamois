@@ -1,7 +1,7 @@
-package fr.siamois.bean.RecordingUnit;
+package fr.siamois.bean.recordingunit;
 
 import fr.siamois.bean.LangBean;
-import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
+import fr.siamois.bean.recordingunit.utils.RecordingUnitUtils;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
@@ -11,8 +11,6 @@ import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldService;
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -29,25 +27,24 @@ import java.util.List;
 @Component
 public class RecordingUnitFormBean implements Serializable {
 
-
     // Deps
-    private final RecordingUnitService recordingUnitService;
-    private final ActionUnitService actionUnitService;
-    private final PersonService personService;
-    private final RecordingUnitUtils recordingUnitUtils;
-    private final FieldService fieldService;
+    private final transient RecordingUnitService recordingUnitService;
+    private final transient ActionUnitService actionUnitService;
+    private final transient PersonService personService;
+    private final transient RecordingUnitUtils recordingUnitUtils;
+    private final transient FieldService fieldService;
     private final LangBean langBean;
-    private final ConceptService conceptService;
-    private final SessionSettings sessionSettings;
+    private final transient ConceptService conceptService;
+    private final transient SessionSettings sessionSettings;
 
     private RecordingUnit recordingUnit;
     private String recordingUnitErrorMessage; // If error while initing the recording unit
     private Long id;  // ID of the requested RU
     private LocalDate startDate;
     private LocalDate endDate;
-    private List<Event> events; // Strati
+    private transient List<Event> events; // Strati
     private Boolean isLocalisationFromSIG;
-    private List<Concept> concepts;
+    private transient List<Concept> concepts;
     private Concept fType = null;
 
     @Data
@@ -60,33 +57,8 @@ public class RecordingUnitFormBean implements Serializable {
     }
 
     public String save() {
-        try {
-
-            this.recordingUnit = recordingUnitUtils.save(recordingUnit, fType, startDate, endDate);
-
-            // Return page with id
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(
-                            FacesMessage.SEVERITY_INFO,
-                            "Info",
-                            langBean.msg("recordingunit.updated", this.recordingUnit.getCode())));
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
-            return "/pages/recordingUnit/recordingUnit?faces-redirect=true&id=" + this.recordingUnit.getId().toString();
-
-        } catch (RuntimeException e) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(
-                            FacesMessage.SEVERITY_ERROR,
-                            "Error",
-                            langBean.msg("recordingunit.updatefailed", this.recordingUnit.getCode())));
-
-            log.error("Error while saving: " + e.getMessage());
-            // todo : add error message
-            return null;
-        }
-
-        // Return page with id
-
+        this.recordingUnit = recordingUnitUtils.save(recordingUnit, fType, startDate, endDate);
+        return recordingUnitUtils.save(recordingUnit, langBean);
     }
 
     public RecordingUnitFormBean(

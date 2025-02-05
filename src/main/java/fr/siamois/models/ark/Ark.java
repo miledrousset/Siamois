@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @Entity
 @Table(name = "ark", schema = "public")
-public class Ark {
+public class Ark implements Serializable {
 
     @Id
     @Column(name = "ark_id", nullable = false, length = Integer.MAX_VALUE)

@@ -1,15 +1,12 @@
-package fr.siamois.bean.ActionUnit;
+package fr.siamois.bean.actionunit;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.UserInfo;
-import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
-import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.vocabulary.ConceptService;
@@ -35,8 +32,8 @@ import java.util.List;
 public class NewActionUnitBean implements Serializable {
 
     // Deps
-    private final ActionUnitService actionUnitService;
-    private final FieldService fieldService;
+    private final transient ActionUnitService actionUnitService;
+    private final transient FieldService fieldService;
     private final LangBean langBean;
     private final SessionSettings sessionSettings;
     private final FieldConfigurationService fieldConfigurationService;
@@ -44,7 +41,7 @@ public class NewActionUnitBean implements Serializable {
 
     // Local
     private ActionUnit actionUnit;
-    private List<Concept> concepts;
+    private transient List<Concept> concepts;
     private Concept fieldType = null;
     private Concept typeParent;
 
