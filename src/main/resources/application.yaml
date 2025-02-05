@@ -23,7 +23,6 @@ spring:
   datasource:
  #   platform: postgres
     url: jdbc:postgresql://localhost:5432/siamois
-    password: siamois
     username: siamois
     hikari:
       maximum-pool-size: 1000
