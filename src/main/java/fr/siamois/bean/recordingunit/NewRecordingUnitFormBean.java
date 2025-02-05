@@ -39,7 +39,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     private final transient RecordingUnitService recordingUnitService;
     private final transient ActionUnitService actionUnitService;
     private final transient PersonService personService;
-    private final RecordingUnitUtils recordingUnitUtils;
+    private final transient RecordingUnitUtils recordingUnitUtils;
     private final transient FieldService fieldService;
     private final LangBean langBean;
     private final transient ConceptService conceptService;
@@ -86,32 +86,8 @@ public class NewRecordingUnitFormBean implements Serializable {
     }
 
     public String save() {
-        try {
-
-            this.recordingUnit = recordingUnitUtils.save(recordingUnit, fType, startDate, endDate);
-            // Return page with id
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(
-                            FacesMessage.SEVERITY_INFO,
-                            "Info",
-                            langBean.msg("recordingunit.created", this.recordingUnit.getCode())));
-
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
-
-            return "/pages/recordingUnit/recordingUnit?faces-redirect=true&id=" + this.recordingUnit.getId().toString();
-
-        } catch (RuntimeException e) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(
-                            FacesMessage.SEVERITY_ERROR,
-                            "Error",
-                            langBean.msg("recordingunit.creationfailed", this.recordingUnit.getCode())));
-
-            log.error("Error while saving: " + e.getMessage());
-            // todo : add error message
-            return null;
-        }
-
+        this.recordingUnit = recordingUnitUtils.save(recordingUnit, fType, startDate, endDate);
+        return recordingUnitUtils.save(recordingUnit, langBean);
     }
 
 
