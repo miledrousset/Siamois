@@ -302,6 +302,16 @@
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
                         <version>${jacoco.version}</version>
+                        <configuration>
+                            <excludes>
+                                <exclude>fr/siamois/models/**/*</exclude>
+                                <exclude>fr/siamois/config/**/*</exclude>
+                                <exclude>**/*Exception.*</exclude>
+                                <exclude>**/*Bean.*</exclude>
+                                <exclude>**/*Converter.*</exclude>
+                                <exclude>**/*Builder.*</exclude>
+                            </excludes>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>
@@ -315,14 +325,6 @@
                                     <goal>report</goal>
                                 </goals>
                                 <configuration>
-                                    <excludes>
-                                        <exclude>fr/siamois/models/**/*</exclude>
-                                        <exclude>fr/siamois/config/**/*</exclude>
-                                        <exclude>**/*Exception.*</exclude>
-                                        <exclude>**/*Bean.*</exclude>
-                                        <exclude>**/*Converter.*</exclude>
-                                        <exclude>**/*Builder.*</exclude>
-                                    </excludes>
                                     <formats>
                                         <format>XML</format>
                                     </formats>
