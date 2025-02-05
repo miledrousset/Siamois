@@ -184,7 +184,10 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
         String query = "SELECT * FROM " + tableName +" WHERE fk_author_id = ? AND fk_institution_id = ? AND update_time BETWEEN ? AND ?";
         PreparedStatement statement = prepareQueryStatement(userInfo, start, end, connection, query);
 
-        return statement.executeQuery();
+        ResultSet result = statement.executeQuery();
+        statement.close();
+
+        return result;
     }
 
 }
