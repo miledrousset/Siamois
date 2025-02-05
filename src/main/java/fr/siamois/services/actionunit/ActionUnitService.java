@@ -1,14 +1,13 @@
 package fr.siamois.services.actionunit;
 
-import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
+import fr.siamois.infrastructure.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
+import fr.siamois.models.exceptions.FailedActionUnitSaveException;
 import fr.siamois.models.spatialunit.SpatialUnit;
-import fr.siamois.models.Team;
 import fr.siamois.models.UserInfo;
-import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.ActionUnitNotFoundException;
@@ -16,13 +15,12 @@ import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.ark.ArkGenerator;
 import fr.siamois.services.vocabulary.ConceptService;
-import fr.siamois.models.vocabulary.Vocabulary;
-import fr.siamois.services.vocabulary.FieldService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -32,13 +30,15 @@ public class ActionUnitService {
     private final ActionUnitRepository actionUnitRepository;
     private final ArkServerRepository arkServerRepository;
     private final ConceptService conceptService;
+    private final ActionCodeRepository actionCodeRepository;
 
     public ActionUnitService(ActionUnitRepository actionUnitRepository,
                              ArkServerRepository arkServerRepository,
-                             ConceptService conceptService) {
+                             ConceptService conceptService, ActionCodeRepository actionCodeRepository) {
         this.actionUnitRepository = actionUnitRepository;
         this.arkServerRepository = arkServerRepository;
         this.conceptService = conceptService;
+        this.actionCodeRepository = actionCodeRepository;
     }
 
     public List<ActionUnit> findAllBySpatialUnitId(SpatialUnit spatialUnit)   {
@@ -89,10 +89,37 @@ public class ActionUnitService {
         }
     }
 
+    public List<ActionCode> findAllActionCodeByCodeIsContainingIgnoreCase(String query) {
+        return actionCodeRepository.findAllByCodeIsContainingIgnoreCase(query);
+    }
+
     @Transactional
     public ActionUnit save(ActionUnit actionUnit, List<ActionCode> secondaryActionCodes) {
 
         try {
+
+            // Look at the primary action code
+            ActionCode primaryActionCode = actionUnit.getPrimaryActionCode();
+            // Is the action code concept already in DB ?
+            Concept actionCodeType = conceptService.saveOrGetConcept(actionUnit.getPrimaryActionCode().getType());
+            actionUnit.getPrimaryActionCode().setType(actionCodeType);
+            // Is the action code already in DB ?
+            Optional<ActionCode> optActionCode = actionCodeRepository.findById(actionUnit.getPrimaryActionCode().getCode());
+            if(optActionCode.isPresent()) {
+                if(actionUnit.getPrimaryActionCode().getType().equals(optActionCode.get().getType())) {
+                    // If the type matches
+                    actionUnit.setPrimaryActionCode(optActionCode.get());
+                }
+                else {
+                    throw new FailedActionUnitSaveException("Code exists but type does not match");
+                }
+            }
+            else {
+                actionUnit.setPrimaryActionCode(actionCodeRepository.save(actionUnit.getPrimaryActionCode()));
+            }
+
+            // Handle secondary codes
+
 
             // Get the old version of the actionUnit
             ActionUnit currentVersion = actionUnitRepository.findById(actionUnit.getId()).get();
@@ -113,7 +140,7 @@ public class ActionUnitService {
 
             return actionUnitRepository.save(actionUnit);
         } catch (RuntimeException e) {
-            throw new FailedRecordingUnitSaveException(e.getMessage());
+            throw new FailedActionUnitSaveException(e.getMessage());
         }
     }
 

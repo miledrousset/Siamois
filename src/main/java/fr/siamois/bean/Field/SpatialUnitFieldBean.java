@@ -2,9 +2,7 @@ package fr.siamois.bean.Field;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.spatialunit.SpatialUnit;
-import fr.siamois.models.auth.Person;
 import fr.siamois.bean.converter.ConceptConverter;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
@@ -43,7 +41,6 @@ public class SpatialUnitFieldBean implements Serializable {
     private final SessionSettings sessionSettings;
     private final SpatialUnitService spatialUnitService;
     private final ConceptService conceptService;
-    private final ConceptConverter conceptConverter;
     private final FieldConfigurationService fieldConfigurationService;
 
     // Storage
@@ -62,13 +59,12 @@ public class SpatialUnitFieldBean implements Serializable {
                                 SessionSettings sessionSettings,
                                 SpatialUnitService spatialUnitService,
                                 ConceptService conceptService,
-                                ConceptConverter conceptConverter, FieldConfigurationService fieldConfigurationService) {
+                                FieldConfigurationService fieldConfigurationService) {
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.sessionSettings = sessionSettings;
         this.spatialUnitService = spatialUnitService;
         this.conceptService = conceptService;
-        this.conceptConverter = conceptConverter;
         this.fieldConfigurationService = fieldConfigurationService;
     }
 

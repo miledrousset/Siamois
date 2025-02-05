@@ -20,7 +20,7 @@ public class ConceptService {
         this.conceptRepository = conceptRepository;
     }
 
-    public Concept saveOrGetConcept(Concept concept) {
+    public Concept  saveOrGetConcept(Concept concept) {
         Vocabulary vocabulary = concept.getVocabulary();
         Optional<Concept> optConcept = conceptRepository.findConceptByExternalIdIgnoreCase(vocabulary.getExternalVocabularyId(), concept.getExternalId());
         return optConcept.orElseGet(() -> conceptRepository.save(concept));
