@@ -316,12 +316,12 @@
                                 </goals>
                                 <configuration>
                                     <excludes>
-                                        <exclude>fr/siamois/models/**</exclude>
-                                        <exclude>fr/siamois/config/**</exclude>
-                                        <exclude>**/*Exception.java</exclude>
-                                        <exclude>**/*Bean.java</exclude>
-                                        <exclude>**/*Converter.java</exclude>
-                                        <exclude>**/*Builder.java</exclude>
+                                        <exclude>fr/siamois/models/**/*</exclude>
+                                        <exclude>fr/siamois/config/**/*</exclude>
+                                        <exclude>**/*Exception.*</exclude>
+                                        <exclude>**/*Bean.*</exclude>
+                                        <exclude>**/*Converter.*</exclude>
+                                        <exclude>**/*Builder.*</exclude>
                                     </excludes>
                                     <formats>
                                         <format>XML</format>
