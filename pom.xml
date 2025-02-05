@@ -53,7 +53,8 @@
             src/main/resources/META-INF/resources/resources/js/bootstrap*,
             src/main/resources/META-INF/resources/resources/js/jquery*,
             src/main/resources/META-INF/resources/resources/css/bootstrap*,
-            src/main/resources/META-INF/resources/resources/css/jquery*
+            src/main/resources/META-INF/resources/resources/css/jquery*,
+            src/main/resources/changelog/database/**
         </sonar.exclusions>
 
     </properties>
