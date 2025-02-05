@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(methods = { RequestMethod.GET })
 public class PingController {
 
     @GetMapping(value = "ping", produces = MediaType.APPLICATION_JSON_VALUE)

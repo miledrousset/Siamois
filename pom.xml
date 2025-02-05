@@ -315,6 +315,14 @@
                                     <goal>report</goal>
                                 </goals>
                                 <configuration>
+                                    <excludes>
+                                        <exclude>fr/siamois/models/**</exclude>
+                                        <exclude>fr/siamois/config/**</exclude>
+                                        <exclude>**/*Exception.java</exclude>
+                                        <exclude>**/*Bean.java</exclude>
+                                        <exclude>**/*Converter.java</exclude>
+                                        <exclude>**/*Builder.java</exclude>
+                                    </excludes>
                                     <formats>
                                         <format>XML</format>
                                     </formats>
