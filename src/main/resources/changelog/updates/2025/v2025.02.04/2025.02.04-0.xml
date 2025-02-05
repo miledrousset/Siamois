@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--
+    Drop field_vocabulary_collection. Replaced by concept_field_config
+    -->
+
+    <changeSet id="2025.02.04-0" author="Julien Linget">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="field_vocabulary_collection"/>
+                <tableExists tableName="vocabulary_collection"/>
+            </and>
+        </preConditions>
+
+        <dropTable tableName="field_vocabulary_collection"/>
+        <dropTable tableName="vocabulary_collection"/>
+
+    </changeSet>
+
+</databaseChangeLog>

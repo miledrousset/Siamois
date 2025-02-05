@@ -30,6 +30,8 @@ public class Concept {
     @Column(name = "external_id", length = Integer.MAX_VALUE)
     private String externalId;
 
-    // Ajouter LANG
+    @NotNull
+    @Column(name = "label_lang", length = Integer.MAX_VALUE)
+    private String langCode;
 
 }

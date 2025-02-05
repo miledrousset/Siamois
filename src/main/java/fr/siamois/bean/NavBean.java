@@ -1,11 +1,9 @@
 package fr.siamois.bean;
 
-import fr.siamois.bean.converter.TeamConverter;
-import fr.siamois.models.Team;
+import fr.siamois.bean.converter.InstitutionConverter;
+import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.NoTeamSelectedException;
-import fr.siamois.services.TeamService;
-import fr.siamois.services.publisher.TeamChangeEventPublisher;
+import fr.siamois.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
@@ -33,26 +31,24 @@ import java.util.Optional;
 public class NavBean implements Serializable {
 
     private final SessionSettings sessionSettings;
-    private final TeamService teamService;
-    private final TeamConverter converter;
-    private final TeamConverter teamConverter;
-    private final TeamChangeEventPublisher teamChangeEventPublisher;
+    private final InstitutionChangeEventPublisher institutionChangeEventPublisher;
+    private final InstitutionConverter converter;
 
-    private List<Team> allTeams;
+    private List<Institution> institutions;
 
-    private List<Team> teams;
+    private Institution selectedInstitution;
 
-    private Team selectedTeam;
-
-    public NavBean(SessionSettings sessionSettings, TeamService teamService, TeamConverter converter, TeamConverter teamConverter, TeamChangeEventPublisher teamChangeEventPublisher) {
+    public NavBean(SessionSettings sessionSettings, InstitutionChangeEventPublisher institutionChangeEventPublisher, InstitutionConverter converter) {
         this.sessionSettings = sessionSettings;
-        this.teamService = teamService;
+        this.institutionChangeEventPublisher = institutionChangeEventPublisher;
         this.converter = converter;
-        this.teamConverter = teamConverter;
-        log.trace("Nav bean constructor called");
-        this.teamChangeEventPublisher = teamChangeEventPublisher;
     }
 
+    public void init() {
+        log.trace("Initializing NavBean");
+        institutions = sessionSettings.getReferencedInstitutions();
+        selectedInstitution = sessionSettings.getSelectedInstitution();
+    }
 
     /**
      * Builds the logout path with the context path
@@ -91,14 +87,10 @@ public class NavBean implements Serializable {
         return false;
     }
 
-    public void changeSelectedTeam() {
-        try {
-            Team oldTeam = sessionSettings.getSelectedTeam();
-            sessionSettings.setSelectedTeam(selectedTeam);
-            teamChangeEventPublisher.publishTeamChangeEvent();
-            log.trace("Team changed from {} to {}", oldTeam.toString(), selectedTeam.toString());
-        } catch (NoTeamSelectedException e) {
-            log.error("No team selected", e);
-        }
+    public void changeSelectedInstitution() {
+        Institution oldInstit = sessionSettings.getSelectedInstitution();
+        sessionSettings.setSelectedInstitution(selectedInstitution);
+        institutionChangeEventPublisher.publishTeamChangeEvent();
+        log.trace("Institution changed from {} to {}", oldInstit.toString(), selectedInstitution.toString());
     }
 }

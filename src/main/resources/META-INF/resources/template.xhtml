@@ -26,6 +26,9 @@
 <h:body>
     <!-- Growl -->
     <p:growl id="main-growl" showDetail="true" />
+
+    <f:event type="preRenderView" listener="#{navBean.init()}"/>
+
     <!-- Sidebar -->
     <p:sidebar id="leftNavSidebar" widgetVar="sidebar">
         <div>
@@ -64,13 +67,13 @@
             <h:form>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <p:selectOneMenu id="teamSelection"
-                                 value="#{navBean.selectedTeam}"
+                                 value="#{navBean.selectedInstitution}"
                                  converter="#{navBean.converter}">
                     <f:selectItems
-                            value="#{navBean.teams}"
+                            value="#{navBean.institutions}"
                             itemLabel="#{team.name}"
                             var="team"/>
-                    <p:ajax listener="#{navBean.changeSelectedTeam()}" update="main"/>
+                    <p:ajax listener="#{navBean.changeSelectedInstitution()}" update="main"/>
                 </p:selectOneMenu>
             </h:form>
 
@@ -114,8 +117,8 @@
 
 
                             <h:button rendered="#{navBean.userIs('ADMIN')}"
-                                      value='${langBean.msg("nav.create.team")}'
-                                      outcome="/pages/admin/team.xhtml" styleClass="btn btn-danger"/>
+                                      value="Créer une organisation"
+                                      outcome="/pages/admin/institution.xhtml" styleClass="btn btn-danger"/>
 
                         </nav>
                     </f:facet>

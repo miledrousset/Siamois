@@ -53,7 +53,7 @@ class NewRecordingUnitFormBeanTest {
         // Below is hardcoded but it should not be. TODO
         //ActionUnit actionUnit = this.actionUnitService.findById(4);
         //this.recordingUnit.setActionUnit(actionUnit);
-        this.recordingUnit.setSerial_id(1);
+        this.recordingUnit.setCode(1);
         // Init size & altimetry
         this.recordingUnit.setSize(new RecordingUnitSize());
         this.recordingUnit.getSize().setSize_unit("cm");

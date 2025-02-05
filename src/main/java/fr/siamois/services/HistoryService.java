@@ -5,6 +5,7 @@ import fr.siamois.infrastructure.repositories.history.SpatialUnitHistoryReposito
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.Team;
 import fr.siamois.models.auth.Person;
+import fr.siamois.models.UserInfo;
 import fr.siamois.models.history.HistoryOperation;
 import fr.siamois.models.history.HistoryUpdateType;
 import fr.siamois.models.history.SpatialUnitHist;
@@ -33,25 +34,25 @@ public class HistoryService {
     }
 
 
-    public List<HistoryOperation> findAllOperationsOfUserAndTeamBetween(Person person, Team team, OffsetDateTime start, OffsetDateTime end) {
+    public List<HistoryOperation> findAllOperationsOfUserAndTeamBetween(UserInfo info, OffsetDateTime start, OffsetDateTime end) {
         if (start.isAfter(end)) return new ArrayList<>();
 
         List<HistoryOperation> operations = new ArrayList<>();
-        addAllCreationOperations(person, team, operations, start, end);
-        addAllHistoryOperations(person, team, operations, start, end);
+        addAllCreationOperations(info, operations, start, end);
+        addAllHistoryOperations(info, operations, start, end);
 
         operations.sort(Comparator.comparing(HistoryOperation::actionDatetime).reversed());
 
         return operations;
     }
 
-    private void addAllHistoryOperations(Person person, Team team, List<HistoryOperation> operations, OffsetDateTime beginTime, OffsetDateTime endTime) {
+    private void addAllHistoryOperations(UserInfo info, List<HistoryOperation> operations, OffsetDateTime beginTime, OffsetDateTime endTime) {
         for (int i = 0; i < entityName.size(); i++)
-            addHistoryOperation(operations, tableNames.get(i), entityName.get(i), person, team, beginTime, endTime);
+            addHistoryOperation(operations, tableNames.get(i), entityName.get(i), info, beginTime, endTime);
     }
 
-    private void addHistoryOperation(List<HistoryOperation> operations, String tableName, String entityName, Person person, Team team, OffsetDateTime start, OffsetDateTime end) {
-        globalHistoryRepository.findAllHistoryOfUserBetween("history_" + tableName, person, team, start, end).forEach((entry) ->
+    private void addHistoryOperation(List<HistoryOperation> operations, String tableName, String entityName, UserInfo info, OffsetDateTime start, OffsetDateTime end) {
+        globalHistoryRepository.findAllHistoryOfUserBetween("history_" + tableName, info, start, end).forEach((entry) ->
                 operations.add(new HistoryOperation(entry.getUpdateType(),
                         entityName,
                         entry.getTableId(),
@@ -59,8 +60,8 @@ public class HistoryService {
                 );
     }
 
-    private void addCreateOperation(List<HistoryOperation> operations, String tableName, String entityName, Person person, Team team, OffsetDateTime start, OffsetDateTime end) {
-        globalHistoryRepository.findAllCreationOfUserBetween(tableName, person, team,  start, end).forEach((entity) ->
+    private void addCreateOperation(List<HistoryOperation> operations, String tableName, String entityName, UserInfo info, OffsetDateTime start, OffsetDateTime end) {
+        globalHistoryRepository.findAllCreationOfUserBetween(tableName, info,  start, end).forEach((entity) ->
                 operations.add(new HistoryOperation(HistoryUpdateType.CREATE,
                         entityName,
                         entity.getId(),
@@ -68,9 +69,9 @@ public class HistoryService {
                 );
     }
 
-    private void addAllCreationOperations(Person person, Team team, List<HistoryOperation> operations, OffsetDateTime beginTime, OffsetDateTime endTime) {
+    private void addAllCreationOperations(UserInfo info, List<HistoryOperation> operations, OffsetDateTime beginTime, OffsetDateTime endTime) {
         for (int i = 0; i < entityName.size(); i++)
-            addCreateOperation(operations, tableNames.get(i), entityName.get(i), person, team, beginTime, endTime);
+            addCreateOperation(operations, tableNames.get(i), entityName.get(i), info, beginTime, endTime);
     }
 
     public List<SpatialUnitHist> findSpatialUnitHistory(SpatialUnit current) {

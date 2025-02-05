@@ -3,12 +3,20 @@ package fr.siamois.services;
 import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.Team;
+import fr.siamois.models.Institution;
+import fr.siamois.models.UserInfo;
+import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
 import fr.siamois.models.history.SpatialUnitHist;
+import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.services.vocabulary.ConceptService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service to manage SpatialUnit
@@ -20,9 +28,11 @@ import java.util.List;
 public class SpatialUnitService {
 
     private final SpatialUnitRepository spatialUnitRepository;
+    private final ConceptService conceptService;
 
-    public SpatialUnitService(SpatialUnitRepository spatialUnitRepository) {
+    public SpatialUnitService(SpatialUnitRepository spatialUnitRepository, ConceptService conceptService) {
         this.spatialUnitRepository = spatialUnitRepository;
+        this.conceptService = conceptService;
     }
 
     /**
@@ -49,14 +59,6 @@ public class SpatialUnitService {
         return spatialUnitRepository.findAllParentsOfSpatialUnit(spatialUnit.getId());
     }
 
-    public List<SpatialUnit> findAllChildOfSpatialUnitOfTeam(SpatialUnit spatialUnit, Team team) {
-        return spatialUnitRepository.findAllChildOfSpatialUnitOfTeam(spatialUnit.getId(), team.getId());
-    }
-
-    public List<SpatialUnit> findAllParentsOfSpatialUnitOfTeam(SpatialUnit spatialUnit, Team team) {
-        return spatialUnitRepository.findAllParentsOfSpatialUnitOfTeam(spatialUnit.getId(), team.getId());
-    }
-
     /**
      * Find a spatial unit by its ID
      *
@@ -80,7 +82,36 @@ public class SpatialUnitService {
         spatialUnitRepository.save(spatialUnit);
     }
 
-    public List<SpatialUnit> findAllWithoutParentsOfTeam(Team selectedTeam) {
-        return spatialUnitRepository.findAllWithoutParentsOfTeam(selectedTeam.getId());
+    public List<SpatialUnit> findAllWithoutParentsOfInstitution(Institution institution) {
+        return spatialUnitRepository.findAllWithoutParentsOfInstitution(institution.getId());
     }
+
+    public List<SpatialUnit> findAllOfInstitution(Institution institution) {
+        return spatialUnitRepository.findAllOfInstitution(institution.getId());
+    }
+
+    public SpatialUnit save(UserInfo info, String name, Concept type, List<SpatialUnit> parents) throws SpatialUnitAlreadyExistsException {
+        Optional<SpatialUnit> optSpatialUnit = spatialUnitRepository.findByNameAndInstitution(name, info.getInstitution().getId());
+        if (optSpatialUnit.isPresent())
+            throw new SpatialUnitAlreadyExistsException(
+                    String.format("Spatial Unit with name %s already exist in institution %s", name, info.getInstitution().getName()));
+
+        type = conceptService.saveOrGetConcept(type);
+
+        SpatialUnit spatialUnit = new SpatialUnit();
+        spatialUnit.setName(name);
+        spatialUnit.setCreatedByInstitution(info.getInstitution());
+        spatialUnit.setAuthor(info.getUser());
+        spatialUnit.setCategory(type);
+        spatialUnit.setCreationTime(OffsetDateTime.now(ZoneId.systemDefault()));
+
+        spatialUnit = spatialUnitRepository.save(spatialUnit);
+
+        for (SpatialUnit parent : parents) {
+            spatialUnitRepository.addParentToSpatialUnit(spatialUnit.getId(), parent.getId());
+        }
+
+        return spatialUnit;
+    }
+
 }

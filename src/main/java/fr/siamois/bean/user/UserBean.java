@@ -3,16 +3,14 @@ package fr.siamois.bean.user;
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.NavBean;
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
-import fr.siamois.models.Team;
+import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.FailedTeamSaveException;
+import fr.siamois.models.exceptions.FailedInstitutionSaveException;
 import fr.siamois.models.exceptions.NoConfigForField;
-import fr.siamois.models.exceptions.NoTeamSelectedException;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.models.vocabulary.Vocabulary;
-import fr.siamois.services.TeamService;
+import fr.siamois.services.InstitutionService;
+import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.MessageUtils;
@@ -42,30 +40,35 @@ public class UserBean implements Serializable {
     // Injections
     private final SessionSettings sessionSettings;
     private final UserAddBean userAddBean;
-    private final TeamService teamService;
-    private final FieldConfigurationService fieldConfigurationService;
     private final FieldService fieldService;
     private final LangBean langBean;
     private final NavBean navBean;
+    private final InstitutionService institutionService;
+    private final ConceptService conceptService;
+    private final FieldConfigurationService fieldConfigurationService;
 
     // Storage
     private Vocabulary vocabularyConfiguration;
-    private FieldConfigurationWrapper fieldConfig;
     private List<Person> teamMembers;
-    private List<ConceptFieldDTO> concepts;
+    private List<Concept> concepts;
 
     // Fields
-    private ConceptFieldDTO role = null;
-    private Team adminTeamSelection = null;
+    private Concept role = null;
+    private Institution adminInstitutionSelection = null;
 
-    public UserBean(UserAddBean userAddBean, TeamService teamService, SessionSettings sessionSettings, FieldConfigurationService fieldConfigurationService, FieldService fieldService, LangBean langBean, NavBean navBean) {
+    public UserBean(UserAddBean userAddBean,
+                    SessionSettings sessionSettings,
+                    FieldService fieldService,
+                    LangBean langBean,
+                    NavBean navBean, InstitutionService institutionService, ConceptService conceptService, FieldConfigurationService fieldConfigurationService) {
         this.userAddBean = userAddBean;
-        this.teamService = teamService;
         this.sessionSettings = sessionSettings;
-        this.fieldConfigurationService = fieldConfigurationService;
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.navBean = navBean;
+        this.institutionService = institutionService;
+        this.conceptService = conceptService;
+        this.fieldConfigurationService = fieldConfigurationService;
     }
 
     /**
@@ -80,17 +83,8 @@ public class UserBean implements Serializable {
      * Load the team members
      */
     private void loadTeamMembers() {
-        try {
-            fieldConfig = fieldConfigurationService.fetchConfigurationOfFieldCode(sessionSettings.getAuthenticatedUser(), Person.USER_ROLE_FIELD_CODE);
-            teamMembers = teamService.findTeamMembers(sessionSettings.getSelectedTeam());
-            log.trace("Team members : {}", teamMembers);
-        } catch (NoConfigForField e) {
-            log.error("Error while loading member configuration", e);
-            MessageUtils.displayErrorMessage(langBean, "commons.error.fieldconfig");
-        } catch (NoTeamSelectedException e) {
-            log.error("No team selected", e);
-            MessageUtils.displayErrorMessage(langBean, "commons.error.team.notselected");
-        }
+        teamMembers = institutionService.findMembersOf(sessionSettings.getSelectedInstitution());
+        log.trace("Team members : {}", teamMembers);
     }
 
     /**
@@ -101,9 +95,8 @@ public class UserBean implements Serializable {
      * @throws NoConfigForField if the field configuration is not found
      */
     public List<String> autocompleteRoles(String input) throws NoConfigForField {
-        if (fieldConfig == null) fieldConfig = fieldConfigurationService.fetchConfigurationOfFieldCode(sessionSettings.getAuthenticatedUser(), Person.USER_ROLE_FIELD_CODE);
-        concepts = fieldService.fetchAutocomplete(fieldConfig, input, langBean.getLanguageCode());
-        return concepts.stream().map(ConceptFieldDTO::getLabel).collect(Collectors.toList());
+        concepts = fieldConfigurationService.fetchAutocomplete(sessionSettings.getUserInfo(), Person.USER_ROLE_FIELD_CODE, input);
+        return concepts.stream().map(Concept::getLabel).collect(Collectors.toList());
     }
 
     /**
@@ -111,7 +104,6 @@ public class UserBean implements Serializable {
      */
     private void resetFields() {
         vocabularyConfiguration = null;
-        fieldConfig = null;
         concepts = new ArrayList<>();
     }
 
@@ -119,17 +111,14 @@ public class UserBean implements Serializable {
      * Create a user
      */
     public void createUser() {
-        Concept roleConcept = fieldService.saveConceptIfNotExist(fieldConfig, role);
+        Concept roleConcept = conceptService.saveOrGetConcept(role);
         try {
-            Team team = sessionSettings.getSelectedTeam();
+            Institution institution = sessionSettings.getSelectedInstitution();
             Person created = userAddBean.createUser(false);
-            teamService.addUserToTeam(created, team, roleConcept);
-        } catch (FailedTeamSaveException e) {
+            institutionService.addUserToInstitution(created, institution, roleConcept);
+        } catch (FailedInstitutionSaveException e) {
             log.error("Error while saving team", e);
             MessageUtils.displayErrorMessage(langBean, "commons.error.team.save");
-        } catch (NoTeamSelectedException e) {
-            log.error("No team selected", e);
-            MessageUtils.displayErrorMessage(langBean, "commons.error.team.notselected");
         }
     }
 

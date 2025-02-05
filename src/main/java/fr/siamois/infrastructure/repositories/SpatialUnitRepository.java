@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>, TraceableEntries {
@@ -37,15 +38,6 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
     )
     List<SpatialUnit> findAllWithoutParents();
 
-    @Transactional
-    @Modifying
-    @Query(
-            nativeQuery = true,
-            value = "INSERT INTO spatial_hierarchy(fk_parent_id, fk_child_id) " +
-                    "VALUES (:parentSpatialUnitId, :childSpatialUnitId)"
-    )
-    void saveSpatialUnitHierarchy(Long parentSpatialUnitId, Long childSpatialUnitId);
-
     @Query(
             nativeQuery = true,
             value = "SELECT su.* FROM spatial_unit su WHERE fk_author_id = :author AND creation_time BETWEEN :start AND :end"
@@ -57,27 +49,31 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
             value = "SELECT su.* " +
                     "FROM spatial_unit su " +
                     "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
-                    "WHERE su.fk_team_id = :teamId " +
+                    "WHERE su.fk_institution_id = :institutionId " +
                     "  AND sh.fk_parent_id IS NULL"
     )
-    List<SpatialUnit> findAllWithoutParentsOfTeam(Long teamId);
+    List<SpatialUnit> findAllWithoutParentsOfInstitution(Long institutionId);
 
     @Query(
             nativeQuery = true,
-            value = "SELECT su.* " +
-                    "FROM spatial_unit su " +
-                    "JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_parent_id " +
-                    "WHERE su.spatial_unit_id = :spatialUnitId AND su.fk_team_id = :teamId"
+            value = "SELECT su.* FROM spatial_unit su WHERE su.fk_institution_id = :institutionId"
     )
-    List<SpatialUnit> findAllChildOfSpatialUnitOfTeam(Long spatialUnitId, Long teamId);
+    List<SpatialUnit> findAllOfInstitution(Long institutionId);
+
+    @Transactional
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = "INSERT INTO spatial_hierarchy(fk_parent_id, fk_child_id) " +
+                    "VALUES (:parentId, :childId)"
+    )
+    void addParentToSpatialUnit(Long childId, Long parentId);
 
     @Query(
             nativeQuery = true,
-            value = "SELECT su.* " +
-                    "FROM spatial_unit su " +
-                    "JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
-                    "WHERE su.spatial_unit_id = :spatialUnitId AND su.fk_team_id = :teamId"
+            value = "SELECT su.* FROM spatial_unit su " +
+                    "WHERE UPPER(su.name) = UPPER(:spatialUnitName) AND su.fk_institution_id = :institutionId"
     )
-    List<SpatialUnit> findAllParentsOfSpatialUnitOfTeam(Long spatialUnitId, Long teamId);
+    Optional<SpatialUnit> findByNameAndInstitution(String spatialUnitName, Long institutionId);
 }
 

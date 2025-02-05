@@ -8,8 +8,8 @@ import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.recordingunit.RecordingUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
@@ -42,7 +42,6 @@ public class ActionUnitBean implements Serializable {
 
     // Local
     private ActionUnit actionUnit;
-    private FieldConfigurationWrapper configurationWrapper;
     private String actionUnitErrorMessage;
     private Long id;  // ID of the action unit requested
 
@@ -95,19 +94,15 @@ public class ActionUnitBean implements Serializable {
      * @param input the input of the user
      * @return the list of concepts that match the input to display in the autocomplete
      */
-    public List<ConceptFieldDTO> completeActionCodeType(String input) {
-
-        Person person = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("User should be connected"));
+    public List<Concept> completeActionCodeType(String input) {
 
         try {
-            if(this.configurationWrapper == null) {
-                this.configurationWrapper = fieldConfigurationService.fetchConfigurationOfFieldCode(person, ActionCode.TYPE_FIELD_CODE);
-            }
+            return fieldConfigurationService.fetchAutocomplete(sessionSettings.getUserInfo(), ActionCode.TYPE_FIELD_CODE, input);
         } catch (NoConfigForField e) {
-            log.error("No collection for field " + RecordingUnit.TYPE_FIELD_CODE);
+            log.error(e.getMessage(), e);
+            return new ArrayList<>();
         }
 
-        return fieldService.fetchAutocomplete(configurationWrapper, input, langBean.getLanguageCode());
     }
 
     public void handleSelectPrimaryCode() {

@@ -3,25 +3,24 @@ package fr.siamois.infrastructure.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
-import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.infrastructure.api.dto.FullConceptDTO;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
+import fr.siamois.models.exceptions.NotSiamoisThesaurusException;
+import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
-import fr.siamois.models.vocabulary.VocabularyCollection;
-import fr.siamois.utils.builder.AutocompletionRequestBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Service to fetch concept information from the API.
@@ -33,70 +32,35 @@ public class ConceptApi {
 
     private final RestTemplate restTemplate;
 
+    private final ObjectMapper mapper;
+
     public ConceptApi(RequestFactory factory) {
         restTemplate = factory.buildRestTemplate();
+        mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    /**
-     * Fetch the autocomplete results of Opentheso API for a given input and vocabulary collection.
-     * @param input The input to search for
-     * @param lang The language to search in
-     * @return A list of concept field DTOs
-     */
-    public List<ConceptFieldDTO> fetchAutocomplete(List<VocabularyCollection> collections, String input, String lang) {
-        Vocabulary vocabulary = collections.get(0).getVocabulary();
-        AutocompletionRequestBuilder builder = AutocompletionRequestBuilder
-                .getBuilder(vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId(), input);
-
-        for (VocabularyCollection collection : collections)
-            builder.withGroup(collection.getExternalId());
-
-        builder.withLang(lang);
-
-        return fetchAutocomplete(builder.build());
+    public ConceptBranchDTO fetchConceptsUnderTopTerm(Concept concept) {
+        return fetchDownExpansion(concept.getVocabulary(), concept.getExternalId());
     }
 
-    /**
-     * Fetch the autocomplete results of Opentheso API for a given input. Filters the results by the given vocabulary.
-     * @param vocabulary The vocabulary to search in
-     * @param input The input to search for
-     * @param lang The language to search in
-     * @return A list of concept field DTOs for the given input
-     */
-    public List<ConceptFieldDTO> fetchAutocomplete(Vocabulary vocabulary, String input, String lang) {
-        AutocompletionRequestBuilder builder = AutocompletionRequestBuilder
-                .getBuilder(vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId(), input);
+    private ConceptBranchDTO fetchDownExpansion(Vocabulary vocabulary, String idConcept) {
+        URI uri = URI.create(String.format("%s/openapi/v1/concept/%s/%s/expansion?way=down", vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId(), idConcept));
 
-        builder.withLang(lang);
+        ResponseEntity<String> response = sendRequestAcceptJson(uri);
 
-        return fetchAutocomplete(builder.build());
-    }
-
-    /**
-     * Fetch the autocomplete results of Opentheso API for a given uri.
-     * @param requestUri The uri with the parameters to send to the API
-     * @return A list of concept field DTOs
-     */
-    private List<ConceptFieldDTO> fetchAutocomplete(String requestUri) {
-        URI uri = URI.create(requestUri);
-
-        log.trace("Sending API request to {}", uri);
-
-        String result = restTemplate.getForObject(uri, String.class);
-
-        if (StringUtils.isEmpty(result)) {
-            return new ArrayList<>();
-        }
-
-        log.trace("API response: {}", result);
-
-        ObjectMapper mapper = new ObjectMapper();
+        TypeReference<Map<String,FullConceptDTO>> typeReference = new TypeReference<>() {};
+        Map<String, FullConceptDTO> result;
         try {
-            return List.of(mapper.readValue(result, ConceptFieldDTO[].class));
+            result = mapper.readValue(response.getBody(), typeReference);
+            ConceptBranchDTO branch = new ConceptBranchDTO();
+            result.forEach(branch::addConceptBranchDTO);
+            return branch;
         } catch (JsonProcessingException e) {
-            log.error(e.getMessage(), e);
-            return new ArrayList<>();
+            log.error("Error while processing JSON", e);
         }
+
+        return new ConceptBranchDTO();
     }
 
     private static class ConceptDTO {
@@ -107,7 +71,45 @@ public class ConceptApi {
         private LabelDTO[] labels;
     }
 
-    public ConceptBranchDTO fetchFieldsBranch(Vocabulary vocabulary) {
+    public FullConceptDTO fetchConceptInfo(Vocabulary vocabulary, String conceptId) {
+        URI uri = URI.create(vocabulary.getBaseUri() + String.format("/openapi/v1/concept/%s/%s", vocabulary.getExternalVocabularyId(), conceptId));
+        ResponseEntity<String> response = sendRequestAcceptJson(uri);
+
+        TypeReference<Map<String,FullConceptDTO>> typeReference = new TypeReference<>() {};
+
+        try {
+            Map<String, FullConceptDTO> result = mapper.readValue(response.getBody(), typeReference);
+            return result.values().stream().findFirst().orElseThrow(() -> new RuntimeException("Invalid concept"));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private ResponseEntity<String> sendRequestAcceptJson(URI uri) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+        return restTemplate.exchange(uri, HttpMethod.GET, requestEntity, String.class);
+    }
+
+    private boolean isAutocompleteTopTerm(FullConceptDTO concept) {
+        return concept.getNotation() != null
+                && Arrays.stream(concept.getNotation())
+                .anyMatch(notation -> notation.getValue().equalsIgnoreCase("SIAMOIS#SIAAUTO"));
+    }
+
+    private Optional<ConceptDTO> findAutocompleteTopTerm(Vocabulary vocabulary, ConceptDTO[] array) {
+        for (ConceptDTO conceptDTO : array) {
+            FullConceptDTO fullConceptDTO = fetchConceptInfo(vocabulary, conceptDTO.idConcept);
+            if (isAutocompleteTopTerm(fullConceptDTO)) {
+                return Optional.of(conceptDTO);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public ConceptBranchDTO fetchFieldsBranch(Vocabulary vocabulary) throws NotSiamoisThesaurusException {
         URI uri = URI.create(vocabulary.getBaseUri() + String.format("/openapi/v1/thesaurus/%s/topconcept", vocabulary.getExternalVocabularyId()));
 
         String conceptDTO = restTemplate.getForObject(uri, String.class);
@@ -119,26 +121,12 @@ public class ConceptApi {
         try {
             ConceptDTO[] array = mapper.readValue(conceptDTO, ConceptDTO[].class);
 
-            ConceptDTO autocompleteParent = Arrays.stream(array)
-                    .filter((conceptDTO1 -> Arrays.stream(conceptDTO1.labels).anyMatch((labelDTO -> labelDTO.getTitle().toUpperCase().contains("(SIAAUTO")))))
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Concept with code SIAAUTO not found"));
+            ConceptDTO autocompleteParent = findAutocompleteTopTerm(vocabulary, array)
+                    .orElseThrow(() -> new NotSiamoisThesaurusException("Concept with notation SIAMOIS#SIAAUTO not found in thesaurus %s",
+                            vocabulary.getExternalVocabularyId()));
 
-            uri = URI.create(vocabulary.getBaseUri() + String.format("/openapi/v1/concept/%s/%s/expansion?way=down", vocabulary.getExternalVocabularyId(), autocompleteParent.idConcept));
+            return fetchDownExpansion(vocabulary, autocompleteParent.idConcept);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-
-            HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-            ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, String.class);
-
-            TypeReference<Map<String,FullConceptDTO>> typeReference = new TypeReference<>() {};
-            Map<String, FullConceptDTO> result = mapper.readValue(response.getBody(), typeReference);
-
-            ConceptBranchDTO branch = new ConceptBranchDTO();
-            result.forEach(branch::addConceptBranchDTO);
-
-            return branch;
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error while parsing branch", e);
         }

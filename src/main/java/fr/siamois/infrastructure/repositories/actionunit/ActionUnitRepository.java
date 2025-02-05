@@ -21,9 +21,4 @@ public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long>, 
     )
     List<ActionUnit> findAllCreatedBetweenByUser(@Param("start") OffsetDateTime start, @Param("end") OffsetDateTime end, @Param("author") Long personId);
 
-    @Query(
-            nativeQuery = true,
-            value = "SELECT au.* FROM action_unit au WHERE au.fk_spatial_unit_id = :spatialUnitId AND au.fk_team_id = :teamId"
-    )
-    List<ActionUnit> findAllBySpatialUnitIdOfTeam(Long spatialUnitId, Long teamId);
 }

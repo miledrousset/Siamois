@@ -42,19 +42,20 @@
                                                        styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
                                         <div class="col-12 md:col-10">
                                             <p:inputText id="output-label-serial-id" required="false" disabled="true"
-                                                         value="#{cc.attrs.recordingUnitFormBean.recordingUnit.serial_id}"/>
+                                                         value="#{cc.attrs.recordingUnitFormBean.recordingUnit.code}"/>
                                         </div>
                                     </div>
                                     <!-- UE Type -->
                                     <div class="field col-md-4">
-                                        <sharedLabel:openthesoLabel for="auto-complete-ue-type" label="Type d'ue"/>
+                                        <sharedLabel:openthesoLabel label="Type d'UE" forId="auto-complete-ue-type"/>
                                         <p:autoComplete id="auto-complete-ue-type"
                                                         value="#{cc.attrs.recordingUnitFormBean.FType}"
                                                         completeMethod="#{cc.attrs.recordingUnitFormBean.completeRecordingUnitType}"
-                                                        var="field" itemLabel="#{field.label}"
+                                                        var="field"
+                                                        itemLabel="#{field.label}"
                                                         itemValue="#{field}"
                                                         required="true"
-                                                        converter="#{conceptFieldDTOConverter}"
+                                                        converter="#{conceptConverter}"
                                                         forceSelection="true"
                                                         scrollHeight="300"
                                                         dropdown="true"/>

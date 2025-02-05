@@ -2,20 +2,19 @@ package fr.siamois.bean.RecordingUnit;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
-import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
+import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
 import fr.siamois.models.recordingunit.RecordingUnitSize;
-import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.services.actionunit.ActionUnitService;
+import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.RecordingUnitService;
+import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
-import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
@@ -41,9 +40,11 @@ public class NewRecordingUnitFormBean implements Serializable {
     private final ActionUnitService actionUnitService;
     private final PersonService personService;
     private final RecordingUnitUtils recordingUnitUtils;
-    private final FieldConfigurationService fieldConfigurationService;
     private final FieldService fieldService;
     private final LangBean langBean;
+    private final ConceptService conceptService;
+    private final SessionSettings sessionSettings;
+    private final FieldConfigurationService fieldConfigurationService;
 
     // Local
     private RecordingUnit recordingUnit;
@@ -55,9 +56,8 @@ public class NewRecordingUnitFormBean implements Serializable {
     private List<RecordingUnit> recordingUnitList;
     private List<RecordingUnit> stratigraphySelectedRecordingUnit;
 
-    private List<ConceptFieldDTO> concepts;
-    private ConceptFieldDTO fType = null;
-    private FieldConfigurationWrapper configurationWrapper;
+    private List<Concept> concepts;
+    private Concept fType = null;
 
     @Data
     public static class Event {
@@ -67,10 +67,6 @@ public class NewRecordingUnitFormBean implements Serializable {
         private String icon;
         private String color;
         private String image;
-
-        public Event() {
-
-        }
 
         public Event(String status, String date, String icon, String color) {
             this.status = status;
@@ -89,15 +85,10 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
-
-    public List<Person> completePerson(String query) {
-        return recordingUnitUtils.completePerson(query);
-    }
-
     public String save() {
         try {
 
-            this.recordingUnit = recordingUnitUtils.save(recordingUnit, configurationWrapper, fType, startDate, endDate);
+            this.recordingUnit = recordingUnitUtils.save(recordingUnit, fType, startDate, endDate);
             // Return page with id
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(
@@ -123,31 +114,24 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
-    /**
-     * Display a  message on the page.
-     *
-     * @param severityInfo The severity of the message.
-     * @param head         The head of the message.
-     * @param detail       The message to display.
-     */
-    private static void displayMessage(FacesMessage.Severity severityInfo, String head, String detail) {
-        FacesContext.getCurrentInstance()
-                .addMessage(null, new FacesMessage(severityInfo, head, detail));
-    }
-
 
     public NewRecordingUnitFormBean(RecordingUnitService recordingUnitService,
                                     ActionUnitService actionUnitService,
                                     PersonService personService,
-                                    RecordingUnitUtils recordingUnitUtils, FieldConfigurationService fieldConfigurationService, FieldService fieldService, LangBean langBean
-    ) {
+                                    RecordingUnitUtils recordingUnitUtils,
+                                    FieldService fieldService,
+                                    LangBean langBean,
+                                    ConceptService conceptService,
+                                    SessionSettings sessionSettings, FieldConfigurationService fieldConfigurationService) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.personService = personService;
         this.recordingUnitUtils = recordingUnitUtils;
-        this.fieldConfigurationService = fieldConfigurationService;
         this.fieldService = fieldService;
         this.langBean = langBean;
+        this.conceptService = conceptService;
+        this.sessionSettings = sessionSettings;
+        this.fieldConfigurationService = fieldConfigurationService;
     }
 
     public void reinitializeBean() {
@@ -161,39 +145,8 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
-    /**
-     * Fetch the autocomplete results on API for the type field and add them to the list of concepts.
-     *
-     * @param input the input of the user
-     * @return the list of concepts that match the input to display in the autocomplete
-     */
-    public List<ConceptFieldDTO> completeRecordingUnitType(String input) {
-
-        Person person = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("User should be connected"));
-
-        try {
-            if(this.configurationWrapper == null) {
-                this.configurationWrapper = fieldConfigurationService.fetchConfigurationOfFieldCode(person, RecordingUnit.TYPE_FIELD_CODE);
-            }
-        } catch (NoConfigForField e) {
-            log.error("No collection for field " + RecordingUnit.TYPE_FIELD_CODE);
-        }
-
-        concepts = fieldService.fetchAutocomplete(configurationWrapper, input, langBean.getLanguageCode());
-        return concepts;
-    }
-
-
     public String goToNewRecordingUnitPage() {
         return "/pages/create/recordingUnit.xhtml?faces-redirect=true";
-    }
-
-    public void fetchAllRecordingUnitsInSameActionUnit() {
-        this.recordingUnitList = recordingUnitService.findAllByActionUnit(recordingUnit.getActionUnit());
-    }
-
-    public void addStratigraphicRelationshipFromSelection() {
-
     }
 
     public void init(ActionUnit actionUnit) {
@@ -223,6 +176,17 @@ public class NewRecordingUnitFormBean implements Serializable {
             }
         } catch (RuntimeException err) {
             recordingUnitErrorMessage = "Error initializing the form";
+        }
+    }
+
+
+    public List<Concept> completeRecordingUnitType(String input) {
+        log.trace("completeRecordingUnitType called");
+        try {
+            return fieldConfigurationService.fetchAutocomplete(sessionSettings.getUserInfo(), RecordingUnit.TYPE_FIELD_CODE, input);
+        } catch (NoConfigForField e) {
+            log.error(e.getMessage(), e);
+            return new ArrayList<>();
         }
     }
 }

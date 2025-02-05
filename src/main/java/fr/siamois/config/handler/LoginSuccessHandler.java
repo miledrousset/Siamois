@@ -1,8 +1,6 @@
 package fr.siamois.config.handler;
 
-import fr.siamois.bean.NavBean;
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.services.TeamService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +22,9 @@ import java.io.IOException;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final SessionSettings sessionSettings;
-    private final NavBean navBean;
-    private final TeamService teamService;
 
-    public LoginSuccessHandler(SessionSettings sessionSettings, NavBean navBean, TeamService teamService) {
+    public LoginSuccessHandler(SessionSettings sessionSettings) {
         this.sessionSettings = sessionSettings;
-        this.navBean = navBean;
-        this.teamService = teamService;
     }
 
     /**
@@ -42,7 +36,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        setupSession();
+        sessionSettings.setupSession();
         redirectRequest(request, response);
     }
 
@@ -61,19 +55,5 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         } else {
             response.sendRedirect(contextPath + "/");
         }
-    }
-
-    private void setupSession() {
-        if (sessionSettings.getAuthenticatedUser().hasRole("ADMIN")) {
-            navBean.setTeams(teamService.findAllTeams());
-        } else {
-            navBean.setTeams(teamService.findTeamsOfPerson(sessionSettings.getAuthenticatedUser()));
-        }
-
-        if (!navBean.getTeams().isEmpty()) {
-            sessionSettings.setSelectedTeam(navBean.getTeams().get(0));
-        }
-
-        log.info("User {} logged in", sessionSettings.getAuthenticatedUser().getUsername());
     }
 }

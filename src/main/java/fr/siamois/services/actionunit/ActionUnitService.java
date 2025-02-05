@@ -7,9 +7,15 @@ import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.Team;
+import fr.siamois.models.UserInfo;
+import fr.siamois.models.actionunit.ActionUnit;
+import fr.siamois.models.ark.Ark;
+import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.ActionUnitNotFoundException;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.services.ark.ArkGenerator;
+import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.vocabulary.FieldService;
 import jakarta.transaction.Transactional;
@@ -25,20 +31,18 @@ public class ActionUnitService {
 
     private final ActionUnitRepository actionUnitRepository;
     private final ArkServerRepository arkServerRepository;
-    private final FieldService fieldService;
+    private final ConceptService conceptService;
 
-    public ActionUnitService(ActionUnitRepository actionUnitRepository, ArkServerRepository arkServerRepository, FieldService fieldService) {
+    public ActionUnitService(ActionUnitRepository actionUnitRepository,
+                             ArkServerRepository arkServerRepository,
+                             ConceptService conceptService) {
         this.actionUnitRepository = actionUnitRepository;
         this.arkServerRepository = arkServerRepository;
-        this.fieldService = fieldService;
+        this.conceptService = conceptService;
     }
 
     public List<ActionUnit> findAllBySpatialUnitId(SpatialUnit spatialUnit)   {
         return actionUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
-    }
-
-    public List<ActionUnit> findAllBySpatialUnitIdOfTeam(SpatialUnit spatialUnit, Team team)   {
-        return actionUnitRepository.findAllBySpatialUnitIdOfTeam(spatialUnit.getId(), team.getId());
     }
 
     /**
@@ -59,14 +63,25 @@ public class ActionUnitService {
     }
 
     @Transactional
-    public ActionUnit save(ActionUnit actionUnit, Vocabulary vocabulary, ConceptFieldDTO
-            typeConceptFieldDTO) {
+    public ActionUnit save(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
 
         try {
+            // Generate ARK if the action unit does not have any
+            if (actionUnit.getArk() == null) {
+                ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
+                Ark ark = new Ark();
+                ark.setArkServer(localServer);
+                ark.setArkId(ArkGenerator.generateArk());
+                actionUnit.setArk(ark);
+            }
 
             // Add concept
-            Concept type = fieldService.saveOrGetConceptFromDto(vocabulary, typeConceptFieldDTO);
+            Concept type = conceptService.saveOrGetConcept(typeConcept);
             actionUnit.setType(type);
+
+
+            actionUnit.setAuthor(info.getUser());
+            actionUnit.setCreatedByInstitution(info.getInstitution());
 
             return actionUnitRepository.save(actionUnit);
         } catch (RuntimeException e) {

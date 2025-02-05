@@ -30,7 +30,7 @@
             <p:dataTable id="memberTable"
                     var="person" value="#{userBean.teamMembers}" widgetVar="managerTable"
                          emptyMessage='#{langBean.msg("create.team.filter.manager.empty")}'
-                         filteredValue="#{teamCreationBean.filteredManagers}"
+                         filteredValue="#{institutionCreationBean.filteredManagers}"
                          rowKey="#{person.id}"
             >
 

@@ -1,87 +1,50 @@
 package fr.siamois.infrastructure.repositories;
 
 import fr.siamois.models.Field;
-import fr.siamois.models.auth.Person;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @Repository
 public interface FieldRepository extends CrudRepository<Field, Long> {
 
-    /**
-     * Set a collection configuration parameter to a field.
-     * @param collectionId The id of the collection
-     * @param fieldId The id of the field
-     * @return The number of rows affected
-     */
     @Transactional
     @Modifying
     @Query(
             nativeQuery = true,
-            value = "INSERT INTO field_vocabulary_collection(fk_collection_id, fk_field_id) " +
-                    "VALUES (:collectionId,:fieldId)"
+            value = "INSERT INTO concept_field_config(fk_institution_id, field_code, fk_concept_id) " +
+                    "VALUES (:institutionId, :fieldCode, :conceptId)"
     )
-    int saveCollectionWithField(@Param("collectionId") Long collectionId, @Param("fieldId") Long fieldId);
+    void saveConceptForFieldOfInstitution(Long institutionId, String fieldCode, Long conceptId);
 
-    /**
-     * Find a field by its user and field code.
-     * @param user The user
-     * @param fieldCode The code of the field
-     * @return An optional containing the field if found
-     */
-    Optional<Field> findByUserAndFieldCode(Person user, @NotNull String fieldCode);
-
-    /**
-     * Deletes all the vocabulary collection configuration of a person by a field code.
-     * @param personId The id of the person
-     * @param fieldCode The code of the field
-     * @return The number of rows affected
-     */
     @Transactional
     @Modifying
     @Query(
             nativeQuery = true,
-            value = "DELETE FROM field_vocabulary_collection fvc " +
-                    "WHERE fvc.fk_field_id IN ( SELECT f.field_id FROM field f WHERE f.fk_user_id = :personId AND f.field_code = :fieldCode)"
+            value = "INSERT INTO concept_field_config(fk_institution_id, fk_user_id, fk_concept_id, field_code) " +
+                    "VALUES (:institutionId, :userId, :conceptId, :fieldCode)"
     )
-    int deleteVocabularyCollectionConfigurationByPersonAndFieldCode(Long personId, String fieldCode);
+    void saveConceptForFieldOfUser(Long institutionId, Long userId, String fieldCode, Long conceptId);
 
-    /**
-     * Deletes the vocabulary configuration of a person by a field code.
-     * @param personId The id of the person
-     * @param fieldCode The code of the field
-     * @return The number of rows affected
-     */
     @Transactional
     @Modifying
     @Query(
             nativeQuery = true,
-            value = "UPDATE field " +
-                    "SET fk_vocabulary_id = NULL " +
-                    "WHERE field_code = :fieldCode AND fk_user_id = :personId"
+            value = "UPDATE concept_field_config " +
+                    "SET fk_concept_id = :conceptId " +
+                    "WHERE fk_institution_id = :institutionId AND field_code = :fieldCode AND fk_user_id IS NULL"
     )
-    int deleteVocabularyConfigurationByPersonAndFieldCode(Long personId, String fieldCode);
+    int updateConfigForFieldOfInstitution(Long institutionId, String fieldCode, Long conceptId);
 
-    /**
-     * Saves a vocabulary configuration to a field.
-     * @param fieldId The id of the field
-     * @param vocabId The id of the vocabulary
-     * @return The number of rows affected
-     */
     @Transactional
     @Modifying
     @Query(
             nativeQuery = true,
-            value = "UPDATE field " +
-                    "SET fk_vocabulary_id = :vocabId " +
-                    "WHERE field_id = :fieldId"
+            value = "UPDATE concept_field_config " +
+                    "SET fk_concept_id = :conceptId " +
+                    "WHERE fk_institution_id = :institutionId AND field_code = :fieldCode AND fk_user_id = :userId"
     )
-    int saveVocabularyWithField(Long fieldId, Long vocabId);
+    int updateConfigForFieldOfUser(Long institutionId, Long userId, String fieldCode, Long conceptId);
 }

@@ -3,7 +3,7 @@
              xmlns:h="http://xmlns.jcp.org/jsf/html"
              xmlns:p="http://primefaces.org/ui"
              xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label"
-             xmlns:f="http://xmlns.jcp.org/jsf/core">
+>
 
     <p:dialog id="dialog-new-spatial-unit" header="Header" widgetVar="new-spatial-unit-dialog" minHeight="40"
               width="350" showEffect="fade" closeOnEscape="true" appendToBody="true">
@@ -28,8 +28,12 @@
                     <!-- Action Type -->
                     <div class="field">
                         <sharedLabel:openthesoLabel for="auto-complete-action-type" label="Type"/>
-                        <p:autoComplete id="su-category" value="#{spatialUnitFieldBean.FCategory}"
+                        <p:autoComplete id="su-category" value="#{spatialUnitFieldBean.selectedConcept}"
                                         completeMethod="#{spatialUnitFieldBean.completeCategory}"
+                                        var="field" itemLabel="#{field.label}"
+                                        itemValue="#{field}"
+                                        required="true"
+                                        converter="#{conceptConverter}"
                                         forceSelection="true"
                                         scrollHeight="300"
                                         dropdown="true"/>

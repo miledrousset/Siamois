@@ -1,7 +1,9 @@
 package fr.siamois.bean.user;
 
 import fr.siamois.bean.LangBean;
+import fr.siamois.models.Institution;
 import fr.siamois.models.Team;
+import fr.siamois.services.InstitutionService;
 import fr.siamois.services.PersonService;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,20 +28,22 @@ public class ManagerCreationBean implements Serializable {
     private final PersonService personService;
     private final LangBean langBean;
     private final UserAddBean userAddBean;
+    private final InstitutionService institutionService;
 
     // Injections
 
     // Storage
-    List<Team> refTeams = new ArrayList<>();
-    List<Team> filteredTeams = new ArrayList<>();
+    List<Institution> refInstitutions = new ArrayList<>();
+    List<Institution> filteredInstitutions = new ArrayList<>();
 
     // Fields
     private List<Team> vTeams = new ArrayList<>();
 
-    public ManagerCreationBean(PersonService personService, LangBean langBean, UserAddBean userAddBean) {
+    public ManagerCreationBean(PersonService personService, LangBean langBean, UserAddBean userAddBean, InstitutionService institutionService) {
         this.personService = personService;
         this.langBean = langBean;
         this.userAddBean = userAddBean;
+        this.institutionService = institutionService;
     }
 
     /**
@@ -47,15 +51,15 @@ public class ManagerCreationBean implements Serializable {
      */
     public void init() {
         resetVariables();
-        refTeams = personService.findAllTeams();
+        refInstitutions = institutionService.findAll();
     }
 
     /**
      * Reset the variables of the bean
      */
     private void resetVariables() {
-        refTeams = new ArrayList<>();
-        filteredTeams = new ArrayList<>();
+        refInstitutions = new ArrayList<>();
+        filteredInstitutions = new ArrayList<>();
         userAddBean.resetVariables();
         vTeams = new ArrayList<>();
     }

@@ -5,11 +5,12 @@ import fr.siamois.bean.SessionSettings;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.auth.Person;
+import fr.siamois.bean.converter.ConceptConverter;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
-import fr.siamois.models.vocabulary.Vocabulary;
+import fr.siamois.services.SpatialUnitService;
+import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import fr.siamois.utils.MessageUtils;
@@ -22,7 +23,6 @@ import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -39,28 +39,37 @@ public class SpatialUnitFieldBean implements Serializable {
 
     // Injections
     private final FieldService fieldService;
-    private final FieldConfigurationService fieldConfigurationService;
     private final LangBean langBean;
     private final SessionSettings sessionSettings;
+    private final SpatialUnitService spatialUnitService;
+    private final ConceptService conceptService;
+    private final ConceptConverter conceptConverter;
+    private final FieldConfigurationService fieldConfigurationService;
 
     // Storage
     private List<SpatialUnit> refSpatialUnits = new ArrayList<>();
     private List<String> labels;
-    private List<ConceptFieldDTO> concepts;
-    private FieldConfigurationWrapper configurationWrapper;
+    private List<Concept> concepts;
 
     // Fields
     private Concept selectedConcept = null;
     private String fName = "";
-    private String fCategory = "";
     private List<SpatialUnit> fParentsSpatialUnits = new ArrayList<>();
     private List<SpatialUnit> fChildrenSpatialUnits = new ArrayList<>();
 
-    public SpatialUnitFieldBean(FieldService fieldService, FieldConfigurationService fieldConfigurationService, LangBean langBean, SessionSettings sessionSettings) {
+    public SpatialUnitFieldBean(FieldService fieldService,
+                                LangBean langBean,
+                                SessionSettings sessionSettings,
+                                SpatialUnitService spatialUnitService,
+                                ConceptService conceptService,
+                                ConceptConverter conceptConverter, FieldConfigurationService fieldConfigurationService) {
         this.fieldService = fieldService;
-        this.fieldConfigurationService = fieldConfigurationService;
         this.langBean = langBean;
         this.sessionSettings = sessionSettings;
+        this.spatialUnitService = spatialUnitService;
+        this.conceptService = conceptService;
+        this.conceptConverter = conceptConverter;
+        this.fieldConfigurationService = fieldConfigurationService;
     }
 
     /**
@@ -69,17 +78,24 @@ public class SpatialUnitFieldBean implements Serializable {
      */
     public void init() {
         init(new ArrayList<>(),new ArrayList<>());
-    }
-
-    public void init(List<SpatialUnit> parents, List<SpatialUnit> children) {
-        refSpatialUnits = fieldService.fetchAllSpatialUnits();
+        refSpatialUnits = spatialUnitService.findAllOfInstitution(sessionSettings.getSelectedInstitution());
         labels = refSpatialUnits.stream()
                 .map(SpatialUnit::getName)
                 .collect(Collectors.toList());
         concepts = null;
         selectedConcept = null;
         fName = "";
-        fCategory = "";
+        fParentsSpatialUnits = new ArrayList<>();
+    }
+
+    public void init(List<SpatialUnit> parents, List<SpatialUnit> children) {
+        refSpatialUnits = spatialUnitService.findAllOfInstitution(sessionSettings.getSelectedInstitution());
+        labels = refSpatialUnits.stream()
+                .map(SpatialUnit::getName)
+                .collect(Collectors.toList());
+        concepts = null;
+        selectedConcept = null;
+        fName = "";
         fParentsSpatialUnits = parents;
         fChildrenSpatialUnits = children;
     }
@@ -91,19 +107,9 @@ public class SpatialUnitFieldBean implements Serializable {
      * @throws IllegalStateException if the collections are not defined
      */
     public String save() {
-        ConceptFieldDTO selectedConceptFieldDTO = getSelectedConceptFieldDTO().orElseThrow(() -> new IllegalStateException("No concept selected"));
-
-        Vocabulary vocabulary = configurationWrapper.vocabularyConfig();
-        if (vocabulary == null) vocabulary = configurationWrapper.vocabularyCollectionsConfig().get(0).getVocabulary();
 
         try {
-            SpatialUnit saved = fieldService.saveSpatialUnit(fName,
-                    vocabulary,
-                    selectedConceptFieldDTO,
-                    fParentsSpatialUnits,
-                    fChildrenSpatialUnits,
-                    sessionSettings.getAuthenticatedUser(),
-                    sessionSettings.getSelectedTeam());
+            SpatialUnit saved = spatialUnitService.save(sessionSettings.getUserInfo(), fName, selectedConcept, fParentsSpatialUnits);
 
             MessageUtils.displayInfoMessage(langBean, "spatialunit.created", saved.getName());
 
@@ -120,33 +126,14 @@ public class SpatialUnitFieldBean implements Serializable {
      * @param input the input of the user
      * @return the list of concepts that match the input to display in the autocomplete
      */
-    public List<String> completeCategory(String input) {
-        Person person = sessionSettings.getAuthenticatedUser();
-
+    public List<Concept> completeCategory(String input) {
         try {
-            if (configurationWrapper == null) {
-                configurationWrapper = fieldConfigurationService.fetchConfigurationOfFieldCode(person, SpatialUnit.CATEGORY_FIELD_CODE);
-            }
-
-            concepts = fieldService.fetchAutocomplete(configurationWrapper, input, langBean.getLanguageCode());
-            return concepts.stream()
-                    .map(ConceptFieldDTO::getLabel)
-                    .collect(Collectors.toList());
-
+            return fieldConfigurationService.fetchAutocomplete(sessionSettings.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE, input);
         } catch (NoConfigForField e) {
-            log.error("No collection for field " + SpatialUnit.CATEGORY_FIELD_CODE);
+            log.error(e.getMessage(), e);
             return new ArrayList<>();
         }
     }
 
-    /**
-     * Find the concept selected by the user.
-     * @return the concept selected by the user
-     */
-    private Optional<ConceptFieldDTO> getSelectedConceptFieldDTO() {
-        return concepts.stream()
-                .filter(conceptFieldDTO -> conceptFieldDTO.getLabel().equalsIgnoreCase(fCategory))
-                .findFirst();
-    }
 
 }

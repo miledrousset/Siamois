@@ -3,8 +3,7 @@ package fr.siamois.bean.Home;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.events.TeamChangeEvent;
-import fr.siamois.models.exceptions.NoTeamSelectedException;
+import fr.siamois.models.events.InstitutionChangeEvent;
 import fr.siamois.services.SpatialUnitService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +44,7 @@ public class HomeBean implements Serializable {
             if (author.hasRole("ADMIN")) {
                 spatialUnitList = spatialUnitService.findAllWithoutParents();
             } else {
-                spatialUnitList = spatialUnitService.findAllWithoutParentsOfTeam(sessionSettings.getSelectedTeam());
+                spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettings.getSelectedInstitution());
             }
         } catch (RuntimeException e) {
             log.error(e.getMessage(), e);
@@ -54,16 +53,10 @@ public class HomeBean implements Serializable {
         }
     }
 
-    @EventListener(TeamChangeEvent.class)
-    public void onTeamChangeEvent() {
-        log.trace("TeamChangeEvent received. Updating teams");
-        try {
-            spatialUnitList = spatialUnitService.findAllWithoutParentsOfTeam(sessionSettings.getSelectedTeam());
-            spatialUnitListErrorMessage = null;
-        } catch (NoTeamSelectedException e) {
-            log.error("Failed to load teams", e);
-            spatialUnitList = null;
-            spatialUnitListErrorMessage = "Failed to load team";
-        }
+    @EventListener(InstitutionChangeEvent.class)
+    public void onInstitutionChangeEvent() {
+        log.trace("InstitutionChangeEvent received. Updating teams");
+        spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettings.getSelectedInstitution());
+        spatialUnitListErrorMessage = null;
     }
 }
