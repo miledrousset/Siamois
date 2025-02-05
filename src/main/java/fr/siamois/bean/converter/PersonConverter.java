@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Slf4j
 public class PersonConverter implements Converter<Person>, Serializable {
 
-    private final PersonService personService;
+    private final transient PersonService personService;
 
     public PersonConverter(PersonService personService) {
         this.personService = personService;
