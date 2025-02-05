@@ -1,0 +1,61 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://java.sun.com/jsf/facelets"
+             xmlns:f="http://xmlns.jcp.org/jsf/core"
+             xmlns:h="http://xmlns.jcp.org/jsf/html"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label"
+>
+
+    <p:dialog id="dialog-new-action-code" header="Nouveau code d'action" widgetVar="new-action-code-dialog" minHeight="40" width="350"
+              showEffect="fade" closeOnEscape="true">
+
+        <h:form id="form-new-action-code">
+
+
+            <p:messages id="dialog-new-action-code-messages" showDetail="true">
+            </p:messages>
+
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <p:outputPanel id="new-action-code" class="ui-fluid">
+                <p:outputPanel>
+
+                    <!-- Type of the action code -->
+                    <div class="field">
+                        <sharedLabel:openthesoLabel for="auto-complete-action-code-type" label="Type de code"/>
+                        <p:autoComplete id="auto-complete-action-code-type"
+                                        value="#{actionUnitBean.newCode.type}"
+                                        var="option" itemLabel="#{option.label}"
+                                        completeMethod="#{actionUnitBean.completeActionCodeType}"
+                                        converter="#{conceptConverter}"
+                                        itemValue="#{option}"
+                                        required="true"
+                                        forceSelection="true"
+                                        scrollHeight="300"
+                                        dropdown="true">
+                        </p:autoComplete>
+                    </div>
+
+                    <!-- Code -->
+                    <div class="field">
+                        <p:outputLabel for="code">Code</p:outputLabel>
+                        <p:inputText id="code" required="true" value="#{actionUnitBean.newCode.code}"/>
+                    </div>
+
+
+                </p:outputPanel>
+                <p:commandButton
+                        value='Ajouter le code'
+                        icon="pi pi-check"
+                        action="#{actionUnitBean.saveNewActionCode}"
+                        update=":dialog-new-action-code @form"
+
+                />
+                <p:commandButton value='${langBean.msg("button.cancel")}' icon="pi pi-times"
+                                 class="ui-button-secondary" update="form-new-action-code" type="button"/>
+
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+
+
+</ui:fragment>

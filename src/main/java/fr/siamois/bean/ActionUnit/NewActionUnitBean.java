@@ -5,7 +5,6 @@ import fr.siamois.bean.SessionSettings;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.spatialunit.SpatialUnit;
-import fr.siamois.bean.converter.ConceptConverter;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.auth.Person;
@@ -42,7 +41,6 @@ public class NewActionUnitBean implements Serializable {
     private final SessionSettings sessionSettings;
     private final FieldConfigurationService fieldConfigurationService;
     private final ConceptService conceptService;
-    private final ConceptConverter conceptConverter;
 
     // Local
     private ActionUnit actionUnit;
@@ -56,14 +54,13 @@ public class NewActionUnitBean implements Serializable {
                              LangBean langBean,
                              SessionSettings sessionSettings,
                              FieldConfigurationService fieldConfigurationService,
-                             ConceptService conceptService, ConceptConverter conceptConverter) {
+                             ConceptService conceptService) {
         this.actionUnitService = actionUnitService;
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.sessionSettings = sessionSettings;
         this.fieldConfigurationService = fieldConfigurationService;
         this.conceptService = conceptService;
-        this.conceptConverter = conceptConverter;
     }
 
 

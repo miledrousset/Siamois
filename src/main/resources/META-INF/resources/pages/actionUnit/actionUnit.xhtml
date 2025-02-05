@@ -41,7 +41,7 @@
                                     var="field" itemLabel="#{field.label}"
                                     itemValue="#{field}"
                                     required="true"
-                                    converter="#{newActionUnitBean.conceptConverter}"
+                                    converter="#{conceptConverter}"
                                     forceSelection="true"
                                     scrollHeight="300"
                                     dropdown="true"/>
@@ -84,12 +84,16 @@
                                             value="#{actionUnitBean.actionUnit.primaryActionCode.type}"
                                             var="option" itemLabel="#{option.label}"
                                             completeMethod="#{actionUnitBean.completeActionCodeType}"
-                                            converter="#{conceptFieldDTOConverter}"
+                                            converter="#{conceptConverter}"
                                             itemValue="#{option}"
                                             required="true"
                                             forceSelection="true"
                                             scrollHeight="300"
-                                            dropdown="true"/>
+                                            dropdown="true">
+                                <p:ajax event="itemSelect"
+                                        listener="#{actionUnitBean.handleSelectPrimaryCode}"/>
+                            </p:autoComplete>
+
                             <p:autoComplete id="auto-complete-primary-action-code"
                                             value="#{actionUnitBean.actionUnit.primaryActionCode}"
                                             var="actionCode" itemLabel="#{actionCode.code}"
@@ -97,10 +101,10 @@
                                             converter="#{actionCodeConverter}"
                                             itemValue="#{actionCode}"
                                             required="true"
-                                            forceSelection="false"
+                                            forceSelection="true"
                                             scrollHeight="300"
                                             dropdown="false">
-                                <p:ajax event="itemSelect" listener="#{actionUnitBean.handleSelectPrimaryCode}"
+                                <p:ajax event="itemSelect"
                                         update="@form"/>
                                 <p:column>
                                     <div style="display:flex;">
@@ -115,11 +119,16 @@
                                             #{actionCode.code}
                                         </span>
                                 </p:column>
-                                <!--                                <f:facet name="footer">-->
-                                <!--                                    <div class="ui-fluid" style="padding:0.5rem 1rem 1rem 1rem">-->
-                                <!--                                        <p:button value="Add new code" onclick="alert('This could open a dialog')"/>-->
-                                <!--                                    </div>-->
-                                <!--                                </f:facet>-->
+                                <f:facet name="footer">
+                                    <div class="ui-fluid" style="padding:0.5rem 1rem 1rem 1rem">
+                                        <p:commandButton value='Nouveau code' icon="pi pi-plus"
+                                                         actionListener="#{actionUnitBean.initNewActionCode(0)}"
+                                                         oncomplete="PF('new-action-code-dialog').show()"
+                                                         style="margin-right: .5rem">
+                                        </p:commandButton>
+
+                                    </div>
+                                </f:facet>
                             </p:autoComplete>
                         </div>
                     </h:form>
@@ -236,6 +245,9 @@
         </h:panelGroup>
 
         <!-- Tabs -->
+
+
+        <ui:include src="../../dialog/actionUnit/newActionCodeDialog.xhtml"/>
 
 
     </ui:define>

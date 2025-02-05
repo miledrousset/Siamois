@@ -6,9 +6,13 @@ import fr.siamois.models.vocabulary.Concept;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.convert.Converter;
+import jakarta.faces.convert.FacesConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-@Component
+@Slf4j
+@FacesConverter("conceptConverter")
+@Component("conceptConverter")
 public class ConceptConverter implements Converter<Concept> {
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -18,6 +22,7 @@ public class ConceptConverter implements Converter<Concept> {
         try {
             return mapper.readValue(s, Concept.class);
         } catch (JsonProcessingException e) {
+            log.error("Error while converting string to concept", e);
             throw new RuntimeException(e);
         }
     }
@@ -27,6 +32,7 @@ public class ConceptConverter implements Converter<Concept> {
         try {
             return mapper.writeValueAsString(concept);
         } catch (JsonProcessingException e) {
+            log.error("Error while converting concept to string", e);
             throw new RuntimeException(e);
         }
     }

@@ -7,13 +7,10 @@ import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
-import fr.siamois.models.recordingunit.RecordingUnit;
-import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
-import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import lombok.Data;
@@ -44,6 +41,11 @@ public class ActionUnitBean implements Serializable {
     private ActionUnit actionUnit;
     private String actionUnitErrorMessage;
     private Long id;  // ID of the action unit requested
+
+    // For entering new code
+    private ActionCode newCode;
+    private Integer newCodeIndex; // Index of the new code, if primary: 0, otherwise 1 to N
+    // (but corresponds to 0 to N-1 in secondary code list)
 
     // Field related
     private Boolean editType;
@@ -77,19 +79,12 @@ public class ActionUnitBean implements Serializable {
      */
     public List<ActionCode> completeActionCode(String input) {
 
-//        codes = fieldService.fetchAutocomplete(configurationWrapper, input, langBean.getLanguageCode());
-        ActionCode code = new ActionCode();
-        code.setCode("1115613");
-        Concept c = new Concept();
-        c.setLabel("Code OA");
-        code.setType(c);
-        List<ActionCode> codes = List.of(code);
-        return codes;
+        return actionUnitService.findAllActionCodeByCodeIsContainingIgnoreCase(input);
 
     }
 
     /**
-     * Fetch the autocomplete results on API for the type field
+     * Fetch the autocomplete results on API for the action code type field
      *
      * @param input the input of the user
      * @return the list of concepts that match the input to display in the autocomplete
@@ -116,6 +111,11 @@ public class ActionUnitBean implements Serializable {
         code.setCode("1115613zz");
         code.setType(c);
         secondaryActionCodes.add(code);
+    }
+
+    public void initNewActionCode(Integer index) {
+        newCodeIndex = index;
+        newCode = new ActionCode();
     }
 
     public void removeSecondaryCode(int index) {
@@ -151,12 +151,22 @@ public class ActionUnitBean implements Serializable {
         }
     }
 
+    public void saveNewActionCode() {
+        // Update the action code
+        if(newCodeIndex == 0) {
+            // update primary action code
+            actionUnit.setPrimaryActionCode(newCode);
+        }
+        // todo : secondary action code
+    }
+
     public void init() {
 
         if (!FacesContext.getCurrentInstance().isPostback()) {
             // reinit
             actionUnitErrorMessage = null;
             actionUnit = null;
+            newCode = new ActionCode();
 
             c1.setLabel("Code OA");
             c2.setLabel("Code OP");
