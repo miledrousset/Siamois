@@ -51,6 +51,8 @@
         <sonar.sources>src/main/java,src/main/resources/META-INF/resources</sonar.sources>
         <sonar.tests>src/test/java</sonar.tests>
         <sonar.exclusions>src/main/resources/META-INF/resources/resources/js/bootstrap*,src/main/resources/META-INF/resources/resources/js/jquery*,src/main/resources/META-INF/resources/resources/css/bootstrap*,src/main/resources/META-INF/resources/resources/css/jquery*</sonar.exclusions>
+        <sonar.coverage.exclusions>fr/siamois/models/**/*,fr/siamois/config/**/*,**/*Exception.*,**/*Bean.*,**/*Converter.*,**/*Builder.*</sonar.coverage.exclusions>
+
 
     </properties>
 
@@ -302,16 +304,6 @@
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
                         <version>${jacoco.version}</version>
-                        <configuration>
-                            <excludes>
-                                <exclude>fr/siamois/models/**/*</exclude>
-                                <exclude>fr/siamois/config/**/*</exclude>
-                                <exclude>**/*Exception.*</exclude>
-                                <exclude>**/*Bean.*</exclude>
-                                <exclude>**/*Converter.*</exclude>
-                                <exclude>**/*Builder.*</exclude>
-                            </excludes>
-                        </configuration>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>
