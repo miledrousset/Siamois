@@ -15,8 +15,6 @@ import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
