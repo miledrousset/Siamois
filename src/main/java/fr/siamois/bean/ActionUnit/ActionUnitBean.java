@@ -6,8 +6,14 @@ import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.auth.Person;
+import fr.siamois.models.exceptions.NoConfigForField;
+import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.models.vocabulary.FieldConfigurationWrapper;
 import fr.siamois.services.actionunit.ActionUnitService;
+import fr.siamois.services.vocabulary.FieldConfigurationService;
+import fr.siamois.services.vocabulary.FieldService;
+import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import lombok.Data;
@@ -30,9 +36,13 @@ public class ActionUnitBean implements Serializable {
     private final ActionUnitService actionUnitService;
     private final LangBean langBean;
     private final SessionSettings sessionSettings;
+    private final FieldConfigurationService fieldConfigurationService;
+    private final FieldService fieldService;
+
 
     // Local
     private ActionUnit actionUnit;
+    private FieldConfigurationWrapper configurationWrapper;
     private String actionUnitErrorMessage;
     private Long id;  // ID of the action unit requested
 
@@ -47,10 +57,12 @@ public class ActionUnitBean implements Serializable {
     private List<ActionCode> secondaryActionCodes ;
 
 
-    public ActionUnitBean(ActionUnitService actionUnitService, LangBean langBean, SessionSettings sessionSettings) {
+    public ActionUnitBean(ActionUnitService actionUnitService, LangBean langBean, SessionSettings sessionSettings, FieldConfigurationService fieldConfigurationService, FieldService fieldService) {
         this.actionUnitService = actionUnitService;
         this.langBean = langBean;
         this.sessionSettings = sessionSettings;
+        this.fieldConfigurationService = fieldConfigurationService;
+        this.fieldService = fieldService;
     }
 
     @PostConstruct
@@ -75,6 +87,27 @@ public class ActionUnitBean implements Serializable {
         List<ActionCode> codes = List.of(code);
         return codes;
 
+    }
+
+    /**
+     * Fetch the autocomplete results on API for the type field
+     *
+     * @param input the input of the user
+     * @return the list of concepts that match the input to display in the autocomplete
+     */
+    public List<ConceptFieldDTO> completeActionCodeType(String input) {
+
+        Person person = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("User should be connected"));
+
+        try {
+            if(this.configurationWrapper == null) {
+                this.configurationWrapper = fieldConfigurationService.fetchConfigurationOfFieldCode(person, ActionCode.TYPE_FIELD_CODE);
+            }
+        } catch (NoConfigForField e) {
+            log.error("No collection for field " + RecordingUnit.TYPE_FIELD_CODE);
+        }
+
+        return fieldService.fetchAutocomplete(configurationWrapper, input, langBean.getLanguageCode());
     }
 
     public void handleSelectPrimaryCode() {

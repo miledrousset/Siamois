@@ -75,11 +75,21 @@
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
                         <div style="display:flex;">
-                            <p:selectOneMenu id="primaryActionCodeTypeOption"
-                                             value="#{actionUnitBean.actionUnit.primaryActionCode.type}">
-                                <f:selectItems value="#{actionUnitBean.actionCodeTypeOptions}"
-                                               var="option" itemLabel="#{option.label}" itemValue="#{option}"/>
-                            </p:selectOneMenu>
+<!--                            <p:selectOneMenu id="primaryActionCodeTypeOption"-->
+<!--                                             value="#{actionUnitBean.actionUnit.primaryActionCode.type}">-->
+<!--                                <f:selectItems value="#{actionUnitBean.actionCodeTypeOptions}"-->
+<!--                                               var="option" itemLabel="#{option.label}" itemValue="#{option}"/>-->
+<!--                            </p:selectOneMenu>-->
+                            <p:autoComplete id="auto-complete-primary-action-code-type"
+                                            value="#{actionUnitBean.actionUnit.primaryActionCode.type}"
+                                            var="option" itemLabel="#{option.label}"
+                                            completeMethod="#{actionUnitBean.completeActionCodeType}"
+                                            converter="#{conceptFieldDTOConverter}"
+                                            itemValue="#{option}"
+                                            required="true"
+                                            forceSelection="true"
+                                            scrollHeight="300"
+                                            dropdown="true"/>
                             <p:autoComplete id="auto-complete-primary-action-code"
                                             value="#{actionUnitBean.actionUnit.primaryActionCode}"
                                             var="actionCode" itemLabel="#{actionCode.code}"

@@ -5,6 +5,7 @@ import fr.siamois.bean.SessionSettings;
 import fr.siamois.infrastructure.api.ConceptApi;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.concept.ConceptSettingsTree;
+import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.auth.Person;
@@ -57,7 +58,8 @@ public class TestConfigurationBean implements Serializable {
             SpatialUnit.CATEGORY_FIELD_CODE,
             Person.USER_ROLE_FIELD_CODE,
             RecordingUnit.TYPE_FIELD_CODE,
-            ActionUnit.TYPE_FIELD_CODE
+            ActionUnit.TYPE_FIELD_CODE,
+            ActionCode.TYPE_FIELD_CODE
     );
 
     // Fields
