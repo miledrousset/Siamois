@@ -78,7 +78,7 @@ public class SpatialUnitBean implements Serializable {
 
     public String goToSpatialUnitById(Long id) {
         log.trace("go to spatial unit");
-        return "/pages/spatialUnit/spatialUnit.xhtml?id=" + id+"&faces-redirect=true";
+        return "/pages/spatialUnit/spatialUnit.xhtml?id=" + id + "&faces-redirect=true";
     }
 
     @PostConstruct
@@ -86,49 +86,51 @@ public class SpatialUnitBean implements Serializable {
 
         reinitializeBean();
 
-        if (id != null) {
-            try {
-                this.spatialUnit = spatialUnitService.findById(id);
-            } catch (RuntimeException e) {
-                this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
-            }
-
-            if (this.spatialUnit != null) {
-                try {
-                    this.spatialUnitListErrorMessage = null;
-                    this.spatialUnitList = spatialUnitService.findAllChildOfSpatialUnit(spatialUnit);
-                } catch (RuntimeException e) {
-                    this.spatialUnitList = null;
-                    this.spatialUnitListErrorMessage = "Unable to load spatial units: " + e.getMessage();
-                }
-                try {
-                    this.spatialUnitParentsListErrorMessage = null;
-                    this.spatialUnitParentsList = spatialUnitService.findAllParentsOfSpatialUnit(spatialUnit);
-                } catch (RuntimeException e) {
-                    this.spatialUnitParentsList = null;
-                    this.spatialUnitParentsListErrorMessage = "Unable to load the parents: " + e.getMessage();
-                }
-                try {
-                    this.recordingUnitListErrorMessage = null;
-                    this.recordingUnitList = recordingUnitService.findAllBySpatialUnit(spatialUnit);
-                } catch (RuntimeException e) {
-                    this.recordingUnitList = null;
-                    this.recordingUnitListErrorMessage = "Unable to load recording units: " + e.getMessage();
-                }
-                try {
-                    this.actionUnitListErrorMessage = null;
-                    this.actionUnitList = actionUnitService.findAllBySpatialUnitId(spatialUnit);
-                } catch (RuntimeException e) {
-                    this.actionUnitList = null;
-                    this.actionUnitListErrorMessage = "Unable to load action units: " + e.getMessage();
-                }
-                historyVersion = historyService.findSpatialUnitHistory(spatialUnit);
-            }
-
-        }
-        else {
+        if (id == null) {
             this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
+            return;
         }
+
+        try {
+            this.spatialUnit = spatialUnitService.findById(id);
+        } catch (RuntimeException e) {
+            this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
+        }
+
+        if (this.spatialUnit == null) {
+            this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
+            return;
+        }
+
+        try {
+            this.spatialUnitListErrorMessage = null;
+            this.spatialUnitList = spatialUnitService.findAllChildOfSpatialUnit(spatialUnit);
+        } catch (RuntimeException e) {
+            this.spatialUnitList = null;
+            this.spatialUnitListErrorMessage = "Unable to load spatial units: " + e.getMessage();
+        }
+        try {
+            this.spatialUnitParentsListErrorMessage = null;
+            this.spatialUnitParentsList = spatialUnitService.findAllParentsOfSpatialUnit(spatialUnit);
+        } catch (RuntimeException e) {
+            this.spatialUnitParentsList = null;
+            this.spatialUnitParentsListErrorMessage = "Unable to load the parents: " + e.getMessage();
+        }
+        try {
+            this.recordingUnitListErrorMessage = null;
+            this.recordingUnitList = recordingUnitService.findAllBySpatialUnit(spatialUnit);
+        } catch (RuntimeException e) {
+            this.recordingUnitList = null;
+            this.recordingUnitListErrorMessage = "Unable to load recording units: " + e.getMessage();
+        }
+        try {
+            this.actionUnitListErrorMessage = null;
+            this.actionUnitList = actionUnitService.findAllBySpatialUnitId(spatialUnit);
+        } catch (RuntimeException e) {
+            this.actionUnitList = null;
+            this.actionUnitListErrorMessage = "Unable to load action units: " + e.getMessage();
+        }
+        historyVersion = historyService.findSpatialUnitHistory(spatialUnit);
     }
 
     public String formatDate(OffsetDateTime offsetDateTime) {
