@@ -1,8 +1,9 @@
 package fr.siamois.services;
 
-import fr.siamois.infrastructure.repositories.ActionUnitRepository;
+import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
 import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
+import fr.siamois.services.actionunit.ActionUnitService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -2,8 +2,10 @@ package fr.siamois.bean.Field;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
+import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
+import fr.siamois.models.spatialunit.SpatialUnit;
+import fr.siamois.models.auth.Person;
 import fr.siamois.bean.converter.ConceptConverter;
-import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.vocabulary.Concept;
@@ -53,6 +55,7 @@ public class SpatialUnitFieldBean implements Serializable {
     private Concept selectedConcept = null;
     private String fName = "";
     private List<SpatialUnit> fParentsSpatialUnits = new ArrayList<>();
+    private List<SpatialUnit> fChildrenSpatialUnits = new ArrayList<>();
 
     public SpatialUnitFieldBean(FieldService fieldService,
                                 LangBean langBean,
@@ -74,6 +77,7 @@ public class SpatialUnitFieldBean implements Serializable {
      * Reset all fields.
      */
     public void init() {
+        init(new ArrayList<>(),new ArrayList<>());
         refSpatialUnits = spatialUnitService.findAllOfInstitution(sessionSettings.getSelectedInstitution());
         labels = refSpatialUnits.stream()
                 .map(SpatialUnit::getName)
@@ -84,7 +88,7 @@ public class SpatialUnitFieldBean implements Serializable {
         fParentsSpatialUnits = new ArrayList<>();
     }
 
-    public void init(List<SpatialUnit> parents) {
+    public void init(List<SpatialUnit> parents, List<SpatialUnit> children) {
         refSpatialUnits = spatialUnitService.findAllOfInstitution(sessionSettings.getSelectedInstitution());
         labels = refSpatialUnits.stream()
                 .map(SpatialUnit::getName)
@@ -93,6 +97,7 @@ public class SpatialUnitFieldBean implements Serializable {
         selectedConcept = null;
         fName = "";
         fParentsSpatialUnits = parents;
+        fChildrenSpatialUnits = children;
     }
 
     /**
@@ -105,6 +110,7 @@ public class SpatialUnitFieldBean implements Serializable {
 
         try {
             SpatialUnit saved = spatialUnitService.save(sessionSettings.getUserInfo(), fName, selectedConcept, fParentsSpatialUnits);
+
             MessageUtils.displayInfoMessage(langBean, "spatialunit.created", saved.getName());
 
             return "/pages/spatialUnit/spatialUnit?faces-redirect=true&id=" + saved.getId().toString();

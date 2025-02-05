@@ -1,6 +1,6 @@
 package fr.siamois.models.actionunit;
 
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.TraceableEntity;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.vocabulary.Concept;
@@ -15,6 +15,12 @@ import java.time.OffsetDateTime;
 @Data
 @MappedSuperclass
 public abstract class ActionUnitParent extends TraceableEntity {
+
+
+    public ActionUnitParent() {
+        this.maxRecordingUnitCode = 2147483647;
+        this.minRecordingUnitCode = 1;
+    }
 
     @Column(name = "begin_date")
     protected OffsetDateTime beginDate;
@@ -39,16 +45,23 @@ public abstract class ActionUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_spatial_unit_id", nullable = false)
     protected SpatialUnit spatialUnit;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "fk_primary_action_code")
     protected ActionCode primaryActionCode;
 
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinTable(
-//            name = "action_action_code",
-//            joinColumns = { @JoinColumn(name = "fk_action_unit_id") },
-//            inverseJoinColumns = { @JoinColumn(name = "fk_action_code_id") }
-//    )
-//    protected ArrayList<ActionCode> secondaryActionCodes;
+    @NotNull
+    @Column(name="code")
+    protected String code;
+
+    @NotNull
+    @Column(name="max_recording_unit_code", nullable = false)
+    protected Integer maxRecordingUnitCode;
+
+    @NotNull
+    @Column(name="min_recording_unit_code")
+    protected Integer minRecordingUnitCode;
+
+
+
 
 }

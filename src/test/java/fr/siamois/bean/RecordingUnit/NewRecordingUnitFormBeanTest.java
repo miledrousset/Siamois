@@ -5,7 +5,7 @@ import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
 import fr.siamois.models.recordingunit.RecordingUnitSize;
-import fr.siamois.services.ActionUnitService;
+import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.RecordingUnitService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ class NewRecordingUnitFormBeanTest {
         // Below is hardcoded but it should not be. TODO
         //ActionUnit actionUnit = this.actionUnitService.findById(4);
         //this.recordingUnit.setActionUnit(actionUnit);
-        this.recordingUnit.setSerial_id(1);
+        this.recordingUnit.setCode(1);
         // Init size & altimetry
         this.recordingUnit.setSize(new RecordingUnitSize());
         this.recordingUnit.getSize().setSize_unit("cm");

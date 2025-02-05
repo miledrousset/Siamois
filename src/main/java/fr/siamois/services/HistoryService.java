@@ -2,7 +2,9 @@ package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.history.GlobalHistoryRepository;
 import fr.siamois.infrastructure.repositories.history.SpatialUnitHistoryRepository;
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
+import fr.siamois.models.Team;
+import fr.siamois.models.auth.Person;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.history.HistoryOperation;
 import fr.siamois.models.history.HistoryUpdateType;

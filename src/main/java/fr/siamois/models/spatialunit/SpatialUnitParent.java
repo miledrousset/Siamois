@@ -1,5 +1,6 @@
-package fr.siamois.models;
+package fr.siamois.models.spatialunit;
 
+import fr.siamois.models.TraceableEntity;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.vocabulary.Concept;
 import jakarta.persistence.*;

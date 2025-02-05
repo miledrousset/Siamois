@@ -5,7 +5,7 @@ import fr.siamois.bean.RecordingUnit.utils.RecordingUnitUtils;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.services.ActionUnitService;
+import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
@@ -69,7 +69,7 @@ public class RecordingUnitFormBean implements Serializable {
                     new FacesMessage(
                             FacesMessage.SEVERITY_INFO,
                             "Info",
-                            langBean.msg("recordingunit.updated", this.recordingUnit.getSerial_id())));
+                            langBean.msg("recordingunit.updated", this.recordingUnit.getCode())));
             FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
             return "/pages/recordingUnit/recordingUnit?faces-redirect=true&id=" + this.recordingUnit.getId().toString();
 
@@ -78,7 +78,7 @@ public class RecordingUnitFormBean implements Serializable {
                     new FacesMessage(
                             FacesMessage.SEVERITY_ERROR,
                             "Error",
-                            langBean.msg("recordingunit.updatefailed", this.recordingUnit.getSerial_id())));
+                            langBean.msg("recordingunit.updatefailed", this.recordingUnit.getCode())));
 
             log.error("Error while saving: " + e.getMessage());
             // todo : add error message

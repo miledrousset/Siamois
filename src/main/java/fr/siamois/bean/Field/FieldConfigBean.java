@@ -3,7 +3,7 @@ package fr.siamois.bean.Field;
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.bean.converter.VocabularyConverter;
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.events.InstitutionChangeEvent;
 import fr.siamois.models.exceptions.NoConfigForField;

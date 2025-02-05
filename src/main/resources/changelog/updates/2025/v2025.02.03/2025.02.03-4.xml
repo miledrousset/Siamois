@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--
+    Add codes to action units and recording units
+    -->
+
+    <changeSet id="2025.02.03-4" author="Gregory Bliault">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="action_unit" columnName="code"/>
+            </not>
+        </preConditions>
+
+
+        <addColumn tableName="action_unit">
+            <column name="code" type="VARCHAR" >
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="action_unit">
+            <column name="min_recording_unit_code" type="INT" defaultValue="1" >
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="action_unit">
+            <column name="max_recording_unit_code" type="INT" defaultValue="2147483647" >
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+
+        <addColumn tableName="recording_unit">
+            <column name="code" type="INT" >
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addUniqueConstraint tableName="recording_unit" columnNames="code, fk_action_unit_id" />
+
+        <dropColumn tableName="recording_unit">
+            <column name="serial_identifier"></column>
+        </dropColumn>
+
+    </changeSet>
+
+</databaseChangeLog>

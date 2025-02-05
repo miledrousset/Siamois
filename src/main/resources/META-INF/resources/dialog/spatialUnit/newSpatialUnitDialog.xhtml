@@ -30,6 +30,10 @@
                         <sharedLabel:openthesoLabel for="auto-complete-action-type" label="Type"/>
                         <p:autoComplete id="su-category" value="#{spatialUnitFieldBean.selectedConcept}"
                                         completeMethod="#{spatialUnitFieldBean.completeCategory}"
+                                        var="field" itemLabel="#{field.label}"
+                                        itemValue="#{field}"
+                                        required="true"
+                                        converter="#{conceptConverter}"
                                         forceSelection="true"
                                         scrollHeight="300"
                                         dropdown="true"/>

@@ -1,14 +1,17 @@
-package fr.siamois.models;
+package fr.siamois.models.spatialunit;
 
+import fr.siamois.models.FieldCode;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.SQLRestriction;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "spatial_unit")
-public class SpatialUnit extends SpatialUnitParent {
+@SQLRestriction("fk_parent_action_unit_id IS NULL")
+public class SpatialUnit extends SpatialUnitGeneric {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

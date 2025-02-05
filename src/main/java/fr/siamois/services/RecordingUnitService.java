@@ -2,8 +2,8 @@ package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
-import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.actionunit.ActionUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;

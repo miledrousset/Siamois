@@ -2,14 +2,17 @@ package fr.siamois.bean.ActionUnit;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
+import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
+import fr.siamois.models.actionunit.ActionUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.bean.converter.ConceptConverter;
-import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
+import fr.siamois.models.vocabulary.Vocabulary;
+import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.services.ActionUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
@@ -102,6 +105,10 @@ public class NewActionUnitBean implements Serializable {
             log.error(e.getMessage(), e);
         }
         return concepts;
+    }
+
+    public void generateRandomActionUnitIdentifier() {
+        actionUnit.setCode("2025");
     }
 
     @PostConstruct

@@ -1,6 +1,6 @@
 package fr.siamois.utils;
 
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.history.SpatialUnitHist;
 import org.junit.jupiter.api.Test;
 

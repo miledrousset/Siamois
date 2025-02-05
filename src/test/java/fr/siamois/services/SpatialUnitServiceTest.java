@@ -1,7 +1,7 @@
 package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
-import fr.siamois.models.SpatialUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;

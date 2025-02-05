@@ -1,8 +1,9 @@
 package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
+import fr.siamois.models.spatialunit.SpatialUnit;
+import fr.siamois.models.Team;
 import fr.siamois.models.Institution;
-import fr.siamois.models.SpatialUnit;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
