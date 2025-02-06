@@ -102,6 +102,8 @@ public class HistoryTriggerInitializer {
 
         ResultSet resultSet = statement.executeQuery();
 
+        statement.close();
+
         while (resultSet.next()) {
             String columnName = resultSet.getString("column_name");
             columnList.append(columnName).append(", ");
