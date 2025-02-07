@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
+import java.io.Serializable;
 
 /**
  * <p>This bean handles the creation of a new user</p>
@@ -27,11 +28,11 @@ import javax.faces.bean.SessionScoped;
 @Getter
 @Setter
 @SessionScoped
-public class UserAddBean {
+public class UserAddBean implements Serializable {
 
     // Injections
     private final LangBean langBean;
-    private final PersonService personService;
+    private final transient PersonService personService;
 
     // Fields
     private String fManagerUsername;

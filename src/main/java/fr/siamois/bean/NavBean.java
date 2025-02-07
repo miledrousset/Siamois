@@ -30,7 +30,7 @@ import java.util.Optional;
 @SessionScoped
 public class NavBean implements Serializable {
 
-    private final SessionSettings sessionSettings;
+    private final SessionSettingsBean sessionSettingsBean;
     private final transient InstitutionChangeEventPublisher institutionChangeEventPublisher;
     private final transient InstitutionConverter converter;
 
@@ -38,16 +38,16 @@ public class NavBean implements Serializable {
 
     private Institution selectedInstitution;
 
-    public NavBean(SessionSettings sessionSettings, InstitutionChangeEventPublisher institutionChangeEventPublisher, InstitutionConverter converter) {
-        this.sessionSettings = sessionSettings;
+    public NavBean(SessionSettingsBean sessionSettingsBean, InstitutionChangeEventPublisher institutionChangeEventPublisher, InstitutionConverter converter) {
+        this.sessionSettingsBean = sessionSettingsBean;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
         this.converter = converter;
     }
 
     public void init() {
         log.trace("Initializing NavBean");
-        institutions = sessionSettings.getReferencedInstitutions();
-        selectedInstitution = sessionSettings.getSelectedInstitution();
+        institutions = sessionSettingsBean.getReferencedInstitutions();
+        selectedInstitution = sessionSettingsBean.getSelectedInstitution();
     }
 
     /**
@@ -88,8 +88,8 @@ public class NavBean implements Serializable {
     }
 
     public void changeSelectedInstitution() {
-        Institution oldInstit = sessionSettings.getSelectedInstitution();
-        sessionSettings.setSelectedInstitution(selectedInstitution);
+        Institution oldInstit = sessionSettingsBean.getSelectedInstitution();
+        sessionSettingsBean.setSelectedInstitution(selectedInstitution);
         institutionChangeEventPublisher.publishInstitutionChangeEvent();
         log.trace("Institution changed from {} to {}", oldInstit.toString(), selectedInstitution.toString());
     }

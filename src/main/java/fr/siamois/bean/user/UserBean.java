@@ -2,7 +2,7 @@ package fr.siamois.bean.user;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.NavBean;
-import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.SessionSettingsBean;
 import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedInstitutionSaveException;
@@ -23,7 +23,6 @@ import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>This bean handles the user management page</p>
@@ -38,14 +37,14 @@ import java.util.stream.Collectors;
 public class UserBean implements Serializable {
 
     // Injections
-    private final SessionSettings sessionSettings;
+    private final SessionSettingsBean sessionSettingsBean;
     private final UserAddBean userAddBean;
-    private final FieldService fieldService;
+    private final transient FieldService fieldService;
     private final LangBean langBean;
     private final NavBean navBean;
-    private final InstitutionService institutionService;
-    private final ConceptService conceptService;
-    private final FieldConfigurationService fieldConfigurationService;
+    private final transient InstitutionService institutionService;
+    private final transient ConceptService conceptService;
+    private final transient FieldConfigurationService fieldConfigurationService;
 
     // Storage
     private Vocabulary vocabularyConfiguration;
@@ -57,12 +56,12 @@ public class UserBean implements Serializable {
     private Institution adminInstitutionSelection = null;
 
     public UserBean(UserAddBean userAddBean,
-                    SessionSettings sessionSettings,
+                    SessionSettingsBean sessionSettingsBean,
                     FieldService fieldService,
                     LangBean langBean,
                     NavBean navBean, InstitutionService institutionService, ConceptService conceptService, FieldConfigurationService fieldConfigurationService) {
         this.userAddBean = userAddBean;
-        this.sessionSettings = sessionSettings;
+        this.sessionSettingsBean = sessionSettingsBean;
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.navBean = navBean;
@@ -83,7 +82,7 @@ public class UserBean implements Serializable {
      * Load the team members
      */
     private void loadTeamMembers() {
-        teamMembers = institutionService.findMembersOf(sessionSettings.getSelectedInstitution());
+        teamMembers = institutionService.findMembersOf(sessionSettingsBean.getSelectedInstitution());
         log.trace("Team members : {}", teamMembers);
     }
 
@@ -95,8 +94,8 @@ public class UserBean implements Serializable {
      * @throws NoConfigForField if the field configuration is not found
      */
     public List<String> autocompleteRoles(String input) throws NoConfigForField {
-        concepts = fieldConfigurationService.fetchAutocomplete(sessionSettings.getUserInfo(), Person.USER_ROLE_FIELD_CODE, input);
-        return concepts.stream().map(Concept::getLabel).collect(Collectors.toList());
+        concepts = fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), Person.USER_ROLE_FIELD_CODE, input);
+        return concepts.stream().map(Concept::getLabel).toList();
     }
 
     /**
@@ -113,7 +112,7 @@ public class UserBean implements Serializable {
     public void createUser() {
         Concept roleConcept = conceptService.saveOrGetConcept(role);
         try {
-            Institution institution = sessionSettings.getSelectedInstitution();
+            Institution institution = sessionSettingsBean.getSelectedInstitution();
             Person created = userAddBean.createUser(false);
             institutionService.addUserToInstitution(created, institution, roleConcept);
         } catch (FailedInstitutionSaveException e) {

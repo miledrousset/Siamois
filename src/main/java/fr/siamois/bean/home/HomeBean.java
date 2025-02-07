@@ -1,6 +1,6 @@
 package fr.siamois.bean.home;
 
-import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.SessionSettingsBean;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.events.InstitutionChangeEvent;
@@ -26,25 +26,25 @@ import java.util.List;
 public class HomeBean implements Serializable {
 
     private final transient SpatialUnitService spatialUnitService;
-    private final SessionSettings sessionSettings;
+    private final SessionSettingsBean sessionSettingsBean;
 
     @Getter
     private transient List<SpatialUnit> spatialUnitList;
 
     @Getter private String spatialUnitListErrorMessage;
 
-    public HomeBean(SpatialUnitService spatialUnitService, SessionSettings sessionSettings) {
+    public HomeBean(SpatialUnitService spatialUnitService, SessionSettingsBean sessionSettingsBean) {
         this.spatialUnitService = spatialUnitService;
-        this.sessionSettings = sessionSettings;
+        this.sessionSettingsBean = sessionSettingsBean;
     }
 
     public void init()  {
         try {
-            Person author = sessionSettings.getAuthenticatedUser();
+            Person author = sessionSettingsBean.getAuthenticatedUser();
             if (author.hasRole("ADMIN")) {
                 spatialUnitList = spatialUnitService.findAllWithoutParents();
             } else {
-                spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettings.getSelectedInstitution());
+                spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettingsBean.getSelectedInstitution());
             }
         } catch (RuntimeException e) {
             log.error(e.getMessage(), e);
@@ -56,7 +56,7 @@ public class HomeBean implements Serializable {
     @EventListener(InstitutionChangeEvent.class)
     public void onInstitutionChangeEvent() {
         log.trace("InstitutionChangeEvent received. Updating teams");
-        spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettings.getSelectedInstitution());
+        spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettingsBean.getSelectedInstitution());
         spatialUnitListErrorMessage = null;
     }
 }

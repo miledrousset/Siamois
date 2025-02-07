@@ -2,7 +2,7 @@ package fr.siamois.bean.recordingunit;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.recordingunit.utils.RecordingUnitUtils;
-import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.SessionSettingsBean;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.actionunit.ActionUnitService;
@@ -35,7 +35,7 @@ public class RecordingUnitFormBean implements Serializable {
     private final transient FieldService fieldService;
     private final LangBean langBean;
     private final transient ConceptService conceptService;
-    private final transient SessionSettings sessionSettings;
+    private final transient SessionSettingsBean sessionSettingsBean;
 
     private RecordingUnit recordingUnit;
     private String recordingUnitErrorMessage; // If error while initing the recording unit
@@ -66,7 +66,7 @@ public class RecordingUnitFormBean implements Serializable {
             ActionUnitService actionUnitService,
             PersonService personService,
             RecordingUnitUtils recordingUnitUtils, FieldService fieldService, LangBean langBean,
-            ConceptService conceptService, SessionSettings sessionSettings) {
+            ConceptService conceptService, SessionSettingsBean sessionSettingsBean) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.personService = personService;
@@ -75,7 +75,7 @@ public class RecordingUnitFormBean implements Serializable {
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.conceptService = conceptService;
-        this.sessionSettings = sessionSettings;
+        this.sessionSettingsBean = sessionSettingsBean;
     }
 
     public void reinitializeBean() {

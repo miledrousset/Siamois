@@ -1,7 +1,7 @@
 package fr.siamois.bean.actionunit;
 
 import fr.siamois.bean.LangBean;
-import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.SessionSettingsBean;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.UserInfo;
@@ -35,9 +35,9 @@ public class NewActionUnitBean implements Serializable {
     private final transient ActionUnitService actionUnitService;
     private final transient FieldService fieldService;
     private final LangBean langBean;
-    private final SessionSettings sessionSettings;
-    private final FieldConfigurationService fieldConfigurationService;
-    private final ConceptService conceptService;
+    private final SessionSettingsBean sessionSettingsBean;
+    private final transient FieldConfigurationService fieldConfigurationService;
+    private final transient ConceptService conceptService;
 
     // Local
     private ActionUnit actionUnit;
@@ -49,13 +49,13 @@ public class NewActionUnitBean implements Serializable {
     public NewActionUnitBean(ActionUnitService actionUnitService,
                              FieldService fieldService,
                              LangBean langBean,
-                             SessionSettings sessionSettings,
+                             SessionSettingsBean sessionSettingsBean,
                              FieldConfigurationService fieldConfigurationService,
                              ConceptService conceptService) {
         this.actionUnitService = actionUnitService;
         this.fieldService = fieldService;
         this.langBean = langBean;
-        this.sessionSettings = sessionSettings;
+        this.sessionSettingsBean = sessionSettingsBean;
         this.fieldConfigurationService = fieldConfigurationService;
         this.conceptService = conceptService;
     }
@@ -63,12 +63,12 @@ public class NewActionUnitBean implements Serializable {
 
     public String save() {
         try {
-            Person author = sessionSettings.getAuthenticatedUser();
+            Person author = sessionSettingsBean.getAuthenticatedUser();
             actionUnit.setAuthor(author);
             actionUnit.setBeginDate(OffsetDateTime.now()); // todo : implement
             actionUnit.setEndDate(OffsetDateTime.now());  // todo : implement
 
-            this.actionUnit = actionUnitService.save(sessionSettings.getUserInfo() ,actionUnit, fieldType);
+            this.actionUnit = actionUnitService.save(sessionSettingsBean.getUserInfo() ,actionUnit, fieldType);
 
             return "/pages/actionUnit/actionUnit?faces-redirect=true&id=" + this.actionUnit.getId().toString();
 
@@ -92,7 +92,7 @@ public class NewActionUnitBean implements Serializable {
      * @return the list of concepts that match the input to display in the autocomplete
      */
     public List<Concept> completeActionUnitType(String input) {
-        UserInfo info = sessionSettings.getUserInfo();
+        UserInfo info = sessionSettingsBean.getUserInfo();
         try {
             concepts = fieldConfigurationService.fetchAutocomplete(info, ActionUnit.TYPE_FIELD_CODE, input);
         } catch (NoConfigForField e) {

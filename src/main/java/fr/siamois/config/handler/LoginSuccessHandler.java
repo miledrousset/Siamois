@@ -1,6 +1,6 @@
 package fr.siamois.config.handler;
 
-import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.SessionSettingsBean;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +21,10 @@ import java.io.IOException;
 @Component
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final SessionSettings sessionSettings;
+    private final SessionSettingsBean sessionSettingsBean;
 
-    public LoginSuccessHandler(SessionSettings sessionSettings) {
-        this.sessionSettings = sessionSettings;
+    public LoginSuccessHandler(SessionSettingsBean sessionSettingsBean) {
+        this.sessionSettingsBean = sessionSettingsBean;
     }
 
     /**
@@ -36,7 +36,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        sessionSettings.setupSession();
+        sessionSettingsBean.setupSession();
         redirectRequest(request, response);
     }
 

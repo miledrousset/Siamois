@@ -2,7 +2,7 @@ package fr.siamois.bean.recordingunit;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.recordingunit.utils.RecordingUnitUtils;
-import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.SessionSettingsBean;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.exceptions.NoConfigForField;
@@ -42,7 +42,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     private final transient FieldService fieldService;
     private final LangBean langBean;
     private final transient ConceptService conceptService;
-    private final SessionSettings sessionSettings;
+    private final SessionSettingsBean sessionSettingsBean;
     private final transient FieldConfigurationService fieldConfigurationService;
 
     // Local
@@ -97,7 +97,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                                     FieldService fieldService,
                                     LangBean langBean,
                                     ConceptService conceptService,
-                                    SessionSettings sessionSettings, FieldConfigurationService fieldConfigurationService) {
+                                    SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.personService = personService;
@@ -105,7 +105,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.conceptService = conceptService;
-        this.sessionSettings = sessionSettings;
+        this.sessionSettingsBean = sessionSettingsBean;
         this.fieldConfigurationService = fieldConfigurationService;
 
     }
@@ -157,7 +157,7 @@ public class NewRecordingUnitFormBean implements Serializable {
 
 
     public List<Concept> completeRecordingUnitType(String input) {
-        UserInfo info = sessionSettings.getUserInfo();
+        UserInfo info = sessionSettingsBean.getUserInfo();
         try {
             concepts = fieldConfigurationService.fetchAutocomplete(info, RecordingUnit.TYPE_FIELD_CODE, input);
         } catch (NoConfigForField e) {

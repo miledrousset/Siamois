@@ -1,7 +1,7 @@
 package fr.siamois.bean.field;
 
 import fr.siamois.bean.LangBean;
-import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.SessionSettingsBean;
 import fr.siamois.bean.converter.VocabularyConverter;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.UserInfo;
@@ -39,7 +39,7 @@ public class FieldConfigBean implements Serializable {
     private final transient VocabularyService vocabularyService;
     private final LangBean langBean;
     private final transient FieldConfigurationService fieldConfigurationService;
-    private final SessionSettings sessionSettings;
+    private final SessionSettingsBean sessionSettingsBean;
     private final VocabularyConverter vocabularyConverter;
 
     // Storage
@@ -53,11 +53,11 @@ public class FieldConfigBean implements Serializable {
     private String fUserInstance;
     private Vocabulary fUserSelectedVocab;
 
-    public FieldConfigBean(VocabularyService vocabularyService, LangBean langBean, FieldConfigurationService fieldConfigurationService, SessionSettings sessionSettings, VocabularyConverter vocabularyConverter) {
+    public FieldConfigBean(VocabularyService vocabularyService, LangBean langBean, FieldConfigurationService fieldConfigurationService, SessionSettingsBean sessionSettingsBean, VocabularyConverter vocabularyConverter) {
         this.vocabularyService = vocabularyService;
         this.langBean = langBean;
         this.fieldConfigurationService = fieldConfigurationService;
-        this.sessionSettings = sessionSettings;
+        this.sessionSettingsBean = sessionSettingsBean;
         this.vocabularyConverter = vocabularyConverter;
     }
 
@@ -72,7 +72,7 @@ public class FieldConfigBean implements Serializable {
 
     public void onLoad() {
         log.trace("On Load called");
-        UserInfo info = sessionSettings.getUserInfo();
+        UserInfo info = sessionSettingsBean.getUserInfo();
         try {
             Concept config = fieldConfigurationService.findConfigurationForFieldCode(info, SpatialUnit.CATEGORY_FIELD_CODE);
             fInstance = config.getVocabulary().getBaseUri();
@@ -105,7 +105,7 @@ public class FieldConfigBean implements Serializable {
 
     public void loadConfig() {
         Vocabulary databaseVocab = vocabularyService.saveOrGetVocabulary(fSelectedVocab);
-        UserInfo info = sessionSettings.getUserInfo();
+        UserInfo info = sessionSettingsBean.getUserInfo();
         saveConfiguration(info, databaseVocab);
     }
 
@@ -129,7 +129,7 @@ public class FieldConfigBean implements Serializable {
     public void loadUserConfig() {
         Vocabulary databaseVocab = vocabularyService.saveOrGetVocabulary(fUserSelectedVocab);
 
-        UserInfo info = sessionSettings.getUserInfo();
+        UserInfo info = sessionSettingsBean.getUserInfo();
 
         saveConfiguration(info, databaseVocab);
     }

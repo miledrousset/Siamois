@@ -1,7 +1,7 @@
 package fr.siamois.models;
 
 import fr.siamois.bean.LangBean;
-import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.SessionSettingsBean;
 import fr.siamois.models.auth.Person;
 import lombok.Getter;
 
@@ -18,8 +18,8 @@ public class UserInfo {
         this.lang = lang;
     }
 
-    public UserInfo(SessionSettings sessionSettings, LangBean langBean) {
-        this(sessionSettings.getSelectedInstitution(), sessionSettings.getAuthenticatedUser(), langBean.getLanguageCode());
+    public UserInfo(SessionSettingsBean sessionSettingsBean, LangBean langBean) {
+        this(sessionSettingsBean.getSelectedInstitution(), sessionSettingsBean.getAuthenticatedUser(), langBean.getLanguageCode());
     }
 
 }
