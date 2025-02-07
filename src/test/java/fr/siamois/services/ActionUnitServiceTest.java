@@ -5,6 +5,7 @@ import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.models.Institution;
 import fr.siamois.models.UserInfo;
+import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
@@ -98,7 +99,7 @@ class ActionUnitServiceTest {
     @Test
     void findById_Exception() {
 
-        when(actionUnitRepository.findById(actionUnit1.getId())).thenReturn(Optional.ofNullable(null));
+        when(actionUnitRepository.findById(actionUnit1.getId())).thenReturn(Optional.empty());
 
 
         // Act & Assert
@@ -151,6 +152,40 @@ class ActionUnitServiceTest {
         );
 
         assertEquals("No local server found", exception.getMessage());
+    }
+
+    @Test
+    void findAllActionCodeByCodeIsContainingIgnoreCase_Success() {
+        // Arrange
+        String query = "test";
+        ActionCode actionCode1 = new ActionCode();
+        actionCode1.setCode("testCode1");
+        ActionCode actionCode2 = new ActionCode();
+        actionCode2.setCode("anotherTestCode");
+        when(actionCodeRepository.findAllByCodeIsContainingIgnoreCase(query)).thenReturn(List.of(actionCode1, actionCode2));
+
+        // Act
+        List<ActionCode> actualResult = actionUnitService.findAllActionCodeByCodeIsContainingIgnoreCase(query);
+
+        // Assert
+        assertNotNull(actualResult);
+        assertEquals(2, actualResult.size());
+        assertThat(actualResult).extracting(ActionCode::getCode).containsExactlyInAnyOrder("testCode1", "anotherTestCode");
+    }
+
+    @Test
+    void findAllActionCodeByCodeIsContainingIgnoreCase_Exception() {
+        // Arrange
+        String query = "test";
+        when(actionCodeRepository.findAllByCodeIsContainingIgnoreCase(query)).thenThrow(new RuntimeException("Database error"));
+
+        // Act & Assert
+        Exception exception = assertThrows(
+                RuntimeException.class,
+                () -> actionUnitService.findAllActionCodeByCodeIsContainingIgnoreCase(query)
+        );
+
+        assertEquals("Database error", exception.getMessage());
     }
 
 }
