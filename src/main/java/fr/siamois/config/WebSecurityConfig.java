@@ -27,7 +27,7 @@ public class WebSecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, LangBean langBean, LoginSuccessHandler loginSuccessHandler) throws Exception {
-        http.authorizeHttpRequests((requests) -> requests
+        http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/", "/index.xhtml").authenticated()
                 .requestMatchers("/fieldConfiguration", "/pages/field/fieldConfiguration.xhtml").authenticated()
                 .requestMatchers("/pages/**").authenticated()
@@ -35,17 +35,17 @@ public class WebSecurityConfig {
                 .requestMatchers("/pages/manager/**", "/manager/**").hasAnyAuthority("TEAM_MANAGER", "ADMIN")
                 .anyRequest().permitAll()
         );
-        http.formLogin((login) -> login
+        http.formLogin(login -> login
                 .loginPage("/login?lang=" + langBean.getLanguageCode()).permitAll()
                 .loginProcessingUrl("/login")
                 .failureUrl("/login?error=true&lang=" + langBean.getLanguageCode())
                 .successHandler(loginSuccessHandler)
         );
-        http.logout((logout) -> logout
+        http.logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?lang=" + langBean.getLanguageCode())
         );
-        http.sessionManagement((session) -> session.maximumSessions(1));
+        http.sessionManagement(session -> session.maximumSessions(1));
 
         return http.build();
     }

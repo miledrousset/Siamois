@@ -25,7 +25,7 @@ public class ActionUnit extends ActionUnitParent {
             joinColumns = { @JoinColumn(name = "fk_action_id") },
             inverseJoinColumns = { @JoinColumn(name = "fk_action_code_id") }
     )
-    protected Set<ActionCode> secondaryActionCodes = new HashSet<>();
+    protected transient Set<ActionCode> secondaryActionCodes = new HashSet<>();
 
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIAAU.TYPE";

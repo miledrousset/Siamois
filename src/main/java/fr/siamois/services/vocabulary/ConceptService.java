@@ -49,7 +49,7 @@ public class ConceptService {
 
         return Arrays.stream(conceptDTO.getPrefLabel())
                 .filter(purlInfoDTO -> purlInfoDTO.getLang().equals(lang))
-                .map((elt) -> {
+                .map(elt -> {
                     LabelDTO labelDTO = new LabelDTO();
                     labelDTO.setTitle(elt.getValue());
                     labelDTO.setLang(elt.getLang());
