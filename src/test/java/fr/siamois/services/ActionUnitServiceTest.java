@@ -1,10 +1,19 @@
 package fr.siamois.services;
 
+import fr.siamois.infrastructure.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
+import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
+import fr.siamois.models.Institution;
+import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionUnit;
+import fr.siamois.models.ark.Ark;
+import fr.siamois.models.ark.ArkServer;
+import fr.siamois.models.auth.Person;
+import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.spatialunit.SpatialUnit;
+import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.actionunit.ActionUnitService;
-import org.junit.jupiter.api.AfterEach;
+import fr.siamois.services.vocabulary.ConceptService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,15 +24,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ActionUnitServiceTest {
 
-    @Mock
-    private ActionUnitRepository actionUnitRepository;
+    @Mock private ActionUnitRepository actionUnitRepository;
+    @Mock private ArkServerRepository arkServerRepository;
+    @Mock private ConceptService conceptService;
+    @Mock private ActionCodeRepository actionCodeRepository;
 
     @InjectMocks
     private ActionUnitService actionUnitService;
@@ -42,10 +53,6 @@ class ActionUnitServiceTest {
         actionUnit2.setId(2L);
 
 
-    }
-
-    @AfterEach
-    void tearDown() {
     }
 
     @Test
@@ -101,6 +108,49 @@ class ActionUnitServiceTest {
         );
 
         assertEquals("ActionUnit not found with ID: 1", exception.getMessage());
-
     }
+
+    @Test
+    void save_withUserInfo_success() {
+        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
+
+        ActionUnit actionUnit = new ActionUnit();
+        Concept typeConcept = new Concept();
+        ArkServer localServer = new ArkServer();
+        localServer.setId(1L);
+        Ark ark = new Ark();
+        ark.setArkServer(localServer);
+
+        when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(localServer));
+        when(conceptService.saveOrGetConcept(typeConcept)).thenReturn(typeConcept);
+        when(actionUnitRepository.save(actionUnit)).thenReturn(actionUnit);
+
+        ActionUnit result = actionUnitService.save(userInfo, actionUnit, typeConcept);
+
+        assertNotNull(result);
+        assertEquals(actionUnit, result);
+        assertEquals(typeConcept, result.getType());
+        assertEquals(userInfo.getUser(), result.getAuthor());
+        assertEquals(userInfo.getInstitution(), result.getCreatedByInstitution());
+        assertNotNull(result.getArk());
+        assertThat(result.getArk().getArkId()).startsWith("666666/");
+    }
+
+    @Test
+    void save_withUserInfo_failure() {
+        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
+
+        ActionUnit actionUnit = new ActionUnit();
+        Concept typeConcept = new Concept();
+
+        when(arkServerRepository.findLocalServer()).thenThrow(new RuntimeException("No local server found"));
+
+        Exception exception = assertThrows(
+                FailedRecordingUnitSaveException.class,
+                () -> actionUnitService.save(userInfo, actionUnit, typeConcept)
+        );
+
+        assertEquals("No local server found", exception.getMessage());
+    }
+
 }

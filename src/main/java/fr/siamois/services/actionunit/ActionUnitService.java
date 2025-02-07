@@ -98,8 +98,6 @@ public class ActionUnitService {
 
         try {
 
-            // Look at the primary action code
-            ActionCode primaryActionCode = actionUnit.getPrimaryActionCode();
             // Is the action code concept already in DB ?
             Concept actionCodeType = conceptService.saveOrGetConcept(actionUnit.getPrimaryActionCode().getType());
             actionUnit.getPrimaryActionCode().setType(actionCodeType);
