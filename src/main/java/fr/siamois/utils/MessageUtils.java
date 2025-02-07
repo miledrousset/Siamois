@@ -11,6 +11,8 @@ public class MessageUtils {
 
     private static final Map<FacesMessage.Severity, String> titlesCodes = new HashMap<>();
 
+    private MessageUtils() {}
+
     static {
         titlesCodes.put(FacesMessage.SEVERITY_INFO, "commons.message.state.info");
         titlesCodes.put(FacesMessage.SEVERITY_ERROR, "commons.message.state.error");
