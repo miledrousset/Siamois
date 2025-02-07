@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -67,7 +68,11 @@ public class LogsBean implements Serializable {
         ZoneOffset offset = ZoneId.systemDefault().getRules().getOffset(vStartDateTime);
         OffsetDateTime start = OffsetDateTime.of(vStartDateTime, offset);
         OffsetDateTime end = OffsetDateTime.of(vEndDateTime, offset);
-        operations = historyService.findAllOperationsOfUserAndTeamBetween(sessionSettings.getUserInfo(), start, end);
+        try {
+            operations = historyService.findAllOperationsOfUserAndTeamBetween(sessionSettings.getUserInfo(), start, end);
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     public String formatDate(OffsetDateTime offsetDateTime) {
