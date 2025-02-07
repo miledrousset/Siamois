@@ -3,16 +3,17 @@ package fr.siamois.models.recordingunit;
 import jakarta.persistence.Embeddable;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Embeddable
 @Data
-public class RecordingUnitAltimetry {
+public class RecordingUnitAltimetry implements Serializable {
 
-    private BigDecimal altitude_sup_plus;
-    private BigDecimal altitude_sup_minus;
-    private BigDecimal altitude_inf_plus;
-    private BigDecimal altitude_inf_minus;
-    private String altitude_unit;
+    private BigDecimal altitudeSupPlus;
+    private BigDecimal altitudeSupMinus;
+    private BigDecimal altitudeInfPlus;
+    private BigDecimal altitudeInfMinus;
+    private String altitudeUnit;
 
 }

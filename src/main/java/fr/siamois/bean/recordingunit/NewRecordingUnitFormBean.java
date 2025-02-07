@@ -138,9 +138,9 @@ public class NewRecordingUnitFormBean implements Serializable {
                 this.recordingUnit.setCode(1);
                 // Init size & altimetry
                 this.recordingUnit.setSize(new RecordingUnitSize());
-                this.recordingUnit.getSize().setSize_unit("cm");
+                this.recordingUnit.getSize().setSizeUnit("cm");
                 this.recordingUnit.setAltitude(new RecordingUnitAltimetry());
-                this.recordingUnit.getAltitude().setAltitude_unit("m");
+                this.recordingUnit.getAltitude().setAltitudeUnit("m");
                 // Init strati. TODO : real implementation
                 events = new ArrayList<>();
                 events.add(new Event("Anterior", "15/10/2020 10:30", "pi pi-arrow-circle-up", "#9C27B0", "game-controller.jpg"));

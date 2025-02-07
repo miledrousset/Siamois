@@ -57,9 +57,9 @@ class NewRecordingUnitFormBeanTest {
         this.recordingUnit.setCode(1);
         // Init size & altimetry
         this.recordingUnit.setSize(new RecordingUnitSize());
-        this.recordingUnit.getSize().setSize_unit("cm");
+        this.recordingUnit.getSize().setSizeUnit("cm");
         this.recordingUnit.setAltitude(new RecordingUnitAltimetry());
-        this.recordingUnit.getAltitude().setAltitude_unit("m");
+        this.recordingUnit.getAltitude().setAltitudeUnit("m");
 
 
 
