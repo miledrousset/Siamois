@@ -24,7 +24,7 @@ public class ArkGeneratorUtils {
             int index = RANDOM.nextInt(CHARACTERS.length());
             sb.append(CHARACTERS.charAt(index));
         }
-        return SERVER_NAAN_NUMBER + "/" + sb.toString();
+        return SERVER_NAAN_NUMBER + "/" + sb;
     }
 
 }
