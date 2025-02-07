@@ -22,6 +22,7 @@ package fr.siamois.services;
     import java.util.ArrayList;
     import java.util.List;
 
+    import static org.assertj.core.api.Assertions.assertThat;
     import static org.junit.jupiter.api.Assertions.*;
     import static org.mockito.Mockito.*;
 
@@ -97,6 +98,14 @@ package fr.siamois.services;
             assertEquals(2, operations.size());
             verify(globalHistoryRepository, times(7)).findAllHistoryOfUserBetween(anyString(), eq(userInfo), eq(start), eq(end));
             verify(globalHistoryRepository, times(7)).findAllCreationOfUserBetween(anyString(), eq(userInfo), eq(start), eq(end));
+        }
+
+        @Test
+        void findAllOperationsOfUserAndTeamBetween_whenInvalidDate_shouldReturnEmptyList() {
+            OffsetDateTime start = OffsetDateTime.now();
+            OffsetDateTime end = start.minusDays(2);
+            List<HistoryOperation> result = historyService.findAllOperationsOfUserAndTeamBetween(userInfo, start, end);
+            assertThat(result).isEmpty();
         }
 
         @Test
