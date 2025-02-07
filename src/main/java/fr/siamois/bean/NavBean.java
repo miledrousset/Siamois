@@ -31,10 +31,10 @@ import java.util.Optional;
 public class NavBean implements Serializable {
 
     private final SessionSettings sessionSettings;
-    private final InstitutionChangeEventPublisher institutionChangeEventPublisher;
-    private final InstitutionConverter converter;
+    private final transient InstitutionChangeEventPublisher institutionChangeEventPublisher;
+    private final transient InstitutionConverter converter;
 
-    private List<Institution> institutions;
+    private transient List<Institution> institutions;
 
     private Institution selectedInstitution;
 
@@ -90,7 +90,7 @@ public class NavBean implements Serializable {
     public void changeSelectedInstitution() {
         Institution oldInstit = sessionSettings.getSelectedInstitution();
         sessionSettings.setSelectedInstitution(selectedInstitution);
-        institutionChangeEventPublisher.publishTeamChangeEvent();
+        institutionChangeEventPublisher.publishInstitutionChangeEvent();
         log.trace("Institution changed from {} to {}", oldInstit.toString(), selectedInstitution.toString());
     }
 }
