@@ -62,7 +62,8 @@
             **/*Settings.*,
             **/*Factory.*,
             **/SiamoisApplication.*,
-            **/*DTO.*
+            **/*DTO.*,
+            **/*Utils.*
         </sonar.coverage.exclusions>
 
 
