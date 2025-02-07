@@ -1,6 +1,6 @@
 package fr.siamois.bean.spatialunit;
 
-import fr.siamois.bean.SessionSettingsBean;
+import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.history.SpatialUnitHist;
@@ -36,7 +36,7 @@ public class SpatialUnitBean implements Serializable {
     private final transient RecordingUnitService recordingUnitService;
     private final transient ActionUnitService actionUnitService;
     private final transient HistoryService historyService;
-    private final SessionSettingsBean sessionSettingsBean;
+    private final SessionSettings sessionSettings;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -55,12 +55,12 @@ public class SpatialUnitBean implements Serializable {
 
     private Long id;  // ID of the spatial unit
 
-    public SpatialUnitBean(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, HistoryService historyService, SessionSettingsBean sessionSettingsBean) {
+    public SpatialUnitBean(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, HistoryService historyService, SessionSettings sessionSettings) {
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.historyService = historyService;
-        this.sessionSettingsBean = sessionSettingsBean;
+        this.sessionSettings = sessionSettings;
     }
 
     public void reinitializeBean() {

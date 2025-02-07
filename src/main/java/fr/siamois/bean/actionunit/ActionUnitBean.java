@@ -1,7 +1,7 @@
 package fr.siamois.bean.actionunit;
 
 import fr.siamois.bean.LangBean;
-import fr.siamois.bean.SessionSettingsBean;
+import fr.siamois.bean.SessionSettings;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
@@ -32,7 +32,7 @@ public class ActionUnitBean implements Serializable {
     // Deps
     private final transient ActionUnitService actionUnitService;
     private final LangBean langBean;
-    private final SessionSettingsBean sessionSettingsBean;
+    private final SessionSettings sessionSettings;
     private final transient FieldConfigurationService fieldConfigurationService;
     private final transient FieldService fieldService;
 
@@ -57,10 +57,10 @@ public class ActionUnitBean implements Serializable {
     private transient List<ActionCode> secondaryActionCodes ;
 
 
-    public ActionUnitBean(ActionUnitService actionUnitService, LangBean langBean, SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService, FieldService fieldService) {
+    public ActionUnitBean(ActionUnitService actionUnitService, LangBean langBean, SessionSettings sessionSettings, FieldConfigurationService fieldConfigurationService, FieldService fieldService) {
         this.actionUnitService = actionUnitService;
         this.langBean = langBean;
-        this.sessionSettingsBean = sessionSettingsBean;
+        this.sessionSettings = sessionSettings;
         this.fieldConfigurationService = fieldConfigurationService;
         this.fieldService = fieldService;
     }
@@ -91,7 +91,7 @@ public class ActionUnitBean implements Serializable {
     public List<Concept> completeActionCodeType(String input) {
 
         try {
-            return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), ActionCode.TYPE_FIELD_CODE, input);
+            return fieldConfigurationService.fetchAutocomplete(sessionSettings.getUserInfo(), ActionCode.TYPE_FIELD_CODE, input);
         } catch (NoConfigForField e) {
             log.error(e.getMessage(), e);
             return new ArrayList<>();
@@ -123,7 +123,7 @@ public class ActionUnitBean implements Serializable {
 
     public void save() {
         try {
-            Person author = sessionSettingsBean.getAuthenticatedUser();
+            Person author = sessionSettings.getAuthenticatedUser();
             actionUnit.setLastModifiedBy(author);
 
             this.actionUnit = actionUnitService.save(actionUnit, secondaryActionCodes);
