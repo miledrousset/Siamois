@@ -3,7 +3,6 @@ package fr.siamois.bean.field;
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.spatialunit.SpatialUnit;
-import fr.siamois.bean.converter.ConceptConverter;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.vocabulary.Concept;
@@ -21,7 +20,6 @@ import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>This bean handles the creation of new Spatial Unit</p>
@@ -39,9 +37,9 @@ public class SpatialUnitFieldBean implements Serializable {
     private final transient FieldService fieldService;
     private final LangBean langBean;
     private final SessionSettings sessionSettings;
-    private final SpatialUnitService spatialUnitService;
-    private final ConceptService conceptService;
-    private final FieldConfigurationService fieldConfigurationService;
+    private final transient SpatialUnitService spatialUnitService;
+    private final transient ConceptService conceptService;
+    private final transient FieldConfigurationService fieldConfigurationService;
 
     // Storage
     private List<SpatialUnit> refSpatialUnits = new ArrayList<>();
@@ -77,7 +75,7 @@ public class SpatialUnitFieldBean implements Serializable {
         refSpatialUnits = spatialUnitService.findAllOfInstitution(sessionSettings.getSelectedInstitution());
         labels = refSpatialUnits.stream()
                 .map(SpatialUnit::getName)
-                .collect(Collectors.toList());
+                .toList();
         concepts = null;
         selectedConcept = null;
         fName = "";
@@ -88,7 +86,7 @@ public class SpatialUnitFieldBean implements Serializable {
         refSpatialUnits = spatialUnitService.findAllOfInstitution(sessionSettings.getSelectedInstitution());
         labels = refSpatialUnits.stream()
                 .map(SpatialUnit::getName)
-                .collect(Collectors.toList());
+                .toList();
         concepts = null;
         selectedConcept = null;
         fName = "";

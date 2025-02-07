@@ -13,7 +13,7 @@ import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.ActionUnitNotFoundException;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.services.ark.ArkGenerator;
+import fr.siamois.utils.ArkGeneratorUtils;
 import fr.siamois.services.vocabulary.ConceptService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +71,7 @@ public class ActionUnitService {
                 ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
                 Ark ark = new Ark();
                 ark.setArkServer(localServer);
-                ark.setArkId(ArkGenerator.generateArk());
+                ark.setArkId(ArkGeneratorUtils.generateArk());
                 actionUnit.setArk(ark);
             }
 
@@ -98,8 +98,6 @@ public class ActionUnitService {
 
         try {
 
-            // Look at the primary action code
-            ActionCode primaryActionCode = actionUnit.getPrimaryActionCode();
             // Is the action code concept already in DB ?
             Concept actionCodeType = conceptService.saveOrGetConcept(actionUnit.getPrimaryActionCode().getType());
             actionUnit.getPrimaryActionCode().setType(actionCodeType);

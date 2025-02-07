@@ -106,10 +106,6 @@ class FieldConfigurationServiceTest {
                 .thenReturn(parentConcept);
         when(fieldRepository.updateConfigForFieldOfInstitution(anyLong(), anyString(), anyLong())).thenReturn(0);
 
-        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
-        userInfo.getInstitution().setId(12L);
-        userInfo.getUser().setId(12L);
-
         Optional<GlobalFieldConfig> result = service.setupFieldConfigurationForInstitution(userInfo, vocabulary);
 
         assertThat(result).isEmpty();
@@ -133,10 +129,6 @@ class FieldConfigurationServiceTest {
                 .thenReturn(parentConcept);
         when(fieldRepository.updateConfigForFieldOfInstitution(anyLong(), anyString(), anyLong())).thenReturn(1);
 
-        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
-        userInfo.getInstitution().setId(12L);
-        userInfo.getUser().setId(12L);
-
         Optional<GlobalFieldConfig> result = service.setupFieldConfigurationForInstitution(userInfo, vocabulary);
 
         assertThat(result).isEmpty();
@@ -156,10 +148,6 @@ class FieldConfigurationServiceTest {
 
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST", "SIAMAND"));
         when(conceptApi.fetchFieldsBranch(vocabulary)).thenReturn(dto);
-
-        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
-        userInfo.getInstitution().setId(12L);
-        userInfo.getUser().setId(12L);
 
         Optional<GlobalFieldConfig> result = service.setupFieldConfigurationForInstitution(userInfo, vocabulary);
 
@@ -185,10 +173,6 @@ class FieldConfigurationServiceTest {
                 .thenReturn(parentConcept);
         when(fieldRepository.updateConfigForFieldOfUser(anyLong(), anyLong(), anyString(), anyLong())).thenReturn(0);
 
-        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
-        userInfo.getInstitution().setId(12L);
-        userInfo.getUser().setId(12L);
-
         Optional<GlobalFieldConfig> result = service.setupFieldConfigurationForUser(userInfo, vocabulary);
 
         assertThat(result).isEmpty();
@@ -211,10 +195,6 @@ class FieldConfigurationServiceTest {
         when(conceptService.saveOrGetConceptFromFullDTO(any(UserInfo.class), any(Vocabulary.class), any(FullConceptDTO.class)))
                 .thenReturn(parentConcept);
         when(fieldRepository.updateConfigForFieldOfUser(anyLong(), anyLong(),anyString(), anyLong())).thenReturn(1);
-
-        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
-        userInfo.getInstitution().setId(12L);
-        userInfo.getUser().setId(12L);
 
         Optional<GlobalFieldConfig> result = service.setupFieldConfigurationForUser(userInfo, vocabulary);
 
@@ -295,7 +275,7 @@ class FieldConfigurationServiceTest {
 
         List<Concept> result = service.fetchAutocomplete(userInfo, "SIATEST", "ue");
 
-        assertThat(result).allMatch((val) -> val.getLabel().contains("value"));
+        assertThat(result).isNotEmpty().allMatch(val -> val.getLabel().contains("value"));
     }
 
     @Test
@@ -311,6 +291,28 @@ class FieldConfigurationServiceTest {
 
         List<Concept> result = service.fetchAutocomplete(userInfo, "SIATEST", "Sie");
 
-        assertThat(result).allMatch((match) -> match.getLabel().equals("Sites"));
+        assertThat(result).isNotEmpty().allMatch(match -> match.getLabel().equals("Sites"));
+    }
+
+    @Test
+    void fetchAllValues() {
+        ConceptBranchDTO dto = new ConceptBranchDTO();
+        dto.addConceptBranchDTO("http://localhost/th223/1213", fullConceptDTO("1213", "", "First value"));
+        dto.addConceptBranchDTO("http://localhost/th223/1214", fullConceptDTO("1214", "", "Second value"));
+        dto.addConceptBranchDTO("http://localhost/th223/1215", fullConceptDTO("1215", "", "Third value"));
+
+        Concept parentConcept = new Concept();
+        parentConcept.setId(-1L);
+        parentConcept.setExternalId("1212");
+        parentConcept.setVocabulary(vocabulary);
+        parentConcept.setLangCode("fr");
+        parentConcept.setLabel("Parent concept");
+
+        when(conceptApi.fetchConceptsUnderTopTerm(parentConcept)).thenReturn(dto);
+
+        List<Concept> result = service.fetchAllValues(userInfo, parentConcept);
+
+        assertThat(result).hasSize(3);
+        assertThat(result).extracting(Concept::getLabel).containsExactlyInAnyOrder("First value", "Second value", "Third value");
     }
 }

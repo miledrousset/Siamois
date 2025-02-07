@@ -1,6 +1,4 @@
-package fr.siamois.services.ark;
-
-import org.springframework.stereotype.Service;
+package fr.siamois.utils;
 
 import java.security.SecureRandom;
 
@@ -8,12 +6,13 @@ import java.security.SecureRandom;
  * Service to generate ARKs.
  * @author Julien Linget
  */
-@Service
-public class ArkGenerator {
+public class ArkGeneratorUtils {
 
-    private static final String serverNaanNumber = "666666";
+    private static final String SERVER_NAAN_NUMBER = "666666";
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final SecureRandom RANDOM = new SecureRandom();
+
+    private ArkGeneratorUtils() {}
 
     /**
      * DEVELOPMENT PURPOSES ONLY
@@ -25,7 +24,7 @@ public class ArkGenerator {
             int index = RANDOM.nextInt(CHARACTERS.length());
             sb.append(CHARACTERS.charAt(index));
         }
-        return serverNaanNumber + "/" + sb.toString();
+        return SERVER_NAAN_NUMBER + "/" + sb;
     }
 
 }

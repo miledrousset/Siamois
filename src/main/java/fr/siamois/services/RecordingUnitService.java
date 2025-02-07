@@ -10,7 +10,7 @@ import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.exceptions.RecordingUnitNotFoundException;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.services.ark.ArkGenerator;
+import fr.siamois.utils.ArkGeneratorUtils;
 import fr.siamois.services.vocabulary.ConceptService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +71,7 @@ public class RecordingUnitService {
                 ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
                 Ark ark = new Ark();
                 ark.setArkServer(localServer);
-                ark.setArkId(ArkGenerator.generateArk());
+                ark.setArkId(ArkGeneratorUtils.generateArk());
                 recordingUnit.setArk(ark);
             }
 

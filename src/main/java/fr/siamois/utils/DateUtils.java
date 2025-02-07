@@ -12,6 +12,8 @@ public class DateUtils {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
+    private DateUtils() {}
+
     /**
      * offsetDateTime to {@link String} representation with format `YYYY-MM-DD HH:MM` with the system time zone.
      * @param offsetDateTime The {@link OffsetDateTime} to convert

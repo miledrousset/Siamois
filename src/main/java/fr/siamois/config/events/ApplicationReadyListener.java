@@ -6,6 +6,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 
+import java.sql.SQLException;
+
 @Slf4j
 @Configuration
 public class ApplicationReadyListener {
@@ -18,8 +20,12 @@ public class ApplicationReadyListener {
 
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
-        historyTriggerInitializer.createHistoryTriggers();
-        log.info("History trigger created");
+        try {
+            historyTriggerInitializer.createHistoryTriggers();
+            log.info("History trigger created");
+        } catch (SQLException e) {
+            log.error("Failed to create History Triggers", e);
+        }
     }
 
 }

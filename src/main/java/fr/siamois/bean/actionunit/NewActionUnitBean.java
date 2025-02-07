@@ -36,8 +36,8 @@ public class NewActionUnitBean implements Serializable {
     private final transient FieldService fieldService;
     private final LangBean langBean;
     private final SessionSettings sessionSettings;
-    private final FieldConfigurationService fieldConfigurationService;
-    private final ConceptService conceptService;
+    private final transient FieldConfigurationService fieldConfigurationService;
+    private final transient ConceptService conceptService;
 
     // Local
     private ActionUnit actionUnit;

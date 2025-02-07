@@ -13,7 +13,7 @@ public class InstitutionChangeEventPublisher {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public void publishTeamChangeEvent() {
+    public void publishInstitutionChangeEvent() {
         InstitutionChangeEvent event = new InstitutionChangeEvent(this);
         applicationEventPublisher.publishEvent(event);
     }

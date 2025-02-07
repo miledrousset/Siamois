@@ -23,7 +23,6 @@ import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>This bean handles the user management page</p>
@@ -40,12 +39,12 @@ public class UserBean implements Serializable {
     // Injections
     private final SessionSettings sessionSettings;
     private final UserAddBean userAddBean;
-    private final FieldService fieldService;
+    private final transient FieldService fieldService;
     private final LangBean langBean;
     private final NavBean navBean;
-    private final InstitutionService institutionService;
-    private final ConceptService conceptService;
-    private final FieldConfigurationService fieldConfigurationService;
+    private final transient InstitutionService institutionService;
+    private final transient ConceptService conceptService;
+    private final transient FieldConfigurationService fieldConfigurationService;
 
     // Storage
     private Vocabulary vocabularyConfiguration;
@@ -96,7 +95,7 @@ public class UserBean implements Serializable {
      */
     public List<String> autocompleteRoles(String input) throws NoConfigForField {
         concepts = fieldConfigurationService.fetchAutocomplete(sessionSettings.getUserInfo(), Person.USER_ROLE_FIELD_CODE, input);
-        return concepts.stream().map(Concept::getLabel).collect(Collectors.toList());
+        return concepts.stream().map(Concept::getLabel).toList();
     }
 
     /**
