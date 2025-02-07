@@ -9,13 +9,16 @@ import fr.siamois.models.UserInfo;
 import fr.siamois.models.history.HistoryOperation;
 import fr.siamois.models.history.HistoryUpdateType;
 import fr.siamois.models.history.SpatialUnitHist;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 @Service
 public class HistoryService {
 
@@ -52,21 +55,29 @@ public class HistoryService {
     }
 
     private void addHistoryOperation(List<HistoryOperation> operations, String tableName, String entityName, UserInfo info, OffsetDateTime start, OffsetDateTime end) {
-        globalHistoryRepository.findAllHistoryOfUserBetween("history_" + tableName, info, start, end).forEach((entry) ->
-                operations.add(new HistoryOperation(entry.getUpdateType(),
-                        entityName,
-                        entry.getTableId(),
-                        entry.getUpdateTime()))
-                );
+        try {
+            globalHistoryRepository.findAllHistoryOfUserBetween("history_" + tableName, info, start, end).forEach(entry ->
+                    operations.add(new HistoryOperation(entry.getUpdateType(),
+                            entityName,
+                            entry.getTableId(),
+                            entry.getUpdateTime()))
+            );
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     private void addCreateOperation(List<HistoryOperation> operations, String tableName, String entityName, UserInfo info, OffsetDateTime start, OffsetDateTime end) {
-        globalHistoryRepository.findAllCreationOfUserBetween(tableName, info,  start, end).forEach((entity) ->
-                operations.add(new HistoryOperation(HistoryUpdateType.CREATE,
-                        entityName,
-                        entity.getId(),
-                        entity.getCreationTime()))
-                );
+        try {
+            globalHistoryRepository.findAllCreationOfUserBetween(tableName, info,  start, end).forEach(entity ->
+                    operations.add(new HistoryOperation(HistoryUpdateType.CREATE,
+                            entityName,
+                            entity.getId(),
+                            entity.getCreationTime()))
+            );
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     private void addAllCreationOperations(UserInfo info, List<HistoryOperation> operations, OffsetDateTime beginTime, OffsetDateTime endTime) {

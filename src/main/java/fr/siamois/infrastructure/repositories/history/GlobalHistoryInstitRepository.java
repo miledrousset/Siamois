@@ -28,7 +28,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
         this.hikariDataSource = hikariDataSource;
     }
 
-    private void populateTablenameList() {
+    private void populateTablenameList() throws SQLException {
         if (!existingTableNames.isEmpty()) return;
 
         String query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'";
@@ -42,6 +42,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
         } catch (SQLException e) {
             log.error("Error while populating table names", e);
             existingTableNames.clear();
+            throw e;
         }
     }
 
@@ -102,7 +103,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
     }
 
     @Override
-    public List<GlobalHistoryEntry> findAllHistoryOfUserBetween(String tableName, UserInfo userInfo, OffsetDateTime start, OffsetDateTime end) {
+    public List<GlobalHistoryEntry> findAllHistoryOfUserBetween(String tableName, UserInfo userInfo, OffsetDateTime start, OffsetDateTime end) throws SQLException {
         List<GlobalHistoryEntry> entries = new ArrayList<>();
         Connection connection = null;
         try {
@@ -120,6 +121,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
             }
         } catch (SQLException e) {
             log.error("Error while searching for HistoryEntry for table {}", tableName, e);
+            throw e;
         } finally {
             closeConnection(tableName, connection);
         }
@@ -128,7 +130,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
     }
 
     @Override
-    public List<TraceableEntity> findAllCreationOfUserBetween(String tableName, UserInfo userInfo, OffsetDateTime start, OffsetDateTime end) {
+    public List<TraceableEntity> findAllCreationOfUserBetween(String tableName, UserInfo userInfo, OffsetDateTime start, OffsetDateTime end) throws SQLException {
         List<TraceableEntity> entries = new ArrayList<>();
         Connection connection = null;
         try {
@@ -156,6 +158,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
 
         } catch (SQLException e) {
             log.error("Error while searching for table {}", tableName, e);
+            throw e;
         } finally {
             closeConnection(tableName, connection);
         }
