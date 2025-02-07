@@ -24,13 +24,14 @@ import java.util.Optional;
 @Service
 public class FieldConfigurationService {
 
+    private static final IllegalStateException FIELD_CODE_NOT_FOUND = new IllegalStateException("Field code not found");
     private final ConceptApi conceptApi;
     private final FieldService fieldService;
     private final FieldRepository fieldRepository;
     private final ConceptRepository conceptRepository;
     private final ConceptService conceptService;
 
-    private static final double SIMILARITY_CAP = 0.7;
+    private static final double SIMILARITY_CAP = 0.5;
 
 
     public FieldConfigurationService(ConceptApi conceptApi, FieldService fieldService, FieldRepository fieldRepository, ConceptRepository conceptRepository, ConceptService conceptService) {
@@ -52,7 +53,7 @@ public class FieldConfigurationService {
 
         for (FullConceptDTO conceptDTO : config.conceptWithValidFieldCode()) {
             Concept concept = conceptService.saveOrGetConceptFromFullDTO(info, vocabulary, conceptDTO);
-            String fieldCode = conceptDTO.getFieldcode().orElseThrow(() -> new IllegalStateException("Field code not found"));
+            String fieldCode = conceptDTO.getFieldcode().orElseThrow(() -> FIELD_CODE_NOT_FOUND);
 
             int rowAffected = fieldRepository.updateConfigForFieldOfInstitution(info.getInstitution().getId(), fieldCode, concept.getId());
             if (rowAffected == 0) {
@@ -71,13 +72,13 @@ public class FieldConfigurationService {
 
         final List<String> missingFieldCode = existingFieldCodes.stream()
                 .filter(fieldCode -> allConceptsWithPotentialFieldCode.stream()
-                        .map(concept -> concept.getFieldcode().orElseThrow(() -> new IllegalStateException("Field code not found")).toUpperCase())
+                        .map(concept -> concept.getFieldcode().orElseThrow(() -> FIELD_CODE_NOT_FOUND).toUpperCase())
                         .noneMatch(fieldCode::equals))
                 .toList();
 
         final List<FullConceptDTO> validConcept = allConceptsWithPotentialFieldCode.stream()
                 .filter(concept -> {
-                    String fieldCode = concept.getFieldcode().orElseThrow(() -> new IllegalStateException("Field code not found")).toUpperCase();
+                    String fieldCode = concept.getFieldcode().orElseThrow(() -> FIELD_CODE_NOT_FOUND).toUpperCase();
                     return existingFieldCodes.contains(fieldCode);
                 })
                 .toList();
@@ -92,7 +93,7 @@ public class FieldConfigurationService {
 
         for (FullConceptDTO conceptDTO : config.conceptWithValidFieldCode()) {
             Concept concept = conceptService.saveOrGetConceptFromFullDTO(info, vocabulary, conceptDTO);
-            String fieldCode = conceptDTO.getFieldcode().orElseThrow(() -> new IllegalStateException("Field code not found"));
+            String fieldCode = conceptDTO.getFieldcode().orElseThrow(() -> FIELD_CODE_NOT_FOUND);
 
             int rowAffected = fieldRepository.updateConfigForFieldOfUser(info.getInstitution().getId(),
                     info.getUser().getId(),
