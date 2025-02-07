@@ -1,0 +1,105 @@
+{
+  "https://thesaurus.mom.fr/?idc=4282369&idt=th223": {
+    "http://purl.org/dc/terms/contributor": [
+      {
+        "value": "julien.linget",
+        "type": "literal",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://purl.org/dc/terms/created": [
+      {
+        "value": "2025-01-27",
+        "type": "literal",
+        "datatype": "http://www.w3.org/2001/XMLSchema#date"
+      }
+    ],
+    "http://purl.org/dc/terms/creator": [
+      {
+        "value": "julien.linget",
+        "type": "literal",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://purl.org/dc/terms/identifier": [
+      {
+        "value": "4282369",
+        "type": "literal",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://purl.org/dc/terms/modified": [
+      {
+        "value": "2025-02-03",
+        "type": "literal",
+        "datatype": "http://www.w3.org/2001/XMLSchema#date"
+      }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "value": "http://www.w3.org/2004/02/skos/core#Concept",
+        "type": "uri"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#inScheme": [
+      {
+        "value": "https://thesaurus.mom.fr/api/ark:/66666/th223",
+        "type": "uri"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#narrower": [
+      {
+        "value": "https://thesaurus.mom.fr/?idc=4282364&idt=th223",
+        "type": "uri"
+      },
+      {
+        "value": "https://thesaurus.mom.fr/?idc=4282366&idt=th223",
+        "type": "uri"
+      },
+      {
+        "value": "https://thesaurus.mom.fr/?idc=4282368&idt=th223",
+        "type": "uri"
+      },
+      {
+        "value": "https://thesaurus.mom.fr/api/ark:/66666/SIA-TBGC19CH7RJRKPQ24S5JG-0",
+        "type": "uri"
+      },
+      {
+        "value": "https://thesaurus.mom.fr/api/ark:/66666/SIA-TBK2713PWDN00RRDRH9P9-W",
+        "type": "uri"
+      },
+      {
+        "value": "https://thesaurus.mom.fr/api/ark:/66666/SIA-THL3JH9DD79XBDNJC7R28-C",
+        "type": "uri"
+      },
+      {
+        "value": "https://thesaurus.mom.fr/api/ark:/66666/SIA-TNNH41DTR24V4QGSGLJF7-N",
+        "type": "uri"
+      },
+      {
+        "value": "https://thesaurus.mom.fr/api/ark:/66666/SIA-TRTRD79M2VB821LFNKXG3-1",
+        "type": "uri"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#notation": [
+      {
+        "value": "SIAMOIS#SIAAUTO",
+        "type": "literal",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#prefLabel": [
+      {
+        "value": "Siamois - Autocompletion",
+        "type": "literal",
+        "lang": "fr"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#topConceptOf": [
+      {
+        "value": "https://thesaurus.mom.fr/api/ark:/66666/th223",
+        "type": "uri"
+      }
+    ]
+  }
+}
