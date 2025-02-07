@@ -51,7 +51,7 @@
         <sonar.sources>src/main/java,src/main/resources/META-INF/resources</sonar.sources>
         <sonar.tests>src/test/java</sonar.tests>
         <sonar.exclusions>src/main/resources/META-INF/resources/resources/js/bootstrap*,src/main/resources/META-INF/resources/resources/js/jquery*,src/main/resources/META-INF/resources/resources/css/bootstrap*,src/main/resources/META-INF/resources/resources/css/jquery*</sonar.exclusions>
-        <sonar.coverage.exclusions>**/models/**/*.*,**/config/**/*.*,**/*Exception.*,**/*Bean.*,**/*Converter.*,**/*Builder.*,**/*Controller.*,**/*Settings.*,**/*Factory.*</sonar.coverage.exclusions>
+        <sonar.coverage.exclusions>**/models/**/*.*,**/config/**/*.*,**/*Exception.*,**/*Bean.*,**/*Converter.*,**/*Builder.*,**/*Controller.*,**/*Settings.*,**/*Factory.*,**/SiamoisApplication.*</sonar.coverage.exclusions>
 
 
     </properties>
