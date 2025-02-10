@@ -65,7 +65,7 @@ public class RecordingUnitUtils {
                     new FacesMessage(
                             FacesMessage.SEVERITY_INFO,
                             "Info",
-                            langBean.msg("recordingunit.created", recordingUnit.getCode())));
+                            langBean.msg("recordingunit.created", recordingUnit.getIdentifier())));
 
             FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
 
@@ -76,7 +76,7 @@ public class RecordingUnitUtils {
                     new FacesMessage(
                             FacesMessage.SEVERITY_ERROR,
                             "Error",
-                            langBean.msg("recordingunit.creationfailed", recordingUnit.getCode())));
+                            langBean.msg("recordingunit.creationfailed", recordingUnit.getIdentifier())));
 
             log.error("Error while saving: {}", e.getMessage());
             // todo : add error message

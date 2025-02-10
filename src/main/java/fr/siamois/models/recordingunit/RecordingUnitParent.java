@@ -51,8 +51,8 @@ public abstract class RecordingUnitParent extends TraceableEntity {
     protected Person excavator;
 
     @NotNull
-    @Column(name = "code")
-    protected Integer code;
+    @Column(name = "identifier")
+    protected Integer identifier;
 
     @Embedded
     protected RecordingUnitSize size;

@@ -135,7 +135,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                 this.startDate = recordingUnitUtils.offsetDateTimeToLocalDate(now());
                 this.recordingUnit.setActionUnit(actionUnit);
                 // todo : implement real algorithm for serial id
-                this.recordingUnit.setCode(1);
+                this.recordingUnit.setIdentifier(1);
                 // Init size & altimetry
                 this.recordingUnit.setSize(new RecordingUnitSize());
                 this.recordingUnit.getSize().setSizeUnit("cm");
