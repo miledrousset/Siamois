@@ -1,0 +1,220 @@
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components"
+>
+    <ui:define name="metadata">
+        <f:metadata>
+            <!-- Capture the ID parameter from the URL and bind it to spatialUnitBean -->
+            <f:viewParam name="id" value="#{spatialUnitBean.id}" required="#{!facesContext.postback}"/>
+            <f:event type="preRenderView" listener="#{spatialUnitBean.init}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="content">
+        <p:growl id="growl" showDetail="true"/>
+        <!-- Content -->
+        <p:staticMessage severity="error" summary="Error" closable="false"
+                         detail="#{spatialUnitBean.spatialUnitErrorMessage}"
+                         rendered="#{not empty spatialUnitBean.spatialUnitErrorMessage}"/>
+        <h:panelGroup id="contentPanel" rendered="#{spatialUnitBean.spatialUnit != null}">
+            <h2>#{spatialUnitBean.spatialUnit.name}
+                <p:chip label="#{spatialUnitBean.spatialUnit.category.label}" icon="pi pi-map-marker"
+                        styleClass="mr-2"/>
+            </h2>
+            <p>ARK ID: #{spatialUnitBean.spatialUnit.ark.arkId}</p>
+            <h:form>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <p:outputPanel>
+                    <div class="card">
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:commandButton value='Nouvelle action' icon="pi pi-plus"
+                                                 action="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"
+                                                 oncomplete="PF('new-action-unit-dialog').show()"
+                                                 style="margin-right: .5rem">
+                                </p:commandButton>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                    </div>
+                </p:outputPanel>
+            </h:form>
+            <p:tabView>
+                <p:tab title="Aperçu">
+                </p:tab>
+                <p:tab title="Détails">
+                </p:tab>
+                <p:tab title="Hierarchie">
+                    <div class="row siamois-row">
+                        <div class="col-md-6">
+                            <p:staticMessage severity="error" summary="Error" closable="false"
+                                             detail="#{spatialUnitBean.spatialUnitListErrorMessage}"
+                                             rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
+                            <spatialUnit:spatialUnitList
+                                    header="Contient"
+                                    spatialUnitList="#{spatialUnitBean.spatialUnitList}">
+                                <f:facet name="toolbar">
+                                    <p:toolbar>
+                                        <p:toolbarGroup>
+                                            <p:commandButton value='Nouveau lieu enfant' icon="pi pi-plus"
+                                                             actionListener="#{spatialUnitFieldBean.init([spatialUnitBean.spatialUnit],[])}"
+                                                             oncomplete="PF('new-spatial-unit-dialog').show()"
+                                                             style="margin-right: .5rem">
+                                            </p:commandButton>
+                                        </p:toolbarGroup>
+                                    </p:toolbar>
+                                </f:facet>
+                            </spatialUnit:spatialUnitList>
+                        </div>
+                        <div class="col-md-6">
+                            <p:staticMessage severity="error" summary="Error" closable="false"
+                                             detail="#{spatialUnitBean.spatialUnitListErrorMessage}"
+                                             rendered="#{not empty spatialUnitBean.spatialUnitListErrorMessage}"/>
+                            <spatialUnit:spatialUnitList
+                                    header="Fait partie de"
+                                    spatialUnitList="#{spatialUnitBean.spatialUnitParentsList}">
+                                <f:facet name="toolbar">
+                                    <p:toolbar>
+                                        <p:toolbarGroup>
+                                            <p:commandButton value='Nouveau lieu parent' icon="pi pi-plus"
+                                                             actionListener="#{spatialUnitFieldBean.init([],[spatialUnitBean.spatialUnit])}"
+                                                             oncomplete="PF('new-spatial-unit-dialog').show()"
+                                                             style="margin-right: .5rem">
+                                            </p:commandButton>
+                                        </p:toolbarGroup>
+                                    </p:toolbar>
+                                </f:facet>
+                            </spatialUnit:spatialUnitList>
+                        </div>
+                    </div>
+                </p:tab>
+                <p:tab title="Actions">
+                    <div class="row siamois-rows">
+                        <div class="col-md-12">
+                            <p:staticMessage severity="error" summary="Error" closable="false"
+                                             detail="#{spatialUnitBean.actionUnitListErrorMessage}"
+                                             rendered="#{not empty spatialUnitBean.actionUnitListErrorMessage}"/>
+                            <h:form>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <p:outputPanel>
+                                    <div class="card">
+                                        <p:toolbar>
+                                            <p:toolbarGroup>
+                                                <p:commandButton value='Nouveau' icon="pi pi-plus"
+                                                                 action="#{newActionUnitBean.reinit(spatialUnitBean.spatialUnit)}"
+                                                                 oncomplete="PF('new-action-unit-dialog').show()"
+                                                                 style="margin-right: .5rem">
+                                                </p:commandButton>
+                                            </p:toolbarGroup>
+                                        </p:toolbar>
+                                        <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
+                                                     value="#{spatialUnitBean.actionUnitList}">
+                                            <f:facet name="header">
+                                                Actions
+                                            </f:facet>
+                                            <p:column headerText="Name">
+                                                <p:link outcome="/pages/actionUnit/actionUnit.xhtml"
+                                                        value="#{item.name}">
+                                                    <f:param name="id" value="#{item.id}"/>
+                                                </p:link>
+                                            </p:column>
+                                            <p:column headerText="Type">
+                                                <p:chip label="#{item.type.label}" icon="pi pi-play" styleClass="mr-2"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </p:outputPanel>
+                            </h:form>
+                        </div>
+                    </div>
+                </p:tab>
+                <p:tab title="Enregistrements">
+                    <div class="row siamois-row">
+                        <div class="col-md-12">
+                            <form>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <p:outputPanel>
+                                    <div class="card">
+                                        <p:staticMessage severity="error" summary="Error" closable="false"
+                                                         detail="#{spatialUnitBean.recordingUnitListErrorMessage}"
+                                                         rendered="#{not empty spatialUnitBean.recordingUnitListErrorMessage}"/>
+                                        <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
+                                                     value="#{spatialUnitBean.recordingUnitList}">
+                                            <f:facet name="header">
+                                                Unités d'enregistrement
+                                            </f:facet>
+                                            <p:column headerText="Name">
+                                                <p:link outcome="/pages/recordingUnit/recordingUnit.xhtml"
+                                                        value="#{item.code}">
+                                                    <f:param name="id" value="#{item.id}"/>
+                                                </p:link>
+                                            </p:column>
+                                            <p:column headerText="ARK">
+                                                <h:outputText value="#{item.ark.arkId}"/>
+                                            </p:column>
+                                            <p:column headerText="Type">
+                                                <p:chip label="#{item.type.label}" icon="pi pi-file" styleClass="mr-2"/>
+                                            </p:column>
+                                            <p:column headerText="Auteur">
+                                                <h:outputText value="#{item.author.name} #{item.author.lastname}"/>
+                                            </p:column>
+                                            <p:column headerText="Fouilleur">
+                                                <h:outputText
+                                                        value="#{item.excavator.name} #{item.excavator.lastname}"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </p:outputPanel>
+                            </form>
+                        </div>
+                        <!-- Table des unités action -->
+                    </div>
+                </p:tab>
+                <p:tab title="Prelevements">
+                </p:tab>
+                <p:tab title="Versions">
+                    <h:form>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <p:dataTable var="version" value="#{spatialUnitBean.historyVersion}" rows="5" paginator="true">
+                            <p:column headerText="Date de la version">
+                                <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
+                            </p:column>
+                            <p:column>
+                                <p:commandButton
+                                        value="Visualiser"
+                                        action="#{spatialUnitBean.visualise(version)}"
+                                        update="idDisplayVersion"
+                                        oncomplete="PF('displayVersion').show()"
+                                />
+                            </p:column>
+                            <p:column>
+                                <p:commandButton
+                                        value="Restaurer"
+                                        immediate="true"
+                                        action="#{spatialUnitBean.restore(version)}"
+                                        oncomplete="PF('restored-dlg').show()"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+        </h:panelGroup>
+        <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true">
+            <h:form id="displayVersionForm">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <h:panelGroup id="versionVisualizer" rendered="#{spatialUnitBean.revisionToDisplay != null}">
+                    <p>Name : #{spatialUnitBean.revisionToDisplay.name}</p>
+                    <p>Ark : #{spatialUnitBean.revisionToDisplay.ark.arkId}</p>
+                    <p>Category : #{spatialUnitBean.revisionToDisplay.category.label}</p>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+        <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
+            <h:outputText value="Version restaurée"/>
+        </p:dialog>
+        <ui:include src="../../dialog/actionUnit/actionUnitDialog.xhtml"/>
+        <ui:include src="../../dialog/spatialUnit/newSpatialUnitDialog.xhtml"/>
+    </ui:define>
+</ui:composition>
