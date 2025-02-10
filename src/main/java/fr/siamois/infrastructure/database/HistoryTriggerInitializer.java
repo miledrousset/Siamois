@@ -98,13 +98,13 @@ public class HistoryTriggerInitializer {
 
         ResultSet resultSet = statement.executeQuery();
 
-        statement.close();
-
         while (resultSet.next()) {
             String columnName = resultSet.getString("column_name");
             columnList.append(columnName).append(", ");
             selectList.append("OLD.").append(columnName).append(", ");
         }
+
+        statement.close();
 
         if (columnList.isEmpty()) {
             throw new WrongTableNameException("Table with name " + tableName + " does not exist in the current database");
