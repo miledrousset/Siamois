@@ -45,6 +45,12 @@ spring:
     basename: language/messages
     encoding: UTF-8
 
+joinfaces:
+  faces:
+    project-stage: development
+  primefaces:
+    theme: overcast
+
 logging:
   level:
     root: INFO
