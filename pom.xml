@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fr.siamois</groupId>
     <artifactId>siamois</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2-DEV</version>
     <packaging>jar</packaging>
     <name>siamois</name>
 
@@ -42,6 +42,30 @@
         <jsf-impl.version>2.2.20</jsf-impl.version>
         <jts.version>1.20.0</jts.version>
         <mockito.version>5.14.2</mockito.version>
+        <jacoco.version>0.8.12</jacoco.version>
+
+        <!-- Sonar -->
+        <sonar.projectKey>miledrousset_Siamois</sonar.projectKey>
+        <sonar.organization>miledrousset</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.sources>src/main/java,src/main/resources/META-INF/resources</sonar.sources>
+        <sonar.tests>src/test/java</sonar.tests>
+        <sonar.exclusions>src/main/resources/META-INF/resources/resources/js/bootstrap*,src/main/resources/META-INF/resources/resources/js/jquery*,src/main/resources/META-INF/resources/resources/css/bootstrap*,src/main/resources/META-INF/resources/resources/css/jquery*</sonar.exclusions>
+        <sonar.coverage.exclusions>
+            **/models/**/*.*,
+            **/config/**/*.*,
+            **/*Exception.*,
+            **/*Bean.*,
+            **/*Converter.*,
+            **/*Builder.*,
+            **/*Controller.*,
+            **/*Settings.*,
+            **/*Factory.*,
+            **/SiamoisApplication.*,
+            **/*DTO.*,
+            **/*Utils.*
+        </sonar.coverage.exclusions>
+
 
     </properties>
 
@@ -250,6 +274,11 @@
             <version>1.13.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -278,5 +307,39 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco.version}</version>
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>report</id>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                                <configuration>
+                                    <formats>
+                                        <format>XML</format>
+                                    </formats>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

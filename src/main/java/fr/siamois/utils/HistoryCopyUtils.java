@@ -6,6 +6,8 @@ import java.lang.reflect.Field;
 
 public class HistoryCopyUtils {
 
+    private HistoryCopyUtils() {}
+
     /**
      * Copy attributes from history to target. The ID field of the target is set to the tableId of the history.
      * @param history The history object
@@ -23,7 +25,7 @@ public class HistoryCopyUtils {
             tableId.setAccessible(true);
             id.set(target, tableId.get(history));
         } catch (Exception e) {
-            throw new RuntimeException("Failed to copy attributes", e);
+            throw new IllegalStateException("Failed to copy attributes", e);
         }
     }
 

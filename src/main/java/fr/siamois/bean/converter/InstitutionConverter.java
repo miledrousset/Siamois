@@ -8,9 +8,11 @@ import jakarta.faces.convert.Converter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 @Slf4j
 @Component
-public class InstitutionConverter implements Converter<Institution> {
+public class InstitutionConverter implements Converter<Institution>, Serializable {
 
     private final ObjectMapper mapper = new ObjectMapper();
 

@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @Entity
 @Table(name = "vocabulary", schema = "public", uniqueConstraints = {
         @UniqueConstraint(name = "vocabulary_pk_uri_external_id", columnNames = {"base_uri", "external_id"})
 })
-public class Vocabulary {
+public class Vocabulary implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vocabulary_id", nullable = false)

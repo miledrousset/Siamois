@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
@@ -21,7 +22,7 @@ import java.time.ZoneId;
 @Getter
 @EqualsAndHashCode
 @MappedSuperclass
-public abstract class TraceableEntity {
+public abstract class TraceableEntity implements Serializable {
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

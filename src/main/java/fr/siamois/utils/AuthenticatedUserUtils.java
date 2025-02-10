@@ -13,6 +13,8 @@ import java.util.Optional;
  */
 public class AuthenticatedUserUtils {
 
+    private AuthenticatedUserUtils() {}
+
     /**
      * Retrieve the authenticated Person from the SecurityContextHolder
      * @return Optional contains Person if user is authenticated and empty if no user is authenticated

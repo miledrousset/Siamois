@@ -6,10 +6,12 @@ import fr.siamois.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @Entity
 @Table(name = "action_code")
-public class ActionCode {
+public class ActionCode implements Serializable {
 
     @Id
     @Column(name = "action_code_id", nullable = false)

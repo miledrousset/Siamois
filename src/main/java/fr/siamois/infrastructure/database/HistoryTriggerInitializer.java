@@ -26,25 +26,21 @@ public class HistoryTriggerInitializer {
     /**
      * Create all history triggers.
      */
-    public void createHistoryTriggers() {
-        try {
-            Connection connection = dataSource.getConnection();
-            List<String> tablesToStore = List.of(
-                    "action_unit",
-                    "siamois_document",
-                    "recording_unit",
-                    "recording_unit_study",
-                    "spatial_unit",
-                    "specimen",
-                    "specimen_study");
+    public void createHistoryTriggers() throws SQLException {
+        Connection connection = dataSource.getConnection();
+        List<String> tablesToStore = List.of(
+                "action_unit",
+                "siamois_document",
+                "recording_unit",
+                "recording_unit_study",
+                "spatial_unit",
+                "specimen",
+                "specimen_study");
 
-            for (String tableName : tablesToStore)
-                createSQLHistTrigger(connection, tableName, "history_" + tableName);
+        for (String tableName : tablesToStore)
+            createSQLHistTrigger(connection, tableName, "history_" + tableName);
 
-            connection.close();
-        } catch (SQLException e) {
-            log.error("Could not create history triggers", e);
-        }
+        connection.close();
     }
 
     public void createSQLHistTrigger(Connection connection, String tableName, String historyTableName) throws SQLException {
@@ -107,6 +103,8 @@ public class HistoryTriggerInitializer {
             columnList.append(columnName).append(", ");
             selectList.append("OLD.").append(columnName).append(", ");
         }
+
+        statement.close();
 
         if (columnList.isEmpty()) {
             throw new WrongTableNameException("Table with name " + tableName + " does not exist in the current database");

@@ -13,7 +13,7 @@ import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.ActionUnitNotFoundException;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.services.ark.ArkGenerator;
+import fr.siamois.utils.ArkGeneratorUtils;
 import fr.siamois.services.vocabulary.ConceptService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -67,6 +67,15 @@ public class ActionUnitService {
     public ActionUnit save(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
 
         try {
+
+            // Generate ARK if the action unit does not have any
+            if (actionUnit.getArk() == null) {
+                ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
+                Ark ark = new Ark();
+                ark.setArkServer(localServer);
+                ark.setArkId(ArkGeneratorUtils.generateArk());
+                actionUnit.setArk(ark);
+            }
 
             // Add concept
             Concept type = conceptService.saveOrGetConcept(typeConcept);

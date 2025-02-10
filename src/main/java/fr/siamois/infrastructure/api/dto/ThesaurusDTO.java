@@ -1,6 +1,8 @@
 package fr.siamois.infrastructure.api.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -9,6 +11,8 @@ import java.util.List;
  * @author Julien Linget
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ThesaurusDTO {
     private String idTheso;
     private List<LabelDTO> labels;

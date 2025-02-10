@@ -16,7 +16,7 @@ import java.util.Locale;
 @SessionScoped
 public class LangBean implements Serializable {
 
-    private final LangService langService;
+    private final transient LangService langService;
 
     @Value("${siamois.lang.default}")
     private String defaultLang;

@@ -1,10 +1,16 @@
 package fr.siamois.utils;
 
+import java.util.Random;
+
 public class CodeUtils {
+
+    private CodeUtils() {}
+
+    private static final Random RANDOM = new Random();
 
     private static char generateRandomChar() {
         String allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-";
-        int randomIndex = (int) (Math.random() * allowedChars.length());
+        int randomIndex = RANDOM.nextInt(0, allowedChars.length());
         return allowedChars.charAt(randomIndex);
     }
 

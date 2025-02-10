@@ -2,7 +2,6 @@ package fr.siamois.services.auth;
 
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import fr.siamois.models.auth.Person;
-import lombok.Setter;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,11 +13,10 @@ import org.springframework.stereotype.Service;
  *
  * @author Julien Linget
  */
-@Setter
 @Service
 public class PersonDetailsService implements UserDetailsService {
 
-    private PersonRepository personRepository;
+    private final PersonRepository personRepository;
 
     public PersonDetailsService(PersonRepository personRepository) {
         this.personRepository = personRepository;

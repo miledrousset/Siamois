@@ -1,8 +1,6 @@
 package fr.siamois.bean.logs;
 
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.models.Institution;
-import fr.siamois.models.auth.Person;
 import fr.siamois.models.events.InstitutionChangeEvent;
 import fr.siamois.models.history.HistoryOperation;
 import fr.siamois.services.HistoryService;
@@ -15,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -28,10 +27,10 @@ import java.util.List;
 @SessionScoped
 public class LogsBean implements Serializable {
 
-    private final HistoryService historyService;
+    private final transient HistoryService historyService;
     private final SessionSettings sessionSettings;
 
-    private List<HistoryOperation> operations;
+    private transient List<HistoryOperation> operations;
 
     private final LocalDateTime endOfToday = dateEndOfCurrentDay();
 
@@ -69,7 +68,11 @@ public class LogsBean implements Serializable {
         ZoneOffset offset = ZoneId.systemDefault().getRules().getOffset(vStartDateTime);
         OffsetDateTime start = OffsetDateTime.of(vStartDateTime, offset);
         OffsetDateTime end = OffsetDateTime.of(vEndDateTime, offset);
-        operations = historyService.findAllOperationsOfUserAndTeamBetween(sessionSettings.getUserInfo(), start, end);
+        try {
+            operations = historyService.findAllOperationsOfUserAndTeamBetween(sessionSettings.getUserInfo(), start, end);
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     public String formatDate(OffsetDateTime offsetDateTime) {

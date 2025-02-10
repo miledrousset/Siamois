@@ -5,12 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.io.Serializable;
+
 @Data
 @Entity
 @Table(name = "ark_server", schema = "public", uniqueConstraints = {
         @UniqueConstraint(name = "ark_server_server_ark_uri_key", columnNames = {"server_ark_uri"})
 })
-public class ArkServer {
+public class ArkServer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ark_server_id", nullable = false)

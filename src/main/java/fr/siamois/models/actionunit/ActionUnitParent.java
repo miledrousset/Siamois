@@ -16,8 +16,7 @@ import java.time.OffsetDateTime;
 @MappedSuperclass
 public abstract class ActionUnitParent extends TraceableEntity {
 
-
-    public ActionUnitParent() {
+    protected ActionUnitParent() {
         this.maxRecordingUnitCode = 2147483647;
         this.minRecordingUnitCode = 1;
     }

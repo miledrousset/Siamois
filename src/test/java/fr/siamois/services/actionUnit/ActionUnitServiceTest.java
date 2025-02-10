@@ -4,10 +4,12 @@ import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.infrastructure.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
+import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.models.Institution;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
+import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedActionUnitSaveException;
 import fr.siamois.models.spatialunit.SpatialUnit;
@@ -42,6 +44,8 @@ class ActionUnitServiceTest {
     private ConceptService conceptService;
     @Mock
     private ActionCodeRepository actionCodeRepository;
+    @Mock
+    private ArkServerRepository arkServerRepository;
 
 
     @InjectMocks
@@ -109,6 +113,8 @@ class ActionUnitServiceTest {
         failedCode.setType(c2);
         failedCode.setCode("primary");
 
+
+
     }
 
     @AfterEach
@@ -172,7 +178,8 @@ class ActionUnitServiceTest {
     }
 
     @Test
-    void SaveActionCodes_Success() {
+    void SaveWithActionCodes_Success() {
+        when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(new ArkServer()));
         lenient().when(conceptService.saveOrGetConcept(c1)).thenReturn(c1);
         lenient().when(conceptService.saveOrGetConcept(c2)).thenReturn(c2);
         lenient().when(conceptService.saveOrGetConcept(c3)).thenReturn(c3);
@@ -207,8 +214,8 @@ class ActionUnitServiceTest {
     }
 
     @Test
-    void testFindAllWithoutParents_Exception() {
-
+    void SaveActionCodes_Exception() {
+        when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(new ArkServer()));
         lenient().when(conceptService.saveOrGetConcept(c1)).thenReturn(c1);
         lenient().when(conceptService.saveOrGetConcept(c2)).thenReturn(c2);
         lenient().when(conceptService.saveOrGetConcept(c3)).thenReturn(c3);

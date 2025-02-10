@@ -24,6 +24,7 @@ import java.util.Optional;
 @Service
 public class FieldConfigurationService {
 
+    private static final IllegalStateException FIELD_CODE_NOT_FOUND = new IllegalStateException("Field code not found");
     private final ConceptApi conceptApi;
     private final FieldService fieldService;
     private final FieldRepository fieldRepository;
@@ -52,7 +53,7 @@ public class FieldConfigurationService {
 
         for (FullConceptDTO conceptDTO : config.conceptWithValidFieldCode()) {
             Concept concept = conceptService.saveOrGetConceptFromFullDTO(info, vocabulary, conceptDTO);
-            String fieldCode = conceptDTO.getFieldcode().orElseThrow(() -> new IllegalStateException("Field code not found"));
+            String fieldCode = conceptDTO.getFieldcode().orElseThrow(() -> FIELD_CODE_NOT_FOUND);
 
             int rowAffected = fieldRepository.updateConfigForFieldOfInstitution(info.getInstitution().getId(), fieldCode, concept.getId());
             if (rowAffected == 0) {
@@ -71,13 +72,13 @@ public class FieldConfigurationService {
 
         final List<String> missingFieldCode = existingFieldCodes.stream()
                 .filter(fieldCode -> allConceptsWithPotentialFieldCode.stream()
-                        .map(concept -> concept.getFieldcode().orElseThrow(() -> new IllegalStateException("Field code not found")).toUpperCase())
+                        .map(concept -> concept.getFieldcode().orElseThrow(() -> FIELD_CODE_NOT_FOUND).toUpperCase())
                         .noneMatch(fieldCode::equals))
                 .toList();
 
         final List<FullConceptDTO> validConcept = allConceptsWithPotentialFieldCode.stream()
                 .filter(concept -> {
-                    String fieldCode = concept.getFieldcode().orElseThrow(() -> new IllegalStateException("Field code not found")).toUpperCase();
+                    String fieldCode = concept.getFieldcode().orElseThrow(() -> FIELD_CODE_NOT_FOUND).toUpperCase();
                     return existingFieldCodes.contains(fieldCode);
                 })
                 .toList();
@@ -92,7 +93,7 @@ public class FieldConfigurationService {
 
         for (FullConceptDTO conceptDTO : config.conceptWithValidFieldCode()) {
             Concept concept = conceptService.saveOrGetConceptFromFullDTO(info, vocabulary, conceptDTO);
-            String fieldCode = conceptDTO.getFieldcode().orElseThrow(() -> new IllegalStateException("Field code not found"));
+            String fieldCode = conceptDTO.getFieldcode().orElseThrow(() -> FIELD_CODE_NOT_FOUND);
 
             int rowAffected = fieldRepository.updateConfigForFieldOfUser(info.getInstitution().getId(),
                     info.getUser().getId(),
@@ -134,23 +135,22 @@ public class FieldConfigurationService {
 
         ConceptBranchDTO terms = conceptApi.fetchConceptsUnderTopTerm(parentConcept);
         List<Concept> result = new ArrayList<>();
-        List<FullConceptDTO> ignoredConcept = new ArrayList<>();
+
+        input = input.toLowerCase();
 
         for (FullConceptDTO fullConcept : terms.getData().values()) {
             if (isNotParentConcept(fullConcept, parentConcept)) {
                 PurlInfoDTO label = getPrefLabelOfLang(info, fullConcept);
-                if (label.getValue().contains(input)) {
+                if (label.getValue().toLowerCase().contains(input)) {
                     result.add(createConceptFromDTO(parentConcept.getVocabulary(), label, fullConcept));
-                } else {
-                    ignoredConcept.add(fullConcept);
                 }
             }
         }
 
         if (result.isEmpty()) {
-            for (FullConceptDTO fullConceptDTO : ignoredConcept) {
+            for (FullConceptDTO fullConceptDTO : terms.getData().values()) {
                 PurlInfoDTO label = getPrefLabelOfLang(info, fullConceptDTO);
-                double similarity = stringSimilarity(label.getValue(), input);
+                double similarity = stringSimilarity(label.getValue().toLowerCase(), input);
                 if (similarity >= SIMILARITY_CAP) {
                     result.add(createConceptFromDTO(parentConcept.getVocabulary(), label, fullConceptDTO));
                 }
