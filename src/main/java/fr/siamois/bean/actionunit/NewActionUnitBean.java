@@ -102,7 +102,7 @@ public class NewActionUnitBean implements Serializable {
     }
 
     public void generateRandomActionUnitIdentifier() {
-        actionUnit.setCode("2025");
+        actionUnit.setIdentifier("2025");
     }
 
     @PostConstruct

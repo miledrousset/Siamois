@@ -49,8 +49,8 @@ public abstract class ActionUnitParent extends TraceableEntity {
     protected ActionCode primaryActionCode;
 
     @NotNull
-    @Column(name="code")
-    protected String code;
+    @Column(name="identifier")
+    protected String identifier;
 
     @NotNull
     @Column(name="max_recording_unit_code", nullable = false)

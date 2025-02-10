@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--
+    Change name of column "code" from recording unit and action unit to "identifier"
+    -->
+
+    <changeSet id="2025.02.10-0" author="Grégory Bliault">
+        <preConditions onFail="MARK_RAN">
+                <columnExists tableName="recording_unit" columnName="code"/>
+        </preConditions>
+
+        <renameColumn
+                       newColumnName="identifier"
+                       oldColumnName="code"
+                       tableName="recording_unit"/>
+        <renameColumn
+                newColumnName="identifier"
+                oldColumnName="code"
+                tableName="action_unit"/>
+        <renameColumn
+                newColumnName="identifier"
+                oldColumnName="code"
+                tableName="history_action_unit"/>
+        <renameColumn
+                newColumnName="identifier"
+                oldColumnName="code"
+                tableName="history_recording_unit"/>
+
+    </changeSet>
+
+</databaseChangeLog>
