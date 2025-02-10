@@ -1,7 +1,6 @@
 package fr.siamois.services.actionUnit;
 
-import fr.siamois.bean.LangBean;
-import fr.siamois.bean.SessionSettings;
+
 import fr.siamois.infrastructure.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
@@ -14,10 +13,10 @@ import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedActionUnitSaveException;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.services.SpatialUnitService;
+
 import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
-import org.checkerframework.checker.units.qual.C;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -115,10 +114,6 @@ class ActionUnitServiceTest {
 
 
 
-    }
-
-    @AfterEach
-    void tearDown() {
     }
 
     @Test

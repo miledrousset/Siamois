@@ -10,7 +10,6 @@ import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.FailedActionUnitSaveException;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
@@ -29,7 +28,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)

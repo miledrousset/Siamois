@@ -118,7 +118,6 @@ public class ActionUnitService {
         try {
 
             // -------------------- Handle the primary action code
-            ActionCode primaryActionCode = actionUnit.getPrimaryActionCode();
             // Is the action code concept already in DB ?
             actionUnit.getPrimaryActionCode().setType(conceptService.saveOrGetConcept(actionUnit.getPrimaryActionCode().getType()));
             // Saving or retrieving primary action code
