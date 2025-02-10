@@ -1,6 +1,9 @@
 package fr.siamois.config;
 
 import com.sun.faces.config.ConfigureListener;
+import jakarta.faces.annotation.FacesConfig;
+import jakarta.faces.application.ResourceHandler;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.webapp.FacesServlet;
 import jakarta.servlet.ServletContext;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
@@ -9,10 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.ServletContextAware;
 
-
+@FacesConfig
 @Configuration
 public class JsfConfiguration  implements ServletContextAware {
-
 
     @Override
     public void setServletContext(ServletContext servletContext) {

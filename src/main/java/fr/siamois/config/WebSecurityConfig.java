@@ -28,7 +28,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, LangBean langBean, LoginSuccessHandler loginSuccessHandler) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-                .requestMatchers("/", "/index.xhtml").authenticated()
+                .requestMatchers("/", "/index.xhtml").permitAll()
                 .requestMatchers("/fieldConfiguration", "/pages/field/fieldConfiguration.xhtml").authenticated()
                 .requestMatchers("/pages/**").authenticated()
                 .requestMatchers("/pages/admin/**", "/admin/**").hasAuthority("ADMIN")
