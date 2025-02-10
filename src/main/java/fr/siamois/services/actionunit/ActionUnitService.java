@@ -67,14 +67,6 @@ public class ActionUnitService {
     public ActionUnit save(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
 
         try {
-            // Generate ARK if the action unit does not have any
-            if (actionUnit.getArk() == null) {
-                ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
-                Ark ark = new Ark();
-                ark.setArkServer(localServer);
-                ark.setArkId(ArkGenerator.generateArk());
-                actionUnit.setArk(ark);
-            }
 
             // Add concept
             Concept type = conceptService.saveOrGetConcept(typeConcept);
@@ -93,8 +85,26 @@ public class ActionUnitService {
         return actionCodeRepository.findAllByCodeIsContainingIgnoreCase(query);
     }
 
+    private ActionCode saveOrGetActionCode(ActionCode actionCode) {
+        Optional<ActionCode> optActionCode = actionCodeRepository.findById(actionCode.getCode()); // We try to get the code
+        if (optActionCode.isPresent()) {
+            // We test if the type is the same because it's not possible to modify the type of a code already in the system
+            if(actionCode.getType().equals(optActionCode.get().getType())) {
+                // If the type matches it's fine, we return it.
+                return optActionCode.get();
+            }
+            else {
+                throw new FailedActionUnitSaveException("Code exists but type does not match");
+            }
+        }
+        else {
+            // SAVE THE CODE
+            return actionCodeRepository.save(actionCode);
+        }
+    }
+
     @Transactional
-    public ActionUnit save(ActionUnit actionUnit, List<ActionCode> secondaryActionCodes) {
+    public ActionUnit save(ActionUnit actionUnit, List<ActionCode> secondaryActionCodes, UserInfo info) {
 
         try {
 
@@ -102,21 +112,8 @@ public class ActionUnitService {
             ActionCode primaryActionCode = actionUnit.getPrimaryActionCode();
             // Is the action code concept already in DB ?
             actionUnit.getPrimaryActionCode().setType(conceptService.saveOrGetConcept(actionUnit.getPrimaryActionCode().getType()));
-            // Is the action code already in DB ?
-            Optional<ActionCode> optActionCode = actionCodeRepository.findById(actionUnit.getPrimaryActionCode().getCode());
-            if(optActionCode.isPresent()) {
-                if(actionUnit.getPrimaryActionCode().getType().equals(optActionCode.get().getType())) {
-                    // If the type matches
-                    actionUnit.setPrimaryActionCode(optActionCode.get());
-                }
-                else {
-                    throw new FailedActionUnitSaveException("Code exists but type does not match");
-                }
-            }
-            else {
-                // SAVE THE CODE
-                actionUnit.setPrimaryActionCode(actionCodeRepository.save(actionUnit.getPrimaryActionCode()));
-            }
+            // Saving or retrieving primary action code
+            actionUnit.setPrimaryActionCode(saveOrGetActionCode(actionUnit.getPrimaryActionCode()));
 
             // ------------------ Handle secondary codes
             // Get the old version of the actionUnit
@@ -139,26 +136,15 @@ public class ActionUnitService {
             actionUnit.setSecondaryActionCodes(new HashSet<>());
             currentSecondaryActionCodes.forEach(actionCode -> {
                 actionCode.setType(conceptService.saveOrGetConcept(actionCode.getType()));
-                // Is the action code already in DB ?
-                Optional<ActionCode> optActionSecondaryCode = actionCodeRepository.findById(actionCode.getCode());
-                if(optActionSecondaryCode.isPresent()) {
-                    if(actionCode.getType().equals(optActionSecondaryCode.get().getType())) {
-                        // If the type matches
-                        actionUnit.getSecondaryActionCodes().add(optActionCode.get());
-                    }
-                    else {
-                        throw new FailedActionUnitSaveException("Code exists but type does not match");
-                    }
-                }
-                else {
-                    // Save the code
-                    actionUnit.getSecondaryActionCodes().add(actionCodeRepository.save(actionCode));
-                }
+                // Saving or retrieving action code
+                actionUnit.getSecondaryActionCodes().add(saveOrGetActionCode(actionCode));
             });
 
             actionUnit.setSecondaryActionCodes(currentSecondaryActionCodes);
 
-            return actionUnitRepository.save(actionUnit);
+            // Saving the action unit
+            return save(info, actionUnit, actionUnit.getType());
+
         } catch (RuntimeException e) {
             throw new FailedActionUnitSaveException(e.getMessage());
         }

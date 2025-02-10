@@ -126,7 +126,7 @@ public class ActionUnitBean implements Serializable {
             Person author = sessionSettings.getAuthenticatedUser();
             actionUnit.setLastModifiedBy(author);
 
-            this.actionUnit = actionUnitService.save(actionUnit, secondaryActionCodes);
+            this.actionUnit = actionUnitService.save(actionUnit, secondaryActionCodes, sessionSettings.getUserInfo());
 
             // Display message
             FacesContext.getCurrentInstance().addMessage(null,
