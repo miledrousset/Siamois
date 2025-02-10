@@ -8,7 +8,7 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="id" value="#{actionUnitBean.id}"/>
+            <f:viewParam name="id" value="#{actionUnitBean.id}" required="#{!facesContext.postback}"/>
             <f:event type="preRenderView" listener="#{actionUnitBean.init}"/>
         </f:metadata>
     </ui:define>
@@ -26,6 +26,7 @@
                          rendered="#{not empty actionUnitBean.actionUnitErrorMessage}"/>
 
         <h:panelGroup id="contentPanel" rendered="#{actionUnitBean.actionUnit != null}">
+            <h:message id="msg-test"/>
             <h:form>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <h2>#{actionUnitBean.actionUnit.name}
@@ -69,7 +70,7 @@
                     <!-- Action codes (OA, OP, ...) -->
                     <h3>Manage Codes</h3>
                     <!-- The primary code attached to this action -->
-                    <h4>Primary code</h4>
+                    <h4>Main code</h4>
 
                     <h:form id="primaryCodeForm">
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -80,19 +81,9 @@
 <!--                                <f:selectItems value="#{actionUnitBean.actionCodeTypeOptions}"-->
 <!--                                               var="option" itemLabel="#{option.label}" itemValue="#{option}"/>-->
 <!--                            </p:selectOneMenu>-->
-                            <p:autoComplete id="auto-complete-primary-action-code-type"
-                                            value="#{actionUnitBean.actionUnit.primaryActionCode.type}"
-                                            var="option" itemLabel="#{option.label}"
-                                            completeMethod="#{actionUnitBean.completeActionCodeType}"
-                                            converter="#{conceptConverter}"
-                                            itemValue="#{option}"
-                                            required="true"
-                                            forceSelection="true"
-                                            scrollHeight="300"
-                                            dropdown="true">
-                                <p:ajax event="itemSelect"
-                                        listener="#{actionUnitBean.handleSelectPrimaryCode}"/>
-                            </p:autoComplete>
+                            <p:chip label="#{actionUnitBean.actionUnit.primaryActionCode.type.label}"
+                                    icon="pi pi-qrcode" >
+                            </p:chip>
 
                             <p:autoComplete id="auto-complete-primary-action-code"
                                             value="#{actionUnitBean.actionUnit.primaryActionCode}"
@@ -122,7 +113,9 @@
                                 <f:facet name="footer">
                                     <div class="ui-fluid" style="padding:0.5rem 1rem 1rem 1rem">
                                         <p:commandButton value='Nouveau code' icon="pi pi-plus"
-                                                         actionListener="#{actionUnitBean.initNewActionCode(0)}"
+                                                         action="#{actionUnitBean.initNewActionCode(0)}"
+                                                         update="form-new-action-code"
+                                                         immediate="true"
                                                          oncomplete="PF('new-action-code-dialog').show()"
                                                          style="margin-right: .5rem">
                                         </p:commandButton>
@@ -133,30 +126,7 @@
                         </div>
                     </h:form>
 
-
-                    <!--                            <p:repeat var="codeEntry" value="#{codeBean.codes}" varStatus="status">-->
-                    <!--                                <h:panelGrid columns="3">-->
-                    <!--                                    &lt;!&ndash; Autocomplete Field for Type &ndash;&gt;-->
-                    <!--                                    <p:autoComplete value="#{codeEntry.type}" completeMethod="#{codeBean.completeType}"-->
-                    <!--                                                    placeholder="Select Type" minQueryLength="1" forceSelection="true"/>-->
-
-                    <!--                                    &lt;!&ndash; Text Input for Code &ndash;&gt;-->
-                    <!--                                    <p:inputText value="#{codeEntry.code}" placeholder="Enter Code"/>-->
-
-                    <!--                                    &lt;!&ndash; Remove Button &ndash;&gt;-->
-                    <!--                                    <p:commandButton value="Remove" action="#{codeBean.removeCode(status.index)}"-->
-                    <!--                                                     update="codesForm" process="@this" icon="ui-icon-trash"/>-->
-                    <!--                                </h:panelGrid>-->
-                    <!--                            </p:repeat>-->
-
-                    <!--                            &lt;!&ndash; Add New Code Button &ndash;&gt;-->
-                    <!--                            <p:commandButton value="Add Code" action="#{codeBean.addCode}" update="codesForm"-->
-                    <!--                                             icon="ui-icon-plus"/>-->
-
-                    <!--                            &lt;!&ndash; Submit Button &ndash;&gt;-->
-                    <!--                            <p:commandButton value="Submit" action="#{codeBean.submit}" update="messages"-->
-                    <!--                                             icon="ui-icon-check" />-->
-                    <h4>Secondary codes</h4>
+                    <h4>Additional codes</h4>
                     <h:messages id="msg"></h:messages>
                     <h:form id="secondaryCodesForm">
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -164,16 +134,9 @@
                                          action="#{actionUnitBean.addNewSecondaryCode}"/>
                         <ui:repeat id="secondaryCodeRepeat" var="secondaryCode" value="#{actionUnitBean.secondaryActionCodes}" varStatus="status">
                             <h:panelGroup style="display:flex;" id="secondaryCodeField">
-                                <p:selectOneMenu id="secondaryActionCodeTypeOption"
-                                                 converter="#{conceptConverter}"
-                                                 value="#{actionUnitBean.secondaryActionCodes[status.index].type}"
-                                >
-                                    <f:selectItems value="#{actionUnitBean.actionCodeTypeOptions}"
-                                                   var="option" itemLabel="#{option.label}" itemValue="#{option}"/>
-                                    <p:ajax event="valueChange"
-                                            update="@this msg main-growl"
-                                    />
-                                </p:selectOneMenu>
+                                <p:chip label="#{actionUnitBean.secondaryActionCodes[status.index].type.label}"
+                                        icon="pi pi-qrcode" >
+                                </p:chip>
                                 <p:autoComplete id="SecondaryCodeAutoCompleteId"
                                                 value="#{actionUnitBean.secondaryActionCodes[status.index]}"
                                                 var="actionCode"
@@ -204,11 +167,18 @@
                                             #{actionCode.code}
                                         </span>
                                     </p:column>
-                                    <!--                                <f:facet name="footer">-->
-                                    <!--                                    <div class="ui-fluid" style="padding:0.5rem 1rem 1rem 1rem">-->
-                                    <!--                                        <p:button value="Add new code" onclick="alert('This could open a dialog')"/>-->
-                                    <!--                                    </div>-->
-                                    <!--                                </f:facet>-->
+                                    <f:facet name="footer">
+                                        <div class="ui-fluid" style="padding:0.5rem 1rem 1rem 1rem">
+                                            <p:commandButton value='Nouveau code' icon="pi pi-plus"
+                                                             immediate="true"
+                                                             update="form-new-action-code"
+                                                             action="#{actionUnitBean.initNewActionCode(status.index+1)}"
+                                                             oncomplete="PF('new-action-code-dialog').show()"
+                                                             style="margin-right: .5rem">
+                                            </p:commandButton>
+
+                                        </div>
+                                    </f:facet>
                                 </p:autoComplete>
                                 <p:commandButton icon="pi pi-minus" process="@this" update="@form"
                                                  action="#{actionUnitBean.removeSecondaryCode(status.index)}"/>

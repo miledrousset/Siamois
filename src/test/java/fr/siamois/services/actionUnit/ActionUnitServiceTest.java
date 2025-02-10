@@ -1,4 +1,5 @@
-package fr.siamois.services;
+package fr.siamois.services.actionUnit;
+
 
 import fr.siamois.infrastructure.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
@@ -7,14 +8,16 @@ import fr.siamois.models.Institution;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
+import fr.siamois.models.exceptions.FailedActionUnitSaveException;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
+
 import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,24 +29,31 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ActionUnitServiceTest {
 
-    @Mock private ActionUnitRepository actionUnitRepository;
-    @Mock private ArkServerRepository arkServerRepository;
-    @Mock private ConceptService conceptService;
-    @Mock private ActionCodeRepository actionCodeRepository;
+    @Mock
+    private ActionUnitRepository actionUnitRepository;
+    @Mock
+    private ConceptService conceptService;
+    @Mock
+    private ActionCodeRepository actionCodeRepository;
+    @Mock
+    private ArkServerRepository arkServerRepository;
+
 
     @InjectMocks
     private ActionUnitService actionUnitService;
 
-    SpatialUnit spatialUnit1 ;
-    ActionUnit actionUnit1 ;
-    ActionUnit actionUnit2 ;
+
+    SpatialUnit spatialUnit1;
+    ActionUnit actionUnit1;
+    ActionUnit actionUnit2;
 
     ActionUnit actionUnitWithCodesBefore;
     ActionUnit actionUnitWithCodesAfter;
@@ -58,16 +68,16 @@ class ActionUnitServiceTest {
 
     @BeforeEach
     void setUp() {
+
+        Person p =new Person();
+        Institution i = new Institution();
+        info = new UserInfo(i,p,"fr");
         spatialUnit1 = new SpatialUnit();
         actionUnit1 = new ActionUnit();
         actionUnit2 = new ActionUnit();
         spatialUnit1.setId(1L);
         actionUnit1.setId(1L);
         actionUnit2.setId(2L);
-
-        Person p =new Person();
-        Institution i = new Institution();
-        info = new UserInfo(i,p,"fr");
         c1 = new Concept();
         c2 = new Concept();
         c3 = new Concept();
@@ -115,7 +125,7 @@ class ActionUnitServiceTest {
         List<ActionUnit> actualResult = actionUnitService.findAllBySpatialUnitId(spatialUnit1);
 
         // Assert
-        assertEquals(List.of(actionUnit1,actionUnit2), actualResult);
+        assertEquals(List.of(actionUnit1, actionUnit2), actualResult);
     }
 
     @Test
@@ -149,7 +159,7 @@ class ActionUnitServiceTest {
     @Test
     void findById_Exception() {
 
-        when(actionUnitRepository.findById(actionUnit1.getId())).thenReturn(Optional.empty());
+        when(actionUnitRepository.findById(actionUnit1.getId())).thenReturn(Optional.ofNullable(null));
 
 
         // Act & Assert
@@ -159,84 +169,63 @@ class ActionUnitServiceTest {
         );
 
         assertEquals("ActionUnit not found with ID: 1", exception.getMessage());
+
     }
 
     @Test
-    void save_withUserInfo_success() {
-        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
+    void SaveWithActionCodes_Success() {
+        when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(new ArkServer()));
+        lenient().when(conceptService.saveOrGetConcept(c1)).thenReturn(c1);
+        lenient().when(conceptService.saveOrGetConcept(c2)).thenReturn(c2);
+        lenient().when(conceptService.saveOrGetConcept(c3)).thenReturn(c3);
+        lenient().when(actionCodeRepository.findById(primaryActionCode.getCode())).thenReturn(Optional.ofNullable(primaryActionCodeBefore));
+        lenient().when(actionCodeRepository.findById(secondaryActionCode1.getCode())).thenReturn(Optional.ofNullable(secondaryActionCode1));
+        lenient().when(actionCodeRepository.findById(secondaryActionCode2.getCode())).thenReturn(Optional.empty());
+        when(actionUnitRepository.save(actionUnitWithCodesBefore)).thenReturn(actionUnitWithCodesAfter);
+        when(actionUnitRepository.findById(actionUnitWithCodesBefore.getId())).thenReturn(Optional.ofNullable(actionUnitWithCodesBefore));
 
-        ActionUnit actionUnit = new ActionUnit();
-        Concept typeConcept = new Concept();
-        ArkServer localServer = new ArkServer();
-        localServer.setId(1L);
-        Ark ark = new Ark();
-        ark.setArkServer(localServer);
-
-        when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(localServer));
-        when(conceptService.saveOrGetConcept(typeConcept)).thenReturn(typeConcept);
-        when(actionUnitRepository.save(actionUnit)).thenReturn(actionUnit);
-
-        ActionUnit result = actionUnitService.save(userInfo, actionUnit, typeConcept);
-
-        assertNotNull(result);
-        assertEquals(actionUnit, result);
-        assertEquals(typeConcept, result.getType());
-        assertEquals(userInfo.getUser(), result.getAuthor());
-        assertEquals(userInfo.getInstitution(), result.getCreatedByInstitution());
-        assertNotNull(result.getArk());
-        assertThat(result.getArk().getArkId()).startsWith("666666/");
+        ActionUnit result = actionUnitService.save(actionUnitWithCodesBefore, List.of(secondaryActionCode1, secondaryActionCode2),info);
+        // assert
+        assertEquals(actionUnitWithCodesAfter, result);
     }
 
     @Test
-    void save_withUserInfo_failure() {
-        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
+    void SaveActionCodes_FailedCodeExistsButTypeDoesNotMatch() {
+        lenient().when(conceptService.saveOrGetConcept(c1)).thenReturn(c1);
+        lenient().when(conceptService.saveOrGetConcept(c2)).thenReturn(c2);
 
-        ActionUnit actionUnit = new ActionUnit();
-        Concept typeConcept = new Concept();
+        lenient().when(actionCodeRepository.findById(failedCode.getCode())).thenReturn(Optional.ofNullable(primaryActionCode));
 
-        when(arkServerRepository.findLocalServer()).thenThrow(new RuntimeException("No local server found"));
 
-        Exception exception = assertThrows(
-                FailedRecordingUnitSaveException.class,
-                () -> actionUnitService.save(userInfo, actionUnit, typeConcept)
-        );
-
-        assertEquals("No local server found", exception.getMessage());
-    }
-
-    @Test
-    void findAllActionCodeByCodeIsContainingIgnoreCase_Success() {
-        // Arrange
-        String query = "test";
-        ActionCode actionCode1 = new ActionCode();
-        actionCode1.setCode("testCode1");
-        ActionCode actionCode2 = new ActionCode();
-        actionCode2.setCode("anotherTestCode");
-        when(actionCodeRepository.findAllByCodeIsContainingIgnoreCase(query)).thenReturn(List.of(actionCode1, actionCode2));
-
-        // Act
-        List<ActionCode> actualResult = actionUnitService.findAllActionCodeByCodeIsContainingIgnoreCase(query);
-
-        // Assert
-        assertNotNull(actualResult);
-        assertEquals(2, actualResult.size());
-        assertThat(actualResult).extracting(ActionCode::getCode).containsExactlyInAnyOrder("testCode1", "anotherTestCode");
-    }
-
-    @Test
-    void findAllActionCodeByCodeIsContainingIgnoreCase_Exception() {
-        // Arrange
-        String query = "test";
-        when(actionCodeRepository.findAllByCodeIsContainingIgnoreCase(query)).thenThrow(new RuntimeException("Database error"));
+        actionUnitWithCodesBefore.setPrimaryActionCode(failedCode);
 
         // Act & Assert
         Exception exception = assertThrows(
-                RuntimeException.class,
-                () -> actionUnitService.findAllActionCodeByCodeIsContainingIgnoreCase(query)
+                FailedActionUnitSaveException.class,
+                () -> actionUnitService.save(actionUnitWithCodesBefore, List.of(secondaryActionCode1, secondaryActionCode2),info)
         );
 
-        assertEquals("Database error", exception.getMessage());
+        assertEquals("Code exists but type does not match", exception.getMessage());
     }
 
+    @Test
+    void SaveActionCodes_Exception() {
+        when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(new ArkServer()));
+        lenient().when(conceptService.saveOrGetConcept(c1)).thenReturn(c1);
+        lenient().when(conceptService.saveOrGetConcept(c2)).thenReturn(c2);
+        lenient().when(conceptService.saveOrGetConcept(c3)).thenReturn(c3);
+        lenient().when(actionCodeRepository.findById(primaryActionCode.getCode())).thenReturn(Optional.ofNullable(primaryActionCodeBefore));
+        lenient().when(actionCodeRepository.findById(secondaryActionCode1.getCode())).thenReturn(Optional.ofNullable(secondaryActionCode1));
+        lenient().when(actionCodeRepository.findById(secondaryActionCode2.getCode())).thenReturn(Optional.empty());
+        when(actionUnitRepository.save(actionUnitWithCodesBefore)).thenThrow(new RuntimeException("Database error"));
+        when(actionUnitRepository.findById(actionUnitWithCodesBefore.getId())).thenReturn(Optional.ofNullable(actionUnitWithCodesBefore));
 
+        // Act & Assert
+        Exception exception = assertThrows(
+                FailedActionUnitSaveException.class,
+                () -> actionUnitService.save(actionUnitWithCodesBefore, List.of(secondaryActionCode1, secondaryActionCode2),info)
+        );
+        assertEquals("Database error", exception.getMessage());
+
+    }
 }

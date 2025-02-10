@@ -19,6 +19,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -66,6 +67,7 @@ public class ActionUnitService {
     public ActionUnit save(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
 
         try {
+
             // Generate ARK if the action unit does not have any
             if (actionUnit.getArk() == null) {
                 ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
@@ -78,7 +80,6 @@ public class ActionUnitService {
             // Add concept
             Concept type = conceptService.saveOrGetConcept(typeConcept);
             actionUnit.setType(type);
-
 
             actionUnit.setAuthor(info.getUser());
             actionUnit.setCreatedByInstitution(info.getInstitution());
@@ -93,37 +94,42 @@ public class ActionUnitService {
         return actionCodeRepository.findAllByCodeIsContainingIgnoreCase(query);
     }
 
+    private ActionCode saveOrGetActionCode(ActionCode actionCode) {
+        Optional<ActionCode> optActionCode = actionCodeRepository.findById(actionCode.getCode()); // We try to get the code
+        if (optActionCode.isPresent()) {
+            // We test if the type is the same because it's not possible to modify the type of a code already in the system
+            if(actionCode.getType().equals(optActionCode.get().getType())) {
+                // If the type matches it's fine, we return it.
+                return optActionCode.get();
+            }
+            else {
+                throw new FailedActionUnitSaveException("Code exists but type does not match");
+            }
+        }
+        else {
+            // SAVE THE CODE
+            return actionCodeRepository.save(actionCode);
+        }
+    }
+
     @Transactional
-    public ActionUnit save(ActionUnit actionUnit, List<ActionCode> secondaryActionCodes) {
+    public ActionUnit save(ActionUnit actionUnit, List<ActionCode> secondaryActionCodes, UserInfo info) {
 
         try {
 
+            // -------------------- Handle the primary action code
             // Is the action code concept already in DB ?
-            Concept actionCodeType = conceptService.saveOrGetConcept(actionUnit.getPrimaryActionCode().getType());
-            actionUnit.getPrimaryActionCode().setType(actionCodeType);
-            // Is the action code already in DB ?
-            Optional<ActionCode> optActionCode = actionCodeRepository.findById(actionUnit.getPrimaryActionCode().getCode());
-            if(optActionCode.isPresent()) {
-                if(actionUnit.getPrimaryActionCode().getType().equals(optActionCode.get().getType())) {
-                    // If the type matches
-                    actionUnit.setPrimaryActionCode(optActionCode.get());
-                }
-                else {
-                    throw new FailedActionUnitSaveException("Code exists but type does not match");
-                }
-            }
-            else {
-                actionUnit.setPrimaryActionCode(actionCodeRepository.save(actionUnit.getPrimaryActionCode()));
-            }
+            actionUnit.getPrimaryActionCode().setType(conceptService.saveOrGetConcept(actionUnit.getPrimaryActionCode().getType()));
+            // Saving or retrieving primary action code
+            actionUnit.setPrimaryActionCode(saveOrGetActionCode(actionUnit.getPrimaryActionCode()));
 
-            // Handle secondary codes
-
-
+            // ------------------ Handle secondary codes
             // Get the old version of the actionUnit
             ActionUnit currentVersion = actionUnitRepository.findById(actionUnit.getId()).get();
 
             // Get the old list of secondaryActionCodes
             Set<ActionCode> currentSecondaryActionCodes = currentVersion.getSecondaryActionCodes();
+
             // Handle codes
             // 1. Remove the ones that are not linked to the action unit anymore
             currentSecondaryActionCodes.removeIf(actionCode -> !secondaryActionCodes.contains(actionCode));
@@ -134,9 +140,19 @@ public class ActionUnitService {
                 }
             });
 
+            // Update action code secondary codes set
+            actionUnit.setSecondaryActionCodes(new HashSet<>());
+            currentSecondaryActionCodes.forEach(actionCode -> {
+                actionCode.setType(conceptService.saveOrGetConcept(actionCode.getType()));
+                // Saving or retrieving action code
+                actionUnit.getSecondaryActionCodes().add(saveOrGetActionCode(actionCode));
+            });
+
             actionUnit.setSecondaryActionCodes(currentSecondaryActionCodes);
 
-            return actionUnitRepository.save(actionUnit);
+            // Saving the action unit
+            return save(info, actionUnit, actionUnit.getType());
+
         } catch (RuntimeException e) {
             throw new FailedActionUnitSaveException(e.getMessage());
         }

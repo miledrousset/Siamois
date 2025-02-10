@@ -17,7 +17,7 @@ public class ActionCode implements Serializable {
     @Column(name = "action_code_id", nullable = false)
     private String code;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_type", nullable = false)
     protected Concept type;
 
