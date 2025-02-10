@@ -19,6 +19,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -79,7 +80,6 @@ public class ActionUnitService {
             Concept type = conceptService.saveOrGetConcept(typeConcept);
             actionUnit.setType(type);
 
-
             actionUnit.setAuthor(info.getUser());
             actionUnit.setCreatedByInstitution(info.getInstitution());
 
@@ -98,11 +98,10 @@ public class ActionUnitService {
 
         try {
 
-            // Look at the primary action code
+            // -------------------- Handle the primary action code
             ActionCode primaryActionCode = actionUnit.getPrimaryActionCode();
             // Is the action code concept already in DB ?
-            Concept actionCodeType = conceptService.saveOrGetConcept(actionUnit.getPrimaryActionCode().getType());
-            actionUnit.getPrimaryActionCode().setType(actionCodeType);
+            actionUnit.getPrimaryActionCode().setType(conceptService.saveOrGetConcept(actionUnit.getPrimaryActionCode().getType()));
             // Is the action code already in DB ?
             Optional<ActionCode> optActionCode = actionCodeRepository.findById(actionUnit.getPrimaryActionCode().getCode());
             if(optActionCode.isPresent()) {
@@ -115,17 +114,17 @@ public class ActionUnitService {
                 }
             }
             else {
+                // SAVE THE CODE
                 actionUnit.setPrimaryActionCode(actionCodeRepository.save(actionUnit.getPrimaryActionCode()));
             }
 
-            // Handle secondary codes
-
-
+            // ------------------ Handle secondary codes
             // Get the old version of the actionUnit
             ActionUnit currentVersion = actionUnitRepository.findById(actionUnit.getId()).get();
 
             // Get the old list of secondaryActionCodes
             Set<ActionCode> currentSecondaryActionCodes = currentVersion.getSecondaryActionCodes();
+
             // Handle codes
             // 1. Remove the ones that are not linked to the action unit anymore
             currentSecondaryActionCodes.removeIf(actionCode -> !secondaryActionCodes.contains(actionCode));
@@ -133,6 +132,27 @@ public class ActionUnitService {
             secondaryActionCodes.forEach(actionCode -> {
                 if (!currentSecondaryActionCodes.contains(actionCode)) {
                     currentSecondaryActionCodes.add(actionCode);
+                }
+            });
+
+            // Update action code secondary codes set
+            actionUnit.setSecondaryActionCodes(new HashSet<>());
+            currentSecondaryActionCodes.forEach(actionCode -> {
+                actionCode.setType(conceptService.saveOrGetConcept(actionCode.getType()));
+                // Is the action code already in DB ?
+                Optional<ActionCode> optActionSecondaryCode = actionCodeRepository.findById(actionCode.getCode());
+                if(optActionSecondaryCode.isPresent()) {
+                    if(actionCode.getType().equals(optActionSecondaryCode.get().getType())) {
+                        // If the type matches
+                        actionUnit.getSecondaryActionCodes().add(optActionCode.get());
+                    }
+                    else {
+                        throw new FailedActionUnitSaveException("Code exists but type does not match");
+                    }
+                }
+                else {
+                    // Save the code
+                    actionUnit.getSecondaryActionCodes().add(actionCodeRepository.save(actionCode));
                 }
             });
 

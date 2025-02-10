@@ -46,12 +46,15 @@
                 <p:commandButton
                         value='Ajouter le code'
                         icon="pi pi-check"
+                        oncomplete="PF('new-action-code-dialog').hide()"
                         action="#{actionUnitBean.saveNewActionCode}"
-                        update=":dialog-new-action-code @form"
+                        update="spatialUnitTabsId:primaryCodeForm, spatialUnitTabsId:secondaryCodesForm"
 
                 />
                 <p:commandButton value='${langBean.msg("button.cancel")}' icon="pi pi-times"
-                                 class="ui-button-secondary" update="form-new-action-code" type="button"/>
+                                 oncomplete="PF('new-action-code-dialog').hide()"
+                                 immediaite="true"
+                                 class="ui-button-secondary" update="dialog-new-action-code" type="button"/>
 
             </p:outputPanel>
         </h:form>

@@ -1,4 +1,4 @@
-package fr.siamois.services;
+package fr.siamois.services.actionUnit;
 
 import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
 import fr.siamois.models.actionunit.ActionUnit;
@@ -32,6 +32,9 @@ class ActionUnitServiceTest {
     ActionUnit actionUnit1 ;
     ActionUnit actionUnit2 ;
 
+    ActionUnit actionUnitWithCodesBefore ;
+    ActionUnit actionUnitWithCodesAfter ;
+
     @BeforeEach
     void setUp() {
         spatialUnit1 = new SpatialUnit();
@@ -40,6 +43,10 @@ class ActionUnitServiceTest {
         spatialUnit1.setId(1L);
         actionUnit1.setId(1L);
         actionUnit2.setId(2L);
+
+        // For action codes test
+        actionUnitWithCodesAfter = new ActionUnit();
+        actionUnitWithCodesBefore = new ActionUnit();
 
 
     }
@@ -102,5 +109,15 @@ class ActionUnitServiceTest {
 
         assertEquals("ActionUnit not found with ID: 1", exception.getMessage());
 
+    }
+
+    @Test
+    void SaveNew_Success() {
+
+    }
+
+    @Test
+    void SaveActionCodes_Success() {
+        when(actionUnitRepository.save(actionUnitWithCodesBefore)).thenReturn(actionUnitWithCodesAfter);
     }
 }

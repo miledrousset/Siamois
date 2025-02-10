@@ -19,7 +19,7 @@ public class ActionUnit extends ActionUnitParent {
     @Column(name = "action_unit_id", nullable = false)
     private Long id;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "action_action_code",
             joinColumns = { @JoinColumn(name = "fk_action_id") },

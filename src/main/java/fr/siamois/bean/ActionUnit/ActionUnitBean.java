@@ -107,13 +107,12 @@ public class ActionUnitBean implements Serializable {
     public void addNewSecondaryCode() {
         ActionCode code = new ActionCode();
         Concept c = new Concept();
-        c.setLabel("Code OA");
-        code.setCode("1115613zz");
+        code.setCode("");
         code.setType(c);
         secondaryActionCodes.add(code);
     }
 
-    public void initNewActionCode(Integer index) {
+    public void initNewActionCode(int index) {
         newCodeIndex = index;
         newCode = new ActionCode();
     }
@@ -156,8 +155,10 @@ public class ActionUnitBean implements Serializable {
         if(newCodeIndex == 0) {
             // update primary action code
             actionUnit.setPrimaryActionCode(newCode);
+        } else if (newCodeIndex > 0) {
+            actionUnit.getSecondaryActionCodes().add(newCode);
+            secondaryActionCodes.set(newCodeIndex-1, newCode);
         }
-        // todo : secondary action code
     }
 
     public void init() {
@@ -167,19 +168,13 @@ public class ActionUnitBean implements Serializable {
             actionUnitErrorMessage = null;
             actionUnit = null;
             newCode = new ActionCode();
-
-            c1.setLabel("Code OA");
-            c2.setLabel("Code OP");
-            actionCodeTypeOptions = List.of(c1,c2);
             secondaryActionCodes = new ArrayList<>();
             // Get the requested action from DB
             try {
                 if(id!=null) {
                     actionUnit = actionUnitService.findById(id);
-                    ActionCode primaryActionCode = new ActionCode();
-                    actionUnit.setPrimaryActionCode(primaryActionCode);
-
                     Concept typeConcept = actionUnit.getType();
+                    secondaryActionCodes = new ArrayList<>(actionUnit.getSecondaryActionCodes());
                     fType = new ConceptFieldDTO();
                     fType.setLabel(typeConcept.getLabel());
                     // If thesaurus we can reconstruct the DTO
