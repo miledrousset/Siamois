@@ -14,7 +14,7 @@
     <h:outputStylesheet library="css" name="styles.css"/>
 
     <!-- QUIXLAB -->
-    <link href="quixlab/css/style.css" rel="stylesheet"/>
+    <link href="static/quixlab/css/style.css" rel="stylesheet"/>
 
     <script type="text/javascript">
         window.csrfTokenName = "{{ craft.config.csrfTokenName }}";
@@ -34,7 +34,7 @@
         ***********************************-->
         <div class="nav-header">
             <div class="brand-logo">
-                <a href="index.html">
+                <a href="dashboard">
                     <b class="logo-abbr">
                         <!-- Logo when MENU is closed -->
                         <img src="https://placehold.co/21x19" alt=""/>
@@ -62,13 +62,13 @@
 
                 <div class="nav-control">
                     <div class="hamburger">
-                        <span class="toggle-icon"><i class="icon-menu"></i></span>
+                        <span class="toggle-icon"><i class="icon-menu"/></span>
                     </div>
                 </div>
                 <div class="header-left">
                     <div class="input-group icons">
                         <div class="input-group-prepend">
-                            <span class="input-group-text bg-transparent border-0 pr-2 pr-sm-3" id="basic-addon1"><i class="mdi mdi-magnify"></i></span>
+                            <span class="input-group-text bg-transparent border-0 pr-2 pr-sm-3" id="basic-addon1"><i class="mdi mdi-magnify"/></span>
                         </div>
                         <input type="search" class="form-control" placeholder="Search Dashboard" aria-label="Search Dashboard"/>
                         <div class="drop-down   d-md-none">
@@ -81,8 +81,8 @@
                 <div class="header-right">
                     <ul class="clearfix">
                         <li class="icons dropdown"><a href="javascript:void(0)" data-toggle="dropdown">
-                            <i class="mdi mdi-bell-outline"></i>
-                            <span class="badge badge-pill gradient-2 badge-primary">3</span>
+                            <i class="mdi mdi-bell-outline"/>
+                            <span class="badge badge-pill gradient-2 badge-primary">9+</span>
                         </a>
                             <div class="drop-down animated fadeIn dropdown-menu dropdown-notfication">
                                 <div class="dropdown-content-heading d-flex justify-content-between">
@@ -93,7 +93,7 @@
                                     <ul>
                                         <li>
                                             <a href="javascript:void()">
-                                                <span class="mr-3 avatar-icon bg-success-lighten-2"><i class="icon-present"></i></span>
+                                                <span class="mr-3 avatar-icon bg-success-lighten-2"><i class="icon-present"/></span>
                                                 <div class="notification-content">
                                                     <h6 class="notification-heading">Events near you</h6>
                                                     <span class="notification-text">Within next 5 days</span>
@@ -102,7 +102,7 @@
                                         </li>
                                         <li>
                                             <a href="javascript:void()">
-                                                <span class="mr-3 avatar-icon bg-danger-lighten-2"><i class="icon-present"></i></span>
+                                                <span class="mr-3 avatar-icon bg-danger-lighten-2"><i class="icon-present"/></span>
                                                 <div class="notification-content">
                                                     <h6 class="notification-heading">Event Started</h6>
                                                     <span class="notification-text">One hour ago</span>
@@ -111,7 +111,7 @@
                                         </li>
                                         <li>
                                             <a href="javascript:void()">
-                                                <span class="mr-3 avatar-icon bg-success-lighten-2"><i class="icon-present"></i></span>
+                                                <span class="mr-3 avatar-icon bg-success-lighten-2"><i class="icon-present"/></span>
                                                 <div class="notification-content">
                                                     <h6 class="notification-heading">Event Ended Successfully</h6>
                                                     <span class="notification-text">One hour ago</span>
@@ -120,7 +120,7 @@
                                         </li>
                                         <li>
                                             <a href="javascript:void()">
-                                                <span class="mr-3 avatar-icon bg-danger-lighten-2"><i class="icon-present"></i></span>
+                                                <span class="mr-3 avatar-icon bg-danger-lighten-2"><i class="icon-present"/></span>
                                                 <div class="notification-content">
                                                     <h6 class="notification-heading">Events to Join</h6>
                                                     <span class="notification-text">After two days</span>
@@ -134,7 +134,7 @@
                         </li>
                         <li class="icons dropdown d-none d-md-flex">
                             <a href="javascript:void(0)" class="log-user"  data-toggle="dropdown">
-                                <span>MOM</span>  <i class="fa fa-angle-down f-s-14" aria-hidden="true"></i>
+                                <span>MOM</span>  <i class="fa fa-angle-down f-s-14" aria-hidden="true"/>
                             </a>
                             <div class="drop-down dropdown-language animated fadeIn  dropdown-menu">
                                 <div class="dropdown-content-body">
@@ -147,13 +147,13 @@
                         </li>
                         <li class="icons dropdown d-none d-md-flex">
                             <a href="javascript:void(0)" class="log-user"  data-toggle="dropdown">
-                                <span>English</span>  <i class="fa fa-angle-down f-s-14" aria-hidden="true"></i>
+                                <span>Français</span>  <i class="fa fa-angle-down f-s-14" aria-hidden="true"/>
                             </a>
                             <div class="drop-down dropdown-language animated fadeIn  dropdown-menu">
                                 <div class="dropdown-content-body">
                                     <ul>
+                                        <li><a href="javascript:void()">Français</a></li>
                                         <li><a href="javascript:void()">English</a></li>
-                                        <li><a href="javascript:void()">Dutch</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -167,16 +167,10 @@
                                 <div class="dropdown-content-body">
                                     <ul>
                                         <li>
-                                            <a href="app-profile.html"><i class="icon-user"></i> <span>Profile</span></a>
-                                        </li>
-                                        <li>
-                                            <a href="email-inbox.html"><i class="icon-envelope-open"></i> <span>Inbox</span> <div class="badge gradient-3 badge-pill badge-primary">3</div></a>
+                                            <a href="dashboard"><i class="icon-user"/> <span>Profil</span></a>
                                         </li>
 
-                                        <li>
-                                            <a href="page-lock.html"><i class="icon-lock"></i> <span>Lock Screen</span></a>
-                                        </li>
-                                        <li><a href="page-login.html"><i class="icon-key"></i> <span>Logout</span></a></li>
+                                        <li><a href="dashboard"><i class="icon-key"/> <span>Déconnexion</span></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -198,44 +192,44 @@
                     <li class="nav-label">Titre 1</li>
                     <li>
                         <a href="dashboard" aria-expanded="false">
-                            <i class="icon-home menu-icon"></i><span class="nav-text">Accueil</span>
+                            <i class="icon-home menu-icon"/><span class="nav-text">Accueil</span>
                         </a>
                     </li>
                     <li>
                         <a href="dashboard" aria-expanded="false">
-                            <i class="icon-location-pin menu-icon"></i><span class="nav-text">Unité spatiale</span>
+                            <i class="icon-location-pin menu-icon"/><span class="nav-text">Unité spatiale</span>
                         </a>
                     </li>
                     <li>
                         <a href="dashboard" aria-expanded="false">
-                            <i class="icon-control-play menu-icon"></i><span class="nav-text">Unité d'action</span>
+                            <i class="icon-control-play menu-icon"/><span class="nav-text">Unité d'action</span>
                         </a>
                     </li>
                     <li>
                         <a href="dashboard" aria-expanded="false">
-                            <i class="icon-note menu-icon"></i><span class="nav-text">Unité d'enregistrement</span>
+                            <i class="icon-note menu-icon"/><span class="nav-text">Unité d'enregistrement</span>
                         </a>
                     </li>
                     <li>
                         <a href="dashboard" aria-expanded="false">
-                            <i class="icon-social-dropbox menu-icon"></i><span class="nav-text">Prélèvements</span>
+                            <i class="icon-social-dropbox menu-icon"/><span class="nav-text">Prélèvements</span>
                         </a>
                     </li>
                     <li>
                         <a href="dashboard" aria-expanded="false">
-                            <i class="icon-eyeglass menu-icon"></i><span class="nav-text">Études</span>
+                            <i class="icon-eyeglass menu-icon"/><span class="nav-text">Études</span>
                         </a>
                     </li>
                     <li>
                         <a href="dashboard" aria-expanded="false">
-                            <i class="icon-docs menu-icon"></i><span class="nav-text">Documents</span>
+                            <i class="icon-docs menu-icon"/><span class="nav-text">Documents</span>
                         </a>
                     </li>
 
                     <li class="nav-label">Gestion de l'organisation</li>
                     <li class="mega-menu mega-menu-sm">
                         <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                            <i class="icon-people menu-icon"></i><span class="nav-text">Utilisateurs</span>
+                            <i class="icon-people menu-icon"/><span class="nav-text">Utilisateurs</span>
                         </a>
                         <ul aria-expanded="false">
                             <li><a>Gestion des utilisateurs</a></li>
@@ -245,17 +239,17 @@
                     <li class="nav-label">Administration</li>
                     <li>
                         <a href="dashboard" aria-expanded="false">
-                            <i class="icon-energy menu-icon"></i><span class="nav-text">Gestion de l'instance</span>
+                            <i class="icon-energy menu-icon"/><span class="nav-text">Gestion de l'instance</span>
                         </a>
                     </li>
                     <li>
                         <a href="dashboard" aria-expanded="false">
-                            <i class="icon-globe-alt menu-icon"></i><span class="nav-text">Gestion des organisations</span>
+                            <i class="icon-globe-alt menu-icon"/><span class="nav-text">Gestion des organisations</span>
                         </a>
                     </li>
                     <li>
                         <a href="dashboard" aria-expanded="false">
-                            <i class="icon-user-following menu-icon"></i><span class="nav-text">Gestion des administrateurs</span>
+                            <i class="icon-user-following menu-icon"/><span class="nav-text">Gestion des administrateurs</span>
                         </a>
                     </li>
                 </ul>
@@ -269,7 +263,12 @@
             Content body start
         ***********************************-->
         <div class="content-body">
-
+            <h:panelGroup id="main" styleClass="content-body">
+                <!-- Content will be inserted here -->
+                <ui:insert description="The main content" name="content">
+                    <!-- Content will be inserted here -->
+                </ui:insert>
+            </h:panelGroup>
         </div>
         <!--**********************************
             Content body end
@@ -293,11 +292,11 @@
     <h:outputScript library="js" name="jquery-ui.js"/>
     <h:outputScript library="js" name="bootstrap.bundle.min.js"/>
 
-    <script src="quixlab/plugins/common/common.min.js"></script>
-    <script src="quixlab/js/custom.min.js"></script>
-    <script src="quixlab/js/settings.js"></script>
-    <script src="quixlab/js/gleek.js"></script>
-    <script src="quixlab/js/styleSwitcher.js"></script>
+    <script src="static/quixlab/plugins/common/common.min.js"></script>
+    <script src="static/quixlab/js/custom.min.js"></script>
+    <script src="static/quixlab/js/settings.js"></script>
+    <script src="static/quixlab/js/gleek.js"></script>
+    <script src="static/quixlab/js/styleSwitcher.js"></script>
 
 </h:body>
 </html>

@@ -7,8 +7,7 @@
 
 <h:head>
     <!-- Import de BOOTSTRAP -->
-    <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css"/>
-    <script src="resources/js/bootstrap.bundle.min.js"></script>
+    <h:outputStylesheet library="css" name="bootstrap.min.css"/>
     <title>Connexion</title>
 </h:head>
 
@@ -58,6 +57,8 @@
             </div>
         </div>
     </section>
+
+    <h:outputScript library="js" name="jquery-3.7.1.min.js"/>
 
     <script>
         const lang = document.getElementById('lang');

@@ -49,6 +49,9 @@ spring:
     resources:
       static-locations: classpath:/static/
 
+  mvc:
+    static-path-pattern: /static/**
+
 joinfaces:
   faces:
     project-stage: development
