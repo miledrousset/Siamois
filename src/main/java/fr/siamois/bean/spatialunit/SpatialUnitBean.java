@@ -50,7 +50,6 @@ public class SpatialUnitBean implements Serializable {
     private String recordingUnitListErrorMessage;
 
     private transient List<SpatialUnitHist> historyVersion;
-
     private SpatialUnitHist revisionToDisplay = null;
 
     private Long id;  // ID of the spatial unit

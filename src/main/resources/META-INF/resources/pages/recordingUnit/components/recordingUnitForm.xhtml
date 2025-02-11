@@ -140,7 +140,8 @@
                     </div>
                     <div class="row">
                         <div class="form-panel col-12 col-lg-4 col-xl-4">
-                            <p:panel id="panel-location" header='#{langBean.msg("recordingunit.panel.location")}' toggleable="true">
+                            <p:panel id="panel-location" header='#{langBean.msg("recordingunit.panel.location")}'
+                                     toggleable="true">
                                 <h5>SIG</h5>
                                 <p:toggleSwitch value="#{newRecordingUnitFormBean.isLocalisationFromSIG}"
                                                 onIcon="pi pi-check"
@@ -148,7 +149,8 @@
                             </p:panel>
                         </div>
                         <div class="form-panel col-12 col-lg-4 col-xl-4">
-                            <p:panel id="panel-dimension" header='#{langBean.msg("recordingunit.panel.dimension")}' toggleable="true">
+                            <p:panel id="panel-dimension" header='#{langBean.msg("recordingunit.panel.dimension")}'
+                                     toggleable="true">
                                 <div class="field grid">
                                     <div class="row">
                                         <div class="field col-12 md:col-4">
@@ -188,7 +190,8 @@
                             </p:panel>
                         </div>
                         <div class="form-panel col-12 col-lg-4 col-xl-4">
-                            <p:panel id="panel-altimetry" header='#{langBean.msg("recordingunit.panel.altimetry")}' toggleable="true" >
+                            <p:panel id="panel-altimetry" header='#{langBean.msg("recordingunit.panel.altimetry")}'
+                                     toggleable="true">
                                 <div class="field grid">
                                     <div class="row">
                                         <div class="field col-12 md:col-4">
@@ -257,13 +260,15 @@
                                               align="left"
                                               styleClass="customized-chronoline">
                                     <f:facet name="opposite">
-                                        <small class="text-secondary">#{event.status}</small >
+                                        <small class="text-secondary">#{event.status}</small>
                                     </f:facet>
                                     <f:facet name="marker">
                                 <span class="custom-marker shadow-1" style="background-color: #{event.color}"><i
                                         class="#{event.icon}"/></span>
                                     </f:facet>
-                                    <p:menuButton value="Add" buttonStyle="background: #{event.color};border-color: #{event.color};" icon="pi pi-plus-circle">
+                                    <p:menuButton value="Add"
+                                                  buttonStyle="background: #{event.color};border-color: #{event.color};"
+                                                  icon="pi pi-plus-circle">
                                         <!--                                            <p:menuitem-->
                                         <!--                                                    value="Relation certaine"-->
                                         <!--                                                    immediate="true"-->
@@ -275,7 +280,8 @@
                                         <!--                                                    oncomplete="PF('searchRecordingUnitInActionUnit').show();"/>-->
                                     </p:menuButton>
                                     <div class="flex align-items-center flex-wrap" id="slot">
-                                        <ui:repeat value="#{newRecordingUnitFormBean.stratigraphySelectedRecordingUnit}" var="value">
+                                        <ui:repeat value="#{newRecordingUnitFormBean.stratigraphySelectedRecordingUnit}"
+                                                   var="value">
                                             <p:chip label="#{value.id}" removable="true"/>
                                         </ui:repeat>
                                     </div>
@@ -285,9 +291,48 @@
                     </div>
                 </p:tab>
 
+                <p:tab title="Versions">
+                    <!-- todo : refactor le form ci-dessous pour les reutiliser pour plusieurs type de table? -->
+                        <p:dataTable var="version" value="#{newRecordingUnitFormBean.historyVersion}" rows="5" paginator="true">
+                            <p:column headerText="Date de la version">
+                                <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
+                            </p:column>
+                            <p:column>
+                                <p:commandButton
+                                        value="Visualiser"
+                                        action="#{newRecordingUnitFormBean.visualiseHistory(version)}"
+                                        update="idDisplayVersion"
+                                        oncomplete="PF('displayVersion').show()"
+                                />
+                            </p:column>
+                            <p:column>
+                                <p:commandButton
+                                        value="Restaurer"
+                                        immediate="true"
+                                        action="#{newRecordingUnitFormBean.restore(version)}"
+                                        oncomplete="PF('restored-dlg').show()"/>
+                            </p:column>
+                        </p:dataTable>
+                </p:tab>
+
             </p:tabView>
 
         </h:form>
     </h:panelGroup>
+
+    <!-- todo : refactor les dialogs ci-dessous pour les reutiliser pour plusieurs type de table? -->
+    <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true">
+        <h:form id="displayVersionForm">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <h:panelGroup id="versionVisualizer" rendered="#{newRecordingUnitFormBean.revisionToDisplay != null}">
+                <p>Name : #{newRecordingUnitFormBean.revisionToDisplay.identifier}</p>
+                <p>Ark : #{newRecordingUnitFormBean.revisionToDisplay.ark.arkId}</p>
+                <p>Category : #{newRecordingUnitFormBean.revisionToDisplay.type.label}</p>
+            </h:panelGroup>
+        </h:form>
+    </p:dialog>
+    <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
+        <h:outputText value="Version restaurée"/>
+    </p:dialog>
 
 </ui:composition>

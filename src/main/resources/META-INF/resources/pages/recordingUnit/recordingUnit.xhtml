@@ -6,7 +6,7 @@
                 xmlns:recordingUnit="http://xmlns.jcp.org/jsf/composite/pages/recordingUnit/components">
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="id" value="#{newRecordingUnitFormBean.id}"/>
+            <f:viewParam name="id" value="#{newRecordingUnitFormBean.id}" required="#{!facesContext.postback}"/>
             <f:event type="preRenderView" listener="#{newRecordingUnitFormBean.init}"/>
         </f:metadata>
     </ui:define>

@@ -1,7 +1,10 @@
 package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.history.GlobalHistoryRepository;
+import fr.siamois.infrastructure.repositories.history.RecordingUnitHistoryRepository;
 import fr.siamois.infrastructure.repositories.history.SpatialUnitHistoryRepository;
+import fr.siamois.models.history.RecordingUnitHist;
+import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.history.HistoryOperation;
@@ -21,6 +24,7 @@ import java.util.List;
 public class HistoryService {
 
     private final SpatialUnitHistoryRepository spatialUnitHistoryRepository;
+    private final RecordingUnitHistoryRepository recordingUnitHistoryRepository;
     private final GlobalHistoryRepository globalHistoryRepository;
 
     private static final List<String> entityName = List.of("Action Unit", "Recording Unit", "Recording Unit Study",
@@ -29,8 +33,9 @@ public class HistoryService {
     private static final List<String> tableNames = List.of("action_unit", "recording_unit",
             "recording_unit_study", "siamois_document", "spatial_unit", "specimen", "specimen_study");
 
-    public HistoryService(SpatialUnitHistoryRepository spatialUnitHistoryRepository, GlobalHistoryRepository globalHistoryRepository) {
+    public HistoryService(SpatialUnitHistoryRepository spatialUnitHistoryRepository, RecordingUnitHistoryRepository recordingUnitHistoryRepository, GlobalHistoryRepository globalHistoryRepository) {
         this.spatialUnitHistoryRepository = spatialUnitHistoryRepository;
+        this.recordingUnitHistoryRepository = recordingUnitHistoryRepository;
         this.globalHistoryRepository = globalHistoryRepository;
     }
 
@@ -77,6 +82,10 @@ public class HistoryService {
 
     public List<SpatialUnitHist> findSpatialUnitHistory(SpatialUnit current) {
         return spatialUnitHistoryRepository.findAllByTableId(current.getId());
+    }
+
+    public List<RecordingUnitHist> findRecordingUnitHistory(RecordingUnit current) {
+        return recordingUnitHistoryRepository.findAllByTableId(current.getId());
     }
 
 }

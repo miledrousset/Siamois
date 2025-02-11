@@ -6,9 +6,12 @@ import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
+import fr.siamois.models.history.RecordingUnitHist;
+import fr.siamois.models.history.SpatialUnitHist;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
 import fr.siamois.models.recordingunit.RecordingUnitSize;
+import fr.siamois.services.HistoryService;
 import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.PersonService;
@@ -43,6 +46,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     // Deps
     private final transient RecordingUnitService recordingUnitService;
     private final transient ActionUnitService actionUnitService;
+    private final transient HistoryService historyService;
     private final transient PersonService personService;
     private final transient FieldService fieldService;
     private final LangBean langBean;
@@ -65,6 +69,10 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     // View param
     private Long id;  // ID of the requested RU
+
+    // History
+    private transient List<RecordingUnitHist> historyVersion;
+    private RecordingUnitHist revisionToDisplay = null;
 
     @Data
     public static class Event {
@@ -151,7 +159,7 @@ public class NewRecordingUnitFormBean implements Serializable {
 
 
     public NewRecordingUnitFormBean(RecordingUnitService recordingUnitService,
-                                    ActionUnitService actionUnitService,
+                                    ActionUnitService actionUnitService, HistoryService historyService,
                                     PersonService personService,
                                     FieldService fieldService,
                                     LangBean langBean,
@@ -159,6 +167,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                                     SessionSettings sessionSettings, FieldConfigurationService fieldConfigurationService) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
+        this.historyService = historyService;
         this.personService = personService;
         this.fieldService = fieldService;
         this.langBean = langBean;
@@ -221,7 +230,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                     reinitializeBean();
                     this.recordingUnit = new RecordingUnit();
                     this.recordingUnit.setDescription("Nouvelle description");
-                    this.startDate =offsetDateTimeToLocalDate(now());
+                    this.startDate = offsetDateTimeToLocalDate(now());
                     this.recordingUnit.setActionUnit(actionUnit);
 
                     // Init size & altimetry
@@ -247,26 +256,35 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     public void init() {
         try {
-            if (this.id != null) {
+            if (!FacesContext.getCurrentInstance().isPostback()) {
+                if (this.id != null) {
 
-                log.info("Loading RU");
-                reinitializeBean();
-                this.recordingUnit = this.recordingUnitService.findById(this.id);
-                if (this.recordingUnit.getStartDate() != null) {
-                    this.startDate = offsetDateTimeToLocalDate(this.recordingUnit.getStartDate());
-                }
-                if (this.recordingUnit.getEndDate() != null) {
-                    this.endDate = offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());
-                }
-                // TODO handle isLocalisationFromSIG properly
-                this.isLocalisationFromSIG = false;
-                // Init type field
-                fType = this.recordingUnit.getType();
+                    log.info("Loading RU");
+                    reinitializeBean();
+                    this.recordingUnit = this.recordingUnitService.findById(this.id);
+                    if (this.recordingUnit.getStartDate() != null) {
+                        this.startDate = offsetDateTimeToLocalDate(this.recordingUnit.getStartDate());
+                    }
+                    if (this.recordingUnit.getEndDate() != null) {
+                        this.endDate = offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());
+                    }
+                    // TODO handle isLocalisationFromSIG properly
+                    this.isLocalisationFromSIG = false;
+                    // Init type field
+                    fType = this.recordingUnit.getType();
+                    historyVersion = historyService.findRecordingUnitHistory(recordingUnit);
 
+                }
             }
+
         } catch (RuntimeException err) {
             recordingUnitErrorMessage = "Unable to get recording unit";
         }
+    }
+
+    public void visualiseHistory(RecordingUnitHist history) {
+        log.trace("History version changed to {}", history.toString());
+        revisionToDisplay = history;
     }
 
     public List<Concept> completeRecordingUnitType(String input) {
