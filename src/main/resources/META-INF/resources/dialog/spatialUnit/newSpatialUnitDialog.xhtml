@@ -2,7 +2,7 @@
              xmlns:ui="http://java.sun.com/jsf/facelets"
              xmlns:h="http://xmlns.jcp.org/jsf/html"
              xmlns:p="http://primefaces.org/ui"
-             xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages.old/shared/label"
+             xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label"
 >
 
     <p:dialog id="dialog-new-spatial-unit" header="Header" widgetVar="new-spatial-unit-dialog" minHeight="40"
@@ -27,7 +27,7 @@
 
                     <!-- Action Type -->
                     <div class="field">
-                        <sharedLabel:openthesoLabel for="auto-complete-action-type" label="Type"/>
+                        <sharedLabel:openthesoLabel forId="auto-complete-action-type" label="Type"/>
                         <p:autoComplete id="su-category" value="#{spatialUnitFieldBean.selectedConcept}"
                                         completeMethod="#{spatialUnitFieldBean.completeCategory}"
                                         var="field" itemLabel="#{field.label}"
