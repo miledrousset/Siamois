@@ -50,7 +50,7 @@
                         <p:outputLabel for="identifier">Identifier</p:outputLabel>
                         <div style="display:flex;">
                             <p:commandButton action="#{newActionUnitBean.generateRandomActionUnitIdentifier}" icon="pi pi-refresh" styleClass="rounded-button" update="identifier" process="@this"/>
-                            <p:inputText id="identifier" required="true" value="#{newActionUnitBean.actionUnit.code}"/>
+                            <p:inputText id="identifier" required="true" value="#{newActionUnitBean.actionUnit.identifier}"/>
                         </div>
 
                     </div>
