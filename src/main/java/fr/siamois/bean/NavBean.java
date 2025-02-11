@@ -51,17 +51,6 @@ public class NavBean implements Serializable {
     }
 
     /**
-     * Builds the logout path with the context path
-     * @return the logout path
-     */
-    public String logoutPath() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = context.getExternalContext();
-        String contextPath = externalContext.getRequestContextPath();
-        return contextPath + "/logout";
-    }
-
-    /**
      * Checks if the user is in the given role
      * @param roleName the role to check
      * @return true if the user is in the role, false otherwise
@@ -87,10 +76,17 @@ public class NavBean implements Serializable {
         return false;
     }
 
-    public void changeSelectedInstitution() {
-        Institution oldInstit = sessionSettings.getSelectedInstitution();
-        sessionSettings.setSelectedInstitution(selectedInstitution);
+    public void changeSelectedInstitution(Institution institution) {
+        Institution old = sessionSettings.getSelectedInstitution();
+        sessionSettings.setSelectedInstitution(institution);
         institutionChangeEventPublisher.publishInstitutionChangeEvent();
-        log.trace("Institution changed from {} to {}", oldInstit.toString(), selectedInstitution.toString());
+        log.trace("Institution changed from {} to {}", old, institution);
+    }
+
+    public boolean institutionRefIsEmpty() {
+        if (institutions == null) {
+            institutions = sessionSettings.getReferencedInstitutions();
+        }
+        return institutions.isEmpty();
     }
 }

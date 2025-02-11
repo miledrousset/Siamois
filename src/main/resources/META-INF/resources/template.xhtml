@@ -12,7 +12,7 @@
     <h:outputStylesheet library="css" name="styles.css"/>
 
     <!-- QUIXLAB -->
-    <link href="static/quixlab/css/style.css" rel="stylesheet"/>
+    <link href="#{request.contextPath}/static/quixlab/css/style.css" rel="stylesheet"/>
 
     <script type="text/javascript">
         window.csrfTokenName = "{{ craft.config.csrfTokenName }}";
@@ -32,7 +32,7 @@
         ***********************************-->
         <div class="nav-header">
             <div class="brand-logo">
-                <a href="dashboard">
+                <a href="#{request.contextPath}/dashboard">
                     <b class="logo-abbr">
                         <!-- Logo when MENU is closed -->
                         <img src="https://placehold.co/21x19" alt=""/>
@@ -66,9 +66,11 @@
                 <div class="header-left">
                     <div class="input-group icons">
                         <div class="input-group-prepend">
-                            <span class="input-group-text bg-transparent border-0 pr-2 pr-sm-3" id="basic-addon1"><i class="mdi mdi-magnify"/></span>
+                            <span class="input-group-text bg-transparent border-0 pr-2 pr-sm-3" id="basic-addon1"><i
+                                    class="mdi mdi-magnify"/></span>
                         </div>
-                        <input type="search" class="form-control" placeholder="Search Dashboard" aria-label="Search Dashboard"/>
+                        <input type="search" class="form-control" placeholder="Search Dashboard"
+                               aria-label="Search Dashboard"/>
                         <div class="drop-down   d-md-none">
                             <form action="#">
                                 <input type="text" class="form-control" placeholder="Search"/>
@@ -91,7 +93,8 @@
                                     <ul>
                                         <li>
                                             <a href="javascript:void()">
-                                                <span class="mr-3 avatar-icon bg-success-lighten-2"><i class="icon-present"/></span>
+                                                <span class="mr-3 avatar-icon bg-success-lighten-2"><i
+                                                        class="icon-present"/></span>
                                                 <div class="notification-content">
                                                     <h6 class="notification-heading">Events near you</h6>
                                                     <span class="notification-text">Within next 5 days</span>
@@ -100,7 +103,8 @@
                                         </li>
                                         <li>
                                             <a href="javascript:void()">
-                                                <span class="mr-3 avatar-icon bg-danger-lighten-2"><i class="icon-present"/></span>
+                                                <span class="mr-3 avatar-icon bg-danger-lighten-2"><i
+                                                        class="icon-present"/></span>
                                                 <div class="notification-content">
                                                     <h6 class="notification-heading">Event Started</h6>
                                                     <span class="notification-text">One hour ago</span>
@@ -109,7 +113,8 @@
                                         </li>
                                         <li>
                                             <a href="javascript:void()">
-                                                <span class="mr-3 avatar-icon bg-success-lighten-2"><i class="icon-present"/></span>
+                                                <span class="mr-3 avatar-icon bg-success-lighten-2"><i
+                                                        class="icon-present"/></span>
                                                 <div class="notification-content">
                                                     <h6 class="notification-heading">Event Ended Successfully</h6>
                                                     <span class="notification-text">One hour ago</span>
@@ -118,7 +123,8 @@
                                         </li>
                                         <li>
                                             <a href="javascript:void()">
-                                                <span class="mr-3 avatar-icon bg-danger-lighten-2"><i class="icon-present"/></span>
+                                                <span class="mr-3 avatar-icon bg-danger-lighten-2"><i
+                                                        class="icon-present"/></span>
                                                 <div class="notification-content">
                                                     <h6 class="notification-heading">Events to Join</h6>
                                                     <span class="notification-text">After two days</span>
@@ -130,34 +136,69 @@
                                 </div>
                             </div>
                         </li>
+
+
                         <li class="icons dropdown d-none d-md-flex">
-                            <a href="javascript:void(0)" class="log-user"  data-toggle="dropdown">
-                                <span>MOM</span>  <i class="fa fa-angle-down f-s-14" aria-hidden="true"/>
-                            </a>
-                            <div class="drop-down dropdown-language animated fadeIn  dropdown-menu">
-                                <div class="dropdown-content-body">
-                                    <ul>
-                                        <li><a href="javascript:void()">MOM</a></li>
-                                        <li><a href="javascript:void()">CNRS</a></li>
-                                    </ul>
-                                </div>
-                            </div>
+                            <h:form id="institution-form">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+                                <h:panelGroup rendered="#{not navBean.institutionRefIsEmpty()}">
+                                    <a href="javascript:void(0)" class="log-user" data-toggle="dropdown">
+                                        <span>#{navBean.selectedInstitution.name}</span> <i
+                                            class="fa fa-angle-down f-s-14" aria-hidden="true"/>
+                                    </a>
+                                    <div class="drop-down animated fadeIn  dropdown-menu">
+                                        <div class="dropdown-content-body">
+                                            <ul>
+                                                <ui:repeat value="#{navBean.institutions}" var="instit">
+                                                    <li>
+                                                        <h:commandLink action="#{navBean.changeSelectedInstitution(instit)}"
+                                                                       value="#{instit.name}"
+                                                                       update="main institution-form"
+                                                        />
+                                                    </li>
+                                                </ui:repeat>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{navBean.institutionRefIsEmpty()}">
+                                    <a href="javascript:void(0)" class="log-user" data-toggle="dropdown">
+                                        <span>NO ORGANIZATION</span> <i class="fa fa-angle-down f-s-14"
+                                                                        aria-hidden="true"/>
+                                    </a>
+                                    <div class="drop-down animated fadeIn  dropdown-menu">
+                                        <div class="dropdown-content-body">
+                                        </div>
+                                    </div>
+                                </h:panelGroup>
+                            </h:form>
                         </li>
+
                         <li class="icons dropdown d-none d-md-flex">
-                            <a href="javascript:void(0)" class="log-user"  data-toggle="dropdown">
-                                <span>Français</span>  <i class="fa fa-angle-down f-s-14" aria-hidden="true"/>
-                            </a>
-                            <div class="drop-down dropdown-language animated fadeIn  dropdown-menu">
-                                <div class="dropdown-content-body">
-                                    <ul>
-                                        <li><a href="javascript:void()">Français</a></li>
-                                        <li><a href="javascript:void()">English</a></li>
-                                    </ul>
+                            <h:form id="lang-form">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <a href="javascript:void(0)" class="log-user" data-toggle="dropdown">
+                                    <span>#{langBean.languageName}</span> <i class="fa fa-angle-down f-s-14" aria-hidden="true"/>
+                                </a>
+                                <div class="drop-down dropdown-language animated fadeIn  dropdown-menu">
+                                    <div class="dropdown-content-body">
+                                        <ul>
+                                            <ui:repeat value="#{langService.availableLanguages}" var="lang">
+                                                <li>
+                                                    <h:commandLink actionListener="#{langBean.setLanguage(lang)}"
+                                                                   value="#{langBean.findLanguageName(lang)}"
+                                                                   oncomplete="location.reload()"
+                                                    />
+                                                </li>
+                                            </ui:repeat>
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
+                            </h:form>
                         </li>
                         <li class="icons dropdown">
-                            <div class="user-img c-pointer position-relative"   data-toggle="dropdown">
+                            <div class="user-img c-pointer position-relative" data-toggle="dropdown">
                                 <span class="activity active"></span>
                                 <img src="qhttps://placehold.co/359×218" height="40" width="40" alt=""/>
                             </div>
@@ -165,12 +206,13 @@
                                 <div class="dropdown-content-body">
                                     <ul>
                                         <li>
-                                            <a href="dashboard"><i class="icon-user"/> <span>Profil</span></a>
+                                            <a href="#{request.contextPath}/dashboard"><i class="icon-user"/> <span>Profil</span></a>
                                         </li>
 
                                         <li>
-                                            <form action="logout" method="post" id="disconnect_form">
-                                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                            <form action="#{request.contextPath}/logout" method="post" id="disconnect_form">
+                                                <input type="hidden" name="${_csrf.parameterName}"
+                                                       value="${_csrf.token}"/>
                                                 <a href="#" onclick="disconnect()">
                                                     <i class="icon-key"/>
                                                     <span>Déconnexion</span>
@@ -197,37 +239,37 @@
                 <ul class="metismenu" id="menu">
                     <li class="nav-label">Titre 1</li>
                     <li>
-                        <a href="dashboard" aria-expanded="false">
+                        <a href="#{request.contextPath}/dashboard" aria-expanded="false">
                             <i class="icon-home menu-icon"/><span class="nav-text">Accueil</span>
                         </a>
                     </li>
                     <li>
-                        <a href="dashboard" aria-expanded="false">
+                        <a href="#{request.contextPath}/dashboard" aria-expanded="false">
                             <i class="icon-location-pin menu-icon"/><span class="nav-text">Unité spatiale</span>
                         </a>
                     </li>
                     <li>
-                        <a href="dashboard" aria-expanded="false">
+                        <a href="#{request.contextPath}/dashboard" aria-expanded="false">
                             <i class="icon-control-play menu-icon"/><span class="nav-text">Unité d'action</span>
                         </a>
                     </li>
                     <li>
-                        <a href="dashboard" aria-expanded="false">
+                        <a href="#{request.contextPath}/dashboard" aria-expanded="false">
                             <i class="icon-note menu-icon"/><span class="nav-text">Unité d'enregistrement</span>
                         </a>
                     </li>
                     <li>
-                        <a href="dashboard" aria-expanded="false">
+                        <a href="#{request.contextPath}/dashboard" aria-expanded="false">
                             <i class="icon-social-dropbox menu-icon"/><span class="nav-text">Prélèvements</span>
                         </a>
                     </li>
                     <li>
-                        <a href="dashboard" aria-expanded="false">
+                        <a href="#{request.contextPath}/dashboard" aria-expanded="false">
                             <i class="icon-eyeglass menu-icon"/><span class="nav-text">Études</span>
                         </a>
                     </li>
                     <li>
-                        <a href="dashboard" aria-expanded="false">
+                        <a href="#{request.contextPath}/dashboard" aria-expanded="false">
                             <i class="icon-docs menu-icon"/><span class="nav-text">Documents</span>
                         </a>
                     </li>
@@ -244,18 +286,19 @@
                     </li>
                     <li class="nav-label">Administration</li>
                     <li>
-                        <a href="dashboard" aria-expanded="false">
+                        <a href="#{request.contextPath}/dashboard" aria-expanded="false">
                             <i class="icon-energy menu-icon"/><span class="nav-text">Gestion de l'instance</span>
                         </a>
                     </li>
                     <li>
-                        <a href="dashboard" aria-expanded="false">
+                        <a href="#{request.contextPath}/dashboard" aria-expanded="false">
                             <i class="icon-globe-alt menu-icon"/><span class="nav-text">Gestion des organisations</span>
                         </a>
                     </li>
                     <li>
-                        <a href="dashboard" aria-expanded="false">
-                            <i class="icon-user-following menu-icon"/><span class="nav-text">Gestion des administrateurs</span>
+                        <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                            <i class="icon-user-following menu-icon"/><span
+                                class="nav-text">Gestion des administrateurs</span>
                         </a>
                     </li>
                 </ul>
@@ -269,7 +312,7 @@
             Content body start
         ***********************************-->
         <div class="content-body">
-            <h:panelGroup id="main" styleClass="content-body">
+            <h:panelGroup id="main">
                 <!-- Content will be inserted here -->
                 <ui:insert description="The main content" name="content">
                     <!-- Content will be inserted here -->
@@ -286,7 +329,8 @@
         ***********************************-->
         <div class="footer">
             <div class="copyright">
-                <p>Copyright Designed &amp; Developed by <a href="https://themeforest.net/user/quixlab">Quixlab</a> 2018</p>
+                <p>Copyright Designed &amp; Developed by <a href="https://themeforest.net/user/quixlab">Quixlab</a> 2018
+                </p>
             </div>
         </div>
         <!--**********************************
@@ -305,11 +349,11 @@
         }
     </script>
 
-    <script src="static/quixlab/plugins/common/common.min.js"></script>
-    <script src="static/quixlab/js/custom.min.js"></script>
-    <script src="static/quixlab/js/settings.js"></script>
-    <script src="static/quixlab/js/gleek.js"></script>
-    <script src="static/quixlab/js/styleSwitcher.js"></script>
+    <script src="#{request.contextPath}/static/quixlab/plugins/common/common.min.js"></script>
+    <script src="#{request.contextPath}/static/quixlab/js/custom.min.js"></script>
+    <script src="#{request.contextPath}/static/quixlab/js/settings.js"></script>
+    <script src="#{request.contextPath}/static/quixlab/js/gleek.js"></script>
+    <script src="#{request.contextPath}/static/quixlab/js/styleSwitcher.js"></script>
 
 </h:body>
 </html>
