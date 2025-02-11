@@ -14,8 +14,7 @@
     <h:outputStylesheet library="css" name="styles.css"/>
 
     <!-- QUIXLAB -->
-
-    <h:outputStylesheet library="quixlab" name="css/style.css"/>
+    <link href="quixlab/css/style.css" rel="stylesheet"/>
 
     <script type="text/javascript">
         window.csrfTokenName = "{{ craft.config.csrfTokenName }}";
@@ -38,15 +37,15 @@
                 <a href="index.html">
                     <b class="logo-abbr">
                         <!-- Logo when MENU is closed -->
-                        <h:graphicImage library="quixlab" name="images/logo.png"/>
+                        <img src="quixlab/images/logo.png" alt=""/>
                     </b>
                     <span class="logo-compact">
                         <!-- Logo on mobile -->
-                        <h:graphicImage library="quixlab" name="images/logo-compact.png"/>
+                        <img src="quixlab/images/logo-compact.png" alt=""/>
                     </span>
                     <span class="brand-title">
                         <!-- Logo on COMPUTER -->
-                        <h:graphicImage library="quixlab" name="images/logo-text.png"/>
+                        <img src="quixlab/images/logo-text.png" alt=""/>
                     </span>
                 </a>
             </div>
@@ -94,7 +93,7 @@
                                     <ul>
                                         <li class="notification-unread">
                                             <a href="javascript:void()">
-                                                <h:graphicImage styleClass="float-left mr-3 avatar-img" library="quixlab" name="images/avatar/1.jpg"/>
+                                                <img class="float-left mr-3 avatar-img" alt="" src="quixlab/images/avatar/1.jpg"/>
                                                 <div class="notification-content">
                                                     <div class="notification-heading">Saiful Islam</div>
                                                     <div class="notification-timestamp">08 Hours ago</div>
@@ -104,7 +103,7 @@
                                         </li>
                                         <li class="notification-unread">
                                             <a href="javascript:void()">
-                                                <h:graphicImage styleClass="float-left mr-3 avatar-img" library="quixlab" name="images/avatar/2.jpg"/>
+                                                <img class="float-left mr-3 avatar-img" alt="" src="quixlab/images/avatar/2.jpg"/>
                                                 <div class="notification-content">
                                                     <div class="notification-heading">Adam Smith</div>
                                                     <div class="notification-timestamp">08 Hours ago</div>
@@ -114,7 +113,7 @@
                                         </li>
                                         <li>
                                             <a href="javascript:void()">
-                                                <h:graphicImage styleClass="float-left mr-3 avatar-img" library="quixlab" name="images/avatar/3.jpg"/>
+                                                <img class="float-left mr-3 avatar-img" alt="" src="quixlab/images/avatar/3.jpg"/>
                                                 <div class="notification-content">
                                                     <div class="notification-heading">Barak Obama</div>
                                                     <div class="notification-timestamp">08 Hours ago</div>
@@ -124,7 +123,7 @@
                                         </li>
                                         <li>
                                             <a href="javascript:void()">
-                                                <h:graphicImage styleClass="float-left mr-3 avatar-img" library="quixlab" name="images/avatar/4.jpg"/>
+                                                <img class="float-left mr-3 avatar-img" alt="" src="quixlab/images/avatar/4.jpg"/>
                                                 <div class="notification-content">
                                                     <div class="notification-heading">Hilari Clinton</div>
                                                     <div class="notification-timestamp">08 Hours ago</div>
@@ -205,7 +204,7 @@
                         <li class="icons dropdown">
                             <div class="user-img c-pointer position-relative"   data-toggle="dropdown">
                                 <span class="activity active"></span>
-                                <h:graphicImage library="quixlab" name="images/user/1.png" height="40" width="40"/>
+                                <img src="quixlab/images/user/1.png" height="40" width="40" alt=""/>
                             </div>
                             <div class="drop-down dropdown-profile   dropdown-menu">
                                 <div class="dropdown-content-body">
@@ -433,11 +432,11 @@
     <h:outputScript library="js" name="jquery-ui.js"/>
     <h:outputScript library="js" name="bootstrap.bundle.min.js"/>
 
-    <h:outputScript library="quixlab" name="plugins/common/common.min.js"/>
-    <h:outputScript library="quixlab" name="js/custom.min.js"/>
-    <h:outputScript library="quixlab" name="js/settings.js"/>
-    <h:outputScript library="quixlab" name="js/gleek.js"/>
-    <h:outputScript library="quixlab" name="js/styleSwitcher.js"/>
+    <script src="quixlab/plugins/common/common.min.js"></script>
+    <script src="quixlab/js/custom.min.js"></script>
+    <script src="quixlab/js/settings.js"></script>
+    <script src="quixlab/js/gleek.js"></script>
+    <script src="quixlab/js/styleSwitcher.js"></script>
 
 </h:body>
 </html>
