@@ -75,6 +75,11 @@ public class RecordingUnitService {
                 recordingUnit.setArk(ark);
             }
 
+            // Generate unique identifier if not present
+            if(recordingUnit.getIdentifier() == null) {
+                recordingUnit.setIdentifier(1);
+            }
+
             // Add concept
             Concept type = conceptService.saveOrGetConcept(concept);
             recordingUnit.setType(type);

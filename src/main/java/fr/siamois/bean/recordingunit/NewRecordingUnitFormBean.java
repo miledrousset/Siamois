@@ -1,10 +1,10 @@
 package fr.siamois.bean.recordingunit;
 
 import fr.siamois.bean.LangBean;
-import fr.siamois.bean.recordingunit.utils.RecordingUnitUtils;
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionUnit;
+import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
@@ -16,6 +16,8 @@ import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -23,7 +25,11 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.time.OffsetDateTime.now;
@@ -38,7 +44,6 @@ public class NewRecordingUnitFormBean implements Serializable {
     private final transient RecordingUnitService recordingUnitService;
     private final transient ActionUnitService actionUnitService;
     private final transient PersonService personService;
-    private final transient RecordingUnitUtils recordingUnitUtils;
     private final transient FieldService fieldService;
     private final LangBean langBean;
     private final transient ConceptService conceptService;
@@ -57,6 +62,9 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     private transient List<Concept> concepts;
     private Concept fType = null;
+
+    // View param
+    private Long id;  // ID of the requested RU
 
     @Data
     public static class Event {
@@ -84,16 +92,67 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
+
+    public RecordingUnit save(RecordingUnit recordingUnit,
+                              Concept typeConcept,
+                              LocalDate startDate,
+                              LocalDate endDate) {
+
+        // TODO : handle isLocalisationFromSIG and associated fields
+
+        // handle dates
+        if (startDate != null) {
+            recordingUnit.setStartDate(localDateToOffsetDateTime(startDate));
+        }
+        if (endDate != null) {
+            recordingUnit.setEndDate(localDateToOffsetDateTime(endDate));
+        }
+
+        return recordingUnitService.save(recordingUnit, typeConcept);
+
+    }
+
+    public LocalDate offsetDateTimeToLocalDate(OffsetDateTime offsetDT) {
+        return offsetDT.toLocalDate();
+    }
+
+    public OffsetDateTime localDateToOffsetDateTime(LocalDate localDate) {
+        return localDate.atTime(LocalTime.NOON).atOffset(ZoneOffset.UTC);
+    }
+
     public String save() {
-        this.recordingUnit = recordingUnitUtils.save(recordingUnit, fType, startDate, endDate);
-        return recordingUnitUtils.save(recordingUnit, langBean);
+        try {
+
+            save(this.recordingUnit, fType, startDate, endDate);
+
+            // Return page with id
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_INFO,
+                            "Info",
+                            langBean.msg("recordingunit.created", recordingUnit.getIdentifier())));
+
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+
+            return "/pages/recordingUnit/recordingUnit?faces-redirect=true&id=" + recordingUnit.getId().toString();
+
+        } catch (RuntimeException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_ERROR,
+                            "Error",
+                            langBean.msg("recordingunit.creationfailed", recordingUnit.getIdentifier())));
+
+            log.error("Error while saving: {}", e.getMessage());
+            // todo : add error message
+        }
+        return null;
     }
 
 
     public NewRecordingUnitFormBean(RecordingUnitService recordingUnitService,
                                     ActionUnitService actionUnitService,
                                     PersonService personService,
-                                    RecordingUnitUtils recordingUnitUtils,
                                     FieldService fieldService,
                                     LangBean langBean,
                                     ConceptService conceptService,
@@ -101,7 +160,6 @@ public class NewRecordingUnitFormBean implements Serializable {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.personService = personService;
-        this.recordingUnitUtils = recordingUnitUtils;
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.conceptService = conceptService;
@@ -121,40 +179,95 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
+    public List<Person> completePerson(String query) {
+        if (query == null || query.isEmpty()) {
+            return Collections.emptyList();
+        }
+        query = query.toLowerCase();
+        return personService.findAllByNameLastnameContaining(query);
+    }
+
     public String goToNewRecordingUnitPage() {
         return "/pages/create/recordingUnit.xhtml?faces-redirect=true";
     }
 
     public void init(ActionUnit actionUnit) {
         try {
-            if (this.recordingUnit == null) {
-                log.info("Creating RU");
-                reinitializeBean();
-                this.recordingUnit = new RecordingUnit();
-                this.recordingUnit.setDescription("Nouvelle description");
-                this.startDate = recordingUnitUtils.offsetDateTimeToLocalDate(now());
-                this.recordingUnit.setActionUnit(actionUnit);
-                // todo : implement real algorithm for serial id
-                this.recordingUnit.setIdentifier(1);
-                // Init size & altimetry
-                this.recordingUnit.setSize(new RecordingUnitSize());
-                this.recordingUnit.getSize().setSizeUnit("cm");
-                this.recordingUnit.setAltitude(new RecordingUnitAltimetry());
-                this.recordingUnit.getAltitude().setAltitudeUnit("m");
-                // Init strati. TODO : real implementation
-                events = new ArrayList<>();
-                events.add(new Event("Anterior", "15/10/2020 10:30", "pi pi-arrow-circle-up", "#9C27B0", "game-controller.jpg"));
-                events.add(new Event("Synchronous", "15/10/2020 14:00", "pi pi-sync", "#673AB7"));
-                events.add(new Event("Posterior", "15/10/2020 16:15", "pi pi-arrow-circle-down", "#FF9800"));
-                this.recordingUnitList = recordingUnitService.findAllByActionUnit(recordingUnit.getActionUnit());
-                log.info("here");
+            if (this.id != null) {
 
+                // If no ID is specified it's a new one
+                try {
+                    log.info("Loading RU");
+                    reinitializeBean();
+                    this.recordingUnit = this.recordingUnitService.findById(this.id);
+                    if (this.recordingUnit.getStartDate() != null) {
+                        this.startDate = offsetDateTimeToLocalDate(this.recordingUnit.getStartDate());
+                    }
+                    if (this.recordingUnit.getEndDate() != null) {
+                        this.endDate = offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());
+                    }
+                    // TODO handle isLocalisationFromSIG properly
+                    this.isLocalisationFromSIG = false;
+                    // Init type field
+                    fType = this.recordingUnit.getType();
+                } catch (RuntimeException err) {
+                    recordingUnitErrorMessage = "Unable to get recording unit";
+                }
+
+
+            } else {
+                if (this.recordingUnit == null) {
+                    log.info("Creating RU");
+                    reinitializeBean();
+                    this.recordingUnit = new RecordingUnit();
+                    this.recordingUnit.setDescription("Nouvelle description");
+                    this.startDate =offsetDateTimeToLocalDate(now());
+                    this.recordingUnit.setActionUnit(actionUnit);
+
+                    // Init size & altimetry
+                    this.recordingUnit.setSize(new RecordingUnitSize());
+                    this.recordingUnit.setCreatedByInstitution(actionUnit.getCreatedByInstitution());
+                    this.recordingUnit.getSize().setSizeUnit("cm");
+                    this.recordingUnit.setAltitude(new RecordingUnitAltimetry());
+                    this.recordingUnit.getAltitude().setAltitudeUnit("m");
+                    // Init strati. TODO : real implementation
+                    events = new ArrayList<>();
+                    events.add(new Event("Anterior", "15/10/2020 10:30", "pi pi-arrow-circle-up", "#9C27B0", "game-controller.jpg"));
+                    events.add(new Event("Synchronous", "15/10/2020 14:00", "pi pi-sync", "#673AB7"));
+                    events.add(new Event("Posterior", "15/10/2020 16:15", "pi pi-arrow-circle-down", "#FF9800"));
+                    this.recordingUnitList = recordingUnitService.findAllByActionUnit(recordingUnit.getActionUnit());
+                    log.info("here");
+
+                }
             }
         } catch (RuntimeException err) {
             recordingUnitErrorMessage = "Error initializing the form";
         }
     }
 
+    public void init() {
+        try {
+            if (this.id != null) {
+
+                log.info("Loading RU");
+                reinitializeBean();
+                this.recordingUnit = this.recordingUnitService.findById(this.id);
+                if (this.recordingUnit.getStartDate() != null) {
+                    this.startDate = offsetDateTimeToLocalDate(this.recordingUnit.getStartDate());
+                }
+                if (this.recordingUnit.getEndDate() != null) {
+                    this.endDate = offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());
+                }
+                // TODO handle isLocalisationFromSIG properly
+                this.isLocalisationFromSIG = false;
+                // Init type field
+                fType = this.recordingUnit.getType();
+
+            }
+        } catch (RuntimeException err) {
+            recordingUnitErrorMessage = "Unable to get recording unit";
+        }
+    }
 
     public List<Concept> completeRecordingUnitType(String input) {
         UserInfo info = sessionSettings.getUserInfo();

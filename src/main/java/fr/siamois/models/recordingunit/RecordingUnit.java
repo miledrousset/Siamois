@@ -2,7 +2,9 @@ package fr.siamois.models.recordingunit;
 
 
 import fr.siamois.models.FieldCode;
+import fr.siamois.models.Institution;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
