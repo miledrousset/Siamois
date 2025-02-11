@@ -21,15 +21,6 @@
                 newColumnName="identifier"
                 oldColumnName="code"
                 tableName="action_unit"/>
-        <renameColumn
-                newColumnName="identifier"
-                oldColumnName="code"
-                tableName="history_action_unit"/>
-        <renameColumn
-                newColumnName="identifier"
-                oldColumnName="code"
-                tableName="history_recording_unit"/>
-
     </changeSet>
 
 </databaseChangeLog>

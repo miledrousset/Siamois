@@ -76,11 +76,6 @@
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
                         <div style="display:flex;">
-<!--                            <p:selectOneMenu id="primaryActionCodeTypeOption"-->
-<!--                                             value="#{actionUnitBean.actionUnit.primaryActionCode.type}">-->
-<!--                                <f:selectItems value="#{actionUnitBean.actionCodeTypeOptions}"-->
-<!--                                               var="option" itemLabel="#{option.label}" itemValue="#{option}"/>-->
-<!--                            </p:selectOneMenu>-->
                             <p:chip label="#{actionUnitBean.actionUnit.primaryActionCode.type.label}"
                                     icon="pi pi-qrcode" >
                             </p:chip>
