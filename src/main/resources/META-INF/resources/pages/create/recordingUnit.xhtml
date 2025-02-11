@@ -15,7 +15,7 @@
         <!-- Content -->
         <p:autoComplete id="auto-complete-ue-type"
                         value="#{newRecordingUnitFormBean.FType}"
-                        completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitType}"
+                        completeMethod="#{actionUnitBean.completeActionCodeType}"
                         var="field"
                         itemLabel="#{field.label}"
                         itemValue="#{field}"
@@ -24,6 +24,5 @@
                         forceSelection="true"
                         scrollHeight="300"
                         dropdown="true"/>
-        <recordingUnit:recordingUnitForm id="newRecordingUnitFormComponent" recordingUnitFormBean="#{newRecordingUnitFormBean}" isNew="true" />
     </ui:define>
 </ui:composition>

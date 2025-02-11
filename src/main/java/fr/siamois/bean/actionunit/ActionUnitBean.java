@@ -48,12 +48,8 @@ public class ActionUnitBean implements Serializable {
 
     // Field related
     private Boolean editType;
-    private ConceptFieldDTO fType;
+    private Concept fType;
 
-    // todo: remove below and implement properly
-    private Concept c1 = new Concept();
-    private Concept c2 = new Concept();
-    private transient List<Concept> actionCodeTypeOptions ;
     private transient List<ActionCode> secondaryActionCodes ;
 
 
@@ -168,12 +164,8 @@ public class ActionUnitBean implements Serializable {
             try {
                 if(id!=null) {
                     actionUnit = actionUnitService.findById(id);
-                    Concept typeConcept = actionUnit.getType();
                     secondaryActionCodes = new ArrayList<>(actionUnit.getSecondaryActionCodes());
-                    fType = new ConceptFieldDTO();
-                    fType.setLabel(typeConcept.getLabel());
-                    // If thesaurus we can reconstruct the DTO
-                    fType.setUri(typeConcept.getVocabulary().getBaseUri()+"?idc="+typeConcept.getExternalId()+"&idt="+typeConcept.getVocabulary().getExternalVocabularyId());
+                    fType = this.actionUnit.getType();
 
                 }
                 else {
