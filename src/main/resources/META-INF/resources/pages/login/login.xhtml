@@ -22,7 +22,7 @@
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-12 col-md-8 col-lg-6 col-xl-5">
                     <div class="card shadow-2-strong" style="border-radius: 1rem;">
-                        <form class="card-body p-5 text-center" action="${pageContext.request.contextPath}login" method="post">
+                        <form class="card-body p-5 text-center" action="login" method="post">
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                             <h3 class="mb-5">${langBean.msg("login.title")}</h3>
 

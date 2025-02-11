@@ -170,7 +170,15 @@
                                             <a href="dashboard"><i class="icon-user"/> <span>Profil</span></a>
                                         </li>
 
-                                        <li><a href="dashboard"><i class="icon-key"/> <span>Déconnexion</span></a></li>
+                                        <li>
+                                            <form action="logout" method="post" id="disconnect_form">
+                                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                                <a href="#" onclick="disconnect()">
+                                                    <i class="icon-key"/>
+                                                    <span>Déconnexion</span>
+                                                </a>
+                                            </form>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -291,6 +299,13 @@
     <h:outputScript library="js" name="jquery-3.7.1.min.js"/>
     <h:outputScript library="js" name="jquery-ui.js"/>
     <h:outputScript library="js" name="bootstrap.bundle.min.js"/>
+
+    <script>
+        function disconnect() {
+            const form = document.getElementById("disconnect_form");
+            form.submit();
+        }
+    </script>
 
     <script src="static/quixlab/plugins/common/common.min.js"></script>
     <script src="static/quixlab/js/custom.min.js"></script>
