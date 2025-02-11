@@ -5,7 +5,6 @@ import fr.siamois.models.UserInfo;
 import fr.siamois.models.auth.Person;
 import fr.siamois.services.InstitutionService;
 import fr.siamois.utils.AuthenticatedUserUtils;
-import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
