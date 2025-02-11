@@ -5,8 +5,6 @@ import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
 import fr.siamois.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.utils.AuthenticatedUserUtils;
-import jakarta.faces.context.ExternalContext;
-import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +34,6 @@ public class NavBean implements Serializable {
 
     private transient List<Institution> institutions;
 
-    private Institution selectedInstitution;
-
     public NavBean(SessionSettings sessionSettings, InstitutionChangeEventPublisher institutionChangeEventPublisher, InstitutionConverter converter) {
         this.sessionSettings = sessionSettings;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
@@ -47,7 +43,6 @@ public class NavBean implements Serializable {
     public void init() {
         log.trace("Initializing NavBean");
         institutions = sessionSettings.getReferencedInstitutions();
-        selectedInstitution = sessionSettings.getSelectedInstitution();
     }
 
     /**
@@ -88,5 +83,17 @@ public class NavBean implements Serializable {
             institutions = sessionSettings.getReferencedInstitutions();
         }
         return institutions.isEmpty();
+    }
+
+    public Institution getSelectedInstitution() {
+        return sessionSettings.getSelectedInstitution();
+    }
+
+    public boolean isManagerOrAdmin() {
+        if (userIs("ADMIN")) return true;
+        Optional<Person> optUser = AuthenticatedUserUtils.getAuthenticatedUser();
+        Institution selected = getSelectedInstitution();
+        return optUser.filter(person -> userIs("TEAM_MANAGER")
+                && selected.getManager().equals(person)).isPresent();
     }
 }
