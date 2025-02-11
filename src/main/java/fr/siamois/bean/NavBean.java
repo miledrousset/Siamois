@@ -55,22 +55,6 @@ public class NavBean implements Serializable {
         return optUser.map(person -> person.hasRole(roleName)).orElse(false);
     }
 
-    /**
-     * Checks if the user is in any of the given roles
-     * @param roles the roles to check
-     * @return true if the user is in any of the roles, false otherwise
-     */
-    public boolean userIsAny(String... roles) {
-        Optional<Person> optUser = AuthenticatedUserUtils.getAuthenticatedUser();
-        if (optUser.isEmpty()) return false;
-
-        Person user = optUser.get();
-        for (String role : roles) {
-            if (user.hasRole(role)) return true;
-        }
-        return false;
-    }
-
     public void changeSelectedInstitution(Institution institution) {
         Institution old = sessionSettings.getSelectedInstitution();
         sessionSettings.setSelectedInstitution(institution);
