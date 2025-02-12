@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components">
+
+    <ui:define name="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="col-lg-12">
+                            <!-- Conditionally render the message if it's set in the bean -->
+                            <p:staticMessage severity="error" summary="Error" closable="false" detail="#{homeBean.spatialUnitListErrorMessage}" rendered="#{not empty homeBean.spatialUnitListErrorMessage}" />
+                            <spatialUnit:spatialUnitList spatialUnitList="#{homeBean.spatialUnitList}" header='${langBean.msg("spatialunit.label")}'
+                                                         breadcrumbBean="#{breadcrumbBean}">
+                                <f:facet name="toolbar">
+                                    <p:toolbar>
+                                        <p:toolbarGroup>
+                                            <p:commandButton value='Nouveau lieu' icon="pi pi-plus"
+                                                             actionListener="#{spatialUnitFieldBean.init([], [])}"
+                                                             oncomplete="PF('new-spatial-unit-dialog').show()"
+                                                             style="margin-right: .5rem">
+                                            </p:commandButton>
+                                        </p:toolbarGroup>
+                                    </p:toolbar>
+                                </f:facet>
+                            </spatialUnit:spatialUnitList>
+                            <ui:include src="../../dialog/spatialUnit/newSpatialUnitDialog.xhtml"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>
