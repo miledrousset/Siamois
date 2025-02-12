@@ -1,6 +1,5 @@
 package fr.siamois.bean.recordingunit;
 
-import fr.siamois.bean.recordingunit.utils.RecordingUnitUtils;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
@@ -29,9 +28,6 @@ class NewRecordingUnitFormBeanTest {
     private RecordingUnitService recordingUnitService;  // Mock the RecordingUnitService
     @Mock
     private ActionUnitService actionUnitService;
-    @Mock
-    private RecordingUnitUtils recordingUnitUtils;
-
 
 
     @InjectMocks
@@ -94,7 +90,7 @@ class NewRecordingUnitFormBeanTest {
     @Test
     void init_success() {
         // Given: mock the services
-        when(recordingUnitUtils.offsetDateTimeToLocalDate(any(OffsetDateTime.class))).thenReturn(LocalDate.MAX);
+        // when(recordingUnitUtils.offsetDateTimeToLocalDate(any(OffsetDateTime.class))).thenReturn(LocalDate.MAX);
 
         // When: call the @PostConstruct method (implicitly triggered during bean initialization)
         newRecordingUnitFormBean.init(actionUnit);
