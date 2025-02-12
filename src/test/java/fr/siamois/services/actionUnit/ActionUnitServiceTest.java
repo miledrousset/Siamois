@@ -76,9 +76,11 @@ class ActionUnitServiceTest {
         spatialUnit1.setId(1L);
         actionUnit1.setId(1L);
         actionUnit2.setId(2L);
+
         c1 = new Concept();
         c2 = new Concept();
         c3 = new Concept();
+
         // For action codes test
         c1.setExternalId("1");
         c1.setLabel("Code OA");
@@ -87,17 +89,16 @@ class ActionUnitServiceTest {
         c3.setExternalId("3");
         c3.setLabel("Code libre");
 
-
         actionUnitWithCodes = new ActionUnit();
 
         primaryActionCode = new ActionCode();
         primaryActionCode.setCode("primary");
         primaryActionCode.setType(c1);
-        primaryActionCode = new ActionCode();
 
         secondaryActionCode1 = new ActionCode();
         secondaryActionCode1.setCode("secondary1");
         secondaryActionCode1.setType(c2);
+
         secondaryActionCode2 = new ActionCode();
         secondaryActionCode2.setCode("secondary2");
         secondaryActionCode2.setType(c3);
@@ -178,12 +179,15 @@ class ActionUnitServiceTest {
     void SaveWithActionCodes_Success() {
 
         when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(new ArkServer()));
+
         lenient().when(conceptService.saveOrGetConcept(c1)).thenReturn(c1);
         lenient().when(conceptService.saveOrGetConcept(c2)).thenReturn(c2);
         lenient().when(conceptService.saveOrGetConcept(c3)).thenReturn(c3);
+
         lenient().when(actionCodeRepository.findById(primaryActionCode.getCode())).thenReturn(Optional.ofNullable(primaryActionCode));
         lenient().when(actionCodeRepository.findById(secondaryActionCode1.getCode())).thenReturn(Optional.ofNullable(secondaryActionCode1));
-        lenient().when(actionCodeRepository.findById(secondaryActionCode2.getCode())).thenReturn(Optional.empty());
+        lenient().when(actionCodeRepository.findById(secondaryActionCode2.getCode())).thenReturn(Optional.empty()); // It means this code is not in DB
+
         when(actionUnitRepository.save(actionUnitWithCodes)).thenReturn(actionUnitWithCodes);
         when(actionUnitRepository.findById(actionUnitWithCodes.getId())).thenReturn(Optional.ofNullable(actionUnitWithCodes));
 

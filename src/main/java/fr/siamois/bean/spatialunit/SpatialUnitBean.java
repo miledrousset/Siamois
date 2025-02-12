@@ -23,9 +23,7 @@ import software.xdev.chartjs.model.options.*;
 import software.xdev.chartjs.model.color.RGBAColor;
 
 import javax.faces.bean.SessionScoped;
-import java.awt.*;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
