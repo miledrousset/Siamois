@@ -77,6 +77,15 @@ public class ActionUnitService {
                 actionUnit.setArk(ark);
             }
 
+            // Generate unique identifier if not presents
+            if (actionUnit.getFullIdentifier() == null) {
+                if (actionUnit.getIdentifier() == null) {
+                    throw new RuntimeException("ActionUnit identifier must be set");
+                }
+                // Set full identifier
+                actionUnit.setFullIdentifier(actionUnit.displayFullIdentifier());
+            }
+
             // Add concept
             Concept type = conceptService.saveOrGetConcept(typeConcept);
             actionUnit.setType(type);

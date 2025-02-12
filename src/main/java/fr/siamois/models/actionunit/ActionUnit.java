@@ -30,4 +30,16 @@ public class ActionUnit extends ActionUnitParent {
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIAAU.TYPE";
 
+    public String displayFullIdentifier() {
+        if(getFullIdentifier() == null) {
+            if(getCreatedByInstitution().getIdentifier() == null) {
+                throw new RuntimeException("Institution identifier must be set");
+            }
+            return getCreatedByInstitution().getIdentifier() + "-" + (getIdentifier() == null ? '?' : getIdentifier());
+        }
+        else {
+            return getFullIdentifier();
+        }
+    }
+
 }

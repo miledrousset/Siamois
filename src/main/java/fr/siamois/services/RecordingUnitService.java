@@ -76,8 +76,18 @@ public class RecordingUnitService {
             }
 
             // Generate unique identifier if not present
-            if(recordingUnit.getIdentifier() == null) {
-                recordingUnit.setIdentifier(1);
+            if (recordingUnit.getFullIdentifier() == null) {
+                if (recordingUnit.getIdentifier() == null) {
+                    // Generate next identifier
+                    Integer currentMaxIdentifier = recordingUnitRepository.findMaxUsedIdentifierByAction(recordingUnit.getActionUnit().getId());
+                    Integer nextIdentifier = (currentMaxIdentifier == null) ? recordingUnit.getActionUnit().getMaxRecordingUnitCode() : currentMaxIdentifier + 1;
+                    if (nextIdentifier > recordingUnit.getActionUnit().getMaxRecordingUnitCode()) {
+                        throw new RuntimeException("Max recording unit code reached; Please ask administrator to increase the range");
+                    }
+                    recordingUnit.setIdentifier(nextIdentifier);
+                }
+                // Set full identifier
+                recordingUnit.setFullIdentifier(recordingUnit.displayFullIdentifier());
             }
 
             // Add concept

@@ -27,4 +27,19 @@ public class RecordingUnit extends RecordingUnitParent {
     @FieldCode
     public static final String STRATI_FIELD_CODE = "SIARU.STRATI";
 
+    public String displayFullIdentifier() {
+        if(getFullIdentifier() == null) {
+            if(getCreatedByInstitution().getIdentifier() == null) {
+                throw new RuntimeException("Institution identifier must be set");
+            }
+            if(getActionUnit().getIdentifier() == null) {
+                throw new RuntimeException("Action identifier must be set");
+            }
+            return getCreatedByInstitution().getIdentifier() + "-" + getActionUnit().getIdentifier() + "-" + (getIdentifier() == null ? "?" : getIdentifier());
+        }
+        else {
+            return getFullIdentifier();
+        }
+    }
+
 }
