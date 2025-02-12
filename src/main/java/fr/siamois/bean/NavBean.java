@@ -73,11 +73,12 @@ public class NavBean implements Serializable {
         return sessionSettings.getSelectedInstitution();
     }
 
-    public boolean isManagerOrAdmin() {
+    public boolean isManagerOrAdminOfInstitution() {
         if (userIs("ADMIN")) return true;
         Optional<Person> optUser = AuthenticatedUserUtils.getAuthenticatedUser();
         Institution selected = getSelectedInstitution();
         return optUser.filter(person -> userIs("TEAM_MANAGER")
                 && selected.getManager().equals(person)).isPresent();
     }
+
 }

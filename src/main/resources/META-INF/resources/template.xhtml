@@ -155,7 +155,7 @@
                                                         <h:commandLink
                                                                 action="#{navBean.changeSelectedInstitution(instit)}"
                                                                 value="#{instit.name}"
-                                                                update="main institution-form"
+                                                                update="main institution-form sidebar"
                                                         />
                                                     </li>
                                                 </ui:repeat>
@@ -238,90 +238,92 @@
         <!--**********************************
             Sidebar start
         ***********************************-->
-        <div class="nk-sidebar">
-            <div class="nk-nav-scroll">
-                <h:form id="side_nav_form">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <ul class="metismenu" id="menu">
-                        <li class="nav-label">Titre 1</li>
-                        <li>
-                            <a href="#{request.contextPath}/dashboard" aria-expanded="false">
-                                <i class="icon-home menu-icon"/><span class="nav-text">Accueil</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#{request.contextPath}/dashboard" aria-expanded="false">
-                                <i class="icon-location-pin menu-icon"/><span class="nav-text">Unité spatiale</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#{request.contextPath}/dashboard" aria-expanded="false">
-                                <i class="icon-control-play menu-icon"/><span class="nav-text">Unité d'action</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#{request.contextPath}/dashboard" aria-expanded="false">
-                                <i class="icon-note menu-icon"/><span class="nav-text">Unité d'enregistrement</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#{request.contextPath}/dashboard" aria-expanded="false">
-                                <i class="icon-social-dropbox menu-icon"/><span class="nav-text">Prélèvements</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#{request.contextPath}/dashboard" aria-expanded="false">
-                                <i class="icon-eyeglass menu-icon"/><span class="nav-text">Études</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#{request.contextPath}/dashboard" aria-expanded="false">
-                                <i class="icon-docs menu-icon"/><span class="nav-text">Documents</span>
-                            </a>
-                        </li>
-
-                        <h:panelGroup rendered="#{navBean.isManagerOrAdmin()}">
-                            <li class="nav-label">Gestion de l'organisation</li>
-                            <li class="mega-menu mega-menu-sm">
-                                <a class="has-arrow" aria-expanded="false">
-                                    <i class="icon-people menu-icon"/><span class="nav-text">Utilisateurs</span>
-                                </a>
-                                <ul aria-expanded="false">
-                                    <li>
-                                        <a href="#{request.contextPath}/manager/users">
-                                            Gestion des utilisateurs
-                                        </a>
-                                    </li>
-                                    <li><a>Gestion des rôles</a></li>
-                                </ul>
-                            </li>
-                        </h:panelGroup>
-
-                        <h:panelGroup rendered="#{navBean.userIs('ADMIN')}">
-                            <li class="nav-label">Administration</li>
+        <h:panelGroup id="sidebar">
+            <div class="nk-sidebar">
+                <div class="nk-nav-scroll">
+                    <h:form id="side_nav_form">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <ul class="metismenu" id="menu">
+                            <li class="nav-label">Titre 1</li>
                             <li>
                                 <a href="#{request.contextPath}/dashboard" aria-expanded="false">
-                                    <i class="icon-energy menu-icon"/><span
-                                        class="nav-text">Gestion de l'instance</span>
+                                    <i class="icon-home menu-icon"/><span class="nav-text">Accueil</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="#{request.contextPath}/admin/institution" aria-expanded="false">
-                                    <i class="icon-globe-alt menu-icon"/><span
-                                        class="nav-text">Gestion des organisations</span>
+                                <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                    <i class="icon-location-pin menu-icon"/><span class="nav-text">Unité spatiale</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="#{request.contextPath}/admin/manager" aria-expanded="false">
-                                    <i class="icon-user-following menu-icon"/><span
-                                        class="nav-text">Gestion des administrateurs</span>
+                                <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                    <i class="icon-control-play menu-icon"/><span class="nav-text">Unité d'action</span>
                                 </a>
                             </li>
-                        </h:panelGroup>
-                    </ul>
-                </h:form>
+                            <li>
+                                <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                    <i class="icon-note menu-icon"/><span class="nav-text">Unité d'enregistrement</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                    <i class="icon-social-dropbox menu-icon"/><span class="nav-text">Prélèvements</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                    <i class="icon-eyeglass menu-icon"/><span class="nav-text">Études</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                    <i class="icon-docs menu-icon"/><span class="nav-text">Documents</span>
+                                </a>
+                            </li>
+
+                            <h:panelGroup rendered="#{navBean.managerOrAdminOfInstitution()}">
+                                <li class="nav-label">Gestion de l'organisation</li>
+                                <li class="mega-menu mega-menu-sm">
+                                    <a class="has-arrow" aria-expanded="false">
+                                        <i class="icon-people menu-icon"/><span class="nav-text">Utilisateurs</span>
+                                    </a>
+                                    <ul aria-expanded="false">
+                                        <li>
+                                            <a href="#{request.contextPath}/manager/users">
+                                                Gestion des utilisateurs
+                                            </a>
+                                        </li>
+                                        <li><a>Gestion des rôles</a></li>
+                                    </ul>
+                                </li>
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{navBean.userIs('ADMIN')}">
+                                <li class="nav-label">Administration</li>
+                                <li>
+                                    <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                        <i class="icon-energy menu-icon"/><span
+                                            class="nav-text">Gestion de l'instance</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#{request.contextPath}/admin/institution" aria-expanded="false">
+                                        <i class="icon-globe-alt menu-icon"/><span
+                                            class="nav-text">Gestion des organisations</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#{request.contextPath}/admin/manager" aria-expanded="false">
+                                        <i class="icon-user-following menu-icon"/><span
+                                            class="nav-text">Gestion des administrateurs</span>
+                                    </a>
+                                </li>
+                            </h:panelGroup>
+                        </ul>
+                    </h:form>
+                </div>
             </div>
-        </div>
+        </h:panelGroup>
         <!--**********************************
             Sidebar end
         ***********************************-->
