@@ -13,20 +13,25 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    public static final String REDIRECT_ERROR_500 = "redirect:/pages/error/error-500.xhtml";
+    public static final String REDIRECT_ERROR_404 = "redirect:/pages/error/error-404.xhtml";
+    public static final String REDIRECT_ERROR_403 = "redirect:/pages/error/error-403.xhtml";
+    public static final String ERROR_MESSAGE = "errorMessage";
+
     @ExceptionHandler(ForbiddenException.class)
     public ModelAndView handleForbiddenException(HttpServletRequest request, Exception ex, Model model) {
         if(getHttpStatus(request).equals(HttpStatus.FORBIDDEN)) {
-            model.addAttribute("errorMessage", ex.getMessage());
-            return new ModelAndView("redirect:/errorPages/error403.xhtml");
+            model.addAttribute(ERROR_MESSAGE, ex.getMessage());
+            return new ModelAndView(REDIRECT_ERROR_403);
         }
-        return new ModelAndView("redirect:/errorPages/error500.xhtml");
+        return new ModelAndView(REDIRECT_ERROR_500);
     }
 
     // Gestion des erreurs 404
     @ExceptionHandler(NoHandlerFoundException.class)
     public ModelAndView handleNotFoundException(Exception ex, Model model) {
-        model.addAttribute("errorMessage", ex.getMessage());
-        return new ModelAndView("redirect:/errorPages/error404.xhtml");
+        model.addAttribute(ERROR_MESSAGE, ex.getMessage());
+        return new ModelAndView(REDIRECT_ERROR_404);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
@@ -38,10 +43,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ModelAndView handleException(HttpServletRequest request, Exception ex, Model model) {
         if (getHttpStatus(request).equals(HttpStatus.INTERNAL_SERVER_ERROR)) {
-            model.addAttribute("errorMessage", ex.getMessage());
-            return new ModelAndView("redirect:/errorPages/error500.xhtml");
+            model.addAttribute(ERROR_MESSAGE, ex.getMessage());
+            return new ModelAndView(REDIRECT_ERROR_500);
         }
-        return new ModelAndView("redirect:/errorPages/error500.xhtml");
+        return new ModelAndView(REDIRECT_ERROR_500);
     }
 
     private HttpStatus getHttpStatus(HttpServletRequest request) {
