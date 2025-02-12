@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AutocompletionRequestBuilderTest {
 
     @Test
-    public void testBuilder_withFullConcept() {
+    void testBuilder_withFullConcept() {
         String server = "https://domaine.exemple";
         String thesoExtId = "th21";
         String input = "S";
@@ -25,7 +25,7 @@ class AutocompletionRequestBuilderTest {
     }
 
     @Test
-    public void testBuilder_withoutFullConcept() {
+    void testBuilder_withoutFullConcept() {
         String server = "https://domaine.exemple";
         String thesoExtId = "th21";
         String input = "S";

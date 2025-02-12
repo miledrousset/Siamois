@@ -14,7 +14,9 @@ import java.util.TreeSet;
  */
 public class AutocompletionRequestBuilder {
 
-    private final String server, input, thesoExternalId;
+    private final String server;
+    private final String input;
+    private final String thesoExternalId;
     private final Set<String> langs = new TreeSet<>();
     private final Set<String> groupsId = new TreeSet<>();
     private boolean isFull = false;
