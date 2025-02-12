@@ -25,19 +25,18 @@ import java.util.List;
 @Slf4j
 @Component
 public class ManagerCreationBean implements Serializable {
-    private final PersonService personService;
+    // Injections
+    private final transient PersonService personService;
     private final LangBean langBean;
     private final UserAddBean userAddBean;
-    private final InstitutionService institutionService;
-
-    // Injections
+    private final transient InstitutionService institutionService;
 
     // Storage
-    List<Institution> refInstitutions = new ArrayList<>();
-    List<Institution> filteredInstitutions = new ArrayList<>();
+    transient List<Institution> refInstitutions = new ArrayList<>();
+    transient List<Institution> filteredInstitutions = new ArrayList<>();
 
     // Fields
-    private List<Team> vTeams = new ArrayList<>();
+    private transient List<Team> vTeams = new ArrayList<>();
 
     public ManagerCreationBean(PersonService personService, LangBean langBean, UserAddBean userAddBean, InstitutionService institutionService) {
         this.personService = personService;
