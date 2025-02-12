@@ -60,6 +60,7 @@ class ActionUnitServiceTest {
     ActionCode secondaryActionCode1;
     ActionCode secondaryActionCode2;
     ActionCode failedCode;
+    ActionCode secondaryActionCodeThatWillBeRemoved;
     Concept c1, c2, c3;
 
     UserInfo info;
@@ -103,8 +104,11 @@ class ActionUnitServiceTest {
         secondaryActionCode2.setCode("secondary2");
         secondaryActionCode2.setType(c3);
 
+        secondaryActionCodeThatWillBeRemoved = new ActionCode();
+        secondaryActionCodeThatWillBeRemoved.setCode("willberemoved");
+
         actionUnitWithCodes.setPrimaryActionCode(primaryActionCode);
-        actionUnitWithCodes.setSecondaryActionCodes(new HashSet<>(List.of(secondaryActionCode1, secondaryActionCode2)));
+        actionUnitWithCodes.setSecondaryActionCodes(new HashSet<>(List.of(secondaryActionCode1, secondaryActionCode2, secondaryActionCodeThatWillBeRemoved)));
 
         actionUnitWithCodes.setIdentifier("Test");
         Institution institution = new Institution();
@@ -195,7 +199,34 @@ class ActionUnitServiceTest {
         // assert
         assertNotNull(result);
         assertEquals(primaryActionCode, result.getPrimaryActionCode());
+        assertEquals(new HashSet<>(List.of(secondaryActionCode1, secondaryActionCode2)), result.getSecondaryActionCodes());
         assertEquals("MOM-Test", result.getFullIdentifier());
+    }
+
+    @Test
+    void Save_FailureBecauseIdentifierIsMissing() {
+
+        when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(new ArkServer()));
+
+        lenient().when(conceptService.saveOrGetConcept(c1)).thenReturn(c1);
+        lenient().when(conceptService.saveOrGetConcept(c2)).thenReturn(c2);
+        lenient().when(conceptService.saveOrGetConcept(c3)).thenReturn(c3);
+
+        lenient().when(actionCodeRepository.findById(primaryActionCode.getCode())).thenReturn(Optional.ofNullable(primaryActionCode));
+        lenient().when(actionCodeRepository.findById(secondaryActionCode1.getCode())).thenReturn(Optional.ofNullable(secondaryActionCode1));
+        lenient().when(actionCodeRepository.findById(secondaryActionCode2.getCode())).thenReturn(Optional.empty()); // It means this code is not in DB
+
+        when(actionUnitRepository.findById(actionUnitWithCodes.getId())).thenReturn(Optional.ofNullable(actionUnitWithCodes));
+
+        actionUnitWithCodes.setIdentifier(null); // remove identifier
+
+        // Act & Assert
+        Exception exception = assertThrows(
+                FailedActionUnitSaveException.class,
+                () -> actionUnitService.save(actionUnitWithCodes, List.of(secondaryActionCode1, secondaryActionCode2),info)
+        );
+
+        assertEquals("ActionUnit identifier must be set", exception.getMessage());
     }
 
     @Test
