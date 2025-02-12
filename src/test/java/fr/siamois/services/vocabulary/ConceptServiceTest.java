@@ -51,7 +51,7 @@ class ConceptServiceTest {
     @Test
     void saveOrGetConcept_shoudSaveConcept_whenNotExist() {
         when(repository.findConceptByExternalIdIgnoreCase("th233", "1003")).thenReturn(Optional.empty());
-        when(repository.save(any(Concept.class))).then((invocation) -> invocation.getArgument(0, Concept.class));
+        when(repository.save(any(Concept.class))).then(invocation -> invocation.getArgument(0, Concept.class));
 
         Concept concept = new Concept();
         concept.setVocabulary(vocabulary);
@@ -111,7 +111,7 @@ class ConceptServiceTest {
 
         when(repository.findConceptByExternalIdIgnoreCase(vocabulary.getExternalVocabularyId(), "1023"))
                 .thenReturn(Optional.empty());
-        when(repository.save(any(Concept.class))).then((invocation) -> invocation.getArgument(0, Concept.class));
+        when(repository.save(any(Concept.class))).then(invocation -> invocation.getArgument(0, Concept.class));
 
         Concept refConcept = new Concept();
         refConcept.setLabel("Test label");
