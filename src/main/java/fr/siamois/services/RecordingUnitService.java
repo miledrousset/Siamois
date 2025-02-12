@@ -6,6 +6,7 @@ import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
+import fr.siamois.models.exceptions.MaxRecordingUnitIdentifierReached;
 import fr.siamois.models.exceptions.RecordingUnitNotFoundException;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.spatialunit.SpatialUnit;
@@ -73,6 +74,21 @@ public class RecordingUnitService {
                 ark.setArkServer(localServer);
                 ark.setArkId(ArkGeneratorUtils.generateArk());
                 recordingUnit.setArk(ark);
+            }
+
+            // Generate unique identifier if not present
+            if (recordingUnit.getFullIdentifier() == null) {
+                if (recordingUnit.getIdentifier() == null) {
+                    // Generate next identifier
+                    Integer currentMaxIdentifier = recordingUnitRepository.findMaxUsedIdentifierByAction(recordingUnit.getActionUnit().getId());
+                    Integer nextIdentifier = (currentMaxIdentifier == null) ? recordingUnit.getActionUnit().getMaxRecordingUnitCode() : currentMaxIdentifier + 1;
+                    if (nextIdentifier > recordingUnit.getActionUnit().getMaxRecordingUnitCode()) {
+                        throw new MaxRecordingUnitIdentifierReached("Max recording unit code reached; Please ask administrator to increase the range");
+                    }
+                    recordingUnit.setIdentifier(nextIdentifier);
+                }
+                // Set full identifier
+                recordingUnit.setFullIdentifier(recordingUnit.displayFullIdentifier());
             }
 
             // Add concept

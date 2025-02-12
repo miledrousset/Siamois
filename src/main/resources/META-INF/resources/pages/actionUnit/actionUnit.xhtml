@@ -16,8 +16,6 @@
     <ui:define name="content">
         <h:outputScript library="primefaces" name="jquery/jquery.js"/>
 
-        <p:growl id="growl" showDetail="true"/>
-
         <!-- Content -->
 
         <!-- General description of the action unit -->
@@ -26,7 +24,7 @@
                          rendered="#{not empty actionUnitBean.actionUnitErrorMessage}"/>
 
         <h:panelGroup id="contentPanel" rendered="#{actionUnitBean.actionUnit != null}">
-            <h:message id="msg-test"/>
+
             <h:form>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <h2>#{actionUnitBean.actionUnit.name}

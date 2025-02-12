@@ -6,13 +6,13 @@
                 xmlns:recordingUnit="http://xmlns.jcp.org/jsf/composite/pages/recordingUnit/components">
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="id" value="#{recordingUnitFormBean.id}"/>
-            <f:event type="preRenderView" listener="#{recordingUnitFormBean.init}"/>
+            <f:viewParam name="id" value="#{newRecordingUnitFormBean.id}" required="#{!facesContext.postback}"/>
+            <f:event type="preRenderView" listener="#{newRecordingUnitFormBean.init}"/>
         </f:metadata>
     </ui:define>
     <ui:define name="content">
         <h:outputScript library="primefaces" name="jquery/jquery.js"/>
         <!-- Content -->
-        <recordingUnit:recordingUnitForm recordingUnitFormBean="#{recordingUnitFormBean}" isNew="false"/>
+        <ui:include src="../recordingUnit/components/recordingUnitForm.xhtml"/>
     </ui:define>
 </ui:composition>

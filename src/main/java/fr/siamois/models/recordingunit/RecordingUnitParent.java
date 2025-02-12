@@ -54,6 +54,10 @@ public abstract class RecordingUnitParent extends TraceableEntity {
     @Column(name = "identifier")
     protected Integer identifier;
 
+    @NotNull
+    @Column(name = "full_identifier")
+    protected String fullIdentifier;
+
     @Embedded
     protected RecordingUnitSize size;
 

@@ -7,22 +7,12 @@
 >
     <ui:define name="metadata">
         <f:metadata>
-            <!--            <f:event type="preRenderView" listener="#{newRecordingUnitFormBean.init}"/>-->
+
         </f:metadata>
     </ui:define>
     <ui:define name="content">
         <h:outputScript library="primefaces" name="jquery/jquery.js"/>
         <!-- Content -->
-        <p:autoComplete id="auto-complete-ue-type"
-                        value="#{newRecordingUnitFormBean.FType}"
-                        completeMethod="#{actionUnitBean.completeActionCodeType}"
-                        var="field"
-                        itemLabel="#{field.label}"
-                        itemValue="#{field}"
-                        required="true"
-                        converter="#{conceptConverter}"
-                        forceSelection="true"
-                        scrollHeight="300"
-                        dropdown="true"/>
+        <ui:include src="../recordingUnit/components/recordingUnitForm.xhtml"/>
     </ui:define>
 </ui:composition>

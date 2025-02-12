@@ -1,6 +1,7 @@
 package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.history.GlobalHistoryRepository;
+import fr.siamois.infrastructure.repositories.history.RecordingUnitHistoryRepository;
 import fr.siamois.infrastructure.repositories.history.SpatialUnitHistoryRepository;
 import fr.siamois.models.Institution;
 import fr.siamois.models.TraceableEntity;
@@ -33,6 +34,9 @@ class HistoryServiceTest {
     private SpatialUnitHistoryRepository spatialUnitHistoryRepository;
 
     @Mock
+    private RecordingUnitHistoryRepository recordingUnitHistoryRepository;
+
+    @Mock
     private GlobalHistoryRepository globalHistoryRepository;
 
     private HistoryService historyService;
@@ -40,7 +44,7 @@ class HistoryServiceTest {
 
     @BeforeEach
     void setUp() {
-        historyService = new HistoryService(spatialUnitHistoryRepository, globalHistoryRepository);
+        historyService = new HistoryService(spatialUnitHistoryRepository, recordingUnitHistoryRepository, globalHistoryRepository);
         setupUserInfo();
     }
 

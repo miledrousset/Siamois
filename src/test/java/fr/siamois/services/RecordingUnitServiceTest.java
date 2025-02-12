@@ -3,12 +3,15 @@ package fr.siamois.services;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
+import fr.siamois.models.Institution;
+import fr.siamois.models.actionunit.ActionUnit;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.recordingunit.RecordingUnit;
-import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
+import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +23,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 
@@ -30,24 +34,27 @@ class RecordingUnitServiceTest {
 
     @Mock
     private RecordingUnitRepository recordingUnitRepository;
-
     @Mock
     private ArkServerRepository arkServerRepository;
-
     @Mock
     private FieldService fieldService;
+    @Mock
+    private ConceptService conceptService;
 
     @InjectMocks
     private RecordingUnitService recordingUnitService;
 
-    SpatialUnit spatialUnit1 ;
-    RecordingUnit recordingUnit1 ;
-    RecordingUnit recordingUnit2 ;
+    SpatialUnit spatialUnit1;
+    RecordingUnit recordingUnit1;
+    RecordingUnit recordingUnit2;
     Ark newArk;
     ArkServer mockArkServer;
     Vocabulary vocabulary;
     ConceptFieldDTO dto;
     Concept concept;
+
+
+    RecordingUnit recordingUnitToSave;
 
     @BeforeEach
     void setUp() {
@@ -64,6 +71,18 @@ class RecordingUnitServiceTest {
         vocabulary = new Vocabulary();
         dto = new ConceptFieldDTO();
 
+        Institution parentInstitution = new Institution();
+        parentInstitution.setIdentifier("MOM");
+        ActionUnit actionUnit = new ActionUnit();
+        actionUnit.setIdentifier("2025");
+        actionUnit.setMinRecordingUnitCode(5);
+        actionUnit.setId(1L);
+        actionUnit.setMaxRecordingUnitCode(5);
+        actionUnit.setCreatedByInstitution(parentInstitution);
+        recordingUnitToSave = new RecordingUnit();
+        recordingUnitToSave.setActionUnit(actionUnit);
+        recordingUnitToSave.setCreatedByInstitution(parentInstitution);
+
 
     }
 
@@ -76,7 +95,7 @@ class RecordingUnitServiceTest {
         List<RecordingUnit> actualResult = recordingUnitService.findAllBySpatialUnit(spatialUnit1);
 
         // Assert
-        assertEquals(List.of(recordingUnit1,recordingUnit2), actualResult);
+        assertEquals(List.of(recordingUnit1, recordingUnit2), actualResult);
     }
 
     @Test
@@ -113,7 +132,6 @@ class RecordingUnitServiceTest {
         when(recordingUnitRepository.findById(recordingUnit1.getId())).thenReturn(Optional.empty());
 
 
-
         // Act & Assert
         Exception exception = assertThrows(
                 Exception.class,
@@ -123,4 +141,48 @@ class RecordingUnitServiceTest {
         assertEquals("RecordingUnit not found with ID: 1", exception.getMessage());
 
     }
+
+    @Test
+    void save_Success() {
+
+        when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(new ArkServer()));
+        Concept c = new Concept();
+        c.setLabel("Unité strati");
+        when(conceptService.saveOrGetConcept(c)).thenReturn(c);
+
+        when(recordingUnitRepository.findMaxUsedIdentifierByAction(anyLong())).thenReturn(null);
+
+        when(recordingUnitRepository.save(
+                any(RecordingUnit.class)
+        )).thenReturn(recordingUnitToSave);
+
+        RecordingUnit result = recordingUnitService.save(recordingUnitToSave,c);
+
+        // assert
+        assertNotNull(result);
+        assertEquals("MOM-2025-5", result.getFullIdentifier());
+
+
+    }
+
+    @Test
+    void save_Failure_MaxNbOfRecordingsReached() {
+
+        when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(new ArkServer()));
+        Concept c = new Concept();
+        c.setLabel("Unité strati");
+
+        when(recordingUnitRepository.findMaxUsedIdentifierByAction(anyLong())).thenReturn(5);
+
+        // Act & Assert
+        Exception exception = assertThrows(
+                Exception.class,
+                () -> recordingUnitService.save(recordingUnitToSave,c)
+        );
+
+        assertEquals("Max recording unit code reached; Please ask administrator to increase the range", exception.getMessage());
+
+
+    }
+
 }

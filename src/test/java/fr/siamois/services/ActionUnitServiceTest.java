@@ -1,5 +1,6 @@
 package fr.siamois.services;
 
+
 import fr.siamois.infrastructure.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
@@ -166,11 +167,16 @@ class ActionUnitServiceTest {
         UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
 
         ActionUnit actionUnit = new ActionUnit();
+        actionUnit.setIdentifier("Test");
+        Institution institution = new Institution();
+        institution.setIdentifier("MOM");
+        actionUnit.setCreatedByInstitution(institution);
         Concept typeConcept = new Concept();
         ArkServer localServer = new ArkServer();
         localServer.setId(1L);
         Ark ark = new Ark();
         ark.setArkServer(localServer);
+
 
         when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(localServer));
         when(conceptService.saveOrGetConcept(typeConcept)).thenReturn(typeConcept);
@@ -179,6 +185,7 @@ class ActionUnitServiceTest {
         ActionUnit result = actionUnitService.save(userInfo, actionUnit, typeConcept);
 
         assertNotNull(result);
+        assertEquals("MOM-Test", result.getFullIdentifier());
         assertEquals(actionUnit, result);
         assertEquals(typeConcept, result.getType());
         assertEquals(userInfo.getUser(), result.getAuthor());

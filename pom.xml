@@ -280,6 +280,16 @@
             <version>${jacoco.version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/software.xdev/chartjs-java-model -->
+        <dependency>
+            <groupId>software.xdev</groupId>
+            <artifactId>chartjs-java-model</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+
+
+
+
     </dependencies>
 
     <build>

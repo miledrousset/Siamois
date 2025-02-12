@@ -1,7 +1,6 @@
 package fr.siamois.infrastructure.repositories.recordingunit;
 
 
-
 import fr.siamois.infrastructure.repositories.history.TraceableEntries;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.recordingunit.RecordingUnit;
@@ -39,7 +38,7 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
             nativeQuery = true,
             value = "SELECT ru.* FROM recording_unit ru " +
                     "JOIN action_unit au ON ru.fk_action_unit_id = au.action_unit_id " +
-                    "JOIN spatial_unit su ON au.fk_spatial_unit_id = su.spatial_unit_id "+
+                    "JOIN spatial_unit su ON au.fk_spatial_unit_id = su.spatial_unit_id " +
                     "WHERE su.spatial_unit_id = :spatialUnitId"
     )
     List<RecordingUnit> findAllBySpatialUnitId(Long spatialUnitId);
@@ -55,14 +54,24 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
     )
     void saveStratigraphicRelationship(Long recordingUnitId1, Long recordingUnitId2, Long conceptId);
 
-
-
-
     @Query(
             nativeQuery = true,
             value = "SELECT ru.* FROM recording_unit ru WHERE fk_author_id = :author AND creation_time BETWEEN :start AND :end"
     )
     List<RecordingUnit> findAllCreatedBetweenByUser(@Param("start") OffsetDateTime start, @Param("end") OffsetDateTime end, @Param("author") Long personId);
+
+    /**
+     * Returns the maximum identifier given to a recording unit in the context of an action unit
+     *
+     * @param actionUnitId
+     * @return The max identifier
+     */
+    @Query(
+            nativeQuery = true,
+            value = "SELECT MAX(ru.identifier) " +
+                    "FROM recording_unit ru where ru.fk_action_unit_id = :actionUnitId"
+    )
+    Integer findMaxUsedIdentifierByAction(Long actionUnitId);
 
 
 }

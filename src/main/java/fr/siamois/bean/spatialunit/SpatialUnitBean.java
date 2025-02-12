@@ -13,8 +13,14 @@ import fr.siamois.utils.DateUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+
 import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
+import software.xdev.chartjs.model.charts.BarChart;
+import software.xdev.chartjs.model.data.BarData;
+import software.xdev.chartjs.model.dataset.BarDataset;
+import software.xdev.chartjs.model.options.*;
+import software.xdev.chartjs.model.color.RGBAColor;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
@@ -50,8 +56,9 @@ public class SpatialUnitBean implements Serializable {
     private String recordingUnitListErrorMessage;
 
     private transient List<SpatialUnitHist> historyVersion;
-
     private SpatialUnitHist revisionToDisplay = null;
+
+    private String barModel;
 
     private Long id;  // ID of the spatial unit
 
@@ -81,8 +88,34 @@ public class SpatialUnitBean implements Serializable {
         return "/pages/spatialUnit/spatialUnit.xhtml?id=" + id + "&faces-redirect=true";
     }
 
+
+    public void createBarModel() {
+        barModel = new BarChart()
+                .setData(new BarData()
+                        .addDataset(new BarDataset()
+                                .setData(65, 59, 80)
+                                .setBackgroundColor(List.of(new RGBAColor(255, 99, 132, 0.5),new RGBAColor(12, 99, 132, 0.5),new RGBAColor(255, 17, 51, 0.5)))
+                                .setBorderColor(new RGBAColor(255, 99, 132,1))
+                                .setBorderWidth(1))
+                        .setLabels("Hors contexte", "Unité stratigraphique", "Unité construite"))
+                .setOptions(new BarOptions()
+                        .setResponsive(true)
+                        .setMaintainAspectRatio(false)
+                        .setPlugins(new Plugins()
+                                .setTooltip(new Tooltip().setMode("index"))
+                                .setTitle(new Title()
+                                        .setDisplay(true)
+                                        .setText("Unités d'enregistrement (mockup)")
+                                )
+                        )
+                ).toJson();
+    }
+
+
     @PostConstruct
     public void init() {
+
+        createBarModel();
 
         reinitializeBean();
 
