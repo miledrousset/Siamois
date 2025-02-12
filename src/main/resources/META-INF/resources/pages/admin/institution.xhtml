@@ -88,7 +88,9 @@
                                 <div class="card-body">
                                     <h:commandButton styleClass="btn mb-1 btn-rounded btn-primary"
                                                      value='#{langBean.msg("create.team.confirm")}'
-                                                     action="#{institutionCreationBean.saveTeamAndManager()}"/>
+                                                     action="#{institutionCreationBean.saveTeamAndManager()}"
+                                                     update="@all"
+                                    />
                                 </div>
                             </div>
                         </div>
