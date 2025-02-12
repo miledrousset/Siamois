@@ -147,9 +147,6 @@ class ConceptApiTest {
         conceptApi = new ConceptApi(requestFactory, mapper);
         when(restTemplate.getForObject(any(URI.class), eq(String.class))).thenReturn("NOT EMPTY");
 
-        ConceptApi.ConceptDTO dto = new ConceptApi.ConceptDTO();
-        dto.idConcept = "12";
-
         when(mapper.readValue(anyString(), eq(ConceptApi.ConceptDTO[].class))).thenThrow(JsonProcessingException.class);
 
         ConceptBranchDTO result = conceptApi.fetchFieldsBranch(vocabulary);
