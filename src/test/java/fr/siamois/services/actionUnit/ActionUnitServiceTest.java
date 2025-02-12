@@ -13,11 +13,8 @@ import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedActionUnitSaveException;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
-
 import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
-
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -159,7 +156,7 @@ class ActionUnitServiceTest {
     @Test
     void findById_Exception() {
 
-        when(actionUnitRepository.findById(actionUnit1.getId())).thenReturn(Optional.ofNullable(null));
+        when(actionUnitRepository.findById(actionUnit1.getId())).thenReturn(Optional.empty());
 
 
         // Act & Assert
@@ -199,10 +196,12 @@ class ActionUnitServiceTest {
 
         actionUnitWithCodesBefore.setPrimaryActionCode(failedCode);
 
+        List<ActionCode> toSave = List.of(secondaryActionCode1, secondaryActionCode2);
+
         // Act & Assert
         Exception exception = assertThrows(
                 FailedActionUnitSaveException.class,
-                () -> actionUnitService.save(actionUnitWithCodesBefore, List.of(secondaryActionCode1, secondaryActionCode2),info)
+                () -> actionUnitService.save(actionUnitWithCodesBefore, toSave,info)
         );
 
         assertEquals("Code exists but type does not match", exception.getMessage());
@@ -220,10 +219,12 @@ class ActionUnitServiceTest {
         when(actionUnitRepository.save(actionUnitWithCodesBefore)).thenThrow(new RuntimeException("Database error"));
         when(actionUnitRepository.findById(actionUnitWithCodesBefore.getId())).thenReturn(Optional.ofNullable(actionUnitWithCodesBefore));
 
+        List<ActionCode> toSave = List.of(secondaryActionCode1, secondaryActionCode2);
+
         // Act & Assert
         Exception exception = assertThrows(
                 FailedActionUnitSaveException.class,
-                () -> actionUnitService.save(actionUnitWithCodesBefore, List.of(secondaryActionCode1, secondaryActionCode2),info)
+                () -> actionUnitService.save(actionUnitWithCodesBefore, toSave,info)
         );
         assertEquals("Database error", exception.getMessage());
 

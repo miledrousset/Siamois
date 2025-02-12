@@ -2,13 +2,13 @@ package fr.siamois.bean.actionunit;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.UserInfo;
+import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.NoConfigForField;
-import fr.siamois.services.actionunit.ActionUnitService;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;

@@ -1,13 +1,13 @@
 package fr.siamois.bean.recordingunit;
 
 import fr.siamois.bean.LangBean;
-import fr.siamois.bean.recordingunit.utils.RecordingUnitUtils;
 import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.recordingunit.utils.RecordingUnitUtils;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.RecordingUnitService;
+import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldService;
 import jakarta.annotation.PostConstruct;

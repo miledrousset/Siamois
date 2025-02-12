@@ -2,8 +2,6 @@ package fr.siamois.config;
 
 import com.sun.faces.config.ConfigureListener;
 import jakarta.faces.annotation.FacesConfig;
-import jakarta.faces.application.ResourceHandler;
-import jakarta.faces.context.FacesContext;
 import jakarta.faces.webapp.FacesServlet;
 import jakarta.servlet.ServletContext;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;

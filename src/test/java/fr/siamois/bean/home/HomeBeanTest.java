@@ -1,9 +1,9 @@
 package fr.siamois.bean.home;
 
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.services.SpatialUnitService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

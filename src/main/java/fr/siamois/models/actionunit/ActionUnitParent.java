@@ -1,8 +1,8 @@
 package fr.siamois.models.actionunit;
 
-import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.TraceableEntity;
 import fr.siamois.models.ark.Ark;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
