@@ -12,6 +12,7 @@ import fr.siamois.models.exceptions.NotSiamoisThesaurusException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -34,9 +35,16 @@ public class ConceptApi {
 
     private final ObjectMapper mapper;
 
+    @Autowired
     public ConceptApi(RequestFactory factory) {
         restTemplate = factory.buildRestTemplate();
         mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
+    ConceptApi(RequestFactory factory, ObjectMapper mapper) {
+        this.restTemplate = factory.buildRestTemplate();
+        this.mapper = mapper;
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 

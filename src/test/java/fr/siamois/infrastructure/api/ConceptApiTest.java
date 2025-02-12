@@ -1,5 +1,8 @@
 package fr.siamois.infrastructure.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullConceptDTO;
 import fr.siamois.models.exceptions.NotSiamoisThesaurusException;
@@ -20,8 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ConceptApiTest {
@@ -33,6 +35,9 @@ class ConceptApiTest {
     private RequestFactory requestFactory;
 
     private ConceptApi conceptApi;
+
+    @Mock
+    private ObjectMapper mapper;
 
     @BeforeEach
     void setUp() {
@@ -93,5 +98,24 @@ class ConceptApiTest {
         ConceptBranchDTO result = conceptApi.fetchFieldsBranch(vocabulary);
 
         assertNotNull(result);
+    }
+
+    @Test
+    void fetchConceptInfo_throwJSONException() throws JsonProcessingException {
+        Vocabulary vocabulary = new Vocabulary();
+        vocabulary.setBaseUri("http://example.com");
+        vocabulary.setExternalVocabularyId("th223");
+
+        conceptApi = new ConceptApi(requestFactory, mapper);
+
+        when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(), eq(String.class)))
+                .thenReturn(new ResponseEntity<>("Not empty", HttpStatus.OK));
+
+        //noinspection unchecked
+        when(mapper.readValue(anyString(), any(TypeReference.class))).thenThrow(JsonProcessingException.class);
+
+        FullConceptDTO result = conceptApi.fetchConceptInfo(vocabulary, "12");
+
+        assertNull(result);
     }
 }
