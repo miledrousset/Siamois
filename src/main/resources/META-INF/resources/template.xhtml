@@ -246,39 +246,39 @@
                         <ul class="metismenu" id="menu">
                             <li class="nav-label">Titre 1</li>
                             <li>
-                                <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                <h:commandLink action="/pages/dashboard/dashboard.xhtml">
                                     <i class="icon-home menu-icon"/><span class="nav-text">Accueil</span>
-                                </a>
+                                </h:commandLink>
                             </li>
                             <li>
-                                <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                <h:commandLink action="/pages/dashboard/dashboard.xhtml">
                                     <i class="icon-location-pin menu-icon"/><span class="nav-text">Unité spatiale</span>
-                                </a>
+                                </h:commandLink>
                             </li>
                             <li>
-                                <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                <h:commandLink action="/pages/dashboard/dashboard.xhtml">
                                     <i class="icon-control-play menu-icon"/><span class="nav-text">Unité d'action</span>
-                                </a>
+                                </h:commandLink>
                             </li>
                             <li>
-                                <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                <h:commandLink action="/pages/dashboard/dashboard.xhtml">
                                     <i class="icon-note menu-icon"/><span class="nav-text">Unité d'enregistrement</span>
-                                </a>
+                                </h:commandLink>
                             </li>
                             <li>
-                                <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                <h:commandLink action="/pages/dashboard/dashboard.xhtml">
                                     <i class="icon-social-dropbox menu-icon"/><span class="nav-text">Prélèvements</span>
-                                </a>
+                                </h:commandLink>
                             </li>
                             <li>
-                                <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                <h:commandLink action="/pages/dashboard/dashboard.xhtml">
                                     <i class="icon-eyeglass menu-icon"/><span class="nav-text">Études</span>
-                                </a>
+                                </h:commandLink>
                             </li>
                             <li>
-                                <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                <h:commandLink action="/pages/dashboard/dashboard.xhtml">
                                     <i class="icon-docs menu-icon"/><span class="nav-text">Documents</span>
-                                </a>
+                                </h:commandLink>
                             </li>
 
                             <h:panelGroup rendered="#{navBean.isManagerOrAdminOfInstitution()}">
@@ -289,11 +289,15 @@
                                     </a>
                                     <ul aria-expanded="false">
                                         <li>
-                                            <a href="#{request.contextPath}/manager/users">
+                                            <h:commandLink action="/pages/manager/users.xhtml">
                                                 Gestion des utilisateurs
-                                            </a>
+                                            </h:commandLink>
                                         </li>
-                                        <li><a>Gestion des rôles</a></li>
+                                        <li>
+                                            <h:commandLink action="/pages/dashboard/dashboard.xhtml">
+                                                Gestion des rôles
+                                            </h:commandLink>
+                                        </li>
                                     </ul>
                                 </li>
                             </h:panelGroup>
@@ -301,22 +305,22 @@
                             <h:panelGroup rendered="#{navBean.userIs('ADMIN')}">
                                 <li class="nav-label">Administration</li>
                                 <li>
-                                    <a href="#{request.contextPath}/dashboard" aria-expanded="false">
+                                    <h:commandLink action="/pages/dashboard/dashboard.xhtml">
                                         <i class="icon-energy menu-icon"/><span
                                             class="nav-text">Gestion de l'instance</span>
-                                    </a>
+                                    </h:commandLink>
                                 </li>
                                 <li>
-                                    <a href="#{request.contextPath}/admin/institution" aria-expanded="false">
+                                    <h:commandLink action="/pages/admin/institution.xhtml">
                                         <i class="icon-globe-alt menu-icon"/><span
                                             class="nav-text">Gestion des organisations</span>
-                                    </a>
+                                    </h:commandLink>
                                 </li>
                                 <li>
-                                    <a href="#{request.contextPath}/admin/manager" aria-expanded="false">
+                                    <h:commandLink action="/pages/admin/manager.xhtml">
                                         <i class="icon-user-following menu-icon"/><span
                                             class="nav-text">Gestion des administrateurs</span>
-                                    </a>
+                                    </h:commandLink>
                                 </li>
                             </h:panelGroup>
                         </ul>
