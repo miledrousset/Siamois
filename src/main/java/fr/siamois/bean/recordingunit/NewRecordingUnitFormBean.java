@@ -106,7 +106,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                               LocalDate startDate,
                               LocalDate endDate) {
 
-        // TODO : handle isLocalisationFromSIG and associated fields
+
 
         // handle dates
         if (startDate != null) {
@@ -220,7 +220,7 @@ public class NewRecordingUnitFormBean implements Serializable {
             this.recordingUnit.setAltitude(new RecordingUnitAltimetry());
             this.recordingUnit.getAltitude().setAltitudeUnit("m");
 
-            // Init strati. TODO : real implementation
+
             events = new ArrayList<>();
             events.add(new Event("Anterior", "15/10/2020 10:30", "pi pi-arrow-circle-up", "#9C27B0", "game-controller.jpg"));
             events.add(new Event("Synchronous", "15/10/2020 14:00", "pi pi-sync", "#673AB7"));
@@ -252,7 +252,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                     if (this.recordingUnit.getEndDate() != null) {
                         this.endDate = offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());
                     }
-                    // TODO handle isLocalisationFromSIG properly
+
                     this.isLocalisationFromSIG = false;
                     // Init type field
                     fType = this.recordingUnit.getType();

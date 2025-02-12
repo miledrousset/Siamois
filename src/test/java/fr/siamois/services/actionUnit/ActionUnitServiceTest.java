@@ -8,7 +8,6 @@ import fr.siamois.models.Institution;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedActionUnitSaveException;
@@ -217,10 +216,12 @@ class ActionUnitServiceTest {
 
         actionUnitWithCodes.setIdentifier(null); // remove identifier
 
+        List<ActionCode> toSave = List.of(secondaryActionCode1, secondaryActionCode2);
+
         // Act & Assert
         Exception exception = assertThrows(
                 FailedActionUnitSaveException.class,
-                () -> actionUnitService.save(actionUnitWithCodes, List.of(secondaryActionCode1, secondaryActionCode2),info)
+                () -> actionUnitService.save(actionUnitWithCodes, toSave,info)
         );
 
         assertEquals("ActionUnit identifier must be set", exception.getMessage());
