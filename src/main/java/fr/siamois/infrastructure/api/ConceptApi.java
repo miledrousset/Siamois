@@ -81,7 +81,8 @@ public class ConceptApi {
             Map<String, FullConceptDTO> result = mapper.readValue(response.getBody(), typeReference);
             return result.values().stream().findFirst().orElseThrow(() -> new RuntimeException("Invalid concept"));
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage(), e);
+            return null;
         }
     }
 
@@ -114,10 +115,10 @@ public class ConceptApi {
 
         String conceptDTO = restTemplate.getForObject(uri, String.class);
         if (conceptDTO == null) {
-            throw new RuntimeException("Vocabulary not found");
+            log.error("Vocabulary not found");
+            return null;
         }
 
-        ObjectMapper mapper = new ObjectMapper();
         try {
             ConceptDTO[] array = mapper.readValue(conceptDTO, ConceptDTO[].class);
 
@@ -128,7 +129,8 @@ public class ConceptApi {
             return fetchDownExpansion(vocabulary, autocompleteParent.idConcept);
 
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error while parsing branch", e);
+            log.error("Error while parsing branch", e);
+            return null;
         }
     }
 
