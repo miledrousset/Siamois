@@ -1,6 +1,7 @@
 package fr.siamois.models.actionunit;
 
 import fr.siamois.models.FieldCode;
+import fr.siamois.models.exceptions.NullInstitutionIdentifier;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,7 +34,7 @@ public class ActionUnit extends ActionUnitParent {
     public String displayFullIdentifier() {
         if(getFullIdentifier() == null) {
             if(getCreatedByInstitution().getIdentifier() == null) {
-                throw new RuntimeException("Institution identifier must be set");
+                throw new NullInstitutionIdentifier("Institution identifier must be set");
             }
             return getCreatedByInstitution().getIdentifier() + "-" + (getIdentifier() == null ? '?' : getIdentifier());
         }

@@ -10,7 +10,6 @@ import fr.siamois.models.UserInfo;
 import fr.siamois.models.history.HistoryOperation;
 import fr.siamois.models.history.HistoryUpdateType;
 import fr.siamois.models.history.SpatialUnitHist;
-import fr.siamois.models.spatialunit.SpatialUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

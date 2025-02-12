@@ -11,6 +11,7 @@ import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.ActionUnitNotFoundException;
 import fr.siamois.models.exceptions.FailedActionUnitSaveException;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
+import fr.siamois.models.exceptions.NullActionUnitIdentifier;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.vocabulary.ConceptService;
@@ -80,7 +81,7 @@ public class ActionUnitService {
             // Generate unique identifier if not presents
             if (actionUnit.getFullIdentifier() == null) {
                 if (actionUnit.getIdentifier() == null) {
-                    throw new RuntimeException("ActionUnit identifier must be set");
+                    throw new NullActionUnitIdentifier("ActionUnit identifier must be set");
                 }
                 // Set full identifier
                 actionUnit.setFullIdentifier(actionUnit.displayFullIdentifier());

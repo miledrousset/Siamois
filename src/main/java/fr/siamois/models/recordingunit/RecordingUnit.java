@@ -3,6 +3,8 @@ package fr.siamois.models.recordingunit;
 
 import fr.siamois.models.FieldCode;
 import fr.siamois.models.Institution;
+import fr.siamois.models.exceptions.NullActionUnitIdentifier;
+import fr.siamois.models.exceptions.NullInstitutionIdentifier;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -30,10 +32,10 @@ public class RecordingUnit extends RecordingUnitParent {
     public String displayFullIdentifier() {
         if(getFullIdentifier() == null) {
             if(getCreatedByInstitution().getIdentifier() == null) {
-                throw new RuntimeException("Institution identifier must be set");
+                throw new NullInstitutionIdentifier("Institution identifier must be set");
             }
             if(getActionUnit().getIdentifier() == null) {
-                throw new RuntimeException("Action identifier must be set");
+                throw new NullActionUnitIdentifier("Action identifier must be set");
             }
             return getCreatedByInstitution().getIdentifier() + "-" + getActionUnit().getIdentifier() + "-" + (getIdentifier() == null ? "?" : getIdentifier());
         }

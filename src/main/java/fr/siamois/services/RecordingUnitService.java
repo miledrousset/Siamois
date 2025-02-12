@@ -6,6 +6,7 @@ import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
+import fr.siamois.models.exceptions.MaxRecordingUnitIdentifierReached;
 import fr.siamois.models.exceptions.RecordingUnitNotFoundException;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.spatialunit.SpatialUnit;
@@ -82,7 +83,7 @@ public class RecordingUnitService {
                     Integer currentMaxIdentifier = recordingUnitRepository.findMaxUsedIdentifierByAction(recordingUnit.getActionUnit().getId());
                     Integer nextIdentifier = (currentMaxIdentifier == null) ? recordingUnit.getActionUnit().getMaxRecordingUnitCode() : currentMaxIdentifier + 1;
                     if (nextIdentifier > recordingUnit.getActionUnit().getMaxRecordingUnitCode()) {
-                        throw new RuntimeException("Max recording unit code reached; Please ask administrator to increase the range");
+                        throw new MaxRecordingUnitIdentifierReached("Max recording unit code reached; Please ask administrator to increase the range");
                     }
                     recordingUnit.setIdentifier(nextIdentifier);
                 }

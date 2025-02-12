@@ -8,7 +8,6 @@ import fr.siamois.models.auth.Person;
 
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.history.RecordingUnitHist;
-import fr.siamois.models.history.SpatialUnitHist;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
 import fr.siamois.models.recordingunit.RecordingUnitSize;
@@ -17,7 +16,6 @@ import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.PersonService;
 import fr.siamois.services.RecordingUnitService;
-import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
@@ -243,8 +241,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     // Init for existing recording units
     public void init() {
         try {
-            if (!FacesContext.getCurrentInstance().isPostback()) {
-                if (this.id != null) {
+            if (!FacesContext.getCurrentInstance().isPostback() && this.id != null) {
 
                     log.info("Loading RU");
                     reinitializeBean();
@@ -262,7 +259,7 @@ public class NewRecordingUnitFormBean implements Serializable {
 
                     historyVersion = historyService.findRecordingUnitHistory(recordingUnit);
 
-                }
+
             }
 
         } catch (RuntimeException err) {

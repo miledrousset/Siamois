@@ -1,6 +1,5 @@
 package fr.siamois.models.recordingunit;
 
-import fr.siamois.models.Institution;
 import fr.siamois.models.TraceableEntity;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.ark.Ark;
