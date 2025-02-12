@@ -12,6 +12,7 @@ import fr.siamois.models.exceptions.NotSiamoisThesaurusException;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -34,9 +35,16 @@ public class ConceptApi {
 
     private final ObjectMapper mapper;
 
+    @Autowired
     public ConceptApi(RequestFactory factory) {
         restTemplate = factory.buildRestTemplate();
         mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
+    ConceptApi(RequestFactory factory, ObjectMapper mapper) {
+        this.restTemplate = factory.buildRestTemplate();
+        this.mapper = mapper;
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
@@ -63,12 +71,12 @@ public class ConceptApi {
         return new ConceptBranchDTO();
     }
 
-    private static class ConceptDTO {
+    static class ConceptDTO {
         @JsonProperty("idConcept")
-        private String idConcept;
+        String idConcept;
 
         @JsonProperty("labels")
-        private LabelDTO[] labels;
+        LabelDTO[] labels;
     }
 
     public FullConceptDTO fetchConceptInfo(Vocabulary vocabulary, String conceptId) {
@@ -95,7 +103,7 @@ public class ConceptApi {
     }
 
     private boolean isAutocompleteTopTerm(FullConceptDTO concept) {
-        return concept.getNotation() != null
+        return concept != null && concept.getNotation() != null
                 && Arrays.stream(concept.getNotation())
                 .anyMatch(notation -> notation.getValue().equalsIgnoreCase("SIAMOIS#SIAAUTO"));
     }
