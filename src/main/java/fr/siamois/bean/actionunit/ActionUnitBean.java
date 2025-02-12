@@ -2,7 +2,6 @@ package fr.siamois.bean.actionunit;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.auth.Person;
@@ -13,6 +12,7 @@ import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,6 @@ import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.faces.context.FacesContext;
 
 @Slf4j
 @Data

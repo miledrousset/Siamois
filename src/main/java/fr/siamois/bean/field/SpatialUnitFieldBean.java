@@ -2,9 +2,9 @@ package fr.siamois.bean.field;
 
 import fr.siamois.bean.LangBean;
 import fr.siamois.bean.SessionSettings;
-import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.SpatialUnitService;
 import fr.siamois.services.vocabulary.ConceptService;

@@ -5,36 +5,65 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
-        <f:viewAction action="#{managerCreationBean.init}" />
+        <f:viewAction action="#{managerCreationBean.init}"/>
     </f:metadata>
     <ui:define name="content">
-        <h1>#{langBean.msg("nav.create.manager")}</h1>
-        <h:form>
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <ui:include src="/pages/shared/form/createUser.xhtml" />
-            <p:dataTable var="team" value="#{managerCreationBean.refInstitutions}"
-                         selection="#{managerCreationBean.VTeams}"
-                         widgetVar="teamTable"
-                         emptyMessage='#{langBean.msg("create.team.manager.teams.empty")}'
-                         filteredValue="#{managerCreationBean.filteredInstitutions}"
-                         rowKey="#{team.id}"
-                         selectionMode="multiple"
-            >
-                <p:column selectionBox="true" style="width:16px;text-align:center"/>
-                <p:column headerText="ID" filterBy="#{team.id}" filterMatchMode="contains" filterPlaceholder='#{langBean.msg("commons.filterby.id")}'>
-                    <h:outputText value="#{team.id}"/>
-                </p:column>
-                <p:column headerText='#{langBean.msg("create.team.name")}' filterBy="#{team.name}" filterMatchMode="contains" filterPlaceholder='#{langBean.msg("commons.filterby.name")}'>
-                    <h:outputText value="#{team.name}" />
-                </p:column>
-                <p:column headerText='#{langBean.msg("commons.description")}' filterBy="#{team.description}" filterMatchMode="contains" filterPlaceholder='#{langBean.msg("commons.filterby.description")}'>
-                    <h:outputText value="#{team.description}" />
-                </p:column>
-            </p:dataTable>
-            <h:commandButton value='#{langBean.msg("create.team.confirm")}' action="#{managerCreationBean.createUser()}" />
-            <p:messages id="messages" showDetail="true" closable="true">
-                <p:autoUpdate/>
-            </p:messages>
-        </h:form>
+        <div class="container-fluid">
+            <h:form id="manager_form">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <div class="row">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="col-lg-12">
+                                <h1>#{langBean.msg("nav.create.manager")}</h1>
+                                <ui:include src="/pages/shared/form/createUser.xhtml"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="card">
+                        <div class="card-body">
+                            <p:dataTable var="team" value="#{managerCreationBean.refInstitutions}"
+                                         selection="#{managerCreationBean.VTeams}"
+                                         widgetVar="teamTable"
+                                         emptyMessage='#{langBean.msg("create.team.manager.teams.empty")}'
+                                         filteredValue="#{managerCreationBean.filteredInstitutions}"
+                                         rowKey="#{team.id}"
+                                         selectionMode="multiple"
+                            >
+                                <p:column selectionBox="true" style="width:16px;text-align:center"/>
+                                <p:column headerText="ID" filterBy="#{team.id}" filterMatchMode="contains"
+                                          filterPlaceholder='#{langBean.msg("commons.filterby.id")}'>
+                                    <h:outputText value="#{team.id}"/>
+                                </p:column>
+                                <p:column headerText='#{langBean.msg("create.team.name")}' filterBy="#{team.name}"
+                                          filterMatchMode="contains"
+                                          filterPlaceholder='#{langBean.msg("commons.filterby.name")}'>
+                                    <h:outputText value="#{team.name}"/>
+                                </p:column>
+                                <p:column headerText='#{langBean.msg("commons.description")}'
+                                          filterBy="#{team.description}" filterMatchMode="contains"
+                                          filterPlaceholder='#{langBean.msg("commons.filterby.description")}'>
+                                    <h:outputText value="#{team.description}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="card">
+                        <div class="card-body">
+                            <h:commandButton styleClass="btn mb-1 btn-rounded btn-primary"
+                                             value='#{langBean.msg("create.team.confirm")}'
+                                             action="#{managerCreationBean.createUser()}"/>
+                            <p:messages id="messages" showDetail="true" closable="true">
+                                <p:autoUpdate/>
+                            </p:messages>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </div>
     </ui:define>
 </ui:composition>

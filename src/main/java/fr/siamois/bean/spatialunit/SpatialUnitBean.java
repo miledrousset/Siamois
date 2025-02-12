@@ -2,13 +2,13 @@ package fr.siamois.bean.spatialunit;
 
 import fr.siamois.bean.SessionSettings;
 import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.history.SpatialUnitHist;
 import fr.siamois.models.recordingunit.RecordingUnit;
-import fr.siamois.services.actionunit.ActionUnitService;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.services.HistoryService;
 import fr.siamois.services.RecordingUnitService;
 import fr.siamois.services.SpatialUnitService;
+import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.utils.DateUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;

@@ -1,4 +1,7 @@
 # Siamois
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=miledrousset_Siamois&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=miledrousset_Siamois)
+
 > Description courte du projet
 
 Description longue du projet

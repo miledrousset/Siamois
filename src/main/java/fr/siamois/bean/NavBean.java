@@ -5,8 +5,6 @@ import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
 import fr.siamois.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.utils.AuthenticatedUserUtils;
-import jakarta.faces.context.ExternalContext;
-import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +34,6 @@ public class NavBean implements Serializable {
 
     private transient List<Institution> institutions;
 
-    private Institution selectedInstitution;
-
     public NavBean(SessionSettings sessionSettings, InstitutionChangeEventPublisher institutionChangeEventPublisher, InstitutionConverter converter) {
         this.sessionSettings = sessionSettings;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
@@ -47,18 +43,6 @@ public class NavBean implements Serializable {
     public void init() {
         log.trace("Initializing NavBean");
         institutions = sessionSettings.getReferencedInstitutions();
-        selectedInstitution = sessionSettings.getSelectedInstitution();
-    }
-
-    /**
-     * Builds the logout path with the context path
-     * @return the logout path
-     */
-    public String logoutPath() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = context.getExternalContext();
-        String contextPath = externalContext.getRequestContextPath();
-        return contextPath + "/logout";
     }
 
     /**
@@ -71,26 +55,30 @@ public class NavBean implements Serializable {
         return optUser.map(person -> person.hasRole(roleName)).orElse(false);
     }
 
-    /**
-     * Checks if the user is in any of the given roles
-     * @param roles the roles to check
-     * @return true if the user is in any of the roles, false otherwise
-     */
-    public boolean userIsAny(String... roles) {
-        Optional<Person> optUser = AuthenticatedUserUtils.getAuthenticatedUser();
-        if (optUser.isEmpty()) return false;
-
-        Person user = optUser.get();
-        for (String role : roles) {
-            if (user.hasRole(role)) return true;
-        }
-        return false;
-    }
-
-    public void changeSelectedInstitution() {
-        Institution oldInstit = sessionSettings.getSelectedInstitution();
-        sessionSettings.setSelectedInstitution(selectedInstitution);
+    public void changeSelectedInstitution(Institution institution) {
+        Institution old = sessionSettings.getSelectedInstitution();
+        sessionSettings.setSelectedInstitution(institution);
         institutionChangeEventPublisher.publishInstitutionChangeEvent();
-        log.trace("Institution changed from {} to {}", oldInstit.toString(), selectedInstitution.toString());
+        log.trace("Institution changed from {} to {}", old, institution);
     }
+
+    public boolean institutionRefIsEmpty() {
+        if (institutions == null) {
+            institutions = sessionSettings.getReferencedInstitutions();
+        }
+        return institutions.isEmpty();
+    }
+
+    public Institution getSelectedInstitution() {
+        return sessionSettings.getSelectedInstitution();
+    }
+
+    public boolean isManagerOrAdminOfInstitution() {
+        if (userIs("ADMIN")) return true;
+        Optional<Person> optUser = AuthenticatedUserUtils.getAuthenticatedUser();
+        Institution selected = getSelectedInstitution();
+        return optUser.filter(person -> userIs("TEAM_MANAGER")
+                && selected.getManager().equals(person)).isPresent();
+    }
+
 }

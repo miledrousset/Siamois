@@ -3,18 +3,18 @@ package fr.siamois.services.actionunit;
 import fr.siamois.infrastructure.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
+import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.exceptions.FailedActionUnitSaveException;
-import fr.siamois.models.spatialunit.SpatialUnit;
-import fr.siamois.models.UserInfo;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.ActionUnitNotFoundException;
+import fr.siamois.models.exceptions.FailedActionUnitSaveException;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
-import fr.siamois.utils.ArkGeneratorUtils;
 import fr.siamois.services.vocabulary.ConceptService;
+import fr.siamois.utils.ArkGeneratorUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -134,7 +134,7 @@ public class ActionUnitService {
 
             // ------------------ Handle secondary codes
             // Get the old version of the actionUnit
-            ActionUnit currentVersion = actionUnitRepository.findById(actionUnit.getId()).get();
+            ActionUnit currentVersion = actionUnitRepository.findById(actionUnit.getId()).orElseThrow(IllegalStateException::new);
 
             // Get the old list of secondaryActionCodes
             Set<ActionCode> currentSecondaryActionCodes = currentVersion.getSecondaryActionCodes();

@@ -1,13 +1,12 @@
 package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
-import fr.siamois.models.spatialunit.SpatialUnit;
-import fr.siamois.models.Team;
 import fr.siamois.models.Institution;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
 import fr.siamois.models.history.SpatialUnitHist;
+import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.vocabulary.ConceptService;
 import lombok.extern.slf4j.Slf4j;
