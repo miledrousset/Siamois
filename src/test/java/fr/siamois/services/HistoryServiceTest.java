@@ -7,10 +7,8 @@ import fr.siamois.models.Institution;
 import fr.siamois.models.TraceableEntity;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.history.GlobalHistoryEntry;
-import fr.siamois.models.history.HistoryOperation;
-import fr.siamois.models.history.HistoryUpdateType;
-import fr.siamois.models.history.SpatialUnitHist;
+import fr.siamois.models.history.*;
+import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -127,4 +125,21 @@ class HistoryServiceTest {
         assertEquals(1, result.size());
         verify(spatialUnitHistoryRepository, times(1)).findAllByTableId(1L);
     }
+
+    @Test
+    void findRecordingUnitHistory() {
+        RecordingUnit recordingUnit = new RecordingUnit();
+        recordingUnit.setId(1L);
+
+        List<RecordingUnitHist> recordingUnitHists = new ArrayList<>();
+        recordingUnitHists.add(new RecordingUnitHist());
+
+        when(recordingUnitHistoryRepository.findAllByTableId(1L)).thenReturn(recordingUnitHists);
+
+        List<RecordingUnitHist> result = historyService.findRecordingUnitHistory(recordingUnit);
+
+        assertEquals(1, result.size());
+        verify(recordingUnitHistoryRepository, times(1)).findAllByTableId(1L);
+    }
+
 }
