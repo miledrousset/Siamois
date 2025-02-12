@@ -140,7 +140,21 @@ class ConceptApiTest {
         when(mapper.readValue(anyString(), any(TypeReference.class))).thenThrow(JsonProcessingException.class);
 
         assertThrows(NotSiamoisThesaurusException.class, () -> conceptApi.fetchFieldsBranch(vocabulary));
+    }
 
+    @Test
+    void fetchFieldsBranch_throws_whenJsonException() throws JsonProcessingException, NotSiamoisThesaurusException {
+        conceptApi = new ConceptApi(requestFactory, mapper);
+        when(restTemplate.getForObject(any(URI.class), eq(String.class))).thenReturn("NOT EMPTY");
+
+        ConceptApi.ConceptDTO dto = new ConceptApi.ConceptDTO();
+        dto.idConcept = "12";
+
+        when(mapper.readValue(anyString(), eq(ConceptApi.ConceptDTO[].class))).thenThrow(JsonProcessingException.class);
+
+        ConceptBranchDTO result = conceptApi.fetchFieldsBranch(vocabulary);
+
+        assertNull(result);
     }
 
 }
