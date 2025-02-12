@@ -71,12 +71,12 @@ public class ConceptApi {
         return new ConceptBranchDTO();
     }
 
-    private static class ConceptDTO {
+    static class ConceptDTO {
         @JsonProperty("idConcept")
-        private String idConcept;
+        String idConcept;
 
         @JsonProperty("labels")
-        private LabelDTO[] labels;
+        LabelDTO[] labels;
     }
 
     public FullConceptDTO fetchConceptInfo(Vocabulary vocabulary, String conceptId) {
@@ -103,7 +103,7 @@ public class ConceptApi {
     }
 
     private boolean isAutocompleteTopTerm(FullConceptDTO concept) {
-        return concept.getNotation() != null
+        return concept != null && concept.getNotation() != null
                 && Arrays.stream(concept.getNotation())
                 .anyMatch(notation -> notation.getValue().equalsIgnoreCase("SIAMOIS#SIAAUTO"));
     }

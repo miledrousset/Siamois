@@ -122,4 +122,25 @@ class ConceptApiTest {
         assertNull(result);
     }
 
+    @Test
+    void fetchFieldsBranch_throws_whenThesauIsNotSiamois() throws JsonProcessingException {
+        conceptApi = new ConceptApi(requestFactory, mapper);
+
+        when(restTemplate.getForObject(any(URI.class), eq(String.class))).thenReturn("NOT EMPTY");
+
+        ConceptApi.ConceptDTO dto = new ConceptApi.ConceptDTO();
+        dto.idConcept = "12";
+
+        when(mapper.readValue(anyString(), eq(ConceptApi.ConceptDTO[].class))).thenReturn(new ConceptApi.ConceptDTO[] { dto });
+
+        when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(), eq(String.class)))
+                .thenReturn(new ResponseEntity<>("Not empty", HttpStatus.OK));
+
+        //noinspection unchecked
+        when(mapper.readValue(anyString(), any(TypeReference.class))).thenThrow(JsonProcessingException.class);
+
+        assertThrows(NotSiamoisThesaurusException.class, () -> conceptApi.fetchFieldsBranch(vocabulary));
+
+    }
+
 }
