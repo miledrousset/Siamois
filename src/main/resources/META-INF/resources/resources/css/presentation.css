@@ -1,0 +1,35 @@
+body {
+    background-color: #F3F3F9;
+}
+
+.presentation-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+}
+
+.container-fluid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.presentation-container img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 1vh;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-body p {
+    text-align: left;
+    width: 100%;
+}

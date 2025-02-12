@@ -1,0 +1,49 @@
+#connection-head {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-gap: 2vh;
+    min-height: 0;  /* NEW */
+    min-width: 0;   /* NEW; needed for Firefox */
+}
+
+#connection-head > * {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    background-color: #F3F3F9;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+}
+
+.container-fluid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.login-container img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 1vh;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-body p {
+    text-align: left;
+    width: 100%;
+}

@@ -8,34 +8,62 @@
         <f:viewAction action="#{userBean.init()}"/>
     </f:metadata>
     <ui:define name="content">
-        <h1>#{langBean.msg("create.team.user.title")}</h1>
-        <h:form>
-            <p:messages id="messages" showDetail="true" closable="true">
-                <p:autoUpdate/>
-            </p:messages>
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <ui:include src="/pages/shared/form/createUser.xhtml" />
-            <p:autoComplete value="#{userBean.role}"
-                            completeMethod="#{userBean.autocompleteRoles}"
-                            forceSelection="true"
-                            scrollHeight="300"
-                            dropdown="true"/>
-            <p:commandButton value="#{langBean.msg('create.team.user')}" action="#{userBean.createUser()}" update="memberTable" />
-            <p:dataTable id="memberTable"
-                         var="person" value="#{userBean.teamMembers}" widgetVar="managerTable"
-                         emptyMessage='#{langBean.msg("create.team.filter.manager.empty")}'
-                         filteredValue="#{institutionCreationBean.filteredManagers}"
-                         rowKey="#{person.id}"
-            >
-                <p:column headerText='#{langBean.msg("commons.username")}' filterBy="#{person.username}" filterMatchMode="contains"
-                          filterPlaceholder='#{langBean.msg("create.team.filter.username")}'>
-                    <h:outputText value="#{person.username}"/>
-                </p:column>
-                <p:column headerText='#{langBean.msg("commons.name")}'
-                          filterPlaceholder='#{langBean.msg("create.team.filter.name")}'>
-                    <h:outputText value="#{person.name}"/>
-                </p:column>
-            </p:dataTable>
-        </h:form>
+        <div class="container-fluid">
+            <h:form id="user-management">
+                <div class="row">
+                    <div class="card">
+                        <div class="card-body">
+                            <h1>#{langBean.msg("create.team.user.title")}</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="card">
+                        <div class="card-content">
+                            <p:messages id="messages" showDetail="true" closable="true">
+                                <p:autoUpdate/>
+                            </p:messages>
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            <ui:include src="/pages/shared/form/createUser.xhtml"/>
+                            <p:autoComplete value="#{userBean.role}"
+                                            completeMethod="#{userBean.autocompleteRoles}"
+                                            forceSelection="true"
+                                            scrollHeight="300"
+                                            dropdown="true"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="card">
+                        <div class="card-body">
+                            <p:dataTable id="memberTable"
+                                         var="person" value="#{userBean.teamMembers}" widgetVar="managerTable"
+                                         emptyMessage='#{langBean.msg("create.team.filter.manager.empty")}'
+                                         filteredValue="#{institutionCreationBean.filteredManagers}"
+                                         rowKey="#{person.id}"
+                            >
+                                <p:column headerText='#{langBean.msg("commons.username")}' filterBy="#{person.username}"
+                                          filterMatchMode="contains"
+                                          filterPlaceholder='#{langBean.msg("create.team.filter.username")}'>
+                                    <h:outputText value="#{person.username}"/>
+                                </p:column>
+                                <p:column headerText='#{langBean.msg("commons.name")}'
+                                          filterPlaceholder='#{langBean.msg("create.team.filter.name")}'>
+                                    <h:outputText value="#{person.name}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="card">
+                        <div class="card-body">
+                            <p:commandButton value="#{langBean.msg('create.team.user')}"
+                                             action="#{userBean.createUser()}" update="memberTable"/>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </div>
     </ui:define>
 </ui:composition>

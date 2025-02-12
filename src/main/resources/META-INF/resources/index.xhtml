@@ -2,16 +2,49 @@
 <HTML xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
       xml:lang="#{langBean.languageCode}"
 >
 
+<f:metadata>
+    <f:event type="preRenderView" listener="#{presentationBean.checkAuth()}"/>
+</f:metadata>
 
+<h:head>
+    <h:outputStylesheet library="css" name="presentation.css"/>
+    <link href="#{request.contextPath}/static/quixlab/css/style.css" rel="stylesheet"/>
+</h:head>
 
 <h:body>
+    <main class="presentation-container">
+        <div class="container-fluid">
+            <div class="row col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h:graphicImage library="img" styleClass="img-fluid w-20" name="LOGO_CMJN-baseline.png"/>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sin kakan malitiam dixisses,
+                            ad aliud nos unum certum vitium consuetudo Latina traduceret. Facit enim ille duo seiuncta ultima bonorum,
+                            quae ut essent vera, coniungi debuerunt; Deinde, ubi erubuit-vis enim est permagna naturae-, confugit illuc,
+                            ut neget accedere quicquam posse ad voluptatem nihil dolentis. Familiares nostros, credo, Sironem dicis et
+                            Philodemum, cum optimos viros, tum homines doctissimos. Idem etiam dolorem saepe perpetiuntur,
+                            ne, si id non faciant, incidant in maiorem. Duo Reges: constructio interrete. Et certamen honestum et
+                            disputatio splendida! omnis est enim de virtutis dignitate contentio. Non quaero,
+                            quid dicat, sed quid convenienter possit rationi et sententiae suae dicere. Sin ea non neglegemus neque
+                            tamen ad finem summi boni referemus, non multum ab Erilli levitate aberrabimus.
+                            Tanta vis admonitionis inest in locis; </p>
 
-    <ui:include src="pages/home/home.xhtml"/>
+                        <p>Haec non erant eius, qui innumerabilis mundos infinitasque regiones,
+                            quarum nulla esset ora, nulla extremitas, mente peragravisset. Nam si propter voluptatem,
+                            quae est ista laus, quae possit e macello peti? Aberat omnis dolor, qui si adesset, nec molliter ferret et tamen medicis plus quam philosophis uteretur. Haeret in salebra. Sed si duo honesta proposita sint, alterum cum valitudine, alterum cum morbo, non esse dubium, ad utrum eorum natura nos ipsa deductura sit. Sunt etiam turpitudines plurimae, quae, nisi honestas natura plurimum valeat, cur non cadant in sapientem non est facile defendere. Nulla erit controversia. In qua si nihil est praeter rationem, sit in una virtute finis bonorum; </p>
 
+                        <a href="#{request.contextPath}/dashboard">
+                            <button class="btn mb-1 btn-success">Se connecter</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 </h:body>
-
 
 </HTML>
