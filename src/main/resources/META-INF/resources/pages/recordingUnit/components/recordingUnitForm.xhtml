@@ -266,19 +266,7 @@
                                 <span class="custom-marker shadow-1" style="background-color: #{event.color}"><i
                                         class="#{event.icon}"/></span>
                                     </f:facet>
-                                    <p:menuButton value="Add"
-                                                  buttonStyle="background: #{event.color};border-color: #{event.color};"
-                                                  icon="pi pi-plus-circle">
-                                                                                    <p:menuitem
-                                                                                            value="Relation certaine"
-                                                                                            immediate="true"
-                                                                                            action="#{newRecordingUnitFormBean.fetchAllRecordingUnitsInSameActionUnit}"
-                                                                                            update="newRecordingUnitFormComponent:idSearchRecordingUnitInActionUnit"
-                                                                                            oncomplete="PF('searchRecordingUnitInActionUnit').show();"/>
-                                                                                    <p:menuitem
-                                                                                            value="Relation incertaine"
-                                                                                            oncomplete="PF('searchRecordingUnitInActionUnit').show();"/>
-                                    </p:menuButton>
+
                                     <div class="flex align-items-center flex-wrap" id="slot">
                                         <ui:repeat value="#{newRecordingUnitFormBean.stratigraphySelectedRecordingUnit}"
                                                    var="value">

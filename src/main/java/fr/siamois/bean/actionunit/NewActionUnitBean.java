@@ -113,7 +113,9 @@ public class NewActionUnitBean implements Serializable {
     }
 
     public void reinit(SpatialUnit spatialUnit) {
+        init();
         this.actionUnit.setSpatialUnit(spatialUnit);
+        this.actionUnit.setCreatedByInstitution(spatialUnit.getCreatedByInstitution());
     }
 
 

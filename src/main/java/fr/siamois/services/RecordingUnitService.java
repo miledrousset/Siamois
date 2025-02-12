@@ -81,8 +81,8 @@ public class RecordingUnitService {
                 if (recordingUnit.getIdentifier() == null) {
                     // Generate next identifier
                     Integer currentMaxIdentifier = recordingUnitRepository.findMaxUsedIdentifierByAction(recordingUnit.getActionUnit().getId());
-                    Integer nextIdentifier = (currentMaxIdentifier == null) ? recordingUnit.getActionUnit().getMaxRecordingUnitCode() : currentMaxIdentifier + 1;
-                    if (nextIdentifier > recordingUnit.getActionUnit().getMaxRecordingUnitCode()) {
+                    Integer nextIdentifier = (currentMaxIdentifier == null) ? recordingUnit.getActionUnit().getMinRecordingUnitCode() : currentMaxIdentifier + 1;
+                    if (nextIdentifier > recordingUnit.getActionUnit().getMaxRecordingUnitCode() || nextIdentifier < 0) {
                         throw new MaxRecordingUnitIdentifierReached("Max recording unit code reached; Please ask administrator to increase the range");
                     }
                     recordingUnit.setIdentifier(nextIdentifier);
