@@ -1,6 +1,7 @@
 package fr.siamois.bean.user;
 
 import fr.siamois.bean.LangBean;
+import fr.siamois.bean.NavBean;
 import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedInstitutionSaveException;
@@ -30,10 +31,11 @@ import java.util.List;
 public class InstitutionCreationBean implements Serializable {
 
     // Injections
-    private final PersonService personService;
+    private final transient PersonService personService;
     private final LangBean langBean;
     private final UserAddBean userAddBean;
-    private final InstitutionService institutionService;
+    private final transient InstitutionService institutionService;
+    private final NavBean navBean;
 
     // Storage
     private List<Person> managers;
@@ -48,11 +50,12 @@ public class InstitutionCreationBean implements Serializable {
 
     private Person fManager;
 
-    public InstitutionCreationBean(PersonService personService, LangBean langBean, UserAddBean userAddBean, InstitutionService institutionService) {
+    public InstitutionCreationBean(PersonService personService, LangBean langBean, UserAddBean userAddBean, InstitutionService institutionService, NavBean navBean) {
         this.personService = personService;
         this.langBean = langBean;
         this.userAddBean = userAddBean;
         this.institutionService = institutionService;
+        this.navBean = navBean;
     }
 
     /**
@@ -91,6 +94,7 @@ public class InstitutionCreationBean implements Serializable {
                 institution.setManager(fManager);
                 institution.setIdentifier(fInstCode);
                 institutionService.createInstitution(institution);
+                navBean.updateInstitutions();
                 MessageUtils.displayInfoMessage(langBean, "create.team.success");
             } catch (InstitutionAlreadyExist e) {
                 log.error("Institution already exists.", e);

@@ -63,7 +63,7 @@ public class NavBean implements Serializable {
     }
 
     public boolean institutionRefIsEmpty() {
-        if (institutions == null) {
+        if (institutions == null || institutions.isEmpty()) {
             institutions = sessionSettings.getReferencedInstitutions();
         }
         return institutions.isEmpty();
@@ -79,6 +79,10 @@ public class NavBean implements Serializable {
         Institution selected = getSelectedInstitution();
         return optUser.filter(person -> userIs("TEAM_MANAGER")
                 && selected.getManager().equals(person)).isPresent();
+    }
+
+    public void updateInstitutions() {
+        sessionSettings.setupSession();
     }
 
 }

@@ -41,7 +41,7 @@ public class SessionSettings implements Serializable {
     }
 
     public List<Institution> getReferencedInstitutions() {
-        if (referencedInstitutions == null) {
+        if (referencedInstitutions == null || referencedInstitutions.isEmpty()) {
             setupSession();
         }
         return referencedInstitutions;
@@ -70,10 +70,11 @@ public class SessionSettings implements Serializable {
 
         result.sort(((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName())));
 
-        if (!result.isEmpty())
+        referencedInstitutions = result;
+
+        if (selectedInstitution == null && !result.isEmpty())
             selectedInstitution = result.get(0);
 
-        referencedInstitutions = result;
     }
 
 }
