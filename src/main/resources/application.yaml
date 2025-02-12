@@ -54,7 +54,7 @@ spring:
 
 joinfaces:
   faces:
-    project-stage: development
+    project-stage: production
   primefaces:
     theme: overcast
 
