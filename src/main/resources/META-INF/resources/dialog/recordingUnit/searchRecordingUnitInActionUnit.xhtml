@@ -12,15 +12,15 @@
         <h:form id="searchRecordingUnitInActionUnitForm">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
-            <p:dataTable id="recordingUnitListInSameActionTable" value="#{cc.attrs.recordingUnitFormBean.recordingUnitList}"
+            <p:dataTable id="recordingUnitListInSameActionTable" value="#{newRecordingUnitFormBean.recordingUnitList}"
                          var="recordingUnit" paginator="true" rows="5" selectionMode="multiple" rowKey="#{recordingUnit.id}"
                          selectionPageOnly="false" selectionRowMode="none" cellNavigation="true"
-                         selection="#{cc.attrs.recordingUnitFormBean.stratigraphySelectedRecordingUnit}">
+                         selection="#{newRecordingUnitFormBean.stratiDialogSelection}">
 
                 <p:column selectionBox="true" style="width:16px;text-align:center"/>
 
                 <p:column headerText="Name">
-                    <h:outputText value="#{recordingUnit.id}"/>
+                    <h:outputText value="#{recordingUnit.displayFullIdentifier()}"/>
                 </p:column>
 
                 <p:column headerText="Type">
@@ -33,8 +33,8 @@
                 <p:toolbarGroup>
 
                     <p:commandButton value='Creer les relations stratigraphique' icon="pi pi-check"
-                                     action="#{cc.attrs.recordingUnitFormBean.addStratigraphicRelationshipFromSelection}"
-                                     update="newRecordingUnitFormComponent:recordingUnitForm:recordingUnitFormTabView:panel-stratigraphy"
+                                     action="#{newRecordingUnitFormBean.addStratigraphicRelationshipFromSelection()}"
+                                     update="recordingUnitFormId:recordingUnitTabsId:panel-stratigraphy"
                                      oncomplete="PF('searchRecordingUnitInActionUnit').hide();"
                                      style="margin-right: .5rem">
                     </p:commandButton>

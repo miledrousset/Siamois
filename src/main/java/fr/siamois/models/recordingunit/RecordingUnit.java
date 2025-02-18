@@ -10,15 +10,24 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Set;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "recording_unit")
 public class RecordingUnit extends RecordingUnitParent {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recording_unit_id", nullable = false)
     private Long id;
+
+    @OneToMany(mappedBy = "unit1")
+    private Set<StratigraphicRelationship> relationshipsAsUnit1;
+
+    @OneToMany(mappedBy = "unit2")
+    private Set<StratigraphicRelationship> relationshipsAsUnit2;
 
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIARU.TYPE";

@@ -1,4 +1,4 @@
-package fr.siamois.services;
+package fr.siamois.services.recordingunit;
 
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;

@@ -15,7 +15,8 @@ import fr.siamois.services.HistoryService;
 import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.PersonService;
-import fr.siamois.services.RecordingUnitService;
+import fr.siamois.services.recordingunit.RecordingUnitService;
+import fr.siamois.services.recordingunit.StratigraphicRelationshipService;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static java.awt.Color.green;
 import static java.time.OffsetDateTime.now;
 
 @Data
@@ -53,16 +55,16 @@ public class NewRecordingUnitFormBean implements Serializable {
     private final transient ConceptService conceptService;
     private final SessionSettings sessionSettings;
     private final transient FieldConfigurationService fieldConfigurationService;
+    private final StratigraphicRelationshipService stratigraphicRelationshipService;
 
     // Local
     private RecordingUnit recordingUnit;
     private String recordingUnitErrorMessage;
     private LocalDate startDate;
     private LocalDate endDate;
-    private transient List<Event> events; // Strati
+
     private Boolean isLocalisationFromSIG;
-    private transient List<RecordingUnit> recordingUnitList;
-    private transient List<RecordingUnit> stratigraphySelectedRecordingUnit;
+
 
     private transient List<Concept> concepts;
     private Concept fType = null;
@@ -74,6 +76,20 @@ public class NewRecordingUnitFormBean implements Serializable {
     private transient List<RecordingUnitHist> historyVersion;
     private RecordingUnitHist revisionToDisplay = null;
 
+    // Stratigraphy
+    private transient List<Event> events; // Strati
+    private transient List<StratigraphyValidationEvent> validationEvents; // Strati
+    private transient List<RecordingUnit> recordingUnitList; // To store the candidate for stratigraphic relationships
+    private transient List<RecordingUnit> stratigraphySelectedRecordingUnit;
+    private final int POSTERIOR = 0;
+    private final int SYNCHRONOUS = 1;
+    private final int ANTERIOR = 2;
+    private final int CERTAIN = 0;
+    private final int UNCERTAIN = 1;
+    private int stratiDialogType ; // Index from 0 to 2
+    private int stratiDialogCertainty ; // 0 or 1
+    private List<RecordingUnit> stratiDialogSelection;
+
     @Data
     public static class Event {
 
@@ -82,6 +98,8 @@ public class NewRecordingUnitFormBean implements Serializable {
         private String icon;
         private String color;
         private String image;
+        private int type;
+        private List<RecordingUnit> recordingUnitList;
 
         public Event(String status, String date, String icon, String color) {
             this.status = status;
@@ -100,12 +118,29 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
+    @Data
+    public static class StratigraphyValidationEvent {
+
+        private String status;
+        private String name;
+        private String icon;
+        private String color;
+
+
+        public StratigraphyValidationEvent(String status, String name, String icon, String color) {
+            this.status = status;
+            this.name = name;
+            this.icon = icon;
+            this.color = color;
+        }
+
+    }
+
 
     public RecordingUnit save(RecordingUnit recordingUnit,
                               Concept typeConcept,
                               LocalDate startDate,
                               LocalDate endDate) {
-
 
 
         // handle dates
@@ -165,7 +200,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                                     FieldService fieldService,
                                     LangBean langBean,
                                     ConceptService conceptService,
-                                    SessionSettings sessionSettings, FieldConfigurationService fieldConfigurationService) {
+                                    SessionSettings sessionSettings, FieldConfigurationService fieldConfigurationService, StratigraphicRelationshipService stratigraphicRelationshipService) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.historyService = historyService;
@@ -175,7 +210,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         this.conceptService = conceptService;
         this.sessionSettings = sessionSettings;
         this.fieldConfigurationService = fieldConfigurationService;
-
+        this.stratigraphicRelationshipService = stratigraphicRelationshipService;
     }
 
     public void reinitializeBean() {
@@ -201,6 +236,31 @@ public class NewRecordingUnitFormBean implements Serializable {
         return "/pages/create/recordingUnit.xhtml?faces-redirect=true";
     }
 
+    public void initStratigraphy() {
+        events = new ArrayList<>();
+        validationEvents = new ArrayList<>();
+
+        // Init neighbors
+        Event anterior = new Event("Anterior", "15/10/2020 10:30", "pi pi-arrow-circle-down", "#9C27B0", "game-controller.jpg");
+        anterior.setRecordingUnitList(stratigraphicRelationshipService.getAnteriorUnits(recordingUnit));
+        anterior.setType(ANTERIOR);
+        Event synchronous = new Event("Synchronous", "15/10/2020 14:00", "pi pi-sync", "#673AB7");
+        synchronous.setRecordingUnitList(stratigraphicRelationshipService.getSynchronousUnits(recordingUnit));
+        synchronous.setType(SYNCHRONOUS);
+        Event posterior = new Event("Posterior", "15/10/2020 16:15", "pi pi-arrow-circle-up", "#FF9800");
+        posterior.setRecordingUnitList(stratigraphicRelationshipService.getPosteriorUnits(recordingUnit));
+        posterior.setType(POSTERIOR);
+        events.add(posterior);
+        events.add(synchronous);
+        events.add(anterior);
+
+        // Init validation control
+        validationEvents.add(new StratigraphyValidationEvent("Inclusions", "Inclusions", "pi pi-check", "green"));
+        validationEvents.add(new StratigraphyValidationEvent("Relations certaines", "Relations certaines", "pi pi-spin pi-spinner", "#008dcd"));
+        validationEvents.add(new StratigraphyValidationEvent("Relations incertaines", "Relations incertaines", "pi pi-times", "red"));
+
+    }
+
     // Init for new recording units
     public void init(ActionUnit actionUnit) {
         try {
@@ -220,11 +280,9 @@ public class NewRecordingUnitFormBean implements Serializable {
             this.recordingUnit.setAltitude(new RecordingUnitAltimetry());
             this.recordingUnit.getAltitude().setAltitudeUnit("m");
 
+            initStratigraphy();
 
-            events = new ArrayList<>();
-            events.add(new Event("Anterior", "15/10/2020 10:30", "pi pi-arrow-circle-up", "#9C27B0", "game-controller.jpg"));
-            events.add(new Event("Synchronous", "15/10/2020 14:00", "pi pi-sync", "#673AB7"));
-            events.add(new Event("Posterior", "15/10/2020 16:15", "pi pi-arrow-circle-down", "#FF9800"));
+
             this.recordingUnitList = recordingUnitService.findAllByActionUnit(recordingUnit.getActionUnit());
             log.info("here");
 
@@ -238,26 +296,40 @@ public class NewRecordingUnitFormBean implements Serializable {
         }
     }
 
+    public void initStratiDialog(int type) {
+
+        // TODO : filter the following list to remove the UE already added with another type/certainty
+        stratiDialogType = type;
+        this.recordingUnitList = recordingUnitService.findAllByActionUnit(recordingUnit.getActionUnit());
+        stratiDialogSelection = events.get(stratiDialogType).recordingUnitList;
+    }
+
+    public void addStratigraphicRelationshipFromSelection() {
+        events.get(stratiDialogType).setRecordingUnitList(stratiDialogSelection);
+    }
+
     // Init for existing recording units
     public void init() {
         try {
             if (!FacesContext.getCurrentInstance().isPostback() && this.id != null) {
 
-                    log.info("Loading RU");
-                    reinitializeBean();
-                    this.recordingUnit = this.recordingUnitService.findById(this.id);
-                    if (this.recordingUnit.getStartDate() != null) {
-                        this.startDate = offsetDateTimeToLocalDate(this.recordingUnit.getStartDate());
-                    }
-                    if (this.recordingUnit.getEndDate() != null) {
-                        this.endDate = offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());
-                    }
+                log.info("Loading RU");
+                reinitializeBean();
+                this.recordingUnit = this.recordingUnitService.findById(this.id);
+                if (this.recordingUnit.getStartDate() != null) {
+                    this.startDate = offsetDateTimeToLocalDate(this.recordingUnit.getStartDate());
+                }
+                if (this.recordingUnit.getEndDate() != null) {
+                    this.endDate = offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());
+                }
 
-                    this.isLocalisationFromSIG = false;
-                    // Init type field
-                    fType = this.recordingUnit.getType();
+                this.isLocalisationFromSIG = false;
+                // Init type field
+                fType = this.recordingUnit.getType();
 
-                    historyVersion = historyService.findRecordingUnitHistory(recordingUnit);
+                initStratigraphy();
+
+                historyVersion = historyService.findRecordingUnitHistory(recordingUnit);
 
 
             }

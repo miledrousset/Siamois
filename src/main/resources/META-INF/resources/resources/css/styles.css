@@ -62,7 +62,7 @@ html, body {
 
 .main-content {
     flex-grow: 1;
-    padding: 20px;
+    margin: 20px;
     overflow-y: auto;
 }
 
@@ -118,5 +118,10 @@ html, body {
 .edit-type-chip:hover {
     background: #2196f3;
     color: white;
+}
+
+.stratigraphy-neighborhood .ui-chronoline-event-opposite {
+    display: none !important; /* Hides the opposite side */
+    width: 0 !important; /* Ensures no space is occupied */
 }
 

@@ -11,6 +11,7 @@ import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
+import fr.siamois.services.recordingunit.RecordingUnitService;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldService;
 import org.junit.jupiter.api.BeforeEach;

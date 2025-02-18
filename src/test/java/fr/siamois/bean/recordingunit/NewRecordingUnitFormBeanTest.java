@@ -4,7 +4,7 @@ import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
 import fr.siamois.models.recordingunit.RecordingUnitSize;
-import fr.siamois.services.RecordingUnitService;
+import fr.siamois.services.recordingunit.RecordingUnitService;
 import fr.siamois.services.actionunit.ActionUnitService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
