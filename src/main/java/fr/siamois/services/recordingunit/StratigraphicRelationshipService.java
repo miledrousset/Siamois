@@ -3,7 +3,11 @@ package fr.siamois.services.recordingunit;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.StratigraphicRelationshipRepository;
 import fr.siamois.models.recordingunit.RecordingUnit;
+import fr.siamois.models.recordingunit.StratigraphicRelationshipId;
 import fr.siamois.models.vocabulary.Concept;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,22 +21,29 @@ import fr.siamois.models.recordingunit.StratigraphicRelationship;
 @Service
 public class StratigraphicRelationshipService {
 
-    private final RecordingUnitRepository unitRepository;
     private final StratigraphicRelationshipRepository relationshipRepository;
-    private final Concept synchronous ;
-    private final Concept asynchronous ;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public StratigraphicRelationshipService(RecordingUnitRepository unitRepository, StratigraphicRelationshipRepository relationshipRepository) {
+    public static final Concept SYNCHRONOUS;
+    public static final Concept ASYNCHRONOUS;
 
-        this.unitRepository = unitRepository;
+    // Init concepts. We might do it differently later.
+    // To be defined how we want to store the relationships and their labels.
+    // maybe three columns : concept + synchron/async + certainty. We might need to store mapping between concepts and
+    // sync/async
+    static {
+        SYNCHRONOUS = new Concept();
+        SYNCHRONOUS.setId(-1L);
+        ASYNCHRONOUS = new Concept();
+        ASYNCHRONOUS.setId(-2L);
+    }
+
+    public StratigraphicRelationshipService(
+            RecordingUnitRepository unitRepository,
+            StratigraphicRelationshipRepository relationshipRepository) {
+
         this.relationshipRepository = relationshipRepository;
-
-        // Init concepts. We might do it differently later.
-        // To be defined how we want to store the relationships and their labels.
-        synchronous = new Concept();
-        asynchronous = new Concept();
-        synchronous.setId(-1L);
-        asynchronous.setId(-2L);
 
     }
 
@@ -41,13 +52,13 @@ public class StratigraphicRelationshipService {
         List<RecordingUnit> synchronousUnits = new ArrayList<>();
 
         // Find synchronous relationships where usq is unit1
-        synchronousUnits.addAll(relationshipRepository.findByUnit1AndRelationshipType(usq, synchronous)
+        synchronousUnits.addAll(relationshipRepository.findByUnit1AndType(usq, SYNCHRONOUS)
                 .stream()
                 .map(StratigraphicRelationship::getUnit2)
                 .toList());
 
         // Find synchronous relationships where usq is unit2
-        synchronousUnits.addAll(relationshipRepository.findByUnit2AndRelationshipType(usq, synchronous)
+        synchronousUnits.addAll(relationshipRepository.findByUnit2AndType(usq, SYNCHRONOUS)
                 .stream()
                 .map(StratigraphicRelationship::getUnit1) // Here we take unit1 instead of unit2
                 .toList());
@@ -56,20 +67,61 @@ public class StratigraphicRelationshipService {
     }
 
     public List<RecordingUnit> getAnteriorUnits(RecordingUnit usq) {
-        return relationshipRepository.findByUnit2AndRelationshipType(usq, asynchronous)
+        return relationshipRepository.findByUnit2AndType(usq, ASYNCHRONOUS)
                 .stream()
                 .map(StratigraphicRelationship::getUnit1) // If unit2 = usq, unit1 is anterior
                 .collect(Collectors.toList());
     }
 
     public List<RecordingUnit> getPosteriorUnits(RecordingUnit usq) {
-        return relationshipRepository.findByUnit1AndRelationshipType(usq, asynchronous)
+        return relationshipRepository.findByUnit1AndType(usq, ASYNCHRONOUS)
                 .stream()
                 .map(StratigraphicRelationship::getUnit2) // If unit1 = usq, unit2 is posterior
                 .collect(Collectors.toList());
     }
 
-    public Optional<RecordingUnit> getUnitById(Long id) {
-        return unitRepository.findById(id);
+    @Transactional
+    public StratigraphicRelationship saveOrGet(RecordingUnit unit1, RecordingUnit unit2, Concept type) {
+
+        // First, try to find the relationship with the given order of units (unit1, unit2)
+        Optional<StratigraphicRelationship> opt = relationshipRepository.findByUnit1AndUnit2AndType(unit1, unit2, type);
+
+        // If found, update the type and return the relationship
+        if (opt.isPresent()) {
+            StratigraphicRelationship existingRel = opt.get();
+            existingRel.setType(type);
+            return relationshipRepository.save(existingRel);
+        }
+
+        // If not found, check for the reversed relationship (unit2, unit1)
+        opt = relationshipRepository.findByUnit1AndUnit2AndType(unit2, unit1, type);
+
+        // If reversed relationship found, delete the old one and create a new one with the correct order
+        if (opt.isPresent()) {
+            StratigraphicRelationship existingRel = opt.get();
+            relationshipRepository.delete(existingRel); // Delete the reversed relationship
+            entityManager.flush(); // Ensure the deletion is flushed before proceeding because
+            // there is a trigger in DB for reversed relationships
+
+            // Create a new relationship with the correct order
+            return save(unit1, unit2, type);
+        }
+
+        // If neither exists, create a new relationship
+        return save(unit1, unit2, type);
     }
+
+    private StratigraphicRelationship save(RecordingUnit unit1, RecordingUnit unit2, Concept type) {
+        StratigraphicRelationship newRel = new StratigraphicRelationship();
+        StratigraphicRelationshipId id = new StratigraphicRelationshipId();
+        id.setUnit1Id(unit1.getId());
+        id.setUnit2Id(unit2.getId());
+        newRel.setId(id);
+        newRel.setType(type);
+        newRel.setUnit1(unit1);
+        newRel.setUnit2(unit2);
+
+        return relationshipRepository.save(newRel);
+    }
+
 }

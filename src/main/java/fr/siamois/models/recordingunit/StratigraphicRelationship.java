@@ -27,5 +27,5 @@ public class StratigraphicRelationship {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_relationship_concept_id")
-    private Concept relationshipType;
+    private Concept type;
 }

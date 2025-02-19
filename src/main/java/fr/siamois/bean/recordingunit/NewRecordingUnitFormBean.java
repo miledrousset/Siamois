@@ -151,7 +151,11 @@ public class NewRecordingUnitFormBean implements Serializable {
             recordingUnit.setEndDate(localDateToOffsetDateTime(endDate));
         }
 
-        return recordingUnitService.save(recordingUnit, typeConcept);
+        return recordingUnitService.save(recordingUnit,
+                typeConcept,
+                events.get(2).getRecordingUnitList(),
+                events.get(1).getRecordingUnitList(),
+                events.get(0).getRecordingUnitList());
 
     }
 
@@ -174,8 +178,6 @@ public class NewRecordingUnitFormBean implements Serializable {
                             FacesMessage.SEVERITY_INFO,
                             "Info",
                             langBean.msg("recordingunit.created", recordingUnit.getIdentifier())));
-
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
 
             return "/pages/recordingUnit/recordingUnit?faces-redirect=true&id=" + recordingUnit.getId().toString();
 
@@ -241,15 +243,18 @@ public class NewRecordingUnitFormBean implements Serializable {
         validationEvents = new ArrayList<>();
 
         // Init neighbors
-        Event anterior = new Event("Anterior", "15/10/2020 10:30", "pi pi-arrow-circle-down", "#9C27B0", "game-controller.jpg");
-        anterior.setRecordingUnitList(stratigraphicRelationshipService.getAnteriorUnits(recordingUnit));
-        anterior.setType(ANTERIOR);
-        Event synchronous = new Event("Synchronous", "15/10/2020 14:00", "pi pi-sync", "#673AB7");
-        synchronous.setRecordingUnitList(stratigraphicRelationshipService.getSynchronousUnits(recordingUnit));
-        synchronous.setType(SYNCHRONOUS);
         Event posterior = new Event("Posterior", "15/10/2020 16:15", "pi pi-arrow-circle-up", "#FF9800");
         posterior.setRecordingUnitList(stratigraphicRelationshipService.getPosteriorUnits(recordingUnit));
         posterior.setType(POSTERIOR);
+
+        Event synchronous = new Event("Synchronous", "15/10/2020 14:00", "pi pi-sync", "#673AB7");
+        synchronous.setRecordingUnitList(stratigraphicRelationshipService.getSynchronousUnits(recordingUnit));
+        synchronous.setType(SYNCHRONOUS);
+
+        Event anterior = new Event("Anterior", "15/10/2020 10:30", "pi pi-arrow-circle-down", "#9C27B0", "game-controller.jpg");
+        anterior.setRecordingUnitList(stratigraphicRelationshipService.getAnteriorUnits(recordingUnit));
+        anterior.setType(ANTERIOR);
+
         events.add(posterior);
         events.add(synchronous);
         events.add(anterior);

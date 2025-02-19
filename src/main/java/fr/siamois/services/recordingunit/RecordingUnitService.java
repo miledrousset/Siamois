@@ -9,15 +9,19 @@ import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.exceptions.MaxRecordingUnitIdentifierReached;
 import fr.siamois.models.exceptions.RecordingUnitNotFoundException;
 import fr.siamois.models.recordingunit.RecordingUnit;
+import fr.siamois.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.utils.ArkGeneratorUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Service to manage RecordingUnit
@@ -32,13 +36,15 @@ public class RecordingUnitService {
     private final RecordingUnitRepository recordingUnitRepository;
     private final ArkServerRepository arkServerRepository;
     private final ConceptService conceptService;
+    private final StratigraphicRelationshipService stratigraphicRelationshipService;
 
     public RecordingUnitService(RecordingUnitRepository recordingUnitRepository,
                                 ArkServerRepository arkServerRepository,
-                                ConceptService conceptService) {
+                                ConceptService conceptService, StratigraphicRelationshipService stratigraphicRelationshipService) {
         this.recordingUnitRepository = recordingUnitRepository;
         this.arkServerRepository = arkServerRepository;
         this.conceptService = conceptService;
+        this.stratigraphicRelationshipService = stratigraphicRelationshipService;
     }
 
 
@@ -63,7 +69,10 @@ public class RecordingUnitService {
     }
 
     @Transactional
-    public RecordingUnit save(RecordingUnit recordingUnit, Concept concept) {
+    public RecordingUnit save(RecordingUnit recordingUnit, Concept concept,
+                              List<RecordingUnit> anteriorUnits,
+                              List<RecordingUnit> synchronousUnits,
+                              List<RecordingUnit> posteriorUnits) {
 
         try {
             // Generate ARK if the recording unit does not have any
@@ -94,6 +103,43 @@ public class RecordingUnitService {
             // Add concept
             Concept type = conceptService.saveOrGetConcept(concept);
             recordingUnit.setType(type);
+
+            // Handle strati relationships
+            // Step 1: Clear existing relationships (optional, if updating)
+//            recordingUnit.getRelationshipsAsUnit1().clear();
+//            recordingUnit.getRelationshipsAsUnit2().clear();
+
+            // Step 2: This will contain the new relationships
+            Set<StratigraphicRelationship> newRelationships = new HashSet<>();
+
+            for (RecordingUnit syncUnit : synchronousUnits) {
+                newRelationships.add(stratigraphicRelationshipService.saveOrGet(recordingUnit, syncUnit,
+                        StratigraphicRelationshipService.SYNCHRONOUS));
+            }
+
+            for (RecordingUnit antUnit : anteriorUnits) {
+                newRelationships.add(stratigraphicRelationshipService.saveOrGet(antUnit, recordingUnit,
+                        StratigraphicRelationshipService.ASYNCHRONOUS));
+            }
+
+            for (RecordingUnit postUnit : posteriorUnits) {
+                newRelationships.add(stratigraphicRelationshipService.saveOrGet(recordingUnit, postUnit,
+                        StratigraphicRelationshipService.ASYNCHRONOUS));
+            }
+
+            recordingUnit = recordingUnitRepository.save(recordingUnit); // Reattach entity to get lazy props
+
+            // Step 3: Add relationships to RecordingUnit
+            Hibernate.initialize(recordingUnit.getRelationshipsAsUnit1());
+            Hibernate.initialize(recordingUnit.getRelationshipsAsUnit2());
+
+            for (StratigraphicRelationship rel : newRelationships) {
+                if (rel.getUnit1().equals(recordingUnit)) {
+                    recordingUnit.getRelationshipsAsUnit1().add(rel);
+                } else {
+                    recordingUnit.getRelationshipsAsUnit2().add(rel);
+                }
+            }
 
             return recordingUnitRepository.save(recordingUnit);
         } catch (RuntimeException e) {

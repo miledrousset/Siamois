@@ -8,11 +8,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StratigraphicRelationshipRepository extends JpaRepository<StratigraphicRelationship, StratigraphicRelationshipId> {
 
-    List<StratigraphicRelationship> findByUnit1AndRelationshipType(RecordingUnit unit, Concept relationshipType);
+    Optional<StratigraphicRelationship> findByUnit1AndUnit2AndType(RecordingUnit unit1, RecordingUnit unit2, Concept type);
 
-    List<StratigraphicRelationship> findByUnit2AndRelationshipType(RecordingUnit unit, Concept relationshipType);
+    List<StratigraphicRelationship> findByUnit1AndType(RecordingUnit unit, Concept type);
+
+    List<StratigraphicRelationship> findByUnit2AndType(RecordingUnit unit, Concept type);
 }
