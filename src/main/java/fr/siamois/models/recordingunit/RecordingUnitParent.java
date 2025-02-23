@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -64,5 +65,7 @@ public abstract class RecordingUnitParent extends TraceableEntity {
 
     @Embedded
     protected RecordingUnitAltimetry altitude;
+
+
 
 }

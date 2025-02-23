@@ -5,6 +5,7 @@ import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
 import fr.siamois.models.Institution;
 import fr.siamois.models.actionunit.ActionUnit;
+import fr.siamois.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.ark.ArkServer;
@@ -12,6 +13,7 @@ import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.recordingunit.RecordingUnitService;
+import fr.siamois.services.recordingunit.StratigraphicRelationshipService;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldService;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,9 +22,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.webservices.server.AutoConfigureMockWebServiceClient;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,6 +46,8 @@ class RecordingUnitServiceTest {
     private FieldService fieldService;
     @Mock
     private ConceptService conceptService;
+    @Mock
+    private StratigraphicRelationshipService stratigraphicRelationshipService;
 
     @InjectMocks
     private RecordingUnitService recordingUnitService;
@@ -146,6 +153,26 @@ class RecordingUnitServiceTest {
     @Test
     void save_Success() {
 
+        RecordingUnit anteriorUnit = new RecordingUnit();
+        anteriorUnit.setId(1L);
+        RecordingUnit synchronousUnit = new RecordingUnit();
+        synchronousUnit.setId(2L);
+        RecordingUnit posteriorUnit = new RecordingUnit();
+        posteriorUnit.setId(3L);
+
+        StratigraphicRelationship antRelationship = new StratigraphicRelationship();
+        antRelationship.setUnit1(recordingUnitToSave);
+        antRelationship.setUnit2(anteriorUnit);
+        antRelationship.setType(StratigraphicRelationshipService.ASYNCHRONOUS);
+        StratigraphicRelationship syncRelationship = new StratigraphicRelationship();
+        syncRelationship.setUnit1(recordingUnitToSave);
+        syncRelationship.setUnit2(synchronousUnit);
+        syncRelationship.setType(StratigraphicRelationshipService.SYNCHRONOUS);
+        StratigraphicRelationship postRelationship = new StratigraphicRelationship();
+        postRelationship.setUnit1(posteriorUnit);
+        postRelationship.setUnit2(recordingUnitToSave);
+        postRelationship.setType(StratigraphicRelationshipService.ASYNCHRONOUS);
+
         when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(new ArkServer()));
         Concept c = new Concept();
         c.setLabel("Unité strati");
@@ -157,11 +184,28 @@ class RecordingUnitServiceTest {
                 any(RecordingUnit.class)
         )).thenReturn(recordingUnitToSave);
 
-        RecordingUnit result = recordingUnitService.save(recordingUnitToSave,c);
+        when(stratigraphicRelationshipService.saveOrGet(recordingUnitToSave, synchronousUnit, StratigraphicRelationshipService.SYNCHRONOUS))
+                .thenReturn(syncRelationship);
+        when(stratigraphicRelationshipService.saveOrGet(anteriorUnit, recordingUnitToSave, StratigraphicRelationshipService.ASYNCHRONOUS))
+                .thenReturn(antRelationship);
+        when(stratigraphicRelationshipService.saveOrGet(recordingUnitToSave, posteriorUnit, StratigraphicRelationshipService.ASYNCHRONOUS))
+                .thenReturn(postRelationship);
+
+        RecordingUnit result = recordingUnitService.save(recordingUnitToSave,c,
+                List.of(anteriorUnit),
+                List.of(synchronousUnit),
+                List.of(posteriorUnit)
+        );
 
         // assert
         assertNotNull(result);
         assertEquals("MOM-2025-5", result.getFullIdentifier());
+        Set<StratigraphicRelationship> expectedRelationships = Set.of(antRelationship, syncRelationship);
+        assertEquals(expectedRelationships.size(), result.getRelationshipsAsUnit1().size());
+        assertTrue(result.getRelationshipsAsUnit1().containsAll(expectedRelationships));
+        assertNotNull(result.getRelationshipsAsUnit2());
+        assertEquals(1, result.getRelationshipsAsUnit2().size()); // Check the count
+        assertTrue(result.getRelationshipsAsUnit2().contains(postRelationship)); // Check content
 
 
     }
@@ -178,7 +222,10 @@ class RecordingUnitServiceTest {
         // Act & Assert
         Exception exception = assertThrows(
                 Exception.class,
-                () -> recordingUnitService.save(recordingUnitToSave,c)
+                () -> recordingUnitService.save(recordingUnitToSave,c,
+                        new ArrayList<RecordingUnit>(),
+                        new ArrayList<RecordingUnit>(),
+                        new ArrayList<RecordingUnit>())
         );
 
         assertEquals("Max recording unit code reached; Please ask administrator to increase the range", exception.getMessage());
