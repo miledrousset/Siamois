@@ -95,8 +95,6 @@ public class SynchronousGroupBuilder {
         // The list of syncronous group to return
         List<SynchronousGroup> synchronousGroupList = new ArrayList<>();
 
-
-
         // Initialisation des tableaux
         Arrays.fill(maitreES, 0);
         enSynch = IntStream.range(0, recordingUnits.size()) // ensemble synchrone (ES) de l'US (O si pas en synchronisme)
