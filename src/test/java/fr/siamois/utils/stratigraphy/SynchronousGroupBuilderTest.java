@@ -5,8 +5,11 @@ import fr.siamois.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.services.recordingunit.StratigraphicRelationshipService;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,12 +31,25 @@ class SynchronousGroupBuilderTest {
         createSynchronousRelationship(unitA, unitB);
         createSynchronousRelationship(unitA, unitC);
 
+        // Relationships that should be transferred to the synchronous group (A, B, C)
+        createAsynchronousRelationship(unitA, unitD);
+        createAsynchronousRelationship(unitB, unitD);
+
         // Initialize the builder
         List<RecordingUnit> units = List.of(unitA, unitB, unitC, unitD);
-        SynchronousGroupBuilder builder = new SynchronousGroupBuilder(units);
+        List<String> collecComm = new ArrayList<>();
+        long[] enSynch; // ensemble synchrone (ES) de l'US (O si pas en synchronisme)
+        enSynch = IntStream.range(0, units.size()) // ensemble synchrone (ES) de l'US (O si pas en synchronisme)
+                // Initialisation : each element get the value of its index because each US is in its on synchronous group
+                .mapToLong(i -> i + 1) // Assigns index + 1 to each element
+                .toArray();
+        String[] saiUstatut = new String[units.size()];
+        Arrays.fill(saiUstatut, "US");
+        SynchronousGroupBuilder builder = new SynchronousGroupBuilder(units, saiUstatut, enSynch, collecComm);
 
         // Build synchronous groups
-        List<SynchronousGroup> groups = builder.build();
+        builder.build();
+        List<SynchronousGroup> groups = builder.getSynchronousGroupList();
 
         // Assertions
         assertEquals(2, groups.size(), "There should be 2 synchronous groups");
@@ -49,6 +65,15 @@ class SynchronousGroupBuilderTest {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Expected a single-unit synchronous group"));
 
+        // Validate that there is a asynchronous relationship between the two groups
+        assertEquals(1,multiUnitGroup.getRelationshipsAsUnit1().size());
+
+        StratigraphicRelationship rel = multiUnitGroup.getRelationshipsAsUnit1().iterator().next();
+        assertEquals(multiUnitGroup,rel.getUnit1());
+        assertEquals(singleUnitGroup, rel.getUnit2());
+        assertEquals(StratigraphicRelationshipService.ASYNCHRONOUS, rel.getType());
+
+
         // Validate multi-unit group
         assertTrue(multiUnitGroup.getUnits().containsAll(List.of(unitA, unitB, unitC)),
                 "Multi-unit group should contain A, B, and C");
@@ -58,12 +83,18 @@ class SynchronousGroupBuilderTest {
         assertTrue(singleUnitGroup.getUnits().contains(unitD), "Single-unit group should contain unit D");
     }
 
-    private StratigraphicRelationship createSynchronousRelationship(RecordingUnit unit1, RecordingUnit unit2) {
+    private void createSynchronousRelationship(RecordingUnit unit1, RecordingUnit unit2) {
         StratigraphicRelationship relationship = new StratigraphicRelationship();
         relationship.setUnit1(unit1);
         relationship.setUnit2(unit2);
         relationship.setType(StratigraphicRelationshipService.SYNCHRONOUS);
         unit1.getRelationshipsAsUnit1().add(relationship);
-        return relationship;
+    }
+    private void createAsynchronousRelationship(RecordingUnit unit1, RecordingUnit unit2) {
+        StratigraphicRelationship relationship = new StratigraphicRelationship();
+        relationship.setUnit1(unit1);
+        relationship.setUnit2(unit2);
+        relationship.setType(StratigraphicRelationshipService.ASYNCHRONOUS);
+        unit1.getRelationshipsAsUnit1().add(relationship);
     }
 }
