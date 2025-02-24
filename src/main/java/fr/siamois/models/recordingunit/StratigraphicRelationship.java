@@ -16,12 +16,12 @@ public class StratigraphicRelationship {
 
     @NotNull
     @MapsId("unit1Id") // Maps to primary key in composite key
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_recording_unit_1_id", nullable = false)
     private RecordingUnit unit1;
 
-    @ManyToOne
     @MapsId("unit2Id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_recording_unit_2_id", nullable = false)
     private RecordingUnit unit2;
 
