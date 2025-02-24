@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--
+    Adding constraint on stratigraphic relationship to avoid relationship between a US and itself
+    -->
+
+    <changeSet id="2025.02.18-2" author="Grégory Bliault">
+        <preConditions onFail="MARK_RAN">
+
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*)
+                    FROM pg_constraint
+                    WHERE conname = 'prevent_self_relationship';
+                </sqlCheck>
+            </not>
+
+        </preConditions>
+
+        <sql>
+            ALTER TABLE stratigraphic_relationship
+                ADD CONSTRAINT prevent_self_relationship
+                    CHECK (fk_recording_unit_1_id != fk_recording_unit_2_id);
+        </sql>
+
+
+
+    </changeSet>
+
+</databaseChangeLog>

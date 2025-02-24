@@ -10,15 +10,26 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "recording_unit")
 public class RecordingUnit extends RecordingUnitParent {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recording_unit_id", nullable = false)
     private Long id;
+
+    @OneToMany(mappedBy = "unit1", fetch = FetchType.LAZY)
+    private transient Set<StratigraphicRelationship> relationshipsAsUnit1 = new HashSet<>();
+
+    @OneToMany(mappedBy = "unit2", fetch = FetchType.LAZY)
+    private transient Set<StratigraphicRelationship> relationshipsAsUnit2 = new HashSet<>();
 
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIARU.TYPE";
@@ -42,6 +53,20 @@ public class RecordingUnit extends RecordingUnitParent {
         else {
             return getFullIdentifier();
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;  // Same reference
+        if (obj == null || getClass() != obj.getClass()) return false;  // Different types
+
+        RecordingUnit that = (RecordingUnit) obj;
+        return Objects.equals(id, that.id);  // Compare IDs (null-safe)
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);  // Generate hash based on ID
     }
 
 }

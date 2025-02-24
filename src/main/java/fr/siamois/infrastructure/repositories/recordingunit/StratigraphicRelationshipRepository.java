@@ -1,0 +1,21 @@
+package fr.siamois.infrastructure.repositories.recordingunit;
+
+import fr.siamois.models.recordingunit.RecordingUnit;
+import fr.siamois.models.recordingunit.StratigraphicRelationship;
+import fr.siamois.models.recordingunit.StratigraphicRelationshipId;
+import fr.siamois.models.vocabulary.Concept;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface StratigraphicRelationshipRepository extends JpaRepository<StratigraphicRelationship, StratigraphicRelationshipId> {
+
+    Optional<StratigraphicRelationship> findByUnit1AndUnit2AndType(RecordingUnit unit1, RecordingUnit unit2, Concept type);
+
+    List<StratigraphicRelationship> findByUnit1AndType(RecordingUnit unit, Concept type);
+
+    List<StratigraphicRelationship> findByUnit2AndType(RecordingUnit unit, Concept type);
+}

@@ -286,8 +286,12 @@
             <artifactId>chartjs-java-model</artifactId>
             <version>2.6.0</version>
         </dependency>
-
-
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>20.1.0</version>
+            <scope>compile</scope>
+        </dependency>
 
 
     </dependencies>

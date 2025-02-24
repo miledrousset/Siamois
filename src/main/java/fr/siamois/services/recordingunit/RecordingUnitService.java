@@ -1,4 +1,4 @@
-package fr.siamois.services;
+package fr.siamois.services.recordingunit;
 
 import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
@@ -9,15 +9,19 @@ import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.exceptions.MaxRecordingUnitIdentifierReached;
 import fr.siamois.models.exceptions.RecordingUnitNotFoundException;
 import fr.siamois.models.recordingunit.RecordingUnit;
+import fr.siamois.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.utils.ArkGeneratorUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Service to manage RecordingUnit
@@ -32,13 +36,15 @@ public class RecordingUnitService {
     private final RecordingUnitRepository recordingUnitRepository;
     private final ArkServerRepository arkServerRepository;
     private final ConceptService conceptService;
+    private final StratigraphicRelationshipService stratigraphicRelationshipService;
 
     public RecordingUnitService(RecordingUnitRepository recordingUnitRepository,
                                 ArkServerRepository arkServerRepository,
-                                ConceptService conceptService) {
+                                ConceptService conceptService, StratigraphicRelationshipService stratigraphicRelationshipService) {
         this.recordingUnitRepository = recordingUnitRepository;
         this.arkServerRepository = arkServerRepository;
         this.conceptService = conceptService;
+        this.stratigraphicRelationshipService = stratigraphicRelationshipService;
     }
 
 
@@ -62,8 +68,21 @@ public class RecordingUnitService {
         return recordingUnitRepository.findAllByActionUnit(actionUnit);
     }
 
+    public int generateNextIdentifier (RecordingUnit recordingUnit) {
+        // Generate next identifier
+        Integer currentMaxIdentifier = recordingUnitRepository.findMaxUsedIdentifierByAction(recordingUnit.getActionUnit().getId());
+        int nextIdentifier = (currentMaxIdentifier == null) ? recordingUnit.getActionUnit().getMinRecordingUnitCode() : currentMaxIdentifier + 1;
+        if (nextIdentifier > recordingUnit.getActionUnit().getMaxRecordingUnitCode() || nextIdentifier < 0) {
+            throw new MaxRecordingUnitIdentifierReached("Max recording unit code reached; Please ask administrator to increase the range");
+        }
+        return(nextIdentifier);
+    }
+
     @Transactional
-    public RecordingUnit save(RecordingUnit recordingUnit, Concept concept) {
+    public RecordingUnit save(RecordingUnit recordingUnit, Concept concept,
+                              List<RecordingUnit> anteriorUnits,
+                              List<RecordingUnit> synchronousUnits,
+                              List<RecordingUnit> posteriorUnits) {
 
         try {
             // Generate ARK if the recording unit does not have any
@@ -79,13 +98,8 @@ public class RecordingUnitService {
             // Generate unique identifier if not present
             if (recordingUnit.getFullIdentifier() == null) {
                 if (recordingUnit.getIdentifier() == null) {
-                    // Generate next identifier
-                    Integer currentMaxIdentifier = recordingUnitRepository.findMaxUsedIdentifierByAction(recordingUnit.getActionUnit().getId());
-                    Integer nextIdentifier = (currentMaxIdentifier == null) ? recordingUnit.getActionUnit().getMinRecordingUnitCode() : currentMaxIdentifier + 1;
-                    if (nextIdentifier > recordingUnit.getActionUnit().getMaxRecordingUnitCode() || nextIdentifier < 0) {
-                        throw new MaxRecordingUnitIdentifierReached("Max recording unit code reached; Please ask administrator to increase the range");
-                    }
-                    recordingUnit.setIdentifier(nextIdentifier);
+
+                    recordingUnit.setIdentifier(generateNextIdentifier(recordingUnit));
                 }
                 // Set full identifier
                 recordingUnit.setFullIdentifier(recordingUnit.displayFullIdentifier());
@@ -94,6 +108,26 @@ public class RecordingUnitService {
             // Add concept
             Concept type = conceptService.saveOrGetConcept(concept);
             recordingUnit.setType(type);
+
+
+
+            for (RecordingUnit syncUnit : synchronousUnits) {
+                stratigraphicRelationshipService.saveOrGet(recordingUnit, syncUnit,
+                        StratigraphicRelationshipService.SYNCHRONOUS);
+            }
+
+            for (RecordingUnit antUnit : anteriorUnits) {
+                stratigraphicRelationshipService.saveOrGet(antUnit, recordingUnit,
+                        StratigraphicRelationshipService.ASYNCHRONOUS);
+            }
+
+            for (RecordingUnit postUnit : posteriorUnits) {
+                stratigraphicRelationshipService.saveOrGet(recordingUnit, postUnit,
+                        StratigraphicRelationshipService.ASYNCHRONOUS);
+            }
+
+            recordingUnit = recordingUnitRepository.save(recordingUnit); // Reattach entity to get lazy props
+
 
             return recordingUnitRepository.save(recordingUnit);
         } catch (RuntimeException e) {

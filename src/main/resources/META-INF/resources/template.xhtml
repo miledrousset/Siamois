@@ -353,10 +353,14 @@
         ***********************************-->
         <div class="content-body">
             <h:panelGroup id="main">
-                <!-- Content will be inserted here -->
-                <ui:insert description="The main content" name="content">
+
+                <p:card styleClass="main-content">
                     <!-- Content will be inserted here -->
-                </ui:insert>
+                    <ui:insert description="The main content" name="content"/>
+                    <!-- Content will be inserted here -->
+                </p:card>
+
+
             </h:panelGroup>
         </div>
         <!--**********************************
