@@ -25,10 +25,10 @@ public class RecordingUnit extends RecordingUnitParent {
     @Column(name = "recording_unit_id", nullable = false)
     private Long id;
 
-    @OneToMany(mappedBy = "unit1")
+    @OneToMany(mappedBy = "unit1", fetch = FetchType.LAZY)
     private transient Set<StratigraphicRelationship> relationshipsAsUnit1 = new HashSet<>();
 
-    @OneToMany(mappedBy = "unit2")
+    @OneToMany(mappedBy = "unit2", fetch = FetchType.LAZY)
     private transient Set<StratigraphicRelationship> relationshipsAsUnit2 = new HashSet<>();
 
     @FieldCode
