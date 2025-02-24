@@ -1,0 +1,70 @@
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:ark="http://xmlns.jcp.org/jsf/composite/pages/ark/components"
+>
+
+    <ui:define name="content">
+
+        <div class="container-fluid">
+            <h:form id="arkConfig">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <div class="row">
+                    <div class="card">
+                        <div class="card-body">
+                            <h1>Gestion des identifiants</h1>
+                            <p:messages id="messages" showDetail="true" closable="true">
+                                <p:autoUpdate/>
+                            </p:messages>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h2>Serveur ARK</h2>
+                                </div>
+                                <div class="col-6">
+                                    <p:toggleSwitch value="#{arkBean.VIsArkServer}">
+                                        <p:ajax listener="#{arkBean.arkServerToggle()}" update="arkConfig"/>
+                                    </p:toggleSwitch>
+                                </div>
+                            </div>
+                            <h:panelGroup rendered="#{arkBean.VIsArkServer}">
+                                <hr/>
+                                <ark:arkServerForm/>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h2>Serveur ARK local</h2>
+                                </div>
+                                <div class="col-6">
+                                    <p:toggleSwitch value="#{arkBean.VIsLocalArkServer}">
+                                        <p:ajax listener="#{arkBean.arkLocalToggle()}" update="arkConfig"/>
+                                    </p:toggleSwitch>
+                                </div>
+                            </div>
+                            <h:panelGroup rendered="#{arkBean.VIsLocalArkServer}">
+                                <hr/>
+                                <ark:localArkServerForm/>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </div>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+        xmlns:cc="http://java.sun.com/jsf/composite"
+        xmlns:p="http://primefaces.org/ui"
+>
+
+<cc:interface>
+    <cc:attribute name="label" type="String"/>
+    <cc:attribute name="valueListener" type="String" />
+    <cc:attribute name="textType" type="String" default="text" />
+    <cc:attribute name="placeholder" type="String" />
+    <cc:attribute name="styleClass" type="String" default=""/>
+    <cc:attribute name="colSize" type="String" default="6"/>
+</cc:interface>
+
+<cc:implementation>
+    <div class="form-group col-md-#{cc.attrs.colSize}">
+        <label>#{cc.attrs.label}</label>
+        <p:inputText
+                styleClass="form-control #{cc.attrs.styleClass}"
+                type="#{cc.attrs.textType}"
+                placeholder="#{cc.attrs.placeholder}"
+                value="#{cc.attrs.valueListener}"
+        />
+    </div>
+</cc:implementation>
+
+</html>

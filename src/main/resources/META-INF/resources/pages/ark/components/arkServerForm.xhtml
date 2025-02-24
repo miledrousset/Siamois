@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+        xmlns:cc="http://java.sun.com/jsf/composite"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ark="http://xmlns.jcp.org/jsf/composite/pages/ark/components"
+>
+
+<cc:interface>
+
+</cc:interface>
+
+<cc:implementation>
+    <div class="form-row">
+        <ark:formGroup
+                placeholder="http://ark.mondomaine.fr/ark:/"
+                valueListener="#{arkBean.VArkServer}"
+                label="Serveur Ark"
+        />
+        <ark:formGroup
+                placeholder="https://ark.mom.fr/ark:/"
+                valueListener="#{arkBean.VArkUri}"
+                label="URI Ark"
+        />
+    </div>
+    <div class="form-row">
+        <ark:formGroup
+                placeholder="66666"
+                valueListener="#{arkBean.VArkNaan}"
+                label="Votre Naan"
+        />
+        <ark:formGroup
+                placeholder="crt"
+                valueListener="#{arkBean.VArkPrefix}"
+                label="Préfixe Ark"
+        />
+    </div>
+    <div class="form-row">
+        <ark:formGroup
+                placeholder="null"
+                valueListener="#{arkBean.VArkUser}"
+                label="Utilisateur Ark"
+        />
+        <ark:formGroup
+                textType="password"
+                placeholder="******"
+                valueListener="#{arkBean.VArkPassword}"
+                label="Mot de passe Ark"
+        />
+    </div>
+    <p:commandButton styleClass="btn mb-1 btn-primary" value="Enregistrer" action="#{arkBean.saveArkConfig()}"/>
+</cc:implementation>
+
+</html>
