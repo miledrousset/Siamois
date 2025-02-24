@@ -52,7 +52,7 @@ class StratigraphicRelationshipServiceTest {
         asynchronous.setId(-2L);
 
 
-        service = new StratigraphicRelationshipService(recordingUnitRepository, relationshipRepository);
+        service = new StratigraphicRelationshipService(relationshipRepository);
 
         // Manually inject the entityManager mock
         ReflectionTestUtils.setField(service, "entityManager", entityManager);
