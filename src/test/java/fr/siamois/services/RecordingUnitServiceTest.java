@@ -216,9 +216,9 @@ class RecordingUnitServiceTest {
         Exception exception = assertThrows(
                 Exception.class,
                 () -> recordingUnitService.save(recordingUnitToSave,c,
-                        new ArrayList<RecordingUnit>(),
-                        new ArrayList<RecordingUnit>(),
-                        new ArrayList<RecordingUnit>())
+                        new ArrayList<>(),
+                        new ArrayList<>(),
+                        new ArrayList<>())
         );
 
         assertEquals("Max recording unit code reached; Please ask administrator to increase the range", exception.getMessage());
