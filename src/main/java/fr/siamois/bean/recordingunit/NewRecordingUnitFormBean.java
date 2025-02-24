@@ -1,7 +1,7 @@
 package fr.siamois.bean.recordingunit;
 
 import fr.siamois.bean.LangBean;
-import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.SessionSettingsBean;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.auth.Person;
@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static java.awt.Color.green;
 import static java.time.OffsetDateTime.now;
 
 @Data
@@ -53,7 +52,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     private final transient FieldService fieldService;
     private final LangBean langBean;
     private final transient ConceptService conceptService;
-    private final SessionSettings sessionSettings;
+    private final SessionSettingsBean sessionSettingsBean;
     private final transient FieldConfigurationService fieldConfigurationService;
     private final transient StratigraphicRelationshipService stratigraphicRelationshipService;
 
@@ -202,7 +201,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                                     FieldService fieldService,
                                     LangBean langBean,
                                     ConceptService conceptService,
-                                    SessionSettings sessionSettings, FieldConfigurationService fieldConfigurationService, StratigraphicRelationshipService stratigraphicRelationshipService) {
+                                    SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService, StratigraphicRelationshipService stratigraphicRelationshipService) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.historyService = historyService;
@@ -210,7 +209,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.conceptService = conceptService;
-        this.sessionSettings = sessionSettings;
+        this.sessionSettingsBean = sessionSettingsBean;
         this.fieldConfigurationService = fieldConfigurationService;
         this.stratigraphicRelationshipService = stratigraphicRelationshipService;
     }
@@ -292,8 +291,8 @@ public class NewRecordingUnitFormBean implements Serializable {
             log.info("here");
 
             // By default, current user is owner and author
-            recordingUnit.setAuthor(sessionSettings.getAuthenticatedUser());
-            recordingUnit.setExcavator(sessionSettings.getAuthenticatedUser());
+            recordingUnit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
+            recordingUnit.setExcavator(sessionSettingsBean.getAuthenticatedUser());
 
 
         } catch (RuntimeException err) {
@@ -350,7 +349,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     }
 
     public List<Concept> completeRecordingUnitType(String input) {
-        UserInfo info = sessionSettings.getUserInfo();
+        UserInfo info = sessionSettingsBean.getUserInfo();
         try {
             concepts = fieldConfigurationService.fetchAutocomplete(info, RecordingUnit.TYPE_FIELD_CODE, input);
         } catch (NoConfigForField e) {

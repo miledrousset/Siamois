@@ -1,6 +1,6 @@
 package fr.siamois.bean.logs;
 
-import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.SessionSettingsBean;
 import fr.siamois.models.events.InstitutionChangeEvent;
 import fr.siamois.models.history.HistoryOperation;
 import fr.siamois.services.HistoryService;
@@ -28,7 +28,7 @@ import java.util.List;
 public class LogsBean implements Serializable {
 
     private final transient HistoryService historyService;
-    private final SessionSettings sessionSettings;
+    private final SessionSettingsBean sessionSettingsBean;
 
     private transient List<HistoryOperation> operations;
 
@@ -37,9 +37,9 @@ public class LogsBean implements Serializable {
     private LocalDateTime vEndDateTime = LocalDateTime.now(ZoneId.systemDefault());
     private LocalDateTime vStartDateTime = dayBeforeAtMidnight(vEndDateTime);
 
-    public LogsBean(HistoryService historyService, SessionSettings sessionSettings) {
+    public LogsBean(HistoryService historyService, SessionSettingsBean sessionSettingsBean) {
         this.historyService = historyService;
-        this.sessionSettings = sessionSettings;
+        this.sessionSettingsBean = sessionSettingsBean;
     }
 
     private LocalDateTime dayBeforeAtMidnight(LocalDateTime dateTime) {
@@ -69,7 +69,7 @@ public class LogsBean implements Serializable {
         OffsetDateTime start = OffsetDateTime.of(vStartDateTime, offset);
         OffsetDateTime end = OffsetDateTime.of(vEndDateTime, offset);
         try {
-            operations = historyService.findAllOperationsOfUserAndTeamBetween(sessionSettings.getUserInfo(), start, end);
+            operations = historyService.findAllOperationsOfUserAndTeamBetween(sessionSettingsBean.getUserInfo(), start, end);
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
         }

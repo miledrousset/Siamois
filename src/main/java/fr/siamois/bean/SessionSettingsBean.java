@@ -17,14 +17,14 @@ import java.util.List;
 @Getter
 @Component
 @SessionScoped
-public class SessionSettings implements Serializable {
+public class SessionSettingsBean implements Serializable {
 
     private final transient InstitutionService institutionService;
     private final LangBean langBean;
     private Institution selectedInstitution;
     private transient List<Institution> referencedInstitutions;
 
-    public SessionSettings(InstitutionService institutionService, LangBean langBean) {
+    public SessionSettingsBean(InstitutionService institutionService, LangBean langBean) {
         this.institutionService = institutionService;
         this.langBean = langBean;
     }
