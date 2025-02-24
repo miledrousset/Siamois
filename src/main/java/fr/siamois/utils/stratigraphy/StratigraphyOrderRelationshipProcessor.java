@@ -17,8 +17,8 @@ public class StratigraphyOrderRelationshipProcessor {
     // Stratigraphic unit list and their relationship
     private final List<SynchronousGroup> groupList;
     private List<String> collecComm;
-    private Boolean reiterate;
-    private boolean[] coche;
+
+
     private boolean signalConflict = false;
     private List<List<SynchronousGroup>> loops;
 
@@ -27,8 +27,8 @@ public class StratigraphyOrderRelationshipProcessor {
         this.groupList = groupList;
         this.loops = new ArrayList<>();
         this.collecComm = collecComm;
-        coche = new boolean[groupList.size()];
-        reiterate = false;
+
+
 
     }
 
@@ -113,7 +113,8 @@ public class StratigraphyOrderRelationshipProcessor {
         for (SynchronousGroup group : groupList) {
             // If the group has certain asynch relationships
             if (containsRelationshipOfType(group.getRelationshipsAsUnit1(), StratigraphicRelationshipService.ASYNCHRONOUS)) {
-                coche = new boolean[groupList.size()]; // reinit marks
+                boolean[] coche = new boolean[groupList.size()]; // reinit marks
+                boolean reiterate;
                 do {
                     reiterate = processUnitRelationships(group, coche);
                 }
@@ -142,9 +143,6 @@ public class StratigraphyOrderRelationshipProcessor {
     }
 
     public void process() {
-
-        coche = new boolean[groupList.size()];
-        reiterate = false;
 
         deductRelationshipByTransitivity();
 
