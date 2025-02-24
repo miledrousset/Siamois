@@ -26,10 +26,10 @@ public class RecordingUnit extends RecordingUnitParent {
     private Long id;
 
     @OneToMany(mappedBy = "unit1")
-    private Set<StratigraphicRelationship> relationshipsAsUnit1 = new HashSet<>();
+    private transient Set<StratigraphicRelationship> relationshipsAsUnit1 = new HashSet<>();
 
     @OneToMany(mappedBy = "unit2")
-    private Set<StratigraphicRelationship> relationshipsAsUnit2 = new HashSet<>();
+    private transient Set<StratigraphicRelationship> relationshipsAsUnit2 = new HashSet<>();
 
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIARU.TYPE";

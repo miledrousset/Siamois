@@ -40,7 +40,6 @@ public class StratigraphicRelationshipService {
     }
 
     public StratigraphicRelationshipService(
-            RecordingUnitRepository unitRepository,
             StratigraphicRelationshipRepository relationshipRepository) {
 
         this.relationshipRepository = relationshipRepository;

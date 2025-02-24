@@ -11,8 +11,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * The common attributes of the history recording unit table and the real recording table.

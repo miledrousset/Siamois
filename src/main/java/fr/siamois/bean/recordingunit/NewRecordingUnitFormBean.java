@@ -55,7 +55,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     private final transient ConceptService conceptService;
     private final SessionSettings sessionSettings;
     private final transient FieldConfigurationService fieldConfigurationService;
-    private final StratigraphicRelationshipService stratigraphicRelationshipService;
+    private final transient StratigraphicRelationshipService stratigraphicRelationshipService;
 
     // Local
     private RecordingUnit recordingUnit;
@@ -81,11 +81,11 @@ public class NewRecordingUnitFormBean implements Serializable {
     private transient List<StratigraphyValidationEvent> validationEvents; // Strati
     private transient List<RecordingUnit> recordingUnitList; // To store the candidate for stratigraphic relationships
     private transient List<RecordingUnit> stratigraphySelectedRecordingUnit;
-    private final int POSTERIOR = 0;
-    private final int SYNCHRONOUS = 1;
-    private final int ANTERIOR = 2;
-    private final int CERTAIN = 0;
-    private final int UNCERTAIN = 1;
+    private static final int POSTERIOR = 0;
+    private static final int SYNCHRONOUS = 1;
+    private static final int ANTERIOR = 2;
+    private static final int CERTAIN = 0;
+    private static final int UNCERTAIN = 1;
     private int stratiDialogType ; // Index from 0 to 2
     private int stratiDialogCertainty ; // 0 or 1
     private List<RecordingUnit> stratiDialogSelection;
@@ -303,7 +303,7 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     public void initStratiDialog(int type) {
 
-        // TODO : filter the following list to remove the UE already added with another type/certainty
+        // should we filter the following list to remove the UE already added with another type/certainty?
         stratiDialogType = type;
         this.recordingUnitList = recordingUnitService.findAllByActionUnit(recordingUnit.getActionUnit());
         stratiDialogSelection = events.get(stratiDialogType).recordingUnitList;

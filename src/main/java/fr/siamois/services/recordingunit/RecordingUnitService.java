@@ -104,10 +104,6 @@ public class RecordingUnitService {
             Concept type = conceptService.saveOrGetConcept(concept);
             recordingUnit.setType(type);
 
-            // Handle strati relationships
-            // Step 1: Clear existing relationships (optional, if updating)
-//            recordingUnit.getRelationshipsAsUnit1().clear();
-//            recordingUnit.getRelationshipsAsUnit2().clear();
 
             // Step 2: This will contain the new relationships
             Set<StratigraphicRelationship> newRelationships = new HashSet<>();
@@ -132,6 +128,8 @@ public class RecordingUnitService {
             // Step 3: Add relationships to RecordingUnit
             Hibernate.initialize(recordingUnit.getRelationshipsAsUnit1());
             Hibernate.initialize(recordingUnit.getRelationshipsAsUnit2());
+            recordingUnit.getRelationshipsAsUnit1().clear();
+            recordingUnit.getRelationshipsAsUnit2().clear();
 
             for (StratigraphicRelationship rel : newRelationships) {
                 if (rel.getUnit1().equals(recordingUnit)) {

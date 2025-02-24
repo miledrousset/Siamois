@@ -14,19 +14,19 @@ public class SynchronousGroupBuilder {
     // Stratigraphic unit list and their relationship
     private final List<RecordingUnit> recordingUnits;
 
-    private long[] EnSynch; // ensemble synchrone (ES) de l'US (O si pas en synchronisme)
-    private final String[] SaiUstatut; // statut de l'US (Fait, MES, US simple par défaut)
+    private long[] enSynch; // ensemble synchrone (ES) de l'US (O si pas en synchronisme)
+    private final String[] saiUstatut; // statut de l'US (Fait, MES, US simple par défaut)
 
 
-    private boolean AlerteUmaitre = false;
-    private List<String> CollecComm = new ArrayList<>();
+    private boolean alerteUmaitre = false;
+    private List<String> collecComm = new ArrayList<>();
 
     public SynchronousGroupBuilder(@NotNull List<RecordingUnit> recordingUnits) {
         this.recordingUnits = recordingUnits;
 
 
-        SaiUstatut = new String[recordingUnits.size()];
-        Arrays.fill(SaiUstatut, "US");
+        saiUstatut = new String[recordingUnits.size()];
+        Arrays.fill(saiUstatut, "US");
 
     }
 
@@ -48,7 +48,7 @@ public class SynchronousGroupBuilder {
 
         // Initialisation des tableaux
         Arrays.fill(MaitreES, 0);
-        EnSynch = IntStream.range(0, recordingUnits.size()) // ensemble synchrone (ES) de l'US (O si pas en synchronisme)
+        enSynch = IntStream.range(0, recordingUnits.size()) // ensemble synchrone (ES) de l'US (O si pas en synchronisme)
                 // Initialisation : each element get the value of its index because each US is in its on synchronous group
                 .mapToLong(i -> i + 1) // Assigns index + 1 to each element
                 .toArray();
@@ -56,7 +56,7 @@ public class SynchronousGroupBuilder {
         do {
             signalModif = false;
             for (int u = 0; u < recordingUnits.size(); u++) { // We are going to iterate among all the recording units
-                if (EnSynch[u] > 0) { // If the current US is part of a synchronous group
+                if (enSynch[u] > 0) { // If the current US is part of a synchronous group
                     // We compare the current recordingUnits (u) with every other recordingUnits (u2) to find synchronisms
                     for (int u2 = 0; u2 < recordingUnits.size(); u2++) {
 
@@ -66,13 +66,13 @@ public class SynchronousGroupBuilder {
 
                             // Déduction par symétrie
                             if (!hasSynchronousRelationship(recordingUnits.get(u2), recordingUnits.get(u))) { // MSyn(u2, u) != Synchro
-                                // --------- The following lines are the equivalent of MSyn(u2, u) = Synchro;
+                                // The following lines are the equivalent of MSyn(u2, u) = Synchro;
                                 StratigraphicRelationship newRelationship = new StratigraphicRelationship();
                                 newRelationship.setUnit1(recordingUnits.get(u2));
                                 newRelationship.setUnit2(recordingUnits.get(u));
                                 newRelationship.setType(StratigraphicRelationshipService.SYNCHRONOUS); // Assuming this is your synchronous concept
                                 recordingUnits.get(u2).getRelationshipsAsUnit1().add(newRelationship);
-                                // --------- End
+                                //  End
                                 signalModif = true;
                             }
 
@@ -84,13 +84,13 @@ public class SynchronousGroupBuilder {
                                 if( hasSynchronousRelationship(recordingUnits.get(u2), recordingUnits.get(u3)) ||
                                         hasSynchronousRelationship(recordingUnits.get(u3), recordingUnits.get(u2)) )   {
                                     if(!hasSynchronousRelationship(recordingUnits.get(u), recordingUnits.get(u3))) {
-                                        // --------- The following lines are the equivalent of MSyn(u, u3) = Synchro;
+                                        //  The following lines are the equivalent of MSyn(u, u3) = Synchro;
                                         StratigraphicRelationship newRelationship = new StratigraphicRelationship();
                                         newRelationship.setUnit1(recordingUnits.get(u));
                                         newRelationship.setUnit2(recordingUnits.get(u3));
                                         newRelationship.setType(StratigraphicRelationshipService.SYNCHRONOUS); // Assuming this is your synchronous concept
                                         recordingUnits.get(u).getRelationshipsAsUnit1().add(newRelationship);
-                                        // --------- End
+                                        //  End
                                     }
                                 }
                             }
@@ -117,10 +117,10 @@ public class SynchronousGroupBuilder {
                             recordingUnits.get(u2)
                     )) {
 
-                        EnSynch[u2] = u; // Indique la 1ère US de l'ensemble synchrone
+                        enSynch[u2] = u; // Indique la 1ère US de l'ensemble synchrone
                         newGroup.addUnit(recordingUnits.get(u2));
 
-                        if (SaiUstatut[u2].equals("maître d'ES")) {
+                        if (saiUstatut[u2].equals("maître d'ES")) {
                             // If we declared u2 as a group master and u is also a group mastr
                             // , we have a problem because there already is a group master
                             if (MaitreES[u] == 0) {
@@ -128,7 +128,7 @@ public class SynchronousGroupBuilder {
                             } else {
                                 // Ajouter l'alerte
                                 AlerteUmaitre = true;
-                                CollecComm.add("Attention : plusieurs maîtres pour l'ensemble synchrone " + u);
+                                collecComm.add("Attention : plusieurs maîtres pour l'ensemble synchrone " + u);
                             }
                         }
 
