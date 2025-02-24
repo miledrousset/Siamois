@@ -127,7 +127,7 @@ public class SynchronousGroupBuilder {
                                 newGroup.setMaster(recordingUnits.get(u2));
                             } else {
                                 // Ajouter l'alerte
-                                AlerteUmaitre = true;
+                                alerteUmaitre = true;
                                 collecComm.add("Attention : plusieurs maîtres pour l'ensemble synchrone " + u);
                             }
                         }
