@@ -36,13 +36,11 @@ class StratigraphyOrderRelationshipProcessorTest {
         List<String> collecComm = new ArrayList<>();
         StratigraphyOrderRelationshipProcessor processor = new StratigraphyOrderRelationshipProcessor(units, collecComm);
 
-        // Assertions
-        Exception exception = assertThrows(StratigraphicConflictFound.class, () -> {
-            processor.process();; // Call the method expected to throw an exception
-        });
+        // Act
+        processor.process();
 
-        // Optionally, check the message
-        assertEquals("Conflit", exception.getMessage());
+        // Assert
+        assertEquals(true, processor.isSignalConflict());
 
     }
 
@@ -69,6 +67,7 @@ class StratigraphyOrderRelationshipProcessorTest {
         List<SynchronousGroup> groups = processor.getGroupList();
 
         // Assertions
+        assertEquals(false, processor.isSignalConflict());
         assertEquals(0,unitA.getRelationshipsAsUnit1().size());
         assertEquals(1,unitB.getRelationshipsAsUnit1().size());
         assertEquals(2,unitC.getRelationshipsAsUnit1().size());

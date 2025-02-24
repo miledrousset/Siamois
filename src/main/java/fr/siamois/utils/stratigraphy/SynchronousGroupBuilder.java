@@ -19,10 +19,10 @@ public class SynchronousGroupBuilder {
     private long[] maitreES;
     private final String[] saiUstatut; // statut de l'US (Fait, MES, US simple par défaut)
     private long[] enSynch;
-    List<String> collecComm;
+    private List<String> collecComm;
 
     // The list of syncronous group to return
-    List<SynchronousGroup> synchronousGroupList = new ArrayList<>();
+    private List<SynchronousGroup> synchronousGroupList = new ArrayList<>();
 
 
     public SynchronousGroupBuilder(List<RecordingUnit> recordingUnits, String[] saiUstatut, long[] enSynch, List<String> collecComm) {

@@ -6,6 +6,7 @@ import fr.siamois.services.recordingunit.StratigraphicRelationshipService;
 import fr.siamois.models.exceptions.stratigraphy.StratigraphicConflictFound;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
 import java.util.List;
@@ -15,13 +16,16 @@ public class StratigraphyOrderRelationshipProcessor {
 
     // Stratigraphic unit list and their relationship
     private final List<SynchronousGroup> groupList;
-    List<String> collecComm;
-    Boolean reiterate;
-    boolean[] coche ;
+    private List<String> collecComm;
+    private Boolean reiterate;
+    private boolean[] coche ;
+    private boolean signalConflict = false;
+    private List<List<SynchronousGroup>> loops;
 
     public StratigraphyOrderRelationshipProcessor(List<SynchronousGroup> groupList, List<String> collecComm) {
 
         this.groupList = groupList;
+        this.loops = new ArrayList<>();
         this.collecComm = collecComm;
         coche = new boolean[groupList.size()];
         reiterate = false;
@@ -62,7 +66,7 @@ public class StratigraphyOrderRelationshipProcessor {
 
                 // Check for reflexive relationship
                 if(group1 == group2) {
-                    throw new StratigraphicConflictFound("Conflit");
+                    this.signalConflict = true;
                 }
                 else {
                     for(SynchronousGroup group3 : groupList) {
@@ -119,6 +123,25 @@ public class StratigraphyOrderRelationshipProcessor {
         }
     }
 
+    public void loopsDetection() {
+        for(SynchronousGroup group : groupList) {
+            if(hasRelationshipWithUnit2(group, group)) {
+                // loop detected
+                List<SynchronousGroup> newLoop = new ArrayList<>();
+                loops.add(newLoop);
+                newLoop.add(group);
+                for(SynchronousGroup group2 : groupList) {
+                    if(hasRelationshipWithUnit2(group2, group) && hasRelationshipWithUnit2(group, group2) ) {
+                        // 'suivi du circuit par les rel. symétriques
+                        newLoop.add(group2);
+                        // Remove the reflexive relationship
+                        group2.getRelationshipsAsUnit1().removeIf(rel -> rel.getUnit2().equals(group2));
+                    }
+                }
+            }
+        }
+    }
+
     public void process() {
 
         coche = new boolean[groupList.size()];
@@ -126,6 +149,9 @@ public class StratigraphyOrderRelationshipProcessor {
 
         deductRelationshipByTransitivity();
 
-    }
+        if(signalConflict) {
+            loopsDetection();
+        }
 
+    }
 }
