@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.Objects;
+
 
 @Entity
 @Table(name = "stratigraphic_relationship")
@@ -29,5 +31,22 @@ public class StratigraphicRelationship {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_relationship_concept_id")
     private Concept type;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;  // Same reference
+        if (obj == null || getClass() != obj.getClass()) return false;  // Different types
+
+        StratigraphicRelationship that = (StratigraphicRelationship) obj;
+        return Objects.equals(unit1, that.unit1) &&
+                Objects.equals(unit2, that.unit2) &&
+                Objects.equals(type, that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(unit1, unit2, type);
+    }
+
 
 }
