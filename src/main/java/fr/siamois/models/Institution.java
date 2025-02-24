@@ -3,6 +3,7 @@ package fr.siamois.models;
 import fr.siamois.models.auth.Person;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.DefaultValue;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -31,5 +32,18 @@ public class Institution implements Serializable {
     @NotNull
     @Column(name = "identifier", nullable = false, length = Integer.MAX_VALUE)
     private String identifier;
+
+    @Column(name = "ark_naan")
+    private String arkNaan;
+
+    @Column(name = "ark_prefix")
+    private String arkPrefix;
+
+    @Column(name = "ark_size")
+    private Integer arkSize;
+
+    @DefaultValue("FALSE")
+    @Column(name = "ark_is_uppercase")
+    private Boolean arkIsUppercase;
 
 }

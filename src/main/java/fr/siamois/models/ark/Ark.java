@@ -16,7 +16,6 @@ public class Ark implements Serializable {
     @Column(name = "internal_id", nullable = false)
     private Long internalId;
 
-
     @ManyToOne
     @JoinColumn(name = "fk_institution_id", nullable = false)
     private Institution creatingInstitution;
