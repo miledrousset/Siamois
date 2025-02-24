@@ -64,4 +64,6 @@ public abstract class RecordingUnitParent extends TraceableEntity {
     @Embedded
     protected RecordingUnitAltimetry altitude;
 
+
+
 }

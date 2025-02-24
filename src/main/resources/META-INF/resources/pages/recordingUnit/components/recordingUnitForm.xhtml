@@ -14,7 +14,7 @@
 
         <!-- Recording unit bean header -->
 
-        <h:form>
+        <h:form id="recordingUnitFormId">
 
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
@@ -252,33 +252,10 @@
                 </p:tab>
 
                 <p:tab title="Stratigraphie">
-                    <div class="row">
-                        <div class="form-panel col-12">
-                            <p:panel id="panel-stratigraphy" header="Stratigraphie" toggleable="true"
-                                     toggleSpeed="500">
-                                <p:chronoline value="#{newRecordingUnitFormBean.events}" var="event"
-                                              align="left"
-                                              styleClass="customized-chronoline">
-                                    <f:facet name="opposite">
-                                        <small class="text-secondary">#{event.status}</small>
-                                    </f:facet>
-                                    <f:facet name="marker">
-                                <span class="custom-marker shadow-1" style="background-color: #{event.color}"><i
-                                        class="#{event.icon}"/></span>
-                                    </f:facet>
+                    
+                    <ui:include src="./stratigraphyTab.xhtml"></ui:include>
 
-                                    <div class="flex align-items-center flex-wrap" id="slot">
-                                        <ui:repeat value="#{newRecordingUnitFormBean.stratigraphySelectedRecordingUnit}"
-                                                   var="value">
-                                            <p:chip label="#{value.id}" removable="true"/>
-                                        </ui:repeat>
-                                    </div>
-                                </p:chronoline>
-                            </p:panel>
-                        </div>
-                    </div>
                 </p:tab>
-
                 <p:tab title="Versions">
 
                         <p:dataTable var="version" value="#{newRecordingUnitFormBean.historyVersion}" rows="5" paginator="true">
@@ -322,5 +299,7 @@
     <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
         <h:outputText value="Version restaurée"/>
     </p:dialog>
+
+    <ui:include src="../../../dialog/recordingUnit/searchRecordingUnitInActionUnit.xhtml"></ui:include>
 
 </ui:composition>
