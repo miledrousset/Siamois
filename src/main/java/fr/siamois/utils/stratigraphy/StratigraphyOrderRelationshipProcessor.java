@@ -18,7 +18,7 @@ public class StratigraphyOrderRelationshipProcessor {
     private final List<SynchronousGroup> groupList;
     private List<String> collecComm;
     private Boolean reiterate;
-    private boolean[] coche ;
+    private boolean[] coche;
     private boolean signalConflict = false;
     private List<List<SynchronousGroup>> loops;
 
@@ -33,7 +33,7 @@ public class StratigraphyOrderRelationshipProcessor {
     }
 
     public boolean containsRelationshipOfType(Set<StratigraphicRelationship> relationships,
-                                        Concept type) {
+                                              Concept type) {
         return relationships.stream()
                 .anyMatch(rel -> rel.getType().equals(type));
     }
@@ -58,45 +58,44 @@ public class StratigraphyOrderRelationshipProcessor {
     public Boolean processUnitRelationships(SynchronousGroup group1, boolean[] coche) {
         Boolean reiterate = false;
 
-        for(int u2 = 0; u2 < groupList.size(); u2++) {
+        for (int u2 = 0; u2 < groupList.size(); u2++) {
             SynchronousGroup group2 = groupList.get(u2);
             // If group2 has not been processed and there is a relationship between group1 and group2
-            if(!coche[u2] && hasRelationshipWithUnit2(group1, group2)) {
+            if (!coche[u2] && hasRelationshipWithUnit2(group1, group2)) {
                 coche[u2] = true;
 
                 // Check for reflexive relationship
-                if(group1 == group2) {
+                if (group1 == group2) {
                     this.signalConflict = true;
-                }
-                else {
-                    for(SynchronousGroup group3 : groupList) {
+                } else {
+                    for (SynchronousGroup group3 : groupList) {
                         // We look for rels between group 2 and group 3
-                        if(hasRelationshipWithUnit2(group2, group3)) {
-                            // if the relationship has not been deducted yet
-                            if(!hasRelationshipWithUnit2OfType(
-                                    group1, group3, StratigraphicRelationshipService.ASYNCHRONOUS_DEDUCTED
+                        if (
+                                hasRelationshipWithUnit2(group2, group3) &&
+                                        !hasRelationshipWithUnit2OfType( // if the relationship has not been deducted yet
+                                                group1, group3, StratigraphicRelationshipService.ASYNCHRONOUS_DEDUCTED
+                                        )
+                        ) {
+                            // If no relationships at all
+                            if (!hasRelationshipWithUnit2(
+                                    group1, group3
                             )) {
-                                // If no relationships at all
-                                if(!hasRelationshipWithUnit2(
-                                        group1, group3
-                                )) {
-                                    reiterate = true;
-                                }
-                                // Get and modify the rel
-                                Optional<StratigraphicRelationship> rel = getRelationshipWithUnit2(group1,group3);
-                                if(rel.isPresent()) {
-                                    // type is now asynchronous deducted
-                                    rel.get().setType(StratigraphicRelationshipService.ASYNCHRONOUS_DEDUCTED);
-                                }
-                                else {
-                                    // we add it as asynchronous deducted
-                                    StratigraphicRelationship newRel = new StratigraphicRelationship();
-                                    newRel.setUnit1(group1);
-                                    newRel.setUnit2(group3);
-                                    newRel.setType(StratigraphicRelationshipService.ASYNCHRONOUS_DEDUCTED);
-                                    group1.getRelationshipsAsUnit1().add(newRel);
-                                }
+                                reiterate = true;
                             }
+                            // Get and modify the rel
+                            Optional<StratigraphicRelationship> rel = getRelationshipWithUnit2(group1, group3);
+                            if (rel.isPresent()) {
+                                // type is now asynchronous deducted
+                                rel.get().setType(StratigraphicRelationshipService.ASYNCHRONOUS_DEDUCTED);
+                            } else {
+                                // we add it as asynchronous deducted
+                                StratigraphicRelationship newRel = new StratigraphicRelationship();
+                                newRel.setUnit1(group1);
+                                newRel.setUnit2(group3);
+                                newRel.setType(StratigraphicRelationshipService.ASYNCHRONOUS_DEDUCTED);
+                                group1.getRelationshipsAsUnit1().add(newRel);
+                            }
+
                         }
                     }
                 }
@@ -111,27 +110,27 @@ public class StratigraphyOrderRelationshipProcessor {
     public void deductRelationshipByTransitivity() {
 
         // dedeucation par transitivité de toute les realtions redondantes et non redondantes
-        for(SynchronousGroup group : groupList ) {
+        for (SynchronousGroup group : groupList) {
             // If the group has certain asynch relationships
-            if(containsRelationshipOfType(group.getRelationshipsAsUnit1(), StratigraphicRelationshipService.ASYNCHRONOUS)) {
+            if (containsRelationshipOfType(group.getRelationshipsAsUnit1(), StratigraphicRelationshipService.ASYNCHRONOUS)) {
                 coche = new boolean[groupList.size()]; // reinit marks
                 do {
                     reiterate = processUnitRelationships(group, coche);
                 }
-                while(reiterate);
+                while (reiterate);
             }
         }
     }
 
     public void loopsDetection() {
-        for(SynchronousGroup group : groupList) {
-            if(hasRelationshipWithUnit2(group, group)) {
+        for (SynchronousGroup group : groupList) {
+            if (hasRelationshipWithUnit2(group, group)) {
                 // loop detected
                 List<SynchronousGroup> newLoop = new ArrayList<>();
                 loops.add(newLoop);
                 newLoop.add(group);
-                for(SynchronousGroup group2 : groupList) {
-                    if(hasRelationshipWithUnit2(group2, group) && hasRelationshipWithUnit2(group, group2) ) {
+                for (SynchronousGroup group2 : groupList) {
+                    if (hasRelationshipWithUnit2(group2, group) && hasRelationshipWithUnit2(group, group2)) {
                         // 'suivi du circuit par les rel. symétriques
                         newLoop.add(group2);
                         // Remove the reflexive relationship
@@ -149,7 +148,7 @@ public class StratigraphyOrderRelationshipProcessor {
 
         deductRelationshipByTransitivity();
 
-        if(signalConflict) {
+        if (signalConflict) {
             loopsDetection();
         }
 
