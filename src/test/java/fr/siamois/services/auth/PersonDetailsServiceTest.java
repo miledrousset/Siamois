@@ -33,14 +33,14 @@ class PersonDetailsServiceTest {
         Person person = new Person();
         person.setUsername("testUser");
 
-        when(personRepository.findPersonByUsername("testUser")).thenReturn(Optional.of(person));
+        when(personRepository.findByUsernameIgnoreCase("testUser")).thenReturn(Optional.of(person));
 
         assertEquals(person, personDetailsService.loadUserByUsername("testUser"));
     }
 
     @Test
     void loadUserByUsername_throwsUsernameNotFoundException() {
-        when(personRepository.findPersonByUsername("unknownUser")).thenReturn(Optional.empty());
+        when(personRepository.findByUsernameIgnoreCase("unknownUser")).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class, () -> personDetailsService.loadUserByUsername("unknownUser"));
     }
@@ -50,14 +50,14 @@ class PersonDetailsServiceTest {
         Person person = new Person();
         person.setUsername("testUser");
 
-        when(personRepository.findPersonByUsername("testUser")).thenReturn(Optional.of(person));
+        when(personRepository.findByUsernameIgnoreCase("testUser")).thenReturn(Optional.of(person));
 
         assertEquals(person, personDetailsService.findPersonByUsername("testUser"));
     }
 
     @Test
     void findPersonByUsername_throwsUsernameNotFoundException() {
-        when(personRepository.findPersonByUsername("unknownUser")).thenReturn(Optional.empty());
+        when(personRepository.findByUsernameIgnoreCase("unknownUser")).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class, () -> personDetailsService.findPersonByUsername("unknownUser"));
     }

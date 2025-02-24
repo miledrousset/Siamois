@@ -66,7 +66,7 @@ class PersonServiceTest {
         String email = "test@example.com";
         String password = "password123";
 
-        when(personRepository.findPersonByUsername(username)).thenReturn(Optional.empty());
+        when(personRepository.findByUsernameIgnoreCase(username)).thenReturn(Optional.empty());
         when(passwordEncoder.encode(password)).thenReturn("encodedPassword");
         when(personRepository.save(any(Person.class))).then(invocation -> invocation.getArgument(0, Person.class));
 

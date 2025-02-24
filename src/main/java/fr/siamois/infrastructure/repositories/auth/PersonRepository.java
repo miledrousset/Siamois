@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface PersonRepository extends CrudRepository<Person, Long> {
 
-    Optional<Person> findPersonByUsername(String username);
+    Optional<Person> findByUsernameIgnoreCase(String username);
 
     List<Person> findAllByNameIsContainingIgnoreCaseOrLastnameIsContainingIgnoreCase(String name, String lastname);
 
