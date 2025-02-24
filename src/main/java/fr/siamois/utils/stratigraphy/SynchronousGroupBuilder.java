@@ -16,7 +16,7 @@ public class SynchronousGroupBuilder {
 
     private long[] enSynch; // ensemble synchrone (ES) de l'US (O si pas en synchronisme)
     private final String[] saiUstatut; // statut de l'US (Fait, MES, US simple par défaut)
-
+    private long[] maitreES;
 
     private List<String> collecComm = new ArrayList<>();
 
@@ -26,7 +26,65 @@ public class SynchronousGroupBuilder {
 
         saiUstatut = new String[recordingUnits.size()];
         Arrays.fill(saiUstatut, "US");
+        // Store the synchronous group master index
+        maitreES = new long[recordingUnits.size()];
+    }
 
+    public boolean findTransitiveRel(RecordingUnit unit1, int u2) {
+
+        RecordingUnit unit2 = recordingUnits.get(u2);
+        boolean signalModif = false;
+
+        // Déduction par transitivité
+        for (int u3 = 0; u3 < recordingUnits.size(); u3++) {
+            if ((hasSynchronousRelationship(unit2, recordingUnits.get(u3)) ||
+                    hasSynchronousRelationship(recordingUnits.get(u3), unit2)) &&
+                    !hasSynchronousRelationship(unit1, recordingUnits.get(u3))) {
+
+                //  The following lines are the equivalent of "MSyn(u, u3) = Synchro;"
+                StratigraphicRelationship newRelationship = new StratigraphicRelationship();
+                newRelationship.setUnit1(unit1);
+                newRelationship.setUnit2(recordingUnits.get(u3));
+                newRelationship.setType(StratigraphicRelationshipService.SYNCHRONOUS); // Assuming this is your synchronous concept
+                unit1.getRelationshipsAsUnit1().add(newRelationship);
+                //  End
+                signalModif = true;
+            }
+        }
+
+        return signalModif;
+    }
+
+    public boolean iterateAndFindSynchronismsWithGivenUnit(int u, boolean[][] coche ) {
+
+        RecordingUnit unit = recordingUnits.get(u);
+        boolean signalModifSymetry = false;
+        boolean signalModifTransitivity = false;
+
+        for (int u2 = 0; u2 < recordingUnits.size(); u2++) {
+
+            if (hasSynchronousRelationship(unit, recordingUnits.get(u2)) && u != u2 && !coche[u][u2]) {
+
+                coche[u][u2] = true;
+
+                // Déduction par symétrie
+                if (!hasSynchronousRelationship(recordingUnits.get(u2), recordingUnits.get(u))) { // MSyn(u2, u) != Synchro
+                    // The following lines are the equivalent of "MSyn(u2, u) = Synchro;"
+                    StratigraphicRelationship newRelationship = new StratigraphicRelationship();
+                    newRelationship.setUnit1(recordingUnits.get(u2));
+                    newRelationship.setUnit2(unit);
+                    newRelationship.setType(StratigraphicRelationshipService.SYNCHRONOUS); // Assuming this is your synchronous concept
+                    recordingUnits.get(u2).getRelationshipsAsUnit1().add(newRelationship);
+                    //  End
+                    signalModifSymetry = true;
+                }
+
+                // We iterate over the whole list again to find synchronisms by transitivity
+                signalModifTransitivity = findTransitiveRel(unit, u2);
+            }
+        }
+
+        return signalModifTransitivity || signalModifSymetry;
     }
 
     public void findTransitiveAndReflexiveRelationships() {
@@ -41,46 +99,50 @@ public class SynchronousGroupBuilder {
             for (int u = 0; u < recordingUnits.size(); u++) { // We are going to iterate among all the recording units
                 if (enSynch[u] > 0) { // If the current US is part of a synchronous group
                     // We compare the current recordingUnits (u) with every other recordingUnits (u2) to find synchronisms
-                    for (int u2 = 0; u2 < recordingUnits.size(); u2++) {
-
-                        if (hasSynchronousRelationship(recordingUnits.get(u), recordingUnits.get(u2)) && u != u2 && !coche[u][u2]) {
-
-                            coche[u][u2] = true;
-
-                            // Déduction par symétrie
-                            if (!hasSynchronousRelationship(recordingUnits.get(u2), recordingUnits.get(u))) { // MSyn(u2, u) != Synchro
-                                // The following lines are the equivalent of "MSyn(u2, u) = Synchro;"
-                                StratigraphicRelationship newRelationship = new StratigraphicRelationship();
-                                newRelationship.setUnit1(recordingUnits.get(u2));
-                                newRelationship.setUnit2(recordingUnits.get(u));
-                                newRelationship.setType(StratigraphicRelationshipService.SYNCHRONOUS); // Assuming this is your synchronous concept
-                                recordingUnits.get(u2).getRelationshipsAsUnit1().add(newRelationship);
-                                //  End
-                                signalModif = true;
-                            }
-
-                            // We iterate over the whole list again to find synchronisms by transitivity
-
-
-                            // Déduction par transitivité
-                            for (int u3 = 0; u3 < recordingUnits.size(); u3++) {
-                                if ((hasSynchronousRelationship(recordingUnits.get(u2), recordingUnits.get(u3)) ||
-                                        hasSynchronousRelationship(recordingUnits.get(u3), recordingUnits.get(u2))) &&
-                                        !hasSynchronousRelationship(recordingUnits.get(u), recordingUnits.get(u3))) {
-                                    //  The following lines are the equivalent of MSyn(u, u3) = Synchro;
-                                    StratigraphicRelationship newRelationship = new StratigraphicRelationship();
-                                    newRelationship.setUnit1(recordingUnits.get(u));
-                                    newRelationship.setUnit2(recordingUnits.get(u3));
-                                    newRelationship.setType(StratigraphicRelationshipService.SYNCHRONOUS); // Assuming this is your synchronous concept
-                                    recordingUnits.get(u).getRelationshipsAsUnit1().add(newRelationship);
-                                    //  End
-                                }
-                            }
-                        }
-                    }
+                    signalModif = iterateAndFindSynchronismsWithGivenUnit(u, coche);
                 }
             }
         } while (signalModif);
+    }
+
+    public void removeSynchronousRelBetweenUnitAndItself(int unitIndex) {
+        // Remove relationship between u2 and itself so it cant be detected anymore as a group
+        if (hasSynchronousRelationship(
+                recordingUnits.get(unitIndex),
+                recordingUnits.get(unitIndex)
+        )) {
+            // Remove self-referential synchronous relationship
+            recordingUnits.get(unitIndex).getRelationshipsAsUnit1().removeIf(
+                    rel -> rel.getUnit2().equals(recordingUnits.get(unitIndex)) && isSynchronous(rel)
+            );
+        }
+    }
+
+    public void findAndAddUnitToSynchronousGroup(SynchronousGroup group, int firstUnitIndex) {
+
+        for (int u2 = 0; u2 < recordingUnits.size(); u2++) {
+            if (hasSynchronousRelationship(
+                    recordingUnits.get(firstUnitIndex),
+                    recordingUnits.get(u2)
+            )) {
+
+                enSynch[u2] = firstUnitIndex; // Indique la 1ère US de l'ensemble synchrone
+                group.addUnit(recordingUnits.get(u2));
+
+                if (saiUstatut[u2].equals("maître d'ES")) {
+                    // If we declared u2 as a group master and u is also a group mastr
+                    // , we have a problem because there already is a group master
+                    if (maitreES[firstUnitIndex] == 0) {
+                        group.setMaster(recordingUnits.get(u2));
+                    } else {
+                        collecComm.add("Attention : plusieurs maîtres pour l'ensemble synchrone " + firstUnitIndex);
+                    }
+                }
+
+                removeSynchronousRelBetweenUnitAndItself(u2) ;
+
+            }
+        }
     }
 
     // La méthode qui simule la logique de "EnsemblesSynchrones" en Java
@@ -90,8 +152,7 @@ public class SynchronousGroupBuilder {
     public List<SynchronousGroup> build() {
 
 
-        // Store the synchronous group master index
-        long[] maitreES = new long[recordingUnits.size()];
+
         // The list of syncronous group to return
         List<SynchronousGroup> synchronousGroupList = new ArrayList<>();
 
@@ -102,10 +163,12 @@ public class SynchronousGroupBuilder {
                 .mapToLong(i -> i + 1) // Assigns index + 1 to each element
                 .toArray();
 
+        findTransitiveAndReflexiveRelationships();
 
 
         // Traitement des ensembles synchrones
         for (int u = 0; u < recordingUnits.size(); u++) {
+
             if (hasSynchronousRelationship(
                     recordingUnits.get(u),
                     recordingUnits.get(u)
@@ -115,40 +178,8 @@ public class SynchronousGroupBuilder {
                 newGroup.addUnit(recordingUnits.get(u));
                 newGroup.setMaster(recordingUnits.get(u));
 
-                for (int u2 = 0; u2 < recordingUnits.size(); u2++) {
-                    if (hasSynchronousRelationship(
-                            recordingUnits.get(u),
-                            recordingUnits.get(u2)
-                    )) {
+                findAndAddUnitToSynchronousGroup(newGroup, u);
 
-                        enSynch[u2] = u; // Indique la 1ère US de l'ensemble synchrone
-                        newGroup.addUnit(recordingUnits.get(u2));
-
-                        if (saiUstatut[u2].equals("maître d'ES")) {
-                            // If we declared u2 as a group master and u is also a group mastr
-                            // , we have a problem because there already is a group master
-                            if (maitreES[u] == 0) {
-                                newGroup.setMaster(recordingUnits.get(u2));
-                            } else {
-                                collecComm.add("Attention : plusieurs maîtres pour l'ensemble synchrone " + u);
-                            }
-                        }
-
-                        // Remove relationship between u2 and itself so it cant be detected anymore as a group
-                        if (hasSynchronousRelationship(
-                                recordingUnits.get(u2),
-                                recordingUnits.get(u2)
-                        )) {
-                            // Remove self-referential synchronous relationship
-                            int finalU2 = u2;
-                            recordingUnits.get(u2).getRelationshipsAsUnit1().removeIf(
-                                    rel -> rel.getUnit2().equals(recordingUnits.get(finalU2)) && isSynchronous(rel)
-                            );
-                        }
-
-
-                    }
-                }
 
                 // Add the group to the list of group
                 synchronousGroupList.add(newGroup);

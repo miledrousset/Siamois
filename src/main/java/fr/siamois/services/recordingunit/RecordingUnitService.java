@@ -68,6 +68,16 @@ public class RecordingUnitService {
         return recordingUnitRepository.findAllByActionUnit(actionUnit);
     }
 
+    public int generateNextIdentifier (RecordingUnit recordingUnit) {
+        // Generate next identifier
+        Integer currentMaxIdentifier = recordingUnitRepository.findMaxUsedIdentifierByAction(recordingUnit.getActionUnit().getId());
+        int nextIdentifier = (currentMaxIdentifier == null) ? recordingUnit.getActionUnit().getMinRecordingUnitCode() : currentMaxIdentifier + 1;
+        if (nextIdentifier > recordingUnit.getActionUnit().getMaxRecordingUnitCode() || nextIdentifier < 0) {
+            throw new MaxRecordingUnitIdentifierReached("Max recording unit code reached; Please ask administrator to increase the range");
+        }
+        return(nextIdentifier);
+    }
+
     @Transactional
     public RecordingUnit save(RecordingUnit recordingUnit, Concept concept,
                               List<RecordingUnit> anteriorUnits,
@@ -88,13 +98,8 @@ public class RecordingUnitService {
             // Generate unique identifier if not present
             if (recordingUnit.getFullIdentifier() == null) {
                 if (recordingUnit.getIdentifier() == null) {
-                    // Generate next identifier
-                    Integer currentMaxIdentifier = recordingUnitRepository.findMaxUsedIdentifierByAction(recordingUnit.getActionUnit().getId());
-                    Integer nextIdentifier = (currentMaxIdentifier == null) ? recordingUnit.getActionUnit().getMinRecordingUnitCode() : currentMaxIdentifier + 1;
-                    if (nextIdentifier > recordingUnit.getActionUnit().getMaxRecordingUnitCode() || nextIdentifier < 0) {
-                        throw new MaxRecordingUnitIdentifierReached("Max recording unit code reached; Please ask administrator to increase the range");
-                    }
-                    recordingUnit.setIdentifier(nextIdentifier);
+
+                    recordingUnit.setIdentifier(generateNextIdentifier(recordingUnit));
                 }
                 // Set full identifier
                 recordingUnit.setFullIdentifier(recordingUnit.displayFullIdentifier());
@@ -105,39 +110,24 @@ public class RecordingUnitService {
             recordingUnit.setType(type);
 
 
-            // Step 2: This will contain the new relationships
-            Set<StratigraphicRelationship> newRelationships = new HashSet<>();
 
             for (RecordingUnit syncUnit : synchronousUnits) {
-                newRelationships.add(stratigraphicRelationshipService.saveOrGet(recordingUnit, syncUnit,
-                        StratigraphicRelationshipService.SYNCHRONOUS));
+                stratigraphicRelationshipService.saveOrGet(recordingUnit, syncUnit,
+                        StratigraphicRelationshipService.SYNCHRONOUS);
             }
 
             for (RecordingUnit antUnit : anteriorUnits) {
-                newRelationships.add(stratigraphicRelationshipService.saveOrGet(antUnit, recordingUnit,
-                        StratigraphicRelationshipService.ASYNCHRONOUS));
+                stratigraphicRelationshipService.saveOrGet(antUnit, recordingUnit,
+                        StratigraphicRelationshipService.ASYNCHRONOUS);
             }
 
             for (RecordingUnit postUnit : posteriorUnits) {
-                newRelationships.add(stratigraphicRelationshipService.saveOrGet(recordingUnit, postUnit,
-                        StratigraphicRelationshipService.ASYNCHRONOUS));
+                stratigraphicRelationshipService.saveOrGet(recordingUnit, postUnit,
+                        StratigraphicRelationshipService.ASYNCHRONOUS);
             }
 
             recordingUnit = recordingUnitRepository.save(recordingUnit); // Reattach entity to get lazy props
 
-            // Step 3: Add relationships to RecordingUnit
-            Hibernate.initialize(recordingUnit.getRelationshipsAsUnit1());
-            Hibernate.initialize(recordingUnit.getRelationshipsAsUnit2());
-            recordingUnit.getRelationshipsAsUnit1().clear();
-            recordingUnit.getRelationshipsAsUnit2().clear();
-
-            for (StratigraphicRelationship rel : newRelationships) {
-                if (rel.getUnit1().equals(recordingUnit)) {
-                    recordingUnit.getRelationshipsAsUnit1().add(rel);
-                } else {
-                    recordingUnit.getRelationshipsAsUnit2().add(rel);
-                }
-            }
 
             return recordingUnitRepository.save(recordingUnit);
         } catch (RuntimeException e) {

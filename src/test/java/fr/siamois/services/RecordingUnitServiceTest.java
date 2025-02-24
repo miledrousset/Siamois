@@ -26,12 +26,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -199,12 +198,16 @@ class RecordingUnitServiceTest {
         // assert
         assertNotNull(result);
         assertEquals("MOM-2025-5", result.getFullIdentifier());
-        Set<StratigraphicRelationship> expectedRelationships = Set.of(antRelationship, syncRelationship);
-        assertEquals(expectedRelationships.size(), result.getRelationshipsAsUnit1().size());
-        assertTrue(result.getRelationshipsAsUnit1().containsAll(expectedRelationships));
-        assertNotNull(result.getRelationshipsAsUnit2());
-        assertEquals(1, result.getRelationshipsAsUnit2().size()); // Check the count
-        assertTrue(result.getRelationshipsAsUnit2().contains(postRelationship)); // Check content
+
+        // Verify that saveOrGet was called the correct number of times with expected arguments
+        verify(stratigraphicRelationshipService, times(1))
+                .saveOrGet(recordingUnitToSave, synchronousUnit, StratigraphicRelationshipService.SYNCHRONOUS);
+
+        verify(stratigraphicRelationshipService, times(1))
+                .saveOrGet(anteriorUnit, recordingUnitToSave, StratigraphicRelationshipService.ASYNCHRONOUS);
+
+        verify(stratigraphicRelationshipService, times(1))
+                .saveOrGet(recordingUnitToSave, posteriorUnit, StratigraphicRelationshipService.ASYNCHRONOUS);
 
 
     }
