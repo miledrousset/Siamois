@@ -2,12 +2,9 @@ package fr.siamois.services.actionunit;
 
 import fr.siamois.infrastructure.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
-import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.ark.Ark;
-import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.ActionUnitNotFoundException;
 import fr.siamois.models.exceptions.FailedActionUnitSaveException;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
@@ -15,7 +12,6 @@ import fr.siamois.models.exceptions.NullActionUnitIdentifier;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.vocabulary.ConceptService;
-import fr.siamois.utils.ArkGeneratorUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,15 +26,12 @@ import java.util.Set;
 public class ActionUnitService {
 
     private final ActionUnitRepository actionUnitRepository;
-    private final ArkServerRepository arkServerRepository;
     private final ConceptService conceptService;
     private final ActionCodeRepository actionCodeRepository;
 
     public ActionUnitService(ActionUnitRepository actionUnitRepository,
-                             ArkServerRepository arkServerRepository,
                              ConceptService conceptService, ActionCodeRepository actionCodeRepository) {
         this.actionUnitRepository = actionUnitRepository;
-        this.arkServerRepository = arkServerRepository;
         this.conceptService = conceptService;
         this.actionCodeRepository = actionCodeRepository;
     }
@@ -68,15 +61,6 @@ public class ActionUnitService {
     public ActionUnit save(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
 
         try {
-
-            // Generate ARK if the action unit does not have any
-            if (actionUnit.getArk() == null) {
-                ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
-                Ark ark = new Ark();
-                ark.setArkServer(localServer);
-                ark.setArkId(ArkGeneratorUtils.generateArk());
-                actionUnit.setArk(ark);
-            }
 
             // Generate unique identifier if not presents
             if (actionUnit.getFullIdentifier() == null) {

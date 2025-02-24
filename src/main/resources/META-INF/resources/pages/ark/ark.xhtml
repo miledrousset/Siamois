@@ -24,40 +24,9 @@
                 <div class="row">
                     <div class="card">
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-6">
-                                    <h2>Serveur ARK</h2>
-                                </div>
-                                <div class="col-6">
-                                    <p:toggleSwitch value="#{arkBean.VIsArkServer}">
-                                        <p:ajax listener="#{arkBean.arkServerToggle()}" update="arkConfig"/>
-                                    </p:toggleSwitch>
-                                </div>
-                            </div>
-                            <h:panelGroup rendered="#{arkBean.VIsArkServer}">
-                                <hr/>
-                                <ark:arkServerForm/>
-                            </h:panelGroup>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-6">
-                                    <h2>Serveur ARK local</h2>
-                                </div>
-                                <div class="col-6">
-                                    <p:toggleSwitch value="#{arkBean.VIsLocalArkServer}">
-                                        <p:ajax listener="#{arkBean.arkLocalToggle()}" update="arkConfig"/>
-                                    </p:toggleSwitch>
-                                </div>
-                            </div>
-                            <h:panelGroup rendered="#{arkBean.VIsLocalArkServer}">
-                                <hr/>
-                                <ark:localArkServerForm/>
-                            </h:panelGroup>
+                            <h2>Serveur ARK local</h2>
+                            <hr/>
+                            <ark:localArkServerForm/>
                         </div>
                     </div>
                 </div>

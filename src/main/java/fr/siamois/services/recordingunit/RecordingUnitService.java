@@ -1,27 +1,19 @@
 package fr.siamois.services.recordingunit;
 
-import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
 import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.ark.Ark;
-import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.exceptions.MaxRecordingUnitIdentifierReached;
 import fr.siamois.models.exceptions.RecordingUnitNotFoundException;
 import fr.siamois.models.recordingunit.RecordingUnit;
-import fr.siamois.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.vocabulary.ConceptService;
-import fr.siamois.utils.ArkGeneratorUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Service to manage RecordingUnit
@@ -34,15 +26,13 @@ import java.util.Set;
 public class RecordingUnitService {
 
     private final RecordingUnitRepository recordingUnitRepository;
-    private final ArkServerRepository arkServerRepository;
     private final ConceptService conceptService;
     private final StratigraphicRelationshipService stratigraphicRelationshipService;
 
     public RecordingUnitService(RecordingUnitRepository recordingUnitRepository,
-                                ArkServerRepository arkServerRepository,
-                                ConceptService conceptService, StratigraphicRelationshipService stratigraphicRelationshipService) {
+                                ConceptService conceptService,
+                                StratigraphicRelationshipService stratigraphicRelationshipService) {
         this.recordingUnitRepository = recordingUnitRepository;
-        this.arkServerRepository = arkServerRepository;
         this.conceptService = conceptService;
         this.stratigraphicRelationshipService = stratigraphicRelationshipService;
     }
@@ -85,16 +75,6 @@ public class RecordingUnitService {
                               List<RecordingUnit> posteriorUnits) {
 
         try {
-            // Generate ARK if the recording unit does not have any
-            if (recordingUnit.getArk() == null) {
-
-                ArkServer localServer = arkServerRepository.findLocalServer().orElseThrow(() -> new IllegalStateException("No local server found"));
-                Ark ark = new Ark();
-                ark.setArkServer(localServer);
-                ark.setArkId(ArkGeneratorUtils.generateArk());
-                recordingUnit.setArk(ark);
-            }
-
             // Generate unique identifier if not present
             if (recordingUnit.getFullIdentifier() == null) {
                 if (recordingUnit.getIdentifier() == null) {

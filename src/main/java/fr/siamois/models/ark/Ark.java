@@ -1,7 +1,7 @@
 package fr.siamois.models.ark;
 
+import fr.siamois.models.Institution;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,12 +12,16 @@ import java.io.Serializable;
 public class Ark implements Serializable {
 
     @Id
-    @Column(name = "ark_id", nullable = false, length = Integer.MAX_VALUE)
-    private String arkId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "internal_id", nullable = false)
+    private Long internalId;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "fk_base_uri", nullable = false, referencedColumnName = "server_ark_uri")
-    private ArkServer arkServer;
+
+    @ManyToOne
+    @JoinColumn(name = "fk_institution_id", nullable = false)
+    private Institution creatingInstitution;
+
+    @Column(name = "qualifier", nullable = false)
+    private String qualifier;
 
 }
