@@ -13,6 +13,31 @@
 
 <cc:implementation>
     <div class="form-row">
+        <ark:formGroup
+                label="Votre Naan"
+                valueListener="#{arkBean.VLocalNaan}"
+                placeholder="66666"
+        />
+        <ark:formGroup
+                label="Préfixe Ark"
+                valueListener="#{arkBean.VLocalPrefix}"
+                placeholder="66666"
+        />
+        <ark:formGroup
+                label="Taille de l'identifiant Ark "
+                valueListener="#{arkBean.VLocalSize}"
+                placeholder="20"
+                colSize="2"
+        />
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="localIsCaps" >Générer l'identifiant Ark en majuscules </label>
+            <p:toggleSwitch id="localIsCaps" value="#{arkBean.VLocalIsCaps}"/>
+        </div>
+    </div>
+    <div class="form-row">
+        <p:commandButton styleClass="btn mb-1 btn-primary" value="Enregistrer" action="#{arkBean.saveLocalArkConfig()}"/>
     </div>
 </cc:implementation>
 

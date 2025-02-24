@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class ArkBean implements Serializable {
 
 
-    // Fields
+    //  -- Fields
 
     // Toggles
     private boolean vIsArkServer;
@@ -50,4 +50,7 @@ public class ArkBean implements Serializable {
         // TODO
     }
 
+    public void getSaveLocalArkConfig() {
+        // TODO
+    }
 }
