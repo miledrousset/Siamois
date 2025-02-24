@@ -18,7 +18,6 @@ public class SynchronousGroupBuilder {
     private final String[] saiUstatut; // statut de l'US (Fait, MES, US simple par défaut)
 
 
-    private boolean alerteUmaitre = false;
     private List<String> collecComm = new ArrayList<>();
 
     public SynchronousGroupBuilder(@NotNull List<RecordingUnit> recordingUnits) {
@@ -30,28 +29,12 @@ public class SynchronousGroupBuilder {
 
     }
 
-    // La méthode qui simule la logique de "EnsemblesSynchrones" en Java
-    // constitution des ensembles synchrones certains
-    // déduction des synchronismes
-
-    public List<SynchronousGroup> build() {
+    public void findTransitiveAndReflexiveRelationships() {
 
         // Variables locales
         boolean signalModif = false;
-        // Store the synchronous group master index
-        long[] MaitreES = new long[recordingUnits.size()];
-        // The list of syncronous group to return
-        List<SynchronousGroup> synchronousGroupList = new ArrayList<>();
-
         // coche keeps tracks of the visited cells of the synchronisms matrix / matrice signal de relation traitée (accération traitement)
         boolean[][] coche = new boolean[recordingUnits.size()][recordingUnits.size()];
-
-        // Initialisation des tableaux
-        Arrays.fill(MaitreES, 0);
-        enSynch = IntStream.range(0, recordingUnits.size()) // ensemble synchrone (ES) de l'US (O si pas en synchronisme)
-                // Initialisation : each element get the value of its index because each US is in its on synchronous group
-                .mapToLong(i -> i + 1) // Assigns index + 1 to each element
-                .toArray();
 
         do {
             signalModif = false;
@@ -66,7 +49,7 @@ public class SynchronousGroupBuilder {
 
                             // Déduction par symétrie
                             if (!hasSynchronousRelationship(recordingUnits.get(u2), recordingUnits.get(u))) { // MSyn(u2, u) != Synchro
-                                // The following lines are the equivalent of MSyn(u2, u) = Synchro;
+                                // The following lines are the equivalent of "MSyn(u2, u) = Synchro;"
                                 StratigraphicRelationship newRelationship = new StratigraphicRelationship();
                                 newRelationship.setUnit1(recordingUnits.get(u2));
                                 newRelationship.setUnit2(recordingUnits.get(u));
@@ -81,17 +64,16 @@ public class SynchronousGroupBuilder {
 
                             // Déduction par transitivité
                             for (int u3 = 0; u3 < recordingUnits.size(); u3++) {
-                                if( hasSynchronousRelationship(recordingUnits.get(u2), recordingUnits.get(u3)) ||
-                                        hasSynchronousRelationship(recordingUnits.get(u3), recordingUnits.get(u2)) )   {
-                                    if(!hasSynchronousRelationship(recordingUnits.get(u), recordingUnits.get(u3))) {
-                                        //  The following lines are the equivalent of MSyn(u, u3) = Synchro;
-                                        StratigraphicRelationship newRelationship = new StratigraphicRelationship();
-                                        newRelationship.setUnit1(recordingUnits.get(u));
-                                        newRelationship.setUnit2(recordingUnits.get(u3));
-                                        newRelationship.setType(StratigraphicRelationshipService.SYNCHRONOUS); // Assuming this is your synchronous concept
-                                        recordingUnits.get(u).getRelationshipsAsUnit1().add(newRelationship);
-                                        //  End
-                                    }
+                                if ((hasSynchronousRelationship(recordingUnits.get(u2), recordingUnits.get(u3)) ||
+                                        hasSynchronousRelationship(recordingUnits.get(u3), recordingUnits.get(u2))) &&
+                                        !hasSynchronousRelationship(recordingUnits.get(u), recordingUnits.get(u3))) {
+                                    //  The following lines are the equivalent of MSyn(u, u3) = Synchro;
+                                    StratigraphicRelationship newRelationship = new StratigraphicRelationship();
+                                    newRelationship.setUnit1(recordingUnits.get(u));
+                                    newRelationship.setUnit2(recordingUnits.get(u3));
+                                    newRelationship.setType(StratigraphicRelationshipService.SYNCHRONOUS); // Assuming this is your synchronous concept
+                                    recordingUnits.get(u).getRelationshipsAsUnit1().add(newRelationship);
+                                    //  End
                                 }
                             }
                         }
@@ -99,6 +81,30 @@ public class SynchronousGroupBuilder {
                 }
             }
         } while (signalModif);
+    }
+
+    // La méthode qui simule la logique de "EnsemblesSynchrones" en Java
+    // constitution des ensembles synchrones certains
+    // déduction des synchronismes
+
+    public List<SynchronousGroup> build() {
+
+
+        // Store the synchronous group master index
+        long[] maitreES = new long[recordingUnits.size()];
+        // The list of syncronous group to return
+        List<SynchronousGroup> synchronousGroupList = new ArrayList<>();
+
+
+
+        // Initialisation des tableaux
+        Arrays.fill(maitreES, 0);
+        enSynch = IntStream.range(0, recordingUnits.size()) // ensemble synchrone (ES) de l'US (O si pas en synchronisme)
+                // Initialisation : each element get the value of its index because each US is in its on synchronous group
+                .mapToLong(i -> i + 1) // Assigns index + 1 to each element
+                .toArray();
+
+
 
         // Traitement des ensembles synchrones
         for (int u = 0; u < recordingUnits.size(); u++) {
@@ -123,11 +129,9 @@ public class SynchronousGroupBuilder {
                         if (saiUstatut[u2].equals("maître d'ES")) {
                             // If we declared u2 as a group master and u is also a group mastr
                             // , we have a problem because there already is a group master
-                            if (MaitreES[u] == 0) {
+                            if (maitreES[u] == 0) {
                                 newGroup.setMaster(recordingUnits.get(u2));
                             } else {
-                                // Ajouter l'alerte
-                                alerteUmaitre = true;
                                 collecComm.add("Attention : plusieurs maîtres pour l'ensemble synchrone " + u);
                             }
                         }

@@ -1,15 +1,12 @@
 package fr.siamois.services.recordingunit;
 
-import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.StratigraphicRelationshipRepository;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.StratigraphicRelationship;
-import fr.siamois.models.recordingunit.StratigraphicRelationshipId;
 import fr.siamois.models.vocabulary.Concept;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -25,7 +22,6 @@ class StratigraphicRelationshipServiceTest {
 
     @Mock
     private StratigraphicRelationshipRepository relationshipRepository;
-    private RecordingUnitRepository recordingUnitRepository;
 
     @Mock
     private EntityManager entityManager;
