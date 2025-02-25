@@ -51,9 +51,45 @@ public class StratigraphyOrderRelationshipProcessor {
                 .findFirst(); // Returns an Optional containing the first match, or empty if none found
     }
 
+    private boolean deductTransitiveRelationshipBetweenU1AndOthersThroughU2(SynchronousGroup unit1, SynchronousGroup unit2) {
+        boolean reiterate = false;
+        for (SynchronousGroup group3 : groupList) {
+            // We look for rels between group 2 and group 3
+            if (
+                    hasRelationshipWithUnit2(unit2, group3) &&
+                            !hasRelationshipWithUnit2OfType( // if the relationship has not been deducted yet
+                                    unit1, group3, StratigraphicRelationshipService.ASYNCHRONOUS_DEDUCTED
+                            )
+            ) {
+                // If no relationships at all
+                if (!hasRelationshipWithUnit2(
+                        unit1, group3
+                )) {
+                    reiterate = true;
+                }
+                // modify or create the rel so it is marked as deducted
+                Optional<StratigraphicRelationship> rel = getRelationshipWithUnit2(unit1, group3);
+                if (rel.isPresent()) {
+                    // type is now asynchronous deducted
+                    rel.get().setType(StratigraphicRelationshipService.ASYNCHRONOUS_DEDUCTED);
+                } else {
+                    // we add it as asynchronous deducted
+                    StratigraphicRelationship newRel = new StratigraphicRelationship();
+                    newRel.setUnit1(unit1);
+                    newRel.setUnit2(group3);
+                    newRel.setType(StratigraphicRelationshipService.ASYNCHRONOUS_DEDUCTED);
+                    unit1.getRelationshipsAsUnit1().add(newRel);
+                }
+
+            }
+        }
+        return reiterate;
+    }
+
 
     public Boolean processUnitRelationships(SynchronousGroup group1, boolean[] coche) {
-        Boolean reiterate = false;
+
+        boolean reiterate = false;
 
         for (int u2 = 0; u2 < groupList.size(); u2++) {
             SynchronousGroup group2 = groupList.get(u2);
@@ -65,39 +101,8 @@ public class StratigraphyOrderRelationshipProcessor {
                 if (group1 == group2) {
                     this.signalConflict = true;
                 } else {
-                    for (SynchronousGroup group3 : groupList) {
-                        // We look for rels between group 2 and group 3
-                        if (
-                                hasRelationshipWithUnit2(group2, group3) &&
-                                        !hasRelationshipWithUnit2OfType( // if the relationship has not been deducted yet
-                                                group1, group3, StratigraphicRelationshipService.ASYNCHRONOUS_DEDUCTED
-                                        )
-                        ) {
-                            // If no relationships at all
-                            if (!hasRelationshipWithUnit2(
-                                    group1, group3
-                            )) {
-                                reiterate = true;
-                            }
-                            // Get and modify the rel
-                            Optional<StratigraphicRelationship> rel = getRelationshipWithUnit2(group1, group3);
-                            if (rel.isPresent()) {
-                                // type is now asynchronous deducted
-                                rel.get().setType(StratigraphicRelationshipService.ASYNCHRONOUS_DEDUCTED);
-                            } else {
-                                // we add it as asynchronous deducted
-                                StratigraphicRelationship newRel = new StratigraphicRelationship();
-                                newRel.setUnit1(group1);
-                                newRel.setUnit2(group3);
-                                newRel.setType(StratigraphicRelationshipService.ASYNCHRONOUS_DEDUCTED);
-                                group1.getRelationshipsAsUnit1().add(newRel);
-                            }
-
-                        }
-                    }
+                    reiterate = deductTransitiveRelationshipBetweenU1AndOthersThroughU2(group1, group2);
                 }
-
-
             }
         }
 
