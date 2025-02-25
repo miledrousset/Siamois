@@ -1,16 +1,14 @@
 package fr.siamois.utils.stratigraphy;
 
-import fr.siamois.models.exceptions.stratigraphy.StratigraphicConflictFound;
+
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.services.recordingunit.StratigraphicRelationshipService;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -62,7 +60,6 @@ class StratigraphyOrderRelationshipProcessorTest {
 
         // Build synchronous groups
         processor.process();
-        List<SynchronousGroup> groups = processor.getGroupList();
 
         // Assertions
         assertEquals(false, processor.isSignalConflict());

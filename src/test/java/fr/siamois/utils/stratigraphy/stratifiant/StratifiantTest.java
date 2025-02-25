@@ -5,7 +5,6 @@ import fr.siamois.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.services.recordingunit.StratigraphicRelationshipService;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,19 +61,18 @@ class StratifiantTest {
         unit4.getRelationshipsAsUnit1().add(rel4);
 
 
-        // Load data from M03001
         assertDoesNotThrow(() -> {
             List<RecordingUnit> units = Stratifiant.loadStratifiantDataFromSpreadsheet("src/test/resources/xlsx/stratifiant/loadDataTest.xlsx");
             // Assert
             assertEquals(4, units.size());
-            assertEquals( expectedUnits.stream().map(RecordingUnit::getId).collect(Collectors.toList()),
-                     units.stream().map(RecordingUnit::getId).collect(Collectors.toList())
+            assertEquals( expectedUnits.stream().map(RecordingUnit::getId).toList(),
+                     units.stream().map(RecordingUnit::getId).toList()
             );
-            assertEquals( expectedUnits.stream().map(RecordingUnit::getFullIdentifier).collect(Collectors.toList()),
-                    units.stream().map(RecordingUnit::getFullIdentifier).collect(Collectors.toList())
+            assertEquals( expectedUnits.stream().map(RecordingUnit::getFullIdentifier).toList(),
+                    units.stream().map(RecordingUnit::getFullIdentifier).toList()
             );
-            assertEquals( expectedUnits.stream().map(RecordingUnit::getRelationshipsAsUnit1).collect(Collectors.toList()),
-                    units.stream().map(RecordingUnit::getRelationshipsAsUnit1).collect(Collectors.toList())
+            assertEquals( expectedUnits.stream().map(RecordingUnit::getRelationshipsAsUnit1).toList(),
+                    units.stream().map(RecordingUnit::getRelationshipsAsUnit1).toList()
             );
         });
 

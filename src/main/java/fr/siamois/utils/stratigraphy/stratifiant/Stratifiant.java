@@ -20,8 +20,12 @@ import java.util.*;
 
 public class Stratifiant {
 
+    private Stratifiant() {
+        throw new IllegalStateException("Utility class");
+    }
+
     // Load recording units and their relationship from a spreadsheet
-    public static List<RecordingUnit> loadStratifiantDataFromSpreadsheet(String filename) throws FileNotFoundException, IOException {
+    public static List<RecordingUnit> loadStratifiantDataFromSpreadsheet(String filename) throws IOException {
 
         ArrayList<RecordingUnit> units = new ArrayList<>();
 

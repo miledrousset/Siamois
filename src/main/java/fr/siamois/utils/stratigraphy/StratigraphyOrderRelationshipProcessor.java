@@ -3,7 +3,6 @@ package fr.siamois.utils.stratigraphy;
 import fr.siamois.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.recordingunit.StratigraphicRelationshipService;
-import fr.siamois.models.exceptions.stratigraphy.StratigraphicConflictFound;
 import lombok.Data;
 
 import java.util.ArrayList;
