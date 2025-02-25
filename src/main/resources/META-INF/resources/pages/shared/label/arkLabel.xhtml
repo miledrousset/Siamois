@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html
+        xmlns:cc="http://java.sun.com/jsf/composite"
+        xmlns:h="http://java.sun.com/jsf/html"
+>
+
+<cc:interface>
+    <cc:attribute name="ark" type="fr.siamois.models.ark.Ark" required="true"/>
+</cc:interface>
+
+<cc:implementation>
+    <h:panelGroup rendered="#{sessionSettingsBean.institutionSettings.hasEnabledArkConfig()}">
+        <p>ARK ID: <a href="#{arkService.getUriOf(cc.attrs.ark)}">#{arkService.getUriOf(cc.attrs.ark)}</a></p>
+    </h:panelGroup>
+</cc:implementation>
+
+</html>

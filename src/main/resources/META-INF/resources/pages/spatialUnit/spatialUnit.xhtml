@@ -5,6 +5,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components"
+                xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label"
 >
     <ui:define name="metadata">
         <f:metadata>
@@ -24,9 +25,11 @@
                 <p:chip label="#{spatialUnitBean.spatialUnit.category.label}" icon="pi pi-map-marker"
                         styleClass="mr-2"/>
             </h2>
-            <h:panelGroup rendered="#{sessionSettingsBean.institutionSettings.hasEnabledArkConfig()}">
-                <p>ARK ID: <a href="#{arkService.getUriOf(spatialUnitBean.spatialUnit.ark)}">#{arkService.getUriOf(spatialUnitBean.spatialUnit.ark)}</a></p>
-            </h:panelGroup>
+
+            <sharedLabel:arkLabel
+                    ark="#{spatialUnitBean.spatialUnit.ark}"
+            />
+
             <h:form>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <p:outputPanel>
