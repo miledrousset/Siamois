@@ -1,33 +1,40 @@
 package fr.siamois.utils.stratigraphy;
 
+import fr.siamois.models.exceptions.stratigraphy.StratigraphicUnitNotFoundInAnyGroup;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.StratigraphicRelationship;
+import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.recordingunit.StratigraphicRelationshipService;
-import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
+@Data
 public class SynchronousGroupBuilder {
 
 
     // Stratigraphic unit list and their relationship
     private final List<RecordingUnit> recordingUnits;
 
-    private long[] enSynch; // ensemble synchrone (ES) de l'US (O si pas en synchronisme)
-    private final String[] saiUstatut; // statut de l'US (Fait, MES, US simple par défaut)
     private long[] maitreES;
+    private final String[] saiUstatut; // statut de l'US (Fait, MES, US simple par défaut)
+    private long[] enSynch;
+    private List<String> collecComm;
 
-    private List<String> collecComm = new ArrayList<>();
+    // The list of syncronous group to return
+    private List<SynchronousGroup> synchronousGroupList = new ArrayList<>();
 
-    public SynchronousGroupBuilder(@NotNull List<RecordingUnit> recordingUnits) {
+
+    public SynchronousGroupBuilder(List<RecordingUnit> recordingUnits, String[] saiUstatut, long[] enSynch, List<String> collecComm) {
         this.recordingUnits = recordingUnits;
 
+        this.saiUstatut = saiUstatut;
+        this.collecComm = collecComm;
+        this.enSynch = enSynch;
 
-        saiUstatut = new String[recordingUnits.size()];
-        Arrays.fill(saiUstatut, "US");
         // Store the synchronous group master index
         maitreES = new long[recordingUnits.size()];
+
     }
 
     public boolean findTransitiveRel(RecordingUnit unit1, int u2) {
@@ -145,26 +152,67 @@ public class SynchronousGroupBuilder {
         }
     }
 
+    public SynchronousGroup findGroupContainingUnit(RecordingUnit unit) {
+        for (SynchronousGroup group : synchronousGroupList) {
+            if (group.contains(unit)) {
+                return group;
+            }
+        }
+        return null; // Return null if no group contains the unit
+    }
+
+    public boolean containsRelationship(Set<StratigraphicRelationship> relationships,
+                                        RecordingUnit unit1,
+                                        RecordingUnit unit2,
+                                        Concept type) {
+        return relationships.stream()
+                .anyMatch(rel -> rel.getUnit1().equals(unit1)
+                        && rel.getUnit2().equals(unit2)
+                        && rel.getType().equals(type));
+    }
+
+    public void transferRelationshipToGroup(StratigraphicRelationship rel, SynchronousGroup group) {
+        StratigraphicRelationship newRel = new StratigraphicRelationship();
+        // Unit1 will be the current group
+        newRel.setUnit1(group);
+        // Find the group containing unit2
+        SynchronousGroup group2 = findGroupContainingUnit(rel.getUnit2());
+        if(group2 == null) {
+            throw new StratigraphicUnitNotFoundInAnyGroup("Impossible to find unit2 in groups");
+        }
+        newRel.setUnit2(group2);
+        newRel.setType(rel.getType());
+        if(!containsRelationship(group.getRelationshipsAsUnit1(), newRel.getUnit1(), newRel.getUnit2(), newRel.getType())) {
+            group.getRelationshipsAsUnit1().add(newRel);
+        }
+    }
+
+
+    public void transferRelationshipsFromUnitsToGroup() {
+
+        // We iterate over each group to assign the relationships of its slaves to the group
+        for(SynchronousGroup group : synchronousGroupList) {
+            for(RecordingUnit unit : group.getUnits()) {
+                for(StratigraphicRelationship rel : unit.getRelationshipsAsUnit1()) {
+                    // We will transfer asynchronous rel to the parent and uncertain synchronous rel
+                    if(rel.getType().equals(StratigraphicRelationshipService.ASYNCHRONOUS)) {
+                        transferRelationshipToGroup(rel, group);
+                    }
+                }
+            }
+        }
+    }
+
     // La méthode qui simule la logique de "EnsemblesSynchrones" en Java
     // constitution des ensembles synchrones certains
     // déduction des synchronismes
 
-    public List<SynchronousGroup> build() {
-
-
-
-        // The list of syncronous group to return
-        List<SynchronousGroup> synchronousGroupList = new ArrayList<>();
+    public void build() {
 
         // Initialisation des tableaux
         Arrays.fill(maitreES, 0);
-        enSynch = IntStream.range(0, recordingUnits.size()) // ensemble synchrone (ES) de l'US (O si pas en synchronisme)
-                // Initialisation : each element get the value of its index because each US is in its on synchronous group
-                .mapToLong(i -> i + 1) // Assigns index + 1 to each element
-                .toArray();
 
         findTransitiveAndReflexiveRelationships();
-
 
         // Traitement des ensembles synchrones
         for (int u = 0; u < recordingUnits.size(); u++) {
@@ -199,8 +247,7 @@ public class SynchronousGroupBuilder {
             }
         }
 
-        // Give all relationship of the units inside the group to the group itself
-        return synchronousGroupList;
+        transferRelationshipsFromUnitsToGroup();
     }
 
     /**
