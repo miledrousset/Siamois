@@ -85,6 +85,7 @@ public class SessionSettingsBean implements Serializable {
         if (selectedInstitution == null && !result.isEmpty())
             selectedInstitution = result.get(0);
 
+        assert selectedInstitution != null;
         institutionSettings = institutionService.createOrGetSettingsOf(selectedInstitution);
 
     }

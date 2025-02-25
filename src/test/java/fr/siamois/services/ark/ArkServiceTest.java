@@ -94,8 +94,6 @@ class ArkServiceTest {
         when(noidCheckService.calculateCheckDigit(anyString())).thenReturn("X");
         when(arkRepository.findByInstitutionAndQualifier(anyLong(), anyString())).thenReturn(Optional.of(new Ark()));
 
-        assertThrows(TooManyGenerationsException.class, () -> {
-            arkService.generateAndSave(settings);
-        });
+        assertThrows(TooManyGenerationsException.class, () -> arkService.generateAndSave(settings));
     }
 }
