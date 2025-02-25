@@ -78,7 +78,7 @@ public class PersonService {
         if (StringUtils.isBlank(password)) throw new InvalidPassword("Password cannot be empty.");
         if (password.length() < 8) throw new InvalidPassword("Password must be at least 8 characters long.");
 
-        Optional<Person> optPerson = personRepository.findPersonByUsername(username);
+        Optional<Person> optPerson = personRepository.findByUsernameIgnoreCase(username);
         if (optPerson.isPresent()) throw new UserAlreadyExist("Username already exists.");
 
         Person person = new Person();

@@ -42,7 +42,7 @@ public class PersonDetailsService implements UserDetailsService {
      * @throws UsernameNotFoundException Throws if the user is not found
      */
     public Person findPersonByUsername(String username) {
-        return personRepository.findPersonByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Person with username " + username + " not found"));
+        return personRepository.findByUsernameIgnoreCase(username).orElseThrow(() -> new UsernameNotFoundException("Person with username " + username + " not found"));
     }
 
 

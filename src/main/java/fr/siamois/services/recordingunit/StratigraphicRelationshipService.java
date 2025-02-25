@@ -23,6 +23,7 @@ public class StratigraphicRelationshipService {
 
     public static final Concept SYNCHRONOUS;
     public static final Concept ASYNCHRONOUS;
+    public static final Concept ASYNCHRONOUS_DEDUCTED;
 
     // Init concepts. We might do it differently later.
     // To be defined how we want to store the relationships and their labels.
@@ -33,6 +34,8 @@ public class StratigraphicRelationshipService {
         SYNCHRONOUS.setId(-1L);
         ASYNCHRONOUS = new Concept();
         ASYNCHRONOUS.setId(-2L);
+        ASYNCHRONOUS_DEDUCTED = new Concept();
+        ASYNCHRONOUS_DEDUCTED.setId(-3L);
     }
 
     public StratigraphicRelationshipService(
