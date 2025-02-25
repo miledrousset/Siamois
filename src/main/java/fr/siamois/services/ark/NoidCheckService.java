@@ -36,7 +36,7 @@ public class NoidCheckService {
     }
 
     private char getCharOfIntValue(int value) {
-        assert value >= 0 && value <= 30;
+        assert value >= 0 && value < 30;
         for (Map.Entry<Character, Integer> entry : refMap.entrySet()) {
             if (entry.getValue() == value) {
                 return entry.getKey();
