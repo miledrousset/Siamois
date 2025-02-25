@@ -4,6 +4,7 @@ import fr.siamois.infrastructure.repositories.ArkRepository;
 import fr.siamois.models.Institution;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.exceptions.ark.NoArkConfigException;
+import fr.siamois.models.exceptions.ark.TooManyGenerationsException;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -11,20 +12,9 @@ import java.security.SecureRandom;
 @Service
 public class ArkService {
 
-    private static final String VALID_CHAR;
+    private static final String VALID_CHAR_STR = "0123456789bcdfghjklmnpqrstvwxz";
     private static final SecureRandom RANDOM = new SecureRandom();
-    private static final int MAX_GENERATIONS = 1000;
-
-    static {
-        StringBuilder builder = new StringBuilder();
-        for (char c = 'a'; c <= 'z'; c = (char) (c + 1)) {
-            builder.append(c);
-        }
-        for (char c = '0'; c <= '9'; c = (char) (c + 1)) {
-            builder.append(c);
-        }
-        VALID_CHAR = builder.toString();
-    }
+    private static final int MAX_GENERATIONS = 5000;
 
     private final NoidCheckService noidCheckService;
     private final ArkRepository arkRepository;
@@ -35,7 +25,7 @@ public class ArkService {
     }
 
     private char getRandomChar() {
-        return VALID_CHAR.charAt(RANDOM.nextInt(VALID_CHAR.length()));
+        return VALID_CHAR_STR.charAt(RANDOM.nextInt(VALID_CHAR_STR.length()));
     }
 
     private String randomArkQualifier(int length) {
@@ -55,7 +45,7 @@ public class ArkService {
         return !arkRepository.existsByInstitutionAndQualifier(institution.getId(), qualifier);
     }
 
-    public Ark generateAndSave(Institution institution) throws NoArkConfigException {
+    public Ark generateAndSave(Institution institution) throws NoArkConfigException, TooManyGenerationsException {
         if (institution.getArkNaan() == null) {
             throw new NoArkConfigException(institution);
         }
@@ -70,8 +60,9 @@ public class ArkService {
             interationCount++;
         } while (!isValid && interationCount < MAX_GENERATIONS);
 
-        if (interationCount == MAX_GENERATIONS)
-            throw new IllegalStateException("Can't generate ARK after " + MAX_GENERATIONS + " generations.");
+        if (interationCount == MAX_GENERATIONS) {
+            throw new TooManyGenerationsException(MAX_GENERATIONS, institution);
+        }
 
         Ark ark = new Ark();
         ark.setCreatingInstitution(institution);
