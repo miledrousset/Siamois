@@ -3,6 +3,7 @@ package fr.siamois.bean;
 import fr.siamois.models.Institution;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.auth.Person;
+import fr.siamois.models.settings.InstitutionSettings;
 import fr.siamois.services.InstitutionService;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class SessionSettingsBean implements Serializable {
     private final transient InstitutionService institutionService;
     private final LangBean langBean;
     private Institution selectedInstitution;
+    private transient InstitutionSettings institutionSettings;
     private transient List<Institution> referencedInstitutions;
 
     public SessionSettingsBean(InstitutionService institutionService, LangBean langBean) {
@@ -59,6 +61,14 @@ public class SessionSettingsBean implements Serializable {
         return new UserInfo(selectedInstitution, getAuthenticatedUser(), getLanguageCode());
     }
 
+    public InstitutionSettings getInstitutionSettings() {
+        if (institutionSettings == null) {
+            setupInstitution();
+        }
+        return institutionSettings;
+    }
+
+
     private void setupInstitution() {
         Person authUser = getAuthenticatedUser();
         List<Institution> result;
@@ -74,6 +84,8 @@ public class SessionSettingsBean implements Serializable {
 
         if (selectedInstitution == null && !result.isEmpty())
             selectedInstitution = result.get(0);
+
+        institutionSettings = institutionService.createOrGetSettingsOf(selectedInstitution);
 
     }
 

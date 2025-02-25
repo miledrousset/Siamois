@@ -74,11 +74,15 @@ public class InstitutionService {
         }
     }
 
-    public InstitutionSettings findSettingsOf(Institution institution) {
-        Optional<InstitutionSettings> opt = institutionSettingsRepository.findById(institution);
+    public InstitutionSettings createOrGetSettingsOf(Institution institution) {
+        Optional<InstitutionSettings> opt = institutionSettingsRepository.findById(institution.getId());
         if (opt.isPresent()) return opt.get();
         InstitutionSettings empty = new InstitutionSettings();
         empty.setInstitution(institution);
-        return empty;
+        return saveSettings(empty);
+    }
+
+    public InstitutionSettings saveSettings(InstitutionSettings settings) {
+        return institutionSettingsRepository.save(settings);
     }
 }

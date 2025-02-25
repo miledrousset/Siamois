@@ -26,7 +26,7 @@
         <ark:formGroup
                 label="Taille de l'identifiant Ark "
                 valueListener="#{arkBean.VLocalSize}"
-                placeholder="20"
+                placeholder="16"
                 colSize="2"
         />
     </div>
@@ -37,7 +37,7 @@
         </div>
     </div>
     <div class="form-row">
-        <p:commandButton styleClass="btn mb-1 btn-primary" value="Enregistrer" action="#{arkBean.saveLocalArkConfig()}"/>
+        <p:commandButton styleClass="btn mb-1 btn-primary" value="Enregistrer" action="#{arkBean.saveArkConfig()}"/>
     </div>
 </cc:implementation>
 

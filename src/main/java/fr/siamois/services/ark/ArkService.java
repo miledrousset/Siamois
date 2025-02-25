@@ -8,6 +8,7 @@ import fr.siamois.models.exceptions.ark.TooManyGenerationsException;
 import fr.siamois.models.settings.InstitutionSettings;
 import fr.siamois.services.InstitutionService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.security.SecureRandom;
 
@@ -22,7 +23,9 @@ public class ArkService {
     private final ArkRepository arkRepository;
     private final InstitutionService institutionService;
 
-    public ArkService(NoidCheckService noidCheckService, ArkRepository arkRepository, InstitutionService institutionService) {
+    public ArkService(NoidCheckService noidCheckService,
+                      ArkRepository arkRepository,
+                      InstitutionService institutionService) {
         this.noidCheckService = noidCheckService;
         this.arkRepository = arkRepository;
         this.institutionService = institutionService;
@@ -46,11 +49,11 @@ public class ArkService {
     }
 
     public boolean qualifierNotExistInInstitution(Institution institution, String qualifier) {
-        return !arkRepository.existsByInstitutionAndQualifier(institution.getId(), qualifier);
+        return arkRepository.findByInstitutionAndQualifier(institution.getId(), qualifier).isEmpty();
     }
 
-    public Ark generateAndSave(Institution institution) throws NoArkConfigException, TooManyGenerationsException {
-        InstitutionSettings settings = institutionService.findSettingsOf(institution);
+    public Ark generateAndSave(InstitutionSettings settings) throws NoArkConfigException, TooManyGenerationsException {
+        Institution institution = settings.getInstitution();
         if (settings.getArkNaan() == null) {
             throw new NoArkConfigException(institution);
         }
@@ -74,6 +77,24 @@ public class ArkService {
         ark.setQualifier(randomArkQualifier);
 
         return arkRepository.save(ark);
+    }
+
+    public String getUriOf(Ark ark) {
+        InstitutionSettings settings = institutionService.createOrGetSettingsOf(ark.getCreatingInstitution());
+        if (!settings.hasEnabledArkConfig()) {
+            throw new IllegalStateException(String.format("Institution n°%s should have ark settings.", settings.getId()));
+        }
+
+        String qualifier = ark.getQualifier();
+        if (Boolean.TRUE.equals(settings.getArkIsUppercase()))
+            qualifier = qualifier.toUpperCase();
+
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/ark:/")
+                .path(settings.getArkNaan())
+                .path("/")
+                .path(qualifier)
+                .toUriString();
     }
 
 }

@@ -24,7 +24,9 @@
                 <p:chip label="#{spatialUnitBean.spatialUnit.category.label}" icon="pi pi-map-marker"
                         styleClass="mr-2"/>
             </h2>
-            <p>ARK ID: #{spatialUnitBean.spatialUnit.ark.arkId}</p>
+            <h:panelGroup rendered="#{sessionSettingsBean.institutionSettings.hasEnabledArkConfig()}">
+                <p>ARK ID: <a href="#{arkService.getUriOf(spatialUnitBean.spatialUnit.ark)}">#{arkService.getUriOf(spatialUnitBean.spatialUnit.ark)}</a></p>
+            </h:panelGroup>
             <h:form>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <p:outputPanel>

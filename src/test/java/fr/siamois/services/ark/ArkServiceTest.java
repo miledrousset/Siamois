@@ -13,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
@@ -33,7 +35,7 @@ class ArkServiceTest {
 
     @Test
     void arkNotExistInInstitution_shouldReturnFalse_whenQualifierExist() {
-        when(arkRepository.existsByInstitutionAndQualifier(anyLong(), anyString())).thenReturn(true);
+        when(arkRepository.findByInstitutionAndQualifier(anyLong(), anyString())).thenReturn(Optional.of(new Ark()));
 
         Institution institution = new Institution();
         institution.setId(1L);
@@ -53,16 +55,15 @@ class ArkServiceTest {
         settings.setArkNaan("12345");
         settings.setArkSize(5);
 
-        when(institutionService.findSettingsOf(institution)).thenReturn(settings);
         when(noidCheckService.calculateCheckDigit(anyString())).thenReturn("X");
-        when(arkRepository.existsByInstitutionAndQualifier(anyLong(), anyString())).thenReturn(false);
+        when(arkRepository.findByInstitutionAndQualifier(anyLong(), anyString())).thenReturn(Optional.empty());
         when(arkRepository.save(any(Ark.class))).thenAnswer(invocation -> {
             Ark ark = invocation.getArgument(0, Ark.class);
             ark.setInternalId(1L);
             return ark;
         });
 
-        Ark ark = arkService.generateAndSave(institution);
+        Ark ark = arkService.generateAndSave(settings);
 
         assertNotNull(ark);
         assertEquals(institution, ark.getCreatingInstitution());
@@ -77,9 +78,7 @@ class ArkServiceTest {
         InstitutionSettings empty = new InstitutionSettings();
         empty.setInstitution(institution);
 
-        when(institutionService.findSettingsOf(institution)).thenReturn(empty);
-
-        assertThrows(NoArkConfigException.class, () -> arkService.generateAndSave(institution));
+        assertThrows(NoArkConfigException.class, () -> arkService.generateAndSave(empty));
     }
 
     @Test
@@ -92,13 +91,11 @@ class ArkServiceTest {
         settings.setArkNaan("12345");
         settings.setArkSize(3);
 
-        when(institutionService.findSettingsOf(institution)).thenReturn(settings);
-
         when(noidCheckService.calculateCheckDigit(anyString())).thenReturn("X");
-        when(arkRepository.existsByInstitutionAndQualifier(anyLong(), anyString())).thenReturn(true);
+        when(arkRepository.findByInstitutionAndQualifier(anyLong(), anyString())).thenReturn(Optional.of(new Ark()));
 
         assertThrows(TooManyGenerationsException.class, () -> {
-            arkService.generateAndSave(institution);
+            arkService.generateAndSave(settings);
         });
     }
 }

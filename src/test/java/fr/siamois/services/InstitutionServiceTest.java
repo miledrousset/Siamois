@@ -134,7 +134,7 @@ class InstitutionServiceTest {
     }
 
     @Test
-    void findSettingsOf_shouldReturnSettings_whenSet() {
+    void createOrGetSettingsOf_shouldReturnSettings_whenSet() {
         Institution institution = new Institution();
         institution.setId(1L);
 
@@ -142,21 +142,23 @@ class InstitutionServiceTest {
         settings.setInstitution(institution);
         settings.setArkNaan("66666");
 
-        when(institutionSettingsRepository.findById(institution)).thenReturn(Optional.of(settings));
+        when(institutionSettingsRepository.findById(institution.getId())).thenReturn(Optional.of(settings));
 
-        InstitutionSettings result = institutionService.findSettingsOf(institution);
+        InstitutionSettings result = institutionService.createOrGetSettingsOf(institution);
 
         assertThat(result).isEqualTo(settings);
     }
 
     @Test
-    void findSettingsOf_shouldReturnEmptySettings_whenNotSet() {
+    void createOrGetSettingsOf_shouldReturnEmptySettings_whenNotSet() {
         Institution institution = new Institution();
         institution.setId(1L);
 
-        when(institutionSettingsRepository.findById(institution)).thenReturn(Optional.empty());
+        when(institutionSettingsRepository.findById(institution.getId())).thenReturn(Optional.empty());
+        when(institutionSettingsRepository.save(any(InstitutionSettings.class)))
+                .then(invocation -> invocation.getArgument(0, InstitutionSettings.class));
 
-        InstitutionSettings result = institutionService.findSettingsOf(institution);
+        InstitutionSettings result = institutionService.createOrGetSettingsOf(institution);
 
         assertThat(result.getInstitution()).isEqualTo(institution);
     }

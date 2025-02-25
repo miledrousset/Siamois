@@ -7,6 +7,7 @@ import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
 import fr.siamois.models.history.SpatialUnitHist;
+import fr.siamois.models.settings.InstitutionSettings;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.vocabulary.ConceptService;
@@ -33,6 +34,9 @@ class SpatialUnitServiceTest {
 
     @Mock
     private ConceptService conceptService;
+
+    @Mock
+    private InstitutionService institutionService;
 
     @InjectMocks
     private SpatialUnitService spatialUnitService;
@@ -258,6 +262,7 @@ class SpatialUnitServiceTest {
         Concept type = new Concept();
         List<SpatialUnit> parents = List.of(spatialUnit1);
 
+        when(institutionService.createOrGetSettingsOf(userInfo.getInstitution())).thenReturn(new InstitutionSettings());
         when(spatialUnitRepository.findByNameAndInstitution(name, userInfo.getInstitution().getId())).thenReturn(Optional.empty());
         when(conceptService.saveOrGetConcept(type)).thenReturn(type);
         when(spatialUnitRepository.save(any(SpatialUnit.class))).thenReturn(spatialUnit1);

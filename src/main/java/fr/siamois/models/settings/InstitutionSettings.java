@@ -11,8 +11,11 @@ import lombok.Data;
 public class InstitutionSettings {
 
     @Id
+    private Long id;
+
     @OneToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_institution_id", nullable = false)
+    @MapsId
     private Institution institution;
 
     @Column(name = "ark_naan")
@@ -21,6 +24,10 @@ public class InstitutionSettings {
     @Column(name = "ark_prefix")
     private String arkPrefix;
 
+    @DefaultValue("FALSE")
+    @Column(name = "ark_is_enabled")
+    private Boolean arkIsEnabled = false;
+
     @DefaultValue("16")
     @Column(name = "ark_size")
     private Integer arkSize = 16;
@@ -28,5 +35,9 @@ public class InstitutionSettings {
     @DefaultValue("FALSE")
     @Column(name = "ark_is_uppercase")
     private Boolean arkIsUppercase = false;
+
+    public boolean hasEnabledArkConfig() {
+        return arkIsEnabled && arkNaan != null && arkPrefix != null;
+    }
 
 }

@@ -4,6 +4,7 @@ import fr.siamois.bean.SessionSettingsBean;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.history.SpatialUnitHist;
 import fr.siamois.models.recordingunit.RecordingUnit;
+import fr.siamois.models.settings.InstitutionSettings;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.services.HistoryService;
 import fr.siamois.services.recordingunit.RecordingUnitService;
