@@ -33,8 +33,7 @@ class StratigraphyOrderRelationshipProcessorTest {
 
         // Initialize the builder
         List<SynchronousGroup> units = List.of(unitA, unitB, unitC);
-        List<String> collecComm = new ArrayList<>();
-        StratigraphyOrderRelationshipProcessor processor = new StratigraphyOrderRelationshipProcessor(units, collecComm);
+        StratigraphyOrderRelationshipProcessor processor = new StratigraphyOrderRelationshipProcessor(units);
 
         // Act
         processor.process();
@@ -59,8 +58,7 @@ class StratigraphyOrderRelationshipProcessorTest {
 
         // Initialize the builder
         List<SynchronousGroup> units = List.of(unitA, unitB, unitC);
-        List<String> collecComm = new ArrayList<>();
-        StratigraphyOrderRelationshipProcessor processor = new StratigraphyOrderRelationshipProcessor(units, collecComm);
+        StratigraphyOrderRelationshipProcessor processor = new StratigraphyOrderRelationshipProcessor(units);
 
         // Build synchronous groups
         processor.process();

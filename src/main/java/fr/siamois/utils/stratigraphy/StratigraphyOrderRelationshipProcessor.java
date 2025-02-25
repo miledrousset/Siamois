@@ -16,17 +16,15 @@ public class StratigraphyOrderRelationshipProcessor {
 
     // Stratigraphic unit list and their relationship
     private final List<SynchronousGroup> groupList;
-    private List<String> collecComm;
 
 
     private boolean signalConflict = false;
     private List<List<SynchronousGroup>> loops;
 
-    public StratigraphyOrderRelationshipProcessor(List<SynchronousGroup> groupList, List<String> collecComm) {
+    public StratigraphyOrderRelationshipProcessor(List<SynchronousGroup> groupList) {
 
         this.groupList = groupList;
         this.loops = new ArrayList<>();
-        this.collecComm = collecComm;
 
 
 

@@ -70,11 +70,11 @@ public class Stratifiant {
             rel.setUnit1(indexMap.get(ru1Name));
             rel.setUnit2(indexMap.get(ru2Name));
 
-            if(Objects.equals(relType, "sous") || Objects.equals(relType, "pt.être sous")) {
-                rel.setType(StratigraphicRelationshipService.SYNCHRONOUS);
+            if(Objects.equals(relType, "sous") || Objects.equals(relType, "peut-être sous")) {
+                rel.setType(StratigraphicRelationshipService.ASYNCHRONOUS);
             }
             else if(Objects.equals(relType, "synchrone avec") || Objects.equals(relType, "pt.être synchrone")) {
-                rel.setType(StratigraphicRelationshipService.ASYNCHRONOUS);
+                rel.setType(StratigraphicRelationshipService.SYNCHRONOUS);
             }
 
             // Add the rel to the unit1

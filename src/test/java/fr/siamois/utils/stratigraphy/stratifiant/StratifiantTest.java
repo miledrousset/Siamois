@@ -40,17 +40,31 @@ class StratifiantTest {
         StratigraphicRelationship rel1 = new StratigraphicRelationship();
         rel1.setUnit1(unit1);
         rel1.setUnit2(unit3);
-        rel1.setType(StratigraphicRelationshipService.SYNCHRONOUS);
+        rel1.setType(StratigraphicRelationshipService.ASYNCHRONOUS);
         unit1.getRelationshipsAsUnit1().add(rel1);
+
         StratigraphicRelationship rel2 = new StratigraphicRelationship();
-        rel2.setUnit1(unit3);
+        rel2.setUnit1(unit2);
         rel2.setUnit2(unit4);
         rel2.setType(StratigraphicRelationshipService.SYNCHRONOUS);
-        unit3.getRelationshipsAsUnit1().add(rel2);
+        unit2.getRelationshipsAsUnit1().add(rel2);
+
+        StratigraphicRelationship rel3 = new StratigraphicRelationship();
+        rel3.setUnit1(unit3);
+        rel3.setUnit2(unit4);
+        rel3.setType(StratigraphicRelationshipService.ASYNCHRONOUS);
+        unit3.getRelationshipsAsUnit1().add(rel3);
+
+        StratigraphicRelationship rel4 = new StratigraphicRelationship();
+        rel4.setUnit1(unit4);
+        rel4.setUnit2(unit2);
+        rel4.setType(StratigraphicRelationshipService.SYNCHRONOUS);
+        unit4.getRelationshipsAsUnit1().add(rel4);
+
 
         // Load data from M03001
         assertDoesNotThrow(() -> {
-            List<RecordingUnit> units = Stratifiant.loadStratifiantDataFromSpreadsheet("src/test/resources/xlsx/stratifiant/M03001.xlsx");
+            List<RecordingUnit> units = Stratifiant.loadStratifiantDataFromSpreadsheet("src/test/resources/xlsx/stratifiant/loadDataTest.xlsx");
             // Assert
             assertEquals(4, units.size());
             assertEquals( expectedUnits.stream().map(RecordingUnit::getId).collect(Collectors.toList()),
