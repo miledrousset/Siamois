@@ -1,6 +1,7 @@
 package fr.siamois.models.recordingunit;
 
 
+import fr.siamois.models.ArkEntity;
 import fr.siamois.models.FieldCode;
 import fr.siamois.models.Institution;
 import fr.siamois.models.exceptions.NullActionUnitIdentifier;
@@ -18,7 +19,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "recording_unit")
-public class RecordingUnit extends RecordingUnitParent {
+public class RecordingUnit extends RecordingUnitParent implements ArkEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

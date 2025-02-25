@@ -1,6 +1,7 @@
 package fr.siamois.models.specimen;
 
 
+import fr.siamois.models.ArkEntity;
 import fr.siamois.models.FieldCode;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -10,7 +11,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @Table(name = "specimen_study")
-public class SpecimenStudy extends SpecimenStudyParent {
+public class SpecimenStudy extends SpecimenStudyParent implements ArkEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

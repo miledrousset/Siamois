@@ -1,7 +1,6 @@
 package fr.siamois.infrastructure.repositories.recordingunit;
 
 
-import fr.siamois.infrastructure.repositories.history.TraceableEntries;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import jakarta.transaction.Transactional;
@@ -11,11 +10,10 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
-public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, Long>, TraceableEntries {
+public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, Long> {
 
     @Query(
             nativeQuery = true,
@@ -54,12 +52,6 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
     )
     void saveStratigraphicRelationship(Long recordingUnitId1, Long recordingUnitId2, Long conceptId);
 
-    @Query(
-            nativeQuery = true,
-            value = "SELECT ru.* FROM recording_unit ru WHERE fk_author_id = :author AND creation_time BETWEEN :start AND :end"
-    )
-    List<RecordingUnit> findAllCreatedBetweenByUser(@Param("start") OffsetDateTime start, @Param("end") OffsetDateTime end, @Param("author") Long personId);
-
     /**
      * Returns the maximum identifier given to a recording unit in the context of an action unit
      *
@@ -74,4 +66,10 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
     Integer findMaxUsedIdentifierByAction(Long actionUnitId);
 
 
+    @Query(
+            nativeQuery = true,
+            value = "SELECT ru.* FROM recording_unit ru " +
+                    "WHERE ru.fk_ark_id IS NULL AND ru.fk_institution_id = :institutionId"
+    )
+    List<RecordingUnit> findAllWithoutArkOfInstitution(Long institutionId);
 }

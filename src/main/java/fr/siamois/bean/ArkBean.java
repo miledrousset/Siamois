@@ -1,6 +1,7 @@
 package fr.siamois.bean;
 
 import fr.siamois.models.settings.InstitutionSettings;
+import fr.siamois.services.ArkManagerService;
 import fr.siamois.services.InstitutionService;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.application.FacesMessage;
@@ -21,6 +22,7 @@ public class ArkBean implements Serializable {
 
     private final SessionSettingsBean sessionSettingsBean;
     private final transient InstitutionService institutionService;
+    private final transient ArkManagerService arkManagerService;
 
     //  Fields
     // Toggles
@@ -32,9 +34,12 @@ public class ArkBean implements Serializable {
     private int vLocalSize = 16;
     private boolean vLocalIsCaps = false;
 
-    public ArkBean(SessionSettingsBean sessionSettingsBean, InstitutionService institutionService) {
+    public ArkBean(SessionSettingsBean sessionSettingsBean,
+                   InstitutionService institutionService,
+                   ArkManagerService arkManagerService) {
         this.sessionSettingsBean = sessionSettingsBean;
         this.institutionService = institutionService;
+        this.arkManagerService = arkManagerService;
     }
 
     public void loadExistingConfig() {
@@ -58,6 +63,10 @@ public class ArkBean implements Serializable {
         settings = institutionService.saveSettings(settings);
         sessionSettingsBean.setInstitutionSettings(settings);
 
+        if (settings.hasEnabledArkConfig()) {
+            arkManagerService.addArkToEntitiesWithoutArk(settings.getInstitution());
+        }
+
         MessageUtils.displayMessage(FacesMessage.SEVERITY_INFO, "Success", "Configuration successfully saved");
     }
 
@@ -65,6 +74,10 @@ public class ArkBean implements Serializable {
         InstitutionSettings settings = sessionSettingsBean.getInstitutionSettings();
 
         settings.setArkIsEnabled(vArkServerIsActivated);
+
+        if (settings.hasEnabledArkConfig()) {
+            arkManagerService.addArkToEntitiesWithoutArk(settings.getInstitution());
+        }
 
         settings = institutionService.saveSettings(settings);
         sessionSettingsBean.setInstitutionSettings(settings);

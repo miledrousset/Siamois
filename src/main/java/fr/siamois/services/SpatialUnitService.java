@@ -1,6 +1,7 @@
 package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
+import fr.siamois.models.ArkEntity;
 import fr.siamois.models.Institution;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.ark.Ark;
@@ -27,7 +28,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
-public class SpatialUnitService {
+public class SpatialUnitService implements ArkEntityService {
 
     private final SpatialUnitRepository spatialUnitRepository;
     private final ConceptService conceptService;
@@ -126,4 +127,17 @@ public class SpatialUnitService {
         return spatialUnit;
     }
 
+    public Optional<SpatialUnit> findByArk(Ark ark) {
+        return spatialUnitRepository.findByArk(ark);
+    }
+
+    @Override
+    public List<? extends ArkEntity> findWithoutArk(Institution institution) {
+        return spatialUnitRepository.findAllByArkIsNullAndCreatedByInstitution(institution);
+    }
+
+    @Override
+    public ArkEntity save(ArkEntity toSave) {
+        return spatialUnitRepository.save((SpatialUnit) toSave);
+    }
 }

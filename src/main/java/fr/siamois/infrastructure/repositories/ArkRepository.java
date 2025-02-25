@@ -14,4 +14,13 @@ public interface ArkRepository extends CrudRepository<Ark, Long> {
     )
     Optional<Ark> findByInstitutionAndQualifier(Long institutionId, String qualifier);
 
+    @Query(
+            nativeQuery = true,
+            value = "SELECT a.* FROM ark a " +
+                    "JOIN institution_settings iset ON a.fk_institution_id = iset.fk_institution_id " +
+                    "WHERE UPPER(iset.ark_naan) = UPPER(:naan) AND " +
+                    "UPPER(a.qualifier) = UPPER(:qualifier) AND " +
+                    "iset.ark_is_enabled = TRUE"
+    )
+    Optional<Ark> findByNaanAndQualifier(String naan, String qualifier);
 }

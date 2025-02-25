@@ -7,6 +7,7 @@ import fr.siamois.models.exceptions.ark.NoArkConfigException;
 import fr.siamois.models.exceptions.ark.TooManyGenerationsException;
 import fr.siamois.models.settings.InstitutionSettings;
 import fr.siamois.services.InstitutionService;
+import fr.siamois.services.recordingunit.RecordingUnitService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +26,7 @@ class ArkServiceTest {
     @Mock private ArkRepository arkRepository;
     @Mock private NoidCheckService noidCheckService;
     @Mock private InstitutionService institutionService;
+    @Mock private RecordingUnitService recordingUnitService;
 
     private ArkService arkService;
 

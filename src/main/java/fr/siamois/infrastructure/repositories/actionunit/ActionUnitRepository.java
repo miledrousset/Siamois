@@ -1,24 +1,21 @@
 package fr.siamois.infrastructure.repositories.actionunit;
 
-import fr.siamois.infrastructure.repositories.history.TraceableEntries;
+import fr.siamois.models.Institution;
 import fr.siamois.models.actionunit.ActionUnit;
-import org.springframework.data.jpa.repository.Query;
+import fr.siamois.models.ark.Ark;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long>, TraceableEntries {
+public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long> {
 
     List<ActionUnit> findAllBySpatialUnitId(Long id);
 
-    @Query(
-            nativeQuery = true,
-            value = "SELECT au.* FROM action_unit au WHERE fk_author_id = :author AND creation_time BETWEEN :start AND :end"
-    )
-    List<ActionUnit> findAllCreatedBetweenByUser(@Param("start") OffsetDateTime start, @Param("end") OffsetDateTime end, @Param("author") Long personId);
+    Optional<ActionUnit> findByArk(Ark ark);
 
+    List<ActionUnit> findAllByArkIsNullAndCreatedByInstitution(@NotNull Institution createdByInstitution);
 }

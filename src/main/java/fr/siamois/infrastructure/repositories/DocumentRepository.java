@@ -1,17 +1,16 @@
 package fr.siamois.infrastructure.repositories;
 
-import fr.siamois.infrastructure.repositories.history.TraceableEntries;
 import fr.siamois.models.Document;
+import fr.siamois.models.Institution;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
-public interface DocumentRepository extends CrudRepository<Document, Long>, TraceableEntries {
+public interface DocumentRepository extends CrudRepository<Document, Long> {
 
     @Query(
             nativeQuery = true,
@@ -50,9 +49,5 @@ public interface DocumentRepository extends CrudRepository<Document, Long>, Trac
     )
     List<Document> findAllDocumentsOfSpecimenStudy(@Param("specimenStudyId") Long specimenStudyId);
 
-    @Query(
-            nativeQuery = true,
-            value = "SELECT doc.* FROM siamois_document doc WHERE fk_author_id = :author AND creation_time BETWEEN :start AND :end"
-    )
-    List<Document> findAllCreatedBetweenByUser(@Param("start") OffsetDateTime start, @Param("end") OffsetDateTime end, @Param("author") Long personId);
+    List<Document> findAllByArkIsNullAndCreatedByInstitution(Institution institution);
 }

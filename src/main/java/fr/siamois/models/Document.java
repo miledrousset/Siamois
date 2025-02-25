@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @Table(name = "siamois_document", schema = "public")
-public class Document extends DocumentParent {
+public class Document extends DocumentParent implements ArkEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

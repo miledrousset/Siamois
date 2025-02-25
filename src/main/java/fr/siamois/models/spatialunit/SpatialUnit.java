@@ -1,5 +1,6 @@
 package fr.siamois.models.spatialunit;
 
+import fr.siamois.models.ArkEntity;
 import fr.siamois.models.FieldCode;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -11,7 +12,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Entity
 @Table(name = "spatial_unit")
 @SQLRestriction("fk_parent_action_unit_id IS NULL")
-public class SpatialUnit extends SpatialUnitGeneric {
+public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,15 +2,19 @@ package fr.siamois.services.actionunit;
 
 import fr.siamois.infrastructure.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
+import fr.siamois.models.ArkEntity;
+import fr.siamois.models.Institution;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
+import fr.siamois.models.ark.Ark;
 import fr.siamois.models.exceptions.ActionUnitNotFoundException;
 import fr.siamois.models.exceptions.FailedActionUnitSaveException;
 import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.exceptions.NullActionUnitIdentifier;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.services.ArkEntityService;
 import fr.siamois.services.vocabulary.ConceptService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +27,7 @@ import java.util.Set;
 
 @Slf4j
 @Service
-public class ActionUnitService {
+public class ActionUnitService implements ArkEntityService {
 
     private final ActionUnitRepository actionUnitRepository;
     private final ConceptService conceptService;
@@ -152,4 +156,20 @@ public class ActionUnitService {
         }
     }
 
+    public Optional<ActionUnit> findByArk(Ark ark) {
+        return actionUnitRepository.findByArk(ark);
+    }
+
+    public List<ActionUnit> findWithoutArk(Institution institution) {
+        return actionUnitRepository.findAllByArkIsNullAndCreatedByInstitution(institution);
+    }
+
+    @Override
+    public ArkEntity save(ArkEntity toSave) {
+        return actionUnitRepository.save((ActionUnit) toSave);
+    }
+
+    public ActionUnit save(ActionUnit actionUnit) {
+        return actionUnitRepository.save(actionUnit);
+    }
 }
