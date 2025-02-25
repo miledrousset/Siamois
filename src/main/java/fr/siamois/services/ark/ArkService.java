@@ -1,7 +1,7 @@
 package fr.siamois.services.ark;
 
 import fr.siamois.infrastructure.repositories.ArkRepository;
-import fr.siamois.models.*;
+import fr.siamois.models.Institution;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.exceptions.ark.NoArkConfigException;
 import fr.siamois.models.exceptions.ark.TooManyGenerationsException;

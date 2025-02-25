@@ -3,10 +3,12 @@ package fr.siamois.services.actionUnit;
 
 import fr.siamois.infrastructure.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
+import fr.siamois.models.ArkEntity;
 import fr.siamois.models.Institution;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
+import fr.siamois.models.ark.Ark;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedActionUnitSaveException;
 import fr.siamois.models.spatialunit.SpatialUnit;
@@ -24,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
@@ -260,5 +263,55 @@ class ActionUnitServiceTest {
         );
         assertEquals("Database error", exception.getMessage());
 
+    }
+
+    @Test
+    void findByArk() {
+        ActionUnit actionUnit = new ActionUnit();
+        actionUnit.setId(1L);
+
+        Ark ark = new Ark();
+        ark.setInternalId(1L);
+
+        when(actionUnitRepository.findByArk(ark)).thenReturn(Optional.of(actionUnit));
+
+        Optional<ActionUnit> result = actionUnitRepository.findByArk(ark);
+
+        assertThat(result)
+                .isPresent()
+                .contains(actionUnit);
+    }
+
+    @Test
+    void findWithoutArk() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        ActionUnit actionUnitLocal = new ActionUnit();
+        actionUnitLocal.setId(1L);
+        ActionUnit actionUnitLocal2 = new ActionUnit();
+        actionUnitLocal2.setId(2L);
+
+        when(actionUnitRepository.findAllByArkIsNullAndCreatedByInstitution(institution)).thenReturn(List.of(actionUnitLocal, actionUnitLocal2));
+
+        List<ActionUnit> result = actionUnitService.findWithoutArk(institution);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(actionUnitLocal));
+        assertTrue(result.contains(actionUnitLocal2));
+    }
+
+    @Test
+    void save() {
+        ActionUnit actionUnit = new ActionUnit();
+        actionUnit.setId(1L);
+
+        when(actionUnitRepository.save(actionUnit)).thenReturn(actionUnit);
+
+        ArkEntity result = actionUnitService.save(actionUnit);
+
+        assertNotNull(result);
+        assertEquals(actionUnit, result);
     }
 }

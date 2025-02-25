@@ -3,7 +3,8 @@ package fr.siamois.models.recordingunit;
 import fr.siamois.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "stratigraphic_relationship")

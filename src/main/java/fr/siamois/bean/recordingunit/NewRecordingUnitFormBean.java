@@ -5,16 +5,15 @@ import fr.siamois.bean.SessionSettingsBean;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.auth.Person;
-
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.history.RecordingUnitHist;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
 import fr.siamois.models.recordingunit.RecordingUnitSize;
-import fr.siamois.services.HistoryService;
-import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.services.HistoryService;
 import fr.siamois.services.PersonService;
+import fr.siamois.services.actionunit.ActionUnitService;
 import fr.siamois.services.recordingunit.RecordingUnitService;
 import fr.siamois.services.recordingunit.StratigraphicRelationshipService;
 import fr.siamois.services.vocabulary.ConceptService;

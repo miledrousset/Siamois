@@ -6,21 +6,23 @@ import fr.siamois.models.history.SpatialUnitHist;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.services.HistoryService;
-import fr.siamois.services.recordingunit.RecordingUnitService;
 import fr.siamois.services.SpatialUnitService;
 import fr.siamois.services.actionunit.ActionUnitService;
+import fr.siamois.services.recordingunit.RecordingUnitService;
 import fr.siamois.utils.DateUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-
 import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 import software.xdev.chartjs.model.charts.BarChart;
+import software.xdev.chartjs.model.color.RGBAColor;
 import software.xdev.chartjs.model.data.BarData;
 import software.xdev.chartjs.model.dataset.BarDataset;
-import software.xdev.chartjs.model.options.*;
-import software.xdev.chartjs.model.color.RGBAColor;
+import software.xdev.chartjs.model.options.BarOptions;
+import software.xdev.chartjs.model.options.Plugins;
+import software.xdev.chartjs.model.options.Title;
+import software.xdev.chartjs.model.options.Tooltip;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;

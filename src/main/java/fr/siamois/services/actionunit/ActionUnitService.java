@@ -160,6 +160,7 @@ public class ActionUnitService implements ArkEntityService {
         return actionUnitRepository.findByArk(ark);
     }
 
+    @Override
     public List<ActionUnit> findWithoutArk(Institution institution) {
         return actionUnitRepository.findAllByArkIsNullAndCreatedByInstitution(institution);
     }
@@ -167,9 +168,5 @@ public class ActionUnitService implements ArkEntityService {
     @Override
     public ArkEntity save(ArkEntity toSave) {
         return actionUnitRepository.save((ActionUnit) toSave);
-    }
-
-    public ActionUnit save(ActionUnit actionUnit) {
-        return actionUnitRepository.save(actionUnit);
     }
 }
