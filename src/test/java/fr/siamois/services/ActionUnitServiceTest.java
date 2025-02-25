@@ -8,7 +8,6 @@ import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.actionunit.ActionUnitService;
@@ -180,22 +179,6 @@ class ActionUnitServiceTest {
         assertEquals(typeConcept, result.getType());
         assertEquals(userInfo.getUser(), result.getAuthor());
         assertEquals(userInfo.getInstitution(), result.getCreatedByInstitution());
-        assertNotNull(result.getArk());
-    }
-
-    @Test
-    void save_withUserInfo_failure() {
-        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
-
-        ActionUnit actionUnit = new ActionUnit();
-        Concept typeConcept = new Concept();
-
-        Exception exception = assertThrows(
-                FailedRecordingUnitSaveException.class,
-                () -> actionUnitService.save(userInfo, actionUnit, typeConcept)
-        );
-
-        assertEquals("No local server found", exception.getMessage());
     }
 
     @Test

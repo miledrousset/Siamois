@@ -5,6 +5,8 @@ import fr.siamois.models.Institution;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.exceptions.ark.NoArkConfigException;
 import fr.siamois.models.exceptions.ark.TooManyGenerationsException;
+import fr.siamois.models.settings.InstitutionSettings;
+import fr.siamois.services.InstitutionService;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -18,10 +20,12 @@ public class ArkService {
 
     private final NoidCheckService noidCheckService;
     private final ArkRepository arkRepository;
+    private final InstitutionService institutionService;
 
-    public ArkService(NoidCheckService noidCheckService, ArkRepository arkRepository) {
+    public ArkService(NoidCheckService noidCheckService, ArkRepository arkRepository, InstitutionService institutionService) {
         this.noidCheckService = noidCheckService;
         this.arkRepository = arkRepository;
+        this.institutionService = institutionService;
     }
 
     private char getRandomChar() {
@@ -46,7 +50,8 @@ public class ArkService {
     }
 
     public Ark generateAndSave(Institution institution) throws NoArkConfigException, TooManyGenerationsException {
-        if (institution.getArkNaan() == null) {
+        InstitutionSettings settings = institutionService.findSettingsOf(institution);
+        if (settings.getArkNaan() == null) {
             throw new NoArkConfigException(institution);
         }
 
@@ -55,7 +60,7 @@ public class ArkService {
         String randomArkQualifier;
 
         do {
-            randomArkQualifier = randomArkQualifier(institution.getArkSize());
+            randomArkQualifier = randomArkQualifier(settings.getArkSize());
             isValid = qualifierNotExistInInstitution(institution, randomArkQualifier);
             interationCount++;
         } while (!isValid && interationCount < MAX_GENERATIONS);

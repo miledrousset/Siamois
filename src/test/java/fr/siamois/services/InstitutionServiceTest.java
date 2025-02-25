@@ -2,10 +2,12 @@ package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.InstitutionRepository;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
+import fr.siamois.infrastructure.repositories.settings.InstitutionSettingsRepository;
 import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedInstitutionSaveException;
 import fr.siamois.models.exceptions.InstitutionAlreadyExist;
+import fr.siamois.models.settings.InstitutionSettings;
 import fr.siamois.models.vocabulary.Concept;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,7 @@ class InstitutionServiceTest {
 
     @Mock private InstitutionRepository institutionRepository;
     @Mock private PersonRepository personRepository;
+    @Mock private InstitutionSettingsRepository institutionSettingsRepository;
 
     private InstitutionService institutionService;
 
@@ -34,7 +37,7 @@ class InstitutionServiceTest {
 
     @BeforeEach
     void setUp() {
-        institutionService = new InstitutionService(institutionRepository, personRepository);
+        institutionService = new InstitutionService(institutionRepository, personRepository, institutionSettingsRepository);
 
         manager = new Person();
         manager.setId(1L);
@@ -128,5 +131,33 @@ class InstitutionServiceTest {
 
         assertThrows(FailedInstitutionSaveException.class, () ->
                 institutionService.addUserToInstitution(manager, institution1, realRole));
+    }
+
+    @Test
+    void findSettingsOf_shouldReturnSettings_whenSet() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        InstitutionSettings settings = new InstitutionSettings();
+        settings.setInstitution(institution);
+        settings.setArkNaan("66666");
+
+        when(institutionSettingsRepository.findById(institution)).thenReturn(Optional.of(settings));
+
+        InstitutionSettings result = institutionService.findSettingsOf(institution);
+
+        assertThat(result).isEqualTo(settings);
+    }
+
+    @Test
+    void findSettingsOf_shouldReturnEmptySettings_whenNotSet() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        when(institutionSettingsRepository.findById(institution)).thenReturn(Optional.empty());
+
+        InstitutionSettings result = institutionService.findSettingsOf(institution);
+
+        assertThat(result.getInstitution()).isEqualTo(institution);
     }
 }
