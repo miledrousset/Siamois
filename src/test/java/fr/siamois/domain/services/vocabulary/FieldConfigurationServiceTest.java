@@ -1,14 +1,5 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.domain.services.vocabulary.ConceptService;
-import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
-import fr.siamois.domain.services.vocabulary.FieldService;
-import fr.siamois.infrastructure.api.ConceptApi;
-import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
-import fr.siamois.infrastructure.api.dto.FullConceptDTO;
-import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
-import fr.siamois.infrastructure.repositories.FieldRepository;
-import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
@@ -18,6 +9,12 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
+import fr.siamois.infrastructure.api.ConceptApi;
+import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
+import fr.siamois.infrastructure.api.dto.FullConceptDTO;
+import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
+import fr.siamois.infrastructure.repositories.FieldRepository;
+import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

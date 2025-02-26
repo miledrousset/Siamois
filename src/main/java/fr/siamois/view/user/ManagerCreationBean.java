@@ -1,10 +1,10 @@
 package fr.siamois.view.user;
 
-import fr.siamois.view.LangBean;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.Team;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.PersonService;
+import fr.siamois.view.LangBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

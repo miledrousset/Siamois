@@ -1,7 +1,5 @@
 package fr.siamois.view.spatialunit;
 
-import fr.siamois.view.RedirectBean;
-import fr.siamois.view.SessionSettingsBean;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
@@ -11,9 +9,8 @@ import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.utils.DateUtils;
-import jakarta.annotation.PostConstruct;
-import jakarta.faces.context.ExternalContext;
-import jakarta.faces.context.FacesContext;
+import fr.siamois.view.RedirectBean;
+import fr.siamois.view.SessionSettingsBean;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;

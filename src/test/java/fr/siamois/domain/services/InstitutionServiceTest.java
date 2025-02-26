@@ -1,15 +1,14 @@
 package fr.siamois.domain.services;
 
-import fr.siamois.domain.services.InstitutionService;
-import fr.siamois.infrastructure.repositories.InstitutionRepository;
-import fr.siamois.infrastructure.repositories.auth.PersonRepository;
-import fr.siamois.infrastructure.repositories.settings.InstitutionSettingsRepository;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.InstitutionAlreadyExist;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.infrastructure.repositories.InstitutionRepository;
+import fr.siamois.infrastructure.repositories.auth.PersonRepository;
+import fr.siamois.infrastructure.repositories.settings.InstitutionSettingsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

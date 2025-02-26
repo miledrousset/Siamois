@@ -1,10 +1,10 @@
 package fr.siamois.view.logs;
 
-import fr.siamois.view.SessionSettingsBean;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
 import fr.siamois.domain.models.history.HistoryOperation;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.view.SessionSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

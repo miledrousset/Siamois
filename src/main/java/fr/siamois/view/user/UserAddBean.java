@@ -1,6 +1,5 @@
 package fr.siamois.view.user;
 
-import fr.siamois.view.LangBean;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.UserAlreadyExist;
 import fr.siamois.domain.models.exceptions.auth.InvalidEmail;
@@ -8,6 +7,7 @@ import fr.siamois.domain.models.exceptions.auth.InvalidPassword;
 import fr.siamois.domain.models.exceptions.auth.InvalidUsername;
 import fr.siamois.domain.services.PersonService;
 import fr.siamois.domain.utils.MessageUtils;
+import fr.siamois.view.LangBean;
 import jakarta.faces.application.FacesMessage;
 import lombok.Getter;
 import lombok.Setter;

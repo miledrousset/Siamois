@@ -1,8 +1,5 @@
 package fr.siamois.view.field;
 
-import fr.siamois.view.LangBean;
-import fr.siamois.view.SessionSettingsBean;
-import fr.siamois.view.converter.VocabularyConverter;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
 import fr.siamois.domain.models.exceptions.NoConfigForField;
@@ -14,6 +11,9 @@ import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
+import fr.siamois.view.LangBean;
+import fr.siamois.view.SessionSettingsBean;
+import fr.siamois.view.converter.VocabularyConverter;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Getter;

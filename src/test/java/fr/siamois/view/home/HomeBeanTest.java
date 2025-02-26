@@ -1,10 +1,10 @@
 package fr.siamois.view.home;
 
-import fr.siamois.view.SessionSettingsBean;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.SpatialUnitService;
+import fr.siamois.view.SessionSettingsBean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

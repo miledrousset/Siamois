@@ -1,8 +1,5 @@
 package fr.siamois.view.user;
 
-import fr.siamois.view.LangBean;
-import fr.siamois.view.NavBean;
-import fr.siamois.view.SessionSettingsBean;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.FailedInstitutionSaveException;
@@ -14,6 +11,9 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.domain.utils.MessageUtils;
+import fr.siamois.view.LangBean;
+import fr.siamois.view.NavBean;
+import fr.siamois.view.SessionSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

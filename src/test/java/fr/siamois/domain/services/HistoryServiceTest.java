@@ -1,16 +1,15 @@
 package fr.siamois.domain.services;
 
-import fr.siamois.domain.models.history.*;
-import fr.siamois.domain.services.HistoryService;
-import fr.siamois.infrastructure.repositories.history.GlobalHistoryRepository;
-import fr.siamois.infrastructure.repositories.history.RecordingUnitHistoryRepository;
-import fr.siamois.infrastructure.repositories.history.SpatialUnitHistoryRepository;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.history.*;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
+import fr.siamois.infrastructure.repositories.history.GlobalHistoryRepository;
+import fr.siamois.infrastructure.repositories.history.RecordingUnitHistoryRepository;
+import fr.siamois.infrastructure.repositories.history.SpatialUnitHistoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

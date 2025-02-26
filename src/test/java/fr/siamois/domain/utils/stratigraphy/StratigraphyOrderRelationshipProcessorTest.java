@@ -4,8 +4,6 @@ package fr.siamois.domain.utils.stratigraphy;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.domain.services.recordingunit.StratigraphicRelationshipService;
-import fr.siamois.domain.utils.stratigraphy.StratigraphyOrderRelationshipProcessor;
-import fr.siamois.domain.utils.stratigraphy.SynchronousGroup;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;

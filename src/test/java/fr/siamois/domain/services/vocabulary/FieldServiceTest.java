@@ -1,6 +1,5 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.domain.services.vocabulary.FieldService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

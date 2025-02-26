@@ -1,10 +1,9 @@
 package fr.siamois.domain.services.specimen;
 
-import fr.siamois.domain.services.specimen.SpecimenService;
-import fr.siamois.infrastructure.repositories.specimen.SpecimenRepository;
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.specimen.Specimen;
+import fr.siamois.infrastructure.repositories.specimen.SpecimenRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

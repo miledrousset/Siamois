@@ -1,10 +1,9 @@
 package fr.siamois.domain.services.recordingunit;
 
-import fr.siamois.domain.services.recordingunit.StratigraphicRelationshipService;
-import fr.siamois.infrastructure.repositories.recordingunit.StratigraphicRelationshipRepository;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.infrastructure.repositories.recordingunit.StratigraphicRelationshipRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
