@@ -1,4 +1,4 @@
-package fr.siamois.models.exceptions.field;
+package fr.siamois.domain.models.exceptions.field;
 
 public class FailedFieldSaveException extends RuntimeException  {
 
