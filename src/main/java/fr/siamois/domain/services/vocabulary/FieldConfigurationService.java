@@ -1,17 +1,17 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.infrastructure.api.ConceptApi;
-import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
-import fr.siamois.infrastructure.api.dto.FullConceptDTO;
-import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
-import fr.siamois.infrastructure.repositories.FieldRepository;
-import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.exceptions.NoConfigForField;
 import fr.siamois.domain.models.exceptions.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.infrastructure.api.ConceptApi;
+import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
+import fr.siamois.infrastructure.api.dto.FullConceptDTO;
+import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
+import fr.siamois.infrastructure.repositories.FieldRepository;
+import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,9 @@
 package fr.siamois.domain.services;
 
-import fr.siamois.infrastructure.repositories.DocumentRepository;
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.Document;
 import fr.siamois.domain.models.Institution;
+import fr.siamois.infrastructure.repositories.DocumentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

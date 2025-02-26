@@ -1,7 +1,7 @@
 package fr.siamois.domain.services.auth;
 
-import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

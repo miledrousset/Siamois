@@ -1,10 +1,10 @@
 package fr.siamois.view.home;
 
-import fr.siamois.view.SessionSettingsBean;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.SpatialUnitService;
+import fr.siamois.view.SessionSettingsBean;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

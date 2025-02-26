@@ -1,7 +1,5 @@
 package fr.siamois.view.actionunit;
 
-import fr.siamois.view.LangBean;
-import fr.siamois.view.SessionSettingsBean;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
@@ -12,6 +10,8 @@ import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
+import fr.siamois.view.LangBean;
+import fr.siamois.view.SessionSettingsBean;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;

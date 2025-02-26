@@ -1,7 +1,7 @@
 package fr.siamois.domain.config;
 
-import fr.siamois.view.LangBean;
 import fr.siamois.domain.config.handler.LoginSuccessHandler;
+import fr.siamois.view.LangBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,8 +31,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/", "/index.xhtml").permitAll()
                 .requestMatchers("/login", "/pages/login/login.xhtml").permitAll()
                 .requestMatchers("/dashboard", "/pages/dashboard/dashboard.xhtml").authenticated()
-                .requestMatchers("/fieldConfiguration", "/pages/field/fieldConfiguration.xhtml").authenticated()
-                .requestMatchers("/pages/**").authenticated()
+                .requestMatchers("/fieldconfiguration", "/pages/field/fieldConfiguration.xhtml").authenticated()
                 .requestMatchers("/pages/admin/**", "/admin/**").hasAuthority("ADMIN")
                 .requestMatchers("/pages/manager/**", "/manager/**").hasAnyAuthority("TEAM_MANAGER", "ADMIN")
                 .anyRequest().permitAll()

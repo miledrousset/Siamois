@@ -250,37 +250,37 @@
                         <ul class="metismenu" id="menu">
                             <li class="nav-label">SIAMOIS</li>
                             <li>
-                                <h:commandLink action="/pages/dashboard/dashboard.xhtml">
+                                <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
                                     <i class="icon-home menu-icon"/><span class="nav-text">Accueil</span>
                                 </h:commandLink>
                             </li>
                             <li>
-                                <h:commandLink action="/pages/spatialUnit/list.xhtml">
+                                <h:commandLink action="#{redirectBean.redirectTo('/spatialunit')}">
                                     <i class="icon-location-pin menu-icon"/><span class="nav-text">Unité spatiale</span>
                                 </h:commandLink>
                             </li>
                             <li>
-                                <h:commandLink action="/pages/dashboard/dashboard.xhtml">
+                                <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
                                     <i class="icon-control-play menu-icon"/><span class="nav-text">Unité d'action</span>
                                 </h:commandLink>
                             </li>
                             <li>
-                                <h:commandLink action="/pages/dashboard/dashboard.xhtml">
+                                <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
                                     <i class="icon-note menu-icon"/><span class="nav-text">Unité d'enregistrement</span>
                                 </h:commandLink>
                             </li>
                             <li>
-                                <h:commandLink action="/pages/dashboard/dashboard.xhtml">
+                                <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
                                     <i class="icon-social-dropbox menu-icon"/><span class="nav-text">Prélèvements</span>
                                 </h:commandLink>
                             </li>
                             <li>
-                                <h:commandLink action="/pages/dashboard/dashboard.xhtml">
+                                <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
                                     <i class="icon-eyeglass menu-icon"/><span class="nav-text">Études</span>
                                 </h:commandLink>
                             </li>
                             <li>
-                                <h:commandLink action="/pages/dashboard/dashboard.xhtml">
+                                <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
                                     <i class="icon-docs menu-icon"/><span class="nav-text">Documents</span>
                                 </h:commandLink>
                             </li>
@@ -293,25 +293,25 @@
                                     </a>
                                     <ul>
                                         <li>
-                                            <h:commandLink action="/pages/manager/users.xhtml">
+                                            <h:commandLink action="#{redirectBean.redirectTo('/manager/users')}">
                                                 Gestion des utilisateurs
                                             </h:commandLink>
                                         </li>
                                         <li>
-                                            <h:commandLink action="/pages/dashboard/dashboard.xhtml">
+                                            <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
                                                 Gestion des rôles
                                             </h:commandLink>
                                         </li>
                                     </ul>
                                 </li>
                                 <li>
-                                    <h:commandLink action="/pages/field/fieldConfiguration.xhtml">
+                                    <h:commandLink action="#{redirectBean.redirectTo('/fieldConfiguration')}">
                                         <i class="icon-globe menu-icon"/><span
                                             class="nav-text">Configuration du thésaurus</span>
                                     </h:commandLink>
                                 </li>
                                 <li>
-                                    <h:commandLink action="/pages/ark/ark.xhtml">
+                                    <h:commandLink action="#{redirectBean.redirectTo('/manager/ark')}">
                                         <i class="icon-key menu-icon"/><span
                                             class="nav-text">Gestion des identifiants</span>
                                     </h:commandLink>
@@ -321,19 +321,19 @@
                             <h:panelGroup rendered="#{navBean.userIs('ADMIN')}">
                                 <li class="nav-label">Administration</li>
                                 <li>
-                                    <h:commandLink action="/pages/dashboard/dashboard.xhtml">
+                                    <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
                                         <i class="icon-energy menu-icon"/><span
                                             class="nav-text">Gestion de l'instance</span>
                                     </h:commandLink>
                                 </li>
                                 <li>
-                                    <h:commandLink action="/pages/admin/institution.xhtml">
+                                    <h:commandLink action="#{redirectBean.redirectTo('/admin/institution')}">
                                         <i class="icon-globe-alt menu-icon"/><span
                                             class="nav-text">Gestion des organisations</span>
                                     </h:commandLink>
                                 </li>
                                 <li>
-                                    <h:commandLink action="/pages/admin/manager.xhtml">
+                                    <h:commandLink action="#{redirectBean.redirectTo('/admin/manager')}">
                                         <i class="icon-user-following menu-icon"/><span
                                             class="nav-text">Gestion des administrateurs</span>
                                     </h:commandLink>

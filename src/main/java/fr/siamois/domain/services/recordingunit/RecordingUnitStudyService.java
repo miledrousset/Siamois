@@ -1,10 +1,10 @@
 package fr.siamois.domain.services.recordingunit;
 
-import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitStudyRepository;
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.recordingunit.RecordingUnitStudy;
 import fr.siamois.domain.services.ArkEntityService;
+import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitStudyRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

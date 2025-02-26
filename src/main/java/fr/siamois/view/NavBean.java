@@ -1,10 +1,10 @@
 package fr.siamois.view;
 
-import fr.siamois.view.converter.InstitutionConverter;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.domain.utils.AuthenticatedUserUtils;
+import fr.siamois.view.converter.InstitutionConverter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

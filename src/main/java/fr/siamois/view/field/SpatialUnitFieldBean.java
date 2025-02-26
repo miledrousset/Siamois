@@ -1,7 +1,5 @@
 package fr.siamois.view.field;
 
-import fr.siamois.view.LangBean;
-import fr.siamois.view.SessionSettingsBean;
 import fr.siamois.domain.models.exceptions.NoConfigForField;
 import fr.siamois.domain.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
@@ -11,6 +9,8 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.domain.utils.MessageUtils;
+import fr.siamois.view.LangBean;
+import fr.siamois.view.SessionSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

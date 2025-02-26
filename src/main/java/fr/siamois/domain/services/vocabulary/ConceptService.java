@@ -1,11 +1,11 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.infrastructure.api.dto.FullConceptDTO;
-import fr.siamois.infrastructure.api.dto.LabelDTO;
-import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.infrastructure.api.dto.FullConceptDTO;
+import fr.siamois.infrastructure.api.dto.LabelDTO;
+import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

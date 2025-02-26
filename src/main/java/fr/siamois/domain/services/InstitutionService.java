@@ -1,14 +1,14 @@
 package fr.siamois.domain.services;
 
-import fr.siamois.infrastructure.repositories.InstitutionRepository;
-import fr.siamois.infrastructure.repositories.auth.PersonRepository;
-import fr.siamois.infrastructure.repositories.settings.InstitutionSettingsRepository;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.InstitutionAlreadyExist;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.infrastructure.repositories.InstitutionRepository;
+import fr.siamois.infrastructure.repositories.auth.PersonRepository;
+import fr.siamois.infrastructure.repositories.settings.InstitutionSettingsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

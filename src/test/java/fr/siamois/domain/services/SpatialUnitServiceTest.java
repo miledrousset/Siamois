@@ -1,8 +1,5 @@
 package fr.siamois.domain.services;
 
-import fr.siamois.domain.services.InstitutionService;
-import fr.siamois.domain.services.SpatialUnitService;
-import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
@@ -15,6 +12,7 @@ import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.vocabulary.ConceptService;
+import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

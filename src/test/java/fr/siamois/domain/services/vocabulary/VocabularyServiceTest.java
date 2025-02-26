@@ -1,14 +1,13 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.domain.services.vocabulary.VocabularyService;
+import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
+import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.models.vocabulary.VocabularyType;
 import fr.siamois.infrastructure.api.ThesaurusApi;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.infrastructure.api.dto.ThesaurusDTO;
 import fr.siamois.infrastructure.repositories.vocabulary.VocabularyRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.VocabularyTypeRepository;
-import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
-import fr.siamois.domain.models.vocabulary.Vocabulary;
-import fr.siamois.domain.models.vocabulary.VocabularyType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

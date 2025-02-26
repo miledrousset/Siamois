@@ -1,8 +1,5 @@
 package fr.siamois.domain.services;
 
-import fr.siamois.infrastructure.repositories.auth.PersonRepository;
-import fr.siamois.infrastructure.repositories.auth.SystemRoleRepository;
-import fr.siamois.infrastructure.repositories.auth.TeamRepository;
 import fr.siamois.domain.models.Team;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.auth.SystemRole;
@@ -10,6 +7,9 @@ import fr.siamois.domain.models.exceptions.UserAlreadyExist;
 import fr.siamois.domain.models.exceptions.auth.InvalidEmail;
 import fr.siamois.domain.models.exceptions.auth.InvalidPassword;
 import fr.siamois.domain.models.exceptions.auth.InvalidUsername;
+import fr.siamois.infrastructure.repositories.auth.PersonRepository;
+import fr.siamois.infrastructure.repositories.auth.SystemRoleRepository;
+import fr.siamois.infrastructure.repositories.auth.TeamRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

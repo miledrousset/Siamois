@@ -1,9 +1,8 @@
 package fr.siamois.domain.services;
 
-import fr.siamois.domain.services.DocumentService;
-import fr.siamois.infrastructure.repositories.DocumentRepository;
 import fr.siamois.domain.models.Document;
 import fr.siamois.domain.models.Institution;
+import fr.siamois.infrastructure.repositories.DocumentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
