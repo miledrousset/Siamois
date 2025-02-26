@@ -19,7 +19,7 @@ public class SpecimenService implements ArkEntityService {
     }
 
     @Override
-    public List<? extends ArkEntity> findWithoutArk(Institution institution) {
+    public List<Specimen> findWithoutArk(Institution institution) {
         return specimenRepository.findAllByArkIsNullAndCreatedByInstitution(institution);
     }
 
