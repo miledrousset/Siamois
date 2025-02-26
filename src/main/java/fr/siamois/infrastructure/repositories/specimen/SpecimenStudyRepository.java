@@ -1,6 +1,5 @@
 package fr.siamois.infrastructure.repositories.specimen;
 
-import fr.siamois.models.ArkEntity;
 import fr.siamois.models.Institution;
 import fr.siamois.models.specimen.SpecimenStudy;
 import jakarta.validation.constraints.NotNull;
@@ -12,6 +11,6 @@ import java.util.List;
 @Repository
 public interface SpecimenStudyRepository extends CrudRepository<SpecimenStudy, Long> {
 
-    List<? extends ArkEntity> findAllByArkIsNullAndCreatedByInstitution(@NotNull Institution createdByInstitution);
+    List<SpecimenStudy> findAllByArkIsNullAndCreatedByInstitution(@NotNull Institution createdByInstitution);
 }
 
