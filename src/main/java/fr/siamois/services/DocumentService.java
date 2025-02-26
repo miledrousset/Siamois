@@ -18,7 +18,7 @@ public class DocumentService implements ArkEntityService {
     }
 
     @Override
-    public List<? extends ArkEntity> findWithoutArk(Institution institution) {
+    public List<Document> findWithoutArk(Institution institution) {
         return documentRepository.findAllByArkIsNullAndCreatedByInstitution(institution);
     }
 
