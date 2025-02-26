@@ -80,7 +80,7 @@ public class Stratifiant {
                 // Add the rel to the unit1
                 indexMap.get(ru1Name).getRelationshipsAsUnit1().add(rel);
             }
-            
+
         }
 
 
