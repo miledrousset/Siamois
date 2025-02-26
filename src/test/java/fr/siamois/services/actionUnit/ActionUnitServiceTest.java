@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
@@ -313,5 +314,22 @@ class ActionUnitServiceTest {
 
         assertNotNull(result);
         assertEquals(actionUnit, result);
+    }
+
+    @Test
+    void testFindByArk() {
+        Ark ark = new Ark();
+        ark.setInternalId(12L);
+        ark.setQualifier("UBDQSD");
+
+        ActionUnit actionUnit = new ActionUnit();
+        actionUnit.setId(1L);
+        actionUnit.setArk(ark);
+
+        when(actionUnitRepository.findByArk(any(Ark.class))).thenReturn(Optional.of(actionUnit));
+
+        Optional<ActionUnit> result = actionUnitService.findByArk(ark);
+
+        assertTrue(result.isPresent());
     }
 }
