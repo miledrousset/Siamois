@@ -1,5 +1,6 @@
 package fr.siamois.view.spatialunit;
 
+import fr.siamois.view.RedirectBean;
 import fr.siamois.view.SessionSettingsBean;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.history.SpatialUnitHist;
@@ -11,6 +12,8 @@ import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.utils.DateUtils;
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
@@ -25,6 +28,7 @@ import software.xdev.chartjs.model.options.Title;
 import software.xdev.chartjs.model.options.Tooltip;
 
 import javax.faces.bean.SessionScoped;
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -45,6 +49,7 @@ public class SpatialUnitBean implements Serializable {
     private final transient ActionUnitService actionUnitService;
     private final transient HistoryService historyService;
     private final SessionSettingsBean sessionSettingsBean;
+    private final RedirectBean redirectBean;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -64,12 +69,17 @@ public class SpatialUnitBean implements Serializable {
 
     private Long id;  // ID of the spatial unit
 
-    public SpatialUnitBean(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, HistoryService historyService, SessionSettingsBean sessionSettingsBean) {
+    public SpatialUnitBean(SpatialUnitService spatialUnitService,
+                           RecordingUnitService recordingUnitService,
+                           ActionUnitService actionUnitService,
+                           HistoryService historyService,
+                           SessionSettingsBean sessionSettingsBean, RedirectBean redirectBean) {
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.historyService = historyService;
         this.sessionSettingsBean = sessionSettingsBean;
+        this.redirectBean = redirectBean;
     }
 
     public void reinitializeBean() {
@@ -113,16 +123,15 @@ public class SpatialUnitBean implements Serializable {
                 ).toJson();
     }
 
-
-    @PostConstruct
-    public void init() {
+    public void init() throws IOException {
 
         createBarModel();
 
         reinitializeBean();
 
         if (id == null) {
-            this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
+            log.error("The Spatial Unit page should not be accessed without ID or by direct page path");
+            redirectBean.redirectTo("/error/404");
             return;
         }
 
@@ -133,7 +142,8 @@ public class SpatialUnitBean implements Serializable {
         }
 
         if (this.spatialUnit == null) {
-            this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
+            this.spatialUnitErrorMessage = "The spatial unit could not be found";
+            redirectBean.redirectTo("/error/404");
             return;
         }
 

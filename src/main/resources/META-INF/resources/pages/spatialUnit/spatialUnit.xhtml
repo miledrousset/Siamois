@@ -10,7 +10,6 @@
     <ui:define name="metadata">
         <f:metadata>
             <!-- Capture the ID parameter from the URL and bind it to spatialUnitBean -->
-            <f:viewParam name="id" value="#{spatialUnitBean.id}" required="#{!facesContext.postback}"/>
             <f:event type="preRenderView" listener="#{spatialUnitBean.init}"/>
         </f:metadata>
     </ui:define>
