@@ -12,12 +12,14 @@
     <cc:attribute name="placeholder" type="String" />
     <cc:attribute name="styleClass" type="String" default=""/>
     <cc:attribute name="colSize" type="String" default="6"/>
+    <cc:attribute name="randomId" type="String" default="formControl_#{arkBean.randomCode()}"/>
 </cc:interface>
 
 <cc:implementation>
     <div class="form-group col-md-#{cc.attrs.colSize}">
-        <label>#{cc.attrs.label}</label>
+        <label for="#{cc.attrs.randomId}">#{cc.attrs.label}</label>
         <p:inputText
+                id="#{cc.attrs.randomId}"
                 styleClass="form-control #{cc.attrs.styleClass}"
                 type="#{cc.attrs.textType}"
                 placeholder="#{cc.attrs.placeholder}"

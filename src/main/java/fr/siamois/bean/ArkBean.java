@@ -3,6 +3,7 @@ package fr.siamois.bean;
 import fr.siamois.models.settings.InstitutionSettings;
 import fr.siamois.services.ArkManagerService;
 import fr.siamois.services.InstitutionService;
+import fr.siamois.utils.CodeUtils;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.application.FacesMessage;
 import lombok.Getter;
@@ -81,5 +82,9 @@ public class ArkBean implements Serializable {
 
         settings = institutionService.saveSettings(settings);
         sessionSettingsBean.setInstitutionSettings(settings);
+    }
+
+    public String randomCode() {
+        return CodeUtils.generateCode(5);
     }
 }
