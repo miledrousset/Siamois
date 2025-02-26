@@ -35,7 +35,7 @@ class GlobalHistoryInstitRepositoryTest {
     private GlobalHistoryRepository globalHistoryRepository;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         globalHistoryRepository = new GlobalHistoryInstitRepository(hikariDataSource);
     }
 
