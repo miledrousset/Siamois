@@ -1,6 +1,5 @@
 package fr.siamois.infrastructure.repositories;
 
-import fr.siamois.models.ArkEntity;
 import fr.siamois.models.Institution;
 import fr.siamois.models.ark.Ark;
 import fr.siamois.models.spatialunit.SpatialUnit;
@@ -74,6 +73,6 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
 
     Optional<SpatialUnit> findByArk(@NotNull Ark ark);
 
-    List<? extends ArkEntity> findAllByArkIsNullAndCreatedByInstitution(@NotNull Institution createdByInstitution);
+    List<SpatialUnit> findAllByArkIsNullAndCreatedByInstitution(@NotNull Institution createdByInstitution);
 }
 

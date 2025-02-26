@@ -132,7 +132,7 @@ public class SpatialUnitService implements ArkEntityService {
     }
 
     @Override
-    public List<? extends ArkEntity> findWithoutArk(Institution institution) {
+    public List<SpatialUnit> findWithoutArk(Institution institution) {
         return spatialUnitRepository.findAllByArkIsNullAndCreatedByInstitution(institution);
     }
 

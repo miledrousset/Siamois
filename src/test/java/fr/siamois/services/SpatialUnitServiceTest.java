@@ -1,8 +1,10 @@
 package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
+import fr.siamois.models.ArkEntity;
 import fr.siamois.models.Institution;
 import fr.siamois.models.UserInfo;
+import fr.siamois.models.ark.Ark;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
@@ -296,4 +298,53 @@ class SpatialUnitServiceTest {
         assertEquals("Spatial Unit with name SpatialUnitName already exist in institution null", exception.getMessage());
     }
 
+    @Test
+    void findByArk() {
+        // Arrange
+        Ark ark = new Ark();
+        SpatialUnit spatialUnit = new SpatialUnit();
+        when(spatialUnitRepository.findByArk(ark)).thenReturn(Optional.of(spatialUnit));
+
+        // Act
+        Optional<SpatialUnit> result = spatialUnitService.findByArk(ark);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(spatialUnit, result.get());
+        verify(spatialUnitRepository, times(1)).findByArk(ark);
+    }
+
+    @Test
+    void findWithoutArk() {
+        // Arrange
+        Institution institution = new Institution();
+        institution.setId(1L);
+        SpatialUnit spatialUnit = new SpatialUnit();
+        when(spatialUnitRepository.findAllByArkIsNullAndCreatedByInstitution(institution))
+                .thenReturn(List.of(spatialUnit));
+
+        // Act
+        List<? extends ArkEntity> result = spatialUnitService.findWithoutArk(institution);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(spatialUnit, result.get(0));
+        verify(spatialUnitRepository, times(1)).findAllByArkIsNullAndCreatedByInstitution(institution);
+    }
+
+    @Test
+    void save() {
+        // Arrange
+        SpatialUnit spatialUnit = new SpatialUnit();
+        when(spatialUnitRepository.save(spatialUnit)).thenReturn(spatialUnit);
+
+        // Act
+        ArkEntity result = spatialUnitService.save(spatialUnit);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(spatialUnit, result);
+        verify(spatialUnitRepository, times(1)).save(spatialUnit);
+    }
 }
