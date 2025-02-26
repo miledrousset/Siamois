@@ -18,7 +18,7 @@ public class SpatialUnitController {
         this.spatialUnitBean = spatialUnitBean;
     }
 
-    @GetMapping("/spatialUnit/{id}")
+    @GetMapping("/spatialunit/{id}")
     public String toSpatialUnit(@PathVariable Long id, Model model) {
         model.addAttribute("id", id);
         spatialUnitBean.setId(id);
