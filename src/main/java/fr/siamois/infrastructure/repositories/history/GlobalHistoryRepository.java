@@ -1,8 +1,8 @@
 package fr.siamois.infrastructure.repositories.history;
 
-import fr.siamois.models.TraceableEntity;
-import fr.siamois.models.UserInfo;
-import fr.siamois.models.history.GlobalHistoryEntry;
+import fr.siamois.domain.models.TraceableEntity;
+import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.history.GlobalHistoryEntry;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;

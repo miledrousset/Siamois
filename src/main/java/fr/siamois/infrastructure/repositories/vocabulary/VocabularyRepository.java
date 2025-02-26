@@ -1,6 +1,6 @@
 package fr.siamois.infrastructure.repositories.vocabulary;
 
-import fr.siamois.models.vocabulary.Vocabulary;
+import fr.siamois.domain.models.vocabulary.Vocabulary;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

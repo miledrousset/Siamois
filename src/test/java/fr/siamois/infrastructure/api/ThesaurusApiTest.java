@@ -2,7 +2,7 @@ package fr.siamois.infrastructure.api;
 
 import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.infrastructure.api.dto.ThesaurusDTO;
-import fr.siamois.models.exceptions.api.InvalidEndpointException;
+import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

@@ -1,7 +1,7 @@
 package fr.siamois.infrastructure.repositories.specimen;
 
-import fr.siamois.models.Institution;
-import fr.siamois.models.specimen.Specimen;
+import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.specimen.Specimen;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

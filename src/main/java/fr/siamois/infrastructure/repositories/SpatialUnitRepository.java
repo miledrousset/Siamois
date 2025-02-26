@@ -1,8 +1,8 @@
 package fr.siamois.infrastructure.repositories;
 
-import fr.siamois.models.Institution;
-import fr.siamois.models.ark.Ark;
-import fr.siamois.models.spatialunit.SpatialUnit;
+import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.ark.Ark;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Modifying;

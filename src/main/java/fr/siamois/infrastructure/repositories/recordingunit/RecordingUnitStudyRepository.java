@@ -1,7 +1,7 @@
 package fr.siamois.infrastructure.repositories.recordingunit;
 
-import fr.siamois.models.Institution;
-import fr.siamois.models.recordingunit.RecordingUnitStudy;
+import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.recordingunit.RecordingUnitStudy;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

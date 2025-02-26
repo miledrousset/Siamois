@@ -1,6 +1,6 @@
 package fr.siamois.infrastructure.repositories.auth;
 
-import fr.siamois.models.auth.SystemRole;
+import fr.siamois.domain.models.auth.SystemRole;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

@@ -1,0 +1,19 @@
+package fr.siamois.domain.models;
+
+import fr.siamois.domain.models.auth.Person;
+import lombok.Getter;
+
+@Getter
+public class UserInfo {
+
+    private final Institution institution;
+    private final Person user;
+    private final String lang;
+
+    public UserInfo(Institution institution, Person user, String lang) {
+        this.institution = institution;
+        this.user = user;
+        this.lang = lang;
+    }
+
+}

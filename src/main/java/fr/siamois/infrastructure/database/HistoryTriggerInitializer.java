@@ -1,7 +1,7 @@
 package fr.siamois.infrastructure.database;
 
 import com.zaxxer.hikari.HikariDataSource;
-import fr.siamois.models.exceptions.database.WrongTableNameException;
+import fr.siamois.domain.models.exceptions.database.WrongTableNameException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

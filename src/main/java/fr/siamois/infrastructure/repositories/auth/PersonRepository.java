@@ -1,6 +1,6 @@
 package fr.siamois.infrastructure.repositories.auth;
 
-import fr.siamois.models.auth.Person;
+import fr.siamois.domain.models.auth.Person;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

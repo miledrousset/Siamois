@@ -1,6 +1,6 @@
 package fr.siamois.infrastructure.repositories;
 
-import fr.siamois.models.ark.Ark;
+import fr.siamois.domain.models.ark.Ark;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 

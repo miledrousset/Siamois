@@ -1,7 +1,7 @@
 package fr.siamois.infrastructure.api;
 
 import fr.siamois.infrastructure.api.dto.ThesaurusDTO;
-import fr.siamois.models.exceptions.api.InvalidEndpointException;
+import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;

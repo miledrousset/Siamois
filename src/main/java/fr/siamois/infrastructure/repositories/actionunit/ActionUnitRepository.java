@@ -1,8 +1,8 @@
 package fr.siamois.infrastructure.repositories.actionunit;
 
-import fr.siamois.models.Institution;
-import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.ark.Ark;
+import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.ark.Ark;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

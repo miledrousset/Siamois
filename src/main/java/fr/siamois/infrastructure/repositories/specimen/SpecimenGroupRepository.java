@@ -1,6 +1,6 @@
 package fr.siamois.infrastructure.repositories.specimen;
 
-import fr.siamois.models.specimen.SpecimenGroup;
+import fr.siamois.domain.models.specimen.SpecimenGroup;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

@@ -1,8 +1,8 @@
 package fr.siamois.infrastructure.repositories.recordingunit;
 
 
-import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.recordingunit.RecordingUnit;
+import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

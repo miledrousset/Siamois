@@ -1,6 +1,6 @@
 package fr.siamois.infrastructure.repositories.actionunit;
 
-import fr.siamois.models.actionunit.ActionCode;
+import fr.siamois.domain.models.actionunit.ActionCode;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

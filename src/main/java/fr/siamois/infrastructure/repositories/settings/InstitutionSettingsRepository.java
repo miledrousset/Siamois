@@ -1,6 +1,6 @@
 package fr.siamois.infrastructure.repositories.settings;
 
-import fr.siamois.models.settings.InstitutionSettings;
+import fr.siamois.domain.models.settings.InstitutionSettings;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
