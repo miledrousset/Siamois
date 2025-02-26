@@ -7,6 +7,7 @@ import fr.siamois.models.exceptions.ark.NoArkConfigException;
 import fr.siamois.models.exceptions.ark.TooManyGenerationsException;
 import fr.siamois.models.settings.InstitutionSettings;
 import fr.siamois.services.InstitutionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -23,6 +24,9 @@ public class ArkService {
     private final ArkRepository arkRepository;
     private final InstitutionService institutionService;
 
+    private ServletUriComponentsBuilder builder;
+
+    @Autowired
     public ArkService(NoidCheckService noidCheckService,
                       ArkRepository arkRepository,
                       InstitutionService institutionService) {
@@ -31,21 +35,31 @@ public class ArkService {
         this.institutionService = institutionService;
     }
 
+    public ArkService(NoidCheckService noidCheckService,
+                      ArkRepository arkRepository,
+                      InstitutionService institutionService,
+                      ServletUriComponentsBuilder builder) {
+        this.noidCheckService = noidCheckService;
+        this.arkRepository = arkRepository;
+        this.institutionService = institutionService;
+        this.builder = builder;
+    }
+
     private char getRandomChar() {
         return VALID_CHAR_STR.charAt(RANDOM.nextInt(VALID_CHAR_STR.length()));
     }
 
     private String randomArkQualifier(int length) {
-        StringBuilder builder = new StringBuilder();
-        while (builder.length() < length) {
-            builder.append(getRandomChar());
+        StringBuilder stringBuilder = new StringBuilder();
+        while (stringBuilder.length() < length) {
+            stringBuilder.append(getRandomChar());
         }
-        String tmp = builder.toString();
+        String tmp = stringBuilder.toString();
         String controlChar = noidCheckService.calculateCheckDigit(tmp);
 
-        builder.append("-").append(controlChar);
+        stringBuilder.append("-").append(controlChar);
 
-        return builder.toString();
+        return stringBuilder.toString();
     }
 
     public boolean qualifierNotExistInInstitution(Institution institution, String qualifier) {
@@ -89,7 +103,14 @@ public class ArkService {
         if (Boolean.TRUE.equals(settings.getArkIsUppercase()))
             qualifier = qualifier.toUpperCase();
 
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
+        ServletUriComponentsBuilder currentBuilder;
+        if (builder == null) {
+            currentBuilder = ServletUriComponentsBuilder.fromCurrentContextPath();
+        } else {
+            currentBuilder = builder.cloneBuilder();
+        }
+
+        return currentBuilder
                 .path("/api/ark:/")
                 .path(settings.getArkNaan())
                 .path("/")

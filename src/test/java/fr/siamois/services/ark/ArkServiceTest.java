@@ -13,12 +13,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponents;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ArkServiceTest {
@@ -27,12 +29,14 @@ class ArkServiceTest {
     @Mock private NoidCheckService noidCheckService;
     @Mock private InstitutionService institutionService;
     @Mock private RecordingUnitService recordingUnitService;
+    @Mock private ServletUriComponentsBuilder builder;
+    @Mock private UriComponents uriComponents;
 
     private ArkService arkService;
 
     @BeforeEach
     void beforeEach() {
-        arkService = new ArkService(noidCheckService, arkRepository, institutionService);
+        arkService = new ArkService(noidCheckService, arkRepository, institutionService, builder);
     }
 
     @Test
@@ -97,5 +101,37 @@ class ArkServiceTest {
         when(arkRepository.findByInstitutionAndQualifier(anyLong(), anyString())).thenReturn(Optional.of(new Ark()));
 
         assertThrows(TooManyGenerationsException.class, () -> arkService.generateAndSave(settings));
+    }
+
+    @Test
+    void getUriOf() {
+        // Arrange
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        InstitutionSettings settings = new InstitutionSettings();
+        settings.setInstitution(institution);
+        settings.setArkNaan("12345");
+        settings.setArkPrefix("ark:/");
+        settings.setArkIsUppercase(false);
+        settings.setArkIsEnabled(true);
+
+        Ark ark = new Ark();
+        ark.setCreatingInstitution(institution);
+        ark.setQualifier("abcde-x");
+
+        when(institutionService.createOrGetSettingsOf(institution)).thenReturn(settings);
+        when(builder.cloneBuilder()).thenReturn(builder);
+        when(builder.path(anyString())).thenReturn(builder);
+        when(builder.toUriString()).thenReturn("http://localhost/api/ark:/12345/abcde-x");
+
+        // Act
+        String uri = arkService.getUriOf(ark);
+
+        // Assert
+        assertNotNull(uri);
+        assertEquals("http://localhost/api/ark:/12345/abcde-x", uri);
+        verify(builder, times(4)).path(anyString());
+        verify(builder, times(1)).toUriString();
     }
 }
