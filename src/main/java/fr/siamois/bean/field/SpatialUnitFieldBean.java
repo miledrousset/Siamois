@@ -1,7 +1,7 @@
 package fr.siamois.bean.field;
 
 import fr.siamois.bean.LangBean;
-import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.SessionSettingsBean;
 import fr.siamois.models.exceptions.NoConfigForField;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.spatialunit.SpatialUnit;
@@ -36,7 +36,7 @@ public class SpatialUnitFieldBean implements Serializable {
     // Injections
     private final transient FieldService fieldService;
     private final LangBean langBean;
-    private final SessionSettings sessionSettings;
+    private final SessionSettingsBean sessionSettingsBean;
     private final transient SpatialUnitService spatialUnitService;
     private final transient ConceptService conceptService;
     private final transient FieldConfigurationService fieldConfigurationService;
@@ -54,13 +54,13 @@ public class SpatialUnitFieldBean implements Serializable {
 
     public SpatialUnitFieldBean(FieldService fieldService,
                                 LangBean langBean,
-                                SessionSettings sessionSettings,
+                                SessionSettingsBean sessionSettingsBean,
                                 SpatialUnitService spatialUnitService,
                                 ConceptService conceptService,
                                 FieldConfigurationService fieldConfigurationService) {
         this.fieldService = fieldService;
         this.langBean = langBean;
-        this.sessionSettings = sessionSettings;
+        this.sessionSettingsBean = sessionSettingsBean;
         this.spatialUnitService = spatialUnitService;
         this.conceptService = conceptService;
         this.fieldConfigurationService = fieldConfigurationService;
@@ -72,7 +72,7 @@ public class SpatialUnitFieldBean implements Serializable {
      */
     public void init() {
         init(new ArrayList<>(),new ArrayList<>());
-        refSpatialUnits = spatialUnitService.findAllOfInstitution(sessionSettings.getSelectedInstitution());
+        refSpatialUnits = spatialUnitService.findAllOfInstitution(sessionSettingsBean.getSelectedInstitution());
         labels = refSpatialUnits.stream()
                 .map(SpatialUnit::getName)
                 .toList();
@@ -83,7 +83,7 @@ public class SpatialUnitFieldBean implements Serializable {
     }
 
     public void init(List<SpatialUnit> parents, List<SpatialUnit> children) {
-        refSpatialUnits = spatialUnitService.findAllOfInstitution(sessionSettings.getSelectedInstitution());
+        refSpatialUnits = spatialUnitService.findAllOfInstitution(sessionSettingsBean.getSelectedInstitution());
         labels = refSpatialUnits.stream()
                 .map(SpatialUnit::getName)
                 .toList();
@@ -103,7 +103,7 @@ public class SpatialUnitFieldBean implements Serializable {
     public String save() {
 
         try {
-            SpatialUnit saved = spatialUnitService.save(sessionSettings.getUserInfo(), fName, selectedConcept, fParentsSpatialUnits);
+            SpatialUnit saved = spatialUnitService.save(sessionSettingsBean.getUserInfo(), fName, selectedConcept, fParentsSpatialUnits);
 
             MessageUtils.displayInfoMessage(langBean, "spatialunit.created", saved.getName());
 
@@ -122,7 +122,7 @@ public class SpatialUnitFieldBean implements Serializable {
      */
     public List<Concept> completeCategory(String input) {
         try {
-            return fieldConfigurationService.fetchAutocomplete(sessionSettings.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE, input);
+            return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE, input);
         } catch (NoConfigForField e) {
             log.error(e.getMessage(), e);
             return new ArrayList<>();

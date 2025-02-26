@@ -28,21 +28,21 @@ import java.util.Optional;
 @SessionScoped
 public class NavBean implements Serializable {
 
-    private final SessionSettings sessionSettings;
+    private final SessionSettingsBean sessionSettingsBean;
     private final transient InstitutionChangeEventPublisher institutionChangeEventPublisher;
     private final transient InstitutionConverter converter;
 
     private transient List<Institution> institutions;
 
-    public NavBean(SessionSettings sessionSettings, InstitutionChangeEventPublisher institutionChangeEventPublisher, InstitutionConverter converter) {
-        this.sessionSettings = sessionSettings;
+    public NavBean(SessionSettingsBean sessionSettingsBean, InstitutionChangeEventPublisher institutionChangeEventPublisher, InstitutionConverter converter) {
+        this.sessionSettingsBean = sessionSettingsBean;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
         this.converter = converter;
     }
 
     public void init() {
         log.trace("Initializing NavBean");
-        institutions = sessionSettings.getReferencedInstitutions();
+        institutions = sessionSettingsBean.getReferencedInstitutions();
     }
 
     /**
@@ -56,21 +56,21 @@ public class NavBean implements Serializable {
     }
 
     public void changeSelectedInstitution(Institution institution) {
-        Institution old = sessionSettings.getSelectedInstitution();
-        sessionSettings.setSelectedInstitution(institution);
+        Institution old = sessionSettingsBean.getSelectedInstitution();
+        sessionSettingsBean.setSelectedInstitution(institution);
         institutionChangeEventPublisher.publishInstitutionChangeEvent();
         log.trace("Institution changed from {} to {}", old, institution);
     }
 
     public boolean institutionRefIsEmpty() {
         if (institutions == null || institutions.isEmpty()) {
-            institutions = sessionSettings.getReferencedInstitutions();
+            institutions = sessionSettingsBean.getReferencedInstitutions();
         }
         return institutions.isEmpty();
     }
 
     public Institution getSelectedInstitution() {
-        return sessionSettings.getSelectedInstitution();
+        return sessionSettingsBean.getSelectedInstitution();
     }
 
     public boolean isManagerOrAdminOfInstitution() {
@@ -82,7 +82,7 @@ public class NavBean implements Serializable {
     }
 
     public void updateInstitutions() {
-        sessionSettings.setupSession();
+        sessionSettingsBean.setupSession();
     }
 
 }

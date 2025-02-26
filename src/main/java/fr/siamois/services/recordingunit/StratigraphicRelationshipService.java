@@ -1,22 +1,18 @@
 package fr.siamois.services.recordingunit;
 
-import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.StratigraphicRelationshipRepository;
 import fr.siamois.models.recordingunit.RecordingUnit;
+import fr.siamois.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.models.recordingunit.StratigraphicRelationshipId;
 import fr.siamois.models.vocabulary.Concept;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import fr.siamois.models.recordingunit.StratigraphicRelationship;
 
 @Service
 public class StratigraphicRelationshipService {
@@ -72,14 +68,14 @@ public class StratigraphicRelationshipService {
         return relationshipRepository.findByUnit2AndType(usq, ASYNCHRONOUS)
                 .stream()
                 .map(StratigraphicRelationship::getUnit1) // If unit2 = usq, unit1 is anterior
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<RecordingUnit> getPosteriorUnits(RecordingUnit usq) {
         return relationshipRepository.findByUnit1AndType(usq, ASYNCHRONOUS)
                 .stream()
                 .map(StratigraphicRelationship::getUnit2) // If unit1 = usq, unit2 is posterior
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional

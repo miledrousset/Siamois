@@ -1,13 +1,17 @@
 package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
+import fr.siamois.models.ArkEntity;
 import fr.siamois.models.Institution;
 import fr.siamois.models.UserInfo;
+import fr.siamois.models.ark.Ark;
 import fr.siamois.models.exceptions.SpatialUnitAlreadyExistsException;
 import fr.siamois.models.exceptions.SpatialUnitNotFoundException;
 import fr.siamois.models.history.SpatialUnitHist;
+import fr.siamois.models.settings.InstitutionSettings;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
+import fr.siamois.services.ark.ArkService;
 import fr.siamois.services.vocabulary.ConceptService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,14 +28,18 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
-public class SpatialUnitService {
+public class SpatialUnitService implements ArkEntityService {
 
     private final SpatialUnitRepository spatialUnitRepository;
     private final ConceptService conceptService;
+    private final ArkService arkService;
+    private final InstitutionService institutionService;
 
-    public SpatialUnitService(SpatialUnitRepository spatialUnitRepository, ConceptService conceptService) {
+    public SpatialUnitService(SpatialUnitRepository spatialUnitRepository, ConceptService conceptService, ArkService arkService, InstitutionService institutionService) {
         this.spatialUnitRepository = spatialUnitRepository;
         this.conceptService = conceptService;
+        this.arkService = arkService;
+        this.institutionService = institutionService;
     }
 
     /**
@@ -104,6 +112,12 @@ public class SpatialUnitService {
         spatialUnit.setCategory(type);
         spatialUnit.setCreationTime(OffsetDateTime.now(ZoneId.systemDefault()));
 
+        InstitutionSettings settings = institutionService.createOrGetSettingsOf(info.getInstitution());
+        if (settings.hasEnabledArkConfig()) {
+            Ark ark = arkService.generateAndSave(settings);
+            spatialUnit.setArk(ark);
+        }
+
         spatialUnit = spatialUnitRepository.save(spatialUnit);
 
         for (SpatialUnit parent : parents) {
@@ -113,4 +127,17 @@ public class SpatialUnitService {
         return spatialUnit;
     }
 
+    public Optional<SpatialUnit> findByArk(Ark ark) {
+        return spatialUnitRepository.findByArk(ark);
+    }
+
+    @Override
+    public List<SpatialUnit> findWithoutArk(Institution institution) {
+        return spatialUnitRepository.findAllByArkIsNullAndCreatedByInstitution(institution);
+    }
+
+    @Override
+    public ArkEntity save(ArkEntity toSave) {
+        return spatialUnitRepository.save((SpatialUnit) toSave);
+    }
 }

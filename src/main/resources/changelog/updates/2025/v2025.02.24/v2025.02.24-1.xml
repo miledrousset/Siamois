@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2025.02.24-1" author="Julien Linget">
+
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="ark" columnName="ark_id"/>
+        </preConditions>
+
+        <sql>
+            drop table ark_server cascade;
+        </sql>
+
+        <dropColumn tableName="ark" columnName="fk_base_uri"/>
+
+        <sql>
+            alter table ark
+                drop column ark_id cascade;
+        </sql>
+
+        <dropColumn tableName="recording_unit" columnName="fk_ark_id"/>
+        <dropColumn tableName="recording_unit_study" columnName="fk_ark_id"/>
+        <dropColumn tableName="specimen_study" columnName="fk_ark_id"/>
+        <dropColumn tableName="specimen" columnName="fk_ark_id"/>
+        <dropColumn tableName="siamois_document" columnName="fk_ark_id"/>
+        <dropColumn tableName="action_unit" columnName="fk_ark_id"/>
+        <dropColumn tableName="spatial_unit" columnName="fk_ark_id"/>
+        <dropColumn tableName="concept" columnName="fk_ark_id"/>
+
+        <dropColumn tableName="history_recording_unit" columnName="fk_ark_id"/>
+        <dropColumn tableName="history_recording_unit_study" columnName="fk_ark_id"/>
+        <dropColumn tableName="history_specimen_study" columnName="fk_ark_id"/>
+        <dropColumn tableName="history_specimen" columnName="fk_ark_id"/>
+        <dropColumn tableName="history_siamois_document" columnName="fk_ark_id"/>
+        <dropColumn tableName="history_action_unit" columnName="fk_ark_id"/>
+        <dropColumn tableName="history_spatial_unit" columnName="fk_ark_id"/>
+
+        <!-- Drop the column ark_id -->
+        <!-- Add primary key on ark(internal_id) -->
+        <addColumn tableName="ark">
+            <column name="internal_id" autoIncrement="true" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+        </addColumn>
+
+
+        <!-- Drop and replace fk_ark_id columns in specified tables -->
+        <addColumn tableName="recording_unit">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_recording_unit_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="concept">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_recording_unit_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+
+        <addColumn tableName="recording_unit_study">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_recording_unit_study_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+
+        <addColumn tableName="specimen_study">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_specimen_study_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+
+        <addColumn tableName="specimen">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_specimen_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+
+        <addColumn tableName="siamois_document">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_siamois_document_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+
+        <addColumn tableName="action_unit">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_action_unit_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+
+        <addColumn tableName="spatial_unit">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_spatial_unit_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="history_recording_unit">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_history_recording_unit_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="history_recording_unit_study">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_history_recording_unit_study_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="history_specimen_study">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_history_specimen_study_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="history_specimen">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_history_specimen_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="history_siamois_document">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_history_siamois_document_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="history_action_unit">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_history_action_unit_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="history_spatial_unit">
+            <column name="fk_ark_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_history_spatial_unit_ark" references="ark(internal_id)"/>
+            </column>
+        </addColumn>
+
+    </changeSet>
+
+</databaseChangeLog>

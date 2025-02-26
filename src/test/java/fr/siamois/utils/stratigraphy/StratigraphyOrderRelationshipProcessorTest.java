@@ -6,7 +6,6 @@ import fr.siamois.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.services.recordingunit.StratigraphicRelationshipService;
 import org.junit.jupiter.api.Test;
 
-
 import java.util.HashSet;
 import java.util.List;
 
@@ -37,7 +36,7 @@ class StratigraphyOrderRelationshipProcessorTest {
         processor.process();
 
         // Assert
-        assertEquals(true, processor.isSignalConflict());
+        assertTrue(processor.isSignalConflict());
 
     }
 
@@ -62,7 +61,7 @@ class StratigraphyOrderRelationshipProcessorTest {
         processor.process();
 
         // Assertions
-        assertEquals(false, processor.isSignalConflict());
+        assertFalse(processor.isSignalConflict());
         assertEquals(0,unitA.getRelationshipsAsUnit1().size());
         assertEquals(1,unitB.getRelationshipsAsUnit1().size());
         assertEquals(2,unitC.getRelationshipsAsUnit1().size());

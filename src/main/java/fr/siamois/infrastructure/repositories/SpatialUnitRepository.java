@@ -1,20 +1,21 @@
 package fr.siamois.infrastructure.repositories;
 
-import fr.siamois.infrastructure.repositories.history.TraceableEntries;
+import fr.siamois.models.Institution;
+import fr.siamois.models.ark.Ark;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>, TraceableEntries {
+public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long> {
 
     @Query(
             nativeQuery = true,
@@ -37,12 +38,6 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
         "WHERE sh.fk_parent_id IS NULL;"
     )
     List<SpatialUnit> findAllWithoutParents();
-
-    @Query(
-            nativeQuery = true,
-            value = "SELECT su.* FROM spatial_unit su WHERE fk_author_id = :author AND creation_time BETWEEN :start AND :end"
-    )
-    List<SpatialUnit> findAllCreatedBetweenByUser(@Param("start") OffsetDateTime start, @Param("end") OffsetDateTime end, @Param("author") Long personId);
 
     @Query(
             nativeQuery = true,
@@ -75,5 +70,9 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "WHERE UPPER(su.name) = UPPER(:spatialUnitName) AND su.fk_institution_id = :institutionId"
     )
     Optional<SpatialUnit> findByNameAndInstitution(String spatialUnitName, Long institutionId);
+
+    Optional<SpatialUnit> findByArk(@NotNull Ark ark);
+
+    List<SpatialUnit> findAllByArkIsNullAndCreatedByInstitution(@NotNull Institution createdByInstitution);
 }
 

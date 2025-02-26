@@ -4,15 +4,14 @@ import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.RecordingUnitAltimetry;
 import fr.siamois.models.recordingunit.RecordingUnitSize;
-import fr.siamois.services.recordingunit.RecordingUnitService;
 import fr.siamois.services.actionunit.ActionUnitService;
+import fr.siamois.services.recordingunit.RecordingUnitService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,7 +43,6 @@ class NewRecordingUnitFormBeanTest {
         this.recordingUnit.setActionUnit(actionUnit);
         this.recordingUnit.setDescription("Nouvelle description");
         //this.startDate = recordingUnitUtils.offsetDateTimeToLocalDate(now());
-        // Below is hardcoded but it should not be. TODO
         //ActionUnit actionUnit = this.actionUnitService.findById(4);
         //this.recordingUnit.setActionUnit(actionUnit);
         this.recordingUnit.setIdentifier(1);
@@ -91,6 +89,5 @@ class NewRecordingUnitFormBeanTest {
 
         // Then: verify that the bean is populated properly
         assertEquals(recordingUnit.getId(), newRecordingUnitFormBean.getRecordingUnit().getId());
-        // TODO : check other local var
     }
 }

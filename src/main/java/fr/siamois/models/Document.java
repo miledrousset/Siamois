@@ -7,10 +7,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "siamois_document", schema = "public", uniqueConstraints = {
-        @UniqueConstraint(name = "siamois_document_fk_ark_id_key", columnNames = {"fk_ark_id"})
-})
-public class Document extends DocumentParent {
+@Table(name = "siamois_document", schema = "public")
+public class Document extends DocumentParent implements ArkEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

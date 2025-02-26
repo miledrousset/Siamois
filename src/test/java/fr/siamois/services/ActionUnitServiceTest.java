@@ -3,15 +3,11 @@ package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
-import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.models.Institution;
 import fr.siamois.models.UserInfo;
 import fr.siamois.models.actionunit.ActionCode;
 import fr.siamois.models.actionunit.ActionUnit;
-import fr.siamois.models.ark.Ark;
-import fr.siamois.models.ark.ArkServer;
 import fr.siamois.models.auth.Person;
-import fr.siamois.models.exceptions.FailedRecordingUnitSaveException;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.actionunit.ActionUnitService;
@@ -35,7 +31,6 @@ import static org.mockito.Mockito.when;
 class ActionUnitServiceTest {
 
     @Mock private ActionUnitRepository actionUnitRepository;
-    @Mock private ArkServerRepository arkServerRepository;
     @Mock private ConceptService conceptService;
     @Mock private ActionCodeRepository actionCodeRepository;
 
@@ -172,13 +167,7 @@ class ActionUnitServiceTest {
         institution.setIdentifier("MOM");
         actionUnit.setCreatedByInstitution(institution);
         Concept typeConcept = new Concept();
-        ArkServer localServer = new ArkServer();
-        localServer.setId(1L);
-        Ark ark = new Ark();
-        ark.setArkServer(localServer);
 
-
-        when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(localServer));
         when(conceptService.saveOrGetConcept(typeConcept)).thenReturn(typeConcept);
         when(actionUnitRepository.save(actionUnit)).thenReturn(actionUnit);
 
@@ -190,25 +179,6 @@ class ActionUnitServiceTest {
         assertEquals(typeConcept, result.getType());
         assertEquals(userInfo.getUser(), result.getAuthor());
         assertEquals(userInfo.getInstitution(), result.getCreatedByInstitution());
-        assertNotNull(result.getArk());
-        assertThat(result.getArk().getArkId()).startsWith("666666/");
-    }
-
-    @Test
-    void save_withUserInfo_failure() {
-        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
-
-        ActionUnit actionUnit = new ActionUnit();
-        Concept typeConcept = new Concept();
-
-        when(arkServerRepository.findLocalServer()).thenThrow(new RuntimeException("No local server found"));
-
-        Exception exception = assertThrows(
-                FailedRecordingUnitSaveException.class,
-                () -> actionUnitService.save(userInfo, actionUnit, typeConcept)
-        );
-
-        assertEquals("No local server found", exception.getMessage());
     }
 
     @Test

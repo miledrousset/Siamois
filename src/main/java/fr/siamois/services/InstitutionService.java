@@ -2,10 +2,12 @@ package fr.siamois.services;
 
 import fr.siamois.infrastructure.repositories.InstitutionRepository;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
+import fr.siamois.infrastructure.repositories.settings.InstitutionSettingsRepository;
 import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.exceptions.FailedInstitutionSaveException;
 import fr.siamois.models.exceptions.InstitutionAlreadyExist;
+import fr.siamois.models.settings.InstitutionSettings;
 import fr.siamois.models.vocabulary.Concept;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,11 +21,13 @@ import java.util.Optional;
 public class InstitutionService {
 
     private final InstitutionRepository institutionRepository;
+    private final InstitutionSettingsRepository institutionSettingsRepository;
     private final PersonRepository personRepository;
 
-    public InstitutionService(InstitutionRepository institutionRepository, PersonRepository personRepository) {
+    public InstitutionService(InstitutionRepository institutionRepository, PersonRepository personRepository, InstitutionSettingsRepository institutionSettingsRepository) {
         this.institutionRepository = institutionRepository;
         this.personRepository = personRepository;
+        this.institutionSettingsRepository = institutionSettingsRepository;
     }
 
     public List<Institution> findAll() {
@@ -68,5 +72,17 @@ public class InstitutionService {
             log.error("Failed to add user to institution", e);
             throw new FailedInstitutionSaveException("Failed to add user to institution");
         }
+    }
+
+    public InstitutionSettings createOrGetSettingsOf(Institution institution) {
+        Optional<InstitutionSettings> opt = institutionSettingsRepository.findById(institution.getId());
+        if (opt.isPresent()) return opt.get();
+        InstitutionSettings empty = new InstitutionSettings();
+        empty.setInstitution(institution);
+        return saveSettings(empty);
+    }
+
+    public InstitutionSettings saveSettings(InstitutionSettings settings) {
+        return institutionSettingsRepository.save(settings);
     }
 }

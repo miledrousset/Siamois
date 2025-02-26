@@ -1,6 +1,6 @@
 package fr.siamois.bean.home;
 
-import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.SessionSettingsBean;
 import fr.siamois.models.Institution;
 import fr.siamois.models.auth.Person;
 import fr.siamois.models.spatialunit.SpatialUnit;
@@ -22,7 +22,7 @@ class HomeBeanTest {
     @Mock
     private SpatialUnitService spatialUnitService;  // Mock the SpatialUnitService
     @Mock
-    private SessionSettings sessionSettings;
+    private SessionSettingsBean sessionSettingsBean;
 
     @InjectMocks
     private HomeBean homeBean;  // HomeBean under test
@@ -44,13 +44,13 @@ class HomeBeanTest {
         institution.setIdentifier("test.code");
         institution.setName("test.name");
 
-        when(sessionSettings.getSelectedInstitution()).thenReturn(institution);
+        when(sessionSettingsBean.getSelectedInstitution()).thenReturn(institution);
 
         Person person = new Person();
         person.setId(13L);
         person.setUsername("test.username");
 
-        when(sessionSettings.getAuthenticatedUser()).thenReturn(person);
+        when(sessionSettingsBean.getAuthenticatedUser()).thenReturn(person);
     }
 
     @Test

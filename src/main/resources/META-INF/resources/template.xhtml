@@ -11,7 +11,6 @@
     <h:outputStylesheet library="css" name="bootstrap.min.css"/>
     <h:outputStylesheet library="css" name="jquery-ui.min.css"/>
 
-
     <!-- QUIXLAB -->
     <link href="#{request.contextPath}/static/quixlab/css/style.css" rel="stylesheet"/>
 
@@ -309,6 +308,12 @@
                                     <h:commandLink action="/pages/field/fieldConfiguration.xhtml">
                                         <i class="icon-globe menu-icon"/><span
                                             class="nav-text">Configuration du thésaurus</span>
+                                    </h:commandLink>
+                                </li>
+                                <li>
+                                    <h:commandLink action="/pages/ark/ark.xhtml">
+                                        <i class="icon-key menu-icon"/><span
+                                            class="nav-text">Gestion des identifiants</span>
                                     </h:commandLink>
                                 </li>
                             </h:panelGroup>

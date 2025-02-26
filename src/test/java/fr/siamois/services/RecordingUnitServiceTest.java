@@ -1,15 +1,13 @@
 package fr.siamois.services;
 
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
-import fr.siamois.infrastructure.repositories.ark.ArkServerRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
 import fr.siamois.models.Institution;
 import fr.siamois.models.actionunit.ActionUnit;
+import fr.siamois.models.ark.Ark;
+import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.models.spatialunit.SpatialUnit;
-import fr.siamois.models.ark.Ark;
-import fr.siamois.models.ark.ArkServer;
-import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.models.vocabulary.Vocabulary;
 import fr.siamois.services.recordingunit.RecordingUnitService;
@@ -39,8 +37,6 @@ class RecordingUnitServiceTest {
     @Mock
     private RecordingUnitRepository recordingUnitRepository;
     @Mock
-    private ArkServerRepository arkServerRepository;
-    @Mock
     private FieldService fieldService;
     @Mock
     private ConceptService conceptService;
@@ -54,7 +50,6 @@ class RecordingUnitServiceTest {
     RecordingUnit recordingUnit1;
     RecordingUnit recordingUnit2;
     Ark newArk;
-    ArkServer mockArkServer;
     Vocabulary vocabulary;
     ConceptFieldDTO dto;
     Concept concept;
@@ -72,8 +67,6 @@ class RecordingUnitServiceTest {
         recordingUnit2.setId(2L);
         concept = new Concept();
         newArk = new Ark();
-        mockArkServer = new ArkServer();
-        mockArkServer.setServerArkUri("http://localhost:8099/siamois");
         vocabulary = new Vocabulary();
         dto = new ConceptFieldDTO();
 
@@ -171,7 +164,6 @@ class RecordingUnitServiceTest {
         postRelationship.setUnit2(recordingUnitToSave);
         postRelationship.setType(StratigraphicRelationshipService.ASYNCHRONOUS);
 
-        when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(new ArkServer()));
         Concept c = new Concept();
         c.setLabel("Unité strati");
         when(conceptService.saveOrGetConcept(c)).thenReturn(c);
@@ -215,7 +207,6 @@ class RecordingUnitServiceTest {
     @Test
     void save_Failure_MaxNbOfRecordingsReached() {
 
-        when(arkServerRepository.findLocalServer()).thenReturn(Optional.of(new ArkServer()));
         Concept c = new Concept();
         c.setLabel("Unité strati");
 
@@ -225,9 +216,9 @@ class RecordingUnitServiceTest {
         Exception exception = assertThrows(
                 Exception.class,
                 () -> recordingUnitService.save(recordingUnitToSave,c,
-                        new ArrayList<RecordingUnit>(),
-                        new ArrayList<RecordingUnit>(),
-                        new ArrayList<RecordingUnit>())
+                        new ArrayList<>(),
+                        new ArrayList<>(),
+                        new ArrayList<>())
         );
 
         assertEquals("Max recording unit code reached; Please ask administrator to increase the range", exception.getMessage());

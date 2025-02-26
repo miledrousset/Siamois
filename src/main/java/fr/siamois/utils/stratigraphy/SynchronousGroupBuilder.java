@@ -7,7 +7,10 @@ import fr.siamois.models.vocabulary.Concept;
 import fr.siamois.services.recordingunit.StratigraphicRelationshipService;
 import lombok.Data;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 @Data
 public class SynchronousGroupBuilder {
@@ -43,15 +46,15 @@ public class SynchronousGroupBuilder {
         boolean signalModif = false;
 
         // Déduction par transitivité
-        for (int u3 = 0; u3 < recordingUnits.size(); u3++) {
-            if ((hasSynchronousRelationship(unit2, recordingUnits.get(u3)) ||
-                    hasSynchronousRelationship(recordingUnits.get(u3), unit2)) &&
-                    !hasSynchronousRelationship(unit1, recordingUnits.get(u3))) {
+        for (RecordingUnit recordingUnit : recordingUnits) {
+            if ((hasSynchronousRelationship(unit2, recordingUnit) ||
+                    hasSynchronousRelationship(recordingUnit, unit2)) &&
+                    !hasSynchronousRelationship(unit1, recordingUnit)) {
 
                 //  The following lines are the equivalent of "MSyn(u, u3) = Synchro;"
                 StratigraphicRelationship newRelationship = new StratigraphicRelationship();
                 newRelationship.setUnit1(unit1);
-                newRelationship.setUnit2(recordingUnits.get(u3));
+                newRelationship.setUnit2(recordingUnit);
                 newRelationship.setType(StratigraphicRelationshipService.SYNCHRONOUS); // Assuming this is your synchronous concept
                 unit1.getRelationshipsAsUnit1().add(newRelationship);
                 //  End
@@ -97,7 +100,7 @@ public class SynchronousGroupBuilder {
     public void findTransitiveAndReflexiveRelationships() {
 
         // Variables locales
-        boolean signalModif = false;
+        boolean signalModif;
         // coche keeps tracks of the visited cells of the synchronisms matrix / matrice signal de relation traitée (accération traitement)
         boolean[][] coche = new boolean[recordingUnits.size()][recordingUnits.size()];
 

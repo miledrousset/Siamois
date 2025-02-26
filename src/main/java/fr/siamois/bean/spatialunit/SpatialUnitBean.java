@@ -1,26 +1,28 @@
 package fr.siamois.bean.spatialunit;
 
-import fr.siamois.bean.SessionSettings;
+import fr.siamois.bean.SessionSettingsBean;
 import fr.siamois.models.actionunit.ActionUnit;
 import fr.siamois.models.history.SpatialUnitHist;
 import fr.siamois.models.recordingunit.RecordingUnit;
 import fr.siamois.models.spatialunit.SpatialUnit;
 import fr.siamois.services.HistoryService;
-import fr.siamois.services.recordingunit.RecordingUnitService;
 import fr.siamois.services.SpatialUnitService;
 import fr.siamois.services.actionunit.ActionUnitService;
+import fr.siamois.services.recordingunit.RecordingUnitService;
 import fr.siamois.utils.DateUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-
 import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 import software.xdev.chartjs.model.charts.BarChart;
+import software.xdev.chartjs.model.color.RGBAColor;
 import software.xdev.chartjs.model.data.BarData;
 import software.xdev.chartjs.model.dataset.BarDataset;
-import software.xdev.chartjs.model.options.*;
-import software.xdev.chartjs.model.color.RGBAColor;
+import software.xdev.chartjs.model.options.BarOptions;
+import software.xdev.chartjs.model.options.Plugins;
+import software.xdev.chartjs.model.options.Title;
+import software.xdev.chartjs.model.options.Tooltip;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
@@ -42,7 +44,7 @@ public class SpatialUnitBean implements Serializable {
     private final transient RecordingUnitService recordingUnitService;
     private final transient ActionUnitService actionUnitService;
     private final transient HistoryService historyService;
-    private final SessionSettings sessionSettings;
+    private final SessionSettingsBean sessionSettingsBean;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -62,12 +64,12 @@ public class SpatialUnitBean implements Serializable {
 
     private Long id;  // ID of the spatial unit
 
-    public SpatialUnitBean(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, HistoryService historyService, SessionSettings sessionSettings) {
+    public SpatialUnitBean(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, HistoryService historyService, SessionSettingsBean sessionSettingsBean) {
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.historyService = historyService;
-        this.sessionSettings = sessionSettings;
+        this.sessionSettingsBean = sessionSettingsBean;
     }
 
     public void reinitializeBean() {

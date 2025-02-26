@@ -1,5 +1,6 @@
 package fr.siamois.models.actionunit;
 
+import fr.siamois.models.ArkEntity;
 import fr.siamois.models.FieldCode;
 import fr.siamois.models.exceptions.NullInstitutionIdentifier;
 import jakarta.persistence.*;
@@ -13,7 +14,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "action_unit")
-public class ActionUnit extends ActionUnitParent {
+public class ActionUnit extends ActionUnitParent implements ArkEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

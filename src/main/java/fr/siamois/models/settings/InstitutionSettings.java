@@ -1,0 +1,43 @@
+package fr.siamois.models.settings;
+
+import fr.siamois.models.Institution;
+import jakarta.persistence.*;
+import jakarta.ws.rs.DefaultValue;
+import lombok.Data;
+
+@Data
+@Entity
+@Table(name = "institution_settings")
+public class InstitutionSettings {
+
+    @Id
+    private Long id;
+
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "fk_institution_id", nullable = false)
+    @MapsId
+    private Institution institution;
+
+    @Column(name = "ark_naan")
+    private String arkNaan;
+
+    @Column(name = "ark_prefix")
+    private String arkPrefix;
+
+    @DefaultValue("FALSE")
+    @Column(name = "ark_is_enabled")
+    private Boolean arkIsEnabled = false;
+
+    @DefaultValue("16")
+    @Column(name = "ark_size")
+    private Integer arkSize = 16;
+
+    @DefaultValue("FALSE")
+    @Column(name = "ark_is_uppercase")
+    private Boolean arkIsUppercase = false;
+
+    public boolean hasEnabledArkConfig() {
+        return arkIsEnabled && arkNaan != null && arkPrefix != null;
+    }
+
+}
