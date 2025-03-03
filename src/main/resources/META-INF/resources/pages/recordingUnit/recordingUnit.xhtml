@@ -6,7 +6,6 @@
 >
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="id" value="#{newRecordingUnitFormBean.id}" required="#{!facesContext.postback}"/>
             <f:event type="preRenderView" listener="#{newRecordingUnitFormBean.init}"/>
         </f:metadata>
     </ui:define>

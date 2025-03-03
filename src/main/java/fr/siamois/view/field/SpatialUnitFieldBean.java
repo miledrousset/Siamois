@@ -10,6 +10,7 @@ import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.view.LangBean;
+import fr.siamois.view.RedirectBean;
 import fr.siamois.view.SessionSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,6 +41,7 @@ public class SpatialUnitFieldBean implements Serializable {
     private final transient SpatialUnitService spatialUnitService;
     private final transient ConceptService conceptService;
     private final transient FieldConfigurationService fieldConfigurationService;
+    private final RedirectBean redirectBean;
 
     // Storage
     private List<SpatialUnit> refSpatialUnits = new ArrayList<>();
@@ -57,13 +59,15 @@ public class SpatialUnitFieldBean implements Serializable {
                                 SessionSettingsBean sessionSettingsBean,
                                 SpatialUnitService spatialUnitService,
                                 ConceptService conceptService,
-                                FieldConfigurationService fieldConfigurationService) {
+                                FieldConfigurationService fieldConfigurationService,
+                                RedirectBean redirectBean) {
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.sessionSettingsBean = sessionSettingsBean;
         this.spatialUnitService = spatialUnitService;
         this.conceptService = conceptService;
         this.fieldConfigurationService = fieldConfigurationService;
+        this.redirectBean = redirectBean;
     }
 
     /**
@@ -100,18 +104,20 @@ public class SpatialUnitFieldBean implements Serializable {
      * Display a message if the spatial unit has been created.
      * @throws IllegalStateException if the collections are not defined
      */
-    public String save() {
+    public boolean save() {
 
         try {
             SpatialUnit saved = spatialUnitService.save(sessionSettingsBean.getUserInfo(), fName, selectedConcept, fParentsSpatialUnits);
 
             MessageUtils.displayInfoMessage(langBean, "spatialunit.created", saved.getName());
 
-            return "/pages/spatialUnit/spatialUnit?faces-redirect=true&id=" + saved.getId().toString();
+            redirectBean.redirectTo("/spatialunit/" + saved.getId());
+
+            return true;
         } catch (SpatialUnitAlreadyExistsException e) {
             log.error(e.getMessage(), e);
             MessageUtils.displayErrorMessage(langBean, "commons.error.spatialunit.alreadyexist", fName);
-            return null;
+            return false;
         }
     }
 

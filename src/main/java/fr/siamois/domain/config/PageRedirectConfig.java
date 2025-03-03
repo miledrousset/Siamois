@@ -17,15 +17,31 @@ public class PageRedirectConfig implements WebMvcConfigurer {
      */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
+        // Entry point
         registry.addViewController("/").setViewName("forward:/index.xhtml");
         registry.addViewController("/dashboard").setViewName("forward:/pages/dashboard/dashboard.xhtml");
+
+        // Login
         registry.addViewController("/login").setViewName("forward:/pages/login/login.xhtml");
+
+        // Spatial Unit
         registry.addViewController("/spatialUnit").setViewName("forward:/pages/spatialUnit/list.xhtml");
+
+        // Recording unit
+        registry.addViewController("/recordingunit/create").setViewName("forward:/pages/create/recordingUnit.xhtml");
+
+        // Field configuration
         registry.addViewController("/fieldConfiguration").setViewName("forward:/pages/field/fieldConfiguration.xhtml");
+
+        // Admin URI
         registry.addViewController("/admin/manager").setViewName("forward:/pages/admin/manager.xhtml");
         registry.addViewController("/admin/institution").setViewName("forward:/pages/admin/institution.xhtml");
+
+        // Manager URI
         registry.addViewController("/manager/users").setViewName("forward:/pages/manager/users.xhtml");
         registry.addViewController("/manager/ark").setViewName("forward:/pages/ark/ark.xhtml");
+
+        // Errors
         registry.addViewController("/error/404").setViewName("forward:/pages/error/error-404.xhtml");
         registry.addViewController("/error/403").setViewName("forward:/pages/error/error-403.xhtml");
         registry.addViewController("/error/500").setViewName("forward:/pages/error/error-500.xhtml");

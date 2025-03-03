@@ -3,18 +3,21 @@ package fr.siamois.view.actionunit;
 import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.exceptions.ActionUnitNotFoundException;
 import fr.siamois.domain.models.exceptions.NoConfigForField;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.view.LangBean;
+import fr.siamois.view.RedirectBean;
 import fr.siamois.view.SessionSettingsBean;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -34,6 +37,7 @@ public class ActionUnitBean implements Serializable {
     private final SessionSettingsBean sessionSettingsBean;
     private final transient FieldConfigurationService fieldConfigurationService;
     private final transient FieldService fieldService;
+    private final RedirectBean redirectBean;
 
     // Local
     private ActionUnit actionUnit;
@@ -49,15 +53,16 @@ public class ActionUnitBean implements Serializable {
     private Boolean editType;
     private Concept fType;
 
-    private transient List<ActionCode> secondaryActionCodes ;
+    private transient List<ActionCode> secondaryActionCodes;
 
 
-    public ActionUnitBean(ActionUnitService actionUnitService, LangBean langBean, SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService, FieldService fieldService) {
+    public ActionUnitBean(ActionUnitService actionUnitService, LangBean langBean, SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService, FieldService fieldService, RedirectBean redirectBean) {
         this.actionUnitService = actionUnitService;
         this.langBean = langBean;
         this.sessionSettingsBean = sessionSettingsBean;
         this.fieldConfigurationService = fieldConfigurationService;
         this.fieldService = fieldService;
+        this.redirectBean = redirectBean;
     }
 
     @PostConstruct
@@ -136,23 +141,22 @@ public class ActionUnitBean implements Serializable {
                             "Error",
                             langBean.msg("actionunit.creationfailed", this.actionUnit.getName())));
 
-            log.error("Error while saving: " + e.getMessage());
+            log.error("Error while saving: {}", e.getMessage());
         }
     }
 
     public void saveNewActionCode() {
         // Update the action code
-        if(newCodeIndex == 0) {
+        if (newCodeIndex == 0) {
             // update primary action code
             actionUnit.setPrimaryActionCode(newCode);
         } else if (newCodeIndex > 0) {
             actionUnit.getSecondaryActionCodes().add(newCode);
-            secondaryActionCodes.set(newCodeIndex-1, newCode);
+            secondaryActionCodes.set(newCodeIndex - 1, newCode);
         }
     }
 
     public void init() {
-
         if (!FacesContext.getCurrentInstance().isPostback()) {
             // reinit
             actionUnitErrorMessage = null;
@@ -161,18 +165,20 @@ public class ActionUnitBean implements Serializable {
             secondaryActionCodes = new ArrayList<>();
             // Get the requested action from DB
             try {
-                if(id!=null) {
+                if (id != null) {
                     actionUnit = actionUnitService.findById(id);
                     secondaryActionCodes = new ArrayList<>(actionUnit.getSecondaryActionCodes());
                     fType = this.actionUnit.getType();
-
+                } else {
+                    log.error("The Action Unit page should not be accessed without ID or by direct page path");
+                    redirectBean.redirectTo(HttpStatus.NOT_FOUND);
                 }
-                else {
-                    this.actionUnitErrorMessage = "No action unit ID specified";
-                }
-            }
-            catch (RuntimeException e) {
+            } catch (ActionUnitNotFoundException e) {
+                log.error("Action unit with id {} not found", id);
+                redirectBean.redirectTo(HttpStatus.NOT_FOUND);
+            } catch (RuntimeException e) {
                 this.actionUnitErrorMessage = "Failed to load action unit: " + e.getMessage();
+                redirectBean.redirectTo(HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
         }
