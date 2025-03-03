@@ -13,6 +13,7 @@ import fr.siamois.services.recordingunit.RecordingUnitService;
 import fr.siamois.utils.DateUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
@@ -35,6 +36,7 @@ import java.util.List;
  *
  * @author Grégory Bliault
  */
+@EqualsAndHashCode(callSuper = true)
 @Slf4j
 @Data
 public class SpatialUnitPanel extends AbstractPanel {
@@ -73,6 +75,12 @@ public class SpatialUnitPanel extends AbstractPanel {
         this.idunit = id;
         init();
     }
+
+    @Override
+    public String display() {
+        return "/pages/panel/spatialUnitPanelInclude.xhtml";
+    }
+
 
     public void reinitializeBean() {
         this.spatialUnit = null;

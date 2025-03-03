@@ -1,4 +1,4 @@
-<ui:composition template="/template.xhtml"
+<ui:fragment template="/template.xhtml"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -7,34 +7,30 @@
                 xmlns:cc="http://xmlns.jcp.org/jsf/composite"
 >
 
-    <cc:interface>
-        <cc:attribute name="actionUnitPanel" required="true"/>
-    </cc:interface>
 
-    <cc:implementation>
         <h:outputScript library="primefaces" name="jquery/jquery.js"/>
 
         <!-- Content -->
 
         <!-- General description of the action unit -->
         <p:staticMessage severity="error" summary="Error" closable="false"
-                         detail="#{cc.attrs.actionUnitPanel.actionUnitErrorMessage}"
-                         rendered="#{not empty cc.attrs.actionUnitPanel.actionUnitErrorMessage}"/>
+                         detail="#{bean.actionUnitErrorMessage}"
+                         rendered="#{not empty bean.actionUnitErrorMessage}"/>
 
-        <h:panelGroup id="contentPanel" rendered="#{cc.attrs.actionUnitPanel.actionUnit != null}">
+        <h:panelGroup id="contentPanel" rendered="#{bean.actionUnit != null}">
 
             <h:form>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <h2>#{cc.attrs.actionUnitPanel.actionUnit.name}
-                    <p:chip rendered="#{!cc.attrs.actionUnitPanel.editType}" label="#{cc.attrs.actionUnitPanel.actionUnit.type.label}"
+                <h2>#{bean.actionUnit.name}
+                    <p:chip rendered="#{!bean.editType}" label="#{bean.actionUnit.type.label}"
                             icon="pi pi-play"
                             styleClass="edit-type-chip">
-                        <p:ajax event="select" listener="#{cc.attrs.actionUnitPanel.setEditType(true)}" update="@form"/>
+                        <p:ajax event="select" listener="#{bean.setEditType(true)}" update="@form"/>
                     </p:chip>
                     <p:autoComplete id="auto-complete-action-type"
-                                    rendered="#{cc.attrs.actionUnitPanel.editType}"
-                                    value="#{cc.attrs.actionUnitPanel.FType}"
-                                    completeMethod="#{newcc.attrs.actionUnitPanel.completeActionUnitType}"
+                                    rendered="#{bean.editType}"
+                                    value="#{bean.FType}"
+                                    completeMethod="#{newbean.completeActionUnitType}"
                                     var="field" itemLabel="#{field.label}"
                                     itemValue="#{field}"
                                     required="true"
@@ -45,13 +41,13 @@
                 </h2>
             </h:form>
 
-            <p>ARK ID: #{cc.attrs.actionUnitPanel.actionUnit.ark.arkId}</p>
+            <p>ARK ID: #{bean.actionUnit.ark.arkId}</p>
             <!-- Button to access recording unit form -->
             <h:form>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <p:commandButton value="Nouvelle unité d'enregistrement"
                                  icon="pi pi-add"
-                                 actionListener="#{panelManagerBean.addNewRecordingUnitPanel(cc.attrs.actionUnitPanel.actionUnit)}"
+                                 actionListener="#{panelManagerBean.addNewRecordingUnitPanel(bean.actionUnit)}"
                                  update="panelContainer"/>
             </h:form>
 
@@ -72,14 +68,14 @@
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
                         <div style="display:flex;">
-                            <p:chip label="#{cc.attrs.actionUnitPanel.actionUnit.primaryActionCode.type.label}"
+                            <p:chip label="#{bean.actionUnit.primaryActionCode.type.label}"
                                     icon="pi pi-qrcode" >
                             </p:chip>
 
                             <p:autoComplete id="auto-complete-primary-action-code"
-                                            value="#{cc.attrs.actionUnitPanel.actionUnit.primaryActionCode}"
+                                            value="#{bean.actionUnit.primaryActionCode}"
                                             var="actionCode" itemLabel="#{actionCode.code}"
-                                            completeMethod="#{cc.attrs.actionUnitPanel.completeActionCode}"
+                                            completeMethod="#{bean.completeActionCode}"
                                             converter="#{actionCodeConverter}"
                                             itemValue="#{actionCode}"
                                             required="true"
@@ -104,7 +100,7 @@
                                 <f:facet name="footer">
                                     <div class="ui-fluid" style="padding:0.5rem 1rem 1rem 1rem">
                                         <p:commandButton value='Nouveau code' icon="pi pi-plus"
-                                                         action="#{cc.attrs.actionUnitPanel.initNewActionCode(0)}"
+                                                         action="#{bean.initNewActionCode(0)}"
                                                          update="form-new-action-code"
                                                          immediate="true"
                                                          oncomplete="PF('new-action-code-dialog').show()"
@@ -122,17 +118,17 @@
                     <h:form id="secondaryCodesForm">
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         <p:commandButton value="Add new code" icon="pi pi-plus" process="@this" update="secondaryCodesForm"
-                                         action="#{cc.attrs.actionUnitPanel.addNewSecondaryCode}"/>
-                        <ui:repeat id="secondaryCodeRepeat" var="secondaryCode" value="#{cc.attrs.actionUnitPanel.secondaryActionCodes}" varStatus="status">
+                                         action="#{bean.addNewSecondaryCode}"/>
+                        <ui:repeat id="secondaryCodeRepeat" var="secondaryCode" value="#{bean.secondaryActionCodes}" varStatus="status">
                             <h:panelGroup style="display:flex;" id="secondaryCodeField">
-                                <p:chip label="#{cc.attrs.actionUnitPanel.secondaryActionCodes[status.index].type.label}"
+                                <p:chip label="#{bean.secondaryActionCodes[status.index].type.label}"
                                         icon="pi pi-qrcode" >
                                 </p:chip>
                                 <p:autoComplete id="SecondaryCodeAutoCompleteId"
-                                                value="#{cc.attrs.actionUnitPanel.secondaryActionCodes[status.index]}"
+                                                value="#{bean.secondaryActionCodes[status.index]}"
                                                 var="actionCode"
                                                 itemLabel="#{actionCode.code}"
-                                                completeMethod="#{cc.attrs.actionUnitPanel.completeActionCode}"
+                                                completeMethod="#{bean.completeActionCode}"
                                                 converter="#{actionCodeConverter}"
                                                 itemValue="#{actionCode}"
                                                 required="true"
@@ -140,7 +136,7 @@
                                                 scrollHeight="300"
                                                 dropdown="false">
                                     <!--                                    <p:ajax event="itemSelect"-->
-                                    <!--                                            listener="#{cc.attrs.actionUnitPanel.handleSelectPrimaryCode}"-->
+                                    <!--                                            listener="#{bean.handleSelectPrimaryCode}"-->
                                     <!--                                          -->
                                     <p:ajax event="itemSelect"
                                             update="spatialUnitTabsId:secondaryCodesForm:secondaryCodeRepeat:#{status.index}:secondaryCodeField"/>
@@ -163,7 +159,7 @@
                                             <p:commandButton value='Nouveau code' icon="pi pi-plus"
                                                              immediate="true"
                                                              update="form-new-action-code"
-                                                             action="#{cc.attrs.actionUnitPanel.initNewActionCode(status.index+1)}"
+                                                             action="#{bean.initNewActionCode(status.index+1)}"
                                                              oncomplete="PF('new-action-code-dialog').show()"
                                                              style="margin-right: .5rem">
                                             </p:commandButton>
@@ -172,14 +168,14 @@
                                     </f:facet>
                                 </p:autoComplete>
                                 <p:commandButton icon="pi pi-minus" process="@this" update="@form"
-                                                 action="#{cc.attrs.actionUnitPanel.removeSecondaryCode(status.index)}"/>
+                                                 action="#{bean.removeSecondaryCode(status.index)}"/>
                             </h:panelGroup>
                         </ui:repeat>
                     </h:form>
                     <h:form>
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         <p:commandButton icon="pi pi-save" update="primaryCodeForm secondaryCodeForm main-growl"
-                                         action="#{cc.attrs.actionUnitPanel.save()}"/>
+                                         action="#{bean.save()}"/>
                     </h:form>
 
 
@@ -211,5 +207,5 @@
         <ui:include src="../../dialog/actionUnit/newActionCodeDialog.xhtml"/>
 
 
-    </cc:implementation>
-</ui:composition>
+    
+</ui:fragment>

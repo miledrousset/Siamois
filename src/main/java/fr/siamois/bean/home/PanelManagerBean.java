@@ -20,8 +20,12 @@ import fr.siamois.services.vocabulary.ConceptService;
 import fr.siamois.services.vocabulary.FieldConfigurationService;
 import fr.siamois.services.vocabulary.FieldService;
 import jakarta.annotation.PostConstruct;
+import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.model.dashboard.DashboardModel;
+import org.primefaces.model.dashboard.DefaultDashboardModel;
+import org.primefaces.model.dashboard.DefaultDashboardWidget;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -39,7 +43,9 @@ import java.util.List;
 @Slf4j
 @Component
 @SessionScoped
+@Data
 public class PanelManagerBean implements Serializable {
+
 
     private final transient SpatialUnitService spatialUnitService;
     private final transient RecordingUnitService recordingUnitService;
@@ -53,6 +59,8 @@ public class PanelManagerBean implements Serializable {
     private final PersonService personService;
     private final ConceptService conceptService;
     private final StratigraphicRelationshipService stratigraphicRelationshipService;
+    private DashboardModel responsiveModel;
+    private static final String RESPONSIVE_CLASS = "col-12 lg:col-6 xl:col-6";
 
     @Getter
     private List<AbstractPanel> panels = new ArrayList<>();
@@ -77,6 +85,7 @@ public class PanelManagerBean implements Serializable {
     public void init()  {
         panels.add(panelFactory.createSpatialUnitPanel(1L));
         panels.add(new ActionUnitPanel(actionUnitService,langBean, sessionSettings, fieldConfigurationService, fieldService));
+
     }
 
     public void addNewRecordingUnitPanel(ActionUnit parent) {

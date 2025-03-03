@@ -90,6 +90,11 @@ public class NewRecordingUnitPanel extends AbstractPanel {
     private int stratiDialogCertainty ; // 0 or 1
     private List<RecordingUnit> stratiDialogSelection;
 
+    public String display() {
+        return "/pages/panel/recordingUnitPanel.xhtml";
+    }
+
+
     @Data
     public static class Event {
 

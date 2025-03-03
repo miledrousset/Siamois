@@ -5,7 +5,8 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:panel="http://xmlns.jcp.org/jsf/composite/pages/panel">
+                xmlns:panel="http://xmlns.jcp.org/jsf/composite/pages/panel"
+                xmlns:c="http://java.sun.com/jsp/jstl/core">
 
     <ui:define name="content">
         <div class="container-fluid">
@@ -13,33 +14,16 @@
                 <div>
 
                     <h:panelGroup style="display:flex;flex-direction: column;gap:1em;" id="panelContainer">
-                        <ui:repeat value="#{panelManagerBean.panels}" var="panel">
-                            <p:panel id="panel" header="#{panel.title}" closable="true">
 
+                            <c:forEach items="#{panelManagerBean.panels}" var="panel" varStatus="status">
+                                <p:panel id="panel-${status.index}" header="#{panel.title}" closable="true">
 
-                                <h:panelGroup rendered="#{panel.type == 'spatial'}">
+                                    <ui:include src="#{panel.display()}">
+                                        <ui:param name="bean" value="#{panel}"/>
+                                    </ui:include>
+                                </p:panel>
+                            </c:forEach>
 
-                                    <panel:spatialUnitPanel spatialUnitPanel="#{panel}"/>
-
-                                </h:panelGroup>
-
-
-
-                                <h:panelGroup rendered="#{panel.type == 'action'}">
-
-                                    <panel:actionUnitPanel actionUnitPanel="#{panel}"/>
-
-                                </h:panelGroup>
-
-
-
-                                <h:panelGroup rendered="#{panel.type == 'ue'}">
-
-                                    <panel:recordingUnitPanel recordingUnitPanel="#{panel}"/>
-
-                                </h:panelGroup>
-                            </p:panel>
-                        </ui:repeat>
                     </h:panelGroup>
 
 

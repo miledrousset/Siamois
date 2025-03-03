@@ -50,6 +50,11 @@ public class ActionUnitPanel extends AbstractPanel {
 
     private transient List<ActionCode> secondaryActionCodes;
 
+    @Override
+    public String display() {
+        return "/pages/panel/actionUnitPanel.xhtml";
+    }
+
 
     public ActionUnitPanel(ActionUnitService actionUnitService, LangBean langBean, SessionSettings sessionSettings, FieldConfigurationService fieldConfigurationService, FieldService fieldService) {
         super("action", "action", "action");

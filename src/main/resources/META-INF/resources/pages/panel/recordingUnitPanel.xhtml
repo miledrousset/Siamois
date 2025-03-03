@@ -1,4 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui"
@@ -7,15 +7,12 @@
                 xmlns:cc="http://xmlns.jcp.org/jsf/composite"
                 xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label"
 >
-    <cc:interface>
-        <cc:attribute name="recordingUnitPanel" required="true"/>
-    </cc:interface>
-    <cc:implementation>
-        <p:staticMessage severity="error" summary="Error" closable="false"
-                         detail="#{cc.attrs.recordingUnitPanel.recordingUnitErrorMessage}"
-                         rendered="#{not empty cc.attrs.recordingUnitPanel.recordingUnitErrorMessage}"/>
 
-        <h:panelGroup id="recordingUnitFormPanelGroup" rendered="#{cc.attrs.recordingUnitPanel.recordingUnit != null}">
+        <p:staticMessage severity="error" summary="Error" closable="false"
+                         detail="#{bean.recordingUnitErrorMessage}"
+                         rendered="#{not empty bean.recordingUnitErrorMessage}"/>
+
+        <h:panelGroup id="recordingUnitFormPanelGroup" rendered="#{bean.recordingUnit != null}">
 
             <!-- Recording unit bean header -->
 
@@ -25,7 +22,7 @@
 
                 <!-- Save button -->
                 <p:commandButton value='#{langBean.msg("button.save")}' update="@form main-growl"
-                                 action='#{cc.attrs.recordingUnitPanel.save}'/>
+                                 action='#{bean.save}'/>
 
                 <!-- Top panel -->
                 <div class="row">
@@ -33,15 +30,15 @@
                     <!-- Identifier -->
                     <div class="field col-md-3" style="align-content: center;justify-items: center;">
                         <h2 style="margin-bottom: 0;">
-                            #{cc.attrs.recordingUnitPanel.recordingUnit.displayFullIdentifier()}</h2>
+                            #{bean.recordingUnit.displayFullIdentifier()}</h2>
 
                     </div>
                     <!-- UE Type -->
                     <div class="field col-md-3">
                         <sharedLabel:openthesoLabel label="Type d'UE" forId="auto-complete-recording-type"/>
                         <p:autoComplete id="auto-complete-recording-type"
-                                        value="#{cc.attrs.recordingUnitPanel.FType}"
-                                        completeMethod="#{cc.attrs.recordingUnitPanel.completeRecordingUnitType}"
+                                        value="#{bean.FType}"
+                                        completeMethod="#{bean.completeRecordingUnitType}"
                                         var="field" itemLabel="#{field.label}"
                                         itemValue="#{field}"
                                         required="true"
@@ -90,8 +87,8 @@
                                                        value='#{langBean.msg("recordingunit.field.author")}'
                                                        styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
                                         <p:autoComplete id="auto-complete-author"
-                                                        value="#{cc.attrs.recordingUnitPanel.recordingUnit.author}"
-                                                        completeMethod="#{cc.attrs.recordingUnitPanel.completePerson}"
+                                                        value="#{bean.recordingUnit.author}"
+                                                        completeMethod="#{bean.completePerson}"
                                                         forceSelection="true"
                                                         scrollHeight="300"
                                                         required="true"
@@ -103,8 +100,8 @@
                                                        value='#{langBean.msg("recordingunit.field.excavator")}'
                                                        styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
                                         <p:autoComplete id="auto-complete-excavator"
-                                                        value="#{cc.attrs.recordingUnitPanel.recordingUnit.excavator}"
-                                                        completeMethod="#{cc.attrs.recordingUnitPanel.completePerson}"
+                                                        value="#{bean.recordingUnit.excavator}"
+                                                        completeMethod="#{bean.completePerson}"
                                                         forceSelection="true"
                                                         required="false"
                                                         converter="#{personConverter}"
@@ -116,11 +113,11 @@
                                         <h:outputLabel for="datePicker-open" value="Creation"
                                                        styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
                                         <p:datePicker id="datePicker-open"
-                                                      value="#{cc.attrs.recordingUnitPanel.startDate}"/>
+                                                      value="#{bean.startDate}"/>
                                         <h:outputLabel for="datePicker-close" value="Clôture"
                                                        styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
                                         <p:datePicker id="datePicker-close"
-                                                      value="#{cc.attrs.recordingUnitPanel.endDate}"/>
+                                                      value="#{bean.endDate}"/>
                                     </div>
                                 </p:panel>
                             </div>
@@ -137,7 +134,7 @@
                                             <!-- <p:inputTextarea rows="6" cols="33" id="description"/> -->
                                             <!-- TODO : make is secure or remove it -->
                                             <p:textEditor id="description" secure='false' height="200px"
-                                                          value="#{cc.attrs.recordingUnitPanel.recordingUnit.description}"/>
+                                                          value="#{bean.recordingUnit.description}"/>
                                         </div>
                                     </div>
                                 </p:panel>
@@ -148,7 +145,7 @@
                                 <p:panel id="panel-location" header='#{langBean.msg("recordingunit.panel.location")}'
                                          toggleable="true">
                                     <h5>SIG</h5>
-                                    <p:toggleSwitch value="#{cc.attrs.recordingUnitPanel.isLocalisationFromSIG}"
+                                    <p:toggleSwitch value="#{bean.isLocalisationFromSIG}"
                                                     onIcon="pi pi-check"
                                                     offIcon="pi pi-times"/>
                                 </p:panel>
@@ -163,7 +160,7 @@
                                                                value="#{langBean.msg('recordingunit.field.size.unit')}"
                                                                styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
                                                 <p:selectOneMenu id="select-one-menu-size-unit"
-                                                                 value="#{cc.attrs.recordingUnitPanel.recordingUnit.size.sizeUnit}"
+                                                                 value="#{bean.recordingUnit.size.sizeUnit}"
                                                 >
                                                     <f:selectItem itemLabel="cm" itemValue="cm"/>
                                                     <f:selectItem itemLabel="m" itemValue="m"/>
@@ -176,19 +173,19 @@
                                                            value="#{langBean.msg('recordingunit.field.size.length')}"
                                             />
                                             <p:inputNumber id="input-number-length"
-                                                           value="#{cc.attrs.recordingUnitPanel.recordingUnit.size.sizeLength}"
+                                                           value="#{bean.recordingUnit.size.sizeLength}"
                                                            decimalSeparator="," thousandSeparator="."/>
                                             <p:outputLabel for="input-number-width"
                                                            value="#{langBean.msg('recordingunit.field.size.width')}"
                                             />
                                             <p:inputNumber id="input-number-width"
-                                                           value="#{cc.attrs.recordingUnitPanel.recordingUnit.size.sizeWidth}"
+                                                           value="#{bean.recordingUnit.size.sizeWidth}"
                                                            decimalSeparator="," thousandSeparator="."/>
                                             <p:outputLabel for="input-number-thickness"
                                                            value="#{langBean.msg('recordingunit.field.size.thickness')}"
                                             />
                                             <p:inputNumber id="input-number-thickness"
-                                                           value="#{cc.attrs.recordingUnitPanel.recordingUnit.size.sizeThickness}"
+                                                           value="#{bean.recordingUnit.size.sizeThickness}"
                                                            decimalSeparator="," thousandSeparator="."/>
                                         </p:panelGrid>
                                     </div>
@@ -204,7 +201,7 @@
                                                                value="#{langBean.msg('recordingunit.field.size.unit')}"
                                                                styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
                                                 <p:selectOneMenu id="select-one-menu-alti-unit"
-                                                                 value="#{cc.attrs.recordingUnitPanel.recordingUnit.size.sizeUnit}"
+                                                                 value="#{bean.recordingUnit.size.sizeUnit}"
                                                 >
                                                     <f:selectItem itemLabel="m" itemValue="m"/>
                                                     <f:selectItems/>
@@ -217,7 +214,7 @@
                                                                value="#{langBean.msg('recordingunit.field.altitude.sup+')}"
                                                 />
                                                 <p:inputNumber id="input-number-alti-sup-plus" class="form-control"
-                                                               value="#{cc.attrs.recordingUnitPanel.recordingUnit.altitude.altitudeSupPlus}"
+                                                               value="#{bean.recordingUnit.altitude.altitudeSupPlus}"
                                                                decimalSeparator=","
                                                                thousandSeparator="."/>
                                             </div>
@@ -226,7 +223,7 @@
                                                                value="#{langBean.msg('recordingunit.field.altitude.inf+')}"
                                                 />
                                                 <p:inputNumber id="input-number-alti-inf-plus" class="form-control"
-                                                               value="#{cc.attrs.recordingUnitPanel.recordingUnit.altitude.altitudeInfPlus}"
+                                                               value="#{bean.recordingUnit.altitude.altitudeInfPlus}"
                                                                decimalSeparator=","
                                                                thousandSeparator="."/>
                                             </div>
@@ -235,7 +232,7 @@
                                                                value="#{langBean.msg('recordingunit.field.altitude.sup-')}"
                                                 />
                                                 <p:inputNumber id="input-number-alti-sup-moins" class="form-control"
-                                                               value="#{cc.attrs.recordingUnitPanel.recordingUnit.altitude.altitudeSupMinus}"
+                                                               value="#{bean.recordingUnit.altitude.altitudeSupMinus}"
                                                                decimalSeparator=","
                                                                thousandSeparator="."/>
                                             </div>
@@ -244,7 +241,7 @@
                                                                value="#{langBean.msg('recordingunit.field.altitude.inf-')}"
                                                 />
                                                 <p:inputNumber id="input-number-alti-inf_minus" class="form-control"
-                                                               value="#{cc.attrs.recordingUnitPanel.recordingUnit.altitude.altitudeInfMinus}"
+                                                               value="#{bean.recordingUnit.altitude.altitudeInfMinus}"
                                                                decimalSeparator=","
                                                                thousandSeparator="."/>
                                             </div>
@@ -263,14 +260,14 @@
                     </p:tab>
                     <p:tab title="Versions">
 
-                        <p:dataTable var="version" value="#{cc.attrs.recordingUnitPanel.historyVersion}" rows="5" paginator="true">
+                        <p:dataTable var="version" value="#{bean.historyVersion}" rows="5" paginator="true">
                             <p:column headerText="Date de la version">
                                 <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
                             </p:column>
                             <p:column>
                                 <p:commandButton
                                         value="Visualiser"
-                                        action="#{cc.attrs.recordingUnitPanel.visualiseHistory(version)}"
+                                        action="#{bean.visualiseHistory(version)}"
                                         update="idDisplayVersion"
                                         oncomplete="PF('displayVersion').show()"
                                 />
@@ -279,7 +276,7 @@
                                 <p:commandButton
                                         value="Restaurer"
                                         immediate="true"
-                                        action="#{cc.attrs.recordingUnitPanel.restore(version)}"
+                                        action="#{bean.restore(version)}"
                                         oncomplete="PF('restored-dlg').show()"/>
                             </p:column>
                         </p:dataTable>
@@ -294,10 +291,10 @@
         <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true">
             <h:form id="displayVersionForm">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <h:panelGroup id="versionVisualizer" rendered="#{cc.attrs.recordingUnitPanel.revisionToDisplay != null}">
-                    <p>Name : #{cc.attrs.recordingUnitPanel.revisionToDisplay.identifier}</p>
-                    <p>Ark : #{cc.attrs.recordingUnitPanel.revisionToDisplay.ark.arkId}</p>
-                    <p>Category : #{cc.attrs.recordingUnitPanel.revisionToDisplay.type.label}</p>
+                <h:panelGroup id="versionVisualizer" rendered="#{bean.revisionToDisplay != null}">
+                    <p>Name : #{bean.revisionToDisplay.identifier}</p>
+                    <p>Ark : #{bean.revisionToDisplay.ark.arkId}</p>
+                    <p>Category : #{bean.revisionToDisplay.type.label}</p>
                 </h:panelGroup>
             </h:form>
         </p:dialog>
@@ -306,6 +303,6 @@
         </p:dialog>
 
 
-    </cc:implementation>
-</ui:composition>
+
+</ui:fragment>
 
