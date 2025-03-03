@@ -4,6 +4,7 @@ import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.NoConfigForField;
+import fr.siamois.domain.models.exceptions.RecordingUnitNotFoundException;
 import fr.siamois.domain.models.history.RecordingUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.recordingunit.RecordingUnitAltimetry;
@@ -18,11 +19,13 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.view.LangBean;
+import fr.siamois.view.RedirectBean;
 import fr.siamois.view.SessionSettingsBean;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -54,6 +57,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     private final SessionSettingsBean sessionSettingsBean;
     private final transient FieldConfigurationService fieldConfigurationService;
     private final transient StratigraphicRelationshipService stratigraphicRelationshipService;
+    private final RedirectBean redirectBean;
 
     // Local
     private RecordingUnit recordingUnit;
@@ -200,7 +204,10 @@ public class NewRecordingUnitFormBean implements Serializable {
                                     FieldService fieldService,
                                     LangBean langBean,
                                     ConceptService conceptService,
-                                    SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService, StratigraphicRelationshipService stratigraphicRelationshipService) {
+                                    SessionSettingsBean sessionSettingsBean,
+                                    FieldConfigurationService fieldConfigurationService,
+                                    StratigraphicRelationshipService stratigraphicRelationshipService,
+                                    RedirectBean redirectBean) {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.historyService = historyService;
@@ -211,6 +218,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         this.sessionSettingsBean = sessionSettingsBean;
         this.fieldConfigurationService = fieldConfigurationService;
         this.stratigraphicRelationshipService = stratigraphicRelationshipService;
+        this.redirectBean = redirectBean;
     }
 
     public void reinitializeBean() {
@@ -316,7 +324,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         try {
             if (!FacesContext.getCurrentInstance().isPostback() && this.id != null) {
 
-                log.info("Loading RU");
+                log.trace("Loading RU");
                 reinitializeBean();
                 this.recordingUnit = this.recordingUnitService.findById(this.id);
                 if (this.recordingUnit.getStartDate() != null) {
@@ -333,12 +341,16 @@ public class NewRecordingUnitFormBean implements Serializable {
                 initStratigraphy();
 
                 historyVersion = historyService.findRecordingUnitHistory(recordingUnit);
-
-
+            } else if (this.id == null) {
+                redirectBean.redirectTo(HttpStatus.NOT_FOUND);
             }
 
+        } catch (RecordingUnitNotFoundException e) {
+            log.error("Recording unit with ID {} not found", id);
+            redirectBean.redirectTo(HttpStatus.NOT_FOUND);
         } catch (RuntimeException err) {
             recordingUnitErrorMessage = "Unable to get recording unit";
+            redirectBean.redirectTo(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
