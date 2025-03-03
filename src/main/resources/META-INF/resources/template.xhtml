@@ -3,6 +3,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
       xml:lang="#{langBean.languageCode}"
 >
 
@@ -352,15 +353,21 @@
             Content body start
         ***********************************-->
         <div class="content-body">
+            <h:form>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <p:commandButton action="#{flowBean.displayEmpty()}" value="Add empty panel" update="flowContent"/>
+            </h:form>
             <h:panelGroup id="main">
-
-                <p:card styleClass="main-content">
+                <div class="main-content">
                     <!-- Content will be inserted here -->
-                    <ui:insert description="The main content" name="content"/>
+                    <h:form id="flowContent">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <c:forEach items="#{flowBean.components}" var="flow">
+                            <ui:include src="#{flow.display()}"/>
+                        </c:forEach>
+                    </h:form>
                     <!-- Content will be inserted here -->
-                </p:card>
-
-
+                </div>
             </h:panelGroup>
         </div>
         <!--**********************************
