@@ -2,17 +2,47 @@
 <ui:composition template="/template.xhtml"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components">
+                xmlns:panel="http://xmlns.jcp.org/jsf/composite/pages/panel">
 
     <ui:define name="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="card">
-                    <div class="card-body">
-                        <p>Empty dashboard</p>
-                    </div>
+                <div>
+
+                    <h:panelGroup style="display:flex;flex-direction: column;gap:1em;" id="panelContainer">
+                        <ui:repeat value="#{panelManagerBean.panels}" var="panel">
+                            <p:panel id="panel" header="#{panel.title}" closable="true">
+
+
+                                <h:panelGroup rendered="#{panel.type == 'spatial'}">
+
+                                    <panel:spatialUnitPanel spatialUnitPanel="#{panel}"/>
+
+                                </h:panelGroup>
+
+
+
+                                <h:panelGroup rendered="#{panel.type == 'action'}">
+
+                                    <panel:actionUnitPanel actionUnitPanel="#{panel}"/>
+
+                                </h:panelGroup>
+
+
+
+                                <h:panelGroup rendered="#{panel.type == 'ue'}">
+
+                                    <panel:recordingUnitPanel recordingUnitPanel="#{panel}"/>
+
+                                </h:panelGroup>
+                            </p:panel>
+                        </ui:repeat>
+                    </h:panelGroup>
+
+
                 </div>
             </div>
         </div>
