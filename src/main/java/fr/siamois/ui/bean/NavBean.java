@@ -5,6 +5,8 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.domain.utils.AuthenticatedUserUtils;
 import fr.siamois.ui.bean.converter.InstitutionConverter;
+import fr.siamois.ui.bean.flow.SpatialUnitListv2Bean;
+import fr.siamois.ui.bean.flow.SpatialUnitV2Bean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -31,13 +33,19 @@ public class NavBean implements Serializable {
     private final SessionSettingsBean sessionSettingsBean;
     private final transient InstitutionChangeEventPublisher institutionChangeEventPublisher;
     private final transient InstitutionConverter converter;
+    private final FlowBean flowBean;
+    private final SpatialUnitV2Bean spatialUnitV2Bean;
+    private final SpatialUnitListv2Bean spatialUnitListv2Bean;
 
     private transient List<Institution> institutions;
 
-    public NavBean(SessionSettingsBean sessionSettingsBean, InstitutionChangeEventPublisher institutionChangeEventPublisher, InstitutionConverter converter) {
+    public NavBean(SessionSettingsBean sessionSettingsBean, InstitutionChangeEventPublisher institutionChangeEventPublisher, InstitutionConverter converter, FlowBean flowBean, SpatialUnitV2Bean spatialUnitV2Bean, SpatialUnitListv2Bean spatialUnitListv2Bean) {
         this.sessionSettingsBean = sessionSettingsBean;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
         this.converter = converter;
+        this.flowBean = flowBean;
+        this.spatialUnitV2Bean = spatialUnitV2Bean;
+        this.spatialUnitListv2Bean = spatialUnitListv2Bean;
     }
 
     public void init() {
@@ -83,6 +91,11 @@ public class NavBean implements Serializable {
 
     public void updateInstitutions() {
         sessionSettingsBean.setupSession();
+    }
+
+    public void displaySpatialUnit() {
+        log.trace("Add spatial unit list");
+        flowBean.getComponents().add(spatialUnitListv2Bean);
     }
 
 }

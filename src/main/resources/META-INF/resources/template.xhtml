@@ -256,7 +256,7 @@
                                 </h:commandLink>
                             </li>
                             <li>
-                                <h:commandLink action="#{redirectBean.redirectTo('/spatialunit')}">
+                                <h:commandLink action="#{navBean.displaySpatialUnit()}" update="flowContent">
                                     <i class="icon-location-pin menu-icon"/><span class="nav-text">Unité spatiale</span>
                                 </h:commandLink>
                             </li>
@@ -360,12 +360,12 @@
             <h:panelGroup id="main">
                 <div class="main-content">
                     <!-- Content will be inserted here -->
-                    <h:form id="flowContent">
+                    <h:panelGroup id="flowContent">
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         <c:forEach items="#{flowBean.components}" var="flow">
                             <ui:include src="#{flow.display()}"/>
                         </c:forEach>
-                    </h:form>
+                    </h:panelGroup>
                     <!-- Content will be inserted here -->
                 </div>
             </h:panelGroup>

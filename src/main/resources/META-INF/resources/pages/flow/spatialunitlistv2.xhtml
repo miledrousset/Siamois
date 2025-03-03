@@ -1,0 +1,43 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui" xmlns:h="http://java.sun.com/jsf/html">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    <p:toolbar>
+                        <p:toolbarGroup>
+                            <p:commandButton value='Nouveau lieu' icon="pi pi-plus"
+                                             oncomplete="PF('new-spatial-unit-dialog').show()"
+                                             style="margin-right: .5rem">
+                            </p:commandButton>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+                   <h:form id="spatialUnitListv2">
+                       <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                       <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
+                                    value="#{spatialUnitListv2Bean.spatialUnits}">
+                           <p:column headerText="Name">
+                               <p:commandLink
+                                       action="#{spatialUnitListv2Bean.displayChild(item)}"
+                                       update="flowContent"
+                                       immediate="true"
+                               >
+                                   <h:outputText value="#{item.name}"/>
+                               </p:commandLink>
+                           </p:column>
+
+                           <p:column headerText="Category">
+                               <p:chip label="#{item.category.label}" icon="pi pi-map-marker" styleClass="mr-2"/>
+                           </p:column>
+                       </p:dataTable>
+                       <ui:include src="/dialog/spatialUnit/newSpatialUnitDialog.xhtml" />
+                   </h:form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ui:composition>

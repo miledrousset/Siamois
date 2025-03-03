@@ -1,0 +1,63 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components"
+        xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label"
+>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    <h:panelGroup id="contentPanel" rendered="#{spatialUnitV2Bean.spatialUnit != null}">
+                        <h2>#{spatialUnitV2Bean.spatialUnit.name}
+                            <p:chip label="#{spatialUnitV2Bean.spatialUnit.category.label}" icon="pi pi-map-marker"
+                                    styleClass="mr-2"/>
+                        </h2>
+
+                        <sharedLabel:arkLabel
+                                ark="#{spatialUnitV2Bean.spatialUnit.ark}"
+                        />
+
+                        <h:form>
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            <p:outputPanel>
+                                <div class="card">
+                                    <p:toolbar>
+                                        <p:toolbarGroup>
+                                            <p:commandButton value='Nouvelle action' icon="pi pi-plus"
+                                                             action="#{newActionUnitBean.reinit(spatialUnitV2Bean.spatialUnit)}"
+                                                             oncomplete="PF('new-action-unit-dialog').show()"
+                                                             style="margin-right: .5rem">
+                                            </p:commandButton>
+                                        </p:toolbarGroup>
+                                    </p:toolbar>
+                                </div>
+                            </p:outputPanel>
+                        </h:form>
+                        <p:tabView>
+                            <p:tab title="Aperçu">
+                            </p:tab>
+                            <p:tab title="Détails">
+                            </p:tab>
+                            <p:tab title="Actions">
+                            </p:tab>
+                            <p:tab title="Enregistrements">
+                            </p:tab>
+                            <p:tab title="Prelevements">
+                            </p:tab>
+                            <p:tab title="Versions">
+                            </p:tab>
+                        </p:tabView>
+                    </h:panelGroup>
+                    <ui:include src="../../dialog/actionUnit/actionUnitDialog.xhtml"/>
+                    <ui:include src="../../dialog/spatialUnit/newSpatialUnitDialog.xhtml"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ui:composition>

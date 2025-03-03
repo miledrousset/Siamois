@@ -24,9 +24,13 @@ public class FlowBean {
         this.emptyDashboardBean = emptyDashboardBean;
     }
 
+    public void add(FlowComponent flowComponent) {
+        components.add(0, flowComponent);
+    }
+
     public void displayEmpty() {
         log.trace("Add asked");
-        components.add(0, emptyDashboardBean);
+        add(emptyDashboardBean);
     }
 
 }
