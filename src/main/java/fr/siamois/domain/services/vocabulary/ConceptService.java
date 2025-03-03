@@ -3,24 +3,30 @@ package fr.siamois.domain.services.vocabulary;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.infrastructure.api.ConceptApi;
+import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullConceptDTO;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ConceptService {
 
     private final ConceptRepository conceptRepository;
+    private final ConceptApi conceptApi;
 
-    public ConceptService(ConceptRepository conceptRepository) {
+    public ConceptService(ConceptRepository conceptRepository, ConceptApi conceptApi) {
         this.conceptRepository = conceptRepository;
+        this.conceptApi = conceptApi;
     }
 
-    public Concept  saveOrGetConcept(Concept concept) {
+    public Concept saveOrGetConcept(Concept concept) {
         Vocabulary vocabulary = concept.getVocabulary();
         Optional<Concept> optConcept = conceptRepository.findConceptByExternalIdIgnoreCase(vocabulary.getExternalVocabularyId(), concept.getExternalId());
         return optConcept.orElseGet(() -> conceptRepository.save(concept));
@@ -63,6 +69,23 @@ public class ConceptService {
         labelDTO.setTitle(fullConceptDTO.getPrefLabel()[0].getValue());
         labelDTO.setLang(fullConceptDTO.getPrefLabel()[0].getLang());
         return labelDTO;
+    }
+
+    public List<Concept> findSubConceptOf(UserInfo userInfo, Concept concept) {
+        ConceptBranchDTO branch = conceptApi.fetchDownExpansion(concept.getVocabulary(), concept.getExternalId());
+        List<Concept> result = new ArrayList<>();
+        if (branch.isEmpty()) {
+            return result;
+        }
+
+        for (FullConceptDTO dto : branch.getData().values()) {
+            if (!dto.getIdentifier()[0].getValue().equals(concept.getExternalId())) {
+                Concept currentConcept = saveOrGetConceptFromFullDTO(userInfo, concept.getVocabulary(), dto);
+                result.add(currentConcept);
+            }
+        }
+
+        return result;
     }
 
 }

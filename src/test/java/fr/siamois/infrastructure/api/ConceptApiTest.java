@@ -8,6 +8,7 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullConceptDTO;
+import fr.siamois.infrastructure.api.dto.LabelDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -130,6 +131,7 @@ class ConceptApiTest {
 
         ConceptApi.ConceptDTO dto = new ConceptApi.ConceptDTO();
         dto.idConcept = "12";
+        dto.labels = new LabelDTO[]{new LabelDTO()};
 
         when(mapper.readValue(anyString(), eq(ConceptApi.ConceptDTO[].class))).thenReturn(new ConceptApi.ConceptDTO[] { dto });
 
