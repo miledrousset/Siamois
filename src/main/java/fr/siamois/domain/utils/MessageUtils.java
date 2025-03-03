@@ -1,6 +1,6 @@
 package fr.siamois.domain.utils;
 
-import fr.siamois.view.LangBean;
+import fr.siamois.ui.bean.LangBean;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 

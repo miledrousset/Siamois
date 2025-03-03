@@ -1,6 +1,6 @@
 package fr.siamois.domain.config.handler;
 
-import fr.siamois.view.SessionSettingsBean;
+import fr.siamois.ui.bean.SessionSettingsBean;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
