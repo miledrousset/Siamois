@@ -11,6 +11,7 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.view.LangBean;
+import fr.siamois.view.RedirectBean;
 import fr.siamois.view.SessionSettingsBean;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
@@ -38,6 +39,7 @@ public class NewActionUnitBean implements Serializable {
     private final SessionSettingsBean sessionSettingsBean;
     private final transient FieldConfigurationService fieldConfigurationService;
     private final transient ConceptService conceptService;
+    private final RedirectBean redirectBean;
 
     // Local
     private ActionUnit actionUnit;
@@ -51,17 +53,19 @@ public class NewActionUnitBean implements Serializable {
                              LangBean langBean,
                              SessionSettingsBean sessionSettingsBean,
                              FieldConfigurationService fieldConfigurationService,
-                             ConceptService conceptService) {
+                             ConceptService conceptService,
+                             RedirectBean redirectBean) {
         this.actionUnitService = actionUnitService;
         this.fieldService = fieldService;
         this.langBean = langBean;
         this.sessionSettingsBean = sessionSettingsBean;
         this.fieldConfigurationService = fieldConfigurationService;
         this.conceptService = conceptService;
+        this.redirectBean = redirectBean;
     }
 
 
-    public String save() {
+    public boolean save() {
         try {
             Person author = sessionSettingsBean.getAuthenticatedUser();
             actionUnit.setAuthor(author);
@@ -70,7 +74,8 @@ public class NewActionUnitBean implements Serializable {
 
             this.actionUnit = actionUnitService.save(sessionSettingsBean.getUserInfo() ,actionUnit, fieldType);
 
-            return "/pages/actionUnit/actionUnit?faces-redirect=true&id=" + this.actionUnit.getId().toString();
+            redirectBean.redirectTo("/actionunit/" + actionUnit.getId());
+            return true;
 
         } catch (RuntimeException e) {
             FacesContext.getCurrentInstance().addMessage(null,
@@ -81,7 +86,7 @@ public class NewActionUnitBean implements Serializable {
 
             log.error("Error while saving: {}", e.getMessage());
             // todo : add error message
-            return null;
+            return false;
         }
     }
 

@@ -53,7 +53,7 @@ public class ActionUnitBean implements Serializable {
     private Boolean editType;
     private Concept fType;
 
-    private transient List<ActionCode> secondaryActionCodes ;
+    private transient List<ActionCode> secondaryActionCodes;
 
 
     public ActionUnitBean(ActionUnitService actionUnitService, LangBean langBean, SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService, FieldService fieldService, RedirectBean redirectBean) {
@@ -147,12 +147,12 @@ public class ActionUnitBean implements Serializable {
 
     public void saveNewActionCode() {
         // Update the action code
-        if(newCodeIndex == 0) {
+        if (newCodeIndex == 0) {
             // update primary action code
             actionUnit.setPrimaryActionCode(newCode);
         } else if (newCodeIndex > 0) {
             actionUnit.getSecondaryActionCodes().add(newCode);
-            secondaryActionCodes.set(newCodeIndex-1, newCode);
+            secondaryActionCodes.set(newCodeIndex - 1, newCode);
         }
     }
 
@@ -165,21 +165,18 @@ public class ActionUnitBean implements Serializable {
             secondaryActionCodes = new ArrayList<>();
             // Get the requested action from DB
             try {
-                if(id!=null) {
+                if (id != null) {
                     actionUnit = actionUnitService.findById(id);
                     secondaryActionCodes = new ArrayList<>(actionUnit.getSecondaryActionCodes());
                     fType = this.actionUnit.getType();
-
-                }
-                else {
+                } else {
+                    log.error("The Action Unit page should not be accessed without ID or by direct page path");
                     redirectBean.redirectTo(HttpStatus.NOT_FOUND);
                 }
-            }
-            catch (ActionUnitNotFoundException e) {
+            } catch (ActionUnitNotFoundException e) {
                 log.error("Action unit with id {} not found", id);
                 redirectBean.redirectTo(HttpStatus.NOT_FOUND);
-            }
-            catch (RuntimeException e) {
+            } catch (RuntimeException e) {
                 this.actionUnitErrorMessage = "Failed to load action unit: " + e.getMessage();
                 redirectBean.redirectTo(HttpStatus.INTERNAL_SERVER_ERROR);
             }

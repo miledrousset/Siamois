@@ -93,9 +93,9 @@ public class SpatialUnitBean implements Serializable {
         this.spatialUnitParentsListErrorMessage = null;
     }
 
-    public String goToSpatialUnitById(Long id) {
+    public void goToSpatialUnitById(Long id) {
         log.trace("go to spatial unit");
-        return "/pages/spatialUnit/spatialUnit.xhtml?id=" + id + "&faces-redirect=true";
+        redirectBean.redirectTo("/spatialunit/" + id);
     }
 
 

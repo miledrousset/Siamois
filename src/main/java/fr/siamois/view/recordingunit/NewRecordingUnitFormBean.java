@@ -169,7 +169,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         return localDate.atTime(LocalTime.NOON).atOffset(ZoneOffset.UTC);
     }
 
-    public String save() {
+    public boolean save() {
         try {
 
             save(this.recordingUnit, fType, startDate, endDate);
@@ -181,7 +181,8 @@ public class NewRecordingUnitFormBean implements Serializable {
                             "Info",
                             langBean.msg("recordingunit.created", recordingUnit.getIdentifier())));
 
-            return "/pages/recordingUnit/recordingUnit?faces-redirect=true&id=" + recordingUnit.getId().toString();
+            redirectBean.redirectTo("/recordingunit/" + recordingUnit.getId());
+            return true;
 
         } catch (RuntimeException e) {
             FacesContext.getCurrentInstance().addMessage(null,
@@ -194,7 +195,7 @@ public class NewRecordingUnitFormBean implements Serializable {
             log.error("Error while saving: {}", e.getMessage());
 
         }
-        return null;
+        return false;
     }
 
 
@@ -240,8 +241,8 @@ public class NewRecordingUnitFormBean implements Serializable {
         return personService.findAllByNameLastnameContaining(query);
     }
 
-    public String goToNewRecordingUnitPage() {
-        return "/pages/create/recordingUnit.xhtml?faces-redirect=true";
+    public void goToNewRecordingUnitPage() {
+        redirectBean.redirectTo("/recordingunit/create");
     }
 
     public void initStratigraphy() {
@@ -342,6 +343,7 @@ public class NewRecordingUnitFormBean implements Serializable {
 
                 historyVersion = historyService.findRecordingUnitHistory(recordingUnit);
             } else if (this.id == null) {
+                log.error("The Recording Unit page should not be accessed without ID or by direct page path");
                 redirectBean.redirectTo(HttpStatus.NOT_FOUND);
             }
 
