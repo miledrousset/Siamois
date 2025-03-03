@@ -30,11 +30,11 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/", "/index.xhtml").permitAll()
                 .requestMatchers("/login", "/pages/login/login.xhtml").permitAll()
-                .requestMatchers("/dashboard", "/pages/dashboard/dashboard.xhtml").authenticated()
-                .requestMatchers("/fieldconfiguration", "/pages/field/fieldConfiguration.xhtml").authenticated()
-                .requestMatchers("/pages/admin/**", "/admin/**").hasAuthority("ADMIN")
-                .requestMatchers("/pages/manager/**", "/manager/**").hasAnyAuthority("TEAM_MANAGER", "ADMIN")
-                .anyRequest().permitAll()
+                .requestMatchers("/static/**").permitAll()
+                .requestMatchers("/jakarta.faces.resource/**").permitAll()
+                .requestMatchers("/error/**", "/pages/error/**").permitAll()
+                .requestMatchers("/api/**").permitAll()
+                .anyRequest().authenticated()
         );
         http.formLogin(login -> login
                 .loginPage("/login?lang=" + langBean.getLanguageCode()).permitAll()
