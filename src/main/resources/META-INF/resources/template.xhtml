@@ -3,6 +3,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
       xml:lang="#{langBean.languageCode}"
 >
 
@@ -352,16 +353,21 @@
             Content body start
         ***********************************-->
         <div class="content-body">
-            <h:panelGroup id="main">
-
-                <p:card styleClass="main-content">
-                    <!-- Content will be inserted here -->
-                    <ui:insert description="The main content" name="content"/>
-                    <!-- Content will be inserted here -->
-                </p:card>
 
 
-            </h:panelGroup>
+                <h:panelGroup style="display:flex;flex-direction: column;gap:1em;padding:1em;" id="flow">
+
+                    <c:forEach items="#{panelManagerBean.panels}" var="panel" varStatus="status">
+                        <p:panel id="panel-${status.index}" header="#{panel.title}" closable="true">
+
+                            <ui:include src="#{panel.display()}">
+                                <ui:param name="panelModel" value="#{panel}"/>
+                            </ui:include>
+                        </p:panel>
+                    </c:forEach>
+
+                </h:panelGroup>
+
         </div>
         <!--**********************************
             Content body end
