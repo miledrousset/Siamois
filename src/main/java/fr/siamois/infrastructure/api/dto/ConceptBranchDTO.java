@@ -12,4 +12,9 @@ public class ConceptBranchDTO {
     public void addConceptBranchDTO(String url, FullConceptDTO dto) {
         this.data.putIfAbsent(url, dto);
     }
+
+    public boolean isEmpty() {
+        return data.isEmpty();
+    }
+
 }

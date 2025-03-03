@@ -8,4 +8,18 @@ public class PurlInfoDTO {
     private String type;
     private String datatype;
     private String lang;
+
+    public PurlInfoDTO() {}
+
+    public PurlInfoDTO(String dataType, String value) {
+        this.value = value;
+        this.datatype = dataType;
+    }
+
+    public PurlInfoDTO(String dataType, String value, String lang) {
+        this.value = value;
+        this.datatype = dataType;
+        this.lang = lang;
+    }
+
 }
