@@ -3,6 +3,7 @@ package fr.siamois.view;
 import jakarta.faces.context.FacesContext;
 import jakarta.servlet.ServletContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -32,6 +33,16 @@ public class RedirectBean implements Serializable {
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    public void redirectTo(HttpStatus errorStatus) {
+        String errorCode = switch (errorStatus) {
+            case NOT_FOUND -> "404";
+            case FORBIDDEN -> "403";
+            default -> "500";
+        };
+
+        redirectTo(String.format("/error/%s", errorCode));
     }
 
 }

@@ -14,6 +14,7 @@ import fr.siamois.view.SessionSettingsBean;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import software.xdev.chartjs.model.charts.BarChart;
 import software.xdev.chartjs.model.color.RGBAColor;
@@ -128,7 +129,7 @@ public class SpatialUnitBean implements Serializable {
 
         if (id == null) {
             log.error("The Spatial Unit page should not be accessed without ID or by direct page path");
-            redirectBean.redirectTo("/error/404");
+            redirectBean.redirectTo(HttpStatus.NOT_FOUND);
             return;
         }
 
@@ -140,7 +141,7 @@ public class SpatialUnitBean implements Serializable {
 
         if (this.spatialUnit == null) {
             this.spatialUnitErrorMessage = "The spatial unit could not be found";
-            redirectBean.redirectTo("/error/404");
+            redirectBean.redirectTo(HttpStatus.NOT_FOUND);
             return;
         }
 
