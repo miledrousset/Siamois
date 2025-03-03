@@ -1,6 +1,6 @@
 package fr.siamois.ui.redirection;
 
-import fr.siamois.view.recordingunit.NewRecordingUnitFormBean;
+import fr.siamois.ui.bean.recordingunit.NewRecordingUnitFormBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

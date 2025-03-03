@@ -63,7 +63,9 @@
             **/*Factory.*,
             **/SiamoisApplication.*,
             **/*DTO.*,
-            **/*Utils.*
+            **/*Utils.*,
+            **/*Listener.*,
+            **/events/**/*.*
         </sonar.coverage.exclusions>
 
 

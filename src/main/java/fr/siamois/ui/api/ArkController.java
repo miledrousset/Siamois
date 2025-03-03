@@ -1,7 +1,7 @@
 package fr.siamois.ui.api;
 
 import fr.siamois.domain.services.ark.ArkRedirectionService;
-import fr.siamois.view.RedirectBean;
+import fr.siamois.ui.bean.RedirectBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
