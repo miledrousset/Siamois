@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 
 @Tag("integration")
 @ExtendWith(MockitoExtension.class)
-public class ConceptServiceIntTest {
+class ConceptServiceIntTest {
 
     @Mock
     private ConceptRepository conceptRepository;
@@ -39,7 +39,7 @@ public class ConceptServiceIntTest {
     }
 
     @Test
-    public void findSubConceptOf() {
+    void findSubConceptOf() {
         Vocabulary vocabulary = new Vocabulary();
         vocabulary.setId(1L);
         vocabulary.setVocabularyName("Siamois");

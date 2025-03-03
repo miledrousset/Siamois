@@ -159,15 +159,15 @@ class ConceptServiceTest {
     @Test
     void findSubConceptOf_shouldReturnSubConcepts() {
         // Arrange
-        Vocabulary vocabulary = new Vocabulary();
-        vocabulary.setId(1L);
-        vocabulary.setVocabularyName("Siamois");
-        vocabulary.setExternalVocabularyId("th223");
-        vocabulary.setBaseUri("https://thesaurus.mom.fr");
+        Vocabulary currentVocab = new Vocabulary();
+        currentVocab.setId(1L);
+        currentVocab.setVocabularyName("Siamois");
+        currentVocab.setExternalVocabularyId("th223");
+        currentVocab.setBaseUri("https://thesaurus.mom.fr");
 
         Concept concept = new Concept();
         concept.setId(1L);
-        concept.setVocabulary(vocabulary);
+        concept.setVocabulary(currentVocab);
         concept.setExternalId("4282375");
         concept.setLabel("Unité stratigraphique");
         concept.setLangCode("fr");
@@ -214,15 +214,15 @@ class ConceptServiceTest {
     @Test
     void findSubConceptOf_shouldReturnEmptyList_whenBranchIsEmpty() {
         // Arrange
-        Vocabulary vocabulary = new Vocabulary();
-        vocabulary.setId(1L);
-        vocabulary.setVocabularyName("Siamois");
-        vocabulary.setExternalVocabularyId("th223");
-        vocabulary.setBaseUri("https://thesaurus.mom.fr");
+        Vocabulary currentVocab = new Vocabulary();
+        currentVocab.setId(1L);
+        currentVocab.setVocabularyName("Siamois");
+        currentVocab.setExternalVocabularyId("th223");
+        currentVocab.setBaseUri("https://thesaurus.mom.fr");
 
         Concept concept = new Concept();
         concept.setId(1L);
-        concept.setVocabulary(vocabulary);
+        concept.setVocabulary(currentVocab);
         concept.setExternalId("4282375");
         concept.setLabel("Unité stratigraphique");
         concept.setLangCode("fr");
