@@ -1,4 +1,4 @@
-package fr.siamois.domain.config;
+package fr.siamois.ui.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;

@@ -1,4 +1,4 @@
-package fr.siamois.domain.config.handler;
+package fr.siamois.ui.config;
 
 import fr.siamois.ui.bean.SessionSettingsBean;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package fr.siamois.domain.config;
+package fr.siamois.ui.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.ForbiddenException;

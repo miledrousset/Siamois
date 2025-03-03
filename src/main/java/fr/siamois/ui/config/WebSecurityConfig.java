@@ -1,6 +1,5 @@
-package fr.siamois.domain.config;
+package fr.siamois.ui.config;
 
-import fr.siamois.domain.config.handler.LoginSuccessHandler;
 import fr.siamois.ui.bean.LangBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
