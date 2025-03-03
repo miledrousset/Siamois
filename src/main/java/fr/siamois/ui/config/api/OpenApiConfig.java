@@ -31,7 +31,7 @@ public class OpenApiConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("fr.siamois.domain.config"))
+                .apis(RequestHandlerSelectors.basePackage("fr.siamois.ui.config"))
                 .paths(PathSelectors.any())
                 .build();
     }

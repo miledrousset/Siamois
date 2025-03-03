@@ -1,4 +1,4 @@
-package fr.siamois.domain.config.events;
+package fr.siamois.domain.events;
 
 import fr.siamois.infrastructure.database.HistoryTriggerInitializer;
 import lombok.extern.slf4j.Slf4j;

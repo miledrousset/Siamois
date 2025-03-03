@@ -1,4 +1,4 @@
-package fr.siamois.domain.config;
+package fr.siamois.ui.config;
 
 import com.sun.faces.config.ConfigureListener;
 import jakarta.faces.annotation.FacesConfig;
