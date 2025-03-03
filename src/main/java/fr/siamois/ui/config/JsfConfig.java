@@ -12,7 +12,7 @@ import org.springframework.web.context.ServletContextAware;
 
 @FacesConfig
 @Configuration
-public class JsfConfiguration  implements ServletContextAware {
+public class JsfConfig implements ServletContextAware {
 
     @Override
     public void setServletContext(ServletContext servletContext) {

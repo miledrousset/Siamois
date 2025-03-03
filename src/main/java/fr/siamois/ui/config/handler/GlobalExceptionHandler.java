@@ -1,4 +1,4 @@
-package fr.siamois.ui.config;
+package fr.siamois.ui.config.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.ForbiddenException;
