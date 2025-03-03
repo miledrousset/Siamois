@@ -211,4 +211,43 @@ class ConceptServiceTest {
                 .anyMatch(currentConcept -> currentConcept.getExternalId().equalsIgnoreCase("4284785"));
     }
 
+    @Test
+    void findSubConceptOf_shouldReturnEmptyList_whenBranchIsEmpty() {
+        // Arrange
+        Vocabulary vocabulary = new Vocabulary();
+        vocabulary.setId(1L);
+        vocabulary.setVocabularyName("Siamois");
+        vocabulary.setExternalVocabularyId("th223");
+        vocabulary.setBaseUri("https://thesaurus.mom.fr");
+
+        Concept concept = new Concept();
+        concept.setId(1L);
+        concept.setVocabulary(vocabulary);
+        concept.setExternalId("4282375");
+        concept.setLabel("Unité stratigraphique");
+        concept.setLangCode("fr");
+
+        Person person = new Person();
+        person.setId(1L);
+        person.setUsername("someUsername");
+        person.setPassword("somePassword");
+
+        Institution institution = new Institution();
+        institution.setId(1L);
+        institution.setName("SIADev");
+        institution.setManager(person);
+
+        UserInfo userInfo = new UserInfo(institution, person, "fr");
+
+        ConceptBranchDTO branchDTO = new ConceptBranchDTO();
+
+        when(conceptApi.fetchDownExpansion(any(Vocabulary.class), anyString())).thenReturn(branchDTO);
+
+        // Act
+        List<Concept> result = conceptService.findSubConceptOf(userInfo, concept);
+
+        // Assert
+        assertThat(result).isEmpty();
+    }
+
 }
