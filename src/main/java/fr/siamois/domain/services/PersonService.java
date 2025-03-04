@@ -1,17 +1,13 @@
 package fr.siamois.domain.services;
 
-import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.Team;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.UserAlreadyExist;
 import fr.siamois.domain.models.exceptions.auth.InvalidEmail;
 import fr.siamois.domain.models.exceptions.auth.InvalidPassword;
 import fr.siamois.domain.models.exceptions.auth.InvalidUsername;
-import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.infrastructure.repositories.InstitutionRepository;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import fr.siamois.infrastructure.repositories.auth.TeamRepository;
-import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

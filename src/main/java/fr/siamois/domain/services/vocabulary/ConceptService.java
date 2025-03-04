@@ -10,7 +10,10 @@ import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ConceptService {

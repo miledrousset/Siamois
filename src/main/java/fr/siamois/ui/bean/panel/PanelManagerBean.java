@@ -1,8 +1,5 @@
 package fr.siamois.ui.bean.panel;
 
-import fr.siamois.ui.bean.LangBean;
-import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.bean.panel.models.AbstractPanel;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.PersonService;
 import fr.siamois.domain.services.SpatialUnitService;
@@ -12,6 +9,9 @@ import fr.siamois.domain.services.recordingunit.StratigraphicRelationshipService
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
+import fr.siamois.ui.bean.LangBean;
+import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.panel.models.AbstractPanel;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.Getter;

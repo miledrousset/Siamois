@@ -1,10 +1,10 @@
 package fr.siamois.ui.bean.panel;
 
-import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.SpatialUnitListPanel;
 import fr.siamois.ui.bean.panel.models.SpatialUnitPanel;
 import org.springframework.stereotype.Component;

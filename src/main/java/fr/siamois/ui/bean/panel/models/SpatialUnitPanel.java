@@ -1,7 +1,5 @@
 package fr.siamois.ui.bean.panel.models;
 
-import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.bean.panel.models.AbstractPanel;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
@@ -11,12 +9,12 @@ import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.ui.bean.SessionSettingsBean;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
-import org.springframework.stereotype.Component;
 import software.xdev.chartjs.model.charts.BarChart;
 import software.xdev.chartjs.model.color.RGBAColor;
 import software.xdev.chartjs.model.data.BarData;
@@ -26,8 +24,6 @@ import software.xdev.chartjs.model.options.Plugins;
 import software.xdev.chartjs.model.options.Title;
 import software.xdev.chartjs.model.options.Tooltip;
 
-import javax.faces.bean.SessionScoped;
-import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.List;
 
