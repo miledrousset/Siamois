@@ -10,10 +10,7 @@ import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ConceptService {
@@ -71,18 +68,26 @@ public class ConceptService {
         return labelDTO;
     }
 
-    public List<Concept> findSubConceptOf(UserInfo userInfo, Concept concept) {
+    public List<Concept> findDirectSubConceptOf(UserInfo userInfo, Concept concept) {
         ConceptBranchDTO branch = conceptApi.fetchDownExpansion(concept.getVocabulary(), concept.getExternalId());
         List<Concept> result = new ArrayList<>();
         if (branch.isEmpty()) {
             return result;
         }
 
-        for (FullConceptDTO dto : branch.getData().values()) {
-            if (!dto.getIdentifier()[0].getValue().equals(concept.getExternalId())) {
-                Concept currentConcept = saveOrGetConceptFromFullDTO(userInfo, concept.getVocabulary(), dto);
-                result.add(currentConcept);
-            }
+        FullConceptDTO parentConcept = branch.getData().values().stream()
+                .filter(dto -> concept.getExternalId().equalsIgnoreCase(dto.getIdentifier()[0].getValue()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No concept found for " + concept.getExternalId()));
+
+        List<FullConceptDTO> childs = Arrays.stream(parentConcept.getNarrower())
+                .filter((purlInfoDTO -> branch.getData().containsKey(purlInfoDTO.getValue())))
+                .map((purlInfoDTO -> branch.getData().get(purlInfoDTO.getValue())))
+                .toList();
+
+        for (FullConceptDTO child : childs) {
+            Concept newConcept = saveOrGetConceptFromFullDTO(userInfo, concept.getVocabulary(), child);
+            result.add(newConcept);
         }
 
         return result;
