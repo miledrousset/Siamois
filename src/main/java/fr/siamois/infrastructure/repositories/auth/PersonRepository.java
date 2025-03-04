@@ -43,6 +43,5 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
     )
     void addPersonToInstitution(Long personId, Long institutionId, Long conceptId);
 
-
-
+    List<Person> findAllByIsSuperAdmin(Boolean isSuperAdmin);
 }

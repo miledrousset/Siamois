@@ -95,6 +95,8 @@ public class InstitutionService {
     }
 
     public boolean isManagerOf(Institution institution, Person person) {
+        if (institution.getManager().equals(person))
+            return true;
         return institutionRepository.isManagerOf(institution.getId(), person.getId());
     }
 

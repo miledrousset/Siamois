@@ -319,7 +319,7 @@
                                 </li>
                             </h:panelGroup>
 
-                            <h:panelGroup rendered="#{navBean.userIsAdmin('ADMIN')}">
+                            <h:panelGroup rendered="#{navBean.userIsAdmin()}">
                                 <li class="nav-label">Administration</li>
                                 <li>
                                     <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">

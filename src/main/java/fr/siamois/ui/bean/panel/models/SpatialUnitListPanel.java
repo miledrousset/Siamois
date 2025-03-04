@@ -5,9 +5,11 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class SpatialUnitListPanel extends AbstractPanel {
 
@@ -26,7 +28,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
     public void init()  {
         try {
             Person author = sessionSettingsBean.getAuthenticatedUser();
-            if (author.hasRole("ADMIN")) {
+            if (author.isSuperAdmin()) {
                 spatialUnitList = spatialUnitService.findAllWithoutParents();
             } else {
                 spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettingsBean.getSelectedInstitution());
