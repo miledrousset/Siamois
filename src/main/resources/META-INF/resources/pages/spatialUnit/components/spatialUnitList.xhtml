@@ -9,6 +9,7 @@
         <!-- Attributes to pass the bean's list and optional additional parameters -->
         <cc:attribute name="spatialUnitList" required="true"/>
         <cc:attribute name="header"/>
+        <cc:attribute name="panelModel"/>
 
     </cc:interface>
     <cc:implementation>
@@ -29,12 +30,14 @@
 
                         <p:column headerText="Name">
                             <p:commandLink
-                                    action="#{spatialUnitBean.goToSpatialUnitById(item.id)}"
-
+                                    action="#{flowBean.goToSpatialUnitByIdCurrentPanel(item.id, cc.attrs.panelModel)}"
+                                    update="flow"
                                     actionListener="#{breadcrumbBean.addBreadcrumbItem(item.name, '/pages/spatialUnit/spatialUnit', 'pi pi-map-marker')}"
                             >
                                 <h:outputText value="#{item.name}"/>
                             </p:commandLink>
+
+                            <p:commandButton icon="pi pi-external-link" update="flow" action="#{flowBean.goToSpatialUnitByIdNewPanel(item.id,cc.attrs.panelModel)}" />
                         </p:column>
 
                         <p:column headerText="ARK">

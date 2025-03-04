@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--
+    Add default institution for ADMIN
+    -->
+
+    <changeSet id="v2025.03.03-2" author="Grégory Bliault">
+        <preConditions onFail="MARK_RAN">
+
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM institution WHERE institution_id = -1
+                </sqlCheck>
+
+        </preConditions>
+        <insert tableName="institution">
+            <column name="institution_id" value="-1"/>
+            <column name="institution_name" value="Siamois Administration"/>
+            <column name="institution_description" value="Institution par defaut pour administrer Siamois"/>
+            <column name="fk_manager_id" value="1"/>
+            <column name="identifier" value="siamois"/>
+        </insert>
+    </changeSet>
+
+
+</databaseChangeLog>
