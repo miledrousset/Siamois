@@ -39,7 +39,7 @@ class ConceptServiceIntTest {
     }
 
     @Test
-    void findSubConceptOf() {
+    void findDirectSubConceptOf() {
         Vocabulary vocabulary = new Vocabulary();
         vocabulary.setId(1L);
         vocabulary.setVocabularyName("Siamois");
@@ -68,13 +68,54 @@ class ConceptServiceIntTest {
         when(conceptRepository.findConceptByExternalIdIgnoreCase(anyString(), anyString())).thenReturn(Optional.empty());
         when(conceptRepository.save(any(Concept.class))).then(invocationOnMock -> invocationOnMock.getArgument(0));
 
-        List<Concept> result = conceptService.findSubConceptOf(userInfo, concept);
+        List<Concept> result = conceptService.findDirectSubConceptOf(userInfo, concept);
 
         assertThat(result)
                 .hasSize(2)
                 .allMatch(Objects::nonNull)
                 .anyMatch(currentConcept -> currentConcept.getExternalId().equalsIgnoreCase("4282377"))
                 .anyMatch(currentConcept -> currentConcept.getExternalId().equalsIgnoreCase("4284785"));
+    }
+
+    @Test
+    void findDirectSubConceptOf_shouldOnlyReturnDirectChilds() {
+        Vocabulary vocabulary = new Vocabulary();
+        vocabulary.setId(1L);
+        vocabulary.setVocabularyName("Siamois");
+        vocabulary.setExternalVocabularyId("th223");
+        vocabulary.setBaseUri("https://thesaurus.mom.fr");
+
+        Concept concept = new Concept();
+        concept.setId(1L);
+        concept.setVocabulary(vocabulary);
+        concept.setExternalId("4283543");
+        concept.setLabel("Codes d'action");
+        concept.setLangCode("fr");
+
+        Person person = new Person();
+        person.setId(1L);
+        person.setUsername("someUsername");
+        person.setPassword("somePassword");
+
+        Institution institution = new Institution();
+        institution.setId(1L);
+        institution.setName("SIADev");
+        institution.setManager(person);
+
+        UserInfo userInfo = new UserInfo(institution, person, "fr");
+
+        List<String> unwantedId = List.of("4283550", "4283545", "4283546");
+
+        when(conceptRepository.findConceptByExternalIdIgnoreCase(anyString(), anyString())).thenReturn(Optional.empty());
+        when(conceptRepository.save(any(Concept.class))).then(invocationOnMock -> invocationOnMock.getArgument(0));
+
+        List<Concept> result = conceptService.findDirectSubConceptOf(userInfo, concept);
+
+        assertThat(result)
+                .hasSize(1)
+                .allMatch(Objects::nonNull)
+                .anyMatch(currentConcept -> currentConcept.getExternalId().equalsIgnoreCase("4283544"))
+                .noneMatch(currentConcept -> unwantedId.contains(currentConcept.getExternalId()));
     }
 
 }
