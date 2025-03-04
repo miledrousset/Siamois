@@ -1,7 +1,6 @@
-package fr.siamois.ui.bean.panel.models;
+package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.bean.panel.models.AbstractPanel;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
@@ -11,12 +10,13 @@ import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
-import org.springframework.stereotype.Component;
+import org.primefaces.model.menu.MenuElement;
 import software.xdev.chartjs.model.charts.BarChart;
 import software.xdev.chartjs.model.color.RGBAColor;
 import software.xdev.chartjs.model.data.BarData;
@@ -26,9 +26,9 @@ import software.xdev.chartjs.model.options.Plugins;
 import software.xdev.chartjs.model.options.Title;
 import software.xdev.chartjs.model.options.Tooltip;
 
-import javax.faces.bean.SessionScoped;
-import java.io.Serializable;
+import javax.swing.*;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,14 +65,17 @@ public class SpatialUnitPanel extends AbstractPanel {
 
     private Long idunit;  // ID of the spatial unit
 
-    public SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, HistoryService historyService, SessionSettingsBean sessionSettings, Long id) {
-        super("spatial", "spatial", "spatial");
+    public SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, HistoryService historyService, SessionSettingsBean sessionSettings, Long id, PanelBreadcrumb currentBreadcrumb) {
+        super("spatial", "Unité spatiale", "spatial", "pi pi-map-marker");
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.historyService = historyService;
         this.sessionSettings = sessionSettings;
         this.idunit = id;
+        this.setBreadcrumb(new PanelBreadcrumb(this));
+        this.getBreadcrumb().getModel().getElements().clear();
+        this.getBreadcrumb().getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
         init();
     }
 
@@ -138,6 +141,9 @@ public class SpatialUnitPanel extends AbstractPanel {
 
         try {
             this.spatialUnit = spatialUnitService.findById(idunit);
+            this.setTitle(spatialUnit.getName()); // Set panel title
+            // add to BC
+            this.getBreadcrumb().addSpatialUnit(spatialUnit);
         } catch (RuntimeException e) {
             this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
         }

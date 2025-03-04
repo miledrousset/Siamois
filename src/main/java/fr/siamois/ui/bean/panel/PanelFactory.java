@@ -5,8 +5,9 @@ import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
-import fr.siamois.ui.bean.panel.models.SpatialUnitListPanel;
-import fr.siamois.ui.bean.panel.models.SpatialUnitPanel;
+import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
+import fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel;
+import fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.ApplicationScoped;
@@ -30,14 +31,15 @@ public class PanelFactory {
         this.sessionSettings = sessionSettings;
     }
 
-    public SpatialUnitPanel createSpatialUnitPanel(Long spatialUnitId) {
+    public SpatialUnitPanel createSpatialUnitPanel(Long spatialUnitId, PanelBreadcrumb currentBreadcrumb) {
         return new SpatialUnitPanel(
                 spatialUnitService,
                 recordingUnitService,
                 actionUnitService,
                 historyService,
                 sessionSettings,
-                spatialUnitId);
+                spatialUnitId,
+                currentBreadcrumb);
     }
 
     public SpatialUnitListPanel createSpatialUnitListPanel() {

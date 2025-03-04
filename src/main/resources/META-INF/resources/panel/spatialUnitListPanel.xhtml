@@ -10,6 +10,7 @@
     <p:staticMessage severity="error" summary="Error" closable="false" detail="#{panelModel.spatialUnitListErrorMessage}"
                      rendered="#{not empty panelModel.spatialUnitListErrorMessage}"/>
     <spatialUnit:spatialUnitList spatialUnitList="#{panelModel.spatialUnitList}"
+                                 panelModel="#{panelModel}"
                                  header='${langBean.msg("spatialunit.label")}'
                                  >
         <f:facet name="toolbar">

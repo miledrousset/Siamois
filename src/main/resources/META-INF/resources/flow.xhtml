@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:define name="content">
+
+
+        <c:choose>
+            <c:when test="#{not empty flowBean.fullscreenPanel}">
+                <h:panelGroup style="display:flex;flex-direction: column;gap:1em;padding:0.5em;" id="flow">
+                    <p:panel id="panel-fullscreen" toggleable="true" closable="true">
+                        <f:facet name="header">
+                            <i class="#{flowBean.fullscreenPanel.icon}"/> #{flowBean.fullscreenPanel.title}
+                        </f:facet>
+                        <p:breadCrumb model="#{flowBean.fullscreenPanel.breadcrumb.model}"/>
+                        <ui:include src="#{flowBean.fullscreenPanel.display()}">
+                            <ui:param name="panelModel" value="#{flowBean.fullscreenPanel}"/>
+                        </ui:include>
+                        <f:facet name="actions">
+                            <h:form>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <p:commandLink
+                                        action="#{flowBean.closeFullScreen()}"
+                                        update="flow"
+                                        styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
+                                    <h:outputText styleClass="ui-icon pi pi-question"/>
+                                </p:commandLink>
+                            </h:form>
+                        </f:facet>
+                    </p:panel>
+                </h:panelGroup>
+            </c:when>
+
+            <c:otherwise>
+                <h:panelGroup style="display:flex;flex-direction: column;gap:1em;padding:1em;" id="flow">
+                    <c:forEach items="#{flowBean.panels}" var="panel" varStatus="status">
+                        <p:panel id="panel-${status.index}" toggleable="true" closable="true">
+                            <f:facet name="header">
+                                <i class="#{panel.icon}"/> #{panel.title}
+                            </f:facet>
+                            <p:breadCrumb model="#{panel.breadcrumb.model}"/>
+                            <ui:include src="#{panel.display()}">
+                                <ui:param name="panelModel" value="#{panel}"/>
+                            </ui:include>
+                            <f:facet name="actions">
+                                <h:form>
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                    <p:commandLink
+                                            action="#{flowBean.fullScreen(panel)}"
+                                            update="flow"
+                                            styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
+                                        <h:outputText styleClass="ui-icon pi pi-question"/>
+                                    </p:commandLink>
+                                </h:form>
+                            </f:facet>
+                        </p:panel>
+                    </c:forEach>
+                </h:panelGroup>
+            </c:otherwise>
+        </c:choose>
+
+
+    </ui:define>
+
+</ui:composition>
