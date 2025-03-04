@@ -3,7 +3,9 @@ package fr.siamois.domain.models.auth;
 import fr.siamois.domain.models.FieldCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -53,6 +56,7 @@ public class Person implements UserDetails {
 
     @ColumnDefault("false")
     @Column(name = "is_super_admin")
+    @Getter(AccessLevel.NONE)
     private Boolean isSuperAdmin;
 
     @Column(name = "api_key", length = Integer.MAX_VALUE)
@@ -72,31 +76,38 @@ public class Person implements UserDetails {
     @Column(name = "key_description", length = Integer.MAX_VALUE)
     private String keyDescription;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "system_role_user",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private List<SystemRole> roles = new ArrayList<>();
+    @ColumnDefault("false")
+    @Column(name = "is_expired")
+    private boolean isExpired;
 
-    public boolean hasRole(String roleName) {
-        return roles.stream().anyMatch(role -> role.getRoleName().equalsIgnoreCase(roleName));
+    @ColumnDefault("false")
+    @Column(name = "is_locked")
+    private boolean isLocked;
+
+    @ColumnDefault("true")
+    @Column(name = "is_enabled")
+    private boolean isEnabled;
+
+    public boolean isSuperAdmin() {
+        return isSuperAdmin;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<SystemRole> roles = new ArrayList<>();
+        if (isSuperAdmin)
+            roles.add(new SystemRole("SUPER_ADMIN"));
         return roles;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return !isExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !isLocked;
     }
 
     @Override
@@ -106,14 +117,9 @@ public class Person implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
     }
 
     @FieldCode
     public static final String USER_ROLE_FIELD_CODE = "SIAP.ROLE";
-
-    // Methods
-    public String displayName() {
-        return name+" "+lastname;
-    }
 }

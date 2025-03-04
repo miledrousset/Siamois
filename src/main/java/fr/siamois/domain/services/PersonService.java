@@ -1,15 +1,17 @@
 package fr.siamois.domain.services;
 
+import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.Team;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.auth.SystemRole;
 import fr.siamois.domain.models.exceptions.UserAlreadyExist;
 import fr.siamois.domain.models.exceptions.auth.InvalidEmail;
 import fr.siamois.domain.models.exceptions.auth.InvalidPassword;
 import fr.siamois.domain.models.exceptions.auth.InvalidUsername;
+import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.infrastructure.repositories.InstitutionRepository;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
-import fr.siamois.infrastructure.repositories.auth.SystemRoleRepository;
 import fr.siamois.infrastructure.repositories.auth.TeamRepository;
+import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,13 +31,13 @@ public class PersonService {
     private final TeamRepository teamRepository;
     private final PersonRepository personRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final SystemRoleRepository systemRoleRepository;
 
-    public PersonService(TeamRepository teamRepository, PersonRepository personRepository, BCryptPasswordEncoder passwordEncoder, SystemRoleRepository systemRoleRepository) {
+    public PersonService(TeamRepository teamRepository,
+                         PersonRepository personRepository,
+                         BCryptPasswordEncoder passwordEncoder) {
         this.teamRepository = teamRepository;
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
-        this.systemRoleRepository = systemRoleRepository;
     }
 
     /**
@@ -87,16 +89,6 @@ public class PersonService {
         person.setPassword(passwordEncoder.encode(password));
 
         return personRepository.save(person);
-    }
-
-    /**
-     * Add a person to the team managers
-     * @param person The person to add to the team managers
-     */
-    public void addPersonToTeamManagers(Person person) {
-        SystemRole role = systemRoleRepository.findSystemRoleByRoleNameIgnoreCase("TEAM_MANAGER").orElseThrow(() -> new IllegalStateException("Team manager role should be created."));
-        person.getRoles().add(role);
-        personRepository.save(person);
     }
 
     /**

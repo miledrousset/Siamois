@@ -5,9 +5,11 @@ import fr.siamois.domain.models.exceptions.UserAlreadyExist;
 import fr.siamois.domain.models.exceptions.auth.InvalidEmail;
 import fr.siamois.domain.models.exceptions.auth.InvalidPassword;
 import fr.siamois.domain.models.exceptions.auth.InvalidUsername;
+import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.PersonService;
 import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
+import fr.siamois.ui.bean.SessionSettingsBean;
 import jakarta.faces.application.FacesMessage;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,6 +35,8 @@ public class UserAddBean implements Serializable {
     // Injections
     private final LangBean langBean;
     private final transient PersonService personService;
+    private final SessionSettingsBean sessionSettingsBean;
+    private final transient InstitutionService institutionService;
 
     // Fields
     private String fManagerUsername;
@@ -40,9 +44,14 @@ public class UserAddBean implements Serializable {
     private String fManagerPassword;
     private String fManagerConfirmPassword;
 
-    public UserAddBean(LangBean langBean, PersonService personService) {
+    public UserAddBean(LangBean langBean,
+                       PersonService personService,
+                       SessionSettingsBean sessionSettingsBean,
+                       InstitutionService institutionService) {
         this.langBean = langBean;
         this.personService = personService;
+        this.sessionSettingsBean = sessionSettingsBean;
+        this.institutionService = institutionService;
     }
 
     /**
@@ -71,7 +80,7 @@ public class UserAddBean implements Serializable {
             Person person = personService.createPerson(fManagerUsername, fManagerEmail, fManagerPassword);
 
             if (isManager) {
-                personService.addPersonToTeamManagers(person);
+                institutionService.addToManagers(sessionSettingsBean.getSelectedInstitution(), person);
             }
 
             MessageUtils.displayMessage(FacesMessage.SEVERITY_INFO, langBean.msg("commons.message.state.success"), langBean.msg("create.team.manager.created"));

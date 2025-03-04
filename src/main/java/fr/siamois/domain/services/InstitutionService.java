@@ -85,4 +85,17 @@ public class InstitutionService {
     public InstitutionSettings saveSettings(InstitutionSettings settings) {
         return institutionSettingsRepository.save(settings);
     }
+
+    public void addToManagers(Institution institution, Person person) {
+        boolean personExistInInstitution = institutionRepository.personExistInInstitution(person.getId(), institution.getId());
+        if (!personExistInInstitution) {
+            institutionRepository.addPersonTo(person.getId(), institution.getId());
+        }
+        institutionRepository.setPersonAsManagerOf(person.getId(), institution.getId());
+    }
+
+    public boolean isManagerOf(Institution institution, Person person) {
+        return institutionRepository.isManagerOf(institution.getId(), person.getId());
+    }
+
 }

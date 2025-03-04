@@ -1,14 +1,14 @@
 package fr.siamois.domain.services;
 
+import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.Team;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.auth.SystemRole;
 import fr.siamois.domain.models.exceptions.UserAlreadyExist;
 import fr.siamois.domain.models.exceptions.auth.InvalidEmail;
 import fr.siamois.domain.models.exceptions.auth.InvalidPassword;
 import fr.siamois.domain.models.exceptions.auth.InvalidUsername;
+import fr.siamois.infrastructure.repositories.InstitutionRepository;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
-import fr.siamois.infrastructure.repositories.auth.SystemRoleRepository;
 import fr.siamois.infrastructure.repositories.auth.TeamRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,22 +30,16 @@ class PersonServiceTest {
 
     @Mock
     private TeamRepository teamRepository;
-
     @Mock
     private PersonRepository personRepository;
-
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
 
-    @Mock
-    private SystemRoleRepository systemRoleRepository;
-
-    @InjectMocks
     private PersonService personService;
 
     @BeforeEach
     void setUp() {
-        personService = new PersonService(teamRepository, personRepository, passwordEncoder, systemRoleRepository);
+        personService = new PersonService(teamRepository, personRepository, passwordEncoder);
     }
 
     @Test
@@ -76,20 +70,6 @@ class PersonServiceTest {
         assertEquals(username, person.getUsername());
         assertEquals(email, person.getMail());
         assertEquals("encodedPassword", person.getPassword());
-    }
-
-    @Test
-    void addPersonToTeamManagers() {
-        Person person = new Person();
-        SystemRole role = new SystemRole();
-        role.setRoleName("TEAM_MANAGER");
-
-        when(systemRoleRepository.findSystemRoleByRoleNameIgnoreCase("TEAM_MANAGER")).thenReturn(Optional.of(role));
-
-        personService.addPersonToTeamManagers(person);
-
-        assertTrue(person.getRoles().contains(role));
-        verify(personRepository).save(person);
     }
 
     @Test

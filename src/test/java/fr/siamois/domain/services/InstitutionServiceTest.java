@@ -162,4 +162,63 @@ class InstitutionServiceTest {
 
         assertThat(result.getInstitution()).isEqualTo(institution);
     }
+
+    @Test
+    void addToManagers_shouldCreateUserLink_whenNotExist() {
+        Person person = new Person();
+        person.setUsername("username");
+        person.setMail("test@example.com");
+        person.setPassword("password123");
+        person.setId(12L);
+
+        Institution institution = new Institution();
+        institution.setId(2L);
+        institution.setName("institution");
+
+        when(institutionRepository.personExistInInstitution(12L, 2L)).thenReturn(false);
+
+        institutionService.addToManagers(institution, person);
+
+        verify(institutionRepository, atMostOnce()).addPersonTo(12L, 2L);
+        verify(institutionRepository, atMostOnce()).setPersonAsManagerOf(12L, 2L);
+    }
+
+    @Test
+    void addToManagers_shouldOnlySet_whenExist() {
+        Person person = new Person();
+        person.setUsername("username");
+        person.setMail("test@example.com");
+        person.setPassword("password123");
+        person.setId(12L);
+
+        Institution institution = new Institution();
+        institution.setId(2L);
+        institution.setName("institution");
+
+        when(institutionRepository.personExistInInstitution(12L, 2L)).thenReturn(true);
+
+        institutionService.addToManagers(institution, person);
+
+        verify(institutionRepository, never()).addPersonTo(anyLong(), anyLong());
+        verify(institutionRepository, atMostOnce()).setPersonAsManagerOf(12L, 2L);
+    }
+
+    @Test
+    void isManagerOf() {
+        Person person = new Person();
+        person.setUsername("username");
+        person.setMail("test@example.com");
+        person.setPassword("password123");
+        person.setId(12L);
+
+        Institution institution = new Institution();
+        institution.setId(2L);
+        institution.setName("institution");
+
+        when(institutionRepository.isManagerOf(2L, 12L)).thenReturn(true);
+
+        boolean result = institutionService.isManagerOf(institution, person);
+
+        assertThat(result).isTrue();
+    }
 }
