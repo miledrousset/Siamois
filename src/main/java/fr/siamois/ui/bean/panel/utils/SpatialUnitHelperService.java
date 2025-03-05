@@ -16,14 +16,11 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @Slf4j
-@Data
 @Service
 public class SpatialUnitHelperService {
 
     private final SpatialUnitService spatialUnitService;
     private final HistoryService historyService;
-
-
 
     public SpatialUnitHelperService(SpatialUnitService spatialUnitService, HistoryService historyService) {
         this.spatialUnitService = spatialUnitService;
