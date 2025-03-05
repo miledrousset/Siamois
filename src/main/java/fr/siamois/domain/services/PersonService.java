@@ -2,10 +2,11 @@ package fr.siamois.domain.services;
 
 import fr.siamois.domain.models.Team;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.UserAlreadyExist;
-import fr.siamois.domain.models.exceptions.auth.InvalidEmail;
-import fr.siamois.domain.models.exceptions.auth.InvalidPassword;
-import fr.siamois.domain.models.exceptions.auth.InvalidUsername;
+import fr.siamois.domain.models.exceptions.auth.UserAlreadyExistException;
+import fr.siamois.domain.models.exceptions.auth.InvalidEmailException;
+import fr.siamois.domain.models.exceptions.auth.InvalidNameException;
+import fr.siamois.domain.models.exceptions.auth.InvalidPasswordException;
+import fr.siamois.domain.models.exceptions.auth.InvalidUsernameException;
 import fr.siamois.domain.services.auth.verifier.PersonDataVerifier;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import fr.siamois.infrastructure.repositories.auth.TeamRepository;
@@ -46,7 +47,7 @@ public class PersonService {
         return result;
     }
 
-    public Person createPerson(Person person) throws InvalidUsername, InvalidEmail, UserAlreadyExist, InvalidPassword {
+    public Person createPerson(Person person) throws InvalidUsernameException, InvalidEmailException, UserAlreadyExistException, InvalidPasswordException, InvalidNameException {
         checkPersonData(person);
 
         person.setPassword(passwordEncoder.encode(person.getPassword()));
@@ -54,7 +55,7 @@ public class PersonService {
         return personRepository.save(person);
     }
 
-    private void checkPersonData(Person person) throws InvalidUsername, InvalidEmail, UserAlreadyExist, InvalidPassword {
+    private void checkPersonData(Person person) throws InvalidUsernameException, InvalidEmailException, UserAlreadyExistException, InvalidPasswordException, InvalidNameException {
         for (PersonDataVerifier verifier : verifiers) {
             verifier.verify(person);
         }

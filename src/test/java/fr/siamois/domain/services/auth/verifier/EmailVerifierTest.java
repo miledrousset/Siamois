@@ -1,7 +1,7 @@
 package fr.siamois.domain.services.auth.verifier;
 
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.auth.InvalidEmail;
+import fr.siamois.domain.models.exceptions.auth.InvalidEmailException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -15,11 +15,11 @@ class EmailVerifierTest {
         Person person = new Person();
         person.setMail("invalid-email");
 
-        assertThrows(InvalidEmail.class, () -> emailVerifier.verify(person));
+        assertThrows(InvalidEmailException.class, () -> emailVerifier.verify(person));
     }
 
     @Test
-    void verify_shouldNotThrowException_whenEmailIsValid() throws InvalidEmail {
+    void verify_shouldNotThrowException_whenEmailIsValid() throws InvalidEmailException {
         Person person = new Person();
         person.setMail("valid.email@example.com");
 

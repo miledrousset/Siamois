@@ -6,10 +6,10 @@ import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
-import fr.siamois.domain.models.exceptions.ActionUnitNotFoundException;
-import fr.siamois.domain.models.exceptions.FailedActionUnitSaveException;
-import fr.siamois.domain.models.exceptions.FailedRecordingUnitSaveException;
-import fr.siamois.domain.models.exceptions.NullActionUnitIdentifier;
+import fr.siamois.domain.models.exceptions.actionunit.ActionUnitNotFoundException;
+import fr.siamois.domain.models.exceptions.actionunit.FailedActionUnitSaveException;
+import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
+import fr.siamois.domain.models.exceptions.actionunit.NullActionUnitIdentifierException;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
@@ -69,7 +69,7 @@ public class ActionUnitService implements ArkEntityService {
             // Generate unique identifier if not presents
             if (actionUnit.getFullIdentifier() == null) {
                 if (actionUnit.getIdentifier() == null) {
-                    throw new NullActionUnitIdentifier("ActionUnit identifier must be set");
+                    throw new NullActionUnitIdentifierException("ActionUnit identifier must be set");
                 }
                 // Set full identifier
                 actionUnit.setFullIdentifier(actionUnit.displayFullIdentifier());

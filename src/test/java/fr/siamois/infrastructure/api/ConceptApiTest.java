@@ -3,7 +3,7 @@ package fr.siamois.infrastructure.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.siamois.domain.models.exceptions.NotSiamoisThesaurusException;
+import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;

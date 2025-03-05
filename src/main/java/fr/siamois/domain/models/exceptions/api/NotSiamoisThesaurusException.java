@@ -1,4 +1,4 @@
-package fr.siamois.domain.models.exceptions;
+package fr.siamois.domain.models.exceptions.api;
 
 public class NotSiamoisThesaurusException extends Exception {
 

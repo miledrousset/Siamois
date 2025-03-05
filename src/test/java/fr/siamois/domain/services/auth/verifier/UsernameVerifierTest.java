@@ -1,8 +1,8 @@
 package fr.siamois.domain.services.auth.verifier;
 
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.UserAlreadyExist;
-import fr.siamois.domain.models.exceptions.auth.InvalidUsername;
+import fr.siamois.domain.models.exceptions.auth.UserAlreadyExistException;
+import fr.siamois.domain.models.exceptions.auth.InvalidUsernameException;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ class UsernameVerifierTest {
         Person person = new Person();
         person.setUsername("invalid username");
 
-        assertThrows(InvalidUsername.class, () -> usernameVerifier.verify(person));
+        assertThrows(InvalidUsernameException.class, () -> usernameVerifier.verify(person));
     }
 
     @Test
@@ -42,11 +42,11 @@ class UsernameVerifierTest {
 
         when(personRepository.findByUsernameIgnoreCase("existingUser")).thenReturn(Optional.of(new Person()));
 
-        assertThrows(UserAlreadyExist.class, () -> usernameVerifier.verify(person));
+        assertThrows(UserAlreadyExistException.class, () -> usernameVerifier.verify(person));
     }
 
     @Test
-    void verify_shouldNotThrowException_whenUsernameIsValidAndUnique() throws InvalidUsername, UserAlreadyExist {
+    void verify_shouldNotThrowException_whenUsernameIsValidAndUnique() throws InvalidUsernameException, UserAlreadyExistException {
         Person person = new Person();
         person.setUsername("uniqueUser");
 

@@ -1,7 +1,7 @@
 package fr.siamois.ui.bean.field;
 
-import fr.siamois.domain.models.exceptions.NoConfigForField;
-import fr.siamois.domain.models.exceptions.SpatialUnitAlreadyExistsException;
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
@@ -129,7 +129,7 @@ public class SpatialUnitFieldBean implements Serializable {
     public List<Concept> completeCategory(String input) {
         try {
             return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE, input);
-        } catch (NoConfigForField e) {
+        } catch (NoConfigForFieldException e) {
             log.error(e.getMessage(), e);
             return new ArrayList<>();
         }

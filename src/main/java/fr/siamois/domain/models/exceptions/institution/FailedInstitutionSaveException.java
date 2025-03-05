@@ -1,4 +1,4 @@
-package fr.siamois.domain.models.exceptions;
+package fr.siamois.domain.models.exceptions.institution;
 
 import jakarta.validation.constraints.NotNull;
 

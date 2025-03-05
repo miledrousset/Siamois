@@ -2,10 +2,11 @@ package fr.siamois.domain.services;
 
 import fr.siamois.domain.models.Team;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.UserAlreadyExist;
-import fr.siamois.domain.models.exceptions.auth.InvalidEmail;
-import fr.siamois.domain.models.exceptions.auth.InvalidPassword;
-import fr.siamois.domain.models.exceptions.auth.InvalidUsername;
+import fr.siamois.domain.models.exceptions.auth.UserAlreadyExistException;
+import fr.siamois.domain.models.exceptions.auth.InvalidEmailException;
+import fr.siamois.domain.models.exceptions.auth.InvalidNameException;
+import fr.siamois.domain.models.exceptions.auth.InvalidPasswordException;
+import fr.siamois.domain.models.exceptions.auth.InvalidUsernameException;
 import fr.siamois.domain.services.auth.verifier.EmailVerifier;
 import fr.siamois.domain.services.auth.verifier.PasswordVerifier;
 import fr.siamois.domain.services.auth.verifier.UsernameVerifier;
@@ -61,7 +62,7 @@ class PersonServiceTest {
     }
 
     @Test
-    void createPerson() throws InvalidUsername, UserAlreadyExist, InvalidEmail, InvalidPassword {
+    void createPerson() throws InvalidUsernameException, UserAlreadyExistException, InvalidEmailException, InvalidPasswordException, InvalidNameException {
         String username = "test.user";
         String email = "test@example.com";
         String password = "password123";

@@ -1,10 +1,11 @@
 package fr.siamois.ui.bean.user;
 
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.UserAlreadyExist;
-import fr.siamois.domain.models.exceptions.auth.InvalidEmail;
-import fr.siamois.domain.models.exceptions.auth.InvalidPassword;
-import fr.siamois.domain.models.exceptions.auth.InvalidUsername;
+import fr.siamois.domain.models.exceptions.auth.UserAlreadyExistException;
+import fr.siamois.domain.models.exceptions.auth.InvalidEmailException;
+import fr.siamois.domain.models.exceptions.auth.InvalidNameException;
+import fr.siamois.domain.models.exceptions.auth.InvalidPasswordException;
+import fr.siamois.domain.models.exceptions.auth.InvalidUsernameException;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.PersonService;
 import fr.siamois.domain.utils.MessageUtils;
@@ -92,18 +93,21 @@ public class UserAddBean implements Serializable {
 
             resetVariables();
             return person;
-        } catch (UserAlreadyExist e) {
+        } catch (UserAlreadyExistException e) {
             log.error("Username already exists.");
             displayErrorMessage(langBean.msg("commons.error.user.alreadyexist", fManagerUsername));
-        } catch (InvalidUsername e) {
+        } catch (InvalidUsernameException e) {
             log.error("Invalid username.");
             displayErrorMessage(langBean.msg("commons.error.user.username.invalid"));
-        } catch (InvalidEmail e) {
+        } catch (InvalidEmailException e) {
             log.error("Invalid email.");
             displayErrorMessage(langBean.msg("commons.error.user.email.invalid"));
-        } catch (InvalidPassword e) {
+        } catch (InvalidPasswordException e) {
             log.error("Invalid password.");
             displayErrorMessage(langBean.msg("commons.error.user.password.invalid"));
+        } catch (InvalidNameException e) {
+            log.error("Invalid name.");
+            displayErrorMessage(langBean.msg("commons.error.user.username.invalid"));
         }
 
         return null;

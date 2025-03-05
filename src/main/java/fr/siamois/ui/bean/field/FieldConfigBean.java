@@ -2,8 +2,8 @@ package fr.siamois.ui.bean.field;
 
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
-import fr.siamois.domain.models.exceptions.NoConfigForField;
-import fr.siamois.domain.models.exceptions.NotSiamoisThesaurusException;
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
@@ -77,7 +77,7 @@ public class FieldConfigBean implements Serializable {
             Concept config = fieldConfigurationService.findConfigurationForFieldCode(info, SpatialUnit.CATEGORY_FIELD_CODE);
             fInstance = config.getVocabulary().getBaseUri();
             fSelectedVocab = config.getVocabulary();
-        } catch (NoConfigForField e) {
+        } catch (NoConfigForFieldException e) {
             log.trace("No config set for user {} of institution {}",
                     info.getUser().getUsername(),
                     info.getInstitution().getName());

@@ -1,6 +1,6 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.domain.models.exceptions.VocabularyNotFoundException;
+import fr.siamois.domain.models.exceptions.vocabulary.VocabularyNotFoundException;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;

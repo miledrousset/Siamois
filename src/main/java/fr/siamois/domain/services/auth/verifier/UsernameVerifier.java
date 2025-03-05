@@ -1,8 +1,8 @@
 package fr.siamois.domain.services.auth.verifier;
 
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.UserAlreadyExist;
-import fr.siamois.domain.models.exceptions.auth.InvalidUsername;
+import fr.siamois.domain.models.exceptions.auth.UserAlreadyExistException;
+import fr.siamois.domain.models.exceptions.auth.InvalidUsernameException;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
@@ -22,7 +22,7 @@ public class UsernameVerifier implements PersonDataVerifier{
     }
 
     @Override
-    public void verify(Person person) throws InvalidUsername, UserAlreadyExist {
+    public void verify(Person person) throws InvalidUsernameException, UserAlreadyExistException {
         String username = person.getUsername();
 
         usernameHasValidLength(username);
@@ -30,20 +30,20 @@ public class UsernameVerifier implements PersonDataVerifier{
         usernameDoesNotExist(username);
     }
 
-    private void usernameDoesNotExist(String username) throws UserAlreadyExist {
+    private void usernameDoesNotExist(String username) throws UserAlreadyExistException {
         Optional<Person> optPerson = personRepository.findByUsernameIgnoreCase(username);
-        if (optPerson.isPresent()) throw new UserAlreadyExist("Username already exists.");
+        if (optPerson.isPresent()) throw new UserAlreadyExistException("Username already exists.");
     }
 
-    private static void usernameHasValidLength(String username) throws InvalidUsername {
-        if (StringUtils.isBlank(username)) throw new InvalidUsername("Username cannot be empty.");
-        if (username.length() > Person.USERNAME_MAX_LENGTH) throw new InvalidUsername("Username should not exceed " + Person.USERNAME_MAX_LENGTH + " characters.");
+    private static void usernameHasValidLength(String username) throws InvalidUsernameException {
+        if (StringUtils.isBlank(username)) throw new InvalidUsernameException("Username cannot be empty.");
+        if (username.length() > Person.USERNAME_MAX_LENGTH) throw new InvalidUsernameException("Username should not exceed " + Person.USERNAME_MAX_LENGTH + " characters.");
     }
 
-    private static void usernameHasValidChars(String username) throws InvalidUsername {
+    private static void usernameHasValidChars(String username) throws InvalidUsernameException {
         Pattern pattern = Pattern.compile("^[a-zA-Z0-9.]+$");
         Matcher matcher = pattern.matcher(username);
 
-        if (!matcher.find()) throw new InvalidUsername("Username must contain only letters, numbers and dots.");
+        if (!matcher.find()) throw new InvalidUsernameException("Username must contain only letters, numbers and dots.");
     }
 }

@@ -1,7 +1,7 @@
 package fr.siamois.domain.services.auth.verifier;
 
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.auth.InvalidPassword;
+import fr.siamois.domain.models.exceptions.auth.InvalidPasswordException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 public class PasswordVerifier implements PersonDataVerifier {
 
     @Override
-    public void verify(Person person) throws InvalidPassword {
+    public void verify(Person person) throws InvalidPasswordException {
         String password = person.getPassword();
         passwordSizeIsValid(password);
     }
 
-    private static void passwordSizeIsValid(String password) throws InvalidPassword {
-        if (StringUtils.isBlank(password)) throw new InvalidPassword("Password cannot be empty.");
-        if (password.length() < 8) throw new InvalidPassword("Password must be at least 8 characters long.");
-        if (password.length() > Person.PASSWORD_MAX_LENGTH) throw new InvalidPassword("Password should not exceed " + Person.PASSWORD_MAX_LENGTH + " characters.");
+    private static void passwordSizeIsValid(String password) throws InvalidPasswordException {
+        if (StringUtils.isBlank(password)) throw new InvalidPasswordException("Password cannot be empty.");
+        if (password.length() < 8) throw new InvalidPasswordException("Password must be at least 8 characters long.");
+        if (password.length() > Person.PASSWORD_MAX_LENGTH) throw new InvalidPasswordException("Password should not exceed " + Person.PASSWORD_MAX_LENGTH + " characters.");
     }
 }
