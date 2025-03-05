@@ -28,30 +28,11 @@
                     <div class="card">
                         <div class="card-body">
                             <h2>Configuration pour l'organisation</h2>
-                            <h3>Choix de l'instance</h3>
 
-                            <p:outputLabel for="instance-field" value="URI de l'instance de OpenTheso"/>
-                            <p:inputText id="instance-field" value="#{fieldConfigBean.FInstance}"/>
+                            <p:outputLabel for="uri-field" value="URI vers le thesaurus."/>
+                            <p:inputText id="uri-field" value="#{fieldConfigBean.FUri}"/>
+                            <p:commandButton action="#{fieldConfigBean.saveConfig(true)}" value="Sauvegarder la configuration"/>
 
-                            <p:commandButton value="Charger l'instance" action="#{fieldConfigBean.loadInstance()}"
-                                             update="selected-vocab"/>
-                            <h3>Choix du thésaurus</h3>
-
-                            <p:outputLabel for="selected-vocab" value="Choix du thésaurus"/>
-                            <p:autoComplete
-                                    id="selected-vocab"
-                                    value="#{fieldConfigBean.FSelectedVocab}"
-                                    converter="#{fieldConfigBean.vocabularyConverter}"
-                                    completeMethod="#{fieldConfigBean.completeMethod()}"
-                                    var="vocab"
-                                    itemLabel="#{vocab.vocabularyName} (#{vocab.externalVocabularyId})"
-                                    dropdown="true"
-                                    scrollHeight="250"
-                                    itemValue="#{vocab}"
-                            />
-
-                            <p:commandButton value="Charger la configuration depuis le thésaurus"
-                                             action="#{fieldConfigBean.loadConfig()}"/>
                         </div>
                     </div>
                 </div>
@@ -59,31 +40,9 @@
                     <div class="card">
                         <div class="card-body">
                             <h2>Configuration pour l'utilisateur</h2>
-                            <h3>Choix de l'instance</h3>
-
-                            <p:outputLabel for="instance-user-field" value="URI de l'instance de OpenTheso"/>
-                            <p:inputText id="instance-user-field" value="#{fieldConfigBean.FUserInstance}"/>
-
-                            <p:commandButton value="Charger l'instance" action="#{fieldConfigBean.loadUserInstance()}"
-                                             update="selected-user-vocab"/>
-
-                            <h3>Choix du thésaurus</h3>
-
-                            <p:outputLabel for="selected-user-vocab" value="Choix du thésaurus"/>
-                            <p:autoComplete
-                                    id="selected-user-vocab"
-                                    value="#{fieldConfigBean.FUserSelectedVocab}"
-                                    converter="#{fieldConfigBean.vocabularyConverter}"
-                                    completeMethod="#{fieldConfigBean.completeMethod()}"
-                                    var="vocab"
-                                    itemLabel="#{vocab.vocabularyName} (#{vocab.externalVocabularyId})"
-                                    dropdown="true"
-                                    scrollHeight="250"
-                                    itemValue="#{vocab}"
-                            />
-
-                            <p:commandButton value="Charger la configuration depuis le thésaurus"
-                                             action="#{fieldConfigBean.loadUserConfig()}"/>
+                            <p:outputLabel for="uri-user-field" value="URI vers le thesaurus."/>
+                            <p:inputText id="uri-user-field" value="#{fieldConfigBean.FUserUri}"/>
+                            <p:commandButton action="#{fieldConfigBean.saveConfig(false)}" value="Sauvegarder la configuration"/>
                         </div>
                     </div>
                 </div>
