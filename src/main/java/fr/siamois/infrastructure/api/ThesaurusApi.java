@@ -2,6 +2,7 @@ package fr.siamois.infrastructure.api;
 
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.infrastructure.api.dto.ThesaurusDTO;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,7 @@ public class ThesaurusApi {
         return result.get();
     }
 
-    private URI findRedirectUriIfArk(URI uriObj) {
+    private URI findRedirectUriIfArk(@NotNull URI uriObj) {
         if (isNotUriWithIdtParameters(uriObj)) {
             HttpEntity<String> entity = restTemplate.getForEntity(uriObj, String.class);
             if (entity.getHeaders().getLocation() != null) {
