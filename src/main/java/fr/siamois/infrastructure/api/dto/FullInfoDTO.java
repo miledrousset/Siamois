@@ -1,5 +1,6 @@
 package fr.siamois.infrastructure.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -7,7 +8,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Data
-public class FullConceptDTO {
+public class FullInfoDTO {
     @JsonProperty("http://purl.org/dc/terms/contributor")
     private PurlInfoDTO[] contributor;
 
@@ -50,6 +51,9 @@ public class FullConceptDTO {
     @JsonProperty("http://purl.org/umu/uneskos#memberOf")
     private PurlInfoDTO[] memberOf;
 
+    @JsonIgnore
+    private String baseUri;
+
     public Optional<String> getFieldcode() {
         if (notation == null) return Optional.empty();
         return Arrays.stream(notation)
@@ -57,6 +61,10 @@ public class FullConceptDTO {
                 .filter(value -> value.startsWith("SIAMOIS#"))
                 .map(value -> value.replace("SIAMOIS#", ""))
                 .findFirst();
+    }
+
+    public String retrieveIdentifier() {
+        return identifier[0].getValue();
     }
 
 }
