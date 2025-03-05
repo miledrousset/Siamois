@@ -1,5 +1,8 @@
 package fr.siamois.domain.services.vocabulary;
 
+import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
@@ -15,12 +18,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -92,4 +97,35 @@ class VocabularyServiceTest {
         assertNotNull(result);
         assertEquals(newVocabulary, result);
     }
+
+    @Test
+    void findVocabularyOfUri_Success() throws InvalidEndpointException, IOException {
+        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "en");
+        String uri = "http://example.com/openapi/v1/thesaurus?idt=123";
+
+        ThesaurusDTO thesaurusDTO = new ThesaurusDTO();
+        thesaurusDTO.setIdTheso("123");
+        thesaurusDTO.setBaseUri("http://example.com");
+        LabelDTO labelDTO = new LabelDTO();
+        labelDTO.setLang("en");
+        labelDTO.setTitle("Test Thesaurus");
+        thesaurusDTO.setLabels(List.of(labelDTO));
+
+        VocabularyType vocabularyType = new VocabularyType();
+        vocabularyType.setLabel("Thesaurus");
+
+        when(thesaurusApi.fetchThesaurusInfo(uri)).thenReturn(thesaurusDTO);
+        when(vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus")).thenReturn(Optional.of(vocabularyType));
+        when(vocabularyRepository.save(any(Vocabulary.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Vocabulary result = vocabularyService.findVocabularyOfUri(userInfo, uri);
+
+        assertNotNull(result);
+        assertEquals("Test Thesaurus", result.getVocabularyName());
+        assertEquals("123", result.getExternalVocabularyId());
+        assertEquals("http://example.com", result.getBaseUri());
+        assertEquals("en", result.getLastLang());
+        assertEquals(vocabularyType, result.getType());
+    }
+
 }
