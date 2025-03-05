@@ -1,9 +1,9 @@
 package fr.siamois.ui.bean.panel;
 
-import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel;
 import fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel;
