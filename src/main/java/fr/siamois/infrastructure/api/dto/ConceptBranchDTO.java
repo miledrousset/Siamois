@@ -1,5 +1,6 @@
 package fr.siamois.infrastructure.api.dto;
 
+
 import lombok.Getter;
 
 import java.util.HashMap;
