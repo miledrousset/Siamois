@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +46,7 @@ public class ThesaurusApi {
         }
     }
 
-    public ThesaurusDTO fetchThesaurusInfo(String uri) throws IOException, InvalidEndpointException {
+    public ThesaurusDTO fetchThesaurusInfo(String uri) throws InvalidEndpointException {
         URI uriObj = URI.create(uri);
         uriObj = findRedirectUriIfArk(uriObj);
 
