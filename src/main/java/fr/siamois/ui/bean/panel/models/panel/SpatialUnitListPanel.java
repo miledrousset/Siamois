@@ -1,9 +1,10 @@
-package fr.siamois.ui.bean.panel.models;
+package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,8 +21,10 @@ public class SpatialUnitListPanel extends AbstractPanel {
     private String spatialUnitListErrorMessage;
 
     public SpatialUnitListPanel(SpatialUnitService spatialUnitService, SessionSettingsBean sessionSettingsBean) {
+        super("welcome", "Welcome", "welcome-panel", "pi pi-home");
         this.spatialUnitService = spatialUnitService;
         this.sessionSettingsBean = sessionSettingsBean;
+        this.setBreadcrumb(new PanelBreadcrumb());
         init();
     }
 

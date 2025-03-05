@@ -353,19 +353,9 @@
         ***********************************-->
         <div class="content-body">
 
-
-                <h:panelGroup style="display:flex;flex-direction: column;gap:1em;padding:1em;" id="flow">
-
-                    <c:forEach items="#{panelManagerBean.panels}" var="panel" varStatus="status">
-                        <p:panel id="panel-${status.index}" header="#{panel.title}" closable="true">
-
-                            <ui:include src="#{panel.display()}">
-                                <ui:param name="panelModel" value="#{panel}"/>
-                            </ui:include>
-                        </p:panel>
-                    </c:forEach>
-
-                </h:panelGroup>
+            <!-- Content will be inserted here -->
+            <ui:insert description="The main content" name="content"/>
+            <!-- Content will be inserted here -->
 
         </div>
         <!--**********************************

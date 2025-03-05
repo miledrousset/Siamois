@@ -1,6 +1,7 @@
 package fr.siamois.ui.config.handler;
 
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.panel.FlowBean;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,11 @@ import java.io.IOException;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final SessionSettingsBean sessionSettingsBean;
+    private final FlowBean flowBean;
 
-    public LoginSuccessHandler(SessionSettingsBean sessionSettingsBean) {
+    public LoginSuccessHandler(SessionSettingsBean sessionSettingsBean, FlowBean flowBean) {
         this.sessionSettingsBean = sessionSettingsBean;
+        this.flowBean = flowBean;
     }
 
     /**
@@ -37,6 +40,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         sessionSettingsBean.setupSession();
+        // We add the "welcome panel" if the flowBean is empty
+        if(flowBean.getPanels().isEmpty()) {
+            flowBean.addSpatialUnitListPanel();
+        }
         redirectRequest(request, response);
     }
 

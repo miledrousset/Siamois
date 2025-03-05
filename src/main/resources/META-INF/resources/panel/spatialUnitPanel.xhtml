@@ -6,7 +6,9 @@
              xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components"
 >
 
-    <p:growl id="growl" showDetail="true"/>
+
+
+
     <!-- Content -->
     <p:staticMessage severity="error" summary="Error" closable="false"
                      detail="#{panelModel.spatialUnitErrorMessage}"
@@ -174,7 +176,9 @@
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <p:dataTable var="version" value="#{panelModel.historyVersion}" rows="5" paginator="true">
                         <p:column headerText="Date de la version">
-                            <h:outputText value="#{panelModel.formatDate(version.updateTime)}"/>
+
+                            <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
+
                         </p:column>
                         <p:column>
                             <p:commandButton
@@ -209,7 +213,6 @@
     <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
         <h:outputText value="Version restaurée"/>
     </p:dialog>
-    <ui:include src="/dialog/actionUnit/actionUnitDialog.xhtml"/>
-    <ui:include src="/dialog/spatialUnit/newSpatialUnitDialog.xhtml"/>
+
 
 </ui:fragment>
