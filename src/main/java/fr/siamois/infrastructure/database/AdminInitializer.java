@@ -4,7 +4,8 @@ import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.infrastructure.repositories.InstitutionRepository;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -17,7 +18,8 @@ import java.util.Optional;
 
 @Slf4j
 @Component
-@Data
+@Getter
+@Setter
 public class AdminInitializer {
 
     private final BCryptPasswordEncoder passwordEncoder;
