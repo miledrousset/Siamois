@@ -1,9 +1,9 @@
 package fr.siamois.infrastructure.api.dto;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,9 +11,20 @@ import java.util.List;
  * @author Julien Linget
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class ThesaurusDTO {
     private String idTheso;
     private List<LabelDTO> labels;
+
+    public ThesaurusDTO() {
+        labels = new ArrayList<>();
+    }
+
+    public ThesaurusDTO(String idTheso, List<LabelDTO> labels) {
+        this.idTheso = idTheso;
+        this.labels = labels;
+    }
+
+    @JsonIgnore
+    private String baseUri;
+
 }

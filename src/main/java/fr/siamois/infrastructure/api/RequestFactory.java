@@ -24,12 +24,12 @@ public class RequestFactory {
      * Build a RestTemplate with the follow redirect option enabled.
      * @return The RestTemplate
      */
-    public RestTemplate buildRestTemplate() {
+    public RestTemplate buildRestTemplate(boolean followRedirects) {
         return restTemplateBuilder.requestFactory(() -> new SimpleClientHttpRequestFactory() {
             @Override
             protected void prepareConnection(HttpURLConnection connection, String httpMethod) throws IOException {
                 super.prepareConnection(connection, httpMethod);
-                connection.setInstanceFollowRedirects(true);
+                connection.setInstanceFollowRedirects(followRedirects);
             }
         }).build();
     }

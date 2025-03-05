@@ -3,15 +3,15 @@ package fr.siamois.domain.services.vocabulary;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
 import fr.siamois.infrastructure.api.ConceptApi;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
-import fr.siamois.infrastructure.api.dto.FullConceptDTO;
+import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
 import fr.siamois.infrastructure.repositories.FieldRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
@@ -65,8 +65,8 @@ class FieldConfigurationServiceTest {
         userInfo.getUser().setId(12L);
     }
 
-    private FullConceptDTO fullConceptDTO(String id, String code, String prefLabel) {
-        FullConceptDTO conceptDTO = new FullConceptDTO();
+    private FullInfoDTO fullConceptDTO(String id, String code, String prefLabel) {
+        FullInfoDTO conceptDTO = new FullInfoDTO();
         PurlInfoDTO identifier = new PurlInfoDTO();
         identifier.setValue(id);
         identifier.setType("string");
@@ -103,7 +103,7 @@ class FieldConfigurationServiceTest {
 
         when(conceptApi.fetchFieldsBranch(vocabulary)).thenReturn(dto);
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST"));
-        when(conceptService.saveOrGetConceptFromFullDTO(any(UserInfo.class), any(Vocabulary.class), any(FullConceptDTO.class)))
+        when(conceptService.saveOrGetConceptFromFullDTO(any(UserInfo.class), any(Vocabulary.class), any(FullInfoDTO.class)))
                 .thenReturn(parentConcept);
         when(fieldRepository.updateConfigForFieldOfInstitution(anyLong(), anyString(), anyLong())).thenReturn(0);
 
@@ -126,7 +126,7 @@ class FieldConfigurationServiceTest {
 
         when(conceptApi.fetchFieldsBranch(vocabulary)).thenReturn(dto);
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST"));
-        when(conceptService.saveOrGetConceptFromFullDTO(any(UserInfo.class), any(Vocabulary.class), any(FullConceptDTO.class)))
+        when(conceptService.saveOrGetConceptFromFullDTO(any(UserInfo.class), any(Vocabulary.class), any(FullInfoDTO.class)))
                 .thenReturn(parentConcept);
         when(fieldRepository.updateConfigForFieldOfInstitution(anyLong(), anyString(), anyLong())).thenReturn(1);
 
@@ -170,7 +170,7 @@ class FieldConfigurationServiceTest {
 
         when(conceptApi.fetchFieldsBranch(vocabulary)).thenReturn(dto);
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST"));
-        when(conceptService.saveOrGetConceptFromFullDTO(any(UserInfo.class), any(Vocabulary.class), any(FullConceptDTO.class)))
+        when(conceptService.saveOrGetConceptFromFullDTO(any(UserInfo.class), any(Vocabulary.class), any(FullInfoDTO.class)))
                 .thenReturn(parentConcept);
         when(fieldRepository.updateConfigForFieldOfUser(anyLong(), anyLong(), anyString(), anyLong())).thenReturn(0);
 
@@ -193,7 +193,7 @@ class FieldConfigurationServiceTest {
 
         when(conceptApi.fetchFieldsBranch(vocabulary)).thenReturn(dto);
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST"));
-        when(conceptService.saveOrGetConceptFromFullDTO(any(UserInfo.class), any(Vocabulary.class), any(FullConceptDTO.class)))
+        when(conceptService.saveOrGetConceptFromFullDTO(any(UserInfo.class), any(Vocabulary.class), any(FullInfoDTO.class)))
                 .thenReturn(parentConcept);
         when(fieldRepository.updateConfigForFieldOfUser(anyLong(), anyLong(),anyString(), anyLong())).thenReturn(1);
 

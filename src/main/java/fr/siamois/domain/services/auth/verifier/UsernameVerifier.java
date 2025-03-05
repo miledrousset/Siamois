@@ -1,8 +1,8 @@
 package fr.siamois.domain.services.auth.verifier;
 
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.auth.UserAlreadyExistException;
 import fr.siamois.domain.models.exceptions.auth.InvalidUsernameException;
+import fr.siamois.domain.models.exceptions.auth.UserAlreadyExistException;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;

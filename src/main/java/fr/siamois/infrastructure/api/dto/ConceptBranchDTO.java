@@ -8,9 +8,9 @@ import java.util.Map;
 
 @Getter
 public class ConceptBranchDTO {
-    private final Map<String, FullConceptDTO> data = new HashMap<>();
+    private final Map<String, FullInfoDTO> data = new HashMap<>();
 
-    public void addConceptBranchDTO(String url, FullConceptDTO dto) {
+    public void addConceptBranchDTO(String url, FullInfoDTO dto) {
         this.data.putIfAbsent(url, dto);
     }
 

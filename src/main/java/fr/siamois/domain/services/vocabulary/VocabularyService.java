@@ -1,7 +1,8 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.domain.models.exceptions.vocabulary.VocabularyNotFoundException;
+import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
+import fr.siamois.domain.models.exceptions.vocabulary.VocabularyNotFoundException;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
 import fr.siamois.infrastructure.api.ThesaurusApi;
@@ -11,6 +12,7 @@ import fr.siamois.infrastructure.repositories.vocabulary.VocabularyRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.VocabularyTypeRepository;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -73,4 +75,25 @@ public class VocabularyService {
         Optional<Vocabulary> vocabOpt = vocabularyRepository.findVocabularyByBaseUriAndVocabExternalId(vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId());
         return vocabOpt.orElseGet(() -> vocabularyRepository.save(vocabulary));
     }
+
+    public Vocabulary findVocabularyOfUri(UserInfo info, String uri) throws InvalidEndpointException, IOException {
+        ThesaurusDTO thesaurus = thesaurusApi.fetchThesaurusInfo(uri);
+
+        VocabularyType type = vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus").orElseThrow(() -> new IllegalStateException("Thesaurus type not found"));
+
+        LabelDTO labelDTO = thesaurus.getLabels().stream()
+                .filter(label -> label.getLang().equalsIgnoreCase(info.getLang()))
+                .findFirst()
+                .orElse(thesaurus.getLabels().get(0));
+
+        Vocabulary vocabulary = new Vocabulary();
+        vocabulary.setVocabularyName(labelDTO.getTitle());
+        vocabulary.setExternalVocabularyId(thesaurus.getIdTheso());
+        vocabulary.setBaseUri(thesaurus.getBaseUri());
+        vocabulary.setType(type);
+        vocabulary.setLastLang(labelDTO.getLang());
+
+        return saveOrGetVocabulary(vocabulary);
+    }
+
 }
