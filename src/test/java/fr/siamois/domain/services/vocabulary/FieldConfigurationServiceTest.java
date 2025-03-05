@@ -3,8 +3,8 @@ package fr.siamois.domain.services.vocabulary;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.NoConfigForField;
-import fr.siamois.domain.models.exceptions.NotSiamoisThesaurusException;
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
@@ -225,11 +225,11 @@ class FieldConfigurationServiceTest {
 
     @Test
     void findConfigurationForFieldCode_shouldThrow_whenNoConfigSet() {
-        assertThrows(NoConfigForField.class, () -> service.findConfigurationForFieldCode(userInfo, "SIATEST"));
+        assertThrows(NoConfigForFieldException.class, () -> service.findConfigurationForFieldCode(userInfo, "SIATEST"));
     }
 
     @Test
-    void findConfigurationForFieldCode_shouldReturnUserConcept_whenUserConfig() throws NoConfigForField {
+    void findConfigurationForFieldCode_shouldReturnUserConcept_whenUserConfig() throws NoConfigForFieldException {
         Concept concept = new Concept();
         concept.setId(-1L);
         concept.setLabel("Parent config concept");
@@ -246,7 +246,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void findConfigurationForFieldCode_shouldReturnInstitConcept_whenNoUserConfig() throws NoConfigForField {
+    void findConfigurationForFieldCode_shouldReturnInstitConcept_whenNoUserConfig() throws NoConfigForFieldException {
         Concept concept = new Concept();
         concept.setId(-1L);
         concept.setLabel("Parent config concept");
@@ -263,7 +263,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void fetchAutocomplete_shouldReturnExactTerm() throws NoConfigForField {
+    void fetchAutocomplete_shouldReturnExactTerm() throws NoConfigForFieldException {
         ConceptBranchDTO dto = new ConceptBranchDTO();
         dto.addConceptBranchDTO("http://localhost/th223/1213", fullConceptDTO("1213", "", "First value"));
         dto.addConceptBranchDTO("http://localhost/th223/1213", fullConceptDTO("1214", "", "Second value"));
@@ -279,7 +279,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void fetchAutocomplete_shouldReturnCloseTeams_whenNoExactTerms() throws NoConfigForField {
+    void fetchAutocomplete_shouldReturnCloseTeams_whenNoExactTerms() throws NoConfigForFieldException {
         ConceptBranchDTO dto = new ConceptBranchDTO();
         dto.addConceptBranchDTO("http://localhost/th223/1213", fullConceptDTO("1213", "", "Sites"));
         dto.addConceptBranchDTO("http://localhost/th223/1213", fullConceptDTO("1214", "", "Zone"));

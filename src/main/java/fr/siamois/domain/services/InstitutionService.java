@@ -2,8 +2,8 @@ package fr.siamois.domain.services;
 
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.FailedInstitutionSaveException;
-import fr.siamois.domain.models.exceptions.InstitutionAlreadyExist;
+import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
+import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.repositories.InstitutionRepository;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -48,9 +49,9 @@ public class InstitutionService {
         return personRepository.findAllInstitutionManagers();
     }
 
-    public void createInstitution(Institution institution) throws InstitutionAlreadyExist, FailedInstitutionSaveException {
+    public void createInstitution(Institution institution) throws InstitutionAlreadyExistException, FailedInstitutionSaveException {
         Optional<Institution> existing = institutionRepository.findInstitutionByIdentifier(institution.getIdentifier());
-        if (existing.isPresent()) throw new InstitutionAlreadyExist("Institution with code " + institution.getIdentifier() + " already exists");
+        if (existing.isPresent()) throw new InstitutionAlreadyExistException("Institution with code " + institution.getIdentifier() + " already exists");
         try {
             institutionRepository.save(institution);
         } catch (Exception e) {
@@ -85,4 +86,19 @@ public class InstitutionService {
     public InstitutionSettings saveSettings(InstitutionSettings settings) {
         return institutionSettingsRepository.save(settings);
     }
+
+    public void addToManagers(Institution institution, Person person) {
+        boolean personExistInInstitution = institutionRepository.personExistInInstitution(person.getId(), institution.getId());
+        if (!personExistInInstitution) {
+            institutionRepository.addPersonTo(person.getId(), institution.getId());
+        }
+        institutionRepository.setPersonAsManagerOf(person.getId(), institution.getId());
+    }
+
+    public boolean isManagerOf(Institution institution, Person person) {
+        if (Objects.equals(institution.getManager(), person))
+            return true;
+        return institutionRepository.isManagerOf(institution.getId(), person.getId());
+    }
+
 }

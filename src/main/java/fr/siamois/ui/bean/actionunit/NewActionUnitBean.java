@@ -3,7 +3,7 @@ package fr.siamois.ui.bean.actionunit;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.NoConfigForField;
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -100,7 +100,7 @@ public class NewActionUnitBean implements Serializable {
         UserInfo info = sessionSettingsBean.getUserInfo();
         try {
             concepts = fieldConfigurationService.fetchAutocomplete(info, ActionUnit.TYPE_FIELD_CODE, input);
-        } catch (NoConfigForField e) {
+        } catch (NoConfigForFieldException e) {
             log.error(e.getMessage(), e);
         }
         return concepts;

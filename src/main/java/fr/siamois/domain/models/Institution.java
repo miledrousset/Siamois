@@ -1,6 +1,7 @@
 package fr.siamois.domain.models;
 
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.settings.InstitutionSettings;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -31,5 +32,8 @@ public class Institution implements Serializable {
     @NotNull
     @Column(name = "identifier", nullable = false, length = Integer.MAX_VALUE)
     private String identifier;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    private InstitutionSettings settings;
 
 }

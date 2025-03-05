@@ -2,6 +2,7 @@ package fr.siamois.ui.bean;
 
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.domain.utils.AuthenticatedUserUtils;
 import fr.siamois.ui.bean.converter.InstitutionConverter;
@@ -31,13 +32,17 @@ public class NavBean implements Serializable {
     private final SessionSettingsBean sessionSettingsBean;
     private final transient InstitutionChangeEventPublisher institutionChangeEventPublisher;
     private final transient InstitutionConverter converter;
+    private final InstitutionService institutionService;
 
     private transient List<Institution> institutions;
 
-    public NavBean(SessionSettingsBean sessionSettingsBean, InstitutionChangeEventPublisher institutionChangeEventPublisher, InstitutionConverter converter) {
+    public NavBean(SessionSettingsBean sessionSettingsBean,
+                   InstitutionChangeEventPublisher institutionChangeEventPublisher,
+                   InstitutionConverter converter, InstitutionService institutionService) {
         this.sessionSettingsBean = sessionSettingsBean;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
         this.converter = converter;
+        this.institutionService = institutionService;
     }
 
     public void init() {
@@ -47,12 +52,11 @@ public class NavBean implements Serializable {
 
     /**
      * Checks if the user is in the given role
-     * @param roleName the role to check
      * @return true if the user is in the role, false otherwise
      */
-    public boolean userIs(String roleName) {
+    public boolean userIsAdmin() {
         Optional<Person> optUser = AuthenticatedUserUtils.getAuthenticatedUser();
-        return optUser.map(person -> person.hasRole(roleName)).orElse(false);
+        return optUser.map(Person::isSuperAdmin).orElse(false);
     }
 
     public void changeSelectedInstitution(Institution institution) {
@@ -74,11 +78,12 @@ public class NavBean implements Serializable {
     }
 
     public boolean isManagerOrAdminOfInstitution() {
-        if (userIs("ADMIN")) return true;
         Optional<Person> optUser = AuthenticatedUserUtils.getAuthenticatedUser();
-        Institution selected = getSelectedInstitution();
-        return optUser.filter(person -> userIs("TEAM_MANAGER")
-                && selected.getManager().equals(person)).isPresent();
+        if (optUser.isEmpty())
+            return false;
+        Person person = optUser.get();
+        Institution institution = sessionSettingsBean.getSelectedInstitution();
+        return userIsAdmin() || institutionService.isManagerOf(institution, person);
     }
 
     public void updateInstitutions() {

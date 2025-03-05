@@ -2,18 +2,19 @@ package fr.siamois.domain.services;
 
 import fr.siamois.domain.models.Team;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.auth.SystemRole;
-import fr.siamois.domain.models.exceptions.UserAlreadyExist;
-import fr.siamois.domain.models.exceptions.auth.InvalidEmail;
-import fr.siamois.domain.models.exceptions.auth.InvalidPassword;
-import fr.siamois.domain.models.exceptions.auth.InvalidUsername;
+import fr.siamois.domain.models.exceptions.auth.UserAlreadyExistException;
+import fr.siamois.domain.models.exceptions.auth.InvalidEmailException;
+import fr.siamois.domain.models.exceptions.auth.InvalidNameException;
+import fr.siamois.domain.models.exceptions.auth.InvalidPasswordException;
+import fr.siamois.domain.models.exceptions.auth.InvalidUsernameException;
+import fr.siamois.domain.services.auth.verifier.EmailVerifier;
+import fr.siamois.domain.services.auth.verifier.PasswordVerifier;
+import fr.siamois.domain.services.auth.verifier.UsernameVerifier;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
-import fr.siamois.infrastructure.repositories.auth.SystemRoleRepository;
 import fr.siamois.infrastructure.repositories.auth.TeamRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,30 +23,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
 
     @Mock
     private TeamRepository teamRepository;
-
     @Mock
     private PersonRepository personRepository;
-
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
 
-    @Mock
-    private SystemRoleRepository systemRoleRepository;
+    private final EmailVerifier emailVerifier = new EmailVerifier();
+    private final PasswordVerifier passwordVerifier = new PasswordVerifier();
 
-    @InjectMocks
     private PersonService personService;
 
     @BeforeEach
     void setUp() {
-        personService = new PersonService(teamRepository, personRepository, passwordEncoder, systemRoleRepository);
+        UsernameVerifier usernameVerifier = new UsernameVerifier(personRepository);
+        personService = new PersonService(teamRepository, personRepository, passwordEncoder, List.of(usernameVerifier, emailVerifier, passwordVerifier));
     }
 
     @Test
@@ -61,7 +62,7 @@ class PersonServiceTest {
     }
 
     @Test
-    void createPerson() throws InvalidUsername, UserAlreadyExist, InvalidEmail, InvalidPassword {
+    void createPerson() throws InvalidUsernameException, UserAlreadyExistException, InvalidEmailException, InvalidPasswordException, InvalidNameException {
         String username = "test.user";
         String email = "test@example.com";
         String password = "password123";
@@ -70,7 +71,12 @@ class PersonServiceTest {
         when(passwordEncoder.encode(password)).thenReturn("encodedPassword");
         when(personRepository.save(any(Person.class))).then(invocation -> invocation.getArgument(0, Person.class));
 
-        Person person = personService.createPerson(username, email, password);
+        Person toSave = new Person();
+        toSave.setUsername(username);
+        toSave.setMail(email);
+        toSave.setPassword(password);
+
+        Person person = personService.createPerson(toSave);
 
         assertNotNull(person);
         assertEquals(username, person.getUsername());
@@ -79,26 +85,12 @@ class PersonServiceTest {
     }
 
     @Test
-    void addPersonToTeamManagers() {
-        Person person = new Person();
-        SystemRole role = new SystemRole();
-        role.setRoleName("TEAM_MANAGER");
-
-        when(systemRoleRepository.findSystemRoleByRoleNameIgnoreCase("TEAM_MANAGER")).thenReturn(Optional.of(role));
-
-        personService.addPersonToTeamManagers(person);
-
-        assertTrue(person.getRoles().contains(role));
-        verify(personRepository).save(person);
-    }
-
-    @Test
     void findAllByNameLastnameContaining() {
         String nameOrLastname = "test";
         List<Person> persons = new ArrayList<>();
         persons.add(new Person());
 
-        when(personRepository.findAllByNameIsContainingIgnoreCaseOrLastnameIsContainingIgnoreCase(nameOrLastname, nameOrLastname)).thenReturn(persons);
+        when(personRepository.findAllByNameOrLastname(nameOrLastname)).thenReturn(persons);
 
         List<Person> result = personService.findAllByNameLastnameContaining(nameOrLastname);
 

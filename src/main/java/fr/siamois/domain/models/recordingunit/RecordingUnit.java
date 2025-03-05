@@ -3,8 +3,8 @@ package fr.siamois.domain.models.recordingunit;
 
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
-import fr.siamois.domain.models.exceptions.NullActionUnitIdentifier;
-import fr.siamois.domain.models.exceptions.NullInstitutionIdentifier;
+import fr.siamois.domain.models.exceptions.actionunit.NullActionUnitIdentifierException;
+import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -43,7 +43,7 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity {
                 throw new NullInstitutionIdentifier("Institution identifier must be set");
             }
             if(getActionUnit().getIdentifier() == null) {
-                throw new NullActionUnitIdentifier("Action identifier must be set");
+                throw new NullActionUnitIdentifierException("Action identifier must be set");
             }
             return getCreatedByInstitution().getIdentifier() + "-" + getActionUnit().getIdentifier() + "-" + (getIdentifier() == null ? "?" : getIdentifier());
         }

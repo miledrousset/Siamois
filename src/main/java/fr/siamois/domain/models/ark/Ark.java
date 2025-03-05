@@ -23,4 +23,12 @@ public class Ark implements Serializable {
     @Column(name = "qualifier", nullable = false)
     private String qualifier;
 
+    public String getArkId() {
+        String finalQualifier = qualifier;
+        if (creatingInstitution.getSettings().getArkIsUppercase()) {
+            finalQualifier = finalQualifier.toUpperCase();
+        }
+        return String.format("ark:/%s/%s", creatingInstitution.getSettings().getArkNaan(), finalQualifier);
+    }
+
 }

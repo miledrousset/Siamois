@@ -2,7 +2,7 @@ package fr.siamois.domain.models.actionunit;
 
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
-import fr.siamois.domain.models.exceptions.NullInstitutionIdentifier;
+import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -45,4 +45,13 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
                     "WHERE cfc.fk_institution_id = :institutionId AND cfc.field_code = :fieldCode "
     )
     Optional<Concept> findTopTermConfigForFieldCodeOfInstitution(Long institutionId, String fieldCode);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT c.* FROM concept c " +
+                    "JOIN person_role_institution pri ON pri.fk_role_concept_id = c.concept_id " +
+                    "WHERE pri.fk_person_id = :personId AND pri.fk_institution_id = :institutionId"
+    )
+    Optional<Concept> findRoleOfPersonInInstitution(Long personId, Long institutionId);
+
 }

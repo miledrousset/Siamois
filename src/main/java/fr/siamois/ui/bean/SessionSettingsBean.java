@@ -72,7 +72,7 @@ public class SessionSettingsBean implements Serializable {
     private void setupInstitution() {
         Person authUser = getAuthenticatedUser();
         List<Institution> result;
-        if (authUser.hasRole("ADMIN")) {
+        if (authUser.isSuperAdmin()) {
             result = institutionService.findAll();
         } else {
             result = institutionService.findInstitutionsOfPerson(authUser);

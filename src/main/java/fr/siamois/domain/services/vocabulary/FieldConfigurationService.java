@@ -1,8 +1,8 @@
 package fr.siamois.domain.services.vocabulary;
 
 import fr.siamois.domain.models.UserInfo;
-import fr.siamois.domain.models.exceptions.NoConfigForField;
-import fr.siamois.domain.models.exceptions.NotSiamoisThesaurusException;
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
@@ -110,7 +110,7 @@ public class FieldConfigurationService {
         return Optional.empty();
     }
 
-    public Concept findConfigurationForFieldCode(UserInfo info, String fieldCode) throws NoConfigForField {
+    public Concept findConfigurationForFieldCode(UserInfo info, String fieldCode) throws NoConfigForFieldException {
         Optional<Concept> optConcept = conceptRepository
                 .findTopTermConfigForFieldCodeOfUser(info.getInstitution().getId(),
                         info.getUser().getId(),
@@ -122,13 +122,13 @@ public class FieldConfigurationService {
                 .findTopTermConfigForFieldCodeOfInstitution(info.getInstitution().getId(), fieldCode);
 
         if (optConcept.isEmpty())
-            throw new NoConfigForField(String.format("User %s from %s has no config for fieldCode %s",
+            throw new NoConfigForFieldException(String.format("User %s from %s has no config for fieldCode %s",
                     info.getUser().getName(), info.getInstitution().getName(), fieldCode));
 
         return optConcept.get();
     }
 
-    public List<Concept> fetchAutocomplete(UserInfo info, String fieldCode, String input) throws NoConfigForField {
+    public List<Concept> fetchAutocomplete(UserInfo info, String fieldCode, String input) throws NoConfigForFieldException {
         Concept parentConcept = findConfigurationForFieldCode(info, fieldCode);
 
         if (StringUtils.isEmpty(input)) return fetchAllValues(info, parentConcept);
