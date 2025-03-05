@@ -22,70 +22,88 @@ import java.util.List;
         @UniqueConstraint(name = "person_mail_key", columnNames = {"mail"})
 })
 public class Person implements UserDetails {
+
+    // This limit allows the UI to be controlled
+    public static final int NAME_MAX_LENGTH = 64;
+
+    // In UNIX, usernames are limited to 32 characters
+    // If the system should one day communicate with a UNIX system, it should respect this limit.
+    public static final int USERNAME_MAX_LENGTH = 32;
+
+    // https://www.rfc-editor.org/errata/eid1003
+    // RFC 3696 applies a limit 320 characters from email adresses.
+    // 64 chars for the local part and 255 chars for the domain part
+    public static final int LOCAL_MAIL_MAX_LENGTH = 64;
+    public static final int DOMAIN_MAIL_MAX_LENGTH = 255;
+    public static final int MAIL_MAX_LENGTH = LOCAL_MAIL_MAX_LENGTH + DOMAIN_MAIL_MAX_LENGTH;
+
+    public static final int PASSWORD_MAX_LENGTH = 1024;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id", nullable = false)
     private Long id;
 
-    @Column(name = "name", length = Integer.MAX_VALUE)
+    @Column(name = "name", length = NAME_MAX_LENGTH)
     private String name;
 
-    @Column(name = "lastname", length = Integer.MAX_VALUE)
+    @Column(name = "lastname", length = NAME_MAX_LENGTH)
     private String lastname;
 
     @NotNull
-    @Column(name = "username", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "username", nullable = false, length = USERNAME_MAX_LENGTH)
     private String username;
 
+    // The password length shouldn't be set in the database as we don't know their size after hash.
     @NotNull
     @Column(name = "password", nullable = false, length = Integer.MAX_VALUE)
     private String password;
 
     @NotNull
-    @Column(name = "mail", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "mail", nullable = false, length = MAIL_MAX_LENGTH)
     private String mail;
 
     @ColumnDefault("false")
     @Column(name = "pass_to_modify")
-    private Boolean passToModify;
+    private Boolean passToModify = false;
 
     @ColumnDefault("false")
     @Column(name = "alert_mail")
-    private Boolean alertMail;
+    private Boolean alertMail = false;
 
     @ColumnDefault("false")
     @Column(name = "is_super_admin")
     @Getter(AccessLevel.NONE)
-    private Boolean isSuperAdmin;
+    private Boolean isSuperAdmin = false;
 
     @Column(name = "api_key", length = Integer.MAX_VALUE)
     private String apiKey;
 
     @ColumnDefault("false")
     @Column(name = "key_never_expire")
-    private Boolean keyNeverExpire;
+    private Boolean keyNeverExpire = false;
 
     @Column(name = "key_expires_at")
     private OffsetDateTime keyExpiresAt;
 
     @ColumnDefault("false")
     @Column(name = "is_service_account")
-    private Boolean isServiceAccount;
+    private Boolean isServiceAccount = false;
 
     @Column(name = "key_description", length = Integer.MAX_VALUE)
     private String keyDescription;
 
     @ColumnDefault("false")
     @Column(name = "is_expired")
-    private boolean isExpired;
+    private boolean isExpired = false;
 
     @ColumnDefault("false")
     @Column(name = "is_locked")
-    private boolean isLocked;
+    private boolean isLocked = false;
 
     @ColumnDefault("true")
     @Column(name = "is_enabled")
-    private boolean isEnabled;
+    private boolean isEnabled = true;
 
     public boolean isSuperAdmin() {
         return isSuperAdmin;

@@ -15,7 +15,13 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
     Optional<Person> findByUsernameIgnoreCase(String username);
 
-    List<Person> findAllByNameIsContainingIgnoreCaseOrLastnameIsContainingIgnoreCase(String name, String lastname);
+    @Query(
+            nativeQuery = true,
+            value = "SELECT p.* FROM person p " +
+                    "WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :nameOrLastname, '%')) " +
+                    "OR LOWER(p.lastname) LIKE LOWER(CONCAT('%', :nameOrLastname, '%'))"
+    )
+    List<Person> findAllByNameOrLastname(String nameOrLastname);
 
     Optional<Person> findById(long id);
 

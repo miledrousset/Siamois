@@ -34,7 +34,7 @@ class PersonServiceTest {
     @Test
     void findAllByNameLastnameContaining_Success() {
 
-        when(personRepository.findAllByNameIsContainingIgnoreCaseOrLastnameIsContainingIgnoreCase("bob", "bob")).thenReturn(List.of(p));
+        when(personRepository.findAllByNameOrLastname("bob")).thenReturn(List.of(p));
 
         // Act
         List<Person> actualResult = personService.findAllByNameLastnameContaining("bob");

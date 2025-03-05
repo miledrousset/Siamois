@@ -31,6 +31,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/", "/index.xhtml").permitAll()
                 .requestMatchers("/login", "/pages/login/login.xhtml").permitAll()
                 .requestMatchers("/static/**").permitAll()
+                .requestMatchers("/robots.txt").permitAll()
                 .requestMatchers("/jakarta.faces.resource/**").permitAll()
                 .requestMatchers("/error/**", "/pages/error/**").permitAll()
                 .requestMatchers("/api/**").permitAll()

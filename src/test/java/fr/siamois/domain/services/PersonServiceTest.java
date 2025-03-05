@@ -6,6 +6,9 @@ import fr.siamois.domain.models.exceptions.UserAlreadyExist;
 import fr.siamois.domain.models.exceptions.auth.InvalidEmail;
 import fr.siamois.domain.models.exceptions.auth.InvalidPassword;
 import fr.siamois.domain.models.exceptions.auth.InvalidUsername;
+import fr.siamois.domain.services.auth.verifier.EmailVerifier;
+import fr.siamois.domain.services.auth.verifier.PasswordVerifier;
+import fr.siamois.domain.services.auth.verifier.UsernameVerifier;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import fr.siamois.infrastructure.repositories.auth.TeamRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,11 +37,15 @@ class PersonServiceTest {
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
 
+    private final EmailVerifier emailVerifier = new EmailVerifier();
+    private final PasswordVerifier passwordVerifier = new PasswordVerifier();
+    private final UsernameVerifier usernameVerifier = new UsernameVerifier(personRepository);
+
     private PersonService personService;
 
     @BeforeEach
     void setUp() {
-        personService = new PersonService(teamRepository, personRepository, passwordEncoder);
+        personService = new PersonService(teamRepository, personRepository, passwordEncoder, List.of(usernameVerifier, emailVerifier, passwordVerifier));
     }
 
     @Test
@@ -63,7 +70,12 @@ class PersonServiceTest {
         when(passwordEncoder.encode(password)).thenReturn("encodedPassword");
         when(personRepository.save(any(Person.class))).then(invocation -> invocation.getArgument(0, Person.class));
 
-        Person person = personService.createPerson(username, email, password);
+        Person toSave = new Person();
+        toSave.setUsername(username);
+        toSave.setMail(email);
+        toSave.setPassword(password);
+
+        Person person = personService.createPerson(toSave);
 
         assertNotNull(person);
         assertEquals(username, person.getUsername());
@@ -77,7 +89,7 @@ class PersonServiceTest {
         List<Person> persons = new ArrayList<>();
         persons.add(new Person());
 
-        when(personRepository.findAllByNameIsContainingIgnoreCaseOrLastnameIsContainingIgnoreCase(nameOrLastname, nameOrLastname)).thenReturn(persons);
+        when(personRepository.findAllByNameOrLastname(nameOrLastname)).thenReturn(persons);
 
         List<Person> result = personService.findAllByNameLastnameContaining(nameOrLastname);
 

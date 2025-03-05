@@ -16,7 +16,8 @@ public class ApplicationReadyListener {
     private final HistoryTriggerInitializer historyTriggerInitializer;
     private final AdminInitializer adminInitializer;
 
-    public ApplicationReadyListener(HistoryTriggerInitializer historyTriggerInitializer, AdminInitializer adminInitializer) {
+    public ApplicationReadyListener(HistoryTriggerInitializer historyTriggerInitializer,
+                                    AdminInitializer adminInitializer) {
         this.historyTriggerInitializer = historyTriggerInitializer;
         this.adminInitializer = adminInitializer;
     }

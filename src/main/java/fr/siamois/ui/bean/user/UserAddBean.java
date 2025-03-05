@@ -77,7 +77,12 @@ public class UserAddBean implements Serializable {
         }
 
         try {
-            Person person = personService.createPerson(fManagerUsername, fManagerEmail, fManagerPassword);
+            Person toSave = new Person();
+            toSave.setUsername(fManagerUsername);
+            toSave.setPassword(fManagerPassword);
+            toSave.setMail(fManagerEmail);
+
+            Person person = personService.createPerson(toSave);
 
             if (isManager) {
                 institutionService.addToManagers(sessionSettingsBean.getSelectedInstitution(), person);

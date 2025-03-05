@@ -74,7 +74,7 @@ public class AdminInitializer {
         List<Person> admins = personRepository.findAllByIsSuperAdmin(true);
         Person adminWithUsername = null;
         for (Person admin : admins) {
-            if (!admin.getUsername().equalsIgnoreCase(adminUsername)) {
+            if (isNotAskedAdmin(admin)) {
                 admin.setIsSuperAdmin(false);
                 personRepository.save(admin);
             } else {
@@ -87,6 +87,10 @@ public class AdminInitializer {
             return true;
         }
         return false;
+    }
+
+    private boolean isNotAskedAdmin(Person admin) {
+        return !admin.getUsername().equalsIgnoreCase(adminUsername);
     }
 
     /**
@@ -112,13 +116,17 @@ public class AdminInitializer {
         Optional<Institution> optInstitution = institutionRepository.findInstitutionByIdentifier("SIAMOIS");
         if (optInstitution.isPresent()) {
             institution = optInstitution.get();
-            if (!Objects.equals(institution.getManager().getId(), createdAdmin.getId())) {
+            if (createdAdminIsNotOwnerOf(institution)) {
                 institution.setManager(createdAdmin);
                 institutionRepository.save(institution);
             }
             return true;
         }
         return false;
+    }
+
+    private boolean createdAdminIsNotOwnerOf(Institution institution) {
+        return !Objects.equals(institution.getManager().getId(), createdAdmin.getId());
     }
 
 }
