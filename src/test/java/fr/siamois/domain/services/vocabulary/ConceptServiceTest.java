@@ -8,7 +8,7 @@ import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
 import fr.siamois.infrastructure.api.ConceptApi;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
-import fr.siamois.infrastructure.api.dto.FullConceptDTO;
+import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -95,7 +95,7 @@ class ConceptServiceTest {
         verify(repository, never()).save(any(Concept.class));
     }
 
-    private FullConceptDTO createDto() {
+    private FullInfoDTO createDto() {
         PurlInfoDTO id = new PurlInfoDTO();
         id.setType("string");
         id.setValue("1023");
@@ -105,7 +105,7 @@ class ConceptServiceTest {
         prefLabel.setValue("Test label");
         prefLabel.setType("string");
 
-        FullConceptDTO dto = new FullConceptDTO();
+        FullInfoDTO dto = new FullInfoDTO();
         dto.setIdentifier(new PurlInfoDTO[]{id});
         dto.setPrefLabel(new PurlInfoDTO[]{prefLabel});
 
@@ -114,7 +114,7 @@ class ConceptServiceTest {
 
     @Test
     void saveOrGetConceptFromFullDTO_shouldSaveNewConcept_whenNotExist() {
-        FullConceptDTO dto = createDto();
+        FullInfoDTO dto = createDto();
 
         when(repository.findConceptByExternalIdIgnoreCase(vocabulary.getExternalVocabularyId(), "1023"))
                 .thenReturn(Optional.empty());
@@ -136,7 +136,7 @@ class ConceptServiceTest {
 
     @Test
     void saveOrGetConceptFromFullDTO_shouldReturnConcept_whenExist() {
-        FullConceptDTO dto = createDto();
+        FullInfoDTO dto = createDto();
 
         Concept refConcept = new Concept();
         refConcept.setLabel("Test label");
@@ -184,17 +184,17 @@ class ConceptServiceTest {
 
         UserInfo userInfo = new UserInfo(institution, person, "fr");
 
-        FullConceptDTO subConcept1 = new FullConceptDTO();
+        FullInfoDTO subConcept1 = new FullInfoDTO();
         subConcept1.setIdentifier(new PurlInfoDTO[]{new PurlInfoDTO("string", "4282377")});
         subConcept1.setPrefLabel(new PurlInfoDTO[]{new PurlInfoDTO("string", "Sub Concept 1", "fr")});
         subConcept1.setNarrower(new PurlInfoDTO[]{});
 
-        FullConceptDTO subConcept2 = new FullConceptDTO();
+        FullInfoDTO subConcept2 = new FullInfoDTO();
         subConcept2.setIdentifier(new PurlInfoDTO[]{new PurlInfoDTO("string", "4284785")});
         subConcept2.setPrefLabel(new PurlInfoDTO[]{new PurlInfoDTO("string", "Sub Concept 2", "fr")});
         subConcept2.setNarrower(new PurlInfoDTO[]{});
 
-        FullConceptDTO parentConcept = new FullConceptDTO();
+        FullInfoDTO parentConcept = new FullInfoDTO();
         parentConcept.setIdentifier(new PurlInfoDTO[]{new PurlInfoDTO("string", "4282375")});
         parentConcept.setPrefLabel(new PurlInfoDTO[]{new PurlInfoDTO("string", "Unité stratigraphique", "fr")});
         parentConcept.setNarrower(new PurlInfoDTO[]{

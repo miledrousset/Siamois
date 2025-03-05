@@ -5,7 +5,7 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.ConceptApi;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
-import fr.siamois.infrastructure.api.dto.FullConceptDTO;
+import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class ConceptService {
         return optConcept.orElseGet(() -> conceptRepository.save(concept));
     }
 
-    public Concept saveOrGetConceptFromFullDTO(UserInfo info, Vocabulary vocabulary, FullConceptDTO conceptDTO) {
+    public Concept saveOrGetConceptFromFullDTO(UserInfo info, Vocabulary vocabulary, FullInfoDTO conceptDTO) {
         Optional<Concept> optConcept = conceptRepository
                 .findConceptByExternalIdIgnoreCase(
                         vocabulary.getExternalVocabularyId(),
@@ -50,7 +50,7 @@ public class ConceptService {
         return conceptRepository.save(concept);
     }
 
-    private Optional<LabelDTO> findLabelOfLang(FullConceptDTO conceptDTO, String lang) {
+    private Optional<LabelDTO> findLabelOfLang(FullInfoDTO conceptDTO, String lang) {
         if (lang == null) return Optional.empty();
 
         return Arrays.stream(conceptDTO.getPrefLabel())
@@ -64,10 +64,10 @@ public class ConceptService {
                 .findFirst();
     }
 
-    private LabelDTO firstAvailableLabel(FullConceptDTO fullConceptDTO) {
+    private LabelDTO firstAvailableLabel(FullInfoDTO fullInfoDTO) {
         LabelDTO labelDTO = new LabelDTO();
-        labelDTO.setTitle(fullConceptDTO.getPrefLabel()[0].getValue());
-        labelDTO.setLang(fullConceptDTO.getPrefLabel()[0].getLang());
+        labelDTO.setTitle(fullInfoDTO.getPrefLabel()[0].getValue());
+        labelDTO.setLang(fullInfoDTO.getPrefLabel()[0].getLang());
         return labelDTO;
     }
 
@@ -80,7 +80,7 @@ public class ConceptService {
             return result;
         }
 
-        FullConceptDTO parentConcept = branch.getData().values().stream()
+        FullInfoDTO parentConcept = branch.getData().values().stream()
                 .filter(dto -> concept.getExternalId().equalsIgnoreCase(dto.getIdentifier()[0].getValue()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No concept found for " + concept.getExternalId()));
@@ -92,7 +92,7 @@ public class ConceptService {
                 .map((purlInfoDTO -> branch.getData().get(purlInfoDTO.getValue())))
                 .toList();
 
-        for (FullConceptDTO child : childs) {
+        for (FullInfoDTO child : childs) {
             Concept newConcept = saveOrGetConceptFromFullDTO(userInfo, concept.getVocabulary(), child);
             result.add(newConcept);
         }

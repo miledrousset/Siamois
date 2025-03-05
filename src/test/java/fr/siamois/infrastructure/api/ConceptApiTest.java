@@ -7,7 +7,7 @@ import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
-import fr.siamois.infrastructure.api.dto.FullConceptDTO;
+import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class ConceptApiTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        when(requestFactory.buildRestTemplate()).thenReturn(restTemplate);
+        when(requestFactory.buildRestTemplate(true)).thenReturn(restTemplate);
         conceptApi = new ConceptApi(requestFactory);
 
         vocabulary = new Vocabulary();
@@ -63,8 +63,8 @@ class ConceptApiTest {
         concept.setVocabulary(vocabulary);
 
         ConceptBranchDTO expectedBranch = new ConceptBranchDTO();
-        FullConceptDTO fullConceptDTO = new FullConceptDTO();
-        expectedBranch.addConceptBranchDTO("testUrl", fullConceptDTO);
+        FullInfoDTO fullInfoDTO = new FullInfoDTO();
+        expectedBranch.addConceptBranchDTO("testUrl", fullInfoDTO);
 
         when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(), eq(String.class)))
                 .thenReturn(new ResponseEntity<>("{\"testUrl\": {}}", HttpStatus.OK));
@@ -79,7 +79,7 @@ class ConceptApiTest {
         when(restTemplate.exchange(any(URI.class), eq(HttpMethod.GET), any(), eq(String.class)))
                 .thenReturn(new ResponseEntity<>("{\"testId\": {}}", HttpStatus.OK));
 
-        FullConceptDTO result = conceptApi.fetchConceptInfo(vocabulary, "testId");
+        FullInfoDTO result = conceptApi.fetchConceptInfo(vocabulary, "testId");
 
         assertNotNull(result);
     }
@@ -109,7 +109,7 @@ class ConceptApiTest {
         //noinspection unchecked
         when(mapper.readValue(anyString(), any(TypeReference.class))).thenThrow(JsonProcessingException.class);
 
-        FullConceptDTO result = conceptApi.fetchConceptInfo(vocabulary, "12");
+        FullInfoDTO result = conceptApi.fetchConceptInfo(vocabulary, "12");
 
         assertNull(result);
     }

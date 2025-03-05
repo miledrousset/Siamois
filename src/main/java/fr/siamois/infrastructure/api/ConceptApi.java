@@ -9,7 +9,7 @@ import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
-import fr.siamois.infrastructure.api.dto.FullConceptDTO;
+import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class ConceptApi {
 
     @Autowired
     public ConceptApi(RequestFactory factory) {
-        restTemplate = factory.buildRestTemplate();
+        restTemplate = factory.buildRestTemplate(true);
         mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -49,7 +49,7 @@ public class ConceptApi {
     }
 
     ConceptApi(RequestFactory factory, ObjectMapper mapper) {
-        this.restTemplate = factory.buildRestTemplate();
+        this.restTemplate = factory.buildRestTemplate(true);
         this.mapper = mapper;
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -63,8 +63,8 @@ public class ConceptApi {
 
         ResponseEntity<String> response = sendRequestAcceptJson(uri);
 
-        TypeReference<Map<String,FullConceptDTO>> typeReference = new TypeReference<>() {};
-        Map<String, FullConceptDTO> result;
+        TypeReference<Map<String, FullInfoDTO>> typeReference = new TypeReference<>() {};
+        Map<String, FullInfoDTO> result;
         try {
             result = mapper.readValue(response.getBody(), typeReference);
             ConceptBranchDTO branch = new ConceptBranchDTO();
@@ -85,14 +85,14 @@ public class ConceptApi {
         LabelDTO[] labels;
     }
 
-    public FullConceptDTO fetchConceptInfo(Vocabulary vocabulary, String conceptId) {
+    public FullInfoDTO fetchConceptInfo(Vocabulary vocabulary, String conceptId) {
         URI uri = URI.create(vocabulary.getBaseUri() + String.format("/openapi/v1/concept/%s/%s", vocabulary.getExternalVocabularyId(), conceptId));
         ResponseEntity<String> response = sendRequestAcceptJson(uri);
 
-        TypeReference<Map<String,FullConceptDTO>> typeReference = new TypeReference<>() {};
+        TypeReference<Map<String, FullInfoDTO>> typeReference = new TypeReference<>() {};
 
         try {
-            Map<String, FullConceptDTO> result = mapper.readValue(response.getBody(), typeReference);
+            Map<String, FullInfoDTO> result = mapper.readValue(response.getBody(), typeReference);
             return result.values().stream().findFirst().orElseThrow(() -> new RuntimeException("Invalid concept"));
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
@@ -108,7 +108,7 @@ public class ConceptApi {
         return restTemplate.exchange(uri, HttpMethod.GET, requestEntity, String.class);
     }
 
-    private boolean isAutocompleteTopTerm(FullConceptDTO concept) {
+    private boolean isAutocompleteTopTerm(FullInfoDTO concept) {
         return concept != null && concept.getNotation() != null
                 && Arrays.stream(concept.getNotation())
                 .anyMatch(notation -> notation.getValue().equalsIgnoreCase("SIAMOIS#SIAAUTO"));
@@ -116,8 +116,8 @@ public class ConceptApi {
 
     private Optional<ConceptDTO> findAutocompleteTopTerm(Vocabulary vocabulary, ConceptDTO[] array) {
         for (ConceptDTO conceptDTO : array) {
-            FullConceptDTO fullConceptDTO = fetchConceptInfo(vocabulary, conceptDTO.idConcept);
-            if (isAutocompleteTopTerm(fullConceptDTO)) {
+            FullInfoDTO fullInfoDTO = fetchConceptInfo(vocabulary, conceptDTO.idConcept);
+            if (isAutocompleteTopTerm(fullInfoDTO)) {
                 return Optional.of(conceptDTO);
             }
         }

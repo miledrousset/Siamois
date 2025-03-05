@@ -53,7 +53,11 @@ public class FieldConfigBean implements Serializable {
     private String fUserInstance;
     private Vocabulary fUserSelectedVocab;
 
-    public FieldConfigBean(VocabularyService vocabularyService, LangBean langBean, FieldConfigurationService fieldConfigurationService, SessionSettingsBean sessionSettingsBean, VocabularyConverter vocabularyConverter) {
+    public FieldConfigBean(VocabularyService vocabularyService,
+                           LangBean langBean,
+                           FieldConfigurationService fieldConfigurationService,
+                           SessionSettingsBean sessionSettingsBean,
+                           VocabularyConverter vocabularyConverter) {
         this.vocabularyService = vocabularyService;
         this.langBean = langBean;
         this.fieldConfigurationService = fieldConfigurationService;
