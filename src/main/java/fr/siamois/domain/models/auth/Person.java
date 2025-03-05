@@ -35,7 +35,7 @@ public class Person implements UserDetails {
     // 64 chars for the local part and 255 chars for the domain part
     public static final int LOCAL_MAIL_MAX_LENGTH = 64;
     public static final int DOMAIN_MAIL_MAX_LENGTH = 255;
-    public static final int MAIL_MAX_LENGTH = LOCAL_MAIL_MAX_LENGTH + DOMAIN_MAIL_MAX_LENGTH;
+    public static final int MAIL_MAX_LENGTH = LOCAL_MAIL_MAX_LENGTH + 1 + DOMAIN_MAIL_MAX_LENGTH;
 
     public static final int PASSWORD_MAX_LENGTH = 1024;
 
