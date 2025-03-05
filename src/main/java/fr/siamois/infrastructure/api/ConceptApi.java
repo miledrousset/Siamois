@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.siamois.domain.models.exceptions.NotSiamoisThesaurusException;
+import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
@@ -42,6 +42,12 @@ public class ConceptApi {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    public ConceptApi(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+        mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
     ConceptApi(RequestFactory factory, ObjectMapper mapper) {
         this.restTemplate = factory.buildRestTemplate();
         this.mapper = mapper;
@@ -52,7 +58,7 @@ public class ConceptApi {
         return fetchDownExpansion(concept.getVocabulary(), concept.getExternalId());
     }
 
-    private ConceptBranchDTO fetchDownExpansion(Vocabulary vocabulary, String idConcept) {
+    public ConceptBranchDTO fetchDownExpansion(Vocabulary vocabulary, String idConcept) {
         URI uri = URI.create(String.format("%s/openapi/v1/concept/%s/%s/expansion?way=down", vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId(), idConcept));
 
         ResponseEntity<String> response = sendRequestAcceptJson(uri);

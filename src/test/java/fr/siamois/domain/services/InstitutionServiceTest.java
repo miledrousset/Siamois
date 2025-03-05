@@ -2,8 +2,8 @@ package fr.siamois.domain.services;
 
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.FailedInstitutionSaveException;
-import fr.siamois.domain.models.exceptions.InstitutionAlreadyExist;
+import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
+import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.repositories.InstitutionRepository;
@@ -86,7 +86,7 @@ class InstitutionServiceTest {
     void createInstitution_throwsInstitutionAlreadyExist() {
         when(institutionRepository.findInstitutionByIdentifier("123456")).thenReturn(Optional.of(institution1));
 
-        assertThrows(InstitutionAlreadyExist.class, () -> institutionService.createInstitution(institution1));
+        assertThrows(InstitutionAlreadyExistException.class, () -> institutionService.createInstitution(institution1));
     }
 
     @Test
@@ -97,7 +97,7 @@ class InstitutionServiceTest {
     }
 
     @Test
-    void createInstitution() throws InstitutionAlreadyExist, FailedInstitutionSaveException {
+    void createInstitution() throws InstitutionAlreadyExistException, FailedInstitutionSaveException {
         institutionService.createInstitution(institution1);
 
         verify(institutionRepository, times(1)).save(institution1);
@@ -161,5 +161,78 @@ class InstitutionServiceTest {
         InstitutionSettings result = institutionService.createOrGetSettingsOf(institution);
 
         assertThat(result.getInstitution()).isEqualTo(institution);
+    }
+
+    @Test
+    void addToManagers_shouldCreateUserLink_whenNotExist() {
+        Person person = new Person();
+        person.setUsername("username");
+        person.setMail("test@example.com");
+        person.setPassword("password123");
+        person.setId(12L);
+
+        Institution institution = new Institution();
+        institution.setId(2L);
+        institution.setName("institution");
+
+        when(institutionRepository.personExistInInstitution(12L, 2L)).thenReturn(false);
+
+        institutionService.addToManagers(institution, person);
+
+        verify(institutionRepository, atMostOnce()).addPersonTo(12L, 2L);
+        verify(institutionRepository, atMostOnce()).setPersonAsManagerOf(12L, 2L);
+    }
+
+    @Test
+    void addToManagers_shouldOnlySet_whenExist() {
+        Person person = new Person();
+        person.setUsername("username");
+        person.setMail("test@example.com");
+        person.setPassword("password123");
+        person.setId(12L);
+
+        Institution institution = new Institution();
+        institution.setId(2L);
+        institution.setName("institution");
+
+        when(institutionRepository.personExistInInstitution(12L, 2L)).thenReturn(true);
+
+        institutionService.addToManagers(institution, person);
+
+        verify(institutionRepository, never()).addPersonTo(anyLong(), anyLong());
+        verify(institutionRepository, atMostOnce()).setPersonAsManagerOf(12L, 2L);
+    }
+
+    @Test
+    void isManagerOf_whenIsOwnerOfInstitution_shouldReturnTrue() {
+        Person person = new Person();
+        person.setUsername("username");
+        person.setMail("test@example.com");
+        person.setPassword("password123");
+        person.setId(12L);
+
+        Institution institution = new Institution();
+        institution.setId(2L);
+        institution.setName("institution");
+        institution.setManager(person);
+
+        boolean result = institutionService.isManagerOf(institution, person);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void isManagerOf_whenManagerOfTheInstitution_shouldReturnTrue() {
+        Person person = new Person();
+        person.setId(12L);
+
+        Institution institution = new Institution();
+        institution.setId(2L);
+
+        when(institutionRepository.isManagerOf(2L, 12L)).thenReturn(true);
+
+        boolean result = institutionService.isManagerOf(institution, person);
+
+        assertThat(result).isTrue();
     }
 }

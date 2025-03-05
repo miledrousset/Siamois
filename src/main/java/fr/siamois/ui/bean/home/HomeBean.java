@@ -41,7 +41,7 @@ public class HomeBean implements Serializable {
     public void init()  {
         try {
             Person author = sessionSettingsBean.getAuthenticatedUser();
-            if (author.hasRole("ADMIN")) {
+            if (author.isSuperAdmin()) {
                 spatialUnitList = spatialUnitService.findAllWithoutParents();
             } else {
                 spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettingsBean.getSelectedInstitution());

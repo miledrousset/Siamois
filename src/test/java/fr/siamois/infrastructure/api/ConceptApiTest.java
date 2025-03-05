@@ -3,11 +3,12 @@ package fr.siamois.infrastructure.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.siamois.domain.models.exceptions.NotSiamoisThesaurusException;
+import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullConceptDTO;
+import fr.siamois.infrastructure.api.dto.LabelDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -130,6 +131,7 @@ class ConceptApiTest {
 
         ConceptApi.ConceptDTO dto = new ConceptApi.ConceptDTO();
         dto.idConcept = "12";
+        dto.labels = new LabelDTO[]{new LabelDTO()};
 
         when(mapper.readValue(anyString(), eq(ConceptApi.ConceptDTO[].class))).thenReturn(new ConceptApi.ConceptDTO[] { dto });
 
@@ -144,7 +146,7 @@ class ConceptApiTest {
 
     @Test
     void fetchFieldsBranch_throws_whenJsonException() throws JsonProcessingException, NotSiamoisThesaurusException {
-        conceptApi = new ConceptApi(requestFactory, mapper);
+        conceptApi = new ConceptApi(restTemplate);
         when(restTemplate.getForObject(any(URI.class), eq(String.class))).thenReturn("NOT EMPTY");
 
         when(mapper.readValue(anyString(), eq(ConceptApi.ConceptDTO[].class))).thenThrow(JsonProcessingException.class);
@@ -152,6 +154,22 @@ class ConceptApiTest {
         ConceptBranchDTO result = conceptApi.fetchFieldsBranch(vocabulary);
 
         assertNull(result);
+    }
+
+    @Test
+    void fetchDownExpansion_shouldHandleJsonProcessingException() throws JsonProcessingException {
+        // Arrange
+        URI uri = URI.create("http://example.com/openapi/v1/concept/th223/testId/expansion?way=down");
+        when(restTemplate.exchange(eq(uri), eq(HttpMethod.GET), any(), eq(String.class)))
+                .thenReturn(new ResponseEntity<>("Invalid JSON", HttpStatus.OK));
+        when(mapper.readValue(anyString(), any(TypeReference.class))).thenThrow(JsonProcessingException.class);
+
+        // Act
+        ConceptBranchDTO result = conceptApi.fetchDownExpansion(vocabulary, "testId");
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.getData().isEmpty());
     }
 
 }

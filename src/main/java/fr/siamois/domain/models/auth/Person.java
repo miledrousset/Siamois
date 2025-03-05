@@ -3,7 +3,9 @@ package fr.siamois.domain.models.auth;
 import fr.siamois.domain.models.FieldCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,83 +22,109 @@ import java.util.List;
         @UniqueConstraint(name = "person_mail_key", columnNames = {"mail"})
 })
 public class Person implements UserDetails {
+
+    // This limit allows the UI to be controlled
+    public static final int NAME_MAX_LENGTH = 64;
+
+    // In UNIX, usernames are limited to 32 characters
+    // If the system should one day communicate with a UNIX system, it should respect this limit.
+    public static final int USERNAME_MAX_LENGTH = 32;
+
+    // https://www.rfc-editor.org/errata/eid1003
+    // RFC 3696 applies a limit 320 characters from email adresses.
+    // 64 chars for the local part and 255 chars for the domain part
+    public static final int LOCAL_MAIL_MAX_LENGTH = 64;
+    public static final int DOMAIN_MAIL_MAX_LENGTH = 255;
+    public static final int MAIL_MAX_LENGTH = LOCAL_MAIL_MAX_LENGTH + DOMAIN_MAIL_MAX_LENGTH;
+
+    public static final int PASSWORD_MAX_LENGTH = 1024;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id", nullable = false)
     private Long id;
 
-    @Column(name = "name", length = Integer.MAX_VALUE)
+    @Column(name = "name", length = NAME_MAX_LENGTH)
     private String name;
 
-    @Column(name = "lastname", length = Integer.MAX_VALUE)
+    @Column(name = "lastname", length = NAME_MAX_LENGTH)
     private String lastname;
 
     @NotNull
-    @Column(name = "username", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "username", nullable = false, length = USERNAME_MAX_LENGTH)
     private String username;
 
+    // The password length shouldn't be set in the database as we don't know their size after hash.
     @NotNull
     @Column(name = "password", nullable = false, length = Integer.MAX_VALUE)
     private String password;
 
     @NotNull
-    @Column(name = "mail", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "mail", nullable = false, length = MAIL_MAX_LENGTH)
     private String mail;
 
     @ColumnDefault("false")
     @Column(name = "pass_to_modify")
-    private Boolean passToModify;
+    private Boolean passToModify = false;
 
     @ColumnDefault("false")
     @Column(name = "alert_mail")
-    private Boolean alertMail;
+    private Boolean alertMail = false;
 
     @ColumnDefault("false")
     @Column(name = "is_super_admin")
-    private Boolean isSuperAdmin;
+    @Getter(AccessLevel.NONE)
+    private Boolean isSuperAdmin = false;
 
     @Column(name = "api_key", length = Integer.MAX_VALUE)
     private String apiKey;
 
     @ColumnDefault("false")
     @Column(name = "key_never_expire")
-    private Boolean keyNeverExpire;
+    private Boolean keyNeverExpire = false;
 
     @Column(name = "key_expires_at")
     private OffsetDateTime keyExpiresAt;
 
     @ColumnDefault("false")
     @Column(name = "is_service_account")
-    private Boolean isServiceAccount;
+    private Boolean isServiceAccount = false;
 
     @Column(name = "key_description", length = Integer.MAX_VALUE)
     private String keyDescription;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "system_role_user",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private List<SystemRole> roles = new ArrayList<>();
+    @ColumnDefault("false")
+    @Column(name = "is_expired")
+    private boolean isExpired = false;
 
-    public boolean hasRole(String roleName) {
-        return roles.stream().anyMatch(role -> role.getRoleName().equalsIgnoreCase(roleName));
+    @ColumnDefault("false")
+    @Column(name = "is_locked")
+    private boolean isLocked = false;
+
+    @ColumnDefault("true")
+    @Column(name = "is_enabled")
+    private boolean isEnabled = true;
+
+    public boolean isSuperAdmin() {
+        return isSuperAdmin;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<SystemRole> roles = new ArrayList<>();
+        if (this.isSuperAdmin)
+            roles.add(new SystemRole("SUPER_ADMIN"));
         return roles;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return !isExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !isLocked;
     }
 
     @Override
@@ -106,14 +134,9 @@ public class Person implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
     }
 
     @FieldCode
     public static final String USER_ROLE_FIELD_CODE = "SIAP.ROLE";
-
-    // Methods
-    public String displayName() {
-        return name+" "+lastname;
-    }
 }

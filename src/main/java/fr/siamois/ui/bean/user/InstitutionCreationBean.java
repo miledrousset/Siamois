@@ -2,8 +2,8 @@ package fr.siamois.ui.bean.user;
 
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.FailedInstitutionSaveException;
-import fr.siamois.domain.models.exceptions.InstitutionAlreadyExist;
+import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
+import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.PersonService;
 import fr.siamois.domain.utils.CodeUtils;
@@ -96,7 +96,7 @@ public class InstitutionCreationBean implements Serializable {
                 institutionService.createInstitution(institution);
                 navBean.updateInstitutions();
                 MessageUtils.displayInfoMessage(langBean, "create.team.success");
-            } catch (InstitutionAlreadyExist e) {
+            } catch (InstitutionAlreadyExistException e) {
                 log.error("Institution already exists.", e);
                 MessageUtils.displayErrorMessage(langBean, "commons.error.team.alreadyexist", fTeamName);
             } catch (FailedInstitutionSaveException e) {

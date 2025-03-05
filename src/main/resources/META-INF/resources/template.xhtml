@@ -206,8 +206,7 @@
                         </li>
                         <li class="icons dropdown">
                             <div class="user-img c-pointer position-relative" data-toggle="dropdown">
-                                <span class="activity active"></span>
-                                <img src="qhttps://placehold.co/359×218" height="40" width="40" alt=""/>
+                                <i id="user-icon" class="icon-user"/>
                             </div>
                             <div class="drop-down dropdown-profile   dropdown-menu">
                                 <div class="dropdown-content-body">
@@ -319,7 +318,7 @@
                                 </li>
                             </h:panelGroup>
 
-                            <h:panelGroup rendered="#{navBean.userIs('ADMIN')}">
+                            <h:panelGroup rendered="#{navBean.userIsAdmin()}">
                                 <li class="nav-label">Administration</li>
                                 <li>
                                     <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
@@ -353,7 +352,6 @@
             Content body start
         ***********************************-->
         <div class="content-body">
-
 
             <!-- Content will be inserted here -->
             <ui:insert description="The main content" name="content"/>
