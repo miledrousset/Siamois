@@ -1,20 +1,19 @@
 package fr.siamois.ui.bean.panel.models;
 
+import fr.siamois.ui.bean.panel.utils.DataLoaderUtils;
+import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
-import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
-import fr.siamois.domain.utils.DateUtils;
-import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.panel.utils.SpatialUnitHelperService;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.primefaces.PrimeFaces;
 import software.xdev.chartjs.model.charts.BarChart;
 import software.xdev.chartjs.model.color.RGBAColor;
 import software.xdev.chartjs.model.data.BarData;
@@ -24,7 +23,7 @@ import software.xdev.chartjs.model.options.Plugins;
 import software.xdev.chartjs.model.options.Title;
 import software.xdev.chartjs.model.options.Tooltip;
 
-import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,8 +39,8 @@ public class SpatialUnitPanel extends AbstractPanel {
     private final SpatialUnitService spatialUnitService;
     private final RecordingUnitService recordingUnitService;
     private final ActionUnitService actionUnitService;
-    private final HistoryService historyService;
     private final SessionSettingsBean sessionSettings;
+    private final SpatialUnitHelperService spatialUnitHelperService;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -61,14 +60,17 @@ public class SpatialUnitPanel extends AbstractPanel {
 
     private Long idunit;  // ID of the spatial unit
 
-    public SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, HistoryService historyService, SessionSettingsBean sessionSettings, Long id) {
-        super("spatial", "spatial", "spatial");
+    public SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, Long id, PanelBreadcrumb currentBreadcrumb, SpatialUnitHelperService spatialUnitHelperService) {
+        super("spatial", "Unité spatiale", "spatial", "pi pi-map-marker");
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
-        this.historyService = historyService;
         this.sessionSettings = sessionSettings;
         this.idunit = id;
+        this.spatialUnitHelperService = spatialUnitHelperService;
+        this.setBreadcrumb(new PanelBreadcrumb());
+        this.getBreadcrumb().getModel().getElements().clear();
+        this.getBreadcrumb().getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
         init();
     }
 
@@ -77,24 +79,6 @@ public class SpatialUnitPanel extends AbstractPanel {
         return "/panel/spatialUnitPanel.xhtml";
     }
 
-
-    public void reinitializeBean() {
-        this.spatialUnit = null;
-        this.spatialUnitErrorMessage = null;
-        this.spatialUnitListErrorMessage = null;
-        this.recordingUnitListErrorMessage = null;
-        this.actionUnitListErrorMessage = null;
-        this.spatialUnitList = null;
-        this.recordingUnitList = null;
-        this.actionUnitList = null;
-        this.spatialUnitParentsList = null;
-        this.spatialUnitParentsListErrorMessage = null;
-    }
-
-    public String goToSpatialUnitById(Long id) {
-        log.trace("go to spatial unit");
-        return "/pages/spatialUnit/spatialUnit.xhtml?id=" + id + "&faces-redirect=true";
-    }
 
 
     public void createBarModel() {
@@ -125,7 +109,18 @@ public class SpatialUnitPanel extends AbstractPanel {
 
         createBarModel();
 
-        reinitializeBean();
+        spatialUnitHelperService.reinitialize(
+                unit -> this.spatialUnit = unit,
+                msg -> this.spatialUnitErrorMessage = msg,
+                msg -> this.spatialUnitListErrorMessage = msg,
+                msg -> this.recordingUnitListErrorMessage = msg,
+                msg -> this.actionUnitListErrorMessage = msg,
+                list -> this.spatialUnitList = list,
+                list -> this.recordingUnitList = list,
+                list -> this.actionUnitList = list,
+                list -> this.spatialUnitParentsList = list,
+                msg -> this.spatialUnitParentsListErrorMessage = msg
+        );
 
         if (idunit == null) {
             this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
@@ -134,6 +129,9 @@ public class SpatialUnitPanel extends AbstractPanel {
 
         try {
             this.spatialUnit = spatialUnitService.findById(idunit);
+            this.setTitle(spatialUnit.getName()); // Set panel title
+            // add to BC
+            this.getBreadcrumb().addSpatialUnit(spatialUnit);
         } catch (RuntimeException e) {
             this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
         }
@@ -143,50 +141,44 @@ public class SpatialUnitPanel extends AbstractPanel {
             return;
         }
 
-        try {
-            this.spatialUnitListErrorMessage = null;
-            this.spatialUnitList = spatialUnitService.findAllChildOfSpatialUnit(spatialUnit);
-        } catch (RuntimeException e) {
-            this.spatialUnitList = null;
-            this.spatialUnitListErrorMessage = "Unable to load spatial units: " + e.getMessage();
-        }
-        try {
-            this.spatialUnitParentsListErrorMessage = null;
-            this.spatialUnitParentsList = spatialUnitService.findAllParentsOfSpatialUnit(spatialUnit);
-        } catch (RuntimeException e) {
-            this.spatialUnitParentsList = null;
-            this.spatialUnitParentsListErrorMessage = "Unable to load the parents: " + e.getMessage();
-        }
-        try {
-            this.recordingUnitListErrorMessage = null;
-            this.recordingUnitList = recordingUnitService.findAllBySpatialUnit(spatialUnit);
-        } catch (RuntimeException e) {
-            this.recordingUnitList = null;
-            this.recordingUnitListErrorMessage = "Unable to load recording units: " + e.getMessage();
-        }
-        try {
-            this.actionUnitListErrorMessage = null;
-            this.actionUnitList = actionUnitService.findAllBySpatialUnitId(spatialUnit);
-        } catch (RuntimeException e) {
-            this.actionUnitList = null;
-            this.actionUnitListErrorMessage = "Unable to load action units: " + e.getMessage();
-        }
-        historyVersion = historyService.findSpatialUnitHistory(spatialUnit);
-    }
+        DataLoaderUtils.loadData(
+                () -> spatialUnitService.findAllChildOfSpatialUnit(spatialUnit),
+                list -> this.spatialUnitList = list,
+                msg -> this.spatialUnitListErrorMessage = msg,
+                "Unable to load spatial units: "
+        );
 
-    public String formatDate(OffsetDateTime offsetDateTime) {
-        return DateUtils.formatOffsetDateTime(offsetDateTime);
+        DataLoaderUtils.loadData(
+                () -> spatialUnitService.findAllParentsOfSpatialUnit(spatialUnit),
+                list -> this.spatialUnitParentsList = list,
+                msg -> this.spatialUnitParentsListErrorMessage = msg,
+                "Unable to load the parents: "
+        );
+
+        DataLoaderUtils.loadData(
+                () -> recordingUnitService.findAllBySpatialUnit(spatialUnit),
+                list -> this.recordingUnitList = list,
+                msg -> this.recordingUnitListErrorMessage = msg,
+                "Unable to load recording units: "
+        );
+
+        DataLoaderUtils.loadData(
+                () -> actionUnitService.findAllBySpatialUnitId(spatialUnit),
+                list -> this.actionUnitList = list,
+                msg -> this.actionUnitListErrorMessage = msg,
+                "Unable to load action units: "
+        );
+
+        historyVersion = spatialUnitHelperService.findHistory(spatialUnit);
     }
 
     public void visualise(SpatialUnitHist history) {
-        log.trace("History version changed to {}", history.toString());
-        revisionToDisplay = history;
+        spatialUnitHelperService.visualise(history, hist -> this.revisionToDisplay = hist);
     }
 
     public void restore(SpatialUnitHist history) {
-        log.trace("Restore order received");
-        spatialUnitService.restore(history);
-        PrimeFaces.current().executeScript("PF('restored-dlg').show()");
+        spatialUnitHelperService.restore(history);
     }
+
 
 }

@@ -1,7 +1,9 @@
 package fr.siamois.ui.bean.panel.models;
 
+
 import lombok.Data;
 import lombok.Getter;
+
 
 @Data
 public abstract class AbstractPanel {
@@ -12,14 +14,17 @@ public abstract class AbstractPanel {
     private String title;
     private String type;
     private Object content;
+    private String icon;
+    private PanelBreadcrumb breadcrumb;
 
-    public AbstractPanel() {
+    protected AbstractPanel() {
     }
 
-    public AbstractPanel(String id, String title, String type) {
+    protected AbstractPanel(String id, String title, String type, String icon) {
         this.id = id;
         this.title = title;
         this.type = type;
+        this.icon = icon;
     }
 
     public abstract String display();
