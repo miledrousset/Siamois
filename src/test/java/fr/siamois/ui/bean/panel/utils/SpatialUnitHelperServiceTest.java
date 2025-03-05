@@ -6,11 +6,14 @@ import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.SpatialUnitService;
+import jakarta.faces.context.FacesContext;
+import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.primefaces.PrimeFaces;
 
@@ -29,19 +32,26 @@ class SpatialUnitHelperServiceTest {
     @Mock
     private HistoryService historyService;
 
-    @Mock
-    private PrimeFaces primeFacesMock;
-
     @InjectMocks
     private SpatialUnitHelperService spatialUnitHelperService;
 
     private SpatialUnitHist spatialUnitHist;
     private SpatialUnit spatialUnit;
+    private PrimeFaces mockPrimeFaces;
+
+    @Mock
+    private FacesContext facesContext;
+
 
     @BeforeEach
     void setUp() {
         spatialUnitHist = mock(SpatialUnitHist.class);
         spatialUnit = mock(SpatialUnit.class);
+
+        // Mock PrimeFaces
+        mockPrimeFaces = mock(PrimeFaces.class);
+        PrimeFaces.setCurrent(mockPrimeFaces);
+
     }
 
     @Test
@@ -49,6 +59,15 @@ class SpatialUnitHelperServiceTest {
         Consumer<SpatialUnitHist> revisionSetter = mock(Consumer.class);
         spatialUnitHelperService.visualise(spatialUnitHist, revisionSetter);
         verify(revisionSetter).accept(spatialUnitHist);
+    }
+
+    @Test
+    void testRestore() {
+        // mock
+        Mockito.doNothing().when(mockPrimeFaces).executeScript("PF('restored-dlg').show()");
+
+        spatialUnitHelperService.restore(spatialUnitHist);
+        verify(spatialUnitService, times(1)).restore(spatialUnitHist);
     }
 
 
