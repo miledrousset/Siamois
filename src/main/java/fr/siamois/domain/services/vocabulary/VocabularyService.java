@@ -93,7 +93,7 @@ public class VocabularyService {
         vocabulary.setType(type);
         vocabulary.setLastLang(labelDTO.getLang());
 
-        return vocabularyRepository.save(vocabulary);
+        return saveOrGetVocabulary(vocabulary);
     }
 
 }

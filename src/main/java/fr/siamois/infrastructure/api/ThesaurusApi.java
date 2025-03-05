@@ -69,7 +69,7 @@ public class ThesaurusApi {
 
     private URI findRedirectUriIfArk(URI uriObj) {
         if (isNotUriWithIdtParameters(uriObj)) {
-            HttpEntity<String> entity = restTemplate.getForEntity(uriObj.toString(), String.class);
+            HttpEntity<String> entity = restTemplate.getForEntity(uriObj, String.class);
             if (entity.getHeaders().getLocation() != null) {
                 uriObj = entity.getHeaders().getLocation();
             }

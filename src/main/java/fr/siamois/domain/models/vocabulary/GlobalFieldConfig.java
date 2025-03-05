@@ -2,9 +2,32 @@ package fr.siamois.domain.models.vocabulary;
 
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public record GlobalFieldConfig(List<String> missingFieldCode, List<FullInfoDTO> conceptWithValidFieldCode) {
+public class GlobalFieldConfig {
+
+    private final List<String> missingFieldCode;
+    private final List<FullInfoDTO> conceptWithValidFieldCode;
+
+    public GlobalFieldConfig(List<String> missingFieldCode, List<FullInfoDTO> conceptWithValidFieldCode) {
+        this.missingFieldCode = missingFieldCode;
+        this.conceptWithValidFieldCode = conceptWithValidFieldCode;
+    }
+
+    public GlobalFieldConfig() {
+        missingFieldCode = new ArrayList<>();
+        conceptWithValidFieldCode = new ArrayList<>();
+    }
+
+    public List<String> missingFieldCode() {
+        return missingFieldCode;
+    }
+
+    public List<FullInfoDTO> conceptWithValidFieldCode() {
+        return conceptWithValidFieldCode;
+    }
+
     public boolean isWrongConfig() {
         return !missingFieldCode.isEmpty();
     }
