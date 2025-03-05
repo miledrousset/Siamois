@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -95,7 +96,7 @@ public class InstitutionService {
     }
 
     public boolean isManagerOf(Institution institution, Person person) {
-        if (institution.getManager().equals(person))
+        if (Objects.equals(institution.getManager(), person))
             return true;
         return institutionRepository.isManagerOf(institution.getId(), person.getId());
     }

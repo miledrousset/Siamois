@@ -17,8 +17,8 @@ public class EmailVerifier implements PersonDataVerifier {
     public void verify(Person person) throws InvalidEmail {
         String email = person.getMail();
 
-        checkMailLength(email);
         emailUsesValidChars(email);
+        checkMailLength(email);
     }
 
     private static void emailUsesValidChars(String email) throws InvalidEmail {

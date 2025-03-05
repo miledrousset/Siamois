@@ -39,12 +39,12 @@ class PersonServiceTest {
 
     private final EmailVerifier emailVerifier = new EmailVerifier();
     private final PasswordVerifier passwordVerifier = new PasswordVerifier();
-    private final UsernameVerifier usernameVerifier = new UsernameVerifier(personRepository);
 
     private PersonService personService;
 
     @BeforeEach
     void setUp() {
+        UsernameVerifier usernameVerifier = new UsernameVerifier(personRepository);
         personService = new PersonService(teamRepository, personRepository, passwordEncoder, List.of(usernameVerifier, emailVerifier, passwordVerifier));
     }
 

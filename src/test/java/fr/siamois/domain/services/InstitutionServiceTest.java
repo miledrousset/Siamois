@@ -204,7 +204,7 @@ class InstitutionServiceTest {
     }
 
     @Test
-    void isManagerOf() {
+    void isManagerOf_whenIsOwnerOfInstitution_shouldReturnTrue() {
         Person person = new Person();
         person.setUsername("username");
         person.setMail("test@example.com");
@@ -214,6 +214,20 @@ class InstitutionServiceTest {
         Institution institution = new Institution();
         institution.setId(2L);
         institution.setName("institution");
+        institution.setManager(person);
+
+        boolean result = institutionService.isManagerOf(institution, person);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void isManagerOf_whenManagerOfTheInstitution_shouldReturnTrue() {
+        Person person = new Person();
+        person.setId(12L);
+
+        Institution institution = new Institution();
+        institution.setId(2L);
 
         when(institutionRepository.isManagerOf(2L, 12L)).thenReturn(true);
 
