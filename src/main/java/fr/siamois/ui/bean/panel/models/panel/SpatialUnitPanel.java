@@ -6,18 +6,15 @@ import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
-import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
-import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.utils.SpatialUnitHelperService;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.primefaces.PrimeFaces;
 import software.xdev.chartjs.model.charts.BarChart;
 import software.xdev.chartjs.model.color.RGBAColor;
 import software.xdev.chartjs.model.data.BarData;
@@ -27,7 +24,6 @@ import software.xdev.chartjs.model.options.Plugins;
 import software.xdev.chartjs.model.options.Title;
 import software.xdev.chartjs.model.options.Tooltip;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,24 +81,6 @@ public class SpatialUnitPanel extends AbstractPanel {
     }
 
 
-    public void reinitializeBean() {
-        this.spatialUnit = null;
-        this.spatialUnitErrorMessage = null;
-        this.spatialUnitListErrorMessage = null;
-        this.recordingUnitListErrorMessage = null;
-        this.actionUnitListErrorMessage = null;
-        this.spatialUnitList = null;
-        this.recordingUnitList = null;
-        this.actionUnitList = null;
-        this.spatialUnitParentsList = null;
-        this.spatialUnitParentsListErrorMessage = null;
-    }
-
-    public String goToSpatialUnitById(Long id) {
-        log.trace("go to spatial unit");
-        return "/pages/spatialUnit/spatialUnit.xhtml?id=" + id + "&faces-redirect=true";
-    }
-
 
     public void createBarModel() {
         barModel = new BarChart()
@@ -132,7 +110,18 @@ public class SpatialUnitPanel extends AbstractPanel {
 
         createBarModel();
 
-        reinitializeBean();
+        spatialUnitHelperService.reinitialize(
+                unit -> this.spatialUnit = unit,
+                msg -> this.spatialUnitErrorMessage = msg,
+                msg -> this.spatialUnitListErrorMessage = msg,
+                msg -> this.recordingUnitListErrorMessage = msg,
+                msg -> this.actionUnitListErrorMessage = msg,
+                list -> this.spatialUnitList = list,
+                list -> this.recordingUnitList = list,
+                list -> this.actionUnitList = list,
+                list -> this.spatialUnitParentsList = list,
+                msg -> this.spatialUnitParentsListErrorMessage = msg
+        );
 
         if (idunit == null) {
             this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
