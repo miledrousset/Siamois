@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
+import fr.siamois.ui.bean.panel.utils.DataLoaderUtils;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.history.SpatialUnitHist;
@@ -16,7 +17,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
-import org.primefaces.model.menu.MenuElement;
 import software.xdev.chartjs.model.charts.BarChart;
 import software.xdev.chartjs.model.color.RGBAColor;
 import software.xdev.chartjs.model.data.BarData;
@@ -26,7 +26,6 @@ import software.xdev.chartjs.model.options.Plugins;
 import software.xdev.chartjs.model.options.Title;
 import software.xdev.chartjs.model.options.Tooltip;
 
-import javax.swing.*;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -153,34 +152,34 @@ public class SpatialUnitPanel extends AbstractPanel {
             return;
         }
 
-        try {
-            this.spatialUnitListErrorMessage = null;
-            this.spatialUnitList = spatialUnitService.findAllChildOfSpatialUnit(spatialUnit);
-        } catch (RuntimeException e) {
-            this.spatialUnitList = null;
-            this.spatialUnitListErrorMessage = "Unable to load spatial units: " + e.getMessage();
-        }
-        try {
-            this.spatialUnitParentsListErrorMessage = null;
-            this.spatialUnitParentsList = spatialUnitService.findAllParentsOfSpatialUnit(spatialUnit);
-        } catch (RuntimeException e) {
-            this.spatialUnitParentsList = null;
-            this.spatialUnitParentsListErrorMessage = "Unable to load the parents: " + e.getMessage();
-        }
-        try {
-            this.recordingUnitListErrorMessage = null;
-            this.recordingUnitList = recordingUnitService.findAllBySpatialUnit(spatialUnit);
-        } catch (RuntimeException e) {
-            this.recordingUnitList = null;
-            this.recordingUnitListErrorMessage = "Unable to load recording units: " + e.getMessage();
-        }
-        try {
-            this.actionUnitListErrorMessage = null;
-            this.actionUnitList = actionUnitService.findAllBySpatialUnitId(spatialUnit);
-        } catch (RuntimeException e) {
-            this.actionUnitList = null;
-            this.actionUnitListErrorMessage = "Unable to load action units: " + e.getMessage();
-        }
+        DataLoaderUtils.loadData(
+                () -> spatialUnitService.findAllChildOfSpatialUnit(spatialUnit),
+                list -> this.spatialUnitList = list,
+                msg -> this.spatialUnitListErrorMessage = msg,
+                "Unable to load spatial units: "
+        );
+
+        DataLoaderUtils.loadData(
+                () -> spatialUnitService.findAllParentsOfSpatialUnit(spatialUnit),
+                list -> this.spatialUnitParentsList = list,
+                msg -> this.spatialUnitParentsListErrorMessage = msg,
+                "Unable to load the parents: "
+        );
+
+        DataLoaderUtils.loadData(
+                () -> recordingUnitService.findAllBySpatialUnit(spatialUnit),
+                list -> this.recordingUnitList = list,
+                msg -> this.recordingUnitListErrorMessage = msg,
+                "Unable to load recording units: "
+        );
+
+        DataLoaderUtils.loadData(
+                () -> actionUnitService.findAllBySpatialUnitId(spatialUnit),
+                list -> this.actionUnitList = list,
+                msg -> this.actionUnitListErrorMessage = msg,
+                "Unable to load action units: "
+        );
+
         historyVersion = historyService.findSpatialUnitHistory(spatialUnit);
     }
 
