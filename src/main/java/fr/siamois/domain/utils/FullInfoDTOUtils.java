@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 public class FullInfoDTOUtils {
 
+    private FullInfoDTOUtils() {}
+
     public static PurlInfoDTO getPrefLabelOfLang(UserInfo info, FullInfoDTO fullConcept) {
         return Arrays.stream(fullConcept.getPrefLabel())
                 .filter((purlInfoDTO -> purlInfoDTO.getLang().equalsIgnoreCase(info.getLang())))

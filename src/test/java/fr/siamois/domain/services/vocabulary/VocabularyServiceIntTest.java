@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class VocabularyServiceIntTest {
+class VocabularyServiceIntTest {
 
     @Mock
     private VocabularyRepository vocabularyRepository;
