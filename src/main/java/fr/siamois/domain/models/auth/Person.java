@@ -139,4 +139,10 @@ public class Person implements UserDetails {
 
     @FieldCode
     public static final String USER_ROLE_FIELD_CODE = "SIAP.ROLE";
+
+    // For displaying person full names in forms
+    // Used in xhtml files
+    public String displayName() {
+        return name+" "+lastname;
+    }
 }

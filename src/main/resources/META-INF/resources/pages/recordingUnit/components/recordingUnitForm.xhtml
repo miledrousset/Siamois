@@ -61,7 +61,8 @@
                                     forceSelection="true"
                                     scrollHeight="300"
                                     dropdown="true">
-
+                        <!-- We need to update on select to synchronise third type choices -->
+                        <p:ajax event="itemSelect" listener="#{newRecordingUnitFormBean.handleSelectSecondaryType}" update="@form"/>
                     </p:autoComplete>
 
                 </div>
@@ -69,11 +70,18 @@
                 <!-- Interpretation -->
                 <div class="field col-md-3">
                     <sharedLabel:openthesoLabel forId="select-one-menu-ue-interpretation" label="Interpretation"/>
-                    <p:selectOneMenu id="select-one-menu-ue-interpretation" disabled="true">
-                        <f:selectItem itemLabel="Mur"
-                                      itemValue="Mur"/>
-                        <f:selectItems/>
-                    </p:selectOneMenu>
+                    <p:autoComplete id="auto-complete-recording-third-type"
+                                    value="#{newRecordingUnitFormBean.FThirdType}"
+                                    completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitThirdType}"
+                                    var="field" itemLabel="#{field.label}"
+                                    itemValue="#{field}"
+                                    disabled="#{!newRecordingUnitFormBean.hasThirdTypeOptions}"
+                                    required="false"
+                                    converter="#{conceptConverter}"
+                                    forceSelection="true"
+                                    scrollHeight="300"
+                                    dropdown="true">
+                    </p:autoComplete>
                 </div>
             </div>
 

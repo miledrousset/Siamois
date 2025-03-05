@@ -73,6 +73,8 @@ public class NewRecordingUnitFormBean implements Serializable {
     private Concept fType = null;
     private Concept fSecondaryType = null;
     private Boolean hasSecondaryTypeOptions = false;
+    private Concept fThirdType = null;
+    private Boolean hasThirdTypeOptions = false;
 
     // View param
     private Long id;  // ID of the requested RU
@@ -167,9 +169,19 @@ public class NewRecordingUnitFormBean implements Serializable {
     public void handleSelectType(SelectEvent<Concept> event) {
         this.fType = event.getObject();
         this.fSecondaryType = null;
+        this.fThirdType = null;
+        this.hasThirdTypeOptions = null;
 
         // We check if we have secondary types options
         hasSecondaryTypeOptions = !(this.fetchChildrenOfConcept(fType).isEmpty());
+    }
+
+    public void handleSelectSecondaryType(SelectEvent<Concept> event) {
+        this.fSecondaryType = event.getObject();
+        this.fThirdType = null;
+
+        // We check if we have third types options
+        hasThirdTypeOptions = !(this.fetchChildrenOfConcept(fSecondaryType).isEmpty());
     }
 
     public LocalDate offsetDateTimeToLocalDate(OffsetDateTime offsetDT) {
@@ -406,6 +418,19 @@ public class NewRecordingUnitFormBean implements Serializable {
         UserInfo info = sessionSettingsBean.getUserInfo();
 
         return fieldConfigurationService.fetchConceptChildrenAutocomplete(info, fType, input);
+
+    }
+
+    public List<Concept> completeRecordingUnitThirdType(String input) {
+
+        // The main type needs to be set
+        if(fSecondaryType == null) {
+            return new ArrayList<>();
+        }
+
+        UserInfo info = sessionSettingsBean.getUserInfo();
+
+        return fieldConfigurationService.fetchConceptChildrenAutocomplete(info, fSecondaryType, input);
 
     }
 }
