@@ -6,7 +6,6 @@ import fr.siamois.infrastructure.repositories.InstitutionRepository;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,12 +29,12 @@ class AdminInitializerTest {
     @Mock
     private InstitutionRepository institutionRepository;
 
-    @InjectMocks
     private AdminInitializer adminInitializer;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        adminInitializer = new AdminInitializer(passwordEncoder, personRepository, institutionRepository);
         adminInitializer.setAdminUsername("admin");
         adminInitializer.setAdminPassword("admin");
         adminInitializer.setAdminEmail("admin@example.com");
