@@ -19,7 +19,8 @@ import org.primefaces.PrimeFaces;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

@@ -1,31 +1,22 @@
 package fr.siamois.domain.services.vocabulary;
 
 import fr.siamois.domain.models.UserInfo;
-import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
-import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
-import fr.siamois.domain.models.vocabulary.VocabularyType;
 import fr.siamois.infrastructure.api.ConceptApi;
-import fr.siamois.infrastructure.api.ThesaurusApi;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
 import fr.siamois.infrastructure.repositories.FieldRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
-import fr.siamois.infrastructure.repositories.vocabulary.VocabularyRepository;
-import fr.siamois.infrastructure.repositories.vocabulary.VocabularyTypeRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 

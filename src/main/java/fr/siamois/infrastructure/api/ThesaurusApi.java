@@ -4,15 +4,16 @@ import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.infrastructure.api.dto.ThesaurusDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Service to fetch thesaurus information from the API.

@@ -2,9 +2,9 @@ package fr.siamois.ui.bean.field;
 
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
-import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
-import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
+import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;

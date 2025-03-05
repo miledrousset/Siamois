@@ -1,14 +1,12 @@
 package fr.siamois.domain.services.vocabulary;
 
 import fr.siamois.domain.models.UserInfo;
-import fr.siamois.domain.models.exceptions.vocabulary.VocabularyNotFoundException;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
+import fr.siamois.domain.models.exceptions.vocabulary.VocabularyNotFoundException;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
 import fr.siamois.infrastructure.api.ThesaurusApi;
-import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
-import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
 import fr.siamois.infrastructure.api.dto.ThesaurusDTO;
 import fr.siamois.infrastructure.repositories.vocabulary.VocabularyRepository;
 import fr.siamois.infrastructure.repositories.vocabulary.VocabularyTypeRepository;
@@ -18,8 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static fr.siamois.domain.utils.FullInfoDTOUtils.getPrefLabelOfLang;
 
 /**
  * Service to manage Vocabulary

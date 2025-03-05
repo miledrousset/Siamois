@@ -1,7 +1,5 @@
 package fr.siamois.domain.services.vocabulary;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
@@ -18,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 
 import java.io.IOException;
