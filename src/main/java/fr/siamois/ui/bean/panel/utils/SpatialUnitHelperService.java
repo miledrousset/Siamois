@@ -8,6 +8,7 @@ import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.SpatialUnitService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.mockito.Mock;
 import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,8 @@ public class SpatialUnitHelperService {
 
     private final SpatialUnitService spatialUnitService;
     private final HistoryService historyService;
+
+
 
     public SpatialUnitHelperService(SpatialUnitService spatialUnitService, HistoryService historyService) {
         this.spatialUnitService = spatialUnitService;
@@ -66,6 +69,4 @@ public class SpatialUnitHelperService {
     }
 
 }
-
-
 
