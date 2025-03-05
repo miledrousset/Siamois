@@ -22,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -279,7 +280,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void fetchAutocomplete_shouldReturnCloseTeams_whenNoExactTerms() throws NoConfigForFieldException {
+    void fetchAutocomplete_shouldReturnCloseTerms_whenNoExactTerms() throws NoConfigForFieldException {
         ConceptBranchDTO dto = new ConceptBranchDTO();
         dto.addConceptBranchDTO("http://localhost/th223/1213", fullConceptDTO("1213", "", "Sites"));
         dto.addConceptBranchDTO("http://localhost/th223/1213", fullConceptDTO("1214", "", "Zone"));
@@ -314,5 +315,40 @@ class FieldConfigurationServiceTest {
 
         assertThat(result).hasSize(3);
         assertThat(result).extracting(Concept::getLabel).containsExactlyInAnyOrder("First value", "Second value", "Third value");
+    }
+
+
+    @Test
+    void fetchConceptChildrenAutocomplete_shouldReturnExactTerm()  {
+        List<Concept> children = new ArrayList<>();
+        Concept parentConcept = new Concept();
+        Concept c1 = new Concept(); c1.setLabel("Sites");
+        Concept c2 = new Concept(); c2.setLabel("Zone");
+        children.add(c1);
+        children.add(c2);
+
+        when(conceptService.findDirectSubConceptOf(any(UserInfo.class), any(Concept.class)))
+                .thenReturn(children);
+
+        List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "Zone");
+
+        assertThat(result).isNotEmpty().allMatch(match -> match.getLabel().equals("Zone"));
+    }
+
+    @Test
+    void fetchConceptChildrenAutocomplete_shouldReturnCloseTerms_whenNoExactTerms()  {
+        List<Concept> children = new ArrayList<>();
+        Concept parentConcept = new Concept();
+        Concept c1 = new Concept(); c1.setLabel("Sites");
+        Concept c2 = new Concept(); c2.setLabel("Zone");
+        children.add(c1);
+        children.add(c2);
+
+        when(conceptService.findDirectSubConceptOf(any(UserInfo.class), any(Concept.class)))
+                .thenReturn(children);
+
+        List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "Sie");
+
+        assertThat(result).isNotEmpty().allMatch(match -> match.getLabel().equals("Sites"));
     }
 }

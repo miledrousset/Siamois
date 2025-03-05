@@ -42,16 +42,28 @@
                                     converter="#{conceptConverter}"
                                     forceSelection="true"
                                     scrollHeight="300"
-                                    dropdown="true"/>
+                                    dropdown="true">
+                        <!-- We need to update on select to synchronise secondary type choices -->
+                        <p:ajax event="itemSelect" listener="#{newRecordingUnitFormBean.handleSelectType}" update="@form"/>
+                    </p:autoComplete>
                 </div>
                 <!-- UE Secondary Type -->
                 <div class="field col-md-3">
                     <sharedLabel:openthesoLabel forId="select-one-menu-ue-secondary-type" label="Sous type d'ue"/>
-                    <p:selectOneMenu id="select-one-menu-ue-secondary-type" disabled="true">
-                        <f:selectItem itemLabel="Unité stratigraphique negative"
-                                      itemValue="US"/>
-                        <f:selectItems/>
-                    </p:selectOneMenu>
+                    <p:autoComplete id="auto-complete-recording-secondary-type"
+                                    value="#{newRecordingUnitFormBean.FSecondaryType}"
+                                    completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitSecondaryType}"
+                                    var="field" itemLabel="#{field.label}"
+                                    itemValue="#{field}"
+                                    disabled="#{!newRecordingUnitFormBean.hasSecondaryTypeOptions}"
+                                    required="false"
+                                    converter="#{conceptConverter}"
+                                    forceSelection="true"
+                                    scrollHeight="300"
+                                    dropdown="true">
+
+                    </p:autoComplete>
+
                 </div>
 
                 <!-- Interpretation -->
@@ -88,11 +100,13 @@
                                                     completeMethod="#{newRecordingUnitFormBean.completePerson}"
                                                     forceSelection="true"
                                                     scrollHeight="300"
-                                                    required="true"
+                                                    required="false"
                                                     var="person" itemLabel="#{person.displayName()}"
                                                     itemValue="#{person}"
                                                     converter="#{personConverter}"
-                                                    dropdown="false"/>
+                                                    dropdown="false">
+
+                                    </p:autoComplete>
                                     <p:outputLabel for="auto-complete-excavator"
                                                    value='#{langBean.msg("recordingunit.field.excavator")}'
                                                    styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
@@ -251,32 +265,33 @@
                 </p:tab>
 
                 <p:tab title="Stratigraphie">
-                    
+
                     <ui:include src="./stratigraphyTab.xhtml"></ui:include>
 
                 </p:tab>
                 <p:tab title="Versions">
 
-                        <p:dataTable var="version" value="#{newRecordingUnitFormBean.historyVersion}" rows="5" paginator="true">
-                            <p:column headerText="Date de la version">
-                                <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
-                            </p:column>
-                            <p:column>
-                                <p:commandButton
-                                        value="Visualiser"
-                                        action="#{newRecordingUnitFormBean.visualiseHistory(version)}"
-                                        update="idDisplayVersion"
-                                        oncomplete="PF('displayVersion').show()"
-                                />
-                            </p:column>
-                            <p:column>
-                                <p:commandButton
-                                        value="Restaurer"
-                                        immediate="true"
-                                        action="#{newRecordingUnitFormBean.restore(version)}"
-                                        oncomplete="PF('restored-dlg').show()"/>
-                            </p:column>
-                        </p:dataTable>
+                    <p:dataTable var="version" value="#{newRecordingUnitFormBean.historyVersion}" rows="5"
+                                 paginator="true">
+                        <p:column headerText="Date de la version">
+                            <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton
+                                    value="Visualiser"
+                                    action="#{newRecordingUnitFormBean.visualiseHistory(version)}"
+                                    update="idDisplayVersion"
+                                    oncomplete="PF('displayVersion').show()"
+                            />
+                        </p:column>
+                        <p:column>
+                            <p:commandButton
+                                    value="Restaurer"
+                                    immediate="true"
+                                    action="#{newRecordingUnitFormBean.restore(version)}"
+                                    oncomplete="PF('restored-dlg').show()"/>
+                        </p:column>
+                    </p:dataTable>
                 </p:tab>
 
             </p:tabView>
