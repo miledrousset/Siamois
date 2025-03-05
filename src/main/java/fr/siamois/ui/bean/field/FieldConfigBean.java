@@ -74,6 +74,14 @@ public class FieldConfigBean implements Serializable {
         UserInfo info = sessionSettingsBean.getUserInfo();
         try {
             Concept config = fieldConfigurationService.findConfigurationForFieldCode(info, SpatialUnit.CATEGORY_FIELD_CODE);
+
+            String uri = String.format("%s/?idt=%s",
+                    config.getVocabulary().getBaseUri(),
+                    config.getVocabulary().getExternalVocabularyId());
+
+            fUri = uri;
+            fUserUri = uri;
+
         } catch (NoConfigForFieldException e) {
             log.trace("No config set for user {} of institution {}",
                     info.getUser().getUsername(),
@@ -122,13 +130,12 @@ public class FieldConfigBean implements Serializable {
             displayErrorMessage("Error in thesaurus config");
 
 
-        } catch (NotSiamoisThesaurusException e) {
+        } catch (NotSiamoisThesaurusException | InvalidEndpointException e) {
             log.error(e.getMessage());
             displayErrorMessage("Thesaurus is not valid");
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidEndpointException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage(), e);
+            displayErrorMessage("Error in thesaurus config");
         }
     }
 
