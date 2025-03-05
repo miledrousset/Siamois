@@ -87,7 +87,7 @@ public class ConceptService {
 
         if (parentConcept.getNarrower() == null) return result;
 
-        List<FullConceptDTO> childs = Arrays.stream(parentConcept.getNarrower())
+        List<FullInfoDTO> childs = Arrays.stream(parentConcept.getNarrower())
                 .filter((purlInfoDTO -> branch.getData().containsKey(purlInfoDTO.getValue())))
                 .map((purlInfoDTO -> branch.getData().get(purlInfoDTO.getValue())))
                 .toList();
