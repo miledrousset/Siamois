@@ -6,7 +6,7 @@
              xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components"
 >
 
-    <p:growl id="growl" showDetail="true"/>
+
     <!-- Content -->
     <p:staticMessage severity="error" summary="Error" closable="false"
                      detail="#{panelModel.spatialUnitErrorMessage}"
@@ -209,7 +209,6 @@
     <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
         <h:outputText value="Version restaurée"/>
     </p:dialog>
-    <ui:include src="/dialog/actionUnit/actionUnitDialog.xhtml"/>
-    <ui:include src="/dialog/spatialUnit/newSpatialUnitDialog.xhtml"/>
+
 
 </ui:fragment>

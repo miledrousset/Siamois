@@ -4,7 +4,6 @@ import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import lombok.Data;
 import lombok.Getter;
 
-import java.awt.*;
 
 @Data
 public abstract class AbstractPanel {
@@ -18,10 +17,10 @@ public abstract class AbstractPanel {
     private String icon;
     private PanelBreadcrumb breadcrumb;
 
-    public AbstractPanel() {
+    protected AbstractPanel() {
     }
 
-    public AbstractPanel(String id, String title, String type, String icon) {
+    protected AbstractPanel(String id, String title, String type, String icon) {
         this.id = id;
         this.title = title;
         this.type = type;

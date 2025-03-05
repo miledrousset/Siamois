@@ -73,7 +73,7 @@ public class SpatialUnitPanel extends AbstractPanel {
         this.historyService = historyService;
         this.sessionSettings = sessionSettings;
         this.idunit = id;
-        this.setBreadcrumb(new PanelBreadcrumb(this));
+        this.setBreadcrumb(new PanelBreadcrumb());
         this.getBreadcrumb().getModel().getElements().clear();
         this.getBreadcrumb().getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
         init();

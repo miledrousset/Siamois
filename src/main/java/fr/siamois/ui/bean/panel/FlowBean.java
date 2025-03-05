@@ -15,7 +15,6 @@ import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel;
 import fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel;
-import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,6 @@ import org.primefaces.model.dashboard.DashboardModel;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
-import javax.faces.event.ActionEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,16 +48,19 @@ public class FlowBean implements Serializable {
     private final transient FieldConfigurationService fieldConfigurationService;
     private final transient FieldService fieldService;
     private final transient PanelFactory panelFactory;
-    private final PersonService personService;
-    private final ConceptService conceptService;
-    private final StratigraphicRelationshipService stratigraphicRelationshipService;
-    private final BreadcrumbBean breadcrumbBean;
-    private DashboardModel responsiveModel;
+    private final transient PersonService personService;
+    private final transient ConceptService conceptService;
+    private final transient StratigraphicRelationshipService stratigraphicRelationshipService;
+    private final transient BreadcrumbBean breadcrumbBean;
+
+
+    // locals
+    private transient DashboardModel responsiveModel;
     private static final String RESPONSIVE_CLASS = "col-12 lg:col-6 xl:col-6";
 
     @Getter
-    private List<AbstractPanel> panels = new ArrayList<>();
-    private AbstractPanel fullscreenPanel;
+    private transient List<AbstractPanel>  panels = new ArrayList<>();
+    private transient  int fullscreenPanelIndex = -1;
 
 
     public FlowBean(SpatialUnitService spatialUnitService,
@@ -89,14 +90,6 @@ public class FlowBean implements Serializable {
         this.breadcrumbBean = breadcrumbBean;
     }
 
-    @PostConstruct
-    public void init()  {
-
-        // Below is just for testing
-
-        //panels.add(new ActionUnitPanel(actionUnitService,langui.bean, sessionSettings, fieldConfigurationService, fieldService));
-
-    }
 
     public void addSpatialUnitListPanel() {
         panels.add(panelFactory.createSpatialUnitListPanel());
@@ -118,22 +111,24 @@ public class FlowBean implements Serializable {
     public void goToSpatialUnitByIdCurrentPanel(Long id, AbstractPanel currentPanel) {
         // Change current panel type add item to its breadcrumb
         int index = panels.indexOf(currentPanel);
-        SpatialUnitPanel newPanel = panelFactory.createSpatialUnitPanel(id, currentPanel.getBreadcrumb());
-        panels.set(index,newPanel);
+        if(index != -1) {
+            SpatialUnitPanel newPanel = panelFactory.createSpatialUnitPanel(id, currentPanel.getBreadcrumb());
+            panels.set(index,newPanel);
+        }
+
     }
 
     public void fullScreen(AbstractPanel panel) {
         // Could use setter if we don't add more code
-        fullscreenPanel = panel;
+        int index = panels.indexOf(panel);
+        if(index != -1) {
+            fullscreenPanelIndex = index;
+        }
     }
 
     public void closeFullScreen() {
-        fullscreenPanel = null;
+        fullscreenPanelIndex = -1;
     }
 
-//    public void addNewRecordingUnitPanel(ActionUnit parent) {
-//
-//        panels.add(0,new NewRecordingUnitPanel(recordingUnitService, actionUnitService, historyService, personService, fieldService, langui.bean, conceptService,
-//                sessionSettings, fieldConfigurationService, stratigraphicRelationshipService, parent));
-//    }
+
 }

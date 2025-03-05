@@ -1,12 +1,10 @@
 package fr.siamois.ui.bean.panel.models;
 
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
-import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
 import lombok.Data;
 import lombok.Getter;
 import org.primefaces.model.menu.BaseMenuModel;
 import org.primefaces.model.menu.DefaultMenuItem;
-import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.MenuModel;
 
 @Getter
@@ -14,15 +12,14 @@ import org.primefaces.model.menu.MenuModel;
 public class PanelBreadcrumb  {
 
     private MenuModel model;
-    private AbstractPanel panel;
 
-    public PanelBreadcrumb(AbstractPanel panel) {
-        createMenu(panel);
+
+    public PanelBreadcrumb() {
+        createMenu();
     }
 
-    private void createMenu(AbstractPanel panel)
+    private void createMenu()
     {
-        this.panel = panel;
         model = new BaseMenuModel();
         model.getElements().clear();
 
@@ -34,7 +31,6 @@ public class PanelBreadcrumb  {
                 .command("#{flowBean.goToHomeCurrentPanel}")
                 .update("flow")
                 .build();
-        item.setParam("panel", panel);
         model.getElements().add(item);
     }
 
@@ -47,8 +43,6 @@ public class PanelBreadcrumb  {
                 .command("#{flowBean.goToHomeCurrentPanel}")
                 .update("flow")
                 .build();
-
-        item.setParam("panel", panel);
         model.getElements().add(item);
     }
 }

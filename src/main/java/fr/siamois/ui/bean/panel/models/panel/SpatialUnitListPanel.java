@@ -21,10 +21,10 @@ public class SpatialUnitListPanel extends AbstractPanel {
     private String spatialUnitListErrorMessage;
 
     public SpatialUnitListPanel(SpatialUnitService spatialUnitService, SessionSettingsBean sessionSettingsBean) {
-        super("Welcome", "Welcome", "Welcome", "pi pi-home");
+        super("welcome", "Welcome", "welcome-panel", "pi pi-home");
         this.spatialUnitService = spatialUnitService;
         this.sessionSettingsBean = sessionSettingsBean;
-        this.setBreadcrumb(new PanelBreadcrumb(this));
+        this.setBreadcrumb(new PanelBreadcrumb());
         init();
     }
 

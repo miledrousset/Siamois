@@ -9,37 +9,11 @@
 
     <ui:define name="content">
 
+        <p:outputPanel id="flow">
 
-        <c:choose>
-            <c:when test="#{not empty flowBean.fullscreenPanel}">
-                <h:panelGroup style="display:flex;flex-direction: column;gap:1em;padding:0.5em;" id="flow">
-                    <p:panel id="panel-fullscreen" toggleable="true" closable="true">
-                        <f:facet name="header">
-                            <i class="#{flowBean.fullscreenPanel.icon}"/> #{flowBean.fullscreenPanel.title}
-                        </f:facet>
-                        <p:breadCrumb model="#{flowBean.fullscreenPanel.breadcrumb.model}"/>
-                        <ui:include src="#{flowBean.fullscreenPanel.display()}">
-                            <ui:param name="panelModel" value="#{flowBean.fullscreenPanel}"/>
-                        </ui:include>
-                        <f:facet name="actions">
-                            <h:form>
-                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                <p:commandLink
-                                        action="#{flowBean.closeFullScreen()}"
-                                        update="flow"
-                                        styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
-                                    <h:outputText styleClass="ui-icon pi pi-question"/>
-                                </p:commandLink>
-                            </h:form>
-                        </f:facet>
-                    </p:panel>
-                </h:panelGroup>
-            </c:when>
-
-            <c:otherwise>
-                <h:panelGroup style="display:flex;flex-direction: column;gap:1em;padding:1em;" id="flow">
+                <h:panelGroup style="#{flowBean.fullscreenPanelIndex == -1 ? 'display:flex;flex-direction: column;gap:1em;padding:1em;' : 'display:flex;flex-direction: column;gap:1em;padding:0.5em;'}" id="flow-panels">
                     <c:forEach items="#{flowBean.panels}" var="panel" varStatus="status">
-                        <p:panel id="panel-${status.index}" toggleable="true" closable="true">
+                        <p:panel rendered="#{flowBean.fullscreenPanelIndex ==-1 || flowBean.fullscreenPanelIndex == status.index}" id="panel-${status.index}" toggleable="true" closable="true">
                             <f:facet name="header">
                                 <i class="#{panel.icon}"/> #{panel.title}
                             </f:facet>
@@ -50,10 +24,16 @@
                             <f:facet name="actions">
                                 <h:form>
                                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                    <p:commandLink
+                                    <p:commandLink rendered="#{flowBean.fullscreenPanelIndex ==-1}"
                                             action="#{flowBean.fullScreen(panel)}"
                                             update="flow"
                                             styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
+                                        <h:outputText styleClass="ui-icon pi pi-question"/>
+                                    </p:commandLink>
+                                    <p:commandLink rendered="#{flowBean.fullscreenPanelIndex == status.index}"
+                                                   action="#{flowBean.closeFullScreen()}"
+                                                   update="flow"
+                                                   styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
                                         <h:outputText styleClass="ui-icon pi pi-question"/>
                                     </p:commandLink>
                                 </h:form>
@@ -61,10 +41,14 @@
                         </p:panel>
                     </c:forEach>
                 </h:panelGroup>
-            </c:otherwise>
-        </c:choose>
 
+
+
+        </p:outputPanel>
 
     </ui:define>
+
+    <ui:include src="/dialog/actionUnit/actionUnitDialog.xhtml"/>
+    <ui:include src="/dialog/spatialUnit/newSpatialUnitDialog.xhtml"/>
 
 </ui:composition>
