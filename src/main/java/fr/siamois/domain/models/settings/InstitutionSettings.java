@@ -5,10 +5,12 @@ import jakarta.persistence.*;
 import jakarta.ws.rs.DefaultValue;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @Entity
 @Table(name = "institution_settings")
-public class InstitutionSettings {
+public class InstitutionSettings implements Serializable {
 
     @Id
     private Long id;

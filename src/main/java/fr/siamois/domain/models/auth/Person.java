@@ -112,7 +112,7 @@ public class Person implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SystemRole> roles = new ArrayList<>();
-        if (isSuperAdmin)
+        if (this.isSuperAdmin)
             roles.add(new SystemRole("SUPER_ADMIN"));
         return roles;
     }
