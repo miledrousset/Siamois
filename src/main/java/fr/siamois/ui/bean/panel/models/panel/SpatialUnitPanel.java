@@ -12,6 +12,7 @@ import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
+import fr.siamois.ui.bean.panel.utils.SpatialUnitHelperService;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -43,8 +44,8 @@ public class SpatialUnitPanel extends AbstractPanel {
     private final SpatialUnitService spatialUnitService;
     private final RecordingUnitService recordingUnitService;
     private final ActionUnitService actionUnitService;
-    private final HistoryService historyService;
     private final SessionSettingsBean sessionSettings;
+    private final SpatialUnitHelperService spatialUnitHelperService;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -64,14 +65,14 @@ public class SpatialUnitPanel extends AbstractPanel {
 
     private Long idunit;  // ID of the spatial unit
 
-    public SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, HistoryService historyService, SessionSettingsBean sessionSettings, Long id, PanelBreadcrumb currentBreadcrumb) {
+    public SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, Long id, PanelBreadcrumb currentBreadcrumb, SpatialUnitHelperService spatialUnitHelperService) {
         super("spatial", "Unité spatiale", "spatial", "pi pi-map-marker");
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
-        this.historyService = historyService;
         this.sessionSettings = sessionSettings;
         this.idunit = id;
+        this.spatialUnitHelperService = spatialUnitHelperService;
         this.setBreadcrumb(new PanelBreadcrumb());
         this.getBreadcrumb().getModel().getElements().clear();
         this.getBreadcrumb().getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
@@ -180,22 +181,16 @@ public class SpatialUnitPanel extends AbstractPanel {
                 "Unable to load action units: "
         );
 
-        historyVersion = historyService.findSpatialUnitHistory(spatialUnit);
-    }
-
-    public String formatDate(OffsetDateTime offsetDateTime) {
-        return DateUtils.formatOffsetDateTime(offsetDateTime);
+        historyVersion = spatialUnitHelperService.findHistory(spatialUnit);
     }
 
     public void visualise(SpatialUnitHist history) {
-        log.trace("History version changed to {}", history.toString());
-        revisionToDisplay = history;
+        spatialUnitHelperService.visualise(history, hist -> this.revisionToDisplay = hist);
     }
 
     public void restore(SpatialUnitHist history) {
-        log.trace("Restore order received");
-        spatialUnitService.restore(history);
-        PrimeFaces.current().executeScript("PF('restored-dlg').show()");
+        spatialUnitHelperService.restore(history);
     }
+
 
 }

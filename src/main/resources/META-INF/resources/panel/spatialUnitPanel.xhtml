@@ -174,7 +174,7 @@
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <p:dataTable var="version" value="#{panelModel.historyVersion}" rows="5" paginator="true">
                         <p:column headerText="Date de la version">
-                            <h:outputText value="#{panelModel.formatDate(version.updateTime)}"/>
+                            <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
                         </p:column>
                         <p:column>
                             <p:commandButton
