@@ -25,6 +25,7 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.event.SelectEvent;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -70,6 +71,8 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     private transient List<Concept> concepts;
     private Concept fType = null;
+    private Concept fSecondaryType = null;
+    private Boolean hasSecondaryTypeOptions = false;
 
     // View param
     private Long id;  // ID of the requested RU
@@ -161,6 +164,14 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
+    public void handleSelectType(SelectEvent<Concept> event) {
+        this.fType = event.getObject();
+        this.fSecondaryType = null;
+
+        // We check if we have secondary types options
+        hasSecondaryTypeOptions = !(this.fetchChildrenOfConcept(fType).isEmpty());
+    }
+
     public LocalDate offsetDateTimeToLocalDate(OffsetDateTime offsetDT) {
         return offsetDT.toLocalDate();
     }
@@ -230,6 +241,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         this.isLocalisationFromSIG = false;
         this.concepts = null;
         this.fType = null;
+        this.fSecondaryType = null;
 
     }
 
@@ -292,15 +304,17 @@ public class NewRecordingUnitFormBean implements Serializable {
             this.recordingUnit.setAltitude(new RecordingUnitAltimetry());
             this.recordingUnit.getAltitude().setAltitudeUnit("m");
 
-            initStratigraphy();
-
-
             this.recordingUnitList = recordingUnitService.findAllByActionUnit(recordingUnit.getActionUnit());
             log.info("here");
 
             // By default, current user is owner and author
             recordingUnit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
             recordingUnit.setExcavator(sessionSettingsBean.getAuthenticatedUser());
+
+            initStratigraphy();
+
+
+
 
 
         } catch (RuntimeException err) {
@@ -338,6 +352,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                 this.isLocalisationFromSIG = false;
                 // Init type field
                 fType = this.recordingUnit.getType();
+                fSecondaryType = this.recordingUnit.getSecondaryType();
 
                 initStratigraphy();
 
@@ -369,5 +384,28 @@ public class NewRecordingUnitFormBean implements Serializable {
             log.error(e.getMessage(), e);
         }
         return concepts;
+    }
+
+    public List<Concept> fetchChildrenOfConcept(Concept concept) {
+
+        UserInfo info = sessionSettingsBean.getUserInfo();
+
+        concepts = conceptService.findDirectSubConceptOf(info, concept);
+
+        return concepts;
+
+    }
+
+    public List<Concept> completeRecordingUnitSecondaryType(String input) {
+
+        // The main type needs to be set
+        if(fType == null) {
+            return new ArrayList<>();
+        }
+
+        UserInfo info = sessionSettingsBean.getUserInfo();
+
+        return fieldConfigurationService.fetchConceptChildrenAutocomplete(info, fType, input);
+
     }
 }

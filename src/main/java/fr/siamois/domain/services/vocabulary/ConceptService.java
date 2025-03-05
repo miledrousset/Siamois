@@ -71,6 +71,8 @@ public class ConceptService {
         return labelDTO;
     }
 
+
+
     public List<Concept> findDirectSubConceptOf(UserInfo userInfo, Concept concept) {
         ConceptBranchDTO branch = conceptApi.fetchDownExpansion(concept.getVocabulary(), concept.getExternalId());
         List<Concept> result = new ArrayList<>();
@@ -82,6 +84,8 @@ public class ConceptService {
                 .filter(dto -> concept.getExternalId().equalsIgnoreCase(dto.getIdentifier()[0].getValue()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No concept found for " + concept.getExternalId()));
+
+        if (parentConcept.getNarrower() == null) return result;
 
         List<FullConceptDTO> childs = Arrays.stream(parentConcept.getNarrower())
                 .filter((purlInfoDTO -> branch.getData().containsKey(purlInfoDTO.getValue())))

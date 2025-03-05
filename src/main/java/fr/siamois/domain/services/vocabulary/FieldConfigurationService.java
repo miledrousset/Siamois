@@ -128,6 +128,34 @@ public class FieldConfigurationService {
         return optConcept.get();
     }
 
+    public List<Concept> fetchConceptChildrenAutocomplete(UserInfo info, Concept concept, String input) {
+
+        List<Concept> candidates = conceptService.findDirectSubConceptOf(info, concept);
+
+        if (StringUtils.isEmpty(input)) return candidates;
+
+        List<Concept> result = new ArrayList<>();
+
+        input = input.toLowerCase();
+
+        for (Concept c : candidates) {
+            if (c.getLabel().toLowerCase().contains(input)) {
+                result.add(c);
+            }
+        }
+
+        if (result.isEmpty()) {
+            for (Concept c : candidates) {
+                double similarity = stringSimilarity(c.getLabel().toLowerCase(), input);
+                if (similarity >= SIMILARITY_CAP) {
+                    result.add(c);
+                }
+            }
+        }
+
+        return result;
+    }
+
     public List<Concept> fetchAutocomplete(UserInfo info, String fieldCode, String input) throws NoConfigForFieldException {
         Concept parentConcept = findConfigurationForFieldCode(info, fieldCode);
 

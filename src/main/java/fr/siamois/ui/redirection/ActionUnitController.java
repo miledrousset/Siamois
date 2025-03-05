@@ -18,7 +18,7 @@ public class ActionUnitController {
         this.actionUnitBean = actionUnitBean;
     }
 
-    @GetMapping("/actionunit/{id}")
+    @GetMapping("/action-unit/{id}")
     public String toActionUnit(@PathVariable Long id, Model model) {
         model.addAttribute("id", id);
         actionUnitBean.setId(id);
