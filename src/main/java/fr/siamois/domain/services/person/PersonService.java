@@ -80,10 +80,10 @@ public class PersonService {
         return personRepository.findById(id).orElse(null);
     }
 
-    public Person updatePerson(Person person) throws UserAlreadyExistException, InvalidNameException, InvalidPasswordException, InvalidUsernameException, InvalidEmailException {
+    public void updatePerson(Person person) throws UserAlreadyExistException, InvalidNameException, InvalidPasswordException, InvalidUsernameException, InvalidEmailException {
         checkPersonData(person);
 
-        return personRepository.save(person);
+        personRepository.save(person);
     }
 
     public boolean passwordMatch(Person person, String plainPassword) {
