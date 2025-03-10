@@ -8,7 +8,9 @@
 >
 
     <ui:define name="metadata">
-        <f:viewAction action="#{userSettingsBean.init()}"/>
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{userSettingsBean.init()}"/>
+        </f:metadata>
     </ui:define>
 
     <ui:define name="content">
@@ -49,12 +51,42 @@
             <div class="row">
                 <div class="card">
                     <div class="card-body">
+                        <h2>Gestion du mot de passe</h2>
+                        <h:form id="userPasswordForm">
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            <div class="form-group row">
+                                <label class="col-lg-4 col-form-label" for="old-pass">Ancien mot de passe</label>
+                                <div class="col-lg-6">
+                                    <p:inputText id="old-pass" value="#{userSettingsBean.oldPassword}" type="password"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-4 col-form-label" for="new-pass">Nouveau mot de passe</label>
+                                <div class="col-lg-6">
+                                    <p:inputText id="new-pass" value="#{userSettingsBean.newPassword}" type="password" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-4 col-form-label" for="confirm-pass">Confirmation du nouveau mot de passe</label>
+                                <div class="col-lg-6">
+                                    <p:inputText id="confirm-pass" value="#{userSettingsBean.confirmPassword}" type="password"/>
+                                </div>
+                            </div>
+
+                            <h:commandButton value="Changer le mot de passe" action="#{userSettingsBean.changePassword()}"/>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="card">
+                    <div class="card-body">
                         <h2>Configuration pour l'utilisateur</h2>
                         <h:form id="userFieldConfig">
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                             <p:outputLabel for="uri-user-field" value="URI vers le thesaurus."/>
-                            <p:inputText id="uri-user-field" value="#{fieldConfigBean.FUserUri}"/>
-                            <p:commandButton action="#{fieldConfigBean.saveConfig(false)}" value="Sauvegarder la configuration"/>
+                            <p:inputText id="uri-user-field" value="#{userSettingsBean.FUserUri}"/>
+                            <p:commandButton action="#{userSettingsBean.saveUserConfig()}" value="Sauvegarder la configuration"/>
                         </h:form>
                     </div>
                 </div>

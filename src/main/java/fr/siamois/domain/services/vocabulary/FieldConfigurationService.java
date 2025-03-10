@@ -248,4 +248,8 @@ public class FieldConfigurationService {
         return !fullConcept.getIdentifier()[0].getValue().equalsIgnoreCase(parentConcept.getExternalId());
     }
 
+    public boolean hasUserConfig(UserInfo info) {
+        return fieldRepository.hasUserConfig(info.getUser().getId(), info.getInstitution().getId());
+    }
+
 }

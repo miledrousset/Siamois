@@ -3,6 +3,7 @@ package fr.siamois.domain.services.person;
 import fr.siamois.domain.models.Team;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.*;
+import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import fr.siamois.infrastructure.repositories.auth.TeamRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service to manage Person
@@ -82,6 +84,28 @@ public class PersonService {
         checkPersonData(person);
 
         return personRepository.save(person);
+    }
+
+    public boolean passwordMatch(Person person, String plainPassword) {
+        return passwordEncoder.matches(plainPassword, person.getPassword());
+    }
+
+    private Optional<PasswordVerifier> findPasswordVerifier() {
+        for (PersonDataVerifier verifier : verifiers) {
+            if (verifier.getClass().equals(PasswordVerifier.class)) return Optional.of((PasswordVerifier) verifier);
+        }
+        return Optional.empty();
+    }
+
+    public void updatePassword(Person person, String newPassword) throws InvalidPasswordException {
+        PasswordVerifier verifier = findPasswordVerifier().orElseThrow(() -> new IllegalStateException("Password verifier is not defined"));
+
+        person.setPassword(newPassword);
+
+        verifier.verify(person);
+
+        person.setPassword(passwordEncoder.encode(newPassword));
+        personRepository.save(person);
     }
 
 }

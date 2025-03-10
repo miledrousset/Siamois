@@ -11,6 +11,7 @@ import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
+import fr.siamois.domain.utils.FieldConfigUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.converter.VocabularyConverter;
@@ -50,8 +51,6 @@ public class FieldConfigBean implements Serializable {
     // Fields
     private String fUri;
 
-    private String fUserUri;
-
     public FieldConfigBean(VocabularyService vocabularyService,
                            LangBean langBean,
                            FieldConfigurationService fieldConfigurationService,
@@ -80,7 +79,6 @@ public class FieldConfigBean implements Serializable {
                     config.getVocabulary().getExternalVocabularyId());
 
             fUri = uri;
-            fUserUri = uri;
 
         } catch (NoConfigForFieldException e) {
             log.trace("No config set for user {} of institution {}",
@@ -89,55 +87,16 @@ public class FieldConfigBean implements Serializable {
         }
     }
 
-    private static void displayErrorMessage(String message) {
-        displayMessage(FacesMessage.SEVERITY_ERROR, "Error", message);
-    }
-
-    private static void displayMessage(FacesMessage.Severity severity, String title, String message) {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, title, message));
-    }
-
-    private static void missingFieldCodes(GlobalFieldConfig wrongConfig) {
-        log.error("Error in config. Missing codes : {}", wrongConfig.missingFieldCode());
-        displayErrorMessage(String.format("The codes %s are not in the thesaurus", wrongConfig.missingFieldCode()));
-    }
-
-    public void saveConfig(boolean isForInstitution) {
-        log.trace("Save config called");
-        if (StringUtils.isEmpty(fUri) && StringUtils.isEmpty(fUserUri)) return;
-
-        try {
-            UserInfo info = sessionSettingsBean.getUserInfo();
-
-            String uri = fUserUri;
-            if (isForInstitution) uri = fUri;
-
-            Vocabulary dbVocabulary = vocabularyService.findVocabularyOfUri(info, uri);
-            Optional<GlobalFieldConfig> wrongConfig;
-
-            if (isForInstitution) {
-                wrongConfig = fieldConfigurationService.setupFieldConfigurationForInstitution(info, dbVocabulary);
-            } else {
-                wrongConfig = fieldConfigurationService.setupFieldConfigurationForUser(info, dbVocabulary);
-            }
-
-            if (wrongConfig.isEmpty()) {
-                displayMessage(FacesMessage.SEVERITY_INFO, "Info", "Configuration saved");
-                return;
-            }
-
-            if (!wrongConfig.get().missingFieldCode().isEmpty())
-                missingFieldCodes(wrongConfig.get());
-            displayErrorMessage("Error in thesaurus config");
-
-
-        } catch (NotSiamoisThesaurusException | InvalidEndpointException e) {
-            log.error(e.getMessage());
-            displayErrorMessage("Thesaurus is not valid");
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            displayErrorMessage("Error in thesaurus config");
-        }
+    public void saveInstitutionConfig() {
+        UserInfo info = sessionSettingsBean.getUserInfo();
+        FieldConfigUtils.saveConfig(
+                info,
+                vocabularyService,
+                fieldConfigurationService,
+                langBean,
+                fUri,
+                true
+        );
     }
 
 
