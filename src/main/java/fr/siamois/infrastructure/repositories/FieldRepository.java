@@ -47,4 +47,12 @@ public interface FieldRepository extends CrudRepository<Field, Long> {
                     "WHERE fk_institution_id = :institutionId AND field_code = :fieldCode AND fk_user_id = :userId"
     )
     int updateConfigForFieldOfUser(Long institutionId, Long userId, String fieldCode, Long conceptId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT COUNT(*) > 0 FROM concept_field_config cfc " +
+                    "WHERE cfc.fk_user_id = :personId AND " +
+                    "cfc.fk_institution_id = :institutionId"
+    )
+    boolean hasUserConfig(Long personId, Long institutionId);
 }

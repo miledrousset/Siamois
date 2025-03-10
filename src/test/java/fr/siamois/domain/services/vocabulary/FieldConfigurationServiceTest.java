@@ -400,4 +400,31 @@ class FieldConfigurationServiceTest {
         String url = service.getUrlForFieldCode(userInfo, "SIATEST");
         assertThat(url).isNull();
     }
+
+    @Test
+    void hasUserConfig_shouldReturnTrue_whenUserConfigExists() {
+        userInfo = new UserInfo(new Institution(), new Person(), "fr");
+        userInfo.getInstitution().setId(12L);
+        userInfo.getUser().setId(34L);
+
+        when(fieldRepository.hasUserConfig(34L, 12L)).thenReturn(true);
+
+        boolean result = service.hasUserConfig(userInfo);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void hasUserConfig_shouldReturnFalse_whenUserConfigDoesNotExist() {
+        userInfo = new UserInfo(new Institution(), new Person(), "fr");
+        userInfo.getInstitution().setId(12L);
+        userInfo.getUser().setId(34L);
+
+        when(fieldRepository.hasUserConfig(34L, 12L)).thenReturn(false);
+
+        boolean result = service.hasUserConfig(userInfo);
+
+        assertThat(result).isFalse();
+    }
+
 }

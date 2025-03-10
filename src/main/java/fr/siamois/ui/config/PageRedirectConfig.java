@@ -33,6 +33,9 @@ public class PageRedirectConfig implements WebMvcConfigurer {
         // Field configuration
         registry.addViewController("/fieldConfiguration").setViewName("forward:/pages/field/fieldConfiguration.xhtml");
 
+        // User settings
+        registry.addViewController("/user/config").setViewName("forward:/pages/usersettings/userSettings.xhtml");
+
         // Admin URI
         registry.addViewController("/admin/manager").setViewName("forward:/pages/admin/manager.xhtml");
         registry.addViewController("/admin/institution").setViewName("forward:/pages/admin/institution.xhtml");

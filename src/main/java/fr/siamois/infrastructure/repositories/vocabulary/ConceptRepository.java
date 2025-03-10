@@ -48,10 +48,9 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
 
     @Query(
             nativeQuery = true,
-            value = "SELECT c.* FROM concept c " +
-                    "JOIN person_role_institution pri ON pri.fk_role_concept_id = c.concept_id " +
-                    "WHERE pri.fk_person_id = :personId AND pri.fk_institution_id = :institutionId"
+            value = "SELECT COUNT(*) > 0 FROM concept_field_config cfc " +
+                    "WHERE cfc.fk_user_id = :personId AND cfc.fk_institution_id = :institutionId"
     )
-    Optional<Concept> findRoleOfPersonInInstitution(Long personId, Long institutionId);
+    boolean userConceptConfigExist(Long personId, Long institutionId);
 
 }

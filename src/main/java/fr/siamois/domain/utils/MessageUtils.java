@@ -29,6 +29,15 @@ public class MessageUtils {
             throw new IllegalArgumentException("Unknown severity: " + severity + ". Replaced by messageCode");
     }
 
+    public static void displayPlainMessage(LangBean langBean, FacesMessage.Severity severity, String plainMessage, Object... args) {
+        String title = plainMessage;
+        if (titlesCodes.containsKey(severity))
+            title = langBean.msg(titlesCodes.get(severity));
+
+        displayMessage(severity, title, String.format(plainMessage, args));
+
+    }
+
     public static void displayMessage(FacesMessage.Severity severity, String title, String msgCode) {
         FacesMessage facesMessage = new FacesMessage(severity, title, msgCode);
         FacesContext.getCurrentInstance().addMessage(null, facesMessage);

@@ -38,6 +38,7 @@ class UsernameVerifierTest {
     @Test
     void verify_shouldThrowUserAlreadyExist_whenUsernameAlreadyExists() {
         Person person = new Person();
+        person.setId(-1L);
         person.setUsername("existingUser");
 
         when(personRepository.findByUsernameIgnoreCase("existingUser")).thenReturn(Optional.of(new Person()));

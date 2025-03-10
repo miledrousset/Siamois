@@ -33,7 +33,7 @@ public class Institution implements Serializable {
     @Column(name = "identifier", nullable = false, length = Integer.MAX_VALUE)
     private String identifier;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private InstitutionSettings settings;
 
 }

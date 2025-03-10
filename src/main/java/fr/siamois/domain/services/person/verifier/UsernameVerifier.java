@@ -27,12 +27,14 @@ public class UsernameVerifier implements PersonDataVerifier{
 
         usernameHasValidLength(username);
         usernameHasValidChars(username);
-        usernameDoesNotExist(username);
+        usernameDoesNotExist(person.getId(), username);
     }
 
-    private void usernameDoesNotExist(String username) throws UserAlreadyExistException {
-        Optional<Person> optPerson = personRepository.findByUsernameIgnoreCase(username);
-        if (optPerson.isPresent()) throw new UserAlreadyExistException("Username already exists.");
+    private void usernameDoesNotExist(Long id, String username) throws UserAlreadyExistException {
+        if (id == null || id < 0) {
+            Optional<Person> optPerson = personRepository.findByUsernameIgnoreCase(username);
+            if (optPerson.isPresent()) throw new UserAlreadyExistException("Username already exists.");
+        }
     }
 
     private static void usernameHasValidLength(String username) throws InvalidUsernameException {

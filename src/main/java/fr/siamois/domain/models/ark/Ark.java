@@ -25,7 +25,7 @@ public class Ark implements Serializable {
 
     public String getArkId() {
         String finalQualifier = qualifier;
-        if (creatingInstitution.getSettings().getArkIsUppercase()) {
+        if (Boolean.TRUE.equals(creatingInstitution.getSettings().getArkIsUppercase())) {
             finalQualifier = finalQualifier.toUpperCase();
         }
         return String.format("ark:/%s/%s", creatingInstitution.getSettings().getArkNaan(), finalQualifier);
