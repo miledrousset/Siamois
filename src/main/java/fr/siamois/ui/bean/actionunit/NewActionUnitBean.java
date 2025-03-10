@@ -69,8 +69,8 @@ public class NewActionUnitBean implements Serializable {
         try {
             Person author = sessionSettingsBean.getAuthenticatedUser();
             actionUnit.setAuthor(author);
-            actionUnit.setBeginDate(OffsetDateTime.now()); // todo : implement
-            actionUnit.setEndDate(OffsetDateTime.now());  // todo : implement
+            actionUnit.setBeginDate(OffsetDateTime.now());
+            actionUnit.setEndDate(OffsetDateTime.now());
 
             this.actionUnit = actionUnitService.save(sessionSettingsBean.getUserInfo() ,actionUnit, fieldType);
 
@@ -85,7 +85,6 @@ public class NewActionUnitBean implements Serializable {
                             langBean.msg("actionunit.creationfailed", this.actionUnit.getName())));
 
             log.error("Error while saving: {}", e.getMessage());
-            // todo : add error message
             return false;
         }
     }
@@ -108,6 +107,10 @@ public class NewActionUnitBean implements Serializable {
 
     public void generateRandomActionUnitIdentifier() {
         actionUnit.setIdentifier("2025");
+    }
+
+    public String getUrlForActionUnitTypeFieldCode() {
+        return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), ActionUnit.TYPE_FIELD_CODE);
     }
 
     @PostConstruct

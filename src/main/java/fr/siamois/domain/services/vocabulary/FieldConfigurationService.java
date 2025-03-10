@@ -133,6 +133,18 @@ public class FieldConfigurationService {
         return optConcept.get();
     }
 
+    public String getUrlOfConcept(Concept c) {
+        return c.getVocabulary().getBaseUri()+"/?idc="+c.getExternalId()+"&idt="+c.getVocabulary().getExternalVocabularyId();
+    }
+
+    public String getUrlForFieldCode(UserInfo info, String fieldCode) {
+        try {
+            return getUrlOfConcept(findConfigurationForFieldCode(info, fieldCode));
+        } catch(NoConfigForFieldException e) {
+            return null;
+        }
+    }
+
     public List<Concept> fetchConceptChildrenAutocomplete(UserInfo info, Concept concept, String input) {
 
         List<Concept> candidates = conceptService.findDirectSubConceptOf(info, concept);
