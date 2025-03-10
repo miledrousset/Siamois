@@ -211,8 +211,15 @@
                                 <div class="dropdown-content-body">
                                     <ul>
                                         <li>
-                                            <a href="#{request.contextPath}/dashboard"><i class="icon-user"/>
-                                                <span>Profil</span></a>
+                                            <h:form id="user_settings_form">
+                                                <input type="hidden" name="${_csrf.parameterName}"
+                                                       value="${_csrf.token}"/>
+                                                <h:commandLink action="#{flowBean.goToUserSettingsNewPanel()}">
+                                                    <i class="icon-settings"/>
+                                                    <span>Paramètres</span>
+                                                </h:commandLink>
+                                            </h:form>
+
                                         </li>
 
                                         <li>

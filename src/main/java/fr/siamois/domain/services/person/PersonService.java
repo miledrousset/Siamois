@@ -44,6 +44,8 @@ public class PersonService {
     }
 
     public Person createPerson(Person person) throws InvalidUsernameException, InvalidEmailException, UserAlreadyExistException, InvalidPasswordException, InvalidNameException {
+        person.setId(-1L);
+
         checkPersonData(person);
 
         person.setPassword(passwordEncoder.encode(person.getPassword()));
@@ -74,6 +76,12 @@ public class PersonService {
      */
     public Person findById(long id) {
         return personRepository.findById(id).orElse(null);
+    }
+
+    public Person updatePerson(Person person) throws UserAlreadyExistException, InvalidNameException, InvalidPasswordException, InvalidUsernameException, InvalidEmailException {
+        checkPersonData(person);
+
+        return personRepository.save(person);
     }
 
 }

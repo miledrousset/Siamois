@@ -1,0 +1,62 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             xmlns:f="http://xmlns.jcp.org/jsf/core"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:h="http://xmlns.jcp.org/jsf/html"
+>
+
+    <ui:define name="metadata">
+        <f:viewAction action="#{userSettingsBean.init()}"/>
+    </ui:define>
+
+    <h:panelGroup id="contentPanel" >
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    <h2>Paramètres du profil de #{userSettingsBean.username}</h2>
+                    <h:form id="userSettingsForm">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <p:messages id="messages" showDetail="true" closable="true">
+                            <p:autoUpdate/>
+                        </p:messages>
+                        <div class="form-group row">
+                            <label class="col-lg-4 col-form-label" for="first-name">Prénom</label>
+                            <div class="col-lg-6">
+                                <p:inputText id="first-name" value="#{userSettingsBean.firstName}" maxlength="#{userSettingsBean.nameMaxLength}"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-4 col-form-label" for="last-name">Nom de famille</label>
+                            <div class="col-lg-6">
+                                <p:inputText id="last-name" value="#{userSettingsBean.lastName}" maxlength="#{userSettingsBean.nameMaxLength}"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-4 col-form-label" for="email">Email</label>
+                            <div class="col-lg-6">
+                                <p:inputText id="email" value="#{userSettingsBean.email}" maxlength="#{userSettingsBean.emailMaxLength}"/>
+                            </div>
+                        </div>
+
+                        <h:commandButton value="Modifier le profil" action="#{userSettingsBean.updateSettings()}"/>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    <h2>Configuration pour l'utilisateur</h2>
+                    <h:form id="userFieldConfig">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <p:outputLabel for="uri-user-field" value="URI vers le thesaurus."/>
+                        <p:inputText id="uri-user-field" value="#{fieldConfigBean.FUserUri}"/>
+                        <p:commandButton action="#{fieldConfigBean.saveConfig(false)}" value="Sauvegarder la configuration"/>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </h:panelGroup>
+
+</ui:fragment>

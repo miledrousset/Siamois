@@ -7,6 +7,7 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel;
 import fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.UserSettingsPanel;
 import fr.siamois.ui.bean.panel.utils.SpatialUnitHelperService;
 import org.springframework.stereotype.Component;
 
@@ -52,4 +53,9 @@ public class PanelFactory {
                 spatialUnitService,
                 sessionSettings);
     }
+
+    public UserSettingsPanel createUserSettingsPanel() {
+        return new UserSettingsPanel();
+    }
+
 }

@@ -103,7 +103,8 @@ public class FieldConfigBean implements Serializable {
     }
 
     public void saveConfig(boolean isForInstitution) {
-        if (StringUtils.isEmpty(fUri)) return;
+        log.trace("Save config called");
+        if (StringUtils.isEmpty(fUri) && StringUtils.isEmpty(fUserUri)) return;
 
         try {
             UserInfo info = sessionSettingsBean.getUserInfo();

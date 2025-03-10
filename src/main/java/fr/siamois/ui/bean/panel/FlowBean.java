@@ -15,6 +15,7 @@ import fr.siamois.ui.bean.breadcrumb.BreadcrumbBean;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
 import fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel;
 import fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.UserSettingsPanel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -116,6 +117,11 @@ public class FlowBean implements Serializable {
             panels.set(index,newPanel);
         }
 
+    }
+
+    public void goToUserSettingsNewPanel() {
+        UserSettingsPanel newPanel = panelFactory.createUserSettingsPanel();
+        panels.add(0, newPanel);
     }
 
     public void fullScreen(AbstractPanel panel) {

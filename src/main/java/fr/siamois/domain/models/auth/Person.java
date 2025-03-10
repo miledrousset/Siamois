@@ -112,7 +112,7 @@ public class Person implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SystemRole> roles = new ArrayList<>();
-        if (this.isSuperAdmin)
+        if (Boolean.FALSE.equals(this.isSuperAdmin))
             roles.add(new SystemRole("SUPER_ADMIN"));
         return roles;
     }
@@ -145,4 +145,5 @@ public class Person implements UserDetails {
     public String displayName() {
         return name+" "+lastname;
     }
+
 }
