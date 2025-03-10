@@ -1,9 +1,9 @@
-package fr.siamois.domain.services;
+package fr.siamois.domain.services.person;
 
 import fr.siamois.domain.models.Team;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.*;
-import fr.siamois.domain.services.auth.verifier.PersonDataVerifier;
+import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;
 import fr.siamois.infrastructure.repositories.auth.TeamRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

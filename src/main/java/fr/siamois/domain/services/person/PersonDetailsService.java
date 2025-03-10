@@ -1,4 +1,4 @@
-package fr.siamois.domain.services.auth;
+package fr.siamois.domain.services.person;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.infrastructure.repositories.auth.PersonRepository;

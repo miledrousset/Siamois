@@ -5,7 +5,7 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.services.InstitutionService;
-import fr.siamois.domain.services.PersonService;
+import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.utils.CodeUtils;
 import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;

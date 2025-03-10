@@ -1,4 +1,4 @@
-package fr.siamois.domain.services.auth.verifier;
+package fr.siamois.domain.services.person.verifier;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.InvalidPasswordException;
