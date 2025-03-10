@@ -71,17 +71,17 @@ public class UserSettingsBean {
 
         try {
             personService.updatePerson(person);
-            MessageUtils.displayMessage(FacesMessage.SEVERITY_INFO, "Info", "Person updated successfully");
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_INFO, "Person updated successfully");
         } catch (UserAlreadyExistException e) {
-            MessageUtils.displayErrorMessage(langBean, "Username already exist.");
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Username already exist.");
         } catch (InvalidNameException e) {
-            MessageUtils.displayErrorMessage(langBean, "Invalid name.");
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Invalid name.");
         } catch (InvalidPasswordException e) {
-            MessageUtils.displayErrorMessage(langBean, "Invalid password.");
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Invalid password.");
         } catch (InvalidUsernameException e) {
-            MessageUtils.displayErrorMessage(langBean, "Invalid username.");
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Invalid username.");
         } catch (InvalidEmailException e) {
-            MessageUtils.displayErrorMessage(langBean, "Invalid email.");
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Invalid email.");
         }
 
     }

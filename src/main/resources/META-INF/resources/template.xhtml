@@ -214,7 +214,7 @@
                                             <h:form id="user_settings_form">
                                                 <input type="hidden" name="${_csrf.parameterName}"
                                                        value="${_csrf.token}"/>
-                                                <h:commandLink action="#{flowBean.goToUserSettingsNewPanel()}">
+                                                <h:commandLink action="#{redirectBean.redirectTo('/user/config')}">
                                                     <i class="icon-settings"/>
                                                     <span>Paramètres</span>
                                                 </h:commandLink>
