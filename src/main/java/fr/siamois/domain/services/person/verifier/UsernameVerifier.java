@@ -31,7 +31,7 @@ public class UsernameVerifier implements PersonDataVerifier{
     }
 
     private void usernameDoesNotExist(Long id, String username) throws UserAlreadyExistException {
-        if (id != null && id < 0) {
+        if (id == null || id < 0) {
             Optional<Person> optPerson = personRepository.findByUsernameIgnoreCase(username);
             if (optPerson.isPresent()) throw new UserAlreadyExistException("Username already exists.");
         }
