@@ -121,6 +121,17 @@ public class SpatialUnitFieldBean implements Serializable {
         }
     }
 
+    public String getUrlForSpatialUnitTypeFieldCode() {
+        try {
+            Concept c = fieldConfigurationService.findConfigurationForFieldCode(sessionSettingsBean.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE);
+            return c.getVocabulary().getBaseUri()+"/?idc="+c.getExternalId()+"&idt="+c.getVocabulary().getExternalVocabularyId();
+        } catch(NoConfigForFieldException e) {
+            return null;
+        }
+
+    }
+
+
     /**
      * Fetch the autocomplete results on API for the category field and add them to the list of concepts.
      * @param input the input of the user

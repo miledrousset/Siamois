@@ -45,7 +45,7 @@
                     </div>
                 </p:outputPanel>
             </h:form>
-            <p:tabView>
+            <p:tabView dynamic="true">
                 <p:tab title="Aperçu">
                     <p:chart value="#{spatialUnitBean.barModel}" style="width: 100%; height: 500px;">
 
@@ -221,7 +221,6 @@
         <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
             <h:outputText value="Version restaurée"/>
         </p:dialog>
-        <ui:include src="../../dialog/actionUnit/actionUnitDialog.xhtml"/>
-        <ui:include src="../../dialog/spatialUnit/newSpatialUnitDialog.xhtml"/>
+
     </ui:define>
 </ui:composition>
