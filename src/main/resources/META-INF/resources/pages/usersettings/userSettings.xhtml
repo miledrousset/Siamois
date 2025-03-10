@@ -84,8 +84,12 @@
                         <h2>Configuration pour l'utilisateur</h2>
                         <h:form id="userFieldConfig">
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                            <p:outputLabel for="uri-user-field" value="URI vers le thesaurus."/>
-                            <p:inputText id="uri-user-field" value="#{userSettingsBean.FUserUri}"/>
+                            <div class="form-group row">
+                                <label class="col-lg-4 col-form-label" for="old-pass">URI permanent vers le thesaurus</label>
+                                <div class="col-lg-6">
+                                    <p:inputText id="uri-user-field" value="#{userSettingsBean.FUserUri}"/>
+                                </div>
+                            </div>
                             <p:commandButton action="#{userSettingsBean.saveUserConfig()}" value="Sauvegarder la configuration"/>
                         </h:form>
                     </div>
