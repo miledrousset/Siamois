@@ -59,6 +59,7 @@ class FieldConfigurationServiceTest {
         vocabulary.setVocabularyName("Vocabulary name");
         vocabulary.setBaseUri("http://localhost");
         vocabulary.setLastLang("fr");
+        vocabulary.setExternalVocabularyId("1313");
 
         userInfo = new UserInfo(new Institution(), new Person(), "fr");
         userInfo.getInstitution().setId(12L);
@@ -350,5 +351,53 @@ class FieldConfigurationServiceTest {
         List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "Sie");
 
         assertThat(result).isNotEmpty().allMatch(match -> match.getLabel().equals("Sites"));
+    }
+
+    @Test
+    void getUrlOfConcept_success() {
+
+        Concept concept = new Concept();
+        concept.setVocabulary(vocabulary);
+        concept.setExternalId("200");
+
+        String url = service.getUrlOfConcept(concept);
+        assertThat(url).isEqualTo("http://localhost/?idc=200&idt=1313");
+    }
+
+    @Test
+    void getUrlForFieldCode_success() {
+
+        Concept concept = new Concept();
+        concept.setId(-1L);
+        concept.setLabel("Parent config concept");
+        concept.setVocabulary(vocabulary);
+        concept.setExternalId("1212");
+        concept.setLangCode("fr");
+
+        when(conceptRepository.findTopTermConfigForFieldCodeOfInstitution(anyLong(), anyString()))
+                .thenReturn(Optional.of(concept));
+
+        String url = service.getUrlForFieldCode(userInfo, "SIATEST");
+        assertThat(url).isEqualTo("http://localhost/?idc=1212&idt=1313");
+    }
+
+    @Test
+    void getUrlForFieldCode_noConfigForField() {
+
+        Concept concept = new Concept();
+        concept.setId(-1L);
+        concept.setLabel("Parent config concept");
+        concept.setVocabulary(vocabulary);
+        concept.setExternalId("1212");
+        concept.setLangCode("fr");
+
+
+        when(conceptRepository.findTopTermConfigForFieldCodeOfUser(anyLong(), anyLong(), anyString()))
+                .thenReturn(Optional.empty());
+        when(conceptRepository.findTopTermConfigForFieldCodeOfInstitution(anyLong(), anyString()))
+                .thenReturn(Optional.empty());
+
+        String url = service.getUrlForFieldCode(userInfo, "SIATEST");
+        assertThat(url).isNull();
     }
 }
