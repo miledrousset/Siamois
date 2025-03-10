@@ -75,7 +75,7 @@ public class SpatialUnitFieldBean implements Serializable {
      * Reset all fields.
      */
     public void init() {
-        init(new ArrayList<>(),new ArrayList<>());
+        init(new ArrayList<>(), new ArrayList<>());
         refSpatialUnits = spatialUnitService.findAllOfInstitution(sessionSettingsBean.getSelectedInstitution());
         labels = refSpatialUnits.stream()
                 .map(SpatialUnit::getName)
@@ -102,6 +102,7 @@ public class SpatialUnitFieldBean implements Serializable {
      * Save the spatial unit in the database.
      * Display a message if the spatial unit already exists.
      * Display a message if the spatial unit has been created.
+     *
      * @throws IllegalStateException if the collections are not defined
      */
     public boolean save() {
@@ -122,18 +123,13 @@ public class SpatialUnitFieldBean implements Serializable {
     }
 
     public String getUrlForSpatialUnitTypeFieldCode() {
-        try {
-            Concept c = fieldConfigurationService.findConfigurationForFieldCode(sessionSettingsBean.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE);
-            return c.getVocabulary().getBaseUri()+"/?idc="+c.getExternalId()+"&idt="+c.getVocabulary().getExternalVocabularyId();
-        } catch(NoConfigForFieldException e) {
-            return null;
-        }
-
+        return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE);
     }
 
 
     /**
      * Fetch the autocomplete results on API for the category field and add them to the list of concepts.
+     *
      * @param input the input of the user
      * @return the list of concepts that match the input to display in the autocomplete
      */

@@ -3,6 +3,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
                 xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label">
 
     <p:staticMessage severity="error" summary="Error" closable="false"
@@ -33,55 +34,32 @@
                 <!-- UE Type -->
                 <div class="field col-md-3">
                     <sharedLabel:openthesoLabel label="Type d'UE" forId="auto-complete-recording-type"/>
-                    <p:autoComplete id="auto-complete-recording-type"
-                                    value="#{newRecordingUnitFormBean.FType}"
-                                    completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitType}"
-                                    var="field" itemLabel="#{field.label}"
-                                    itemValue="#{field}"
-                                    required="true"
-                                    converter="#{conceptConverter}"
-                                    forceSelection="true"
-                                    scrollHeight="300"
-                                    dropdown="true">
-                        <!-- We need to update on select to synchronise secondary type choices -->
-                        <p:ajax event="itemSelect" listener="#{newRecordingUnitFormBean.handleSelectType}" update="@form"/>
-                    </p:autoComplete>
+                    <sharedInput:conceptAutocomplete
+                            selectedConcept="#{newRecordingUnitFormBean.FType}"
+                            completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitType}"
+                            itemSelectListener="#{newRecordingUnitFormBean.handleSelectType}"
+                            editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingTypeFieldCode()}" />
+
                 </div>
                 <!-- UE Secondary Type -->
                 <div class="field col-md-3">
                     <sharedLabel:openthesoLabel forId="select-one-menu-ue-secondary-type" label="Sous type d'ue"/>
-                    <p:autoComplete id="auto-complete-recording-secondary-type"
-                                    value="#{newRecordingUnitFormBean.FSecondaryType}"
-                                    completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitSecondaryType}"
-                                    var="field" itemLabel="#{field.label}"
-                                    itemValue="#{field}"
-                                    disabled="#{!newRecordingUnitFormBean.hasSecondaryTypeOptions}"
-                                    required="false"
-                                    converter="#{conceptConverter}"
-                                    forceSelection="true"
-                                    scrollHeight="300"
-                                    dropdown="true">
-                        <!-- We need to update on select to synchronise third type choices -->
-                        <p:ajax event="itemSelect" listener="#{newRecordingUnitFormBean.handleSelectSecondaryType}" update="@form"/>
-                    </p:autoComplete>
-
+                    <sharedInput:conceptAutocomplete
+                            selectedConcept="#{newRecordingUnitFormBean.FSecondaryType}"
+                            completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitSecondaryType}"
+                            disabled="#{!newRecordingUnitFormBean.hasSecondaryTypeOptions}"
+                            itemSelectListener="#{newRecordingUnitFormBean.handleSelectSecondaryType}"
+                            editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingSecondaryType()}" />
                 </div>
 
                 <!-- Interpretation -->
                 <div class="field col-md-3">
                     <sharedLabel:openthesoLabel forId="select-one-menu-ue-interpretation" label="Interpretation"/>
-                    <p:autoComplete id="auto-complete-recording-third-type"
-                                    value="#{newRecordingUnitFormBean.FThirdType}"
-                                    completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitThirdType}"
-                                    var="field" itemLabel="#{field.label}"
-                                    itemValue="#{field}"
-                                    disabled="#{!newRecordingUnitFormBean.hasThirdTypeOptions}"
-                                    required="false"
-                                    converter="#{conceptConverter}"
-                                    forceSelection="true"
-                                    scrollHeight="300"
-                                    dropdown="true">
-                    </p:autoComplete>
+                    <sharedInput:conceptAutocomplete
+                            disabled="#{!newRecordingUnitFormBean.hasThirdTypeOptions}"
+                            selectedConcept="#{newRecordingUnitFormBean.FThirdType}"
+                            completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitThirdType}"
+                            editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingThirdType()}" />
                 </div>
             </div>
 

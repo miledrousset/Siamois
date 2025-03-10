@@ -1,6 +1,7 @@
 package fr.siamois.ui.bean.recordingunit;
 
 import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.recordingunit.RecordingUnitNotFoundException;
@@ -419,6 +420,18 @@ public class NewRecordingUnitFormBean implements Serializable {
 
         return fieldConfigurationService.fetchConceptChildrenAutocomplete(info, fType, input);
 
+    }
+
+    public String getUrlForRecordingTypeFieldCode() {
+        return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), RecordingUnit.TYPE_FIELD_CODE);
+    }
+
+    public String getUrlForRecordingSecondaryType() {
+        return fieldConfigurationService.getUrlOfConcept(fType);
+    }
+
+    public String getUrlForRecordingThirdType() {
+        return fieldConfigurationService.getUrlOfConcept(fSecondaryType);
     }
 
     public List<Concept> completeRecordingUnitThirdType(String input) {

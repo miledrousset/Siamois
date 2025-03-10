@@ -82,6 +82,10 @@ public class ActionUnitBean implements Serializable {
 
     }
 
+    public String getUrlForActionCodeTypeFieldCode() {
+        return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), ActionCode.TYPE_FIELD_CODE);
+    }
+
     /**
      * Fetch the autocomplete results on API for the action code type field
      *

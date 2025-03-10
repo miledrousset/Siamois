@@ -8,8 +8,10 @@
     <cc:interface>
 
         <cc:attribute name="completeMethod" required="true" method-signature="java.util.List &lt;java.lang.String&gt;(java.lang.String)" />
+        <cc:attribute name="itemSelectListener" required="false" method-signature="void &lt;java.lang.String&gt;(org.primefaces.event.SelectEvent)" />
         <cc:attribute name="selectedConcept" type="fr.siamois.domain.models.vocabulary.Concept" required="true"/>
         <cc:attribute name="editConceptUrl" required="true"/>
+        <cc:attribute name="disabled" required="false" default="false"/>
 
 
     </cc:interface>
@@ -19,14 +21,23 @@
                         completeMethod="#{cc.attrs.completeMethod}"
                         var="field" itemLabel="#{field.label}"
                         itemValue="#{field}"
+                        disabled="#{cc.attrs.disabled}"
                         required="true"
                         converter="#{conceptConverter}"
                         forceSelection="true"
                         scrollHeight="300"
                         dropdown="true">
+
+            <!-- If defined, we need to update on select to synchronise secondary type choices -->
+            <p:ajax event="itemSelect"
+                    listener="#{cc.attrs.itemSelectListener}"
+                    disabled="#{empty cc.attrs.itemSelectListener}"
+                    update="@form"/>
+
             <f:facet name="footer">
                 <div class="ui-fluid" style="padding:0.5rem 1rem 1rem 1rem">
                     <h:outputLink value="#{cc.attrs.editConceptUrl}" target="_blank"
+                                  disabled="#{empty cc.attrs.editConceptUrl}"
                                   styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
                         <span class="ui-button-text">Edit concept in OpenTheso</span>
                     </h:outputLink>
