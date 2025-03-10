@@ -16,6 +16,11 @@ server:
 siamois:
   lang:
     default: en
+  admin:
+    username: ${SIAMOIS_ADMIN_LOGIN}
+    password: ${SIAMOIS_ADMIN_PASSWORD}
+  documents:
+    folder-path: ${SIAMOIS_DOCUMENTS_PATH}
 
 spring:
   main:
