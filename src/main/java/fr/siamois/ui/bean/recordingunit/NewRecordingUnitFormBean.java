@@ -7,6 +7,9 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.recordingunit.RecordingUnitNotFoundException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.form.Form;
+import fr.siamois.domain.models.form.FormQuestion;
+import fr.siamois.domain.models.form.question.Question;
+import fr.siamois.domain.models.form.question.QuestionSelectMultiple;
 import fr.siamois.domain.models.history.RecordingUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.recordingunit.RecordingUnitAltimetry;
@@ -25,6 +28,7 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import jakarta.faces.application.FacesMessage;
+import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -89,6 +93,7 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     // Form
     private Form additionalForm;
+    private List<FormQuestion> additionalFormQuestions;
 
     // Stratigraphy
     private transient List<Event> events; // Strati
@@ -333,6 +338,7 @@ public class NewRecordingUnitFormBean implements Serializable {
 
             additionalForm = formService.findById(1);
 
+
             initStratigraphy();
 
 
@@ -342,6 +348,29 @@ public class NewRecordingUnitFormBean implements Serializable {
         } catch (RuntimeException err) {
             recordingUnitErrorMessage = "Error initializing the form";
         }
+    }
+
+    public List<Concept> suggestValues(String query) {
+        List<Concept> suggestions = new ArrayList<>();
+
+        // Might be better to only pass question index
+        FacesContext context = FacesContext.getCurrentInstance();
+        Question question = (Question) UIComponent.getCurrentComponent(context).getAttributes().get("question");
+
+        // Check if the question is an instance of QuestionSelectMultiple
+        if (question instanceof QuestionSelectMultiple) {
+            QuestionSelectMultiple selectMultipleQuestion = (QuestionSelectMultiple) question;
+            List<Concept> allOptions = selectMultipleQuestion.getConcepts();
+
+            // Filter the options based on user input (query)
+            for (Concept value : allOptions) {
+                if (value.getLabel().toLowerCase().contains(query.toLowerCase())) {
+                    suggestions.add(value);
+                }
+            }
+        }
+
+        return suggestions;
     }
 
     public void initStratiDialog(int type) {

@@ -20,4 +20,5 @@ public class QuestionInteger extends Question {
     @Column(name = "options", columnDefinition = "jsonb")
     private IntegerOptions options;
 
+
 }

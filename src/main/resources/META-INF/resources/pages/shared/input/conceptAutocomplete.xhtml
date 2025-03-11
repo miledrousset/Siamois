@@ -34,6 +34,18 @@
                     disabled="#{empty cc.attrs.itemSelectListener}"
                     update="@form"/>
 
+            <p:column>
+                <p:commandButton icon="fa fa-external-link" styleClass="btn btn-primary"
+                                 onclick="event.stopPropagation(); window.open('#{field.vocabulary.baseUri}/?idc=#{field.externalId}&amp;idt=#{field.vocabulary.externalVocabularyId}', '_blank'); return false;" />
+            </p:column>
+            <p:column>
+                <div style="display:flex; flex-direction: column">
+                    <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{field.label}"/>
+                    <small>#{field.vocabulary.baseUri} - #{field.vocabulary.vocabularyName}</small>
+                </div>
+
+            </p:column>
+
             <f:facet name="footer">
                 <div class="ui-fluid" style="padding:0.5rem 1rem 1rem 1rem">
                     <h:outputLink value="#{cc.attrs.editConceptUrl}" target="_blank"

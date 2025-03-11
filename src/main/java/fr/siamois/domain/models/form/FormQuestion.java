@@ -12,17 +12,5 @@ public class FormQuestion {
     @EmbeddedId
     private FormQuestionId id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("formId")
-    @JoinColumn(name = "form_id", nullable = false)
-    private Form form;
-
-    @ManyToOne
-    @MapsId("questionId")
-    @JoinColumn(name = "question_id", nullable = false)
-    private Question question;
-
-    @Column(insertable=false, updatable=false)
-    private int position; // The position of the question in the form
 
 }

@@ -1,5 +1,6 @@
 package fr.siamois.domain.models.form;
 
+import fr.siamois.domain.models.form.question.Question;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -22,8 +23,9 @@ public class Form {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "form", fetch = FetchType.EAGER)
-    @OrderBy("position ASC") // This ensures the questions are ordered by position
+    @OneToMany(mappedBy = "id.form", fetch = FetchType.EAGER)
+    @OrderBy("id.position ASC") // This ensures the questions are ordered by position
     private List<FormQuestion> questions = new ArrayList<>();
+
 
 }

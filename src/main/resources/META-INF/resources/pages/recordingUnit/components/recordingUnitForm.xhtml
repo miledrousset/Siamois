@@ -38,7 +38,7 @@
                             selectedConcept="#{newRecordingUnitFormBean.FType}"
                             completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitType}"
                             itemSelectListener="#{newRecordingUnitFormBean.handleSelectType}"
-                            editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingTypeFieldCode()}" />
+                            editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingTypeFieldCode()}"/>
 
                 </div>
                 <!-- UE Secondary Type -->
@@ -49,7 +49,7 @@
                             completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitSecondaryType}"
                             disabled="#{!newRecordingUnitFormBean.hasSecondaryTypeOptions}"
                             itemSelectListener="#{newRecordingUnitFormBean.handleSelectSecondaryType}"
-                            editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingSecondaryType()}" />
+                            editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingSecondaryType()}"/>
                 </div>
 
                 <!-- Interpretation -->
@@ -59,7 +59,7 @@
                             disabled="#{!newRecordingUnitFormBean.hasThirdTypeOptions}"
                             selectedConcept="#{newRecordingUnitFormBean.FThirdType}"
                             completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitThirdType}"
-                            editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingThirdType()}" />
+                            editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingThirdType()}"/>
                 </div>
             </div>
 
@@ -247,6 +247,57 @@
                             </p:panel>
                         </div>
                     </div>
+
+                    <!-- Iterate on the custom form questions -->
+                    <p:panel header='Formulaire personalisé'
+                             toggleable="true">
+                        <ui:repeat value="#{newRecordingUnitFormBean.additionalForm.questions}" var="question">
+
+
+                            <!-- Afficher le label de la question -->
+                            <h:outputLabel value="#{question.id.question.label}"/>
+
+                            <!-- Affichage dynamique du champ de réponse en fonction du type de la question -->
+                            <h:panelGroup id="inputField">
+                                <!-- Si la question est de type INTEGER -->
+                                <h:inputText value="#{2}"
+                                             type="number"
+                                             rendered="#{question.id.question['class'].simpleName eq 'QuestionInteger'}"/>
+
+                                <!-- Si la question est de type SELECT_MULTIPLE -->
+                                <!-- Use autoComplete component for the multi-select field -->
+                                <p:autoComplete value="#{question.id.question.concepts}"
+                                                multiple="true"
+                                                completeMethod="#{newRecordingUnitFormBean.suggestValues}"
+                                                var="option" itemLabel="#{option.label}"
+                                                itemValue="#{option}"
+                                                required="true"
+                                                converter="#{conceptConverter}"
+                                                forceSelection="true"
+                                                scrollHeight="300"
+                                                dropdown="true">
+
+
+                                    <p:column>
+                                        <p:commandButton icon="fa fa-external-link" styleClass="btn btn-primary"
+                                                         onclick="event.stopPropagation(); window.open('#{option.vocabulary.baseUri}/?idc=#{option.externalId}&amp;idt=#{option.vocabulary.externalVocabularyId}', '_blank'); return false;" />
+                                    </p:column>
+                                    <p:column>
+                                        <div style="display:flex; flex-direction: column">
+                                            <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{option.label}"/>
+                                            <small>#{option.vocabulary.baseUri} - #{option.vocabulary.vocabularyName}</small>
+                                        </div>
+
+                                    </p:column>
+
+                                    <!-- Pass the specific question as a parameter to the complete method -->
+                                    <f:attribute name="question" value="#{question.id.question}" />
+                                </p:autoComplete>
+                            </h:panelGroup>
+
+                        </ui:repeat>
+                    </p:panel>
+
 
                 </p:tab>
 
