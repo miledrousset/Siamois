@@ -17,6 +17,7 @@ import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
@@ -29,6 +30,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.model.file.UploadedFile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MimeType;
 import software.xdev.chartjs.model.charts.BarChart;
 import software.xdev.chartjs.model.color.RGBAColor;
 import software.xdev.chartjs.model.data.BarData;
@@ -121,11 +123,6 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
         this.actionUnitList = null;
         this.spatialUnitParentsList = null;
         this.spatialUnitParentsListErrorMessage = null;
-    }
-
-    public void goToSpatialUnitById(Long id) {
-        log.trace("go to spatial unit");
-        redirectBean.redirectTo("/spatialunit/" + id);
     }
 
 
@@ -284,6 +281,11 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
 
     public List<Concept> autocompleteType(String input) {
         return autocomplete(parentType, input);
+    }
+
+    public String regexSupportedTypes() {
+        List<MimeType> supported = documentService.supportedMimeTypes();
+        return DocumentUtils.allowedTypesRegex(supported);
     }
 
 }

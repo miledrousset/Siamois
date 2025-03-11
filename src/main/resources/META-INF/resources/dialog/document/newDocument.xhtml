@@ -58,7 +58,12 @@
                 <div class="form-group row">
                     <label class="col-lg-4 col-form-label" for="file">Fichier</label>
                     <div class="col-lg-6">
-                        <p:fileUpload id="file" value="#{cc.attrs.processBean.docFile}" mode="simple"/>
+                        <p:fileUpload
+                                id="file"
+                                value="#{cc.attrs.processBean.docFile}"
+                                mode="simple"
+                                 allowTypes="#{spatialUnitBean.regexSupportedTypes()}"
+                        />
                     </div>
                 </div>
                 <p:commandButton action="#{cc.attrs.processBean.createDocument()}" value="Ajouter le document"/>
