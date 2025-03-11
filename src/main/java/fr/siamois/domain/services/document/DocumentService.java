@@ -13,6 +13,7 @@ import fr.siamois.domain.utils.CodeUtils;
 import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.infrastructure.repositories.DocumentRepository;
 import jakarta.servlet.ServletContext;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +31,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@Setter
 public class DocumentService implements ArkEntityService {
 
     private final ServletContext servletContext;
