@@ -1,6 +1,8 @@
 package fr.siamois.domain.services.document;
 
-import fr.siamois.domain.models.*;
+import fr.siamois.domain.models.ArkEntity;
+import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.document.DocumentParent;
 import fr.siamois.domain.models.exceptions.InvalidFileSizeException;
@@ -20,7 +22,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

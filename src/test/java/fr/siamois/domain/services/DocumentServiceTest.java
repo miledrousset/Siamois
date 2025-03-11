@@ -1,7 +1,7 @@
 package fr.siamois.domain.services;
 
-import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.infrastructure.repositories.DocumentRepository;
 import jakarta.servlet.ServletContext;

@@ -12,12 +12,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.model.file.UploadedFile;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MimeType;
 
 import javax.faces.bean.SessionScoped;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @Getter

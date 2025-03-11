@@ -1,7 +1,7 @@
 package fr.siamois.infrastructure.repositories;
 
-import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.document.Document;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
