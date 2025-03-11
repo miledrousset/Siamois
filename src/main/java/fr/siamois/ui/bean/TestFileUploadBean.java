@@ -5,6 +5,7 @@ import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.InvalidFileSizeException;
 import fr.siamois.domain.models.exceptions.InvalidFileTypeException;
 import fr.siamois.domain.services.document.DocumentService;
+import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.domain.utils.MessageUtils;
 import jakarta.faces.application.FacesMessage;
 import lombok.Getter;
@@ -55,6 +56,10 @@ public class TestFileUploadBean {
             }
         }
 
+    }
+
+    public String allowedTypesRegex() {
+        return DocumentUtils.allowedTypesRegex(documentService.supportedMimeTypes());
     }
 
 }

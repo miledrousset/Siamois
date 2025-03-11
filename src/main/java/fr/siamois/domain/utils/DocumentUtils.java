@@ -53,7 +53,7 @@ public class DocumentUtils {
         return sum;
     }
 
-    public String allowedTypesRegex(List<MimeType> allowedTypes) {
+    public static String allowedTypesRegex(List<MimeType> allowedTypes) {
         List<String> extensions = new ArrayList<>();
 
         for (MimeType mimeType : allowedTypes) {
