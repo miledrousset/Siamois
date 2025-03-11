@@ -22,14 +22,8 @@ siamois:
     email: ${SIAMOIS_ADMIN_EMAIL}
   documents:
     folder-path: ${SIAMOIS_DOCUMENTS_PATH}
-    allowed-types:
-      - image/jpeg
-      - image/png
-      - image/svg+xml
-      - image/tiff
-      - image/webp
-      - image/apng
-      - application/pdf
+    allowed-types: image/jpeg, image/png, image/svg+xml, image/tiff, image/webp, image/apng, application/pdf
+
 
 spring:
   main:

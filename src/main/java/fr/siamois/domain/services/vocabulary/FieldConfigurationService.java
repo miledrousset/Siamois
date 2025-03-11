@@ -173,9 +173,7 @@ public class FieldConfigurationService {
         return result;
     }
 
-    public List<Concept> fetchAutocomplete(UserInfo info, String fieldCode, String input) throws NoConfigForFieldException {
-        Concept parentConcept = findConfigurationForFieldCode(info, fieldCode);
-
+    public List<Concept> fetchAutocomplete(UserInfo info, Concept parentConcept, String input) {
         if (StringUtils.isEmpty(input)) return fetchAllValues(info, parentConcept);
 
         ConceptBranchDTO terms = conceptApi.fetchConceptsUnderTopTerm(parentConcept);
@@ -203,6 +201,11 @@ public class FieldConfigurationService {
         }
 
         return result;
+    }
+
+    public List<Concept> fetchAutocomplete(UserInfo info, String fieldCode, String input) throws NoConfigForFieldException {
+        Concept parentConcept = findConfigurationForFieldCode(info, fieldCode);
+        return fetchAutocomplete(info, parentConcept, input);
     }
 
     /**

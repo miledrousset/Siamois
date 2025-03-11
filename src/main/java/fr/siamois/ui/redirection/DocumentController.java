@@ -3,7 +3,6 @@ package fr.siamois.ui.redirection;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.services.document.DocumentService;
-import fr.siamois.infrastructure.repositories.DocumentRepository;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
@@ -27,12 +26,11 @@ import java.util.Optional;
 public class DocumentController {
 
 
-    private final DocumentRepository documentRepository;
     private final SessionSettingsBean sessionSettingsBean;
     private final DocumentService documentService;
 
-    public DocumentController(DocumentRepository documentRepository, SessionSettingsBean sessionSettingsBean, DocumentService documentService) {
-        this.documentRepository = documentRepository;
+    public DocumentController(SessionSettingsBean sessionSettingsBean,
+                              DocumentService documentService) {
         this.sessionSettingsBean = sessionSettingsBean;
         this.documentService = documentService;
     }
@@ -46,7 +44,7 @@ public class DocumentController {
         }
 
         String resourceCode = parts[0];
-        Optional<Document> opt = documentRepository.findByFileCode(resourceCode);
+        Optional<Document> opt = documentService.findByFileCode(resourceCode);
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

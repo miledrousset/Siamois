@@ -143,7 +143,7 @@ public class Person implements UserDetails {
     // For displaying person full names in forms
     // Used in xhtml files
     public String displayName() {
-        return name+" "+lastname;
+        return name + " " + lastname;
     }
 
 }
