@@ -6,6 +6,7 @@ import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.recordingunit.RecordingUnitNotFoundException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.form.Form;
 import fr.siamois.domain.models.history.RecordingUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.recordingunit.RecordingUnitAltimetry;
@@ -19,6 +20,7 @@ import fr.siamois.domain.services.recordingunit.StratigraphicRelationshipService
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
+import fr.siamois.domain.services.form.FormService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
@@ -54,6 +56,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     private final transient HistoryService historyService;
     private final transient PersonService personService;
     private final transient FieldService fieldService;
+    private final transient FormService formService;
     private final LangBean langBean;
     private final transient ConceptService conceptService;
     private final SessionSettingsBean sessionSettingsBean;
@@ -83,6 +86,9 @@ public class NewRecordingUnitFormBean implements Serializable {
     // History
     private transient List<RecordingUnitHist> historyVersion;
     private RecordingUnitHist revisionToDisplay = null;
+
+    // Form
+    private Form additionalForm;
 
     // Stratigraphy
     private transient List<Event> events; // Strati
@@ -226,7 +232,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     public NewRecordingUnitFormBean(RecordingUnitService recordingUnitService,
                                     ActionUnitService actionUnitService, HistoryService historyService,
                                     PersonService personService,
-                                    FieldService fieldService,
+                                    FieldService fieldService, FormService formService,
                                     LangBean langBean,
                                     ConceptService conceptService,
                                     SessionSettingsBean sessionSettingsBean,
@@ -238,6 +244,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         this.historyService = historyService;
         this.personService = personService;
         this.fieldService = fieldService;
+        this.formService = formService;
         this.langBean = langBean;
         this.conceptService = conceptService;
         this.sessionSettingsBean = sessionSettingsBean;
@@ -323,6 +330,8 @@ public class NewRecordingUnitFormBean implements Serializable {
             // By default, current user is owner and author
             recordingUnit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
             recordingUnit.setExcavator(sessionSettingsBean.getAuthenticatedUser());
+
+            additionalForm = formService.findById(1);
 
             initStratigraphy();
 

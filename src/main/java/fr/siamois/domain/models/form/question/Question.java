@@ -16,12 +16,9 @@ public abstract class Question {
     private Long id;
 
     @Column(name = "label")
-    protected String label;
+    private String label;
 
     @Column(name = "hint")
-    protected String hint;
-
-    @Column(name = "answer_type")
-    protected String answerType;
+    private String hint;
 
 }
