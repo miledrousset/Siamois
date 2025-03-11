@@ -50,7 +50,7 @@ public abstract class DocumentParent extends TraceableEntity {
     protected String mimeType;
 
     protected Long size;
-    @Column(name = "file_internal_code", length = FILE_INTERNAL_CODE_LENGTH)
+    @Column(name = "file_internal_code", length = FILE_INTERNAL_CODE_LENGTH, unique = true)
     protected String fileCode;
 
     @Column(name = "md5_sum")

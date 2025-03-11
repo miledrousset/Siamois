@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -42,7 +43,7 @@ public class DocumentService implements ArkEntityService {
 
     private final DocumentRepository documentRepository;
 
-    private static int MAX_GENERATIONS = 100;
+    private static final int MAX_GENERATIONS = 100;
 
     public DocumentService(DocumentRepository documentRepository, ServletContext servletContext) {
         this.documentRepository = documentRepository;
@@ -71,7 +72,7 @@ public class DocumentService implements ArkEntityService {
         String code;
         int counter = 0;
         do {
-            code = CodeUtils.generateCode(Document.FILE_INTERNAL_CODE_LENGTH);
+            code = CodeUtils.generateCode(DocumentParent.FILE_INTERNAL_CODE_LENGTH);
             counter++;
         } while (counter < MAX_GENERATIONS && documentRepository.existsByFileCode(code));
 
@@ -130,6 +131,21 @@ public class DocumentService implements ArkEntityService {
         if (document.getSize() > maxFileSize) {
             throw new InvalidFileSizeException(document.getSize(), String.format("Max file size is %s bytes", maxFileSize));
         }
+    }
+
+    public File findFile(Document document) {
+        Path filePath = Paths.get(
+                documentsPath,
+                document.getCreatedByInstitution().getId().toString(),
+                document.getAuthor().getId().toString(),
+                document.storedFileName()
+        );
+
+        return filePath.toFile();
+    }
+
+    public Optional<Document> findByFileCode(String fileCode) {
+        return documentRepository.findByFileCode(fileCode);
     }
 
 }
