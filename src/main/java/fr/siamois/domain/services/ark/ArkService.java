@@ -18,7 +18,7 @@ public class ArkService {
 
     private static final String VALID_CHAR_STR = "0123456789bcdfghjklmnpqrstvwxz";
     private static final SecureRandom RANDOM = new SecureRandom();
-    private static final int MAX_GENERATIONS = 5000;
+    private static final int MAX_GENERATIONS = 100;
 
     private final NoidCheckService noidCheckService;
     private final ArkRepository arkRepository;

@@ -1,7 +1,7 @@
 package fr.siamois.domain.models.history;
 
-import fr.siamois.domain.models.Document;
-import fr.siamois.domain.models.DocumentParent;
+import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.models.document.DocumentParent;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
