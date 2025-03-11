@@ -1,8 +1,10 @@
 package fr.siamois.domain.services;
 
-import fr.siamois.domain.models.Document;
+import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.infrastructure.repositories.DocumentRepository;
+import jakarta.servlet.ServletContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,12 +25,15 @@ class DocumentServiceTest {
     @Mock
     private DocumentRepository documentRepository;
 
+    @Mock
+    private ServletContext servletContext;
+
     @InjectMocks
     private DocumentService documentService;
 
     @BeforeEach
     void setUp() {
-        documentService = new DocumentService(documentRepository);
+        documentService = new DocumentService(documentRepository, servletContext);
     }
 
     @Test
