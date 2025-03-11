@@ -14,7 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.util.Optional;
 
-import static fr.siamois.domain.utils.MessageUtils.*;
+import static fr.siamois.domain.utils.MessageUtils.displayMessage;
+import static fr.siamois.domain.utils.MessageUtils.displayPlainMessage;
 
 public class FieldConfigUtils {
 

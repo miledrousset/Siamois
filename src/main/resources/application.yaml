@@ -16,6 +16,20 @@ server:
 siamois:
   lang:
     default: en
+  admin:
+    username: ${SIAMOIS_ADMIN_LOGIN}
+    password: ${SIAMOIS_ADMIN_PASSWORD}
+    email: ${SIAMOIS_ADMIN_EMAIL}
+  documents:
+    folder-path: ${SIAMOIS_DOCUMENTS_PATH}
+    allowed-types:
+      - image/jpeg
+      - image/png
+      - image/svg+xml
+      - image/tiff
+      - image/webp
+      - image/apng
+      - application/pdf
 
 spring:
   main:
@@ -51,6 +65,12 @@ spring:
 
   mvc:
     static-path-pattern: /static/**
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 300MB
+      max-request-size: 300MB
 
 joinfaces:
   faces:
