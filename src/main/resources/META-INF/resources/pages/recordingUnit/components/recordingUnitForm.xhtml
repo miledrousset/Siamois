@@ -251,23 +251,24 @@
                     <!-- Iterate on the custom form questions -->
                     <p:panel header='Formulaire personalisé'
                              toggleable="true">
-                        <ui:repeat value="#{newRecordingUnitFormBean.additionalForm.questions}" var="question">
+                        <ui:repeat value="#{newRecordingUnitFormBean.recordingUnit.formResponse.answers}" var="field">
 
 
                             <!-- Afficher le label de la question -->
-                            <h:outputLabel value="#{question.id.question.label}"/>
+                            <h:outputLabel value="#{field.pk.question.label}"/>
 
                             <!-- Affichage dynamique du champ de réponse en fonction du type de la question -->
                             <h:panelGroup id="inputField">
                                 <!-- Si la question est de type INTEGER -->
                                 <h:inputText value="#{2}"
                                              type="number"
-                                             rendered="#{question.id.question['class'].simpleName eq 'QuestionInteger'}"/>
+                                             rendered="#{field.pk.question['class'].simpleName eq 'CustomFieldInteger'}"/>
 
                                 <!-- Si la question est de type SELECT_MULTIPLE -->
                                 <!-- Use autoComplete component for the multi-select field -->
-                                <p:autoComplete value="#{question.id.question.concepts}"
+                                <p:autoComplete value="#{field.concepts}"
                                                 multiple="true"
+                                                rendered="#{field.pk.question['class'].simpleName eq 'CustomFieldSelectMultiple'}"
                                                 completeMethod="#{newRecordingUnitFormBean.suggestValues}"
                                                 var="option" itemLabel="#{option.label}"
                                                 itemValue="#{option}"
@@ -291,7 +292,7 @@
                                     </p:column>
 
                                     <!-- Pass the specific question as a parameter to the complete method -->
-                                    <f:attribute name="question" value="#{question.id.question}" />
+                                    <f:attribute name="question" value="#{field.pk.question}" />
                                 </p:autoComplete>
                             </h:panelGroup>
 

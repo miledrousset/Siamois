@@ -1,4 +1,4 @@
-package fr.siamois.domain.models.form.question;
+package fr.siamois.domain.models.form.customField;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.Data;
 @Table(name = "question")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "answer_type", discriminatorType = DiscriminatorType.STRING)
-public abstract class Question {
+public abstract class CustomField {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

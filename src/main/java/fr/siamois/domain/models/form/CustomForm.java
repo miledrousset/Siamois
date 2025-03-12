@@ -1,6 +1,6 @@
 package fr.siamois.domain.models.form;
 
-import fr.siamois.domain.models.form.question.Question;
+import fr.siamois.domain.models.form.customFormField.CustomFormField;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "form")
-public class Form {
+public class CustomForm {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class Form {
 
     @OneToMany(mappedBy = "id.form", fetch = FetchType.EAGER)
     @OrderBy("id.position ASC") // This ensures the questions are ordered by position
-    private List<FormQuestion> questions = new ArrayList<>();
+    private List<CustomFormField> questions = new ArrayList<>();
 
 
 }

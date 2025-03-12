@@ -1,23 +1,23 @@
-package fr.siamois.domain.models.form;
-import fr.siamois.domain.models.form.question.Question;
+package fr.siamois.domain.models.form.customFormField;
+import fr.siamois.domain.models.form.CustomForm;
+import fr.siamois.domain.models.form.customField.CustomField;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 @Embeddable
 @Getter
 @Setter
-public class FormQuestionId implements Serializable {
+public class CustomFormFieldId implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "form_id", nullable = false)
-    private Form form;
+    private CustomForm form;
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)
-    private Question question;
+    private CustomField question;
     private int position; // Position is also part of the PK
 
 

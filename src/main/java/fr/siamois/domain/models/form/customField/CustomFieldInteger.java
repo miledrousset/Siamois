@@ -1,6 +1,5 @@
-package fr.siamois.domain.models.form.question;
+package fr.siamois.domain.models.form.customField;
 
-import fr.siamois.domain.models.form.question.options.IntegerOptions;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -15,10 +14,8 @@ import lombok.EqualsAndHashCode;
 @Entity
 @DiscriminatorValue("INTEGER")
 @Table(name = "question")
-public class QuestionInteger extends Question {
+public class CustomFieldInteger extends CustomField {
 
-    @Column(name = "options", columnDefinition = "jsonb")
-    private IntegerOptions options;
 
 
 }

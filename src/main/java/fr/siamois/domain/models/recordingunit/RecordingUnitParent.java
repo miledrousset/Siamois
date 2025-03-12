@@ -4,11 +4,15 @@ import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.form.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.JoinColumnOrFormula;
+import org.hibernate.annotations.JoinColumnsOrFormulas;
+import org.hibernate.annotations.JoinFormula;
 
 import java.time.OffsetDateTime;
 
@@ -49,6 +53,8 @@ public abstract class RecordingUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_action_unit_id", nullable = false)
     protected ActionUnit actionUnit;
 
+
+
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_excavator_id")
@@ -67,6 +73,8 @@ public abstract class RecordingUnitParent extends TraceableEntity {
 
     @Embedded
     protected RecordingUnitAltimetry altitude;
+
+
 
 
 

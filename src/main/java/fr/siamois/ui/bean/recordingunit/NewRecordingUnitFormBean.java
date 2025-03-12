@@ -1,15 +1,14 @@
 package fr.siamois.ui.bean.recordingunit;
 
 import fr.siamois.domain.models.UserInfo;
-import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.recordingunit.RecordingUnitNotFoundException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
-import fr.siamois.domain.models.form.Form;
-import fr.siamois.domain.models.form.FormQuestion;
-import fr.siamois.domain.models.form.question.Question;
-import fr.siamois.domain.models.form.question.QuestionSelectMultiple;
+import fr.siamois.domain.models.form.CustomForm;
+import fr.siamois.domain.models.form.customFormField.CustomFormField;
+import fr.siamois.domain.models.form.customField.CustomField;
+import fr.siamois.domain.models.form.customField.CustomFieldSelectMultiple;
 import fr.siamois.domain.models.history.RecordingUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.recordingunit.RecordingUnitAltimetry;
@@ -92,8 +91,8 @@ public class NewRecordingUnitFormBean implements Serializable {
     private RecordingUnitHist revisionToDisplay = null;
 
     // Form
-    private Form additionalForm;
-    private List<FormQuestion> additionalFormQuestions;
+    private CustomForm additionalForm;
+    private List<CustomFormField> additionalFormQuestions;
 
     // Stratigraphy
     private transient List<Event> events; // Strati
@@ -288,15 +287,33 @@ public class NewRecordingUnitFormBean implements Serializable {
 
         // Init neighbors
         Event posterior = new Event("Posterior", "15/10/2020 16:15", "pi pi-arrow-circle-up", "#FF9800");
-        posterior.setRecordingUnitList(stratigraphicRelationshipService.getPosteriorUnits(recordingUnit));
+        try {
+            posterior.setRecordingUnitList(stratigraphicRelationshipService.getPosteriorUnits(recordingUnit));
+        } catch(RuntimeException e) {
+            // add warning
+            posterior.setRecordingUnitList(new ArrayList<>());
+        }
+
         posterior.setType(POSTERIOR);
 
         Event synchronous = new Event("Synchronous", "15/10/2020 14:00", "pi pi-sync", "#673AB7");
-        synchronous.setRecordingUnitList(stratigraphicRelationshipService.getSynchronousUnits(recordingUnit));
+
+        try {
+            synchronous.setRecordingUnitList(stratigraphicRelationshipService.getSynchronousUnits(recordingUnit));
+        } catch(RuntimeException e) {
+            // add warning
+            synchronous.setRecordingUnitList(new ArrayList<>());
+        }
         synchronous.setType(SYNCHRONOUS);
 
         Event anterior = new Event("Anterior", "15/10/2020 10:30", "pi pi-arrow-circle-down", "#9C27B0", "game-controller.jpg");
-        anterior.setRecordingUnitList(stratigraphicRelationshipService.getAnteriorUnits(recordingUnit));
+
+        try {
+            anterior.setRecordingUnitList(stratigraphicRelationshipService.getAnteriorUnits(recordingUnit));
+        } catch(RuntimeException e) {
+            // add warning
+            anterior.setRecordingUnitList(new ArrayList<>());
+        }
         anterior.setType(ANTERIOR);
 
         events.add(posterior);
@@ -346,7 +363,7 @@ public class NewRecordingUnitFormBean implements Serializable {
 
 
         } catch (RuntimeException err) {
-            recordingUnitErrorMessage = "Error initializing the form";
+            recordingUnitErrorMessage = err.getMessage();
         }
     }
 
@@ -355,11 +372,11 @@ public class NewRecordingUnitFormBean implements Serializable {
 
         // Might be better to only pass question index
         FacesContext context = FacesContext.getCurrentInstance();
-        Question question = (Question) UIComponent.getCurrentComponent(context).getAttributes().get("question");
+        CustomField question = (CustomField) UIComponent.getCurrentComponent(context).getAttributes().get("question");
 
         // Check if the question is an instance of QuestionSelectMultiple
-        if (question instanceof QuestionSelectMultiple) {
-            QuestionSelectMultiple selectMultipleQuestion = (QuestionSelectMultiple) question;
+        if (question instanceof CustomFieldSelectMultiple) {
+            CustomFieldSelectMultiple selectMultipleQuestion = (CustomFieldSelectMultiple) question;
             List<Concept> allOptions = selectMultipleQuestion.getConcepts();
 
             // Filter the options based on user input (query)
@@ -465,11 +482,18 @@ public class NewRecordingUnitFormBean implements Serializable {
     }
 
     public String getUrlForRecordingSecondaryType() {
-        return fieldConfigurationService.getUrlOfConcept(fType);
+        if(fType != null) {
+            return fieldConfigurationService.getUrlOfConcept(fType);
+        }
+        return null;
+
     }
 
     public String getUrlForRecordingThirdType() {
-        return fieldConfigurationService.getUrlOfConcept(fSecondaryType);
+        if(fSecondaryType != null) {
+            return fieldConfigurationService.getUrlOfConcept(fSecondaryType);
+        }
+        return null;
     }
 
     public List<Concept> completeRecordingUnitThirdType(String input) {
