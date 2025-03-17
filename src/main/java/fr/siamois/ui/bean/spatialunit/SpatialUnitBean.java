@@ -28,7 +28,6 @@ import jakarta.servlet.ServletContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
-import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 import org.springframework.http.HttpStatus;
@@ -44,13 +43,10 @@ import software.xdev.chartjs.model.options.Title;
 import software.xdev.chartjs.model.options.Tooltip;
 
 import javax.faces.bean.SessionScoped;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * <p>This bean handles the spatial unit page</p>
