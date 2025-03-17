@@ -46,11 +46,4 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
     )
     Optional<Concept> findTopTermConfigForFieldCodeOfInstitution(Long institutionId, String fieldCode);
 
-    @Query(
-            nativeQuery = true,
-            value = "SELECT COUNT(*) > 0 FROM concept_field_config cfc " +
-                    "WHERE cfc.fk_user_id = :personId AND cfc.fk_institution_id = :institutionId"
-    )
-    boolean userConceptConfigExist(Long personId, Long institutionId);
-
 }
