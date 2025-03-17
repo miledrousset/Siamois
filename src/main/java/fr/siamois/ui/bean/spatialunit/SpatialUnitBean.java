@@ -28,6 +28,8 @@ import jakarta.servlet.ServletContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -42,10 +44,13 @@ import software.xdev.chartjs.model.options.Title;
 import software.xdev.chartjs.model.options.Tooltip;
 
 import javax.faces.bean.SessionScoped;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * <p>This bean handles the spatial unit page</p>
@@ -240,11 +245,7 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
         }
 
         UserInfo userInfo = sessionSettingsBean.getUserInfo();
-        Document document = new Document();
-        document.setTitle(getDocTitle());
-        document.setNature(getDocNature());
-        document.setScale(getDocScale());
-        document.setFormat(getDocType());
+        Document document = DocumentUtils.prepareDocumentFrom(docFile, this);
 
         try {
             document = documentService.saveFile(userInfo, document, docFile.getInputStream(), servletContext.getContextPath());
@@ -289,6 +290,10 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
     public String regexSupportedTypes() {
         List<MimeType> supported = documentService.supportedMimeTypes();
         return DocumentUtils.allowedTypesRegex(supported);
+    }
+
+    public StreamedContent streamOf(Document document) {
+        return DocumentUtils.streamOf(documentService , document);
     }
 
 }

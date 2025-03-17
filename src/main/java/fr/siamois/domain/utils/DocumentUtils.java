@@ -1,12 +1,21 @@
 package fr.siamois.domain.utils;
 
+import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.services.document.DocumentService;
+import fr.siamois.ui.bean.dialog.DocumentCreationDialog;
+import jakarta.annotation.Nullable;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.util.MimeType;
 
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,6 +70,33 @@ public class DocumentUtils {
         }
 
         return String.format("/(\\.|\\/)(%s)$/", String.join("|", extensions));
+    }
+
+    public static Document prepareDocumentFrom(UploadedFile uploadedFile, DocumentCreationDialog bean) {
+        Document document = new Document();
+        document.setTitle(bean.getDocTitle());
+        document.setNature(bean.getDocNature());
+        document.setScale(bean.getDocScale());
+        document.setFormat(bean.getDocType());
+        document.setMimeType(uploadedFile.getContentType());
+        document.setFileName(uploadedFile.getFileName());
+        document.setSize(uploadedFile.getSize());
+
+        return document;
+    }
+
+    public static @Nullable StreamedContent streamOf(DocumentService documentService, Document document) {
+        Optional<FileInputStream> optStream = documentService.findInputStreamOfDocument(document);
+        if (optStream.isEmpty()) {
+            return null;
+        }
+
+        return DefaultStreamedContent.builder()
+                .contentType(document.getMimeType())
+                .contentLength(document.getSize())
+                .name(document.getFileName())
+                .stream(optStream::get)
+                .build();
     }
 
 }

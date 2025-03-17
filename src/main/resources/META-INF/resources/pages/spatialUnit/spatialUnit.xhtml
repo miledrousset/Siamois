@@ -234,8 +234,21 @@
                             </p:column>
 
                             <p:column>
-                                <h:link outcome="#{siamoisDocument.url}" value="Visualiser"/>
+                                <p:button value="Visualiser"
+                                                 onclick="window.open('#{siamoisDocument.url}');return false;"
+                                />
                             </p:column>
+
+                            <p:column>
+                                <p:commandButton
+                                        value="Télécharger"
+                                        ajax="false"
+                                        onclick="PrimeFaces.monitorDownload(start, stop);"
+                                        styleClass="mr-2">
+                                    <p:fileDownload value="#{spatialUnitBean.streamOf(siamoisDocument)}"/>
+                                </p:commandButton>
+                            </p:column>
+
                         </p:dataTable>
                     </p:tab>
                 </p:tabView>
@@ -254,6 +267,8 @@
         <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
             <h:outputText value="Version restaurée"/>
         </p:dialog>
-        <documentDialog:newDocument processBean="#{spatialUnitBean}"/>
+        <ui:include src="/dialog/document/newDocument.xhtml">
+            <ui:param name="processBean" value="#{spatialUnitBean}"/>
+        </ui:include>
     </ui:define>
 </ui:composition>

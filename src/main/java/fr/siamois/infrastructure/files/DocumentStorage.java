@@ -1,5 +1,6 @@
 package fr.siamois.infrastructure.files;
 
+import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.document.Document;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -7,10 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeType;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,7 +39,13 @@ public class DocumentStorage {
         return types;
     }
 
-    public void save(Path path, InputStream inputStream) throws IOException {
+    public void save(UserInfo userInfo, String fileName, InputStream inputStream) throws IOException {
+        Path path = Paths.get(
+                documentsPath,
+                userInfo.getInstitution().getId().toString(),
+                fileName
+        );
+
         Files.createDirectories(path.getParent());
 
         File file = path.toFile();
@@ -61,7 +65,6 @@ public class DocumentStorage {
         Path filePath = Paths.get(
                 documentsPath,
                 document.getCreatedByInstitution().getId().toString(),
-                document.getAuthor().getId().toString(),
                 document.storedFileName()
         );
 
@@ -70,6 +73,19 @@ public class DocumentStorage {
         }
 
         return Optional.empty();
+    }
+
+    public Optional<FileInputStream> findStreamOf(Document document) {
+        Optional<File> file = find(document);
+        if (file.isEmpty())
+            return Optional.empty();
+
+        try {
+            return Optional.of(new FileInputStream(file.get()));
+        } catch (FileNotFoundException e) {
+            log.error("File not found: {}", file.get().getAbsolutePath());
+            return Optional.empty();
+        }
     }
 
 }

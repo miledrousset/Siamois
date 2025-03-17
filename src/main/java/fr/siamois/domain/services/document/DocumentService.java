@@ -19,12 +19,7 @@ import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeType;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,13 +77,7 @@ public class DocumentService implements ArkEntityService {
         document.setAuthor(userInfo.getUser());
         document.setCreatedByInstitution(userInfo.getInstitution());
 
-        Path filePath = Paths.get(
-                contextPath,
-                userInfo.getInstitution().getIdentifier(),
-                document.storedFileName()
-        );
-
-        documentStorage.save(filePath, bufferedInputStream);
+        documentStorage.save(userInfo, document.storedFileName(), bufferedInputStream);
 
         document.setUrl(String.format("%s/content/%s", contextPath, document.storedFileName()));
 
@@ -125,5 +114,9 @@ public class DocumentService implements ArkEntityService {
 
     public void addToSpatialUnit(Document document, SpatialUnit spatialUnit) {
         documentRepository.addDocumentToSpatialUnit(document.getId(), spatialUnit.getId());
+    }
+
+    public Optional<FileInputStream> findInputStreamOfDocument(Document document) {
+        return documentStorage.findStreamOf(document);
     }
 }
