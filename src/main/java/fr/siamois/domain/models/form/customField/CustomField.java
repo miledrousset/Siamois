@@ -5,14 +5,14 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "question")
+@Table(name = "custom_field")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "answer_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class CustomField {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "question_id", nullable = false)
+    @Column(name = "custom_field_id", nullable = false)
     private Long id;
 
     @Column(name = "label")

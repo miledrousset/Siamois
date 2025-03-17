@@ -13,12 +13,10 @@ import java.io.Serializable;
 public class CustomFormFieldId implements Serializable {
 
     @ManyToOne
-    @JoinColumn(name = "form_id", nullable = false)
+    @JoinColumn(name = "fk_form_id", nullable = false)
     private CustomForm form;
     @ManyToOne
-    @JoinColumn(name = "question_id", nullable = false)
-    private CustomField question;
-    private int position; // Position is also part of the PK
-
+    @JoinColumn(name = "fk_field_id", nullable = false)
+    private CustomField field;
 
 }

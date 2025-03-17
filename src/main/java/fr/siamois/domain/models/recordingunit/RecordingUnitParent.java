@@ -4,15 +4,12 @@ import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.form.CustomFormResponse;
+import fr.siamois.domain.models.form.customFormResponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinColumnsOrFormulas;
-import org.hibernate.annotations.JoinFormula;
 
 import java.time.OffsetDateTime;
 
@@ -39,6 +36,10 @@ public abstract class RecordingUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_secondary_type")
     protected Concept secondaryType;
 
+    @OneToOne
+    @JoinColumn(name = "fk_custom_form_response", referencedColumnName = "custom_form_response_id")
+    private CustomFormResponse formResponse;
+
     @Column(name = "start_date")
     protected OffsetDateTime startDate;
 
@@ -52,7 +53,6 @@ public abstract class RecordingUnitParent extends TraceableEntity {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_action_unit_id", nullable = false)
     protected ActionUnit actionUnit;
-
 
 
     @NotNull

@@ -1,7 +1,8 @@
 package fr.siamois.domain.models.form.customFieldAnswer;
 
-import fr.siamois.domain.models.form.CustomFormResponse;
+import fr.siamois.domain.models.form.CustomForm;
 import fr.siamois.domain.models.form.customField.CustomField;
+import fr.siamois.domain.models.form.customFormResponse.CustomFormResponse;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,13 +15,11 @@ import java.io.Serializable;
 public class CustomFieldAnswerId implements Serializable {
 
     @ManyToOne
-    @JoinColumn(name = "question_id", nullable = false)
-    private CustomField question;
+    @JoinColumn(name = "fk_field_id", nullable = false)
+    private CustomField field;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "custom_form_response_id", nullable = false)
+    @JoinColumn(name = "fk_form_response")
     private CustomFormResponse formResponse;
-
-    private int position; // Position is also part of the PK
 
 }

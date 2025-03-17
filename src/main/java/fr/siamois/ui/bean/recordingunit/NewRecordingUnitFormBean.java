@@ -187,6 +187,10 @@ public class NewRecordingUnitFormBean implements Serializable {
         hasSecondaryTypeOptions = !(this.fetchChildrenOfConcept(fType).isEmpty());
     }
 
+    public void testAjax(SelectEvent<Concept> event) {
+        this.fType = null;
+    }
+
     public void handleSelectSecondaryType(SelectEvent<Concept> event) {
         this.fSecondaryType = event.getObject();
         this.fThirdType = null;

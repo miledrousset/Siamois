@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @Entity
 @DiscriminatorValue("SELECT_MULTIPLE")
-@Table(name = "question")
+@Table(name = "custom_field")
 public class CustomFieldSelectMultiple extends CustomField {
 
     @Column(name = "options", columnDefinition = "jsonb")

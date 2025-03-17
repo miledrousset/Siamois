@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @DiscriminatorValue("INTEGER")
-@Table(name = "question")
+@Table(name = "custom_field")
 public class CustomFieldInteger extends CustomField {
 
 
