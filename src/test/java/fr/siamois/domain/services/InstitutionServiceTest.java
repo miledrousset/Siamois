@@ -6,9 +6,9 @@ import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveExce
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.infrastructure.repositories.InstitutionRepository;
-import fr.siamois.infrastructure.repositories.auth.PersonRepository;
-import fr.siamois.infrastructure.repositories.settings.InstitutionSettingsRepository;
+import fr.siamois.infrastructure.database.repositories.InstitutionRepository;
+import fr.siamois.infrastructure.database.repositories.auth.PersonRepository;
+import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

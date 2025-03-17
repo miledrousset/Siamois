@@ -7,6 +7,8 @@ import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.history.GlobalHistoryEntry;
 import fr.siamois.domain.models.history.HistoryUpdateType;
+import fr.siamois.infrastructure.database.repositories.history.GlobalHistoryInstitRepository;
+import fr.siamois.infrastructure.database.repositories.history.GlobalHistoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

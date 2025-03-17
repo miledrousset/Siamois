@@ -6,8 +6,8 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.document.DocumentService;
-import fr.siamois.infrastructure.repositories.DocumentRepository;
-import jakarta.servlet.ServletContext;
+import fr.siamois.infrastructure.files.DocumentStorage;
+import fr.siamois.infrastructure.database.repositories.DocumentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,18 +33,16 @@ class DocumentServiceTest {
     private DocumentRepository documentRepository;
 
     @Mock
-    private ServletContext servletContext;
+    private DocumentStorage documentStorage;
 
     @InjectMocks
     private DocumentService documentService;
 
+    private final List<MimeType> mimeTypes = List.of(MimeType.valueOf("application/pdf"), MimeType.valueOf("image/png"));
+
     @BeforeEach
     void setUp() {
-        documentService = new DocumentService(documentRepository, servletContext);
-        String[] mimeTypes = {"application/pdf", "image/jpeg"};
-        documentService.setMimeTypes(mimeTypes);
-        documentService.setMaxUploadSize("10MB");
-        documentService.setDocumentsPath("/tmp/siamois");
+        documentService = new DocumentService(documentRepository, documentStorage);
     }
 
     @Test
@@ -79,29 +77,32 @@ class DocumentServiceTest {
 
     @Test
     void supportedMimeTypes() {
+        when(documentStorage.supportedMimeTypes()).thenReturn(mimeTypes);
+
         List<MimeType> result = documentService.supportedMimeTypes();
 
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(MimeType.valueOf("application/pdf"), result.get(0));
-        assertEquals(MimeType.valueOf("image/jpeg"), result.get(1));
+        assertEquals(MimeType.valueOf("image/png"), result.get(1));
     }
 
     @Test
     void saveFile() throws Exception {
         UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
         userInfo.getInstitution().setId(1L);
-        userInfo.getUser().setId(1L);
+        userInfo.getInstitution().setIdentifier("fr");
         Document document = new Document();
-        document.setMimeType("application/pdf"); // Définir le type MIME
-        document.setFileName("test.pdf"); // Définir le nom du fichier
-        document.setSize(1024L); // Définir la taille du fichier
+        document.setMimeType("application/pdf"); // Set MIME type
+        document.setFileName("test.pdf"); // Set file name
+        document.setSize(1024L); // Set file size
         InputStream inputStream = new ByteArrayInputStream("test data".getBytes());
 
         when(documentRepository.save(document)).thenReturn(document);
-        when(servletContext.getContextPath()).thenReturn("/context");
+        when(documentStorage.supportedMimeTypes()).thenReturn(mimeTypes);
+        when(documentStorage.getMaxUploadSize()).thenReturn("10MB");
 
-        Document result = documentService.saveFile(userInfo, document, inputStream);
+        Document result = documentService.saveFile(userInfo, document, inputStream, "/context");
 
         assertNotNull(result);
         assertEquals(document, result);
@@ -119,8 +120,12 @@ class DocumentServiceTest {
         document.setAuthor(author);
         document.setMimeType("application/pdf");
 
-        File file = documentService.findFile(document);
+        when(documentStorage.find(any(Document.class))).thenReturn(Optional.of(new File(document.storedFileName())));
 
+        Optional<File> optFile = documentService.findFile(document);
+
+        assertTrue(optFile.isPresent());
+        File file = optFile.get();
         assertNotNull(file);
         assertTrue(file.getPath().contains(document.storedFileName()));
     }

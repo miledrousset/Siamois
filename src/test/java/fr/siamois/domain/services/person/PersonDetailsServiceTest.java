@@ -1,7 +1,7 @@
 package fr.siamois.domain.services.person;
 
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.infrastructure.repositories.auth.PersonRepository;
+import fr.siamois.infrastructure.database.repositories.auth.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

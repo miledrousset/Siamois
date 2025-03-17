@@ -54,10 +54,13 @@ public class DocumentController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
-        File file = documentService.findFile(document);
+        Optional<File> optFile = documentService.findFile(document);
+        if (optFile.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
 
         try {
-            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(optFile.get()));
 
             return ResponseEntity
                     .ok()

@@ -6,7 +6,7 @@ import fr.siamois.domain.models.exceptions.ark.NoArkConfigException;
 import fr.siamois.domain.models.exceptions.ark.TooManyGenerationsException;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.services.InstitutionService;
-import fr.siamois.infrastructure.repositories.ArkRepository;
+import fr.siamois.infrastructure.database.repositories.ArkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;

@@ -24,6 +24,7 @@ import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.DocumentCreationDialog;
 import jakarta.faces.application.FacesMessage;
+import jakarta.servlet.ServletContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
@@ -66,6 +67,7 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
     private final transient DocumentService documentService;
     private final LangBean langBean;
     private final transient FieldConfigurationService fieldConfigurationService;
+    private final transient ServletContext servletContext;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -100,7 +102,7 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
                            RecordingUnitService recordingUnitService,
                            ActionUnitService actionUnitService,
                            HistoryService historyService,
-                           SessionSettingsBean sessionSettingsBean, RedirectBean redirectBean, DocumentService documentService, LangBean langBean, FieldConfigurationService fieldConfigurationService) {
+                           SessionSettingsBean sessionSettingsBean, RedirectBean redirectBean, DocumentService documentService, LangBean langBean, FieldConfigurationService fieldConfigurationService, ServletContext servletContext) {
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
@@ -110,6 +112,7 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
         this.documentService = documentService;
         this.langBean = langBean;
         this.fieldConfigurationService = fieldConfigurationService;
+        this.servletContext = servletContext;
     }
 
     public void reinitializeBean() {
@@ -208,7 +211,7 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
             parentScale = fieldConfigurationService.findConfigurationForFieldCode(info, Document.SCALE_FIELD_CODE);
             parentType = fieldConfigurationService.findConfigurationForFieldCode(info, Document.FORMAT_FIELD_CODE);
         } catch (NoConfigForFieldException e) {
-            spatialUnitErrorMessage = "No theaurus coniguration for asked fields";
+            spatialUnitErrorMessage = "No thesaurus configuration for asked fields";
         }
 
         historyVersion = historyService.findSpatialUnitHistory(spatialUnit);
@@ -244,7 +247,7 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
         document.setFormat(getDocType());
 
         try {
-            document = documentService.saveFile(userInfo, document, docFile.getInputStream());
+            document = documentService.saveFile(userInfo, document, docFile.getInputStream(), servletContext.getContextPath());
             documentService.addToSpatialUnit(document, spatialUnit);
         } catch (InvalidFileTypeException e) {
             log.error("Invalid file type {}", e.getMessage());

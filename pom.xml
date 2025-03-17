@@ -66,6 +66,7 @@
             **/*Utils.*,
             **/*Listener.*,
             **/events/**/*.*
+            **/*Storage.*
         </sonar.coverage.exclusions>
 
 

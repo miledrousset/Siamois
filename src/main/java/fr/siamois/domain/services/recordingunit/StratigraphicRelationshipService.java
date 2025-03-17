@@ -4,7 +4,7 @@ import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.domain.models.recordingunit.StratigraphicRelationshipId;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.infrastructure.repositories.recordingunit.StratigraphicRelationshipRepository;
+import fr.siamois.infrastructure.database.repositories.recordingunit.StratigraphicRelationshipRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;

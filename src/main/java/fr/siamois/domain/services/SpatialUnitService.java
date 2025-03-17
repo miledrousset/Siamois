@@ -12,7 +12,7 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ark.ArkService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
-import fr.siamois.infrastructure.repositories.SpatialUnitRepository;
+import fr.siamois.infrastructure.database.repositories.SpatialUnitRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
