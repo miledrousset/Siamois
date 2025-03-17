@@ -6,10 +6,12 @@ import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.exceptions.recordingunit.MaxRecordingUnitIdentifierReached;
 import fr.siamois.domain.models.exceptions.recordingunit.RecordingUnitNotFoundException;
+import fr.siamois.domain.models.form.customFormResponse.CustomFormResponse;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
+import fr.siamois.domain.services.form.CustomFormResponseService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
 import jakarta.transaction.Transactional;
@@ -31,13 +33,16 @@ public class RecordingUnitService implements ArkEntityService {
     private final RecordingUnitRepository recordingUnitRepository;
     private final ConceptService conceptService;
     private final StratigraphicRelationshipService stratigraphicRelationshipService;
+    private final CustomFormResponseService customFormResponseService;
 
     public RecordingUnitService(RecordingUnitRepository recordingUnitRepository,
                                 ConceptService conceptService,
-                                StratigraphicRelationshipService stratigraphicRelationshipService) {
+                                StratigraphicRelationshipService stratigraphicRelationshipService,
+                                CustomFormResponseService customFormResponseService) {
         this.recordingUnitRepository = recordingUnitRepository;
         this.conceptService = conceptService;
         this.stratigraphicRelationshipService = stratigraphicRelationshipService;
+        this.customFormResponseService = customFormResponseService;
     }
 
 
@@ -91,6 +96,11 @@ public class RecordingUnitService implements ArkEntityService {
             // Add concept
             Concept type = conceptService.saveOrGetConcept(concept);
             recordingUnit.setType(type);
+
+            // Save form response
+            CustomFormResponse formResponse = customFormResponseService
+                    .saveFormResponse(recordingUnit.getFormResponse());
+            recordingUnit.setFormResponse(formResponse);
 
 
 

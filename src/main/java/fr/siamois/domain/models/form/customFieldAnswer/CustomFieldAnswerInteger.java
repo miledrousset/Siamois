@@ -1,12 +1,9 @@
 package fr.siamois.domain.models.form.customFieldAnswer;
 
-import fr.siamois.converter.ConceptListConverter;
-import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.converter.IntegerToJsonConverter;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.util.List;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -17,6 +14,7 @@ import java.util.List;
 public class CustomFieldAnswerInteger extends CustomFieldAnswer {
 
     @Column(name = "answer", columnDefinition = "jsonb")
+    @Convert(converter = IntegerToJsonConverter.class)
     private Integer value;
 
 }

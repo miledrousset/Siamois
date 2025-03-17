@@ -18,13 +18,14 @@ public class CustomFormResponse {
 
     @Id
     @Column(name="custom_form_response_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name="fk_custom_form_id")
     private CustomForm form;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name="fk_form_response")
     @MapKey(name="pk.field")
     private Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
