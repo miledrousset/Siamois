@@ -1,5 +1,6 @@
 package fr.siamois.domain.models.form.customFormResponse;
 import fr.siamois.domain.models.form.CustomForm;
+import fr.siamois.domain.models.form.customField.CustomField;
 import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswer;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -26,6 +27,6 @@ public class CustomFormResponse {
     @OneToMany
     @JoinColumn(name="fk_form_response")
     @MapKey(name="pk.field")
-    private Map<Long, CustomFieldAnswer> answers = new HashMap<>();
+    private Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
 
 }
