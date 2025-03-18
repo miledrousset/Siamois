@@ -14,8 +14,8 @@ import lombok.EqualsAndHashCode;
 public abstract class DocumentParent extends TraceableEntity {
 
     @NotNull
-    @OneToOne(fetch = FetchType.EAGER, optional = true)
-    @JoinColumn(name = "fk_ark_id", nullable = true)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fk_ark_id")
     protected Ark ark;
 
     @Column(name = "title", length = MAX_FILE_NAME_LENGTH)
