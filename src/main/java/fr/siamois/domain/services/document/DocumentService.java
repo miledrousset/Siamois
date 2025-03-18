@@ -85,9 +85,11 @@ public class DocumentService implements ArkEntityService {
     }
 
     private void checkFileData(Document document) throws InvalidFileTypeException, InvalidFileSizeException {
-        if (supportedMimeTypes().stream().noneMatch(type -> type.toString().equals(document.getMimeType()))) {
-            throw new InvalidFileTypeException(String.format("Type %s is not allowed", document.getMimeType()));
-        }
+        List<MimeType> supportedMimeTypes = supportedMimeTypes();
+        if (allWildCardIsNotInMimetypes(supportedMimeTypes) && documentMimeTypeIsNotSupported(document)) {
+                throw new InvalidFileTypeException(String.format("Type %s is not allowed", document.getMimeType()));
+            }
+
 
         if (document.getFileName().length() > DocumentParent.MAX_FILE_NAME_LENGTH) {
             throw new InvalidFileNameException(document.getFileName(), "File name too long");
@@ -98,6 +100,14 @@ public class DocumentService implements ArkEntityService {
         if (document.getSize() > maxFileSize) {
             throw new InvalidFileSizeException(document.getSize(), String.format("Max file size is %s bytes", maxFileSize));
         }
+    }
+
+    private boolean documentMimeTypeIsNotSupported(Document document) {
+        return supportedMimeTypes().stream().noneMatch(type -> type.toString().equals(document.getMimeType()));
+    }
+
+    private static boolean allWildCardIsNotInMimetypes(List<MimeType> supportedMimeTypes) {
+        return supportedMimeTypes.stream().noneMatch(type -> type.toString().equals("*/*"));
     }
 
     public Optional<File> findFile(Document document) {
@@ -116,7 +126,13 @@ public class DocumentService implements ArkEntityService {
         documentRepository.addDocumentToSpatialUnit(document.getId(), spatialUnit.getId());
     }
 
-    public Optional<FileInputStream> findInputStreamOfDocument(Document document) {
-        return documentStorage.findStreamOf(document);
+    public Optional<InputStream> findInputStreamOfDocument(Document document) {
+        Optional<byte[]> optionalBytes = documentStorage.findBytesOf(document);
+        return optionalBytes.map(ByteArrayInputStream::new);
+
+    }
+
+    public long maxFileSize() {
+        return DocumentUtils.byteParser(documentStorage.getMaxUploadSize());
     }
 }

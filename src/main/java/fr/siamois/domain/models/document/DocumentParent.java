@@ -43,7 +43,7 @@ public abstract class DocumentParent extends TraceableEntity {
     @Column(name = "url", length = Integer.MAX_VALUE)
     protected String url;
 
-    @Column(name = "file_name", length = MAX_FILE_NAME_LENGTH)
+    @Column(name = "file_name")
     protected String fileName;
 
     @Column(name = "mime_type", length = Integer.MAX_VALUE)
@@ -55,6 +55,8 @@ public abstract class DocumentParent extends TraceableEntity {
 
     @Column(name = "md5_sum")
     protected String md5Sum;
+
+    protected String extension;
 
     public static final int MAX_FILE_NAME_LENGTH = 255;
     public static final int FILE_INTERNAL_CODE_LENGTH = 10;

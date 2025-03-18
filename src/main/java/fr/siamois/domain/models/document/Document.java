@@ -20,8 +20,7 @@ public class Document extends DocumentParent implements ArkEntity {
     private Long id;
 
     public String storedFileName() {
-        MimeType type = MimeTypeUtils.parseMimeType(getMimeType());
-        return fileCode + "." + type.getSubtype();
+        return fileCode + extension;
     }
 
     @FieldCode

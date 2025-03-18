@@ -1,15 +1,10 @@
 package fr.siamois.ui.bean.spatialunit;
 
-import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.document.Document;
-import fr.siamois.domain.models.exceptions.InvalidFileSizeException;
-import fr.siamois.domain.models.exceptions.InvalidFileTypeException;
-import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
-import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -18,21 +13,18 @@ import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.domain.utils.DocumentUtils;
-import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.bean.dialog.DocumentCreationDialog;
-import jakarta.faces.application.FacesMessage;
-import jakarta.servlet.ServletContext;
+import fr.siamois.ui.bean.dialog.DocumentCreationBean;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.file.UploadedFile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeType;
+import org.springframework.web.context.annotation.SessionScope;
 import software.xdev.chartjs.model.charts.BarChart;
 import software.xdev.chartjs.model.color.RGBAColor;
 import software.xdev.chartjs.model.data.BarData;
@@ -42,7 +34,6 @@ import software.xdev.chartjs.model.options.Plugins;
 import software.xdev.chartjs.model.options.Title;
 import software.xdev.chartjs.model.options.Tooltip;
 
-import javax.faces.bean.SessionScoped;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -55,9 +46,9 @@ import java.util.List;
  */
 @Slf4j
 @Component
-@SessionScoped
+@SessionScope
 @Data
-public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
+public class SpatialUnitBean implements Serializable {
 
     private final transient SpatialUnitService spatialUnitService;
     private final transient RecordingUnitService recordingUnitService;
@@ -65,10 +56,10 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
     private final transient HistoryService historyService;
     private final SessionSettingsBean sessionSettingsBean;
     private final RedirectBean redirectBean;
-    private final transient DocumentService documentService;
     private final LangBean langBean;
     private final transient FieldConfigurationService fieldConfigurationService;
-    private final transient ServletContext servletContext;
+    private final transient DocumentService documentService;
+    private final DocumentCreationBean documentCreationBean;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -85,16 +76,6 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
     private transient List<SpatialUnitHist> historyVersion;
     private SpatialUnitHist revisionToDisplay = null;
 
-    private Concept parentNature = null;
-    private Concept parentScale = null;
-    private Concept parentType = null;
-
-    private String docTitle;
-    private Concept docNature;
-    private Concept docScale;
-    private Concept docType;
-    private transient UploadedFile docFile;
-
     private String barModel;
 
     private Long id;  // ID of the spatial unit
@@ -103,17 +84,17 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
                            RecordingUnitService recordingUnitService,
                            ActionUnitService actionUnitService,
                            HistoryService historyService,
-                           SessionSettingsBean sessionSettingsBean, RedirectBean redirectBean, DocumentService documentService, LangBean langBean, FieldConfigurationService fieldConfigurationService, ServletContext servletContext) {
+                           SessionSettingsBean sessionSettingsBean, RedirectBean redirectBean, LangBean langBean, FieldConfigurationService fieldConfigurationService, DocumentService documentService, DocumentCreationBean documentCreationBean) {
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.historyService = historyService;
         this.sessionSettingsBean = sessionSettingsBean;
         this.redirectBean = redirectBean;
-        this.documentService = documentService;
         this.langBean = langBean;
         this.fieldConfigurationService = fieldConfigurationService;
-        this.servletContext = servletContext;
+        this.documentService = documentService;
+        this.documentCreationBean = documentCreationBean;
     }
 
     public void reinitializeBean() {
@@ -167,10 +148,12 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
         try {
             this.spatialUnit = spatialUnitService.findById(id);
         } catch (RuntimeException e) {
+            log.error("Failed to find spatial unit with id {}", id, e);
             this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
         }
 
         if (this.spatialUnit == null) {
+            log.error("Spatial unit is null");
             this.spatialUnitErrorMessage = "The spatial unit could not be found";
             redirectBean.redirectTo(HttpStatus.NOT_FOUND);
             return;
@@ -205,15 +188,7 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
             this.actionUnitListErrorMessage = "Unable to load action units: " + e.getMessage();
         }
 
-        UserInfo info = sessionSettingsBean.getUserInfo();
         this.documents = documentService.findForSpatialUnit(spatialUnit);
-        try {
-            parentNature = fieldConfigurationService.findConfigurationForFieldCode(info, Document.NATURE_FIELD_CODE);
-            parentScale = fieldConfigurationService.findConfigurationForFieldCode(info, Document.SCALE_FIELD_CODE);
-            parentType = fieldConfigurationService.findConfigurationForFieldCode(info, Document.FORMAT_FIELD_CODE);
-        } catch (NoConfigForFieldException e) {
-            spatialUnitErrorMessage = "No thesaurus configuration for asked fields";
-        }
 
         historyVersion = historyService.findSpatialUnitHistory(spatialUnit);
     }
@@ -233,63 +208,22 @@ public class SpatialUnitBean implements Serializable, DocumentCreationDialog {
         PrimeFaces.current().executeScript("PF('restored-dlg').show()");
     }
 
-    @Override
-    public void createDocument() {
-        if (docFile == null) {
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "No file set");
-            return;
-        }
-
-        UserInfo userInfo = sessionSettingsBean.getUserInfo();
-        Document document = DocumentUtils.prepareDocumentFrom(docFile, this);
-
-        try {
-            document = documentService.saveFile(userInfo, document, docFile.getInputStream(), servletContext.getContextPath());
-            documentService.addToSpatialUnit(document, spatialUnit);
-        } catch (InvalidFileTypeException e) {
-            log.error("Invalid file type {}", e.getMessage());
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "This type of file is not supported");
-        } catch (InvalidFileSizeException e) {
-            log.error("Invalid file size {}", e.getMessage());
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "The file is too large");
-        } catch (IOException e) {
-            log.error("IO Exception {}", e.getMessage());
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Internal error");
-        }
-
-    }
-
-    public String getUrlForConcept(Concept concept) {
-        return fieldConfigurationService.getUrlOfConcept(concept);
-    }
-
-    public List<Concept> autocomplete(Concept parent, String input) {
-        log.trace("Autocomplete order received");
-        return fieldConfigurationService.fetchAutocomplete(
-                sessionSettingsBean.getUserInfo(),
-                parent,
-                input);
-    }
-
-    public List<Concept> autocompleteNature(String input) {
-        return autocomplete(parentNature, input);
-    }
-
-    public List<Concept> autocompleteScale(String input) {
-        return autocomplete(parentScale, input);
-    }
-
-    public List<Concept> autocompleteType(String input) {
-        return autocomplete(parentType, input);
-    }
-
-    public String regexSupportedTypes() {
-        List<MimeType> supported = documentService.supportedMimeTypes();
-        return DocumentUtils.allowedTypesRegex(supported);
-    }
-
     public StreamedContent streamOf(Document document) {
         return DocumentUtils.streamOf(documentService , document);
+    }
+
+    public void saveDocument() {
+        Document created = documentCreationBean.createDocument();
+        if (created == null)
+            return;
+        documentService.addToSpatialUnit(created, spatialUnit);
+        PrimeFaces.current().executeScript("PF('newDocumentDiag').hide()");
+        PrimeFaces.current().ajax().update("spatialUnitFormTabs:suDocumentsTab");
+    }
+
+    public boolean contentIsImage(String mimeType) {
+        MimeType currentMimeType = MimeType.valueOf(mimeType);
+        return currentMimeType.getType().equals("image");
     }
 
 }

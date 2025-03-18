@@ -20,7 +20,7 @@ import java.util.Optional;
 @Service
 public class DocumentStorage {
 
-    @Value("${siamois.documents.allowed-types}")
+    @Value("${siamois.documents.allowed-types:*/*}")
     private String[] mimeTypes;
 
     @Getter
@@ -75,17 +75,21 @@ public class DocumentStorage {
         return Optional.empty();
     }
 
-    public Optional<FileInputStream> findStreamOf(Document document) {
+    public Optional<byte[]> findBytesOf(Document document) {
         Optional<File> file = find(document);
         if (file.isEmpty())
             return Optional.empty();
 
-        try {
-            return Optional.of(new FileInputStream(file.get()));
-        } catch (FileNotFoundException e) {
+        byte[] fileContent;
+
+        try (FileInputStream fileInputStream = new FileInputStream(file.get())) {
+            fileContent = fileInputStream.readAllBytes();
+        } catch (IOException e) {
             log.error("File not found: {}", file.get().getAbsolutePath());
             return Optional.empty();
         }
+
+        return Optional.of(fileContent);
     }
 
 }

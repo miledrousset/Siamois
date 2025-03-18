@@ -7,13 +7,14 @@
 >
 
     <p:dialog widgetVar="newDocumentDiag" width="40vw" showEffect="fade" closeOnEscape="true" appendToBody="true">
-        <h:form id="newDocument">
+        <h:form id="newDocument" enctype="multipart/form-data">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
             <h1>Création d'un document</h1>
             <div class="form-group row">
                 <label class="col-lg-4 col-form-label" for="title">Titre</label>
                 <div class="col-lg-6">
-                    <p:inputText id="title" value="#{processBean.docTitle}"/>
+                    <p:inputText id="title" value="#{documentCreationBean.docTitle}"/>
                 </div>
             </div>
             <div class="form-group row">
@@ -21,9 +22,9 @@
                 <div class="col-lg-6">
                     <sharedInput:conceptAutocomplete
                             id="nature"
-                            editConceptUrl="#{processBean.getUrlForConcept(processBean.parentNature)}"
-                            selectedConcept="#{processBean.docNature}"
-                            completeMethod="#{processBean.autocompleteNature}"/>
+                            editConceptUrl="#{documentCreationBean.getUrlForConcept(documentCreationBean.parentNature)}"
+                            selectedConcept="#{documentCreationBean.docNature}"
+                            completeMethod="#{documentCreationBean.autocompleteNature}"/>
                 </div>
             </div>
             <div class="form-group row">
@@ -31,9 +32,9 @@
                 <div class="col-lg-6">
                     <sharedInput:conceptAutocomplete
                             id="scale"
-                            editConceptUrl="#{processBean.getUrlForConcept(processBean.parentScale)}"
-                            selectedConcept="#{processBean.docScale}"
-                            completeMethod="#{processBean.autocompleteScale}"/>
+                            editConceptUrl="#{documentCreationBean.getUrlForConcept(documentCreationBean.parentScale)}"
+                            selectedConcept="#{documentCreationBean.docScale}"
+                            completeMethod="#{documentCreationBean.autocompleteScale}"/>
                 </div>
             </div>
             <div class="form-group row">
@@ -41,27 +42,31 @@
                 <div class="col-lg-6">
                     <sharedInput:conceptAutocomplete
                             id="type"
-                            editConceptUrl="#{processBean.getUrlForConcept(processBean.parentType)}"
-                            selectedConcept="#{processBean.docType}"
-                            completeMethod="#{processBean.autocompleteType}"/>
+                            editConceptUrl="#{documentCreationBean.getUrlForConcept(documentCreationBean.parentType)}"
+                            selectedConcept="#{documentCreationBean.docType}"
+                            completeMethod="#{documentCreationBean.autocompleteType}"/>
                 </div>
             </div>
-
-        </h:form>
-        <h:form id="fileSelect" enctype="multipart/form-data">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <div class="form-group row">
                 <label class="col-lg-4 col-form-label" for="file">Fichier</label>
                 <div class="col-lg-6">
                     <p:fileUpload
                             id="file"
-                            value="#{processBean.docFile}"
+                            value="#{documentCreationBean.docFile}"
                             mode="simple"
-                            allowTypes="#{spatialUnitBean.regexSupportedTypes()}"
-                    />
+                            accept="#{documentCreationBean.allowedExtensions()}"
+                    >
+                        <p:validateFile
+                                sizeLimit="#{documentCreationBean.maxFileSize()}"
+                                allowTypes="#{documentCreationBean.regexSupportedTypes()}"/>
+                    </p:fileUpload>
                 </div>
             </div>
-            <p:commandButton action="#{processBean.createDocument()}" value="Ajouter le document"/>
+            <p:commandButton
+                    action="#{spatialUnitBean.saveDocument()}"
+                    value="Ajouter le document"
+            />
         </h:form>
 
 
