@@ -5,8 +5,6 @@ import fr.siamois.domain.models.FieldCode;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.util.MimeType;
-import org.springframework.util.MimeTypeUtils;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
