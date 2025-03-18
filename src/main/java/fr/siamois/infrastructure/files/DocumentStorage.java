@@ -15,6 +15,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 @Slf4j
 @Service
@@ -39,7 +42,7 @@ public class DocumentStorage {
         return types;
     }
 
-    public void save(UserInfo userInfo, String fileName, InputStream inputStream) throws IOException {
+    public void save(UserInfo userInfo, String fileName, byte[] content) throws IOException {
         Path path = Paths.get(
                 documentsPath,
                 userInfo.getInstitution().getId().toString(),
@@ -52,13 +55,19 @@ public class DocumentStorage {
         if (file.createNewFile()) {
             log.info("File created: {}", file.getAbsolutePath());
         }
+
+        byte[] compressed = compress(content);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(compressed);
+
         try (FileOutputStream outputStream = new FileOutputStream(file)) {
             byte[] buffer = new byte[1024];
             int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
+            while ((bytesRead = bais.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, bytesRead);
             }
         }
+
     }
 
     public Optional<File> find(Document document) {
@@ -89,7 +98,40 @@ public class DocumentStorage {
             return Optional.empty();
         }
 
+        fileContent = decompress(fileContent);
+
         return Optional.of(fileContent);
+    }
+
+    public byte[] compress(byte[] bytes) {
+        Deflater deflater = new Deflater();
+        deflater.setInput(bytes);
+        deflater.finish();
+        byte[] buffer = new byte[1024];
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(bytes.length);
+        while (!deflater.finished()) {
+            int count = deflater.deflate(buffer);
+            outputStream.write(buffer, 0, count);
+        }
+        deflater.end();
+        return outputStream.toByteArray();
+    }
+
+    public byte[] decompress(byte[] bytes) {
+        Inflater inflater = new Inflater();
+        inflater.setInput(bytes);
+        byte[] buffer = new byte[1024];
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(bytes.length);
+        try {
+            while (!inflater.finished()) {
+                int count = inflater.inflate(buffer);
+                outputStream.write(buffer, 0, count);
+            }
+        } catch (DataFormatException e) {
+            log.error("Data format exception during decompression", e);
+        }
+        inflater.end();
+        return outputStream.toByteArray();
     }
 
 }

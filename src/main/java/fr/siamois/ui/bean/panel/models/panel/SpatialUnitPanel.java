@@ -70,6 +70,8 @@ public class SpatialUnitPanel extends AbstractPanel {
 
     private Long idunit;  // ID of the spatial unit
 
+    private List<Document> documents;
+
     private SpatialUnitPanel(PanelBreadcrumb currentBreadcrumb) {
         super("spatial", "Unité spatiale", "spatial", "pi pi-map-marker");
         this.setBreadcrumb(new PanelBreadcrumb());
@@ -173,6 +175,7 @@ public class SpatialUnitPanel extends AbstractPanel {
         );
 
         historyVersion = spatialUnitHelperService.findHistory(spatialUnit);
+        documents = documentService.findForSpatialUnit(spatialUnit);
     }
 
     public void visualise(SpatialUnitHist history) {

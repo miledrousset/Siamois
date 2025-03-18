@@ -12,7 +12,6 @@ import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.utils.DateUtils;
-import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
@@ -20,10 +19,8 @@ import fr.siamois.ui.bean.dialog.DocumentCreationBean;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
-import org.primefaces.model.StreamedContent;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MimeType;
 import org.springframework.web.context.annotation.SessionScope;
 import software.xdev.chartjs.model.charts.BarChart;
 import software.xdev.chartjs.model.color.RGBAColor;
@@ -58,6 +55,8 @@ public class SpatialUnitBean implements Serializable {
     private final RedirectBean redirectBean;
     private final LangBean langBean;
     private final transient FieldConfigurationService fieldConfigurationService;
+    private final DocumentCreationBean documentCreationBean;
+    private final transient DocumentService documentService;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -82,7 +81,7 @@ public class SpatialUnitBean implements Serializable {
                            RecordingUnitService recordingUnitService,
                            ActionUnitService actionUnitService,
                            HistoryService historyService,
-                           SessionSettingsBean sessionSettingsBean, RedirectBean redirectBean, LangBean langBean, FieldConfigurationService fieldConfigurationService) {
+                           SessionSettingsBean sessionSettingsBean, RedirectBean redirectBean, LangBean langBean, FieldConfigurationService fieldConfigurationService, DocumentCreationBean documentCreationBean, DocumentService documentService) {
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
@@ -91,6 +90,8 @@ public class SpatialUnitBean implements Serializable {
         this.redirectBean = redirectBean;
         this.langBean = langBean;
         this.fieldConfigurationService = fieldConfigurationService;
+        this.documentCreationBean = documentCreationBean;
+        this.documentService = documentService;
     }
 
     public void reinitializeBean() {
@@ -200,6 +201,15 @@ public class SpatialUnitBean implements Serializable {
         log.trace("Restore order received");
         spatialUnitService.restore(history);
         PrimeFaces.current().executeScript("PF('restored-dlg').show()");
+    }
+
+    public void saveDocument() {
+        Document created = documentCreationBean.createDocument();
+        if (created == null)
+            return;
+        documentService.addToSpatialUnit(created, spatialUnit);
+        PrimeFaces.current().executeScript("PF('newDocumentDiag').hide()");
+        PrimeFaces.current().ajax().update("spatialUnitFormTabs:suDocumentsTab");
     }
 
 }

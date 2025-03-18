@@ -77,7 +77,7 @@ public class DocumentService implements ArkEntityService {
         document.setAuthor(userInfo.getUser());
         document.setCreatedByInstitution(userInfo.getInstitution());
 
-        documentStorage.save(userInfo, document.storedFileName(), bufferedInputStream);
+        documentStorage.save(userInfo, document.storedFileName(), bufferedInputStream.readAllBytes());
 
         document.setUrl(String.format("%s/content/%s", contextPath, document.storedFileName()));
 

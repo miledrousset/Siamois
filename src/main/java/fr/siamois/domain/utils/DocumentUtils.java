@@ -101,14 +101,13 @@ public class DocumentUtils {
 
     private static String getExtension(String fileName) {
         int i = fileName.length() - 1;
-        StringBuilder sb = new StringBuilder();
         while (i >= 0 && fileName.charAt(i) != '.') {
-            sb.insert(0, fileName.charAt(i));
             i--;
         }
         if (i < 0)
             return "";
-        return sb.toString();
+
+        return fileName.substring(i);
     }
 
     public static @Nullable StreamedContent streamOf(DocumentService documentService, Document document) {
