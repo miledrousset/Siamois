@@ -5,9 +5,8 @@ import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.recordingunit.RecordingUnitNotFoundException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
-import fr.siamois.domain.models.form.CustomForm;
+import fr.siamois.domain.models.form.customForm.CustomForm;
 import fr.siamois.domain.models.form.customField.CustomFieldInteger;
-import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswer;
 import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswerInteger;
 import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswerSelectMultiple;
 import fr.siamois.domain.models.form.customFormField.CustomFormField;
@@ -334,6 +333,36 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
+    public void initCustomForm() {
+
+        if(recordingUnit.getFormResponse() == null) {
+            additionalForm = formService.findById(1);
+            recordingUnit.setFormResponse(new CustomFormResponse());
+            recordingUnit.getFormResponse().setAnswers(new HashMap<>());
+        }
+        else {
+            additionalForm = formService.findById(
+                    recordingUnit.getFormResponse().getForm().getId());
+        }
+
+        // Initialize custom form, this should be done based on the RU type
+        recordingUnit.getFormResponse().setForm(additionalForm);
+        for (CustomFormField formField : additionalForm.getFields()) {
+            if (recordingUnit.getFormResponse().getAnswers().get(formField.getId().getField()) == null) {
+                // Init missing parameters
+                if (formField.getId().getField() instanceof CustomFieldSelectMultiple) {
+                    recordingUnit.getFormResponse().getAnswers().put(formField.getId().getField(), new CustomFieldAnswerSelectMultiple());
+                } else if (formField.getId().getField() instanceof CustomFieldInteger) {
+                    recordingUnit.getFormResponse().getAnswers().put(formField.getId().getField(), new CustomFieldAnswerInteger());
+                }
+            }
+
+            // Else we make sure it's proper type?
+
+        }
+
+    }
+
     // Init for new recording units
     public void init(ActionUnit actionUnit) {
         try {
@@ -360,20 +389,8 @@ public class NewRecordingUnitFormBean implements Serializable {
             recordingUnit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
             recordingUnit.setExcavator(sessionSettingsBean.getAuthenticatedUser());
 
-            // Initialize custom form, this should be done based on the RU type
-            additionalForm = formService.findById(1);
-            recordingUnit.setFormResponse(new CustomFormResponse());
-            recordingUnit.getFormResponse().setForm(additionalForm);
-            Map<CustomField, CustomFieldAnswer> initialAnswers = new HashMap<>();
-            for (CustomFormField formField : additionalForm.getFields()) {
-                if (formField.getId().getField() instanceof CustomFieldSelectMultiple) {
-                    initialAnswers.put(formField.getId().getField(), new CustomFieldAnswerSelectMultiple());
-                } else if (formField.getId().getField() instanceof CustomFieldInteger) {
-                    initialAnswers.put(formField.getId().getField(), new CustomFieldAnswerInteger());
-                }
-            }
-            recordingUnit.getFormResponse().setAnswers(initialAnswers);
 
+            initCustomForm();
             initStratigraphy();
 
 
@@ -440,6 +457,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                 fType = this.recordingUnit.getType();
                 fSecondaryType = this.recordingUnit.getSecondaryType();
 
+                initCustomForm();
                 initStratigraphy();
 
                 historyVersion = historyService.findRecordingUnitHistory(recordingUnit);

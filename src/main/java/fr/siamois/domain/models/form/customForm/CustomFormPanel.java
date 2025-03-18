@@ -1,4 +1,4 @@
-package fr.siamois.domain.models.form;
+package fr.siamois.domain.models.form.customForm;
 
 import fr.siamois.domain.models.form.customField.CustomField;
 import lombok.Data;

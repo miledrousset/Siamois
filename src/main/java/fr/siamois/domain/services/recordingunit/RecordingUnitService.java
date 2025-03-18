@@ -119,7 +119,6 @@ public class RecordingUnitService implements ArkEntityService {
                         StratigraphicRelationshipService.ASYNCHRONOUS);
             }
 
-            recordingUnit = recordingUnitRepository.save(recordingUnit); // Reattach entity to get lazy props
 
 
             return recordingUnitRepository.save(recordingUnit);

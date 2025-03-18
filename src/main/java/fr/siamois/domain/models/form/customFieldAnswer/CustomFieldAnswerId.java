@@ -1,6 +1,5 @@
 package fr.siamois.domain.models.form.customFieldAnswer;
 
-import fr.siamois.domain.models.form.CustomForm;
 import fr.siamois.domain.models.form.customField.CustomField;
 import fr.siamois.domain.models.form.customFormResponse.CustomFormResponse;
 import jakarta.persistence.*;
@@ -18,7 +17,7 @@ public class CustomFieldAnswerId implements Serializable {
     @JoinColumn(name = "fk_field_id", nullable = false)
     private CustomField field;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "fk_form_response")
     private CustomFormResponse formResponse;
 

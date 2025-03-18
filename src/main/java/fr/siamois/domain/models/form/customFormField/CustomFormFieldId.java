@@ -1,5 +1,5 @@
 package fr.siamois.domain.models.form.customFormField;
-import fr.siamois.domain.models.form.CustomForm;
+import fr.siamois.domain.models.form.customForm.CustomForm;
 import fr.siamois.domain.models.form.customField.CustomField;
 import jakarta.persistence.*;
 import lombok.Getter;

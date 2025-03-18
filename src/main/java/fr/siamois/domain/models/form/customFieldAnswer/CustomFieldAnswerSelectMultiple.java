@@ -5,6 +5,7 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.ColumnTransformer;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class CustomFieldAnswerSelectMultiple extends CustomFieldAnswer {
 
     @Column(name = "answer", columnDefinition = "jsonb")
     @Convert(converter = ConceptListConverter.class)
+    @ColumnTransformer(write = "?::jsonb")
     private List<Concept> concepts;
 
 }

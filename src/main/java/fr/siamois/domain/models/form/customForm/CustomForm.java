@@ -1,14 +1,10 @@
-package fr.siamois.domain.models.form;
+package fr.siamois.domain.models.form.customForm;
 
-import fr.siamois.converter.ConceptListConverter;
 import fr.siamois.converter.CustomFormLayoutConverter;
-import fr.siamois.domain.models.form.customField.CustomField;
 import fr.siamois.domain.models.form.customFormField.CustomFormField;
-import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

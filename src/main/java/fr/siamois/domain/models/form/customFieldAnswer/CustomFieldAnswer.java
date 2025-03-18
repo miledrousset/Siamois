@@ -13,7 +13,7 @@ import org.hibernate.annotations.Formula;
 @Table(name = "custom_field_answer")
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorFormula("(SELECT f.answer_type FROM custom_field f WHERE f.custom_field_id = fk_field_id)")
+@DiscriminatorColumn(name = "answer_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class CustomFieldAnswer {
 
     @EmbeddedId
