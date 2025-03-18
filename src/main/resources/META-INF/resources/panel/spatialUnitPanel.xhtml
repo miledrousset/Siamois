@@ -198,6 +198,59 @@
                     </p:dataTable>
                 </h:form>
             </p:tab>
+            <p:tab title="Documents" >
+                <p:commandButton
+                        value="Ajouter un document"
+                        onclick="PF('newDocumentDiag').show()"
+
+                />
+
+                <h:panelGroup id="suDocumentsTab">
+                    <p:dataTable
+                            value="#{panelModel.documents}"
+                            var="siamoisDocument"
+                    >
+                        <p:column headerText="Titre">
+                            <h:outputText value="#{siamoisDocument.title}"/>
+                        </p:column>
+
+                        <p:column headerText="Nature">
+                            <h:outputText value="#{siamoisDocument.nature.label}"/>
+                        </p:column>
+
+                        <p:column headerText="Grandeur">
+                            <h:outputText value="#{siamoisDocument.scale.label}"/>
+                        </p:column>
+
+                        <p:column headerText="Type de document">
+                            <h:outputText value="#{siamoisDocument.format.label}"/>
+                        </p:column>
+
+                        <p:column headerText="Auteur">
+                            <h:outputText value="#{siamoisDocument.author.displayName()}"/>
+                        </p:column>
+
+                        <p:column>
+                            <h:panelGroup rendered="#{panelModel.contentIsImage(siamoisDocument.mimeType)}">
+                                <p:button
+                                        value="Visualiser"
+                                        onclick="window.open('#{siamoisDocument.url}');return false"/>
+                            </h:panelGroup>
+                        </p:column>
+
+                        <p:column>
+                            <p:commandButton
+                                    value="Télécharger"
+                                    ajax="false"
+                                    onclick="PrimeFaces.monitorDownload(start, stop);"
+                                    styleClass="mr-2">
+                                <p:fileDownload value="#{panelModel.streamOf(siamoisDocument)}"/>
+                            </p:commandButton>
+                        </p:column>
+
+                    </p:dataTable>
+                </h:panelGroup>
+            </p:tab>
         </p:tabView>
     </h:panelGroup>
     <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true">
@@ -213,6 +266,7 @@
     <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
         <h:outputText value="Version restaurée"/>
     </p:dialog>
+    <ui:include src="/dialog/document/newDocument.xhtml"/>
 
 
 </ui:fragment>

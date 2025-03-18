@@ -58,8 +58,6 @@ public class SpatialUnitBean implements Serializable {
     private final RedirectBean redirectBean;
     private final LangBean langBean;
     private final transient FieldConfigurationService fieldConfigurationService;
-    private final transient DocumentService documentService;
-    private final DocumentCreationBean documentCreationBean;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -84,7 +82,7 @@ public class SpatialUnitBean implements Serializable {
                            RecordingUnitService recordingUnitService,
                            ActionUnitService actionUnitService,
                            HistoryService historyService,
-                           SessionSettingsBean sessionSettingsBean, RedirectBean redirectBean, LangBean langBean, FieldConfigurationService fieldConfigurationService, DocumentService documentService, DocumentCreationBean documentCreationBean) {
+                           SessionSettingsBean sessionSettingsBean, RedirectBean redirectBean, LangBean langBean, FieldConfigurationService fieldConfigurationService) {
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
@@ -93,8 +91,6 @@ public class SpatialUnitBean implements Serializable {
         this.redirectBean = redirectBean;
         this.langBean = langBean;
         this.fieldConfigurationService = fieldConfigurationService;
-        this.documentService = documentService;
-        this.documentCreationBean = documentCreationBean;
     }
 
     public void reinitializeBean() {
@@ -188,8 +184,6 @@ public class SpatialUnitBean implements Serializable {
             this.actionUnitListErrorMessage = "Unable to load action units: " + e.getMessage();
         }
 
-        this.documents = documentService.findForSpatialUnit(spatialUnit);
-
         historyVersion = historyService.findSpatialUnitHistory(spatialUnit);
     }
 
@@ -206,24 +200,6 @@ public class SpatialUnitBean implements Serializable {
         log.trace("Restore order received");
         spatialUnitService.restore(history);
         PrimeFaces.current().executeScript("PF('restored-dlg').show()");
-    }
-
-    public StreamedContent streamOf(Document document) {
-        return DocumentUtils.streamOf(documentService , document);
-    }
-
-    public void saveDocument() {
-        Document created = documentCreationBean.createDocument();
-        if (created == null)
-            return;
-        documentService.addToSpatialUnit(created, spatialUnit);
-        PrimeFaces.current().executeScript("PF('newDocumentDiag').hide()");
-        PrimeFaces.current().ajax().update("spatialUnitFormTabs:suDocumentsTab");
-    }
-
-    public boolean contentIsImage(String mimeType) {
-        MimeType currentMimeType = MimeType.valueOf(mimeType);
-        return currentMimeType.getType().equals("image");
     }
 
 }
