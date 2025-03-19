@@ -174,7 +174,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
             return null;
         }
 
-        String query = "SELECT * FROM " + tableName +" WHERE fk_author_id = ? AND fk_institution_id = ? AND update_time BETWEEN ? AND ?";
+        String query = String.format("SELECT * FROM `%s` WHERE fk_author_id = ? AND fk_institution_id = ? AND update_time BETWEEN ? AND ?", tableName.replace("`", "``"));
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, userInfo.getUser().getId());
