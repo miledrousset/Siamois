@@ -60,13 +60,13 @@
             **/*Builder.*,
             **/*Controller.*,
             **/*Settings.*,
-            **/*Factory.*,
+            **/**Factory.*,
             **/SiamoisApplication.*,
-            **/*DTO.*,
-            **/*Utils.*,
-            **/*Listener.*,
+            **/**DTO.*,
+            **/**Utils.*,
+            **/**Listener.*,
             **/events/**/*.*
-            **/*Storage.*
+            **/infrastructure/files/**/*.*
         </sonar.coverage.exclusions>
 
 

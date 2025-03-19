@@ -1,11 +1,11 @@
-package fr.siamois.domain.services;
+package fr.siamois.domain.services.document;
 
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
-import fr.siamois.domain.services.document.DocumentService;
+import fr.siamois.domain.services.document.compressor.FileCompressor;
 import fr.siamois.infrastructure.database.repositories.DocumentRepository;
 import fr.siamois.infrastructure.files.DocumentStorage;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +18,7 @@ import org.springframework.util.MimeType;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +36,9 @@ class DocumentServiceTest {
     @Mock
     private DocumentStorage documentStorage;
 
+    @Mock
+    private FileCompressor fileCompressor;
+
     @InjectMocks
     private DocumentService documentService;
 
@@ -42,7 +46,7 @@ class DocumentServiceTest {
 
     @BeforeEach
     void setUp() {
-        documentService = new DocumentService(documentRepository, documentStorage, List.of());
+        documentService = new DocumentService(documentRepository, documentStorage, List.of(fileCompressor));
     }
 
     @Test
@@ -165,4 +169,61 @@ class DocumentServiceTest {
         verify(documentRepository, times(1))
                 .addDocumentToSpatialUnit(document.getId(), spatialUnit.getId());
     }
+
+    @Test
+    void findInputStreamOfDocument() throws IOException {
+        Document document = new Document();
+        byte[] data = "test data".getBytes();
+        when(documentStorage.findStreamOf(document)).thenReturn(Optional.of(data));
+
+        Optional<InputStream> result = documentService.findInputStreamOfDocument(document);
+
+        assertTrue(result.isPresent());
+        assertArrayEquals(data, result.get().readAllBytes());
+        verify(documentStorage, times(1)).findStreamOf(document);
+    }
+
+    @Test
+    void maxFileSize() {
+        when(documentStorage.getMaxUploadSize()).thenReturn("10MB");
+
+        long result = documentService.maxFileSize();
+
+        assertEquals(10 * 1024 * 1024, result);
+    }
+
+    @Test
+    void findCompressorOf() {
+        Document document = new Document();
+        document.setMimeType("application/json");
+        when(fileCompressor.isMatchingCompressor(MimeType.valueOf("application/json"))).thenReturn(true);
+
+        FileCompressor result = documentService.findCompressorOf(document);
+
+        assertEquals(fileCompressor, result);
+    }
+
+    @Test
+    void getMD5Sum() throws IOException {
+        InputStream inputStream = new ByteArrayInputStream("test data".getBytes());
+        String expectedMd5 = "eb733a00c0c9d336e65691a37ab54293"; // MD5 of "test data"
+
+        String result = documentService.getMD5Sum(inputStream);
+
+        assertEquals(expectedMd5, result);
+    }
+
+    @Test
+    void existInSpatialUnitByHash() {
+        SpatialUnit spatialUnit = new SpatialUnit();
+        spatialUnit.setId(1L);
+        String hash = "testhash";
+        when(documentRepository.existsByHashInSpatialUnit(spatialUnit.getId(), hash)).thenReturn(true);
+
+        boolean result = documentService.existInSpatialUnitByHash(spatialUnit, hash);
+
+        assertTrue(result);
+        verify(documentRepository, times(1)).existsByHashInSpatialUnit(spatialUnit.getId(), hash);
+    }
+
 }
