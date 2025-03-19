@@ -18,6 +18,10 @@ public class Document extends DocumentParent implements ArkEntity {
     private Long id;
 
     public String storedFileName() {
+        return fileCode + ".gzip";
+    }
+
+    public String contentFileName() {
         return fileCode + extension;
     }
 

@@ -42,11 +42,12 @@ public class DocumentStorage {
         return types;
     }
 
-    public void save(UserInfo userInfo, String fileName, byte[] content) throws IOException {
+    public void save(UserInfo userInfo, String storedFileName, byte[] content) throws IOException {
+
         Path path = Paths.get(
                 documentsPath,
                 userInfo.getInstitution().getId().toString(),
-                fileName
+                storedFileName
         );
 
         Files.createDirectories(path.getParent());
@@ -77,8 +78,10 @@ public class DocumentStorage {
                 document.storedFileName()
         );
 
-        if (filePath.toFile().exists()) {
-            return Optional.of(filePath.toFile());
+        File file = filePath.toFile();
+
+        if (file.exists()) {
+            return Optional.of(file);
         }
 
         return Optional.empty();

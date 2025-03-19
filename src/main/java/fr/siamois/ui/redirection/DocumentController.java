@@ -53,12 +53,13 @@ public class DocumentController {
         Optional<InputStream> optInputStream = documentService.findInputStreamOfDocument(document);
 
         ContentDisposition contentDisposition = ContentDisposition.builder("inline")
-                .filename(document.storedFileName())
+                .filename(document.contentFileName())
                 .build();
 
         return optInputStream.<ResponseEntity<Resource>>map(inputStream -> ResponseEntity
                 .ok()
                 .contentType(MediaType.parseMediaType(document.getMimeType()))
+                .header(HttpHeaders.ACCEPT_ENCODING, "gzip,deflate")
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
                 .body(new InputStreamResource(inputStream))).orElseGet(() -> ResponseEntity.notFound().build());
 
