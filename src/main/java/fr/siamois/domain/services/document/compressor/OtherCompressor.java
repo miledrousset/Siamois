@@ -8,7 +8,7 @@ import org.springframework.util.MimeType;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.DeflaterInputStream;
+import java.util.zip.GZIPOutputStream;
 
 @Service
 @Order
@@ -26,21 +26,22 @@ public class OtherCompressor implements FileCompressor {
      */
     @Override
     public byte[] compress(InputStream inputStream) throws IOException {
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-             DeflaterInputStream deflaterInputStream = new DeflaterInputStream(inputStream)) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream)) {
             byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = deflaterInputStream.read(buffer)) != -1) {
-                byteArrayOutputStream.write(buffer, 0, bytesRead);
+            int len;
+            while ((len = inputStream.read(buffer)) != -1) {
+                gzipOutputStream.write(buffer, 0, len);
             }
-            return byteArrayOutputStream.toByteArray();
         }
+        return byteArrayOutputStream.toByteArray();
     }
 
     @Override
     public String encodingTypes() {
-        return "gzip,deflate";
+        return "gzip";
     }
+
 
     @Override
     public void updateStoredFilename(Document document) {

@@ -69,7 +69,7 @@ public class DocumentController {
         return  ResponseEntity
                 .ok()
                 .contentType(MediaType.parseMediaType(document.getMimeType()))
-                .header(HttpHeaders.ACCEPT_ENCODING, compressor.encodingTypes())
+                .header(HttpHeaders.CONTENT_ENCODING, compressor.encodingTypes())
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
                 .body(new InputStreamResource(fileStream));
 
