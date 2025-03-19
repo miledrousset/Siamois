@@ -31,6 +31,7 @@ import software.xdev.chartjs.model.options.Plugins;
 import software.xdev.chartjs.model.options.Title;
 import software.xdev.chartjs.model.options.Tooltip;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -205,6 +206,21 @@ public class SpatialUnitBean implements Serializable {
     }
 
     public void saveDocument() {
+
+        try {
+            BufferedInputStream currentFile = new BufferedInputStream(documentCreationBean.getDocFile().getInputStream());
+            String hash = documentService.getMD5Sum(currentFile);
+            currentFile.mark(Integer.MAX_VALUE);
+            if (documentService.existInSpatialUnitByHash(spatialUnit, hash)) {
+                log.error("Document already exists in spatial unit");
+                currentFile.reset();
+                return;
+            }
+        } catch (IOException e) {
+            log.error("Error while processing spatial unit document", e);
+            return;
+        }
+
         Document created = documentCreationBean.createDocument();
         if (created == null)
             return;

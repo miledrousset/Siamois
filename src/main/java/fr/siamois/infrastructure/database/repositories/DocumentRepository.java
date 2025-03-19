@@ -35,4 +35,13 @@ public interface DocumentRepository extends CrudRepository<Document, Long> {
                     "VALUES (:documentId, :spatialUnitId)"
     )
     void addDocumentToSpatialUnit(Long documentId, Long spatialUnitId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT COUNT(*) > 0 " +
+                    "FROM spatial_unit_document sud " +
+                    "JOIN siamois_document sd ON sud.fk_document_id = sd.document_id " +
+                    "WHERE sud.fk_spatial_unit_id = :spatialUnitId AND sd.md5_sum = :hash"
+    )
+    boolean existsByHashInSpatialUnit(Long spatialUnitId, String hash);
 }

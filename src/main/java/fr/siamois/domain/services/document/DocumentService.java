@@ -154,4 +154,14 @@ public class DocumentService implements ArkEntityService {
         }
         throw new IllegalStateException(String.format("No file compressor found for %s", document.getMimeType()));
     }
+
+    public String getMD5Sum(InputStream inputStream) throws IOException {
+        BufferedInputStream bis = new BufferedInputStream(inputStream);
+        return DocumentUtils.md5(bis);
+    }
+
+    public boolean existInSpatialUnitByHash(SpatialUnit spatialUnit, String hash) {
+        return documentRepository.existsByHashInSpatialUnit(spatialUnit.getId(), hash);
+    }
+
 }
