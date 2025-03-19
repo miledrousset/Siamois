@@ -111,23 +111,20 @@ class DocumentServiceTest {
 
     @Test
     void findFile() {
-        Institution institution = new Institution();
-        institution.setId(1L); // Définir l'ID de l'institution
-        Person author = new Person();
-        author.setId(1L); // Définir l'ID de l'auteur
         Document document = new Document();
-        document.setCreatedByInstitution(institution);
-        document.setAuthor(author);
+        document.setId(1L);
+        document.setFileName("test.pdf");
         document.setMimeType("application/pdf");
+        document.setSize(1024L);
+        File file = new File("");
 
-        when(documentStorage.find(any(Document.class))).thenReturn(Optional.of(new File(document.getStoredFileName())));
+        when(documentStorage.find(document)).thenReturn(Optional.of(file));
 
-        Optional<File> optFile = documentService.findFile(document);
+        Optional<File> result = documentService.findFile(document);
 
-        assertTrue(optFile.isPresent());
-        File file = optFile.get();
-        assertNotNull(file);
-        assertTrue(file.getPath().contains(document.getStoredFileName()));
+        assertTrue(result.isPresent());
+        assertEquals(file, result.get());
+        verify(documentStorage, times(1)).find(document);
     }
 
     @Test
