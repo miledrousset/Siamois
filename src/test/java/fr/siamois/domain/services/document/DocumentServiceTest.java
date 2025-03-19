@@ -4,10 +4,15 @@ import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.models.document.DocumentParent;
+import fr.siamois.domain.models.exceptions.InvalidFileSizeException;
+import fr.siamois.domain.models.exceptions.InvalidFileTypeException;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.document.compressor.FileCompressor;
+import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.infrastructure.database.repositories.DocumentRepository;
 import fr.siamois.infrastructure.files.DocumentStorage;
+import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -224,6 +229,64 @@ class DocumentServiceTest {
 
         assertTrue(result);
         verify(documentRepository, times(1)).existsByHashInSpatialUnit(spatialUnit.getId(), hash);
+    }
+
+    @Test
+    void checkFileDataShouldThrowInvalidFileTypeException() {
+        Document document = new Document();
+        document.setMimeType("application/unsupported");
+
+        when(documentStorage.supportedMimeTypes()).thenReturn(List.of());
+
+        assertThrows(InvalidFileTypeException.class, () -> documentService.checkFileData(document));
+    }
+
+    @Test
+    void checkFileDataShouldThrowInvalidFileNameException() {
+        Document document = new Document();
+        document.setFileName("a".repeat(DocumentParent.MAX_FILE_NAME_LENGTH + 1));
+        document.setMimeType("application/pdf");
+
+        MimeType mimeType = MimeType.valueOf("application/pdf");
+
+        when(documentStorage.supportedMimeTypes()).thenReturn(List.of(mimeType));
+
+        assertThrows(InvalidFileNameException.class, () -> documentService.checkFileData(document));
+    }
+
+    @Test
+    void checkFileDataShouldThrowInvalidFileSizeException() {
+        Document document = new Document();
+        document.setMimeType("application/pdf");
+        document.setFileName("Regular name");
+
+        when(documentStorage.getMaxUploadSize()).thenReturn("10KB");
+
+        document.setSize(DocumentUtils.byteParser("10KB") + 1);
+
+        MimeType mimeType = MimeType.valueOf("application/pdf");
+        when(documentStorage.supportedMimeTypes()).thenReturn(List.of(mimeType));
+
+        assertThrows(InvalidFileSizeException.class, () -> documentService.checkFileData(document));
+    }
+
+    @Test
+    void findInputStreamOfDocumentShouldReturnOptional() {
+        Document document = new Document();
+
+        Optional<InputStream> result = documentService.findInputStreamOfDocument(document);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void findCompressorOf_whenNoCompressor() {
+        Document document = new Document();
+        document.setMimeType("application/pdf");
+
+        when(fileCompressor.isMatchingCompressor(any(MimeType.class))).thenReturn(false);
+
+        assertThrows(IllegalStateException.class, () -> documentService.findCompressorOf(document));
     }
 
 }

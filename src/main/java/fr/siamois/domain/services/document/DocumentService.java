@@ -91,7 +91,7 @@ public class DocumentService implements ArkEntityService {
         return documentRepository.save(document);
     }
 
-    private void checkFileData(Document document) throws InvalidFileTypeException, InvalidFileSizeException {
+    void checkFileData(Document document) throws InvalidFileTypeException, InvalidFileSizeException {
         List<MimeType> supportedMimeTypes = supportedMimeTypes();
         if (allWildCardIsNotInMimetypes(supportedMimeTypes) && documentMimeTypeIsNotSupported(document)) {
                 throw new InvalidFileTypeException(String.format("Type %s is not allowed", document.getMimeType()));
