@@ -9,23 +9,19 @@ import fr.siamois.domain.models.exceptions.InvalidFileSizeException;
 import fr.siamois.domain.models.exceptions.InvalidFileTypeException;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.ArkEntityService;
+import fr.siamois.domain.services.document.compressor.FileCompressor;
 import fr.siamois.domain.utils.CodeUtils;
 import fr.siamois.domain.utils.DocumentUtils;
-import fr.siamois.infrastructure.repositories.DocumentRepository;
-import jakarta.servlet.ServletContext;
+import fr.siamois.infrastructure.database.repositories.DocumentRepository;
+import fr.siamois.infrastructure.files.DocumentStorage;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeType;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,23 +30,17 @@ import java.util.Optional;
 @Setter
 public class DocumentService implements ArkEntityService {
 
-    private final ServletContext servletContext;
-    @Value("${siamois.documents.allowed-types}")
-    private String[] mimeTypes;
-
-    @Value("${spring.servlet.multipart.max-file-size}")
-    private String maxUploadSize;
-
-    @Value("${siamois.documents.folder-path}")
-    private String documentsPath;
 
     private final DocumentRepository documentRepository;
 
     private static final int MAX_GENERATIONS = 100;
+    private final DocumentStorage documentStorage;
+    private final Collection<FileCompressor> fileCompressors;
 
-    public DocumentService(DocumentRepository documentRepository, ServletContext servletContext) {
+    public DocumentService(DocumentRepository documentRepository, DocumentStorage documentStorage, Collection<FileCompressor> fileCompressors) {
         this.documentRepository = documentRepository;
-        this.servletContext = servletContext;
+        this.documentStorage = documentStorage;
+        this.fileCompressors = fileCompressors;
     }
 
     @Override
@@ -64,11 +54,7 @@ public class DocumentService implements ArkEntityService {
     }
 
     public List<MimeType> supportedMimeTypes() {
-        List<MimeType> types = new ArrayList<>();
-        for (String mimeType : mimeTypes) {
-            types.add(MimeType.valueOf(mimeType));
-        }
-        return types;
+        return documentStorage.supportedMimeTypes();
     }
 
     private String generateFileInternalCode() {
@@ -85,66 +71,54 @@ public class DocumentService implements ArkEntityService {
         return code;
     }
 
-    public Document saveFile(UserInfo userInfo, Document document, InputStream fileInputStream) throws InvalidFileTypeException, InvalidFileSizeException, IOException {
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+    public Document saveFile(UserInfo userInfo, Document document, InputStream fileInputStream, String contextPath) throws InvalidFileTypeException, InvalidFileSizeException, IOException {
+        log.trace("Started to upload document {} to {}", document.getFileName(), userInfo.getInstitution().getId());
 
-        checkFileData(document);
+        try (BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream)) {
+            checkFileData(document);
 
-        document.setMd5Sum(DocumentUtils.md5(bufferedInputStream));
-        document.setFileCode(generateFileInternalCode());
-        document.setAuthor(userInfo.getUser());
-        document.setCreatedByInstitution(userInfo.getInstitution());
+            document.setMd5Sum(DocumentUtils.md5(bufferedInputStream));
+            document.setFileCode(generateFileInternalCode());
+            document.setAuthor(userInfo.getUser());
+            document.setCreatedByInstitution(userInfo.getInstitution());
+            document.setUrl(String.format("%s/content/%s", contextPath, document.contentFileName()));
 
-        Path folderPath = Paths.get(
-                documentsPath,
-                userInfo.getInstitution().getId().toString(),
-                userInfo.getUser().getId().toString()
-        );
-
-        Files.createDirectories(folderPath);
-
-        File serverFile = folderPath.resolve(document.storedFileName()).toFile();
-        if (serverFile.createNewFile())
-            log.trace("Created new file {}", serverFile.getAbsolutePath());
-
-        try (FileOutputStream outputStream = new FileOutputStream(serverFile)) {
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = bufferedInputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
+            documentStorage.save(userInfo, document, bufferedInputStream);
         }
 
-        document.setUrl(String.format("%s/content/%s", servletContext.getContextPath(), document.storedFileName()));
+        log.trace("Finished upload document {} to {}", document.getFileName(), userInfo.getInstitution().getId());
 
         return documentRepository.save(document);
     }
 
-    private void checkFileData(Document document) throws InvalidFileTypeException, InvalidFileSizeException {
-        if (Arrays.stream(mimeTypes).noneMatch(type -> type.equals(document.getMimeType()))) {
-            throw new InvalidFileTypeException(String.format("Type %s is not allowed", document.getMimeType()));
-        }
+    void checkFileData(Document document) throws InvalidFileTypeException, InvalidFileSizeException {
+        List<MimeType> supportedMimeTypes = supportedMimeTypes();
+        if (allWildCardIsNotInMimetypes(supportedMimeTypes) && documentMimeTypeIsNotSupported(document)) {
+                throw new InvalidFileTypeException(String.format("Type %s is not allowed", document.getMimeType()));
+            }
+
 
         if (document.getFileName().length() > DocumentParent.MAX_FILE_NAME_LENGTH) {
             throw new InvalidFileNameException(document.getFileName(), "File name too long");
         }
 
-        final long maxFileSize = DocumentUtils.byteParser(maxUploadSize);
+        final long maxFileSize = DocumentUtils.byteParser(documentStorage.getMaxUploadSize());
 
         if (document.getSize() > maxFileSize) {
             throw new InvalidFileSizeException(document.getSize(), String.format("Max file size is %s bytes", maxFileSize));
         }
     }
 
-    public File findFile(Document document) {
-        Path filePath = Paths.get(
-                documentsPath,
-                document.getCreatedByInstitution().getId().toString(),
-                document.getAuthor().getId().toString(),
-                document.storedFileName()
-        );
+    private boolean documentMimeTypeIsNotSupported(Document document) {
+        return supportedMimeTypes().stream().noneMatch(type -> type.toString().equals(document.getMimeType()));
+    }
 
-        return filePath.toFile();
+    private static boolean allWildCardIsNotInMimetypes(List<MimeType> supportedMimeTypes) {
+        return supportedMimeTypes.stream().noneMatch(type -> type.toString().equals("*/*"));
+    }
+
+    public Optional<File> findFile(Document document) {
+        return documentStorage.find(document);
     }
 
     public Optional<Document> findByFileCode(String fileCode) {
@@ -158,4 +132,36 @@ public class DocumentService implements ArkEntityService {
     public void addToSpatialUnit(Document document, SpatialUnit spatialUnit) {
         documentRepository.addDocumentToSpatialUnit(document.getId(), spatialUnit.getId());
     }
+
+    public Optional<InputStream> findInputStreamOfDocument(Document document) {
+        Optional<byte[]> result  = documentStorage.findStreamOf(document);
+        if (result.isEmpty())
+            return Optional.empty();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(result.get());
+
+        return Optional.of(bais);
+    }
+
+    public long maxFileSize() {
+        return DocumentUtils.byteParser(documentStorage.getMaxUploadSize());
+    }
+
+    public FileCompressor findCompressorOf(Document document) {
+        for (FileCompressor fileCompressor : fileCompressors) {
+            if (fileCompressor.isMatchingCompressor(document.mimeTypeObject()))
+                return fileCompressor;
+        }
+        throw new IllegalStateException(String.format("No file compressor found for %s", document.getMimeType()));
+    }
+
+    public String getMD5Sum(InputStream inputStream) throws IOException {
+        BufferedInputStream bis = new BufferedInputStream(inputStream);
+        return DocumentUtils.md5(bis);
+    }
+
+    public boolean existInSpatialUnitByHash(SpatialUnit spatialUnit, String hash) {
+        return documentRepository.existsByHashInSpatialUnit(spatialUnit.getId(), hash);
+    }
+
 }

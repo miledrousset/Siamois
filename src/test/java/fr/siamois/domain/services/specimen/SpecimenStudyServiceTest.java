@@ -2,7 +2,7 @@ package fr.siamois.domain.services.specimen;
 
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.specimen.SpecimenStudy;
-import fr.siamois.infrastructure.repositories.specimen.SpecimenStudyRepository;
+import fr.siamois.infrastructure.database.repositories.specimen.SpecimenStudyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

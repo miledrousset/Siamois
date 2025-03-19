@@ -6,14 +6,7 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components"
                 xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label"
-                xmlns:documentDialog="http://xmlns.jcp.org/jsf/composite/dialog/document"
 >
-    <ui:define name="metadata">
-        <f:metadata>
-            <!-- Capture the ID parameter from the URL and bind it to spatialUnitBean -->
-            <f:event type="preRenderView" listener="#{spatialUnitBean.init}"/>
-        </f:metadata>
-    </ui:define>
     <ui:define name="content">
         <p:growl id="growl" showDetail="true"/>
         <!-- Content -->
@@ -46,7 +39,7 @@
                     </div>
                 </p:outputPanel>
             </h:form>
-            <h:form>
+            <h:form id="spatialUnitFormTabs">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <p:tabView>
                     <p:tab title="Aperçu">
@@ -206,37 +199,58 @@
                             </p:column>
                         </p:dataTable>
                     </p:tab>
-                    <p:tab title="Documents">
-                        <p:commandButton value="Ajouter un document" onclick="PF('newDocumentDiag').show()"/>
+                    <p:tab title="Documents" >
+                        <p:commandButton
+                                value="Ajouter un document"
+                                onclick="PF('newDocumentDiag').show()"
 
-                        <p:dataTable
-                                value="#{spatialUnitBean.documents}"
-                                var="siamoisDocument"
-                        >
-                            <p:column headerText="Titre">
-                                <h:outputText value="#{siamoisDocument.title}"/>
-                            </p:column>
+                        />
 
-                            <p:column headerText="Nature">
-                                <h:outputText value="#{siamoisDocument.nature.label}"/>
-                            </p:column>
+                        <h:panelGroup id="suDocumentsTab">
+                            <p:dataTable
+                                    value="#{spatialUnitBean.documents}"
+                                    var="siamoisDocument"
+                            >
+                                <p:column headerText="Titre">
+                                    <h:outputText value="#{siamoisDocument.title}"/>
+                                </p:column>
 
-                            <p:column headerText="Grandeur">
-                                <h:outputText value="#{siamoisDocument.scale.label}"/>
-                            </p:column>
+                                <p:column headerText="Nature">
+                                    <h:outputText value="#{siamoisDocument.nature.label}"/>
+                                </p:column>
 
-                            <p:column headerText="Type de document">
-                                <h:outputText value="#{siamoisDocument.format.label}"/>
-                            </p:column>
+                                <p:column headerText="Grandeur">
+                                    <h:outputText value="#{siamoisDocument.scale.label}"/>
+                                </p:column>
 
-                            <p:column headerText="Auteur">
-                                <h:outputText value="#{siamoisDocument.author.displayName()}"/>
-                            </p:column>
+                                <p:column headerText="Type de document">
+                                    <h:outputText value="#{siamoisDocument.format.label}"/>
+                                </p:column>
 
-                            <p:column>
-                                <h:link outcome="#{siamoisDocument.url}" value="Visualiser"/>
-                            </p:column>
-                        </p:dataTable>
+                                <p:column headerText="Auteur">
+                                    <h:outputText value="#{siamoisDocument.author.displayName()}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <h:panelGroup rendered="#{spatialUnitBean.contentIsImage(siamoisDocument.mimeType)}">
+                                        <p:button
+                                                value="Visualiser"
+                                                onclick="window.open('#{siamoisDocument.url}');return false"/>
+                                    </h:panelGroup>
+                                </p:column>
+
+                                <p:column>
+                                    <p:commandButton
+                                            value="Télécharger"
+                                            ajax="false"
+                                            onclick="PrimeFaces.monitorDownload(start, stop);"
+                                            styleClass="mr-2">
+                                        <p:fileDownload value="#{spatialUnitBean.streamOf(siamoisDocument)}"/>
+                                    </p:commandButton>
+                                </p:column>
+
+                            </p:dataTable>
+                        </h:panelGroup>
                     </p:tab>
                 </p:tabView>
             </h:form>
@@ -254,6 +268,6 @@
         <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
             <h:outputText value="Version restaurée"/>
         </p:dialog>
-        <documentDialog:newDocument processBean="#{spatialUnitBean}"/>
+        <ui:include src="/dialog/document/newDocument.xhtml"/>
     </ui:define>
 </ui:composition>

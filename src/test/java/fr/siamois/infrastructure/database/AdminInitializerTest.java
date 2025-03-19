@@ -2,8 +2,8 @@ package fr.siamois.infrastructure.database;
 
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.infrastructure.repositories.InstitutionRepository;
-import fr.siamois.infrastructure.repositories.auth.PersonRepository;
+import fr.siamois.infrastructure.database.repositories.InstitutionRepository;
+import fr.siamois.infrastructure.database.repositories.auth.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

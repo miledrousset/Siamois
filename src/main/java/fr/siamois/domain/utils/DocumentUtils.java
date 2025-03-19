@@ -1,12 +1,22 @@
 package fr.siamois.domain.utils;
 
+import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.services.document.DocumentService;
+import fr.siamois.domain.services.vocabulary.ConceptService;
+import fr.siamois.ui.bean.dialog.DocumentCreationBean;
+import jakarta.annotation.Nullable;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.util.MimeType;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,11 +66,51 @@ public class DocumentUtils {
         List<String> extensions = new ArrayList<>();
 
         for (MimeType mimeType : allowedTypes) {
+            if (mimeType.toString().equalsIgnoreCase("*/*"))
+                return "*";
+
             String subtype = mimeType.getSubtype();
             extensions.add(subtype);
         }
 
         return String.format("/(\\.|\\/)(%s)$/", String.join("|", extensions));
+    }
+
+    public static String allowedExtensionsStringList(List<MimeType> allowedTypes) {
+        List<String> extensions = new ArrayList<>();
+        for (MimeType type : allowedTypes) {
+            if (type.toString().equalsIgnoreCase("*/*"))
+                return "*";
+            extensions.add("." + type.getSubtype());
+        }
+        return String.join(",", extensions);
+    }
+
+    public static Document prepareDocumentFrom(ConceptService conceptService, UploadedFile uploadedFile, DocumentCreationBean bean) {
+        Document document = new Document();
+        document.setTitle(bean.getDocTitle());
+        document.setNature(conceptService.saveOrGetConcept(bean.getDocNature()));
+        document.setScale(conceptService.saveOrGetConcept(bean.getDocScale()));
+        document.setFormat(conceptService.saveOrGetConcept(bean.getDocType()));
+        document.setMimeType(uploadedFile.getContentType());
+        document.setFileName(uploadedFile.getFileName());
+        document.setSize(uploadedFile.getSize());
+        document.setDescription(bean.getDocDescription());
+        return document;
+    }
+
+    public static @Nullable StreamedContent streamOf(DocumentService documentService, Document document) {
+        Optional<InputStream> optStream = documentService.findInputStreamOfDocument(document);
+        if (optStream.isEmpty()) {
+            return null;
+        }
+
+        return DefaultStreamedContent.builder()
+                .contentType(document.getMimeType())
+                .contentLength(document.getSize())
+                .name(document.getFileName())
+                .stream(optStream::get)
+                .build();
     }
 
 }

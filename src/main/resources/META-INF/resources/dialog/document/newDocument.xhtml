@@ -1,77 +1,89 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:cc="http://xmlns.jcp.org/jsf/composite"
                 xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
 
 >
 
-    <cc:interface>
-        <cc:attribute name="processBean" required="true" type="fr.siamois.ui.bean.dialog.DocumentCreationDialog"/>
-    </cc:interface>
+    <p:dialog widgetVar="newDocumentDiag" id="newDocumentDiag" width="40vw" showEffect="fade" closeOnEscape="true" appendToBody="true">
+        <h:form id="newDocument" enctype="multipart/form-data">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
-    <cc:implementation>
-        <p:dialog widgetVar="newDocumentDiag" width="40vw" showEffect="fade" closeOnEscape="true" appendToBody="true">
-            <h:form id="newDocument">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <h1>Création d'un document</h1>
-                <div class="form-group row">
-                    <label class="col-lg-4 col-form-label" for="title">Titre</label>
-                    <div class="col-lg-6">
-                        <p:inputText id="title" value="#{cc.attrs.processBean.docTitle}"/>
-                    </div>
+            <h1>Création d'un document</h1>
+            <div class="form-group row">
+                <label class="col-lg-4 col-form-label" for="title">Titre</label>
+                <div class="col-lg-6">
+                    <p:inputText
+                            id="title"
+                            value="#{documentCreationBean.docTitle}"
+                            maxlength="#{documentCreationBean.maxTitleLength()}"
+                    />
                 </div>
-                <div class="form-group row">
-                    <label class="col-lg-4 col-form-label" for="nature">Nature</label>
-                    <div class="col-lg-6">
-                        <sharedInput:conceptAutocomplete
-                                id="nature"
-                                editConceptUrl="#{cc.attrs.processBean.getUrlForConcept(cc.attrs.processBean.parentNature)}"
-                                selectedConcept="#{cc.attrs.processBean.docNature}"
-                                completeMethod="#{cc.attrs.processBean.autocompleteNature}"/>
-                    </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-form-label" for="description">Description</label>
+                <div class="col-lg-6">
+                    <p:inputTextarea
+                            id="description"
+                            value="#{documentCreationBean.docDescription}"
+                            maxlength="#{documentCreationBean.maxDescriptionSize()}"
+                    />
                 </div>
-                <div class="form-group row">
-                    <label class="col-lg-4 col-form-label" for="scale">Scale</label>
-                    <div class="col-lg-6">
-                        <sharedInput:conceptAutocomplete
-                                id="scale"
-                                editConceptUrl="#{cc.attrs.processBean.getUrlForConcept(cc.attrs.processBean.parentScale)}"
-                                selectedConcept="#{cc.attrs.processBean.docScale}"
-                                completeMethod="#{cc.attrs.processBean.autocompleteScale}"/>
-                    </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-form-label" for="nature">Nature</label>
+                <div class="col-lg-6">
+                    <sharedInput:conceptAutocomplete
+                            id="nature"
+                            editConceptUrl="#{documentCreationBean.getUrlForConcept(documentCreationBean.parentNature)}"
+                            selectedConcept="#{documentCreationBean.docNature}"
+                            completeMethod="#{documentCreationBean.autocompleteNature}"/>
                 </div>
-                <div class="form-group row">
-                    <label class="col-lg-4 col-form-label" for="type">Type</label>
-                    <div class="col-lg-6">
-                        <sharedInput:conceptAutocomplete
-                                id="type"
-                                editConceptUrl="#{cc.attrs.processBean.getUrlForConcept(cc.attrs.processBean.parentType)}"
-                                selectedConcept="#{cc.attrs.processBean.docType}"
-                                completeMethod="#{cc.attrs.processBean.autocompleteType}"/>
-                    </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-form-label" for="scale">Scale</label>
+                <div class="col-lg-6">
+                    <sharedInput:conceptAutocomplete
+                            id="scale"
+                            editConceptUrl="#{documentCreationBean.getUrlForConcept(documentCreationBean.parentScale)}"
+                            selectedConcept="#{documentCreationBean.docScale}"
+                            completeMethod="#{documentCreationBean.autocompleteScale}"/>
                 </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-form-label" for="type">Type</label>
+                <div class="col-lg-6">
+                    <sharedInput:conceptAutocomplete
+                            id="type"
+                            editConceptUrl="#{documentCreationBean.getUrlForConcept(documentCreationBean.parentType)}"
+                            selectedConcept="#{documentCreationBean.docType}"
+                            completeMethod="#{documentCreationBean.autocompleteType}"/>
+                </div>
+            </div>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <div class="form-group row">
+                <label class="col-lg-4 col-form-label" for="file">Fichier</label>
+                <div class="col-lg-6">
+                    <p:fileUpload
+                            id="file"
+                            value="#{documentCreationBean.docFile}"
+                            mode="simple"
+                            accept="#{documentCreationBean.allowedExtensions()}"
+                    >
+                        <p:validateFile
+                                sizeLimit="#{documentCreationBean.maxFileSize()}"
+                                allowTypes="#{documentCreationBean.regexSupportedTypes()}"/>
+                    </p:fileUpload>
+                </div>
+            </div>
+            <p:commandButton
+                    action="#{documentCreationBean.callActionOnSave}"
+                    value="Ajouter le document"
+            />
+        </h:form>
 
-            </h:form>
-            <h:form id="fileSelect" enctype="multipart/form-data">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <div class="form-group row">
-                    <label class="col-lg-4 col-form-label" for="file">Fichier</label>
-                    <div class="col-lg-6">
-                        <p:fileUpload
-                                id="file"
-                                value="#{cc.attrs.processBean.docFile}"
-                                mode="simple"
-                                 allowTypes="#{spatialUnitBean.regexSupportedTypes()}"
-                        />
-                    </div>
-                </div>
-                <p:commandButton action="#{cc.attrs.processBean.createDocument()}" value="Ajouter le document"/>
-            </h:form>
 
+    </p:dialog>
 
-        </p:dialog>
-    </cc:implementation>
-
-</ui:composition>
+</ui:fragment>

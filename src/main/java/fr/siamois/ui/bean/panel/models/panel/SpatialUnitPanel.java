@@ -1,13 +1,17 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.dialog.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.utils.DataLoaderUtils;
 import fr.siamois.ui.bean.panel.utils.SpatialUnitHelperService;
@@ -15,6 +19,9 @@ import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.PrimeFaces;
+import org.primefaces.model.StreamedContent;
+import org.springframework.util.MimeType;
 import software.xdev.chartjs.model.charts.BarChart;
 import software.xdev.chartjs.model.color.RGBAColor;
 import software.xdev.chartjs.model.data.BarData;
@@ -24,6 +31,8 @@ import software.xdev.chartjs.model.options.Plugins;
 import software.xdev.chartjs.model.options.Title;
 import software.xdev.chartjs.model.options.Tooltip;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,11 +46,13 @@ import java.util.List;
 @Data
 public class SpatialUnitPanel extends AbstractPanel {
 
-    private final SpatialUnitService spatialUnitService;
-    private final RecordingUnitService recordingUnitService;
-    private final ActionUnitService actionUnitService;
-    private final SessionSettingsBean sessionSettings;
-    private final SpatialUnitHelperService spatialUnitHelperService;
+    private SpatialUnitService spatialUnitService;
+    private RecordingUnitService recordingUnitService;
+    private ActionUnitService actionUnitService;
+    private SessionSettingsBean sessionSettings;
+    private SpatialUnitHelperService spatialUnitHelperService;
+    private DocumentService documentService;
+    private DocumentCreationBean documentCreationBean;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -61,18 +72,13 @@ public class SpatialUnitPanel extends AbstractPanel {
 
     private Long idunit;  // ID of the spatial unit
 
-    public SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, Long id, PanelBreadcrumb currentBreadcrumb, SpatialUnitHelperService spatialUnitHelperService) {
+    private List<Document> documents;
+
+    private SpatialUnitPanel(PanelBreadcrumb currentBreadcrumb) {
         super("spatial", "Unité spatiale", "spatial", "pi pi-map-marker");
-        this.spatialUnitService = spatialUnitService;
-        this.recordingUnitService = recordingUnitService;
-        this.actionUnitService = actionUnitService;
-        this.sessionSettings = sessionSettings;
-        this.idunit = id;
-        this.spatialUnitHelperService = spatialUnitHelperService;
         this.setBreadcrumb(new PanelBreadcrumb());
         this.getBreadcrumb().getModel().getElements().clear();
         this.getBreadcrumb().getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
-        init();
     }
 
     @Override
@@ -171,6 +177,7 @@ public class SpatialUnitPanel extends AbstractPanel {
         );
 
         historyVersion = spatialUnitHelperService.findHistory(spatialUnit);
+        documents = documentService.findForSpatialUnit(spatialUnit);
     }
 
     public void visualise(SpatialUnitHist history) {
@@ -181,5 +188,120 @@ public class SpatialUnitPanel extends AbstractPanel {
         spatialUnitHelperService.restore(history);
     }
 
+    public StreamedContent streamOf(Document document) {
+        return DocumentUtils.streamOf(documentService , document);
+    }
+
+    public void saveDocument() {
+        try {
+            BufferedInputStream currentFile = new BufferedInputStream(documentCreationBean.getDocFile().getInputStream());
+            String hash = documentService.getMD5Sum(currentFile);
+            currentFile.mark(Integer.MAX_VALUE);
+            if (documentService.existInSpatialUnitByHash(spatialUnit, hash)) {
+                log.error("Document already exists in spatial unit");
+                currentFile.reset();
+                return;
+            }
+        } catch (IOException e) {
+            log.error("Error while processing spatial unit document", e);
+            return;
+        }
+
+        Document created = documentCreationBean.createDocument();
+        if (created == null)
+            return;
+        log.trace("Document created: {}", created);
+        documentService.addToSpatialUnit(created, spatialUnit);
+        log.trace("Document added to spatial unit: {}", spatialUnit);
+        PrimeFaces.current().executeScript("PF('newDocumentDiag').hide()");
+        PrimeFaces.current().ajax().update("spatialUnitFormTabs:suDocumentsTab");
+    }
+
+    public boolean contentIsImage(String mimeType) {
+        MimeType currentMimeType = MimeType.valueOf(mimeType);
+        return currentMimeType.getType().equals("image");
+    }
+
+    public void initDialog() {
+        log.trace("initDialog");
+        documentCreationBean.init();
+        documentCreationBean.setActionOnSave(this::saveDocument);
+        PrimeFaces.current().executeScript("PF('newDocumentDiag').show()");
+    }
+
+    public static SpatialUnitPanelBuilder builder() {
+        return new SpatialUnitPanelBuilder();
+    }
+
+    public static class SpatialUnitPanelBuilder {
+        private SpatialUnitService spatialUnitService;
+        private RecordingUnitService recordingUnitService;
+        private ActionUnitService actionUnitService;
+        private SessionSettingsBean sessionSettings;
+        private Long id;
+        private PanelBreadcrumb currentBreadcrumb;
+        private SpatialUnitHelperService spatialUnitHelperService;
+        private DocumentService documentService;
+        private DocumentCreationBean documentCreationBean;
+
+        public SpatialUnitPanelBuilder spatialUnitService(SpatialUnitService spatialUnitService) {
+            this.spatialUnitService = spatialUnitService;
+            return this;
+        }
+
+        public SpatialUnitPanelBuilder recordingUnitService(RecordingUnitService recordingUnitService) {
+            this.recordingUnitService = recordingUnitService;
+            return this;
+        }
+
+        public SpatialUnitPanelBuilder actionUnitService(ActionUnitService actionUnitService) {
+            this.actionUnitService = actionUnitService;
+            return this;
+        }
+
+        public SpatialUnitPanelBuilder sessionSettings(SessionSettingsBean sessionSettings) {
+            this.sessionSettings = sessionSettings;
+            return this;
+        }
+
+        public SpatialUnitPanelBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public SpatialUnitPanelBuilder currentBreadcrumb(PanelBreadcrumb currentBreadcrumb) {
+            this.currentBreadcrumb = currentBreadcrumb;
+            return this;
+        }
+
+        public SpatialUnitPanelBuilder spatialUnitHelperService(SpatialUnitHelperService spatialUnitHelperService) {
+            this.spatialUnitHelperService = spatialUnitHelperService;
+            return this;
+        }
+
+        public SpatialUnitPanelBuilder documentService(DocumentService documentService) {
+            this.documentService = documentService;
+            return this;
+        }
+
+        public SpatialUnitPanelBuilder documentCreationBean(DocumentCreationBean documentCreationBean) {
+            this.documentCreationBean = documentCreationBean;
+            return this;
+        }
+
+        public SpatialUnitPanel build() {
+            SpatialUnitPanel panel = new SpatialUnitPanel(currentBreadcrumb);
+            panel.setSpatialUnitService(spatialUnitService);
+            panel.setRecordingUnitService(recordingUnitService);
+            panel.setActionUnitService(actionUnitService);
+            panel.setSessionSettings(sessionSettings);
+            panel.setIdunit(id);
+            panel.setSpatialUnitHelperService(spatialUnitHelperService);
+            panel.setDocumentService(documentService);
+            panel.setDocumentCreationBean(documentCreationBean);
+            panel.init();
+            return panel;
+        }
+    }
 
 }

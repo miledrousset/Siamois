@@ -6,7 +6,7 @@ import fr.siamois.domain.models.ark.Ark;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
-import fr.siamois.infrastructure.repositories.ArkRepository;
+import fr.siamois.infrastructure.database.repositories.ArkRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
