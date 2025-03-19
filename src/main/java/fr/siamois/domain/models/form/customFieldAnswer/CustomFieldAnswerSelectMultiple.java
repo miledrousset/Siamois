@@ -1,12 +1,11 @@
 package fr.siamois.domain.models.form.customFieldAnswer;
 
-import fr.siamois.converter.ConceptListConverter;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.ColumnTransformer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -17,7 +16,7 @@ import java.util.List;
 @Table(name = "custom_field_answer")
 public class CustomFieldAnswerSelectMultiple extends CustomFieldAnswer {
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "custom_field_answer_concept_answers",
             joinColumns = {
@@ -26,6 +25,27 @@ public class CustomFieldAnswerSelectMultiple extends CustomFieldAnswer {
             },
             inverseJoinColumns = { @JoinColumn(name = "fk_concept") }
     )
-    private List<Concept> concepts;
+    private List<Concept> concepts = new ArrayList<>();
+
+    /**
+     * Adds a concept to the list if it doesn't already exist
+     *
+     * @param concept The concept to add
+     */
+    public void addConcept(Concept concept) {
+
+        if (!concepts.contains(concept)) {
+            concepts.add(concept);
+        }
+    }
+
+    /**
+     * Removes a concept from the list if it exists
+     *
+     * @param concept The concept to remove
+     */
+    public void removeConcept(Concept concept) {
+        concepts.remove(concept);
+    }
 
 }

@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -16,13 +17,17 @@ import java.util.List;
 @Table(name = "custom_field")
 public class CustomFieldSelectMultiple extends CustomField {
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
+
             name = "custom_field_choices",
             joinColumns = { @JoinColumn(name = "fk_custom_field") },
             inverseJoinColumns = { @JoinColumn(name = "fk_concept") }
+
     )
-    private List<Concept> concepts;
+    private List<Concept> concepts = new ArrayList<>();
+
+
 
 
 

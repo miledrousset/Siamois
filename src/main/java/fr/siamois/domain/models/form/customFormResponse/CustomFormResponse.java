@@ -24,9 +24,10 @@ public class CustomFormResponse {
     private CustomForm form;
 
     @OneToMany(
+            fetch = FetchType.EAGER,
             cascade={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE},
             orphanRemoval = true,
-            mappedBy = "fk.formResponse"
+            mappedBy = "pk.formResponse"
     )
     @MapKey(name="pk.field")
     private Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
@@ -41,5 +42,6 @@ public class CustomFormResponse {
         answer.getPk().setFormResponse(null);
         this.answers.remove(answer.getPk().getField());
     }
+
 
 }

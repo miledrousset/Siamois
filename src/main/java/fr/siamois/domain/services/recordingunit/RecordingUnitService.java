@@ -14,9 +14,9 @@ import fr.siamois.domain.services.ArkEntityService;
 import fr.siamois.domain.services.form.CustomFormResponseService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,7 +27,6 @@ import java.util.List;
  */
 @Slf4j
 @Service
-@Transactional
 public class RecordingUnitService implements ArkEntityService {
 
     private final RecordingUnitRepository recordingUnitRepository;
@@ -76,52 +75,59 @@ public class RecordingUnitService implements ArkEntityService {
         return(nextIdentifier);
     }
 
-    @Transactional
+    @Transactional()
     public RecordingUnit save(RecordingUnit recordingUnit, Concept concept,
                               List<RecordingUnit> anteriorUnits,
                               List<RecordingUnit> synchronousUnits,
                               List<RecordingUnit> posteriorUnits) {
 
         try {
-            // Generate unique identifier if not present
-            if (recordingUnit.getFullIdentifier() == null) {
-                if (recordingUnit.getIdentifier() == null) {
 
-                    recordingUnit.setIdentifier(generateNextIdentifier(recordingUnit));
+            RecordingUnit managedRecordingUnit ;
+
+            if(recordingUnit.getId() != null) {
+                managedRecordingUnit = recordingUnitRepository.findById(recordingUnit.getId()).get();
+            }
+            else {
+                managedRecordingUnit = new RecordingUnit();
+            }
+
+            // Generate unique identifier if not present
+            managedRecordingUnit.setIdentifier(recordingUnit.getIdentifier());
+            managedRecordingUnit.setFullIdentifier(recordingUnit.getFullIdentifier());
+            managedRecordingUnit.setActionUnit(recordingUnit.getActionUnit());
+            managedRecordingUnit.setCreatedByInstitution(recordingUnit.getCreatedByInstitution());
+            if (managedRecordingUnit.getFullIdentifier() == null) {
+                if (managedRecordingUnit.getIdentifier() == null) {
+
+                    managedRecordingUnit.setIdentifier(generateNextIdentifier(managedRecordingUnit));
                 }
                 // Set full identifier
-                recordingUnit.setFullIdentifier(recordingUnit.displayFullIdentifier());
+                managedRecordingUnit.setFullIdentifier(managedRecordingUnit.displayFullIdentifier());
             }
 
             // Add concept
             Concept type = conceptService.saveOrGetConcept(concept);
-            recordingUnit.setType(type);
+            managedRecordingUnit.setType(type);
+
+            // Add other fields
+            managedRecordingUnit.setAltitude(recordingUnit.getAltitude());
+            managedRecordingUnit.setArk(recordingUnit.getArk());
+            managedRecordingUnit.setDescription(recordingUnit.getDescription());
+            managedRecordingUnit.setAuthor(recordingUnit.getAuthor());
+            managedRecordingUnit.setExcavator(recordingUnit.getExcavator());
+            managedRecordingUnit.setEndDate(recordingUnit.getEndDate());
+            managedRecordingUnit.setStartDate(recordingUnit.getStartDate());
+            managedRecordingUnit.setSize(recordingUnit.getSize());
+            managedRecordingUnit.setSecondaryType(recordingUnit.getSecondaryType());
 
             // Process form response
-            CustomFormResponse formResponse = customFormResponseService
-                    .processFormResponse(recordingUnit.getFormResponse());
-            recordingUnit.setFormResponse(formResponse);
+            CustomFormResponse managedFormResponse = customFormResponseService
+                    .saveFormResponse(recordingUnit.getFormResponse());
+            managedRecordingUnit.setFormResponse(managedFormResponse);
 
 
-
-            for (RecordingUnit syncUnit : synchronousUnits) {
-                stratigraphicRelationshipService.saveOrGet(recordingUnit, syncUnit,
-                        StratigraphicRelationshipService.SYNCHRONOUS);
-            }
-
-            for (RecordingUnit antUnit : anteriorUnits) {
-                stratigraphicRelationshipService.saveOrGet(antUnit, recordingUnit,
-                        StratigraphicRelationshipService.ASYNCHRONOUS);
-            }
-
-            for (RecordingUnit postUnit : posteriorUnits) {
-                stratigraphicRelationshipService.saveOrGet(recordingUnit, postUnit,
-                        StratigraphicRelationshipService.ASYNCHRONOUS);
-            }
-
-
-
-            return recordingUnitRepository.save(recordingUnit);
+            return recordingUnitRepository.save(managedRecordingUnit);
         } catch (RuntimeException e) {
             throw new FailedRecordingUnitSaveException(e.getMessage());
         }

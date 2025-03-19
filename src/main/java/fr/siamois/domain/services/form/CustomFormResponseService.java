@@ -10,11 +10,12 @@ import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswerSelectMu
 import fr.siamois.domain.models.form.customFormField.CustomFormField;
 import fr.siamois.domain.models.form.customFormResponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.repositories.form.CustomFieldAnswerRepository;
+import fr.siamois.infrastructure.repositories.form.CustomFieldRepository;
 import fr.siamois.infrastructure.repositories.form.CustomFormResponseRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,10 +24,12 @@ import java.util.stream.Collectors;
 public class CustomFormResponseService {
     private final CustomFormResponseRepository customFormResponseRepository;
     private final CustomFieldAnswerRepository customFieldAnswerRepository;
+    private final CustomFieldRepository customFieldRepository;
 
-    public CustomFormResponseService(CustomFormResponseRepository customFormResponseRepository, CustomFieldAnswerRepository customFieldAnswerRepository) {
+    public CustomFormResponseService(CustomFormResponseRepository customFormResponseRepository, CustomFieldAnswerRepository customFieldAnswerRepository, CustomFieldRepository customFieldRepository) {
         this.customFormResponseRepository = customFormResponseRepository;
         this.customFieldAnswerRepository = customFieldAnswerRepository;
+        this.customFieldRepository = customFieldRepository;
     }
 
     private CustomFieldAnswer createAnswer(CustomFieldAnswerId pk, CustomFieldAnswer answer) {
@@ -41,7 +44,7 @@ public class CustomFormResponseService {
             throw new IllegalArgumentException("Unsupported field type");
         }
         createdAnswer.setPk(pk);
-        return customFieldAnswerRepository.save(createdAnswer);
+        return createdAnswer;
     }
 
     private boolean hasValueChanged(CustomField field, CustomFieldAnswer existingAnswer, CustomFieldAnswer newValue) {
@@ -64,70 +67,121 @@ public class CustomFormResponseService {
         }
     }
 
-    private CustomFieldAnswer updateAnswer(CustomFieldAnswer existingAnswer, CustomFieldAnswer answer, CustomFieldAnswerId pk) {
-        if (existingAnswer.getPk().getField() instanceof CustomFieldInteger) {
-            ((CustomFieldAnswerInteger) existingAnswer).setValue(((CustomFieldAnswerInteger) answer).getValue());
-        } else if (existingAnswer.getPk().getField() instanceof CustomFieldSelectMultiple) {
-            ((CustomFieldAnswerSelectMultiple) existingAnswer).setConcepts(((CustomFieldAnswerSelectMultiple) answer).getConcepts());
+
+    private CustomFieldAnswer updateAnswer(CustomFieldAnswer managedAnswer, CustomFieldAnswer answer, CustomFieldAnswerId pk) {
+        if (managedAnswer.getPk().getField() instanceof CustomFieldInteger) {
+            ((CustomFieldAnswerInteger) managedAnswer).setValue(((CustomFieldAnswerInteger) answer).getValue());
+        } else if (managedAnswer.getPk().getField() instanceof CustomFieldSelectMultiple) {
+            CustomFieldAnswerSelectMultiple managedMultiAnswer = (CustomFieldAnswerSelectMultiple) managedAnswer;
+            CustomFieldAnswerSelectMultiple newMultiAnswer = (CustomFieldAnswerSelectMultiple) answer;
+
+            // Get the concepts from both answers
+            Set<Concept> existingConcepts = new HashSet<>(managedMultiAnswer.getConcepts());
+            Set<Concept> newConcepts = new HashSet<>(newMultiAnswer.getConcepts());
+
+            // Find concepts to remove (in existing but not in new)
+            Set<Concept> conceptsToRemove = new HashSet<>(existingConcepts);
+            conceptsToRemove.removeAll(newConcepts);
+
+            // Find concepts to add (in new but not in existing)
+            Set<Concept> conceptsToAdd = new HashSet<>(newConcepts);
+            conceptsToAdd.removeAll(existingConcepts);
+
+            // Remove concepts that are no longer selected
+            for (Concept concept : conceptsToRemove) {
+                managedMultiAnswer.removeConcept(concept);
+            }
+
+            // Add newly selected concepts
+            for (Concept concept : conceptsToAdd) {
+                managedMultiAnswer.addConcept(concept);
+            }
         } else {
             throw new IllegalArgumentException("Unsupported field type");
         }
-        existingAnswer.setPk(pk);
-        return customFieldAnswerRepository.save(existingAnswer);
+        managedAnswer.setPk(pk);
+        return managedAnswer;
     }
 
     // Process the form response and its answers. By removing answers that are not part of the form.
-    public CustomFormResponse processFormResponse(CustomFormResponse customFormResponse) {
+    @Transactional(propagation = Propagation.MANDATORY)
+    public CustomFormResponse saveFormResponse(CustomFormResponse customFormResponse) {
 
-        CustomFormResponse responseToSave;
+        CustomFormResponse managedFormResponse;
 
         // Get the existing response or create a new one
         if (customFormResponse.getId() == null) {
-            responseToSave = customFormResponseRepository.save(customFormResponse);
+            managedFormResponse = new CustomFormResponse();
         } else {
             Optional<CustomFormResponse> existingResponseOpt = customFormResponseRepository.findById(customFormResponse.getId());
-            responseToSave = existingResponseOpt.orElseGet(() -> customFormResponseRepository.save(customFormResponse));
+            managedFormResponse = existingResponseOpt.orElseGet(CustomFormResponse::new);
         }
 
-        Map<CustomField, CustomFieldAnswer> answers = responseToSave.getAnswers();
+        managedFormResponse.setForm(customFormResponse.getForm());
 
-        // Create a map of the existing answers by their field. They will be removed from here once created or updated
-        Map<CustomField, CustomFieldAnswer> toBeDeleted = new HashMap<>(responseToSave.getAnswers());
+        // Create a copy of the saved answer to keep track of the ones to delete
+        Map<CustomField, CustomFieldAnswer> toBeDeleted = new HashMap<>(managedFormResponse.getAnswers());
 
-
-        // Iterate over the form fields and look for answers that are in the form
+        // Iterate over the form fields and look for answers to fields that are in the form
         for (CustomFormField formField : customFormResponse.getForm().getFields()) {
+
             // Is the field in the answer map?
             CustomField field = formField.getId().getField();
-            CustomFieldAnswer answer = customFormResponse.getAnswers().get(field);
+
+            CustomFieldAnswer answer = customFormResponse.getAnswers().get(field); // get answer
 
             if (answer != null) {
 
+                // Get field from DB
+                Optional<CustomField> optManagedField = customFieldRepository.findById(field.getId());
+                CustomField managedField = optManagedField.get();
+
                 CustomFieldAnswerId pk = new CustomFieldAnswerId();
-                pk.setFormResponse(responseToSave);
-                pk.setField(field);
-                Optional<CustomFieldAnswer> optionalAnswer = customFieldAnswerRepository.findByFormResponseIdAndFieldId(
-                        pk.getFormResponse().getId(), pk.getField().getId()
-                );
-                CustomFieldAnswer newOrUpdatedAnswer = optionalAnswer.map(existingAnswer -> {
-                    if (hasValueChanged(pk.getField(), existingAnswer, answer)) {
-                        return updateAnswer(existingAnswer, answer, pk);
+                pk.setFormResponse(managedFormResponse);
+                pk.setField(managedField);
+
+                // Get the answer if it already exist and modify it if necessary. Otherwise create it and add it.
+                CustomFieldAnswer managedAnswer;
+                if (managedFormResponse.getAnswers().containsKey(managedField)) {
+                    managedAnswer = managedFormResponse.getAnswers().get(managedField);
+                    // Update if necessary
+                    if (hasValueChanged(pk.getField(), managedAnswer, answer)) {
+                        updateAnswer(managedAnswer, answer, pk);
                     }
-                    return existingAnswer;
-                }).orElseGet(() -> createAnswer(pk, answer));
+                } else {
+                    // Create
+                    managedAnswer = createAnswer(pk, answer);
+                    managedFormResponse.addAnswer(managedAnswer);
+                }
 
+                // In both case, remove the answer from the list of answzr to be removed
+                toBeDeleted.remove(managedField);
 
-                answers.put(field, newOrUpdatedAnswer);
-                toBeDeleted.remove(field); // Remove the updated or created answer from the ones to be deleted
             }
         }
 
-        // Remove the answers that are not in the form response anymore
-        for (Map.Entry<CustomField, CustomFieldAnswer> entry : toBeDeleted.entrySet()) {
-            CustomField key = entry.getKey();
-            answers.remove(key);
+        // Delete the answer to be deleted
+        for (CustomFieldAnswer answer : toBeDeleted.values()) {
+
+
+            // Get a fresh reference to ensure it's managed
+            CustomFieldAnswerId answerId = answer.getPk();
+            CustomFieldAnswer managedAnswer = customFieldAnswerRepository.findByFormResponseIdAndFieldId(answerId.getFormResponse().getId(),
+                    answerId.getField().getId()).orElse(null);
+
+            if (managedAnswer != null) {
+                // Clear associations between the answer and the concept list if the type is select multiple
+                if (managedAnswer instanceof CustomFieldAnswerSelectMultiple) {
+                    ((CustomFieldAnswerSelectMultiple) managedAnswer).getConcepts().clear();
+                }
+
+                // Remove it using the managed instance
+                managedFormResponse.removeAnswer(managedAnswer);
+                // Explicitly delete the answer from the repository
+                // customFieldAnswerRepository.delete(managedAnswer);
+            }
         }
-        
-        return responseToSave;
+
+        return managedFormResponse;
     }
 }
