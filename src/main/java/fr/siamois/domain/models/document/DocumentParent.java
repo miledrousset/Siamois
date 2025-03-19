@@ -18,10 +18,10 @@ public abstract class DocumentParent extends TraceableEntity {
     @JoinColumn(name = "fk_ark_id")
     protected Ark ark;
 
-    @Column(name = "title")
+    @Column(name = "title", length = MAX_TITLE_LENGTH)
     protected String title;
 
-    @Column(name = "doc_description", length = DESCRIPTION_LENGTH)
+    @Column(name = "doc_description", length = MAX_DESCRIPTION_LENGTH)
     protected String description;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -60,6 +60,7 @@ public abstract class DocumentParent extends TraceableEntity {
 
     public static final int MAX_FILE_NAME_LENGTH = 255;
     public static final int FILE_INTERNAL_CODE_LENGTH = 10;
-    public static final int DESCRIPTION_LENGTH = 1024;
+    public static final int MAX_DESCRIPTION_LENGTH = 1024;
+    public static final int MAX_TITLE_LENGTH = 50;
 
 }

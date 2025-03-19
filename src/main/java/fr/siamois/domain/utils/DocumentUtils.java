@@ -95,6 +95,7 @@ public class DocumentUtils {
         document.setMimeType(uploadedFile.getContentType());
         document.setFileName(uploadedFile.getFileName());
         document.setSize(uploadedFile.getSize());
+        document.setDescription(bean.getDocDescription());
         return document;
     }
 

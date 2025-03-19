@@ -3,6 +3,7 @@ package fr.siamois.ui.bean.dialog;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.ark.Ark;
 import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.models.document.DocumentParent;
 import fr.siamois.domain.models.exceptions.InvalidFileSizeException;
 import fr.siamois.domain.models.exceptions.InvalidFileTypeException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
@@ -49,6 +50,7 @@ public class DocumentCreationBean implements Serializable {
     private Concept docNature;
     private Concept docScale;
     private Concept docType;
+    private String docDescription;
 
     private transient DocumentSaveAction actionOnSave = null;
     private Concept parentNature = null;
@@ -77,6 +79,7 @@ public class DocumentCreationBean implements Serializable {
         docScale = null;
         docType = null;
         docFile = null;
+        docDescription = null;
         PrimeFaces.current().ajax().update("newDocumentDiag");
     }
 
@@ -163,6 +166,14 @@ public class DocumentCreationBean implements Serializable {
 
     public long maxFileSize() {
         return documentService.maxFileSize();
+    }
+
+    public int maxDescriptionSize() {
+        return DocumentParent.MAX_DESCRIPTION_LENGTH;
+    }
+
+    public int maxTitleLength() {
+        return DocumentParent.MAX_TITLE_LENGTH;
     }
 
     public void callActionOnSave() {
