@@ -24,11 +24,22 @@ public class CustomFormResponse {
     private CustomForm form;
 
     @OneToMany(
-            cascade = CascadeType.MERGE,
-            orphanRemoval = true
+            cascade={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE},
+            orphanRemoval = true,
+            mappedBy = "fk.formResponse"
     )
-    @JoinColumn(name="fk_form_response")
     @MapKey(name="pk.field")
     private Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
+
+    // Keep entities in sync
+    public void addAnswer(CustomFieldAnswer answer) {
+        this.answers.put(answer.getPk().getField(), answer);
+        answer.getPk().setFormResponse(this);
+    }
+
+    public void removeAnswer(CustomFieldAnswer answer) {
+        answer.getPk().setFormResponse(null);
+        this.answers.remove(answer.getPk().getField());
+    }
 
 }

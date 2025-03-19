@@ -36,9 +36,6 @@ public abstract class RecordingUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_secondary_type")
     protected Concept secondaryType;
 
-    @OneToOne
-    @JoinColumn(name = "fk_custom_form_response", referencedColumnName = "custom_form_response_id")
-    private CustomFormResponse formResponse;
 
     @Column(name = "start_date")
     protected OffsetDateTime startDate;

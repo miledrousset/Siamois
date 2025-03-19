@@ -97,9 +97,9 @@ public class RecordingUnitService implements ArkEntityService {
             Concept type = conceptService.saveOrGetConcept(concept);
             recordingUnit.setType(type);
 
-            // Save form response
+            // Process form response
             CustomFormResponse formResponse = customFormResponseService
-                    .saveFormResponse(recordingUnit.getFormResponse());
+                    .processFormResponse(recordingUnit.getFormResponse());
             recordingUnit.setFormResponse(formResponse);
 
 

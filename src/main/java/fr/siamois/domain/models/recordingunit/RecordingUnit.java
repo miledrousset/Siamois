@@ -32,6 +32,10 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     @OneToMany(mappedBy = "unit2", fetch = FetchType.LAZY)
     private transient Set<StratigraphicRelationship> relationshipsAsUnit2 = new HashSet<>();
 
+    @OneToOne(cascade={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE})
+    @JoinColumn(name = "fk_custom_form_response", referencedColumnName = "custom_form_response_id")
+    private CustomFormResponse formResponse;
+
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIARU.TYPE";
 

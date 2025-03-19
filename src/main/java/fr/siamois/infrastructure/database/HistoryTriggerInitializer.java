@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.*;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Create all the history triggers and functions.
@@ -100,8 +101,11 @@ public class HistoryTriggerInitializer {
 
         while (resultSet.next()) {
             String columnName = resultSet.getString("column_name");
-            columnList.append(columnName).append(", ");
-            selectList.append("OLD.").append(columnName).append(", ");
+            if(!Objects.equals(columnName, "fk_custom_form_response")) {
+                columnList.append(columnName).append(", ");
+                selectList.append("OLD.").append(columnName).append(", ");
+            }
+
         }
 
         statement.close();

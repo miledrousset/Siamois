@@ -76,25 +76,27 @@ public class CustomFormResponseService {
         return customFieldAnswerRepository.save(existingAnswer);
     }
 
-    public CustomFormResponse saveFormResponse(CustomFormResponse customFormResponse) {
+    // Process the form response and its answers. By removing answers that are not part of the form.
+    public CustomFormResponse processFormResponse(CustomFormResponse customFormResponse) {
 
-        CustomFormResponse savedResponse;
+        CustomFormResponse responseToSave;
 
+        // Get the existing response or create a new one
         if (customFormResponse.getId() == null) {
-            savedResponse = customFormResponseRepository.save(customFormResponse);
+            responseToSave = customFormResponseRepository.save(customFormResponse);
         } else {
             Optional<CustomFormResponse> existingResponseOpt = customFormResponseRepository.findById(customFormResponse.getId());
-            savedResponse = existingResponseOpt.orElseGet(() -> customFormResponseRepository.save(customFormResponse));
+            responseToSave = existingResponseOpt.orElseGet(() -> customFormResponseRepository.save(customFormResponse));
         }
 
-        HashMap<CustomField, CustomFieldAnswer> answers = new HashMap<>();
+        Map<CustomField, CustomFieldAnswer> answers = responseToSave.getAnswers();
 
         // Create a map of the existing answers by their field. They will be removed from here once created or updated
-        Map<CustomField, CustomFieldAnswer> toBeDeleted = new HashMap<>(savedResponse.getAnswers());
+        Map<CustomField, CustomFieldAnswer> toBeDeleted = new HashMap<>(responseToSave.getAnswers());
 
 
-        // Iterate over the form fields and look for submitted answer
-/*        for (CustomFormField formField : customFormResponse.getForm().getFields()) {
+        // Iterate over the form fields and look for answers that are in the form
+        for (CustomFormField formField : customFormResponse.getForm().getFields()) {
             // Is the field in the answer map?
             CustomField field = formField.getId().getField();
             CustomFieldAnswer answer = customFormResponse.getAnswers().get(field);
@@ -102,7 +104,7 @@ public class CustomFormResponseService {
             if (answer != null) {
 
                 CustomFieldAnswerId pk = new CustomFieldAnswerId();
-                pk.setFormResponse(savedResponse);
+                pk.setFormResponse(responseToSave);
                 pk.setField(field);
                 Optional<CustomFieldAnswer> optionalAnswer = customFieldAnswerRepository.findByFormResponseIdAndFieldId(
                         pk.getFormResponse().getId(), pk.getField().getId()
@@ -116,15 +118,16 @@ public class CustomFormResponseService {
 
 
                 answers.put(field, newOrUpdatedAnswer);
-                toBeDeleted.remove(field); // Remove the updated or created answer from the existingAnswersMap
+                toBeDeleted.remove(field); // Remove the updated or created answer from the ones to be deleted
             }
-        }*/
+        }
 
-        // After processing new answers, delete the answers that were not updated or created
-        // Delete obsolete answers
-//        customFieldAnswerRepository.deleteAll(toBeDeleted.values());
-
-        //savedResponse.setAnswers(answers);
-        return savedResponse;
+        // Remove the answers that are not in the form response anymore
+        for (Map.Entry<CustomField, CustomFieldAnswer> entry : toBeDeleted.entrySet()) {
+            CustomField key = entry.getKey();
+            answers.remove(key);
+        }
+        
+        return responseToSave;
     }
 }

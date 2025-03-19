@@ -17,9 +17,15 @@ import java.util.List;
 @Table(name = "custom_field_answer")
 public class CustomFieldAnswerSelectMultiple extends CustomFieldAnswer {
 
-    @Column(name = "answer", columnDefinition = "jsonb")
-    @Convert(converter = ConceptListConverter.class)
-    @ColumnTransformer(write = "?::jsonb")
+    @ManyToMany
+    @JoinTable(
+            name = "custom_field_answer_concept_answers",
+            joinColumns = {
+                    @JoinColumn(name = "fk_field_id", referencedColumnName = "fk_field_id"),
+                    @JoinColumn(name = "fk_form_response", referencedColumnName = "fk_form_response")
+            },
+            inverseJoinColumns = { @JoinColumn(name = "fk_concept") }
+    )
     private List<Concept> concepts;
 
 }
