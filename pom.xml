@@ -65,8 +65,8 @@
             **/**DTO.*,
             **/**Utils.*,
             **/**Listener.*,
-            **/events/**/*.*
-            **/infrastructure/files/**/*.*
+            **/events/**/*.*,
+            **/files/**/*.*
         </sonar.coverage.exclusions>
 
 
