@@ -13,12 +13,19 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
 import fr.siamois.domain.services.form.CustomFormResponseService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
+import fr.siamois.infrastructure.repositories.form.CustomFormResponseRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
+import org.hibernate.engine.spi.ActionQueue;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service to manage RecordingUnit
@@ -33,15 +40,20 @@ public class RecordingUnitService implements ArkEntityService {
     private final ConceptService conceptService;
     private final StratigraphicRelationshipService stratigraphicRelationshipService;
     private final CustomFormResponseService customFormResponseService;
+    private final CustomFormResponseRepository customFormResponseRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public RecordingUnitService(RecordingUnitRepository recordingUnitRepository,
                                 ConceptService conceptService,
                                 StratigraphicRelationshipService stratigraphicRelationshipService,
-                                CustomFormResponseService customFormResponseService) {
+                                CustomFormResponseService customFormResponseService, CustomFormResponseRepository customFormResponseRepository) {
         this.recordingUnitRepository = recordingUnitRepository;
         this.conceptService = conceptService;
         this.stratigraphicRelationshipService = stratigraphicRelationshipService;
         this.customFormResponseService = customFormResponseService;
+        this.customFormResponseRepository = customFormResponseRepository;
     }
 
 
@@ -121,13 +133,27 @@ public class RecordingUnitService implements ArkEntityService {
             managedRecordingUnit.setSize(recordingUnit.getSize());
             managedRecordingUnit.setSecondaryType(recordingUnit.getSecondaryType());
 
+            CustomFormResponse managedFormResponse;
+
+            // Get the existing response or create a new one
+            if (managedRecordingUnit.getFormResponse() == null) {
+                managedFormResponse = new CustomFormResponse();
+                // Add a form response if no form response associated
+                managedRecordingUnit.setFormResponse(managedFormResponse);
+            } else {
+                managedFormResponse = managedRecordingUnit.getFormResponse();
+            }
+
+
+
             // Process form response
-            CustomFormResponse managedFormResponse = customFormResponseService
-                    .saveFormResponse(recordingUnit.getFormResponse());
-            managedRecordingUnit.setFormResponse(managedFormResponse);
+            customFormResponseService
+                    .saveFormResponse(managedFormResponse, recordingUnit.getFormResponse());
 
 
-            return recordingUnitRepository.save(managedRecordingUnit);
+            return managedRecordingUnit;
+
+            //return recordingUnitRepository.save(managedRecordingUnit);
         } catch (RuntimeException e) {
             throw new FailedRecordingUnitSaveException(e.getMessage());
         }

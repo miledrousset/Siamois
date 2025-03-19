@@ -7,11 +7,13 @@ import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswer;
 import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswerId;
 import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswerInteger;
 import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswerSelectMultiple;
+import fr.siamois.domain.models.form.customForm.CustomForm;
 import fr.siamois.domain.models.form.customFormField.CustomFormField;
 import fr.siamois.domain.models.form.customFormResponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.repositories.form.CustomFieldAnswerRepository;
 import fr.siamois.infrastructure.repositories.form.CustomFieldRepository;
+import fr.siamois.infrastructure.repositories.form.CustomFormRepository;
 import fr.siamois.infrastructure.repositories.form.CustomFormResponseRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,11 +27,13 @@ public class CustomFormResponseService {
     private final CustomFormResponseRepository customFormResponseRepository;
     private final CustomFieldAnswerRepository customFieldAnswerRepository;
     private final CustomFieldRepository customFieldRepository;
+    private final CustomFormRepository customFormRepository;
 
-    public CustomFormResponseService(CustomFormResponseRepository customFormResponseRepository, CustomFieldAnswerRepository customFieldAnswerRepository, CustomFieldRepository customFieldRepository) {
+    public CustomFormResponseService(CustomFormResponseRepository customFormResponseRepository, CustomFieldAnswerRepository customFieldAnswerRepository, CustomFieldRepository customFieldRepository, CustomFormRepository customFormRepository) {
         this.customFormResponseRepository = customFormResponseRepository;
         this.customFieldAnswerRepository = customFieldAnswerRepository;
         this.customFieldRepository = customFieldRepository;
+        this.customFormRepository = customFormRepository;
     }
 
     private CustomFieldAnswer createAnswer(CustomFieldAnswerId pk, CustomFieldAnswer answer) {
@@ -104,37 +108,24 @@ public class CustomFormResponseService {
     }
 
     // Process the form response and its answers. By removing answers that are not part of the form.
-    @Transactional(propagation = Propagation.MANDATORY)
-    public CustomFormResponse saveFormResponse(CustomFormResponse customFormResponse) {
+    public CustomFormResponse saveFormResponse(CustomFormResponse managedFormResponse, CustomFormResponse customFormResponse) {
 
-        CustomFormResponse managedFormResponse;
-
-        // Get the existing response or create a new one
-        if (customFormResponse.getId() == null) {
-            managedFormResponse = new CustomFormResponse();
-        } else {
-            Optional<CustomFormResponse> existingResponseOpt = customFormResponseRepository.findById(customFormResponse.getId());
-            managedFormResponse = existingResponseOpt.orElseGet(CustomFormResponse::new);
-        }
-
-        managedFormResponse.setForm(customFormResponse.getForm());
+        // get form (maybe only if it has changed)
+        CustomForm managedForm = customFormRepository.findById(customFormResponse.getForm().getId()).get();
+        managedFormResponse.setForm(managedForm);
 
         // Create a copy of the saved answer to keep track of the ones to delete
         Map<CustomField, CustomFieldAnswer> toBeDeleted = new HashMap<>(managedFormResponse.getAnswers());
 
         // Iterate over the form fields and look for answers to fields that are in the form
-        for (CustomFormField formField : customFormResponse.getForm().getFields()) {
+        for (CustomFormField formField : managedForm.getFields()) {
 
             // Is the field in the answer map?
-            CustomField field = formField.getId().getField();
+            CustomField managedField = formField.getId().getField();
 
-            CustomFieldAnswer answer = customFormResponse.getAnswers().get(field); // get answer
+            CustomFieldAnswer answer = customFormResponse.getAnswers().get(managedField); // get answer
 
             if (answer != null) {
-
-                // Get field from DB
-                Optional<CustomField> optManagedField = customFieldRepository.findById(field.getId());
-                CustomField managedField = optManagedField.get();
 
                 CustomFieldAnswerId pk = new CustomFieldAnswerId();
                 pk.setFormResponse(managedFormResponse);
@@ -161,13 +152,7 @@ public class CustomFormResponseService {
         }
 
         // Delete the answer to be deleted
-        for (CustomFieldAnswer answer : toBeDeleted.values()) {
-
-
-            // Get a fresh reference to ensure it's managed
-            CustomFieldAnswerId answerId = answer.getPk();
-            CustomFieldAnswer managedAnswer = customFieldAnswerRepository.findByFormResponseIdAndFieldId(answerId.getFormResponse().getId(),
-                    answerId.getField().getId()).orElse(null);
+        for (CustomFieldAnswer managedAnswer : toBeDeleted.values()) {
 
             if (managedAnswer != null) {
                 // Clear associations between the answer and the concept list if the type is select multiple
