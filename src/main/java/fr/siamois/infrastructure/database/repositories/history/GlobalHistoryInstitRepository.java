@@ -86,6 +86,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
         log.error("Table name {} does not exist", tableName);
     }
 
+    @EqualsAndHashCode(callSuper = false)
     @Data
     private static class LocalTraceableEntity extends TraceableEntity {
         private Long id;
@@ -174,7 +175,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
         }
 
         String query = "SELECT * FROM " + tableName +" WHERE fk_author_id = ? AND fk_institution_id = ? AND update_time BETWEEN ? AND ?";
-        
+
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, userInfo.getUser().getId());
             statement.setLong(2, userInfo.getInstitution().getId());
