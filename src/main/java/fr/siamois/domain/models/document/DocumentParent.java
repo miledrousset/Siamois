@@ -56,7 +56,7 @@ public abstract class DocumentParent extends TraceableEntity {
     @Column(name = "md5_sum")
     protected String md5Sum;
 
-    protected String extension;
+    protected String storedFileName;
 
     public static final int MAX_FILE_NAME_LENGTH = 255;
     public static final int FILE_INTERNAL_CODE_LENGTH = 10;

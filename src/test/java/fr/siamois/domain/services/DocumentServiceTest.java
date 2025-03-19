@@ -42,7 +42,7 @@ class DocumentServiceTest {
 
     @BeforeEach
     void setUp() {
-        documentService = new DocumentService(documentRepository, documentStorage);
+        documentService = new DocumentService(documentRepository, documentStorage, List.of());
     }
 
     @Test
@@ -120,14 +120,14 @@ class DocumentServiceTest {
         document.setAuthor(author);
         document.setMimeType("application/pdf");
 
-        when(documentStorage.find(any(Document.class))).thenReturn(Optional.of(new File(document.storedFileName())));
+        when(documentStorage.find(any(Document.class))).thenReturn(Optional.of(new File(document.getStoredFileName())));
 
         Optional<File> optFile = documentService.findFile(document);
 
         assertTrue(optFile.isPresent());
         File file = optFile.get();
         assertNotNull(file);
-        assertTrue(file.getPath().contains(document.storedFileName()));
+        assertTrue(file.getPath().contains(document.getStoredFileName()));
     }
 
     @Test

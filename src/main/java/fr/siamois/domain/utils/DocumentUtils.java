@@ -95,21 +95,9 @@ public class DocumentUtils {
         document.setMimeType(uploadedFile.getContentType());
         document.setFileName(uploadedFile.getFileName());
         document.setSize(uploadedFile.getSize());
-        document.setExtension(getExtension(uploadedFile.getFileName()));
         return document;
     }
-
-    private static String getExtension(String fileName) {
-        int i = fileName.length() - 1;
-        while (i >= 0 && fileName.charAt(i) != '.') {
-            i--;
-        }
-        if (i < 0)
-            return "";
-
-        return fileName.substring(i);
-    }
-
+    
     public static @Nullable StreamedContent streamOf(DocumentService documentService, Document document) {
         Optional<InputStream> optStream = documentService.findInputStreamOfDocument(document);
         if (optStream.isEmpty()) {

@@ -5,6 +5,7 @@ import fr.siamois.domain.models.FieldCode;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.util.MimeType;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -17,12 +18,17 @@ public class Document extends DocumentParent implements ArkEntity {
     @Column(name = "document_id", nullable = false)
     private Long id;
 
-    public String storedFileName() {
-        return fileCode + ".gzip";
+    public String contentFileName() {
+        return fileCode + "." + fileExtension();
     }
 
-    public String contentFileName() {
-        return fileCode + extension;
+    public MimeType mimeTypeObject() {
+        return MimeType.valueOf(mimeType);
+    }
+
+    public String fileExtension() {
+        int i = fileName.lastIndexOf('.');
+        return fileName.substring(i + 1);
     }
 
     @FieldCode

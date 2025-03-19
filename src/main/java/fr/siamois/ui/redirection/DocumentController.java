@@ -3,6 +3,7 @@ package fr.siamois.ui.redirection;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.services.document.DocumentService;
+import fr.siamois.domain.services.document.compressor.FileCompressor;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
@@ -32,7 +33,9 @@ public class DocumentController {
     }
 
     @GetMapping("/content/{fileCodeName}")
-    public ResponseEntity<Resource> download(@PathVariable String fileCodeName) {
+    public ResponseEntity<Resource> download(
+            @PathVariable String fileCodeName
+    ) {
         UserInfo userInfo = sessionSettingsBean.getUserInfo();
         String[] parts = fileCodeName.split("\\.");
         if (parts.length != 2) {
@@ -52,16 +55,23 @@ public class DocumentController {
 
         Optional<InputStream> optInputStream = documentService.findInputStreamOfDocument(document);
 
+        if (optInputStream.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        InputStream fileStream = optInputStream.get();
         ContentDisposition contentDisposition = ContentDisposition.builder("inline")
                 .filename(document.contentFileName())
                 .build();
 
-        return optInputStream.<ResponseEntity<Resource>>map(inputStream -> ResponseEntity
+        FileCompressor compressor = documentService.findCompressorOf(document);
+
+        return  ResponseEntity
                 .ok()
                 .contentType(MediaType.parseMediaType(document.getMimeType()))
-                .header(HttpHeaders.ACCEPT_ENCODING, "gzip,deflate")
+                .header(HttpHeaders.ACCEPT_ENCODING, compressor.encodingTypes())
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
-                .body(new InputStreamResource(inputStream))).orElseGet(() -> ResponseEntity.notFound().build());
+                .body(new InputStreamResource(fileStream));
 
     }
 

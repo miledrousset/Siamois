@@ -27,6 +27,7 @@ import org.springframework.util.MimeType;
 import org.springframework.web.context.annotation.SessionScope;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
 
@@ -130,8 +131,8 @@ public class DocumentCreationBean implements Serializable {
             document.setArk(ark);
         }
 
-        try {
-            document = documentService.saveFile(userInfo, document, docFile.getInputStream(), servletContext.getContextPath());
+        try (InputStream inputStream = docFile.getInputStream()) {
+            document = documentService.saveFile(userInfo, document, inputStream, servletContext.getContextPath());
             reset();
             return document;
         } catch (InvalidFileTypeException e) {

@@ -2,6 +2,7 @@ package fr.siamois.infrastructure.files;
 
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.services.document.compressor.FileCompressor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,9 +16,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
-import java.util.zip.Inflater;
+import java.util.zip.DeflaterInputStream;
 
 @Slf4j
 @Service
@@ -33,6 +33,11 @@ public class DocumentStorage {
     @Value("${siamois.documents.folder-path}")
     private String documentsPath;
 
+    private final List<FileCompressor> compressors;
+
+    public DocumentStorage(List<FileCompressor> compressors) {
+        this.compressors = compressors;
+    }
 
     public List<MimeType> supportedMimeTypes() {
         List<MimeType> types = new ArrayList<>();
@@ -42,12 +47,14 @@ public class DocumentStorage {
         return types;
     }
 
-    public void save(UserInfo userInfo, String storedFileName, byte[] content) throws IOException {
+    public void save(UserInfo userInfo, Document document, InputStream content) throws IOException {
+        byte[] bytes = compressAndSetStoredName(document, content);
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
 
         Path path = Paths.get(
                 documentsPath,
                 userInfo.getInstitution().getId().toString(),
-                storedFileName
+                document.getStoredFileName()
         );
 
         Files.createDirectories(path.getParent());
@@ -56,10 +63,6 @@ public class DocumentStorage {
         if (file.createNewFile()) {
             log.info("File created: {}", file.getAbsolutePath());
         }
-
-        byte[] compressed = compress(content);
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(compressed);
 
         try (FileOutputStream outputStream = new FileOutputStream(file)) {
             byte[] buffer = new byte[1024];
@@ -71,11 +74,26 @@ public class DocumentStorage {
 
     }
 
+    private byte[] compressAndSetStoredName(Document document, InputStream content) throws IOException {
+        FileCompressor compressor = findCompressor(document.mimeTypeObject());
+        compressor.updateStoredFilename(document);
+        return compressor.compress(content);
+    }
+
+    private FileCompressor findCompressor(MimeType type) {
+        for (FileCompressor compressor : compressors) {
+            if (compressor.isMatchingCompressor(type)) {
+                return compressor;
+            }
+        }
+        throw new IllegalStateException("Unsupported mime type: " + type);
+    }
+
     public Optional<File> find(Document document) {
         Path filePath = Paths.get(
                 documentsPath,
                 document.getCreatedByInstitution().getId().toString(),
-                document.storedFileName()
+                document.getStoredFileName()
         );
 
         File file = filePath.toFile();
@@ -87,54 +105,16 @@ public class DocumentStorage {
         return Optional.empty();
     }
 
-    public Optional<byte[]> findBytesOf(Document document) {
+    public Optional<byte[]> findStreamOf(Document document) {
         Optional<File> file = find(document);
         if (file.isEmpty())
             return Optional.empty();
-
-        byte[] fileContent;
-
-        try (FileInputStream fileInputStream = new FileInputStream(file.get())) {
-            fileContent = fileInputStream.readAllBytes();
+        try (FileInputStream fileInputStream = new FileInputStream(file.get());) {
+            return Optional.of(fileInputStream.readAllBytes());
         } catch (IOException e) {
             log.error("File not found: {}", file.get().getAbsolutePath());
-            return Optional.empty();
         }
-
-        fileContent = decompress(fileContent);
-
-        return Optional.of(fileContent);
-    }
-
-    public byte[] compress(byte[] bytes) {
-        Deflater deflater = new Deflater();
-        deflater.setInput(bytes);
-        deflater.finish();
-        byte[] buffer = new byte[1024];
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(bytes.length);
-        while (!deflater.finished()) {
-            int count = deflater.deflate(buffer);
-            outputStream.write(buffer, 0, count);
-        }
-        deflater.end();
-        return outputStream.toByteArray();
-    }
-
-    public byte[] decompress(byte[] bytes) {
-        Inflater inflater = new Inflater();
-        inflater.setInput(bytes);
-        byte[] buffer = new byte[1024];
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(bytes.length);
-        try {
-            while (!inflater.finished()) {
-                int count = inflater.inflate(buffer);
-                outputStream.write(buffer, 0, count);
-            }
-        } catch (DataFormatException e) {
-            log.error("Data format exception during decompression", e);
-        }
-        inflater.end();
-        return outputStream.toByteArray();
+        return Optional.empty();
     }
 
 }

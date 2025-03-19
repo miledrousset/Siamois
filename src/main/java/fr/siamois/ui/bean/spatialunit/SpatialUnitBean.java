@@ -147,6 +147,7 @@ public class SpatialUnitBean implements Serializable {
         } catch (RuntimeException e) {
             log.error("Failed to find spatial unit with id {}", id, e);
             this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
+            redirectBean.redirectTo(HttpStatus.NOT_FOUND);
         }
 
         if (this.spatialUnit == null) {

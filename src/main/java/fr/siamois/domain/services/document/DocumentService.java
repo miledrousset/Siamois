@@ -9,6 +9,7 @@ import fr.siamois.domain.models.exceptions.InvalidFileSizeException;
 import fr.siamois.domain.models.exceptions.InvalidFileTypeException;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.ArkEntityService;
+import fr.siamois.domain.services.document.compressor.FileCompressor;
 import fr.siamois.domain.utils.CodeUtils;
 import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.infrastructure.database.repositories.DocumentRepository;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MimeType;
 
 import java.io.*;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,10 +35,12 @@ public class DocumentService implements ArkEntityService {
 
     private static final int MAX_GENERATIONS = 100;
     private final DocumentStorage documentStorage;
+    private final Collection<FileCompressor> fileCompressors;
 
-    public DocumentService(DocumentRepository documentRepository, DocumentStorage documentStorage) {
+    public DocumentService(DocumentRepository documentRepository, DocumentStorage documentStorage, Collection<FileCompressor> fileCompressors) {
         this.documentRepository = documentRepository;
         this.documentStorage = documentStorage;
+        this.fileCompressors = fileCompressors;
     }
 
     @Override
@@ -68,18 +72,21 @@ public class DocumentService implements ArkEntityService {
     }
 
     public Document saveFile(UserInfo userInfo, Document document, InputStream fileInputStream, String contextPath) throws InvalidFileTypeException, InvalidFileSizeException, IOException {
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+        log.trace("Started to upload document {} to {}", document.getFileName(), userInfo.getInstitution().getId());
 
-        checkFileData(document);
+        try (BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream)) {
+            checkFileData(document);
 
-        document.setMd5Sum(DocumentUtils.md5(bufferedInputStream));
-        document.setFileCode(generateFileInternalCode());
-        document.setAuthor(userInfo.getUser());
-        document.setCreatedByInstitution(userInfo.getInstitution());
+            document.setMd5Sum(DocumentUtils.md5(bufferedInputStream));
+            document.setFileCode(generateFileInternalCode());
+            document.setAuthor(userInfo.getUser());
+            document.setCreatedByInstitution(userInfo.getInstitution());
+            document.setUrl(String.format("%s/content/%s", contextPath, document.contentFileName()));
 
-        documentStorage.save(userInfo, document.storedFileName(), bufferedInputStream.readAllBytes());
+            documentStorage.save(userInfo, document, bufferedInputStream);
+        }
 
-        document.setUrl(String.format("%s/content/%s", contextPath, document.contentFileName()));
+        log.trace("Finished upload document {} to {}", document.getFileName(), userInfo.getInstitution().getId());
 
         return documentRepository.save(document);
     }
@@ -127,12 +134,24 @@ public class DocumentService implements ArkEntityService {
     }
 
     public Optional<InputStream> findInputStreamOfDocument(Document document) {
-        Optional<byte[]> optionalBytes = documentStorage.findBytesOf(document);
-        return optionalBytes.map(ByteArrayInputStream::new);
+        Optional<byte[]> result  = documentStorage.findStreamOf(document);
+        if (result.isEmpty())
+            return Optional.empty();
 
+        ByteArrayInputStream bais = new ByteArrayInputStream(result.get());
+
+        return Optional.of(bais);
     }
 
     public long maxFileSize() {
         return DocumentUtils.byteParser(documentStorage.getMaxUploadSize());
+    }
+
+    public FileCompressor findCompressorOf(Document document) {
+        for (FileCompressor fileCompressor : fileCompressors) {
+            if (fileCompressor.isMatchingCompressor(document.mimeTypeObject()))
+                return fileCompressor;
+        }
+        throw new IllegalStateException(String.format("No file compressor found for %s", document.getMimeType()));
     }
 }
