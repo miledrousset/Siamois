@@ -6,7 +6,7 @@
 
 >
 
-    <p:dialog widgetVar="newDocumentDiag" width="40vw" showEffect="fade" closeOnEscape="true" appendToBody="true">
+    <p:dialog widgetVar="newDocumentDiag" id="newDocumentDiag" width="40vw" showEffect="fade" closeOnEscape="true" appendToBody="true">
         <h:form id="newDocument" enctype="multipart/form-data">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
@@ -64,7 +64,7 @@
                 </div>
             </div>
             <p:commandButton
-                    action="#{spatialUnitBean.saveDocument()}"
+                    action="#{documentCreationBean.callActionOnSave}"
                     value="Ajouter le document"
             />
         </h:form>

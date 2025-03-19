@@ -15,12 +15,12 @@ import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
-import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.servlet.ServletContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.file.UploadedFile;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeType;
@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @Slf4j
 @Component
@@ -50,6 +52,7 @@ public class DocumentCreationBean implements Serializable {
     private Concept docScale;
     private Concept docType;
 
+    private transient DocumentSaveAction actionOnSave = null;
     private Concept parentNature = null;
     private Concept parentScale = null;
     private Concept parentType = null;
@@ -65,7 +68,6 @@ public class DocumentCreationBean implements Serializable {
         this.arkService = arkService;
     }
 
-    @PostConstruct
     public void init() {
         prepareParentConcept();
         reset();
@@ -77,6 +79,7 @@ public class DocumentCreationBean implements Serializable {
         docScale = null;
         docType = null;
         docFile = null;
+        PrimeFaces.current().ajax().update("newDocumentDiag");
     }
 
     private void prepareParentConcept() {
@@ -164,6 +167,8 @@ public class DocumentCreationBean implements Serializable {
         return documentService.maxFileSize();
     }
 
-
+    public void callActionOnSave() {
+        actionOnSave.saveDocument();
+    }
 
 }

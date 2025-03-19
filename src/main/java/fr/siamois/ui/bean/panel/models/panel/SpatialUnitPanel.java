@@ -31,6 +31,8 @@ import software.xdev.chartjs.model.options.Plugins;
 import software.xdev.chartjs.model.options.Title;
 import software.xdev.chartjs.model.options.Tooltip;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -191,10 +193,26 @@ public class SpatialUnitPanel extends AbstractPanel {
     }
 
     public void saveDocument() {
+        try {
+            BufferedInputStream currentFile = new BufferedInputStream(documentCreationBean.getDocFile().getInputStream());
+            String hash = documentService.getMD5Sum(currentFile);
+            currentFile.mark(Integer.MAX_VALUE);
+            if (documentService.existInSpatialUnitByHash(spatialUnit, hash)) {
+                log.error("Document already exists in spatial unit");
+                currentFile.reset();
+                return;
+            }
+        } catch (IOException e) {
+            log.error("Error while processing spatial unit document", e);
+            return;
+        }
+
         Document created = documentCreationBean.createDocument();
         if (created == null)
             return;
+        log.trace("Document created: {}", created);
         documentService.addToSpatialUnit(created, spatialUnit);
+        log.trace("Document added to spatial unit: {}", spatialUnit);
         PrimeFaces.current().executeScript("PF('newDocumentDiag').hide()");
         PrimeFaces.current().ajax().update("spatialUnitFormTabs:suDocumentsTab");
     }
@@ -202,6 +220,13 @@ public class SpatialUnitPanel extends AbstractPanel {
     public boolean contentIsImage(String mimeType) {
         MimeType currentMimeType = MimeType.valueOf(mimeType);
         return currentMimeType.getType().equals("image");
+    }
+
+    public void initDialog() {
+        log.trace("initDialog");
+        documentCreationBean.init();
+        documentCreationBean.setActionOnSave(this::saveDocument);
+        PrimeFaces.current().executeScript("PF('newDocumentDiag').show()");
     }
 
     public static SpatialUnitPanelBuilder builder() {

@@ -206,7 +206,6 @@ public class SpatialUnitBean implements Serializable {
     }
 
     public void saveDocument() {
-
         try {
             BufferedInputStream currentFile = new BufferedInputStream(documentCreationBean.getDocFile().getInputStream());
             String hash = documentService.getMD5Sum(currentFile);

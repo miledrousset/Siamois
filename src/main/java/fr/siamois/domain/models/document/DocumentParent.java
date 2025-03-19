@@ -21,7 +21,7 @@ public abstract class DocumentParent extends TraceableEntity {
     @Column(name = "title")
     protected String title;
 
-    @Column(name = "doc_description", length = Integer.MAX_VALUE)
+    @Column(name = "doc_description", length = DESCRIPTION_LENGTH)
     protected String description;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -60,5 +60,6 @@ public abstract class DocumentParent extends TraceableEntity {
 
     public static final int MAX_FILE_NAME_LENGTH = 255;
     public static final int FILE_INTERNAL_CODE_LENGTH = 10;
+    public static final int DESCRIPTION_LENGTH = 1024;
 
 }
