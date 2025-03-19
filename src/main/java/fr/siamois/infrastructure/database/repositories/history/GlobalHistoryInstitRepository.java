@@ -22,7 +22,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
 
     private final HikariDataSource hikariDataSource;
 
-    private static final List<String> existingTableNames = new ArrayList<>();
+    static final List<String> existingTableNames = new ArrayList<>();
 
     public GlobalHistoryInstitRepository(HikariDataSource hikariDataSource) {
         this.hikariDataSource = hikariDataSource;

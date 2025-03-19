@@ -37,6 +37,7 @@ class GlobalHistoryInstitRepositoryTest {
     @BeforeEach
     void setUp() {
         globalHistoryRepository = new GlobalHistoryInstitRepository(hikariDataSource);
+        GlobalHistoryInstitRepository.existingTableNames.clear();
     }
 
     private void setupUserInfo() {
@@ -83,11 +84,12 @@ class GlobalHistoryInstitRepositoryTest {
     @Test
     void findAllCreationOfUserBetween() throws SQLException {
 
+        GlobalHistoryInstitRepository.existingTableNames.add("test_table");
+
         when(hikariDataSource.getConnection()).thenReturn(connection);
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.getMetaData()).thenReturn(resultSetMetaData);
-
 
         when(resultSet.next()).thenReturn(true, false);
 
