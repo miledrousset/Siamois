@@ -18,7 +18,7 @@ public abstract class DocumentParent extends TraceableEntity {
     @JoinColumn(name = "fk_ark_id")
     protected Ark ark;
 
-    @Column(name = "title", length = MAX_FILE_NAME_LENGTH)
+    @Column(name = "title")
     protected String title;
 
     @Column(name = "doc_description", length = Integer.MAX_VALUE)

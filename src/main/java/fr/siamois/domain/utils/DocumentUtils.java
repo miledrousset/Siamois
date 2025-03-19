@@ -97,7 +97,7 @@ public class DocumentUtils {
         document.setSize(uploadedFile.getSize());
         return document;
     }
-    
+
     public static @Nullable StreamedContent streamOf(DocumentService documentService, Document document) {
         Optional<InputStream> optStream = documentService.findInputStreamOfDocument(document);
         if (optStream.isEmpty()) {

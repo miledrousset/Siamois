@@ -16,8 +16,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterInputStream;
 
 @Slf4j
 @Service
@@ -109,7 +107,7 @@ public class DocumentStorage {
         Optional<File> file = find(document);
         if (file.isEmpty())
             return Optional.empty();
-        try (FileInputStream fileInputStream = new FileInputStream(file.get());) {
+        try (FileInputStream fileInputStream = new FileInputStream(file.get())) {
             return Optional.of(fileInputStream.readAllBytes());
         } catch (IOException e) {
             log.error("File not found: {}", file.get().getAbsolutePath());
