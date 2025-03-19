@@ -1,4 +1,4 @@
-package fr.siamois.infrastructure.repositories.history;
+package fr.siamois.infrastructure.database.repositories.history;
 
 import com.zaxxer.hikari.HikariDataSource;
 import fr.siamois.domain.models.Institution;
@@ -7,8 +7,6 @@ import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.history.GlobalHistoryEntry;
 import fr.siamois.domain.models.history.HistoryUpdateType;
-import fr.siamois.infrastructure.database.repositories.history.GlobalHistoryInstitRepository;
-import fr.siamois.infrastructure.database.repositories.history.GlobalHistoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -112,4 +110,14 @@ class GlobalHistoryInstitRepositoryTest {
         assertThrows(SQLException.class,
                 () -> globalHistoryRepository.findAllCreationOfUserBetween("test_table", userInfo, OffsetDateTime.now().minusDays(1), OffsetDateTime.now()));
     }
+
+    @Test
+    void populateTablenameListShouldThrowSQLException() throws SQLException {
+        when(hikariDataSource.getConnection()).thenThrow(new SQLException("Connection error"));
+
+        GlobalHistoryInstitRepository repository = new GlobalHistoryInstitRepository(hikariDataSource);
+
+        assertThrows(SQLException.class, repository::populateTablenameList);
+    }
+
 }

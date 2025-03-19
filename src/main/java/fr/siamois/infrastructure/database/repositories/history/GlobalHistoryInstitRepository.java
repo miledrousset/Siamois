@@ -28,7 +28,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
         this.hikariDataSource = hikariDataSource;
     }
 
-    private void populateTablenameList() throws SQLException {
+    void populateTablenameList() throws SQLException {
         if (!existingTableNames.isEmpty()) return;
 
         String query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'";
@@ -67,7 +67,7 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
         return columnName.endsWith("id") || columnName.startsWith("id");
     }
 
-    private String findColumnTableIdNameInResultSet(ResultSet resultSet) {
+    String findColumnTableIdNameInResultSet(ResultSet resultSet) {
         try {
             ResultSetMetaData metaData = resultSet.getMetaData();
             for (int i = 1; i <= metaData.getColumnCount(); i++) {
@@ -86,17 +86,6 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
         log.error("Table name {} does not exist", tableName);
     }
 
-    private PreparedStatement prepareQueryStatement(UserInfo userInfo, OffsetDateTime start, OffsetDateTime end, Connection connection, String query) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(query);
-
-        statement.setLong(1, userInfo.getUser().getId());
-        statement.setLong(2, userInfo.getInstitution().getId());
-        statement.setObject(3, start);
-        statement.setObject(4, end);
-        return statement;
-    }
-
-    @EqualsAndHashCode(callSuper = true)
     @Data
     private static class LocalTraceableEntity extends TraceableEntity {
         private Long id;
@@ -185,12 +174,16 @@ public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
         }
 
         String query = "SELECT * FROM " + tableName +" WHERE fk_author_id = ? AND fk_institution_id = ? AND update_time BETWEEN ? AND ?";
-        PreparedStatement statement = prepareQueryStatement(userInfo, start, end, connection, query);
+        
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setLong(1, userInfo.getUser().getId());
+            statement.setLong(2, userInfo.getInstitution().getId());
+            statement.setObject(3, start);
+            statement.setObject(4, end);
 
-        ResultSet result = statement.executeQuery();
-        statement.close();
+            return statement.executeQuery();
+        }
 
-        return result;
     }
 
 }
