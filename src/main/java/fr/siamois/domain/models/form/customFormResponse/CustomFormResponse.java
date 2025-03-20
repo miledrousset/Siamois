@@ -2,6 +2,7 @@ package fr.siamois.domain.models.form.customFormResponse;
 import fr.siamois.domain.models.form.customForm.CustomForm;
 import fr.siamois.domain.models.form.customField.CustomField;
 import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswer;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,13 +25,15 @@ public class CustomFormResponse {
     private CustomForm form;
 
     @OneToMany(
-            fetch = FetchType.EAGER,
-            cascade={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE},
             orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             mappedBy = "pk.formResponse"
     )
     @MapKey(name="pk.field")
     private Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
+
+    @OneToOne(mappedBy = "formResponse")
+    private RecordingUnit recordingUnit;
 
     // Keep entities in sync
     public void addAnswer(CustomFieldAnswer answer) {

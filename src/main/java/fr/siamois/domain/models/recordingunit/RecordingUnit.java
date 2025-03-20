@@ -33,8 +33,8 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     private transient Set<StratigraphicRelationship> relationshipsAsUnit2 = new HashSet<>();
 
     @OneToOne(
-            cascade={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE},
-            orphanRemoval=true
+            orphanRemoval=true,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
     @JoinColumn(name = "fk_custom_form_response", referencedColumnName = "custom_form_response_id")
     private CustomFormResponse formResponse;
@@ -48,6 +48,15 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     @FieldCode
     public static final String STRATI_FIELD_CODE = "SIARU.STRATI";
 
+    // Setters/Removers
+    public void setFormResponse(CustomFormResponse formResponse) {
+        if (formResponse != null) {
+            formResponse.setRecordingUnit(this);
+        }
+        this.formResponse = formResponse;
+    }
+
+    // utils
     public String displayFullIdentifier() {
         if(getFullIdentifier() == null) {
             if(getCreatedByInstitution().getIdentifier() == null) {
@@ -62,6 +71,7 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
             return getFullIdentifier();
         }
     }
+
 
     @Override
     public boolean equals(Object obj) {

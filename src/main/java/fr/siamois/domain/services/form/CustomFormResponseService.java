@@ -1,5 +1,6 @@
 package fr.siamois.domain.services.form;
 
+import fr.siamois.domain.models.Field;
 import fr.siamois.domain.models.form.customField.CustomField;
 import fr.siamois.domain.models.form.customField.CustomFieldInteger;
 import fr.siamois.domain.models.form.customField.CustomFieldSelectMultiple;
@@ -11,10 +12,15 @@ import fr.siamois.domain.models.form.customForm.CustomForm;
 import fr.siamois.domain.models.form.customFormField.CustomFormField;
 import fr.siamois.domain.models.form.customFormResponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.infrastructure.repositories.FieldRepository;
 import fr.siamois.infrastructure.repositories.form.CustomFieldAnswerRepository;
 import fr.siamois.infrastructure.repositories.form.CustomFieldRepository;
 import fr.siamois.infrastructure.repositories.form.CustomFormRepository;
 import fr.siamois.infrastructure.repositories.form.CustomFormResponseRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.hibernate.Session;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,12 +34,17 @@ public class CustomFormResponseService {
     private final CustomFieldAnswerRepository customFieldAnswerRepository;
     private final CustomFieldRepository customFieldRepository;
     private final CustomFormRepository customFormRepository;
+    private final FieldRepository fieldRepository;
 
-    public CustomFormResponseService(CustomFormResponseRepository customFormResponseRepository, CustomFieldAnswerRepository customFieldAnswerRepository, CustomFieldRepository customFieldRepository, CustomFormRepository customFormRepository) {
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public CustomFormResponseService(CustomFormResponseRepository customFormResponseRepository, CustomFieldAnswerRepository customFieldAnswerRepository, CustomFieldRepository customFieldRepository, CustomFormRepository customFormRepository, FieldRepository fieldRepository) {
         this.customFormResponseRepository = customFormResponseRepository;
         this.customFieldAnswerRepository = customFieldAnswerRepository;
         this.customFieldRepository = customFieldRepository;
         this.customFormRepository = customFormRepository;
+        this.fieldRepository = fieldRepository;
     }
 
     private CustomFieldAnswer createAnswer(CustomFieldAnswerId pk, CustomFieldAnswer answer) {
@@ -118,10 +129,7 @@ public class CustomFormResponseService {
         Map<CustomField, CustomFieldAnswer> toBeDeleted = new HashMap<>(managedFormResponse.getAnswers());
 
         // Iterate over the form fields and look for answers to fields that are in the form
-        for (CustomFormField formField : managedForm.getFields()) {
-
-            // Is the field in the answer map?
-            CustomField managedField = formField.getId().getField();
+        for (CustomField managedField : managedForm.getFields()) {
 
             CustomFieldAnswer answer = customFormResponse.getAnswers().get(managedField); // get answer
 
@@ -160,10 +168,9 @@ public class CustomFormResponseService {
                     ((CustomFieldAnswerSelectMultiple) managedAnswer).getConcepts().clear();
                 }
 
-                // Remove it using the managed instance
-                managedFormResponse.removeAnswer(managedAnswer);
-                // Explicitly delete the answer from the repository
-                // customFieldAnswerRepository.delete(managedAnswer);
+                // Remove the answer to trigger its deletion
+                managedFormResponse.getAnswers().remove(managedAnswer.getPk().getField());
+
             }
         }
 

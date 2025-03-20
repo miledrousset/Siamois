@@ -144,14 +144,12 @@ public class RecordingUnitService implements ArkEntityService {
                 managedFormResponse = managedRecordingUnit.getFormResponse();
             }
 
-
-
             // Process form response
             customFormResponseService
                     .saveFormResponse(managedFormResponse, recordingUnit.getFormResponse());
 
 
-            return managedRecordingUnit;
+            return recordingUnitRepository.save(managedRecordingUnit);
 
             //return recordingUnitRepository.save(managedRecordingUnit);
         } catch (RuntimeException e) {

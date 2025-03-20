@@ -94,7 +94,6 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     // Form
     private CustomForm additionalForm;
-    private List<CustomFormField> additionalFormQuestions;
 
     // Stratigraphy
     private transient List<Event> events; // Strati
@@ -347,13 +346,13 @@ public class NewRecordingUnitFormBean implements Serializable {
 
         // Initialize custom form, this should be done based on the RU type
         recordingUnit.getFormResponse().setForm(additionalForm);
-        for (CustomFormField formField : additionalForm.getFields()) {
-            if (recordingUnit.getFormResponse().getAnswers().get(formField.getId().getField()) == null) {
+        for (CustomField field : additionalForm.getFields()) {
+            if (recordingUnit.getFormResponse().getAnswers().get(field) == null) {
                 // Init missing parameters
-                if (formField.getId().getField() instanceof CustomFieldSelectMultiple) {
-                    recordingUnit.getFormResponse().getAnswers().put(formField.getId().getField(), new CustomFieldAnswerSelectMultiple());
-                } else if (formField.getId().getField() instanceof CustomFieldInteger) {
-                    recordingUnit.getFormResponse().getAnswers().put(formField.getId().getField(), new CustomFieldAnswerInteger());
+                if (field instanceof CustomFieldSelectMultiple) {
+                    recordingUnit.getFormResponse().getAnswers().put(field, new CustomFieldAnswerSelectMultiple());
+                } else if (field instanceof CustomFieldInteger) {
+                    recordingUnit.getFormResponse().getAnswers().put(field, new CustomFieldAnswerInteger());
                 }
             }
 
@@ -412,7 +411,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         // Check if the question is an instance of QuestionSelectMultiple
         if (question instanceof CustomFieldSelectMultiple) {
             CustomFieldSelectMultiple selectMultipleQuestion = (CustomFieldSelectMultiple) question;
-            List<Concept> allOptions = selectMultipleQuestion.getConcepts();
+            List<Concept> allOptions = new ArrayList<>(selectMultipleQuestion.getConcepts());
 
             // Filter the options based on user input (query)
             for (Concept value : allOptions) {

@@ -1,7 +1,8 @@
 package fr.siamois.domain.models.form.customForm;
 
 import fr.siamois.converter.CustomFormLayoutConverter;
-import fr.siamois.domain.models.form.customFormField.CustomFormField;
+import fr.siamois.domain.models.form.customField.CustomField;
+import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -25,8 +26,13 @@ public class CustomForm {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "id.form", fetch = FetchType.EAGER)
-    private Set<CustomFormField> fields = new HashSet<>();
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "custom_form_field",
+            joinColumns = { @JoinColumn(name = "fk_field_id")},
+            inverseJoinColumns = { @JoinColumn(name = "fk_form_id") }
+    )
+    private Set<CustomField> fields = new HashSet<>();
 
     @Column(name = "layout", columnDefinition = "jsonb")
     @Convert(converter = CustomFormLayoutConverter.class)

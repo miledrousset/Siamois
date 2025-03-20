@@ -18,7 +18,7 @@ public class CustomFieldAnswerId implements Serializable {
     private CustomField field;
 
     @ManyToOne
-    @JoinColumn(name = "fk_form_response")
+    @JoinColumn(name = "fk_form_response", nullable = false)
     private CustomFormResponse formResponse;
 
 }

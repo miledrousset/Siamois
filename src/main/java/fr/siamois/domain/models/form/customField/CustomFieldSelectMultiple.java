@@ -9,8 +9,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 
 
 @Getter
@@ -28,10 +29,7 @@ public class CustomFieldSelectMultiple extends CustomField {
             inverseJoinColumns = { @JoinColumn(name = "fk_concept") }
 
     )
-    private List<Concept> concepts = new ArrayList<>();
-
-
-
+    private Set<Concept> concepts = new HashSet<>();
 
 
 }

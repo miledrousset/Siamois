@@ -1,8 +1,14 @@
 package fr.siamois.domain.models.form.customField;
 
+import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswer;
+import fr.siamois.domain.models.form.customForm.CustomForm;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.mockito.stubbing.Answer;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -21,6 +27,12 @@ public abstract class CustomField {
 
     @Column(name = "hint")
     private String hint;
+
+//    @ManyToMany(mappedBy = "fields")
+//    private Set<CustomForm> forms = new HashSet<>();
+
+//    @OneToMany(mappedBy = "pk.field", fetch = FetchType.LAZY)
+//    private Set<CustomFieldAnswer> answers = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

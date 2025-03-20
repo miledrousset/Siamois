@@ -62,11 +62,10 @@ logging:
   level:
     root: INFO
     org:
-      springframework: INFO
+      springframework:
+        transaction: DEBUG
+        orm.jpa: DEBUG
       hibernate:
         SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
+        type: DEBUG
 
