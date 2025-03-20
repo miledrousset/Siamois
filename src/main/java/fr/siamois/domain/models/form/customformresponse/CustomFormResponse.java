@@ -1,13 +1,15 @@
-package fr.siamois.domain.models.form.customFormResponse;
-import fr.siamois.domain.models.form.customForm.CustomForm;
-import fr.siamois.domain.models.form.customField.CustomField;
-import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswer;
+package fr.siamois.domain.models.form.customformresponse;
+
+import fr.siamois.domain.models.form.customform.CustomForm;
+import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Entity
 @Data
@@ -39,6 +41,19 @@ public class CustomFormResponse {
     public void addAnswer(CustomFieldAnswer answer) {
         this.answers.put(answer.getPk().getField(), answer);
         answer.getPk().setFormResponse(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CustomFormResponse that = (CustomFormResponse) o;
+        return Objects.equals(recordingUnit, that.recordingUnit);  // Compare based on RecordingUnit
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(recordingUnit);  // Hash based on RecordingUnit
     }
 
 }

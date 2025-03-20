@@ -1,13 +1,7 @@
-package fr.siamois.domain.models.form.customFieldAnswer;
+package fr.siamois.domain.models.form.customfieldanswer;
 
-import fr.siamois.domain.models.ReferencableEntity;
-import fr.siamois.domain.models.form.customFormResponse.CustomFormResponse;
-import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.aspectj.weaver.patterns.TypePatternQuestions;
-import org.hibernate.annotations.DiscriminatorFormula;
-import org.hibernate.annotations.Formula;
 
 import java.util.Objects;
 

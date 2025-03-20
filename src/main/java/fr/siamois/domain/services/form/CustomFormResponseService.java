@@ -1,16 +1,14 @@
 package fr.siamois.domain.services.form;
 
-import fr.siamois.domain.models.Field;
-import fr.siamois.domain.models.form.customField.CustomField;
-import fr.siamois.domain.models.form.customField.CustomFieldInteger;
-import fr.siamois.domain.models.form.customField.CustomFieldSelectMultiple;
-import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswer;
-import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswerId;
-import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswerInteger;
-import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswerSelectMultiple;
-import fr.siamois.domain.models.form.customForm.CustomForm;
-import fr.siamois.domain.models.form.customFormField.CustomFormField;
-import fr.siamois.domain.models.form.customFormResponse.CustomFormResponse;
+import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.form.customfield.CustomFieldInteger;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectMultiple;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerId;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerInteger;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectMultiple;
+import fr.siamois.domain.models.form.customform.CustomForm;
+import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.repositories.FieldRepository;
 import fr.siamois.infrastructure.repositories.form.CustomFieldAnswerRepository;
@@ -19,11 +17,7 @@ import fr.siamois.infrastructure.repositories.form.CustomFormRepository;
 import fr.siamois.infrastructure.repositories.form.CustomFormResponseRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.hibernate.Session;
-import org.hibernate.engine.spi.SessionImplementor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -1,4 +1,4 @@
-package fr.siamois.domain.models.form.customFieldAnswer;
+package fr.siamois.domain.models.form.customfieldanswer;
 
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;

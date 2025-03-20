@@ -1,16 +1,11 @@
 package fr.siamois.infrastructure.repositories.form;
 
-import fr.siamois.domain.models.form.customField.CustomField;
-import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswer;
-import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswerId;
-import fr.siamois.domain.models.form.customFormResponse.CustomFormResponse;
-import fr.siamois.domain.models.recordingunit.RecordingUnit;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository

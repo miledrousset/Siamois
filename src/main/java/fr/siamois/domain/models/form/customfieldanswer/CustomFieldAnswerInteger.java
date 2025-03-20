@@ -1,4 +1,4 @@
-package fr.siamois.domain.models.form.customFieldAnswer;
+package fr.siamois.domain.models.form.customfieldanswer;
 
 import fr.siamois.converter.IntegerToJsonConverter;
 import jakarta.persistence.*;

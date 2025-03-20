@@ -1,6 +1,6 @@
-package fr.siamois.domain.models.form.customForm;
+package fr.siamois.domain.models.form.customform;
 
-import fr.siamois.domain.models.form.customField.CustomField;
+import fr.siamois.domain.models.form.customfield.CustomField;
 import lombok.Data;
 
 import java.util.List;

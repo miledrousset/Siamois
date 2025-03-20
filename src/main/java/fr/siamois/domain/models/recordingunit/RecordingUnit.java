@@ -6,11 +6,9 @@ import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.ReferencableEntity;
 import fr.siamois.domain.models.exceptions.actionunit.NullActionUnitIdentifierException;
 import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
-import fr.siamois.domain.models.form.customFieldAnswer.CustomFieldAnswer;
-import fr.siamois.domain.models.form.customFormResponse.CustomFormResponse;
+import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.Where;
 
 import java.util.HashSet;
 import java.util.Objects;

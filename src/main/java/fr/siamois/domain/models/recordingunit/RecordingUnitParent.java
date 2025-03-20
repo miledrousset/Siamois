@@ -4,7 +4,6 @@ import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.form.customFormResponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -12,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
 /**
  * The common attributes of the history recording unit table and the real recording table.
@@ -70,6 +70,19 @@ public abstract class RecordingUnitParent extends TraceableEntity {
 
     @Embedded
     protected RecordingUnitAltimetry altitude;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RecordingUnit that = (RecordingUnit) o;
+        return Objects.equals(fullIdentifier, that.fullIdentifier);  // Compare based on RecordingUnit
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fullIdentifier);  // Hash based on RecordingUnit
+    }
 
 
 

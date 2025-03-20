@@ -1,7 +1,6 @@
 package fr.siamois.infrastructure.repositories;
 
-import fr.siamois.domain.models.Field;
-import fr.siamois.domain.models.form.customField.CustomField;
+import fr.siamois.domain.models.form.customfield.CustomField;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

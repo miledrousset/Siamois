@@ -1,8 +1,7 @@
-package fr.siamois.domain.models.form.customForm;
+package fr.siamois.domain.models.form.customform;
 
 import fr.siamois.converter.CustomFormLayoutConverter;
-import fr.siamois.domain.models.form.customField.CustomField;
-import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.form.customfield.CustomField;
 import jakarta.persistence.*;
 import lombok.Data;
 

@@ -1,7 +1,6 @@
 package fr.siamois.infrastructure.repositories.form;
 
-import fr.siamois.domain.models.form.customForm.CustomForm;
-import fr.siamois.domain.models.form.customFormResponse.CustomFormResponse;
+import fr.siamois.domain.models.form.customform.CustomForm;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

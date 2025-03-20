@@ -6,7 +6,7 @@ import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.exceptions.recordingunit.MaxRecordingUnitIdentifierReached;
 import fr.siamois.domain.models.exceptions.recordingunit.RecordingUnitNotFoundException;
-import fr.siamois.domain.models.form.customFormResponse.CustomFormResponse;
+import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
@@ -15,17 +15,11 @@ import fr.siamois.domain.services.form.CustomFormResponseService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.repositories.form.CustomFormResponseRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Session;
-import org.hibernate.engine.spi.ActionQueue;
-import org.hibernate.engine.spi.SessionImplementor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Service to manage RecordingUnit
@@ -42,8 +36,7 @@ public class RecordingUnitService implements ArkEntityService {
     private final CustomFormResponseService customFormResponseService;
     private final CustomFormResponseRepository customFormResponseRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+
 
     public RecordingUnitService(RecordingUnitRepository recordingUnitRepository,
                                 ConceptService conceptService,
