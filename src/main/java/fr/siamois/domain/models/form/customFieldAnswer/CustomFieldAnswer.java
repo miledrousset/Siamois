@@ -9,6 +9,8 @@ import org.aspectj.weaver.patterns.TypePatternQuestions;
 import org.hibernate.annotations.DiscriminatorFormula;
 import org.hibernate.annotations.Formula;
 
+import java.util.Objects;
+
 @Data
 @Table(name = "custom_field_answer")
 @Entity
@@ -18,5 +20,18 @@ public abstract class CustomFieldAnswer {
 
     @EmbeddedId
     private CustomFieldAnswerId pk;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CustomFieldAnswer that)) return false;
+
+        return Objects.equals(pk, that.pk);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pk);
+    }
 
 }

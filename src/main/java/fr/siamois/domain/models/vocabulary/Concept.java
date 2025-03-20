@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -35,5 +36,21 @@ public class Concept implements Serializable {
     @NotNull
     @Column(name = "label_lang", length = Integer.MAX_VALUE)
     private String langCode;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Concept concept)) return false;
+
+        return Objects.equals(ark, concept.ark) &&
+                Objects.equals(externalId, concept.externalId) &&
+                Objects.equals(vocabulary, concept.vocabulary);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ark, externalId, vocabulary);
+    }
+
 
 }

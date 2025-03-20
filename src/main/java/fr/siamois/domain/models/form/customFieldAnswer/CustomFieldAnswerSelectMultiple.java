@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -46,6 +47,20 @@ public class CustomFieldAnswerSelectMultiple extends CustomFieldAnswer {
      */
     public void removeConcept(Concept concept) {
         concepts.remove(concept);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CustomFieldAnswerSelectMultiple that)) return false;
+        if (!super.equals(o)) return false; // Ensures any inherited fields are compared
+
+        return Objects.equals(getPk(), that.getPk());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getPk());
     }
 
 }

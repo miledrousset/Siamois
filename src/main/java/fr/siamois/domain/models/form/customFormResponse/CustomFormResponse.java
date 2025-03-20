@@ -41,10 +41,4 @@ public class CustomFormResponse {
         answer.getPk().setFormResponse(this);
     }
 
-    public void removeAnswer(CustomFieldAnswer answer) {
-        answer.getPk().setFormResponse(null);
-        this.answers.remove(answer.getPk().getField());
-    }
-
-
 }
