@@ -1,6 +1,7 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.ui.bean.SessionSettingsBean;
@@ -20,6 +21,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
     private List<SpatialUnit> spatialUnitList;
     private String spatialUnitListErrorMessage;
 
+
     public SpatialUnitListPanel(SpatialUnitService spatialUnitService, SessionSettingsBean sessionSettingsBean) {
         super("welcome", "Welcome", "welcome-panel", "pi pi-home");
         this.spatialUnitService = spatialUnitService;
@@ -36,6 +38,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
             } else {
                 spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettingsBean.getSelectedInstitution());
             }
+
         } catch (RuntimeException e) {
             spatialUnitList = null;
             spatialUnitListErrorMessage = "Failed to load spatial units: " + e.getMessage();

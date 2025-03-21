@@ -7,8 +7,6 @@
 >
 
 
-
-
     <!-- Content -->
     <p:staticMessage severity="error" summary="Error" closable="false"
                      detail="#{panelModel.spatialUnitErrorMessage}"
@@ -130,26 +128,41 @@
             <p:tab title="Enregistrements">
                 <div class="row siamois-row">
                     <div class="col-md-12">
-                        <form>
+                        <h:form>
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                             <p:outputPanel>
+                                <div class="field col-12 md:col-4">
+
+                                    <p:selectManyMenu id="option" value="#{panelModel.selectedFields}"
+                                                      converter="#{customFieldConverter}"
+                                                      var="f" filter="true" filterMatchMode="contains"
+                                                      filterNormalize="true"
+                                                      showCheckbox="true" styleClass="manymenu-advanced">
+                                        <f:selectItems value="#{panelModel.availableFields}" var="field"
+                                                       itemLabel="#{field.label}" itemValue="#{field}"/>
+                                        <p:column headerText="Fouilleur">
+                                            <h:outputText
+                                                    value="#{f.label}"/>
+                                        </p:column>
+                                        <p:ajax event="change" process="@this" update="recordingsTable"/>
+                                    </p:selectManyMenu>
+
+                                </div>
                                 <div class="card">
                                     <p:staticMessage severity="error" summary="Error" closable="false"
                                                      detail="#{panelModel.recordingUnitListErrorMessage}"
                                                      rendered="#{not empty panelModel.recordingUnitListErrorMessage}"/>
-                                    <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
+                                    <p:dataTable id="recordingsTable" paginator="true" paginatorPosition="bottom"
+                                                 rows="10" var="item"
                                                  value="#{panelModel.recordingUnitList}">
                                         <f:facet name="header">
                                             Unités d'enregistrement
                                         </f:facet>
                                         <p:column headerText="Name">
                                             <p:link outcome="/pages/recordingUnit/recordingUnit.xhtml"
-                                                    value="#{item.identifier}">
+                                                    value="#{item.fullIdentifier}">
                                                 <f:param name="id" value="#{item.id}"/>
                                             </p:link>
-                                        </p:column>
-                                        <p:column headerText="ARK">
-                                            <h:outputText value="#{item.ark.arkId}"/>
                                         </p:column>
                                         <p:column headerText="Type">
                                             <p:chip label="#{item.type.label}" icon="pi pi-file" styleClass="mr-2"/>
@@ -161,10 +174,18 @@
                                             <h:outputText
                                                     value="#{item.excavator.name} #{item.excavator.lastname}"/>
                                         </p:column>
+
+                                        <p:columns value="#{panelModel.selectedFields}" var="field"
+                                                   headerText="#{field.label}"
+                                        >
+                                            <h:outputText value="#{panelModel.getFormattedValue(item.formResponse.answers[field].value)}"/>
+
+                                        </p:columns>
+
                                     </p:dataTable>
                                 </div>
                             </p:outputPanel>
-                        </form>
+                        </h:form>
                     </div>
                     <!-- Table des unités action -->
                 </div>

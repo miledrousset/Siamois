@@ -1,11 +1,15 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
+import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.form.CustomFieldService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
@@ -26,6 +30,7 @@ import software.xdev.chartjs.model.options.Tooltip;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>This bean handles the spatial unit page</p>
@@ -42,6 +47,7 @@ public class SpatialUnitPanel extends AbstractPanel {
     private final ActionUnitService actionUnitService;
     private final SessionSettingsBean sessionSettings;
     private final SpatialUnitHelperService spatialUnitHelperService;
+    private final CustomFieldService customFieldService;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -57,16 +63,26 @@ public class SpatialUnitPanel extends AbstractPanel {
     private List<SpatialUnitHist> historyVersion;
     private SpatialUnitHist revisionToDisplay = null;
 
+    private List<CustomField> availableFields;
+    private List<CustomField> selectedFields;
+
     private String barModel;
 
     private Long idunit;  // ID of the spatial unit
 
-    public SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, Long id, PanelBreadcrumb currentBreadcrumb, SpatialUnitHelperService spatialUnitHelperService) {
+    public SpatialUnitPanel(SpatialUnitService spatialUnitService,
+                            RecordingUnitService recordingUnitService,
+                            ActionUnitService actionUnitService,
+                            SessionSettingsBean sessionSettings,
+                            Long id, PanelBreadcrumb currentBreadcrumb,
+                            SpatialUnitHelperService spatialUnitHelperService,
+                            CustomFieldService customFieldService) {
         super("spatial", "Unité spatiale", "spatial", "pi pi-map-marker");
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.sessionSettings = sessionSettings;
+        this.customFieldService = customFieldService;
         this.idunit = id;
         this.spatialUnitHelperService = spatialUnitHelperService;
         this.setBreadcrumb(new PanelBreadcrumb());
@@ -130,6 +146,9 @@ public class SpatialUnitPanel extends AbstractPanel {
 
         try {
             this.spatialUnit = spatialUnitService.findById(idunit);
+            availableFields = customFieldService.findAllFieldsBySpatialUnitId(idunit);
+            selectedFields = new ArrayList<>();
+
             this.setTitle(spatialUnit.getName()); // Set panel title
             // add to BC
             this.getBreadcrumb().addSpatialUnit(spatialUnit);
@@ -179,6 +198,25 @@ public class SpatialUnitPanel extends AbstractPanel {
 
     public void restore(SpatialUnitHist history) {
         spatialUnitHelperService.restore(history);
+    }
+
+    public String getFormattedValue(Object value) {
+        if (value == null) {
+            return "";
+        }
+
+        if (value instanceof Number) {
+            // Integer or Number case
+            return value.toString();
+        } else if (value instanceof List<?>) {
+            // Handle list of concepts
+            List<?> list = (List<?>) value;
+            return list.stream()
+                    .map(item -> (item instanceof Concept) ? ((Concept) item).getLabel() : item.toString())
+                    .collect(Collectors.joining(", "));
+        }
+
+        return value.toString(); // Default case
     }
 
 

@@ -48,7 +48,7 @@ public class CustomFormResponseService {
             ((CustomFieldAnswerInteger) createdAnswer).setValue(((CustomFieldAnswerInteger) answer).getValue());
         } else if (pk.getField() instanceof CustomFieldSelectMultiple) {
             createdAnswer = new CustomFieldAnswerSelectMultiple();
-            ((CustomFieldAnswerSelectMultiple) createdAnswer).setConcepts(((CustomFieldAnswerSelectMultiple) answer).getConcepts());
+            ((CustomFieldAnswerSelectMultiple) createdAnswer).setValue(((CustomFieldAnswerSelectMultiple) answer).getValue());
         } else {
             throw new IllegalArgumentException("Unsupported field type");
         }
@@ -63,11 +63,11 @@ public class CustomFormResponseService {
         } else if (field instanceof CustomFieldSelectMultiple) {
             // Checking if the answer contains the same  IDs
             return !Objects.equals(
-                    ((CustomFieldAnswerSelectMultiple) existingAnswer).getConcepts().stream()
+                    ((CustomFieldAnswerSelectMultiple) existingAnswer).getValue().stream()
                             .map(Concept::getId)
                             .collect(Collectors.toSet()),
 
-                    ((CustomFieldAnswerSelectMultiple) newValue).getConcepts().stream()
+                    ((CustomFieldAnswerSelectMultiple) newValue).getValue().stream()
                             .map(Concept::getId)
                             .collect(Collectors.toSet())
             );
@@ -85,8 +85,8 @@ public class CustomFormResponseService {
             CustomFieldAnswerSelectMultiple newMultiAnswer = (CustomFieldAnswerSelectMultiple) answer;
 
             // Get the concepts from both answers
-            Set<Concept> existingConcepts = new HashSet<>(managedMultiAnswer.getConcepts());
-            Set<Concept> newConcepts = new HashSet<>(newMultiAnswer.getConcepts());
+            Set<Concept> existingConcepts = new HashSet<>(managedMultiAnswer.getValue());
+            Set<Concept> newConcepts = new HashSet<>(newMultiAnswer.getValue());
 
             // Find concepts to remove (in existing but not in new)
             Set<Concept> conceptsToRemove = new HashSet<>(existingConcepts);
@@ -159,7 +159,7 @@ public class CustomFormResponseService {
             if (managedAnswer != null) {
                 // Clear associations between the answer and the concept list if the type is select multiple
                 if (managedAnswer instanceof CustomFieldAnswerSelectMultiple) {
-                    ((CustomFieldAnswerSelectMultiple) managedAnswer).getConcepts().clear();
+                    ((CustomFieldAnswerSelectMultiple) managedAnswer).getValue().clear();
                 }
 
                 // Remove the answer to trigger its deletion

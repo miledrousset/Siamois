@@ -26,7 +26,7 @@ public class CustomFieldAnswerSelectMultiple extends CustomFieldAnswer {
             },
             inverseJoinColumns = { @JoinColumn(name = "fk_concept") }
     )
-    private List<Concept> concepts = new ArrayList<>();
+    private List<Concept> value = new ArrayList<>();
 
     /**
      * Adds a concept to the list if it doesn't already exist
@@ -35,8 +35,8 @@ public class CustomFieldAnswerSelectMultiple extends CustomFieldAnswer {
      */
     public void addConcept(Concept concept) {
 
-        if (!concepts.contains(concept)) {
-            concepts.add(concept);
+        if (!value.contains(concept)) {
+            value.add(concept);
         }
     }
 
@@ -46,7 +46,7 @@ public class CustomFieldAnswerSelectMultiple extends CustomFieldAnswer {
      * @param concept The concept to remove
      */
     public void removeConcept(Concept concept) {
-        concepts.remove(concept);
+        value.remove(concept);
     }
 
     @Override

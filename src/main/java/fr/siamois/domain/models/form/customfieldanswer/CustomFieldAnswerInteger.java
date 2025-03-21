@@ -15,8 +15,7 @@ import java.util.Objects;
 @Table(name = "custom_field_answer")
 public class CustomFieldAnswerInteger extends CustomFieldAnswer {
 
-    @Column(name = "answer", columnDefinition = "jsonb")
-    @Convert(converter = IntegerToJsonConverter.class)
+    @Column(name = "value_as_integer")
     private Integer value;
 
     @Override

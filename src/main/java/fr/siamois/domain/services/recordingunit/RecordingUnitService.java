@@ -16,9 +16,11 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.repositories.form.CustomFormResponseRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,8 +58,17 @@ public class RecordingUnitService implements ArkEntityService {
      * @return The List of RecordingUnit
      * @throws RuntimeException If the repository method throws an Exception
      */
+    @Transactional(readOnly = true)
     public List<RecordingUnit> findAllBySpatialUnit(SpatialUnit spatialUnit) {
-        return recordingUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
+        List<RecordingUnit> recordingUnits = recordingUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
+
+        // Initialize formResponse.answers for each RecordingUnit. TODO : do it later not here
+        for (RecordingUnit recordingUnit : recordingUnits) {
+            if (recordingUnit.getFormResponse() != null) {
+                Hibernate.initialize(recordingUnit.getFormResponse().getAnswers());
+            }
+        }
+        return recordingUnits;
     }
 
     /**
