@@ -77,6 +77,7 @@ public class RecordingUnitService implements ArkEntityService {
      * @return The List of RecordingUnit
      * @throws RuntimeException If the repository method throws an Exception
      */
+    @Transactional(readOnly = true)
     public List<RecordingUnit> findAllByActionUnit(ActionUnit actionUnit) {
         return recordingUnitRepository.findAllByActionUnit(actionUnit);
     }

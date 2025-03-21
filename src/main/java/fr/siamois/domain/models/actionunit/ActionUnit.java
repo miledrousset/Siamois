@@ -21,6 +21,9 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Column(name = "action_unit_id", nullable = false)
     private Long id;
 
+    @OneToMany(fetch= FetchType.EAGER, mappedBy = "pk.actionUnit")
+    private transient Set<ActionUnitFormMapping> formsAvailable = new HashSet<>();
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "action_action_code",

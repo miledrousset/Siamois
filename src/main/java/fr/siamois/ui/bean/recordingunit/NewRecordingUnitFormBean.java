@@ -2,6 +2,7 @@ package fr.siamois.ui.bean.recordingunit;
 
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.actionunit.ActionUnitFormMapping;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.recordingunit.RecordingUnitNotFoundException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
@@ -185,6 +186,8 @@ public class NewRecordingUnitFormBean implements Serializable {
 
         // We check if we have secondary types options
         hasSecondaryTypeOptions = !(this.fetchChildrenOfConcept(fType).isEmpty());
+        // Init custom form
+        initCustomForm();
     }
 
     public void testAjax(SelectEvent<Concept> event) {
@@ -331,32 +334,53 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
+    public CustomForm getFormForType(Concept type, Set<ActionUnitFormMapping> availableForms) {
+        return availableForms.stream()
+                .filter(mapping -> mapping.getPk().getConcept().equals(fType)) // Filter by concept
+                .map(mapping -> mapping.getPk().getForm()) // Extract the form from the composite key
+                .findFirst()
+                .orElse(null); // Return null if no match is found
+    }
+
+    public void initFormResponseAnswers() {
+        // Initialize custom form, this should be done based on the RU type
+        recordingUnit.getFormResponse().setForm(additionalForm);
+        if(additionalForm != null) {
+            for (CustomField field : additionalForm.getFields()) {
+                if (recordingUnit.getFormResponse().getAnswers().get(field) == null) {
+                    // Init missing parameters
+                    if (field instanceof CustomFieldSelectMultiple) {
+                        recordingUnit.getFormResponse().getAnswers().put(field, new CustomFieldAnswerSelectMultiple());
+                    } else if (field instanceof CustomFieldInteger) {
+                        recordingUnit.getFormResponse().getAnswers().put(field, new CustomFieldAnswerInteger());
+                    }
+                }
+                // Else we make sure it's proper type?
+            }
+        }
+
+
+    }
+
+    public void changeCustomForm() {
+        // Do we have a form available for the selected type?
+        Set<ActionUnitFormMapping> formsAvailable = recordingUnit.getActionUnit().getFormsAvailable();
+        additionalForm = getFormForType(fType, formsAvailable);
+        initFormResponseAnswers();
+
+    }
+
     public void initCustomForm() {
 
         if(recordingUnit.getFormResponse() == null) {
-            additionalForm = formService.findById(1);
             recordingUnit.setFormResponse(new CustomFormResponse());
             recordingUnit.getFormResponse().setAnswers(new HashMap<>());
+            changeCustomForm();
         }
         else {
             additionalForm = formService.findById(
                     recordingUnit.getFormResponse().getForm().getId());
-        }
-
-        // Initialize custom form, this should be done based on the RU type
-        recordingUnit.getFormResponse().setForm(additionalForm);
-        for (CustomField field : additionalForm.getFields()) {
-            if (recordingUnit.getFormResponse().getAnswers().get(field) == null) {
-                // Init missing parameters
-                if (field instanceof CustomFieldSelectMultiple) {
-                    recordingUnit.getFormResponse().getAnswers().put(field, new CustomFieldAnswerSelectMultiple());
-                } else if (field instanceof CustomFieldInteger) {
-                    recordingUnit.getFormResponse().getAnswers().put(field, new CustomFieldAnswerInteger());
-                }
-            }
-
-            // Else we make sure it's proper type?
-
+            initFormResponseAnswers();
         }
 
     }
