@@ -63,6 +63,14 @@
                 </div>
             </div>
 
+            <div class="col-12 md:col-4">
+                <p:staticMessage severity="warn"
+                                 summary="WARN"
+                                 detail="No form configured the type #{newRecordingUnitFormBean.FType.label}"
+                                 style="width: 100%"
+                                 rendered="#{newRecordingUnitFormBean.recordingUnit.formResponse.form == null and newRecordingUnitFormBean.FType != null}" />
+            </div>
+
             <!-- Tabs -->
             <p:tabView id="recordingUnitTabsId">
 
@@ -270,7 +278,7 @@
 
                                         <!-- Si la question est de type SELECT_MULTIPLE -->
                                         <!-- Use autoComplete component for the multi-select field -->
-                                        <p:autoComplete value="#{newRecordingUnitFormBean.recordingUnit.formResponse.answers.get(field).concepts}"
+                                        <p:autoComplete value="#{newRecordingUnitFormBean.recordingUnit.formResponse.answers.get(field).value}"
                                                         multiple="true"
                                                         rendered="#{field['class'].simpleName eq 'CustomFieldSelectMultiple'}"
                                                         completeMethod="#{newRecordingUnitFormBean.suggestValues}"

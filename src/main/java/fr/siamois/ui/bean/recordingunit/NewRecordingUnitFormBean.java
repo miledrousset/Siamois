@@ -179,15 +179,20 @@ public class NewRecordingUnitFormBean implements Serializable {
     }
 
     public void handleSelectType(SelectEvent<Concept> event) {
-        this.fType = event.getObject();
-        this.fSecondaryType = null;
-        this.fThirdType = null;
-        this.hasThirdTypeOptions = null;
 
-        // We check if we have secondary types options
-        hasSecondaryTypeOptions = !(this.fetchChildrenOfConcept(fType).isEmpty());
-        // Init custom form
-        initCustomForm();
+        Concept newType = event.getObject();
+        if(newType != fType) {
+            this.fType = event.getObject();
+            this.fSecondaryType = null;
+            this.fThirdType = null;
+            this.hasThirdTypeOptions = null;
+
+            // We check if we have secondary types options
+            hasSecondaryTypeOptions = !(this.fetchChildrenOfConcept(fType).isEmpty());
+            // Init custom form
+            changeCustomForm();
+        }
+
     }
 
     public void testAjax(SelectEvent<Concept> event) {
@@ -334,19 +339,19 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
-    public CustomForm getFormForType(Concept type, Set<ActionUnitFormMapping> availableForms) {
+    public CustomForm getFormForRecordingUnitType(Concept type, Set<ActionUnitFormMapping> availableForms) {
         return availableForms.stream()
-                .filter(mapping -> mapping.getPk().getConcept().equals(fType)) // Filter by concept
-                .map(mapping -> mapping.getPk().getForm()) // Extract the form from the composite key
+                .filter(mapping -> mapping.getPk().getConcept().equals(type) // Vérifier le concept
+                        && "RECORDING_UNIT".equals(mapping.getPk().getTableName())) // Vérifier le tableName
+                .map(mapping -> mapping.getPk().getForm())
                 .findFirst()
-                .orElse(null); // Return null if no match is found
+                .orElse(null); // Retourner null si aucun match
     }
 
     public void initFormResponseAnswers() {
-        // Initialize custom form, this should be done based on the RU type
-        recordingUnit.getFormResponse().setForm(additionalForm);
-        if(additionalForm != null) {
-            for (CustomField field : additionalForm.getFields()) {
+
+        if(recordingUnit.getFormResponse().getForm() != null) {
+            for (CustomField field : recordingUnit.getFormResponse().getForm().getFields()) {
                 if (recordingUnit.getFormResponse().getAnswers().get(field) == null) {
                     // Init missing parameters
                     if (field instanceof CustomFieldSelectMultiple) {
@@ -355,7 +360,6 @@ public class NewRecordingUnitFormBean implements Serializable {
                         recordingUnit.getFormResponse().getAnswers().put(field, new CustomFieldAnswerInteger());
                     }
                 }
-                // Else we make sure it's proper type?
             }
         }
 
@@ -365,16 +369,22 @@ public class NewRecordingUnitFormBean implements Serializable {
     public void changeCustomForm() {
         // Do we have a form available for the selected type?
         Set<ActionUnitFormMapping> formsAvailable = recordingUnit.getActionUnit().getFormsAvailable();
-        additionalForm = getFormForType(fType, formsAvailable);
-        initFormResponseAnswers();
+        additionalForm = getFormForRecordingUnitType(fType, formsAvailable);
+        if(recordingUnit.getFormResponse() == null) {
+            recordingUnit.setFormResponse(new CustomFormResponse());
+            recordingUnit.getFormResponse().setAnswers(new HashMap<>());
+        }
+        recordingUnit.getFormResponse().setForm(additionalForm);
+        if(additionalForm != null) {
+            initFormResponseAnswers();
+        }
+
 
     }
 
     public void initCustomForm() {
 
         if(recordingUnit.getFormResponse() == null) {
-            recordingUnit.setFormResponse(new CustomFormResponse());
-            recordingUnit.getFormResponse().setAnswers(new HashMap<>());
             changeCustomForm();
         }
         else {

@@ -6,6 +6,7 @@ import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.Objects;
 @Entity
 @Data
 @Table(name = "custom_form_response")
+@ToString
 public class CustomFormResponse {
 
 
@@ -32,9 +34,11 @@ public class CustomFormResponse {
             mappedBy = "pk.formResponse"
     )
     @MapKey(name="pk.field")
+    @ToString.Exclude
     private Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
 
     @OneToOne(mappedBy = "formResponse")
+    @ToString.Exclude  // Prevent infinite loop
     private RecordingUnit recordingUnit;
 
     // Keep entities in sync
