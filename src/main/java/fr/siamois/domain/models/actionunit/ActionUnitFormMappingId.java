@@ -8,11 +8,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Embeddable
 @Getter
 @Setter
 
-public class ActionUnitFormMappingId {
+public class ActionUnitFormMappingId implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "fk_action_unit", nullable = false)
@@ -26,7 +28,7 @@ public class ActionUnitFormMappingId {
     @JoinColumn(name = "fk_concept", nullable = false)
     private Concept concept;
 
-    @Column(name= "table_name")
+    @Column(name= "table_name", nullable = false)
     private String tableName;
 
 }

@@ -26,7 +26,7 @@ public class CustomForm {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "custom_form_field",
             joinColumns = { @JoinColumn(name = "fk_field_id")},

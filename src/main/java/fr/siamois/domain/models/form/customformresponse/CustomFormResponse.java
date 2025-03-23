@@ -29,12 +29,12 @@ public class CustomFormResponse {
     private CustomForm form;
 
     @OneToMany(
+            fetch = FetchType.EAGER,
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             mappedBy = "pk.formResponse"
     )
     @MapKey(name="pk.field")
-    @ToString.Exclude
     private Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
 
     @OneToOne(mappedBy = "formResponse")
