@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @Entity
@@ -43,6 +45,18 @@ public class SpecimenStudyTypology {
         @NotNull
         @Column(name = "fk_question_concept_id", nullable = false)
         private Long fkQuestionConceptId;
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            SpecimenStudyTypologyId that = (SpecimenStudyTypologyId) o;
+            return Objects.equals(getFkSpecimenStudyId(), that.getFkSpecimenStudyId()) && Objects.equals(getFkTypologyConceptId(), that.getFkTypologyConceptId()) && Objects.equals(getFkQuestionConceptId(), that.getFkQuestionConceptId());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getFkSpecimenStudyId(), getFkTypologyConceptId(), getFkQuestionConceptId());
+        }
     }
 
 }

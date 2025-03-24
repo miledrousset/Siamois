@@ -100,7 +100,7 @@ public class AdminInitializer implements DatabaseInitializer {
 
         if (adminWithUsername != null) {
             createdAdmin = adminWithUsername;
-            log.info("Super admin already exists: {}", createdAdmin.getUsername());
+            log.debug("Super admin already exists: {}", createdAdmin.getUsername());
             return true;
         }
         return false;
@@ -137,7 +137,7 @@ public class AdminInitializer implements DatabaseInitializer {
                 institution.setManager(createdAdmin);
                 institutionRepository.save(institution);
             }
-            log.info("Institution already exists: {}", institution.getName());
+            log.debug("Institution already exists: {}", institution.getName());
             return true;
         }
         return false;
