@@ -37,6 +37,17 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity {
     )
     private transient Set<Document> documents = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "recording_unit_hierarchy",
+            joinColumns = @JoinColumn(name = "fk_parent_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_child_id")
+    )
+    private transient Set<RecordingUnit> parents = new HashSet<>();
+
+    @ManyToMany(mappedBy = "parents", fetch = FetchType.LAZY)
+    private transient Set<RecordingUnit> children = new HashSet<>();
+
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIARU.TYPE";
 
