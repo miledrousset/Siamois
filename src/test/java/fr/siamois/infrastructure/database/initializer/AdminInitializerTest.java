@@ -1,7 +1,8 @@
-package fr.siamois.infrastructure.database;
+package fr.siamois.infrastructure.database.initializer;
 
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
 import fr.siamois.infrastructure.database.repositories.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.auth.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +46,7 @@ class AdminInitializerTest {
     }
 
     @Test
-    void initializeAdmin_shouldCreateAdminWhenNoAdminExists() {
+    void initializeAdmin_shouldCreateAdminWhenNoAdminExists() throws DatabaseDataInitException {
         when(personRepository.findAllByIsSuperAdmin(true)).thenReturn(List.of());
         when(passwordEncoder.encode("admin")).thenReturn("encodedPassword");
         when(personRepository.save(any(Person.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -58,7 +59,7 @@ class AdminInitializerTest {
     }
 
     @Test
-    void initializeAdmin_shouldNotCreateAdminWhenAdminExists() {
+    void initializeAdmin_shouldNotCreateAdminWhenAdminExists() throws DatabaseDataInitException {
         Person existingAdmin = new Person();
         existingAdmin.setUsername("admin");
         when(personRepository.findAllByIsSuperAdmin(true)).thenReturn(List.of(existingAdmin));
@@ -73,7 +74,7 @@ class AdminInitializerTest {
         when(personRepository.findAllByIsSuperAdmin(true)).thenReturn(List.of());
         when(personRepository.save(any(Person.class))).thenThrow(DataIntegrityViolationException.class);
 
-        assertThrows(DataIntegrityViolationException.class, () -> adminInitializer.initializeAdmin());
+        assertThrows(DatabaseDataInitException.class, () -> adminInitializer.initializeAdmin());
     }
 
     @Test

@@ -1,7 +1,8 @@
-package fr.siamois.infrastructure.database;
+package fr.siamois.infrastructure.database.initializer;
 
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
 import fr.siamois.infrastructure.database.repositories.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.auth.PersonRepository;
 import lombok.Getter;
@@ -55,12 +56,12 @@ public class AdminInitializer implements DatabaseInitializer {
      * Marks all previous person with super admin flag as FALSE if username is different then adminUsername.
      */
     @Override
-    public void initialize() {
+    public void initialize() throws DatabaseDataInitException {
         initializeAdmin();
         initializeAdminOrganization();
     }
 
-    public void initializeAdmin() {
+    public void initializeAdmin() throws DatabaseDataInitException {
         if (processExistingAdmins()) return;
 
         Person person = new Person();
@@ -78,7 +79,7 @@ public class AdminInitializer implements DatabaseInitializer {
         } catch (DataIntegrityViolationException e) {
             log.error("User with username {} already exists and is not SUPER ADMIN but is supposed to. " +
                     "Check the database manually", adminUsername, e);
-            exitApplication(1);
+            throw new DatabaseDataInitException("Super admin account started wrongly.", e);
         }
     }
 

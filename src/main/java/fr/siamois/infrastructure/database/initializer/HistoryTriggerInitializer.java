@@ -1,6 +1,7 @@
-package fr.siamois.infrastructure.database;
+package fr.siamois.infrastructure.database.initializer;
 
 import com.zaxxer.hikari.HikariDataSource;
+import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
 import fr.siamois.domain.models.exceptions.database.WrongTableNameException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public class HistoryTriggerInitializer implements DatabaseInitializer {
     /**
      * Create all history triggers.
      */
-    public void initialize() {
+    public void initialize() throws DatabaseDataInitException {
         try (Connection connection = dataSource.getConnection()) {
             List<String> tablesToStore = List.of(
                     "action_unit",
@@ -48,7 +49,7 @@ public class HistoryTriggerInitializer implements DatabaseInitializer {
                 createSQLHistTrigger(connection, tableName, "history_" + tableName);
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
-            exitApplication(1);
+            throw new DatabaseDataInitException("Could not created history trigger", e);
         }
     }
 
@@ -102,18 +103,17 @@ public class HistoryTriggerInitializer implements DatabaseInitializer {
 
     void addColumnNamesToLists(Connection connection, String tableName, StringBuilder columnList, StringBuilder selectList) throws SQLException {
         String query = "SELECT column_name FROM information_schema.columns WHERE table_name = ?";
-        PreparedStatement statement = connection.prepareStatement(query);
-        statement.setString(1, tableName);
 
-        ResultSet resultSet = statement.executeQuery();
-
-        while (resultSet.next()) {
-            String columnName = resultSet.getString("column_name");
-            columnList.append(columnName).append(", ");
-            selectList.append("OLD.").append(columnName).append(", ");
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, tableName);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    String columnName = resultSet.getString("column_name");
+                    columnList.append(columnName).append(", ");
+                    selectList.append("OLD.").append(columnName).append(", ");
+                }
+            }
         }
-
-        statement.close();
 
         if (columnList.isEmpty()) {
             throw new WrongTableNameException("Table with name " + tableName + " does not exist in the current database");

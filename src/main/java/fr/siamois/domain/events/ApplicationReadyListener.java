@@ -1,6 +1,7 @@
 package fr.siamois.domain.events;
 
-import fr.siamois.infrastructure.database.DatabaseInitializer;
+import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
+import fr.siamois.infrastructure.database.initializer.DatabaseInitializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,12 @@ public class ApplicationReadyListener {
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
         for (DatabaseInitializer initializer : databaseInitializer) {
-            initializer.initialize();
+            try {
+                initializer.initialize();
+            } catch (DatabaseDataInitException e) {
+                log.error(e.getMessage(), e);
+                System.exit(1);
+            }
         }
     }
 
