@@ -25,7 +25,7 @@ public class StratiTriggerInitializer implements DatabaseInitializer {
     public void initialize() throws DatabaseDataInitException {
         try (Connection connection = hikariDataSource.getConnection();
              Statement statement = connection.createStatement()) {
-            statement.addBatch(STRATI_TRIGGER);
+            statement.addBatch(STRATI_FUNCTION);
             statement.addBatch("DROP TRIGGER IF EXISTS prevent_reverse_relationship ON stratigraphic_relationship;");
             statement.addBatch(CREATE_TRIGGER);
             statement.executeBatch();
@@ -36,7 +36,7 @@ public class StratiTriggerInitializer implements DatabaseInitializer {
         }
     }
 
-    private static final String STRATI_TRIGGER =
+    private static final String STRATI_FUNCTION =
             """
                     CREATE OR REPLACE FUNCTION order_strat_relationship()
                     RETURNS TRIGGER AS
