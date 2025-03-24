@@ -16,6 +16,7 @@ public class CustomFieldService {
         this.customFieldRepository = customFieldRepository;
     }
 
+    // Find all the custom fields used in the recording units in the scope of a spatial unit
     public List<CustomField> findAllFieldsBySpatialUnitId(Long spatialUnitId) {
         return customFieldRepository.findAllFieldsBySpatialUnitId(spatialUnitId);
     }

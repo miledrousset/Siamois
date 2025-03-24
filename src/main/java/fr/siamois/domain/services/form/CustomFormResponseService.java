@@ -46,21 +46,15 @@ public class CustomFormResponseService {
             return !Objects.equals(((CustomFieldAnswerInteger) existingAnswer).getValue(),
                     ((CustomFieldAnswerInteger) newValue).getValue());
         } else if (field instanceof CustomFieldSelectMultiple) {
-            // Checking if the answer contains the same  IDs
+            // Checking if the answer contains the same concepts
             return !Objects.equals(
-                    ((CustomFieldAnswerSelectMultiple) existingAnswer).getValue().stream()
-                            .map(Concept::getId)
-                            .collect(Collectors.toSet()),
-
-                    ((CustomFieldAnswerSelectMultiple) newValue).getValue().stream()
-                            .map(Concept::getId)
-                            .collect(Collectors.toSet())
+                    new HashSet<>(((CustomFieldAnswerSelectMultiple) existingAnswer).getValue()),
+                    new HashSet<>(((CustomFieldAnswerSelectMultiple) newValue).getValue())
             );
         } else {
             throw new IllegalArgumentException(UNSUPPORTED_FIELD_TYPE_MESSAGE);
         }
     }
-
 
     private void updateAnswer(CustomFieldAnswer managedAnswer, CustomFieldAnswer answer, CustomFieldAnswerId pk) {
         if (managedAnswer.getPk().getField() instanceof CustomFieldInteger) {
