@@ -51,7 +51,7 @@ class AdminInitializerTest {
         when(passwordEncoder.encode("admin")).thenReturn("encodedPassword");
         when(personRepository.save(any(Person.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        adminInitializer.initializeAdmin();
+        adminInitializer.initialize();
 
         assertNotNull(adminInitializer.getCreatedAdmin());
         assertEquals("admin", adminInitializer.getCreatedAdmin().getUsername());
@@ -64,7 +64,7 @@ class AdminInitializerTest {
         existingAdmin.setUsername("admin");
         when(personRepository.findAllByIsSuperAdmin(true)).thenReturn(List.of(existingAdmin));
 
-        adminInitializer.initializeAdmin();
+        adminInitializer.initialize();
 
         assertEquals(existingAdmin, adminInitializer.getCreatedAdmin());
     }

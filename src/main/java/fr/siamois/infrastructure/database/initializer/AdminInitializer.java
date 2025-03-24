@@ -61,7 +61,7 @@ public class AdminInitializer implements DatabaseInitializer {
         initializeAdminOrganization();
     }
 
-    public void initializeAdmin() throws DatabaseDataInitException {
+    void initializeAdmin() throws DatabaseDataInitException {
         if (processExistingAdmins()) return;
 
         Person person = new Person();
@@ -114,7 +114,7 @@ public class AdminInitializer implements DatabaseInitializer {
      * Creates the Siamois Administration organisation if it doesn't exist. Changes the manager of the organisation
      * to the current admin
      */
-    public void initializeAdminOrganization() {
+    void initializeAdminOrganization() {
         if (processExistingInstitution()) return;
 
         Institution institution = new Institution();
