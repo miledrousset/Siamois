@@ -2,7 +2,10 @@ package fr.siamois.infrastructure.database;
 
 import com.zaxxer.hikari.HikariDataSource;
 import fr.siamois.domain.models.exceptions.database.WrongTableNameException;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -15,32 +18,38 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class HistoryTriggerInitializer {
+@Order(2)
+public class HistoryTriggerInitializer implements DatabaseInitializer {
 
     private final HikariDataSource dataSource;
+    @Getter
+    private final ApplicationContext applicationContext;
 
-    public HistoryTriggerInitializer(HikariDataSource dataSource) {
+    public HistoryTriggerInitializer(HikariDataSource dataSource, ApplicationContext applicationContext) {
         this.dataSource = dataSource;
+        this.applicationContext = applicationContext;
     }
 
     /**
      * Create all history triggers.
      */
-    public void createHistoryTriggers() throws SQLException {
-        Connection connection = dataSource.getConnection();
-        List<String> tablesToStore = List.of(
-                "action_unit",
-                "siamois_document",
-                "recording_unit",
-                "recording_unit_study",
-                "spatial_unit",
-                "specimen",
-                "specimen_study");
+    public void initialize() {
+        try (Connection connection = dataSource.getConnection()) {
+            List<String> tablesToStore = List.of(
+                    "action_unit",
+                    "siamois_document",
+                    "recording_unit",
+                    "recording_unit_study",
+                    "spatial_unit",
+                    "specimen",
+                    "specimen_study");
 
-        for (String tableName : tablesToStore)
-            createSQLHistTrigger(connection, tableName, "history_" + tableName);
-
-        connection.close();
+            for (String tableName : tablesToStore)
+                createSQLHistTrigger(connection, tableName, "history_" + tableName);
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            exitApplication(1);
+        }
     }
 
     public void createSQLHistTrigger(Connection connection, String tableName, String historyTableName) throws SQLException {
@@ -91,7 +100,7 @@ public class HistoryTriggerInitializer {
         }
     }
 
-    private void addColumnNamesToLists(Connection connection, String tableName, StringBuilder columnList, StringBuilder selectList) throws SQLException {
+    void addColumnNamesToLists(Connection connection, String tableName, StringBuilder columnList, StringBuilder selectList) throws SQLException {
         String query = "SELECT column_name FROM information_schema.columns WHERE table_name = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1, tableName);

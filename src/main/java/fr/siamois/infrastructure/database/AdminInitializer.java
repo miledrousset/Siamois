@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -20,11 +22,13 @@ import java.util.Optional;
 @Component
 @Getter
 @Setter
-public class AdminInitializer {
+@Order(1)
+public class AdminInitializer implements DatabaseInitializer {
 
     private final BCryptPasswordEncoder passwordEncoder;
     private final PersonRepository personRepository;
     private final InstitutionRepository institutionRepository;
+    private final ApplicationContext applicationContext;
 
     @Value("${siamois.admin.username:admin}")
     private String adminUsername;
@@ -39,18 +43,25 @@ public class AdminInitializer {
 
     public AdminInitializer(BCryptPasswordEncoder passwordEncoder,
                             PersonRepository personRepository,
-                            InstitutionRepository institutionRepository) {
+                            InstitutionRepository institutionRepository,
+                            ApplicationContext applicationContext) {
         this.passwordEncoder = passwordEncoder;
         this.personRepository = personRepository;
         this.institutionRepository = institutionRepository;
+        this.applicationContext = applicationContext;
     }
 
     /**
      * Marks all previous person with super admin flag as FALSE if username is different then adminUsername.
-     * @return true if the admin was created, false if it already existed
      */
-    public boolean initializeAdmin() {
-        if (processExistingAdmins()) return false;
+    @Override
+    public void initialize() {
+        initializeAdmin();
+        initializeAdminOrganization();
+    }
+
+    public void initializeAdmin() {
+        if (processExistingAdmins()) return;
 
         Person person = new Person();
         person.setUsername(adminUsername);
@@ -63,15 +74,17 @@ public class AdminInitializer {
 
         try {
             createdAdmin = personRepository.save(person);
+            log.info("Created admin: {}", createdAdmin.getUsername());
         } catch (DataIntegrityViolationException e) {
             log.error("User with username {} already exists and is not SUPER ADMIN but is supposed to. " +
-                    "Check the database manually", adminUsername);
-            throw e;
+                    "Check the database manually", adminUsername, e);
+            exitApplication(1);
         }
-
-        return true;
     }
 
+    /*
+     * @return True if wanted admin already exist, false otherwhise
+     */
     private boolean processExistingAdmins() {
         List<Person> admins = personRepository.findAllByIsSuperAdmin(true);
         Person adminWithUsername = null;
@@ -86,6 +99,7 @@ public class AdminInitializer {
 
         if (adminWithUsername != null) {
             createdAdmin = adminWithUsername;
+            log.info("Super admin already exists: {}", createdAdmin.getUsername());
             return true;
         }
         return false;
@@ -98,10 +112,9 @@ public class AdminInitializer {
     /**
      * Creates the Siamois Administration organisation if it doesn't exist. Changes the manager of the organisation
      * to the current admin
-     * @return true if the Siamois Administration organisation is created, false otherwise.
      */
-    public boolean initializeAdminOrganization() {
-        if (processExistingInstitution()) return false;
+    public void initializeAdminOrganization() {
+        if (processExistingInstitution()) return;
 
         Institution institution = new Institution();
         institution.setName("Siamois Administration");
@@ -110,7 +123,8 @@ public class AdminInitializer {
         institution.setIdentifier("SIAMOIS");
 
         institutionRepository.save(institution);
-        return true;
+
+        log.info("Created institution {}", institution.getIdentifier());
     }
 
     private boolean processExistingInstitution() {
@@ -122,6 +136,7 @@ public class AdminInitializer {
                 institution.setManager(createdAdmin);
                 institutionRepository.save(institution);
             }
+            log.info("Institution already exists: {}", institution.getName());
             return true;
         }
         return false;

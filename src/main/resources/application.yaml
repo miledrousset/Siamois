@@ -45,9 +45,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-  liquibase:
-    enabled: true
-    change-log: classpath:/changelog/db.changelog.xml
 
   messages:
     basename: language/messages

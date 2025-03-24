@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -29,12 +30,15 @@ class AdminInitializerTest {
     @Mock
     private InstitutionRepository institutionRepository;
 
+    @Mock
+    private ApplicationContext applicationContext;
+
     private AdminInitializer adminInitializer;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        adminInitializer = new AdminInitializer(passwordEncoder, personRepository, institutionRepository);
+        adminInitializer = new AdminInitializer(passwordEncoder, personRepository, institutionRepository, applicationContext);
         adminInitializer.setAdminUsername("admin");
         adminInitializer.setAdminPassword("admin");
         adminInitializer.setAdminEmail("admin@example.com");
@@ -46,9 +50,8 @@ class AdminInitializerTest {
         when(passwordEncoder.encode("admin")).thenReturn("encodedPassword");
         when(personRepository.save(any(Person.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        boolean result = adminInitializer.initializeAdmin();
+        adminInitializer.initializeAdmin();
 
-        assertTrue(result);
         assertNotNull(adminInitializer.getCreatedAdmin());
         assertEquals("admin", adminInitializer.getCreatedAdmin().getUsername());
         assertEquals("encodedPassword", adminInitializer.getCreatedAdmin().getPassword());
@@ -60,16 +63,13 @@ class AdminInitializerTest {
         existingAdmin.setUsername("admin");
         when(personRepository.findAllByIsSuperAdmin(true)).thenReturn(List.of(existingAdmin));
 
-        boolean result = adminInitializer.initializeAdmin();
+        adminInitializer.initializeAdmin();
 
-        assertFalse(result);
         assertEquals(existingAdmin, adminInitializer.getCreatedAdmin());
     }
 
     @Test
-    void initializeAdmin_shouldThrowExceptionWhenAdmiUsernameExistButIsNotAdmin() {
-        Person existingAdmin = new Person();
-        existingAdmin.setUsername("otherAdmin");
+    void initializeAdmin_shouldThrowExceptionWhenAdminUsernameExistsButIsNotAdmin() {
         when(personRepository.findAllByIsSuperAdmin(true)).thenReturn(List.of());
         when(personRepository.save(any(Person.class))).thenThrow(DataIntegrityViolationException.class);
 
@@ -82,9 +82,8 @@ class AdminInitializerTest {
         when(institutionRepository.save(any(Institution.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         adminInitializer.setCreatedAdmin(new Person());
-        boolean result = adminInitializer.initializeAdminOrganization();
+        adminInitializer.initializeAdminOrganization();
 
-        assertTrue(result);
         verify(institutionRepository, times(1)).save(any(Institution.class));
     }
 
@@ -98,9 +97,8 @@ class AdminInitializerTest {
         when(institutionRepository.findInstitutionByIdentifier("SIAMOIS")).thenReturn(Optional.of(existingInstitution));
 
         adminInitializer.setCreatedAdmin(oldAdmin);
-        boolean result = adminInitializer.initializeAdminOrganization();
+        adminInitializer.initializeAdminOrganization();
 
-        assertFalse(result);
         verify(institutionRepository, never()).save(any(Institution.class));
     }
 
@@ -116,9 +114,8 @@ class AdminInitializerTest {
         Person newAdmin = new Person();
         newAdmin.setId(5L);
         adminInitializer.setCreatedAdmin(newAdmin);
-        boolean result = adminInitializer.initializeAdminOrganization();
+        adminInitializer.initializeAdminOrganization();
 
-        assertFalse(result);
         assertEquals(newAdmin, existingInstitution.getManager());
         verify(institutionRepository, times(1)).save(existingInstitution);
     }
