@@ -3,6 +3,7 @@ package fr.siamois.domain.models.recordingunit;
 
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
+import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.actionunit.NullActionUnitIdentifierException;
 import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
 import jakarta.persistence.*;
@@ -27,6 +28,14 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity {
 
     @OneToMany(mappedBy = "unit2", fetch = FetchType.LAZY)
     private transient Set<StratigraphicRelationship> relationshipsAsUnit2 = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "recording_unit_document",
+            joinColumns = @JoinColumn(name = "fk_recording_unit_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_document_id")
+    )
+    private transient Set<Document> documents = new HashSet<>();
 
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIARU.TYPE";
