@@ -13,12 +13,14 @@
     <h:panelGroup id="recordingUnitFormPanelGroup" rendered="#{newRecordingUnitFormBean.recordingUnit != null}">
 
         <!-- Recording unit bean header -->
-        <p:staticMessage severity="warn"
-                         summary="WARN"
-                         id="missingFormWarning"
-                         detail="No form configured the type #{newRecordingUnitFormBean.FType.label}"
-                         style="width: 100%"
-                         rendered="#{newRecordingUnitFormBean.recordingUnit.formResponse.form == null and newRecordingUnitFormBean.FType != null}"/>
+
+        <h:panelGroup id="missingFormWarning">
+            <p:staticMessage severity="warn"
+                             summary="WARN"
+                             detail="No form configured the type #{newRecordingUnitFormBean.FType.label}"
+                             style="width: 100%"
+                             rendered="#{newRecordingUnitFormBean.recordingUnit.formResponse.form == null and newRecordingUnitFormBean.FType != null}"/>
+        </h:panelGroup>
 
 
         <h:form id="recordingUnitFormId">
