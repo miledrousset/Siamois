@@ -34,6 +34,7 @@ public class HistoryTriggerInitializer implements DatabaseInitializer {
     /**
      * Create all history triggers.
      */
+    @Override
     public void initialize() throws DatabaseDataInitException {
         try (Connection connection = dataSource.getConnection()) {
             List<String> tablesToStore = List.of(
@@ -62,7 +63,7 @@ public class HistoryTriggerInitializer implements DatabaseInitializer {
         createHistoryTrigger(connection, tableName);
     }
 
-    private void createHistoryTrigger(Connection connection, String tableName) throws SQLException {
+    void createHistoryTrigger(Connection connection, String tableName) throws SQLException {
         StringBuilder triggerBuilder = new StringBuilder();
         triggerBuilder.append("CREATE OR REPLACE TRIGGER trg_save_history_").append(tableName).append("\n")
                 .append("AFTER UPDATE OR DELETE ON ").append(tableName).append("\n")
@@ -78,7 +79,7 @@ public class HistoryTriggerInitializer implements DatabaseInitializer {
         }
     }
 
-    private void createHistoryFunction(Connection connection, String tableName, String historyTableName, StringBuilder columnList, StringBuilder selectList) throws SQLException {
+    void createHistoryFunction(Connection connection, String tableName, String historyTableName, StringBuilder columnList, StringBuilder selectList) throws SQLException {
         StringBuilder functionBuilder = new StringBuilder();
         functionBuilder.append("CREATE OR REPLACE FUNCTION save_history_").append(tableName).append("() RETURNS TRIGGER AS \n")
                 .append("$$\n")
