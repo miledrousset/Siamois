@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.util.MimeType;
 
-import java.util.Set;
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
