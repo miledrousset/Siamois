@@ -37,15 +37,12 @@ class StratigraphicRelationshipServiceTest {
         MockitoAnnotations.openMocks(this);
 
         unit1 = new RecordingUnit();
-        unit1.setId(1L);
+        unit1.setFullIdentifier("1");
         unit2 = new RecordingUnit();
-        unit2.setId(2L);
+        unit2.setFullIdentifier("2");
 
-        synchronous = new Concept();
-        synchronous.setId(-1L);
-
-        asynchronous = new Concept();
-        asynchronous.setId(-2L);
+        synchronous = StratigraphicRelationshipService.SYNCHRONOUS;
+        asynchronous = StratigraphicRelationshipService.ASYNCHRONOUS;
 
 
         service = new StratigraphicRelationshipService(relationshipRepository);

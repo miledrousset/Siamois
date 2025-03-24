@@ -40,7 +40,7 @@ class RecordingUnitServiceTest {
     @BeforeEach
     void beforeEach() {
         recordingUnitService = new RecordingUnitService(recordingUnitRepository, conceptService,
-                stratigraphicRelationshipService, customFormResponseService);
+                customFormResponseService);
     }
 
     @Test

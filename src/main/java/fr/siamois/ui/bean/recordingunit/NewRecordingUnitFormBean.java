@@ -228,7 +228,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                             "Info",
                             langBean.msg("recordingunit.created", recordingUnit.getIdentifier())));
 
-            redirectBean.redirectTo("/recordingunit/" + recordingUnit.getId());
+            redirectBean.redirectTo("/recording-unit/" + recordingUnit.getId());
             return true;
 
         } catch (RuntimeException e) {
@@ -427,9 +427,7 @@ public class NewRecordingUnitFormBean implements Serializable {
             recordingUnit.setExcavator(sessionSettingsBean.getAuthenticatedUser());
 
             fType = null;
-            previousFType = null;
             fSecondaryType = null;
-            previousSecondaryFType = null;
 
 
             initCustomForm();
@@ -494,9 +492,6 @@ public class NewRecordingUnitFormBean implements Serializable {
                 // Init type field
                 fType = this.recordingUnit.getType();
                 fSecondaryType = this.recordingUnit.getSecondaryType();
-                previousFType = new Concept(fType);
-                previousSecondaryFType = new Concept(fSecondaryType);
-                previousSecondaryFType = new Concept(fSecondaryType);
 
                 initCustomForm();
                 initStratigraphy();

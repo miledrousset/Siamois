@@ -7,6 +7,7 @@ import fr.siamois.domain.models.ReferencableEntity;
 import fr.siamois.domain.models.exceptions.actionunit.NullActionUnitIdentifierException;
 import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
+import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -74,15 +75,15 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;  // Same reference
-        if (obj == null || getClass() != obj.getClass()) return false;  // Different types
+        if (!(obj instanceof RecordingUnit recordingUnit)) return false;
 
-        RecordingUnit that = (RecordingUnit) obj;
-        return Objects.equals(id, that.id);  // Compare IDs (null-safe)
+        return Objects.equals(fullIdentifier, recordingUnit.fullIdentifier);
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);  // Generate hash based on ID
+        return Objects.hash(fullIdentifier);  // Generate hash based on ID
     }
 
     @Override
