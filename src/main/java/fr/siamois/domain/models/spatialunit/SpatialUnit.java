@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.util.List;
+import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -27,10 +27,10 @@ public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
             joinColumns = @JoinColumn(name = "fk_parent_id"),
             inverseJoinColumns = @JoinColumn(name = "fk_child_id")
     )
-    private List<SpatialUnit> parents;
+    private transient Set<SpatialUnit> parents;
 
     @ManyToMany(mappedBy = "parents", fetch = FetchType.LAZY)
-    private List<SpatialUnit> childs;
+    private transient Set<SpatialUnit> childs;
 
     @FieldCode
     public static final String CATEGORY_FIELD_CODE = "SIASU.TYPE";

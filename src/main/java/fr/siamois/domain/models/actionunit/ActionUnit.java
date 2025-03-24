@@ -29,6 +29,18 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     )
     protected transient Set<ActionCode> secondaryActionCodes = new HashSet<>();
 
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "action_hierarchy",
+            joinColumns = @JoinColumn(name = "fk_parent_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_child_id")
+    )
+    private transient Set<ActionUnit> parents = new HashSet<>();
+
+    @ManyToMany(mappedBy = "parents", fetch = FetchType.LAZY)
+    private transient Set<ActionUnit> children = new HashSet<>();
+
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIAAU.TYPE";
 
