@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service to manage RecordingUnit
@@ -34,21 +35,16 @@ public class RecordingUnitService implements ArkEntityService {
 
     private final RecordingUnitRepository recordingUnitRepository;
     private final ConceptService conceptService;
-    private final StratigraphicRelationshipService stratigraphicRelationshipService;
     private final CustomFormResponseService customFormResponseService;
-    private final CustomFormResponseRepository customFormResponseRepository;
 
 
 
     public RecordingUnitService(RecordingUnitRepository recordingUnitRepository,
                                 ConceptService conceptService,
-                                StratigraphicRelationshipService stratigraphicRelationshipService,
-                                CustomFormResponseService customFormResponseService, CustomFormResponseRepository customFormResponseRepository) {
+                                CustomFormResponseService customFormResponseService) {
         this.recordingUnitRepository = recordingUnitRepository;
         this.conceptService = conceptService;
-        this.stratigraphicRelationshipService = stratigraphicRelationshipService;
         this.customFormResponseService = customFormResponseService;
-        this.customFormResponseRepository = customFormResponseRepository;
     }
 
 
@@ -62,7 +58,6 @@ public class RecordingUnitService implements ArkEntityService {
     public List<RecordingUnit> findAllBySpatialUnit(SpatialUnit spatialUnit) {
         List<RecordingUnit> recordingUnits = recordingUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
 
-        // Initialize formResponse.answers for each RecordingUnit. TODO : do it later not here
         for (RecordingUnit recordingUnit : recordingUnits) {
             if (recordingUnit.getFormResponse() != null) {
                 Hibernate.initialize(recordingUnit.getFormResponse().getAnswers());
@@ -103,7 +98,8 @@ public class RecordingUnitService implements ArkEntityService {
             RecordingUnit managedRecordingUnit ;
 
             if(recordingUnit.getId() != null) {
-                managedRecordingUnit = recordingUnitRepository.findById(recordingUnit.getId()).get();
+                Optional<RecordingUnit> optRecordingUnit = recordingUnitRepository.findById(recordingUnit.getId());
+                managedRecordingUnit = optRecordingUnit.orElseGet(RecordingUnit::new);
             }
             else {
                 managedRecordingUnit = new RecordingUnit();
@@ -156,7 +152,6 @@ public class RecordingUnitService implements ArkEntityService {
 
             return recordingUnitRepository.save(managedRecordingUnit);
 
-            //return recordingUnitRepository.save(managedRecordingUnit);
         } catch (RuntimeException e) {
             throw new FailedRecordingUnitSaveException(e.getMessage());
         }

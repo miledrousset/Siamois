@@ -80,7 +80,9 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     private transient List<Concept> concepts;
     private Concept fType = null;
+    private Concept previousFType = null;
     private Concept fSecondaryType = null;
+    private Concept previousSecondaryFType = null;
     private Boolean hasSecondaryTypeOptions = false;
     private Concept fThirdType = null;
     private Boolean hasThirdTypeOptions = false;
@@ -93,7 +95,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     private RecordingUnitHist revisionToDisplay = null;
 
     // Form
-    private CustomForm additionalForm;
+    private transient CustomForm additionalForm;
 
     // Stratigraphy
     private transient List<Event> events; // Strati
@@ -178,33 +180,32 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
-    public void handleSelectType(SelectEvent<Concept> event) {
+    public void handleSelectType() {
 
-        Concept newType = event.getObject();
-        if (newType != fType) {
-            this.fType = event.getObject();
-            this.fSecondaryType = null;
-            this.fThirdType = null;
-            this.hasThirdTypeOptions = null;
-
-            // We check if we have secondary types options
+        if (fType != null) {
             hasSecondaryTypeOptions = !(this.fetchChildrenOfConcept(fType).isEmpty());
-            // Init custom form
             changeCustomForm();
+        } else {
+            hasSecondaryTypeOptions = false;
         }
 
+        fSecondaryType = null;
+        hasThirdTypeOptions = false;
+        fThirdType = null;
+
+
     }
 
-    public void testAjax(SelectEvent<Concept> event) {
-        this.fType = null;
-    }
 
-    public void handleSelectSecondaryType(SelectEvent<Concept> event) {
-        this.fSecondaryType = event.getObject();
-        this.fThirdType = null;
+    public void handleSelectSecondaryType() {
 
-        // We check if we have third types options
-        hasThirdTypeOptions = !(this.fetchChildrenOfConcept(fSecondaryType).isEmpty());
+        if (fSecondaryType != null) {
+            hasThirdTypeOptions = !(this.fetchChildrenOfConcept(fSecondaryType).isEmpty());
+        } else {
+            hasThirdTypeOptions = false;
+        }
+
+        fThirdType = null;
     }
 
     public LocalDate offsetDateTimeToLocalDate(OffsetDateTime offsetDT) {
@@ -425,6 +426,11 @@ public class NewRecordingUnitFormBean implements Serializable {
             recordingUnit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
             recordingUnit.setExcavator(sessionSettingsBean.getAuthenticatedUser());
 
+            fType = null;
+            previousFType = null;
+            fSecondaryType = null;
+            previousSecondaryFType = null;
+
 
             initCustomForm();
             initStratigraphy();
@@ -443,8 +449,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         CustomField question = (CustomField) UIComponent.getCurrentComponent(context).getAttributes().get("question");
 
         // Check if the question is an instance of QuestionSelectMultiple
-        if (question instanceof CustomFieldSelectMultiple) {
-            CustomFieldSelectMultiple selectMultipleQuestion = (CustomFieldSelectMultiple) question;
+        if (question instanceof CustomFieldSelectMultiple selectMultipleQuestion) {
             List<Concept> allOptions = new ArrayList<>(selectMultipleQuestion.getConcepts());
 
             // Filter the options based on user input (query)
@@ -489,6 +494,9 @@ public class NewRecordingUnitFormBean implements Serializable {
                 // Init type field
                 fType = this.recordingUnit.getType();
                 fSecondaryType = this.recordingUnit.getSecondaryType();
+                previousFType = new Concept(fType);
+                previousSecondaryFType = new Concept(fSecondaryType);
+                previousSecondaryFType = new Concept(fSecondaryType);
 
                 initCustomForm();
                 initStratigraphy();
