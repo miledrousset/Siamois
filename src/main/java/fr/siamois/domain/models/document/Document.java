@@ -18,6 +18,15 @@ public class Document extends DocumentParent implements ArkEntity {
     @Column(name = "document_id", nullable = false)
     private Long id;
 
+    @FieldCode
+    public static final String NATURE_FIELD_CODE = "SIAD.NATURE";
+
+    @FieldCode
+    public static final String SCALE_FIELD_CODE = "SIAD.SCALE";
+
+    @FieldCode
+    public static final  String FORMAT_FIELD_CODE = "SIAD.FORMAT";
+
     public String contentFileName() {
         return fileCode + "." + fileExtension();
     }
@@ -31,12 +40,4 @@ public class Document extends DocumentParent implements ArkEntity {
         return fileName.substring(i + 1);
     }
 
-    @FieldCode
-    public static final String NATURE_FIELD_CODE = "SIAD.NATURE";
-
-    @FieldCode
-    public static final String SCALE_FIELD_CODE = "SIAD.SCALE";
-
-    @FieldCode
-    public static final  String FORMAT_FIELD_CODE = "SIAD.FORMAT";
 }

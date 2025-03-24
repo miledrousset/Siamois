@@ -8,9 +8,7 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name = "vocabulary", schema = "public", uniqueConstraints = {
-        @UniqueConstraint(name = "vocabulary_pk_uri_external_id", columnNames = {"base_uri", "external_id"})
-})
+@Table(name = "vocabulary", schema = "public")
 public class Vocabulary implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
