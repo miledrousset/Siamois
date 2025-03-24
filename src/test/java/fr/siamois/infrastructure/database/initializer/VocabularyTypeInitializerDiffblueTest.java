@@ -1,5 +1,6 @@
 package fr.siamois.infrastructure.database.initializer;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
@@ -15,7 +16,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.data.repository.CrudRepository;
 
 class VocabularyTypeInitializerDiffblueTest {
@@ -60,7 +60,7 @@ class VocabularyTypeInitializerDiffblueTest {
         vocabularyType.setId(1L);
         vocabularyType.setLabel("Label");
         VocabularyTypeRepository vocabularyTypeRepository = mock(VocabularyTypeRepository.class);
-        when(vocabularyTypeRepository.save(Mockito.<VocabularyType>any())).thenReturn(vocabularyType);
+        when(vocabularyTypeRepository.save(any(VocabularyType.class))).thenReturn(vocabularyType);
         Optional<VocabularyType> emptyResult = Optional.empty();
         when(vocabularyTypeRepository.findVocabularyTypeByLabel(anyString())).thenReturn(emptyResult);
 
@@ -69,6 +69,6 @@ class VocabularyTypeInitializerDiffblueTest {
 
         // Assert
         verify(vocabularyTypeRepository, atLeast(1)).findVocabularyTypeByLabel(anyString());
-        verify(vocabularyTypeRepository, atLeast(1)).save(Mockito.<VocabularyType>any());
+        verify(vocabularyTypeRepository, atLeast(1)).save(any(VocabularyType.class));
     }
 }
