@@ -286,7 +286,11 @@
             <version>5.3.0</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.27.0</version>
+        </dependency>
 
     </dependencies>
 

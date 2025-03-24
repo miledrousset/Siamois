@@ -30,21 +30,25 @@ spring:
     allow-bean-definition-overriding: true
   datasource:
  #   platform: postgres
-    url: jdbc:postgresql://localhost:5432/siamois
-    username: siamois
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     hikari:
       maximum-pool-size: 1000
       minimum-idle: 1
       idle-timeout: 30000
       connection-test-query: SELECT 1
   jpa:
-    show-sql: true
     generate-ddl: true
     hibernate:
       ddl-auto: validate
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: false
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/changelog/db.changelog.xml
 
   messages:
     basename: language/messages
@@ -75,9 +79,4 @@ logging:
     org:
       springframework: INFO
       hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
-
+        SQL: INFO
