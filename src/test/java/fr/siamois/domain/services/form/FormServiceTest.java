@@ -31,12 +31,23 @@ class FormServiceTest {
                 .thenReturn(Optional.of(new CustomForm()));
 
         // act
-        Optional<CustomForm> optRes = formRepository.findById(anyLong());
+        CustomForm res = formService.findById(anyLong());
 
-        assertTrue(optRes.isPresent());
-        CustomForm res = optRes.get();
         assertNotNull(res);
         assertInstanceOf(CustomForm.class, res);
+
+    }
+
+    @Test
+    void findAllFieldsBySpatialUnitId_null() {
+
+        when(formRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // act
+        CustomForm res = formService.findById(anyLong());
+
+        assertNull(res);
 
     }
 }
