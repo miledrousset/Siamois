@@ -36,8 +36,8 @@ class BrowserDisplayableCompressorTest {
     }
 
     @Test
-    void testEncodingTypes() {
-        assertEquals("", compressor.encodingTypes());
+    void testEncodingTypes_assertThrows() {
+        assertThrows(UnsupportedOperationException.class, () -> compressor.encodingTypes());
     }
 
     @Test
