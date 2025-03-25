@@ -2,10 +2,15 @@ package fr.siamois.domain.models.spatialunit;
 
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
+import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.models.form.customfield.CustomField;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.SQLRestriction;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -21,5 +26,8 @@ public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
 
     @FieldCode
     public static final String CATEGORY_FIELD_CODE = "SIASU.TYPE";
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "spatialUnit")
+    private Set<Document> fields = new HashSet<>();
 
 }
