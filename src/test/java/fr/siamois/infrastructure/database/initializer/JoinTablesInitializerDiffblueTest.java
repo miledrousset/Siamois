@@ -66,7 +66,7 @@ class JoinTablesInitializerDiffblueTest {
         verify(resultSet).next();
         verify(statement, atLeast(1)).close();
         verify(statement, atLeast(1)).execute(anyString());
-        verify(statement).executeQuery("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'action_action_code')");
+        verify(statement).executeQuery("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'spatial_hierarchy')");
         verify(statement, atLeast(1)).getUpdateCount();
     }
 
@@ -109,7 +109,7 @@ class JoinTablesInitializerDiffblueTest {
         verify(resultSet).getBoolean(1);
         verify(resultSet).next();
         verify(statement).close();
-        verify(statement).executeQuery("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'action_action_code')");
+        verify(statement).executeQuery("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'spatial_hierarchy')");
     }
 
     /**
@@ -147,6 +147,6 @@ class JoinTablesInitializerDiffblueTest {
         verify(resultSet).close();
         verify(resultSet).next();
         verify(statement).close();
-        verify(statement).executeQuery("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'action_action_code')");
+        verify(statement).executeQuery("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'spatial_hierarchy')");
     }
 }
