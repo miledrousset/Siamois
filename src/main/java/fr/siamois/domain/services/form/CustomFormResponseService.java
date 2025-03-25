@@ -13,7 +13,6 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.repositories.form.CustomFormRepository;
 import org.springframework.stereotype.Service;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class CustomFormResponseService {
@@ -90,7 +89,7 @@ public class CustomFormResponseService {
         managedAnswer.setPk(pk);
     }
 
-    public void saveAnswer(CustomField managedField,
+    private void saveAnswer(CustomField managedField,
                            CustomFormResponse customFormResponse,
                            CustomFormResponse managedFormResponse,
                            Map<CustomField, CustomFieldAnswer> toBeDeleted

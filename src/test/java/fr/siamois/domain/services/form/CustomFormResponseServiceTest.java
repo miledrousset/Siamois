@@ -13,7 +13,6 @@ import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
 
 import fr.siamois.infrastructure.repositories.form.CustomFormRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,9 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,6 +45,7 @@ class CustomFormResponseServiceTest {
     CustomFieldSelectMultiple field1SelectMultiple;
     CustomFieldSelectMultiple field2SelectMultiple;
     CustomFieldSelectMultiple field3SelectMultiple;
+    CustomFieldSelectMultiple field4SelectMultipleToBeDeleted;
     CustomFieldInteger field1Integer;
     CustomFieldInteger field2Integer;
     CustomFieldInteger field3Integer;
@@ -57,10 +55,13 @@ class CustomFormResponseServiceTest {
     Concept field4Concept;
     Concept field5Concept;
     Concept field6Concept;
+    Concept field7ConceptToBeDelete;
     Concept answer1Value ;
     Concept answer2ValueOld ;
     Concept answer2ValueNew;
     Concept answer3Value;
+    Concept answer4ValueToBeDeleted;
+    CustomFieldAnswerSelectMultiple a7ToBeDeleted = new CustomFieldAnswerSelectMultiple();
 
     @BeforeEach
     void setUp() {
@@ -77,6 +78,8 @@ class CustomFormResponseServiceTest {
         field5Concept.setExternalId("q5");
         field6Concept = new Concept();
         field6Concept.setExternalId("q6");
+        field7ConceptToBeDelete = new Concept();
+        field1Concept.setExternalId("q7");
         answer1Value = new Concept();
         answer2ValueOld = new Concept();
         answer2ValueNew = new Concept();
@@ -85,6 +88,8 @@ class CustomFormResponseServiceTest {
         answer2ValueOld.setExternalId("a2_old");
         answer2ValueNew.setExternalId("a2_new");
         answer3Value.setExternalId("a3");
+        answer4ValueToBeDeleted = new Concept();
+        answer4ValueToBeDeleted.setExternalId("a4");
         // The fields we are going to test
         field1SelectMultiple = new CustomFieldSelectMultiple();
         field1SelectMultiple.setLabel("Select Multiple");
@@ -95,6 +100,9 @@ class CustomFormResponseServiceTest {
         field3SelectMultiple = new CustomFieldSelectMultiple();
         field3SelectMultiple.setLabel("Select Multiple");
         field3SelectMultiple.setConcept(field3Concept);
+        field4SelectMultipleToBeDeleted = new CustomFieldSelectMultiple();
+        field4SelectMultipleToBeDeleted.setLabel("Select Multiple");
+        field4SelectMultipleToBeDeleted.setConcept(field7ConceptToBeDelete);
         field1Integer = new CustomFieldInteger();
         field1Integer.setLabel("Integer");
         field1Integer.setConcept(field4Concept);
@@ -114,8 +122,10 @@ class CustomFormResponseServiceTest {
         customFormPanel.getFields().add(field1SelectMultiple);
         customFormPanel.getFields().add(field2SelectMultiple);
         customFormPanel.getFields().add(field3SelectMultiple);
+        // we don't add the form 7 to the field bc we want to remove it
         form = new CustomForm();
         form.setLayout(new ArrayList<>());
+        form.setId(-1L);
         form.getLayout().add(customFormPanel);
 
         // Prepare the answers
@@ -164,6 +174,13 @@ class CustomFormResponseServiceTest {
         pk6.setField(field1Integer);
         a6.setPk(pk6);
         a6.setValue(6);
+        // One answer to be deleted
+
+        CustomFieldAnswerId pk7 = new CustomFieldAnswerId();
+        pk7.setField(field4SelectMultipleToBeDeleted);
+        a7ToBeDeleted.setPk(pk7);
+        a7ToBeDeleted.setValue(new ArrayList<>());
+        a7ToBeDeleted.getValue().add(answer4ValueToBeDeleted);
 
 
         // Prepare the form response to be modified
@@ -174,6 +191,7 @@ class CustomFormResponseServiceTest {
         managedFormResponse.getAnswers().put(field1Integer,a2);
         managedFormResponse.getAnswers().put(field2SelectMultiple,a3Old);
         managedFormResponse.getAnswers().put(field2Integer,a4old);
+        managedFormResponse.getAnswers().put(field4SelectMultipleToBeDeleted,a7ToBeDeleted);
         // -------------
 
         // Prepare the form response to be submitted
@@ -193,131 +211,7 @@ class CustomFormResponseServiceTest {
 
     }
 
-    @AfterEach
-    void tearDown() {
-    }
 
-    @Test
-    void saveAnswer_UnchangedSelectMultiple() {
-
-        // Initialize to be deleted with the old values from the form response
-        customFormResponseService.saveAnswer(
-                field1SelectMultiple, customFormResponse, managedFormResponse, toBeDeleted
-        );
-
-        CustomFieldAnswerSelectMultiple answer = (CustomFieldAnswerSelectMultiple) managedFormResponse.getAnswers().get(field1SelectMultiple);
-
-        // Assess that the answer in the managedformresponse is unchanged
-        assertEquals( 1,answer.getValue().size());
-        // Assess that value is unchanged
-        assertTrue(answer.getValue().contains(answer1Value));
-        // Assess that the field has be removed from tobedeleted
-        assertFalse(toBeDeleted.containsKey(field1SelectMultiple));
-
-
-    }
-
-    @Test
-    void saveAnswer_UpdatedSelectMultiple() {
-
-        // Initialize to be deleted with the old values from the form response
-        customFormResponseService.saveAnswer(
-                field2SelectMultiple, customFormResponse, managedFormResponse, toBeDeleted
-        );
-
-        CustomFieldAnswerSelectMultiple answer = (CustomFieldAnswerSelectMultiple)
-                managedFormResponse.getAnswers().get(field2SelectMultiple);
-
-
-        assertEquals( 1,answer.getValue().size());
-        // Assess that value is unchanged
-        assertTrue(answer.getValue().contains(answer2ValueNew));
-        // Assess that the field has be removed from tobedeleted
-        assertFalse(toBeDeleted.containsKey(field2SelectMultiple));
-
-
-    }
-
-    @Test
-    void saveAnswer_AddedSelectMultiple() {
-
-        // Initialize to be deleted with the old values from the form response
-        customFormResponseService.saveAnswer(
-                field3SelectMultiple, customFormResponse, managedFormResponse, toBeDeleted
-        );
-
-        CustomFieldAnswerSelectMultiple answer = (CustomFieldAnswerSelectMultiple)
-                managedFormResponse.getAnswers().get(field3SelectMultiple);
-
-
-        assertEquals( 1,answer.getValue().size());
-        // Assess that value is unchanged
-        assertTrue(answer.getValue().contains(answer3Value));
-
-
-
-    }
-
-    @Test
-    void saveAnswer_UnchangedInteger() {
-
-        // Initialize to be deleted with the old values from the form response
-        customFormResponseService.saveAnswer(
-                field1Integer, customFormResponse, managedFormResponse, toBeDeleted
-        );
-
-            CustomFieldAnswerInteger answer =
-                    (CustomFieldAnswerInteger) managedFormResponse
-                            .getAnswers().get(field1Integer);
-
-        // Assess that the value is unchanged
-        assertEquals( 2,answer.getValue());
-
-        // Assess that the field has be removed from tobedeleted
-        assertFalse(toBeDeleted.containsKey(field1Integer));
-
-
-    }
-
-    @Test
-    void saveAnswer_UpdatedInteger() {
-
-        // Initialize to be deleted with the old values from the form response
-        customFormResponseService.saveAnswer(
-                field2Integer, customFormResponse, managedFormResponse, toBeDeleted
-        );
-
-        CustomFieldAnswerInteger answer =
-                (CustomFieldAnswerInteger) managedFormResponse
-                        .getAnswers().get(field2Integer);
-
-        // Assess that the value is unchanged
-        assertEquals( 4,answer.getValue());
-
-        // Assess that the field has be removed from tobedeleted
-        assertFalse(toBeDeleted.containsKey(field2Integer));
-
-
-    }
-
-    @Test
-    void saveAnswer_AddedInteger() {
-
-        // Initialize to be deleted with the old values from the form response
-        customFormResponseService.saveAnswer(
-                field3Integer, customFormResponse, managedFormResponse, toBeDeleted
-        );
-
-        CustomFieldAnswerInteger answer =
-                (CustomFieldAnswerInteger) managedFormResponse
-                        .getAnswers().get(field3Integer);
-
-        // Assess that the value is unchanged
-        assertEquals( 6,answer.getValue());
-
-
-
-    }
 
     @Test
     void saveFormResponse_success() {
@@ -326,16 +220,64 @@ class CustomFormResponseServiceTest {
         when(customFormRepository.findById(anyLong()))
                 .thenReturn(Optional.of(form));
 
-        doNothing().when(customFormResponseService).saveAnswer(
-                any(CustomField.class),
-                any(CustomFormResponse.class),
-                any(CustomFormResponse.class),
-                any()
-        );
 
+        //act
         customFormResponseService.saveFormResponse(
                 managedFormResponse,
                 customFormResponse
         );
+
+
+        CustomFieldAnswerInteger answer1 =
+                (CustomFieldAnswerInteger) managedFormResponse
+                        .getAnswers().get(field3Integer);
+
+        // Assess that the value is unchanged
+        assertEquals( 6,answer1.getValue());
+
+        CustomFieldAnswerInteger answer2 =
+                (CustomFieldAnswerInteger) managedFormResponse
+                        .getAnswers().get(field2Integer);
+
+        // Assess that the value is unchanged
+        assertEquals( 4,answer2.getValue());
+
+        CustomFieldAnswerInteger answer3 =
+                (CustomFieldAnswerInteger) managedFormResponse
+                        .getAnswers().get(field1Integer);
+
+        // Assess that the value is unchanged
+        assertEquals( 2,answer3.getValue());
+
+        CustomFieldAnswerSelectMultiple answer4 = (CustomFieldAnswerSelectMultiple)
+                managedFormResponse.getAnswers().get(field3SelectMultiple);
+
+
+        assertEquals( 1,answer4.getValue().size());
+        // Assess that value is unchanged
+        assertTrue(answer4.getValue().contains(answer3Value));
+
+        CustomFieldAnswerSelectMultiple answer5 = (CustomFieldAnswerSelectMultiple)
+                managedFormResponse.getAnswers().get(field2SelectMultiple);
+
+
+        assertEquals( 1,answer5.getValue().size());
+        // Assess that value is unchanged
+        assertTrue(answer5.getValue().contains(answer2ValueNew));
+
+        CustomFieldAnswerSelectMultiple answer6 = (CustomFieldAnswerSelectMultiple)
+                managedFormResponse.getAnswers().get(field1SelectMultiple);
+
+        // Assess that the answer in the managedformresponse is unchanged
+        assertEquals( 1,answer6.getValue().size());
+        // Assess that value is unchanged
+        assertTrue(answer6.getValue().contains(answer1Value));
+
+        // assess there is only 6 responses
+        assertEquals(6, managedFormResponse.getAnswers().size());
+
+        // assess the value of the answer to be deleted has been removed
+        assertEquals(0, a7ToBeDeleted.getValue().size());
+
     }
 }
