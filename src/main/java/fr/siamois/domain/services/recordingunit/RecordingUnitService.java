@@ -15,6 +15,8 @@ import fr.siamois.domain.services.form.CustomFormResponseService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.repositories.form.CustomFormResponseRepository;
 import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
+import fr.siamois.infrastructure.database.repositories.recordingunit.RecordingUnitRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;

@@ -7,7 +7,7 @@ import fr.siamois.domain.models.exceptions.ark.TooManyGenerationsException;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
-import fr.siamois.infrastructure.repositories.ArkRepository;
+import fr.siamois.infrastructure.database.repositories.ArkRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

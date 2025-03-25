@@ -6,7 +6,7 @@ import fr.siamois.domain.models.exceptions.ark.NoArkConfigException;
 import fr.siamois.domain.models.exceptions.ark.TooManyGenerationsException;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.services.InstitutionService;
-import fr.siamois.infrastructure.repositories.ArkRepository;
+import fr.siamois.infrastructure.database.repositories.ArkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -18,7 +18,7 @@ public class ArkService {
 
     private static final String VALID_CHAR_STR = "0123456789bcdfghjklmnpqrstvwxz";
     private static final SecureRandom RANDOM = new SecureRandom();
-    private static final int MAX_GENERATIONS = 5000;
+    private static final int MAX_GENERATIONS = 100;
 
     private final NoidCheckService noidCheckService;
     private final ArkRepository arkRepository;

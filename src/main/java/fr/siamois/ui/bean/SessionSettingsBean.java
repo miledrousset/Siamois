@@ -22,17 +22,19 @@ public class SessionSettingsBean implements Serializable {
 
     private final transient InstitutionService institutionService;
     private final LangBean langBean;
+    private final transient RedirectBean redirectBean;
     private Institution selectedInstitution;
     private transient InstitutionSettings institutionSettings;
     private transient List<Institution> referencedInstitutions;
 
-    public SessionSettingsBean(InstitutionService institutionService, LangBean langBean) {
+    public SessionSettingsBean(InstitutionService institutionService, LangBean langBean, RedirectBean redirectBean) {
         this.institutionService = institutionService;
         this.langBean = langBean;
+        this.redirectBean = redirectBean;
     }
 
     public Person getAuthenticatedUser() {
-        return AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("No authenticated user but user should be authenticated"));
+        return AuthenticatedUserUtils.getAuthenticatedUser().orElse(null);
     }
 
     public Institution getSelectedInstitution() {
@@ -58,6 +60,9 @@ public class SessionSettingsBean implements Serializable {
     }
 
     public UserInfo getUserInfo() {
+        if (selectedInstitution == null || getAuthenticatedUser() == null) {
+            redirectBean.redirectTo("/");
+        }
         return new UserInfo(selectedInstitution, getAuthenticatedUser(), getLanguageCode());
     }
 

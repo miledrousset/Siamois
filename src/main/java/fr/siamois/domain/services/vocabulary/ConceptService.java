@@ -7,7 +7,7 @@ import fr.siamois.infrastructure.api.ConceptApi;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
-import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

@@ -33,10 +33,148 @@
                 </div>
             </p:outputPanel>
         </h:form>
-        <p:tabView>
-            <p:tab title="Aperçu">
-                <p:chart value="#{panelModel.barModel}" style="width: 100%; height: 500px;">
+        <h:form id="spatialUnitFormTabs">
+            <p:tabView>
+                <p:tab title="Aperçu">
+                    <p:chart value="#{panelModel.barModel}" style="width: 100%; height: 500px;">
 
+                    </p:chart>
+                </p:tab>
+                <p:tab title="Détails">
+                </p:tab>
+                <p:tab title="Hierarchie">
+                    <div class="row siamois-row">
+                        <div class="col-md-6">
+                            <p:staticMessage severity="error" summary="Error" closable="false"
+                                             detail="#{panelModel.spatialUnitListErrorMessage}"
+                                             rendered="#{not empty panelModel.spatialUnitListErrorMessage}"/>
+                            <spatialUnit:spatialUnitList
+                                    header="Contient"
+                                    spatialUnitList="#{panelModel.spatialUnitList}">
+                                <f:facet name="toolbar">
+                                    <p:toolbar>
+                                        <p:toolbarGroup>
+                                            <p:commandButton value='Nouveau lieu enfant' icon="pi pi-plus"
+                                                             actionListener="#{spatialUnitFieldpanelModel.init([panelModel.spatialUnit],[])}"
+                                                             oncomplete="PF('new-spatial-unit-dialog').show()"
+                                                             style="margin-right: .5rem">
+                                            </p:commandButton>
+                                        </p:toolbarGroup>
+                                    </p:toolbar>
+                                </f:facet>
+                            </spatialUnit:spatialUnitList>
+                        </div>
+                        <div class="col-md-6">
+                            <p:staticMessage severity="error" summary="Error" closable="false"
+                                             detail="#{panelModel.spatialUnitListErrorMessage}"
+                                             rendered="#{not empty panelModel.spatialUnitListErrorMessage}"/>
+                            <spatialUnit:spatialUnitList
+                                    header="Fait partie de"
+                                    spatialUnitList="#{panelModel.spatialUnitParentsList}">
+                                <f:facet name="toolbar">
+                                    <p:toolbar>
+                                        <p:toolbarGroup>
+                                            <p:commandButton value='Nouveau lieu parent' icon="pi pi-plus"
+                                                             actionListener="#{spatialUnitFieldpanelModel.init([],[panelModel.spatialUnit])}"
+                                                             oncomplete="PF('new-spatial-unit-dialog').show()"
+                                                             style="margin-right: .5rem">
+                                            </p:commandButton>
+                                        </p:toolbarGroup>
+                                    </p:toolbar>
+                                </f:facet>
+                            </spatialUnit:spatialUnitList>
+                        </div>
+                    </div>
+                </p:tab>
+                <p:tab title="Actions">
+                    <div class="row siamois-rows">
+                        <div class="col-md-12">
+                            <p:staticMessage severity="error" summary="Error" closable="false"
+                                             detail="#{panelModel.actionUnitListErrorMessage}"
+                                             rendered="#{not empty panelModel.actionUnitListErrorMessage}"/>
+                            <h:form>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <p:outputPanel>
+                                    <div class="card">
+                                        <p:toolbar>
+                                            <p:toolbarGroup>
+                                                <p:commandButton value='Nouveau' icon="pi pi-plus"
+                                                                 action="#{newActionUnitpanelModel.reinit(panelModel.spatialUnit)}"
+                                                                 oncomplete="PF('new-action-unit-dialog').show()"
+                                                                 style="margin-right: .5rem">
+                                                </p:commandButton>
+                                            </p:toolbarGroup>
+                                        </p:toolbar>
+                                        <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
+                                                     value="#{panelModel.actionUnitList}">
+                                            <f:facet name="header">
+                                                Actions
+                                            </f:facet>
+                                            <p:column headerText="Name">
+                                                <p:link outcome="/pages/actionUnit/actionUnit.xhtml"
+                                                        value="#{item.name}">
+                                                    <f:param name="id" value="#{item.id}"/>
+                                                </p:link>
+                                            </p:column>
+                                            <p:column headerText="Type">
+                                                <p:chip label="#{item.type.label}" icon="pi pi-play" styleClass="mr-2"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </p:outputPanel>
+                            </h:form>
+                        </div>
+                    </div>
+                </p:tab>
+                <p:tab title="Enregistrements">
+                    <div class="row siamois-row">
+                        <div class="col-md-12">
+                            <form>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <p:outputPanel>
+                                    <div class="card">
+                                        <p:staticMessage severity="error" summary="Error" closable="false"
+                                                         detail="#{panelModel.recordingUnitListErrorMessage}"
+                                                         rendered="#{not empty panelModel.recordingUnitListErrorMessage}"/>
+                                        <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
+                                                     value="#{panelModel.recordingUnitList}">
+                                            <f:facet name="header">
+                                                Unités d'enregistrement
+                                            </f:facet>
+                                            <p:column headerText="Name">
+                                                <p:link outcome="/pages/recordingUnit/recordingUnit.xhtml"
+                                                        value="#{item.identifier}">
+                                                    <f:param name="id" value="#{item.id}"/>
+                                                </p:link>
+                                            </p:column>
+                                            <p:column headerText="ARK">
+                                                <h:outputText value="#{item.ark.arkId}"/>
+                                            </p:column>
+                                            <p:column headerText="Type">
+                                                <p:chip label="#{item.type.label}" icon="pi pi-file" styleClass="mr-2"/>
+                                            </p:column>
+                                            <p:column headerText="Auteur">
+                                                <h:outputText value="#{item.author.name} #{item.author.lastname}"/>
+                                            </p:column>
+                                            <p:column headerText="Fouilleur">
+                                                <h:outputText
+                                                        value="#{item.excavator.name} #{item.excavator.lastname}"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </p:outputPanel>
+                            </form>
+                        </div>
+                        <!-- Table des unités action -->
+                    </div>
+                </p:tab>
+                <p:tab title="Prelevements">
+                </p:tab>
+                <p:tab title="Versions">
+                    <h:form>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <p:dataTable var="version" value="#{panelModel.historyVersion}" rows="5" paginator="true">
+                            <p:column headerText="Date de la version">
                 </p:chart>
             </p:tab>
             <p:tab title="Détails">
@@ -198,28 +336,81 @@
                     <p:dataTable var="version" value="#{panelModel.historyVersion}" rows="5" paginator="true">
                         <p:column headerText="Date de la version">
 
-                            <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
+                                <h:outputText value="#{spatialUnitBean.formatDate(version.updateTime)}"/>
 
-                        </p:column>
-                        <p:column>
-                            <p:commandButton
-                                    value="Visualiser"
-                                    action="#{panelModel.visualise(version)}"
+                            </p:column>
+                            <p:column>
+                                <p:commandButton
+                                        value="Visualiser"
+                                        action="#{panelModel.visualise(version)}"
 
-                                    oncomplete="PF('displayVersion').show()"
-                            />
-                        </p:column>
-                        <p:column>
-                            <p:commandButton
-                                    value="Restaurer"
-                                    immediate="true"
-                                    action="#{panelModel.restore(version)}"
-                                    oncomplete="PF('restored-dlg').show()"/>
-                        </p:column>
-                    </p:dataTable>
-                </h:form>
-            </p:tab>
-        </p:tabView>
+                                        oncomplete="PF('displayVersion').show()"
+                                />
+                            </p:column>
+                            <p:column>
+                                <p:commandButton
+                                        value="Restaurer"
+                                        immediate="true"
+                                        action="#{panelModel.restore(version)}"
+                                        oncomplete="PF('restored-dlg').show()"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+                <p:tab title="Documents">
+                    <p:commandButton
+                            value="Ajouter un document"
+                            action="#{panelModel.initDialog()}"
+                    />
+
+                    <h:panelGroup id="suDocumentsTab">
+                        <p:dataTable
+                                value="#{panelModel.documents}"
+                                var="siamoisDocument"
+                        >
+                            <p:column headerText="Titre">
+                                <h:outputText value="#{siamoisDocument.title}"/>
+                            </p:column>
+
+                            <p:column headerText="Nature">
+                                <h:outputText value="#{siamoisDocument.nature.label}"/>
+                            </p:column>
+
+                            <p:column headerText="Grandeur">
+                                <h:outputText value="#{siamoisDocument.scale.label}"/>
+                            </p:column>
+
+                            <p:column headerText="Type de document">
+                                <h:outputText value="#{siamoisDocument.format.label}"/>
+                            </p:column>
+
+                            <p:column headerText="Auteur">
+                                <h:outputText value="#{siamoisDocument.author.displayName()}"/>
+                            </p:column>
+
+                            <p:column>
+                                <h:panelGroup rendered="#{panelModel.contentIsImage(siamoisDocument.mimeType)}">
+                                    <p:button
+                                            value="Visualiser"
+                                            onclick="window.open('#{siamoisDocument.url}');return false"/>
+                                </h:panelGroup>
+                            </p:column>
+
+                            <p:column>
+                                <p:commandButton
+                                        value="Télécharger"
+                                        ajax="false"
+                                        onclick="PrimeFaces.monitorDownload(start, stop);"
+                                        styleClass="mr-2">
+                                    <p:fileDownload value="#{panelModel.streamOf(siamoisDocument)}"/>
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:panelGroup>
+                </p:tab>
+            </p:tabView>
+        </h:form>
     </h:panelGroup>
     <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true">
         <h:form id="displayVersionForm">
@@ -234,6 +425,7 @@
     <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
         <h:outputText value="Version restaurée"/>
     </p:dialog>
+    <ui:include src="/dialog/document/newDocument.xhtml"/>
 
 
 </ui:fragment>

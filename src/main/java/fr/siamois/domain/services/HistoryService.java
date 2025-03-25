@@ -7,9 +7,9 @@ import fr.siamois.domain.models.history.RecordingUnitHist;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
-import fr.siamois.infrastructure.repositories.history.GlobalHistoryRepository;
-import fr.siamois.infrastructure.repositories.history.RecordingUnitHistoryRepository;
-import fr.siamois.infrastructure.repositories.history.SpatialUnitHistoryRepository;
+import fr.siamois.infrastructure.database.repositories.history.GlobalHistoryRepository;
+import fr.siamois.infrastructure.database.repositories.history.RecordingUnitHistoryRepository;
+import fr.siamois.infrastructure.database.repositories.history.SpatialUnitHistoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

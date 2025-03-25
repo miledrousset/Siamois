@@ -9,9 +9,7 @@ import java.util.Objects;
 
 @Data
 @Entity
-@Table(name = "vocabulary_type", schema = "public", uniqueConstraints = {
-        @UniqueConstraint(name = "vocabulary_type_label_key", columnNames = {"label"})
-})
+@Table(name = "vocabulary_type")
 public class VocabularyType implements Serializable {
 
     @Id
@@ -20,7 +18,7 @@ public class VocabularyType implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "label", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "label", nullable = false, length = Integer.MAX_VALUE, unique = true)
     private String label;
 
     @Override

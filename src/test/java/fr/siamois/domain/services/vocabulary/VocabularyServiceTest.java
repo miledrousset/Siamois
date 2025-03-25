@@ -9,8 +9,8 @@ import fr.siamois.domain.models.vocabulary.VocabularyType;
 import fr.siamois.infrastructure.api.ThesaurusApi;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.infrastructure.api.dto.ThesaurusDTO;
-import fr.siamois.infrastructure.repositories.vocabulary.VocabularyRepository;
-import fr.siamois.infrastructure.repositories.vocabulary.VocabularyTypeRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.VocabularyRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.VocabularyTypeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -99,7 +98,7 @@ class VocabularyServiceTest {
     }
 
     @Test
-    void findVocabularyOfUri_Success() throws InvalidEndpointException, IOException {
+    void findVocabularyOfUri_Success() throws InvalidEndpointException {
         UserInfo userInfo = new UserInfo(new Institution(), new Person(), "en");
         String uri = "http://example.com/openapi/v1/thesaurus?idt=123";
 

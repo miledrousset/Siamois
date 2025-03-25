@@ -8,11 +8,10 @@ import fr.siamois.domain.models.vocabulary.VocabularyType;
 import fr.siamois.infrastructure.api.ThesaurusApi;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
 import fr.siamois.infrastructure.api.dto.ThesaurusDTO;
-import fr.siamois.infrastructure.repositories.vocabulary.VocabularyRepository;
-import fr.siamois.infrastructure.repositories.vocabulary.VocabularyTypeRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.VocabularyRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.VocabularyTypeRepository;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -76,7 +75,7 @@ public class VocabularyService {
         return vocabOpt.orElseGet(() -> vocabularyRepository.save(vocabulary));
     }
 
-    public Vocabulary findVocabularyOfUri(UserInfo info, String uri) throws InvalidEndpointException, IOException {
+    public Vocabulary findVocabularyOfUri(UserInfo info, String uri) throws InvalidEndpointException {
         ThesaurusDTO thesaurus = thesaurusApi.fetchThesaurusInfo(uri);
 
         VocabularyType type = vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus").orElseThrow(() -> new IllegalStateException("Thesaurus type not found"));

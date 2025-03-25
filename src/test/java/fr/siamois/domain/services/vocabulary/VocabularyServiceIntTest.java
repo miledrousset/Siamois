@@ -8,8 +8,8 @@ import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
 import fr.siamois.infrastructure.api.RequestFactory;
 import fr.siamois.infrastructure.api.ThesaurusApi;
-import fr.siamois.infrastructure.repositories.vocabulary.VocabularyRepository;
-import fr.siamois.infrastructure.repositories.vocabulary.VocabularyTypeRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.VocabularyRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.VocabularyTypeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,7 +44,7 @@ class VocabularyServiceIntTest {
 
     @Test
     @Tag("integration")
-    void findVocabularyOfUri_withNativeLink() throws IOException, InvalidEndpointException {
+    void findVocabularyOfUri_withNativeLink() throws InvalidEndpointException {
         String nativeLink = "https://thesaurus.mom.fr/?idt=th227";
 
         UserInfo info = new UserInfo(new Institution(), new Person(), "fr");
@@ -79,7 +78,7 @@ class VocabularyServiceIntTest {
 
     @Test
     @Tag("integration")
-    void findVocabularyOfUri_withArkLink() throws IOException, InvalidEndpointException {
+    void findVocabularyOfUri_withArkLink() throws InvalidEndpointException {
         String nativeLink = "https://thesaurus.mom.fr/api/ark:/66666/SIA-TTDBMLCXLNL9Q93GK17L7-S";
 
         UserInfo info = new UserInfo(new Institution(), new Person(), "fr");

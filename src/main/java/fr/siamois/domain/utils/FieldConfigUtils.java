@@ -11,10 +11,10 @@ import fr.siamois.ui.bean.LangBean;
 import jakarta.faces.application.FacesMessage;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
 import java.util.Optional;
 
-import static fr.siamois.domain.utils.MessageUtils.*;
+import static fr.siamois.domain.utils.MessageUtils.displayMessage;
+import static fr.siamois.domain.utils.MessageUtils.displayPlainMessage;
 
 public class FieldConfigUtils {
 
@@ -51,8 +51,6 @@ public class FieldConfigUtils {
 
         } catch (NotSiamoisThesaurusException | InvalidEndpointException e) {
             displayErrorMessage(langBean, "Thesaurus is not valid");
-        } catch (IOException e) {
-            displayErrorMessage(langBean, "Error in thesaurus config");
         }
     }
 

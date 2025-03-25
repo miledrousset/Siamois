@@ -17,10 +17,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "person", schema = "public", uniqueConstraints = {
-        @UniqueConstraint(name = "person_username_key", columnNames = {"username"}),
-        @UniqueConstraint(name = "person_mail_key", columnNames = {"mail"})
-})
+@Table(name = "person", schema = "public")
 public class Person implements UserDetails {
 
     // This limit allows the UI to be controlled
@@ -51,7 +48,7 @@ public class Person implements UserDetails {
     private String lastname;
 
     @NotNull
-    @Column(name = "username", nullable = false, length = USERNAME_MAX_LENGTH)
+    @Column(name = "username", nullable = false, length = USERNAME_MAX_LENGTH, unique = true)
     private String username;
 
     // The password length shouldn't be set in the database as we don't know their size after hash.
@@ -60,7 +57,7 @@ public class Person implements UserDetails {
     private String password;
 
     @NotNull
-    @Column(name = "mail", nullable = false, length = MAIL_MAX_LENGTH)
+    @Column(name = "mail", nullable = false, length = MAIL_MAX_LENGTH, unique = true)
     private String mail;
 
     @ColumnDefault("false")
@@ -143,7 +140,7 @@ public class Person implements UserDetails {
     // For displaying person full names in forms
     // Used in xhtml files
     public String displayName() {
-        return name+" "+lastname;
+        return name + " " + lastname;
     }
 
 }

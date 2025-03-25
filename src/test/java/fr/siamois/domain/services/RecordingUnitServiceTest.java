@@ -15,7 +15,7 @@ import fr.siamois.domain.services.recordingunit.StratigraphicRelationshipService
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
-import fr.siamois.infrastructure.repositories.recordingunit.RecordingUnitRepository;
+import fr.siamois.infrastructure.database.repositories.recordingunit.RecordingUnitRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -14,6 +14,9 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
+import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
+import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
+import jakarta.transaction.Transactional;
 import fr.siamois.infrastructure.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.repositories.actionunit.ActionUnitRepository;
 

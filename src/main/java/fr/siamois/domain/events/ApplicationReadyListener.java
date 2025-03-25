@@ -1,40 +1,33 @@
 package fr.siamois.domain.events;
 
-import fr.siamois.infrastructure.database.AdminInitializer;
-import fr.siamois.infrastructure.database.HistoryTriggerInitializer;
+import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
+import fr.siamois.infrastructure.database.initializer.DatabaseInitializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 
-import java.sql.SQLException;
+import java.util.List;
 
 @Slf4j
 @Configuration
 public class ApplicationReadyListener {
 
-    private final HistoryTriggerInitializer historyTriggerInitializer;
-    private final AdminInitializer adminInitializer;
+    private final List<DatabaseInitializer> databaseInitializer;
 
-    public ApplicationReadyListener(HistoryTriggerInitializer historyTriggerInitializer,
-                                    AdminInitializer adminInitializer) {
-        this.historyTriggerInitializer = historyTriggerInitializer;
-        this.adminInitializer = adminInitializer;
+    public ApplicationReadyListener(List<DatabaseInitializer> initializers) {
+        this.databaseInitializer = initializers;
     }
 
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
-        if (adminInitializer.initializeAdmin())
-            log.info("ADMIN user created");
-
-        if (adminInitializer.initializeAdminOrganization())
-            log.info("Siamois Administration created");
-
-        try {
-            historyTriggerInitializer.createHistoryTriggers();
-            log.info("History trigger created");
-        } catch (SQLException e) {
-            log.error("Failed to create History Triggers", e);
+        for (DatabaseInitializer initializer : databaseInitializer) {
+            try {
+                initializer.initialize();
+            } catch (DatabaseDataInitException e) {
+                log.error(e.getMessage(), e);
+                System.exit(1);
+            }
         }
     }
 

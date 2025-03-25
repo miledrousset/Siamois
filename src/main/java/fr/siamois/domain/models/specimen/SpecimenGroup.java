@@ -16,4 +16,5 @@ public class SpecimenGroup {
     @NotNull
     @Column(name = "name", nullable = false, length = Integer.MAX_VALUE)
     private String name;
+
 }

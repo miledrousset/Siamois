@@ -16,27 +16,36 @@ server:
 siamois:
   lang:
     default: en
+  admin:
+    username: ${SIAMOIS_ADMIN_LOGIN}
+    password: ${SIAMOIS_ADMIN_PASSWORD}
+    email: ${SIAMOIS_ADMIN_EMAIL}
+  documents:
+    folder-path: ${SIAMOIS_DOCUMENTS_PATH}
+    allowed-types: image/jpeg, image/png, image/svg+xml, image/tiff, image/webp, image/apng, application/pdf
+
 
 spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
  #   platform: postgres
-    url: jdbc:postgresql://localhost:5432/siamois
-    username: siamois
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     hikari:
       maximum-pool-size: 1000
       minimum-idle: 1
       idle-timeout: 30000
       connection-test-query: SELECT 1
   jpa:
-    show-sql: true
     generate-ddl: true
     hibernate:
       ddl-auto: validate
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: false
+
   liquibase:
     enabled: true
     change-log: classpath:/changelog/db.changelog.xml
@@ -52,6 +61,12 @@ spring:
   mvc:
     static-path-pattern: /static/**
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 300MB
+      max-request-size: 300MB
+
 joinfaces:
   faces:
     project-stage: production
@@ -62,10 +77,6 @@ logging:
   level:
     root: INFO
     org:
-      springframework:
-        transaction: DEBUG
-        orm.jpa: DEBUG
+      springframework: INFO
       hibernate:
-        SQL: DEBUG
-        type: DEBUG
-
+        SQL: INFO

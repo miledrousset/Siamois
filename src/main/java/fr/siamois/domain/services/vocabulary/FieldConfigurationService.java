@@ -10,8 +10,8 @@ import fr.siamois.infrastructure.api.ConceptApi;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
-import fr.siamois.infrastructure.repositories.FieldRepository;
-import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
+import fr.siamois.infrastructure.database.repositories.FieldRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.springframework.stereotype.Service;
@@ -173,9 +173,7 @@ public class FieldConfigurationService {
         return result;
     }
 
-    public List<Concept> fetchAutocomplete(UserInfo info, String fieldCode, String input) throws NoConfigForFieldException {
-        Concept parentConcept = findConfigurationForFieldCode(info, fieldCode);
-
+    public List<Concept> fetchAutocomplete(UserInfo info, Concept parentConcept, String input) {
         if (StringUtils.isEmpty(input)) return fetchAllValues(info, parentConcept);
 
         ConceptBranchDTO terms = conceptApi.fetchConceptsUnderTopTerm(parentConcept);
@@ -203,6 +201,11 @@ public class FieldConfigurationService {
         }
 
         return result;
+    }
+
+    public List<Concept> fetchAutocomplete(UserInfo info, String fieldCode, String input) throws NoConfigForFieldException {
+        Concept parentConcept = findConfigurationForFieldCode(info, fieldCode);
+        return fetchAutocomplete(info, parentConcept, input);
     }
 
     /**
