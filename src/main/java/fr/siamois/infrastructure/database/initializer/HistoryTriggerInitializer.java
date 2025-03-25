@@ -26,6 +26,15 @@ public class HistoryTriggerInitializer implements DatabaseInitializer {
     @Getter
     private final ApplicationContext applicationContext;
 
+    public static final List<String> TABLES_TO_STORE = List.of(
+            "action_unit",
+            "siamois_document",
+            "recording_unit",
+            "recording_unit_study",
+            "spatial_unit",
+            "specimen",
+            "specimen_study");
+
     public HistoryTriggerInitializer(HikariDataSource dataSource, ApplicationContext applicationContext) {
         this.dataSource = dataSource;
         this.applicationContext = applicationContext;
@@ -37,16 +46,7 @@ public class HistoryTriggerInitializer implements DatabaseInitializer {
     @Override
     public void initialize() throws DatabaseDataInitException {
         try (Connection connection = dataSource.getConnection()) {
-            List<String> tablesToStore = List.of(
-                    "action_unit",
-                    "siamois_document",
-                    "recording_unit",
-                    "recording_unit_study",
-                    "spatial_unit",
-                    "specimen",
-                    "specimen_study");
-
-            for (String tableName : tablesToStore)
+            for (String tableName : TABLES_TO_STORE)
                 createSQLHistTrigger(connection, tableName, "history_" + tableName);
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
