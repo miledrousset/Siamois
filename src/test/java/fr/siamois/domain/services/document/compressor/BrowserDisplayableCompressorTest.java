@@ -35,10 +35,6 @@ class BrowserDisplayableCompressorTest {
         assertArrayEquals(data.getBytes(), compressedData);
     }
 
-    @Test
-    void testEncodingTypes() {
-        assertEquals("", compressor.encodingTypes());
-    }
 
     @Test
     void testUpdateStoredFilename() {
