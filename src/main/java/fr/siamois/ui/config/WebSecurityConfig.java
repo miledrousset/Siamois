@@ -1,6 +1,5 @@
 package fr.siamois.ui.config;
 
-import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.config.handler.LoginSuccessHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +18,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+    public static final String LOGIN = "/login";
+
     /**
      * Security filter chain of the application.
      * @param http HttpSecurity object to configure the security chain.
@@ -26,10 +27,10 @@ public class WebSecurityConfig {
      * @throws Exception If any filter configuration fails.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, LangBean langBean, LoginSuccessHandler loginSuccessHandler) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSuccessHandler loginSuccessHandler) throws Exception {
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/", "/index.xhtml").permitAll()
-                .requestMatchers("/login", "/pages/login/login.xhtml").permitAll()
+                .requestMatchers(LOGIN, "/pages/login/login.xhtml").permitAll()
                 .requestMatchers("/static/**").permitAll()
                 .requestMatchers("/robots.txt").permitAll()
                 .requestMatchers("/jakarta.faces.resource/**").permitAll()
@@ -38,9 +39,9 @@ public class WebSecurityConfig {
                 .anyRequest().authenticated()
         );
         http.formLogin(login -> login
-                .loginPage("/login?lang=" + langBean.getLanguageCode()).permitAll()
-                .loginProcessingUrl("/login")
-                .failureUrl("/login?error=true&lang=" + langBean.getLanguageCode())
+                .loginPage(LOGIN)
+                .loginProcessingUrl(LOGIN)
+                .usernameParameter("email")
                 .successHandler(loginSuccessHandler)
         );
         http.logout(logout -> logout

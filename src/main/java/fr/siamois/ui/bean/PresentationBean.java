@@ -19,12 +19,14 @@ public class PresentationBean implements Serializable {
     public void checkAuth() {
         log.trace("CheckAuth called");
         Optional<Person> opt = AuthenticatedUserUtils.getAuthenticatedUser();
-        if (opt.isPresent()) {
-            try {
+        try {
+            if (opt.isPresent()) {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("dashboard");
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
+            } else {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("login");
             }
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
         }
     }
 
