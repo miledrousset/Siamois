@@ -1,6 +1,5 @@
 package fr.siamois.ui.config;
 
-import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.config.handler.LoginSuccessHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +27,7 @@ public class WebSecurityConfig {
      * @throws Exception If any filter configuration fails.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, LangBean langBean, LoginSuccessHandler loginSuccessHandler) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSuccessHandler loginSuccessHandler) throws Exception {
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/", "/index.xhtml").permitAll()
                 .requestMatchers(LOGIN, "/pages/login/login.xhtml").permitAll()

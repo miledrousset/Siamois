@@ -49,7 +49,11 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
     )
     void addPersonToInstitution(Long personId, Long institutionId, Long conceptId);
 
-    List<Person> findAllByIsSuperAdmin(boolean isSuperAdmin);
+    @Query(
+            nativeQuery = true,
+            value = "SELECT p.* FROM person p WHERE p.is_super_admin = TRUE"
+    )
+    List<Person> findAllSuperAdmin();
 
     Optional<Person> findByMailIgnoreCase(String mail);
 
