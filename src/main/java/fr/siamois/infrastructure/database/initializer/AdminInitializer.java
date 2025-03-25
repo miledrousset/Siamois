@@ -84,7 +84,7 @@ public class AdminInitializer implements DatabaseInitializer {
     }
 
     /*
-     * @return True if wanted admin already exist, false otherwhise
+     * @return True if wanted admin already exist, false otherwise
      */
     private boolean processExistingAdmins() {
         List<Person> admins = personRepository.findAllByIsSuperAdmin(true);
