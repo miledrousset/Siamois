@@ -10,11 +10,13 @@ import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "recording_unit")
@@ -72,19 +74,7 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     }
 
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;  // Same reference
-        if (!(obj instanceof RecordingUnit recordingUnit)) return false;
 
-        return Objects.equals(fullIdentifier, recordingUnit.fullIdentifier);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(fullIdentifier);  // Generate hash based on ID
-    }
 
     @Override
     public String getTableName() {
