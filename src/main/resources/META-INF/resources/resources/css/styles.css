@@ -1,9 +1,25 @@
-/* Basic Reset */
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
+
+:root {
+
+    --siamois-primary: #BED730;
+    --siamois-primary-green: #BED730;
+    --siamois-green-light-100: #E6F0E6;
+    --main-content-background: #FAFAFA;
+    --main-content-top-stroke: #c4c4c4;
+    --text-light: #6B7280;
+
+    --context-main-color: #068DA9;
+    --context-light-color-50: #EDF4F6;
+    --context-light-color-100: #CDE8EE;
+    --context-light-color-200: #B4DDE5;
+}
+
 
 html, body {
     height: 100%;

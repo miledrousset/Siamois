@@ -22,7 +22,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
 
     public SpatialUnitListPanel(SpatialUnitService spatialUnitService, SessionSettingsBean sessionSettingsBean) {
-        super("welcome", "Welcome", "welcome-panel", "pi pi-home");
+        super("spatial-unit-list", "Unités géographiques", "welcome-panel", "bi bi-geo-alt");
         this.spatialUnitService = spatialUnitService;
         this.sessionSettingsBean = sessionSettingsBean;
         this.setBreadcrumb(new PanelBreadcrumb());

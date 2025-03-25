@@ -1,0 +1,47 @@
+.siamois-panel {
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif !important;
+    border: 1px solid var(--siamois-green-light-100);
+}
+
+.siamois-panel .ui-breadcrumb {
+    border: none;
+}
+
+.siamois-panel .ui-toolbar {
+    border: none;
+    background: none;
+}
+
+.ui-panel.spatial-unit-panel .ui-panel-titlebar {
+    background: var(--context-light-color-100);
+    color: var(--text-light)
+}
+
+
+.spatial-unit-panel-title {
+    color: var(--context-main-color);
+    font-size: 22px;
+    padding: 1em;
+}
+
+.spatial-unit-panel .ui-datatable thead th {
+    background: var(--context-light-color-100);
+}
+
+.spatial-unit-panel .ui-button {
+    background: var(--context-main-color);
+}
+
+.ui-chip.spatial-unit-count-chip {
+    background-color: white;
+    border-color: var(--context-main-color);
+    color: var(--context-main-color);
+    font-size: 16px;
+}
+
+.ui-chip.spatial-unit-type-chip {
+    background-color: var(--context-main-color);
+    color: white;
+    font-size: 16px;
+}

@@ -8,6 +8,11 @@
     <!-- Conditionally render the message if it's set in the bean -->
     <p:staticMessage severity="error" summary="Error" closable="false" detail="#{panelModel.spatialUnitListErrorMessage}"
                      rendered="#{not empty panelModel.spatialUnitListErrorMessage}"/>
+    <div class="spatial-unit-panel-title">
+        <i class="bi bi-geo-alt"></i>
+        Unités géographiques
+        <p:chip label="258" styleClass="spatial-unit-count-chip"/>
+    </div>
     <spatialUnit:spatialUnitList spatialUnitList="#{panelModel.spatialUnitList}"
 
                                  panelModel="#{panelModel}"
