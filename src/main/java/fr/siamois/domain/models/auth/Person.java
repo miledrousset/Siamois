@@ -14,6 +14,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -62,30 +63,30 @@ public class Person implements UserDetails {
 
     @ColumnDefault("false")
     @Column(name = "pass_to_modify")
-    private Boolean passToModify = false;
+    private boolean passToModify = false;
 
     @ColumnDefault("false")
     @Column(name = "alert_mail")
-    private Boolean alertMail = false;
+    private boolean alertMail = false;
 
     @ColumnDefault("false")
     @Column(name = "is_super_admin")
     @Getter(AccessLevel.NONE)
-    private Boolean isSuperAdmin = false;
+    private boolean isSuperAdmin = false;
 
     @Column(name = "api_key", length = Integer.MAX_VALUE)
     private String apiKey;
 
     @ColumnDefault("false")
     @Column(name = "key_never_expire")
-    private Boolean keyNeverExpire = false;
+    private boolean keyNeverExpire = false;
 
     @Column(name = "key_expires_at")
     private OffsetDateTime keyExpiresAt;
 
     @ColumnDefault("false")
     @Column(name = "is_service_account")
-    private Boolean isServiceAccount = false;
+    private boolean isServiceAccount = false;
 
     @Column(name = "key_description", length = Integer.MAX_VALUE)
     private String keyDescription;
@@ -143,4 +144,39 @@ public class Person implements UserDetails {
         return name + " " + lastname;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return isExpired() == person.isExpired()
+                && isLocked() == person.isLocked()
+                && isEnabled() == person.isEnabled()
+                && Objects.equals(getId(), person.getId())
+                && Objects.equals(getName(), person.getName())
+                && Objects.equals(getLastname(), person.getLastname())
+                && Objects.equals(getUsername(), person.getUsername())
+                && Objects.equals(getPassword(), person.getPassword())
+                && Objects.equals(getMail(), person.getMail())
+                && Objects.equals(passToModify, person.passToModify)
+                && Objects.equals(alertMail, person.alertMail)
+                && Objects.equals(isSuperAdmin, person.isSuperAdmin)
+                && Objects.equals(getApiKey(), person.getApiKey())
+                && Objects.equals(keyNeverExpire, person.keyNeverExpire)
+                && Objects.equals(getKeyExpiresAt(), person.getKeyExpiresAt())
+                && Objects.equals(isServiceAccount, person.isServiceAccount)
+                && Objects.equals(getKeyDescription(), person.getKeyDescription());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(),
+                getLastname(), getUsername(),
+                getPassword(), getMail(),
+                passToModify,  alertMail,
+                isSuperAdmin, getApiKey(),
+                keyNeverExpire, getKeyExpiresAt(),
+                isServiceAccount, getKeyDescription(),
+                isExpired(), isLocked(), isEnabled());
+    }
 }

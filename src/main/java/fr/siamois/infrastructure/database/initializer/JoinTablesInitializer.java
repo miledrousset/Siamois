@@ -44,7 +44,7 @@ public class JoinTablesInitializer implements DatabaseInitializer {
     private static boolean verifyTableExistance(Connection connection) throws SQLException {
         boolean tableExists;
         try (var statement = connection.createStatement();
-             var resultSet = statement.executeQuery("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'action_action_code')")) {
+             var resultSet = statement.executeQuery("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'spatial_hierarchy')")) {
             resultSet.next();
             tableExists = resultSet.getBoolean(1);
         }
