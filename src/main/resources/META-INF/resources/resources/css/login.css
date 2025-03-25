@@ -27,3 +27,8 @@ img {
 p.description {
     color: var(--description-grey);
 }
+
+div.invalid-feedback {
+    display: block;
+    padding-bottom: 10px;
+}

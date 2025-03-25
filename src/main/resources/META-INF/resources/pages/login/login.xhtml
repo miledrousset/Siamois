@@ -50,6 +50,11 @@
                                             <input id="password" name="password" class="form-control" type="password"
                                                    placeholder="Votre mot de passe"/>
                                         </div>
+                                        <h:panelGroup rendered="#{param.error != null}">
+                                            <div class="invalid-feedback">
+                                                Email ou mot de passe invalide.
+                                            </div>
+                                        </h:panelGroup>
                                         <button type="submit" class="btn btn-success">Se connecter à Siamois</button>
                                     </form>
                                 </div>
