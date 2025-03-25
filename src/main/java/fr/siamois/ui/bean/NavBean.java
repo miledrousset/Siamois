@@ -32,7 +32,7 @@ public class NavBean implements Serializable {
     private final SessionSettingsBean sessionSettingsBean;
     private final transient InstitutionChangeEventPublisher institutionChangeEventPublisher;
     private final transient InstitutionConverter converter;
-    private final InstitutionService institutionService;
+    private final transient InstitutionService institutionService;
 
     private transient List<Institution> institutions;
 
