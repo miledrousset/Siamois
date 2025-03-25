@@ -22,7 +22,7 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     private Long id;
 
     @OneToMany(fetch= FetchType.EAGER, mappedBy = "actionUnit")
-    private  Set<ActionUnitFormMapping> formsAvailable = new HashSet<>();
+    private transient Set<ActionUnitFormMapping> formsAvailable = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

@@ -4,7 +4,6 @@ import fr.siamois.converter.CustomFormLayoutConverter;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.List;
