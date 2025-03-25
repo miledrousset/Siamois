@@ -4,6 +4,7 @@ import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,6 +27,21 @@ public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
 
     @FieldCode
     public static final String CATEGORY_FIELD_CODE = "SIASU.TYPE";
+
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "spatialUnit")
+    private Set<Document> documents = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name="spatial_hierarchy",
+            joinColumns = { @JoinColumn(name = "fk_parent_id") },
+            inverseJoinColumns = { @JoinColumn(name = "fk_child_id") }
+    )
+    private Set<SpatialUnit> children = new HashSet<>();
+
+    @ManyToMany(mappedBy = "children")
+    private Set<SpatialUnit> parents = new HashSet<>();
 
 
 

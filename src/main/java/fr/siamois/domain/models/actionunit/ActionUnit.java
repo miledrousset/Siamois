@@ -2,6 +2,7 @@ package fr.siamois.domain.models.actionunit;
 
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
+import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -21,8 +22,11 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Column(name = "action_unit_id", nullable = false)
     private Long id;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "actionUnit")
+    private Set<Document> documents = new HashSet<>();
+
     @OneToMany(fetch= FetchType.EAGER, mappedBy = "actionUnit")
-    private transient Set<ActionUnitFormMapping> formsAvailable = new HashSet<>();
+    private Set<ActionUnitFormMapping> formsAvailable = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -31,6 +35,18 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
             inverseJoinColumns = { @JoinColumn(name = "fk_action_code_id") }
     )
     private Set<ActionCode> secondaryActionCodes = new HashSet<>();
+
+
+    @ManyToMany
+    @JoinTable(
+            name="action_hierarchy",
+            joinColumns = { @JoinColumn(name = "fk_parent_id") },
+            inverseJoinColumns = { @JoinColumn(name = "fk_child_id") }
+    )
+    private Set<ActionUnit> children = new HashSet<>();
+
+    @ManyToMany(mappedBy = "children")
+    private Set<ActionUnit> parents = new HashSet<>();
 
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIAAU.TYPE";

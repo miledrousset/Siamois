@@ -3,11 +3,14 @@ package fr.siamois.domain.models.spatialunit;
 import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
+
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -30,5 +33,10 @@ public abstract class SpatialUnitParent extends TraceableEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_parent_action_unit_id")
     protected ActionUnit parentActionUnit;
+
+
+
+
+
 
 }

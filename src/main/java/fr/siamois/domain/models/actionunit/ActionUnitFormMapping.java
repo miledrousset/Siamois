@@ -5,11 +5,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @Entity
 @Table(name = "action_unit_form_mapping")
-public class ActionUnitFormMapping {
+public class ActionUnitFormMapping implements Serializable {
 
     @EmbeddedId
     private ActionUnitFormMappingId pk;

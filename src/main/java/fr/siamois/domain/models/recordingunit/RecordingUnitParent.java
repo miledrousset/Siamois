@@ -13,6 +13,7 @@ import lombok.EqualsAndHashCode;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
+
 /**
  * The common attributes of the history recording unit table and the real recording table.
  *
@@ -70,6 +71,8 @@ public abstract class RecordingUnitParent extends TraceableEntity {
 
     @Embedded
     protected RecordingUnitAltimetry altitude;
+
+
 
     @Override
     public boolean equals(Object o) {
