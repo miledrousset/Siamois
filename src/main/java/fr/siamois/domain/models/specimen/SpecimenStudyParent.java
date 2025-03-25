@@ -3,6 +3,7 @@ package fr.siamois.domain.models.specimen;
 import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
+
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -31,5 +33,6 @@ public abstract class SpecimenStudyParent extends TraceableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_action_unit_id")
     protected ActionUnit actionUnit;
+
 
 }

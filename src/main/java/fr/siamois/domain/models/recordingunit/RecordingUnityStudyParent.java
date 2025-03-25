@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
 
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @MappedSuperclass
@@ -31,6 +32,8 @@ public abstract class RecordingUnityStudyParent extends TraceableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_action_unit_id")
     protected ActionUnit actionUnit;
+
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_recording_unit_id")

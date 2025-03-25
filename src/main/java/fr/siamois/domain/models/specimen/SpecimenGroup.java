@@ -4,10 +4,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 @Entity
 @Table(name = "specimen_group")
-public class SpecimenGroup {
+public class SpecimenGroup implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "specimen_group_id", nullable = false)
@@ -16,5 +20,14 @@ public class SpecimenGroup {
     @NotNull
     @Column(name = "name", nullable = false, length = Integer.MAX_VALUE)
     private String name;
+
+    @ManyToMany
+    @JoinTable(
+            name="specimen_group_attribution",
+            joinColumns = { @JoinColumn(name = "fk_specimen_group_id") },
+            inverseJoinColumns = { @JoinColumn(name = "fk_specimen_id") }
+    )
+    private Set<Specimen> specimens = new HashSet<>();
+
 
 }

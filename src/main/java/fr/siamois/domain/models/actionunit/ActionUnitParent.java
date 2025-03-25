@@ -2,6 +2,7 @@ package fr.siamois.domain.models.actionunit;
 
 import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.ark.Ark;
+
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
@@ -10,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -63,6 +65,8 @@ public abstract class ActionUnitParent extends TraceableEntity {
     @NotNull
     @Column(name="min_recording_unit_code")
     protected Integer minRecordingUnitCode;
+
+
 
 
 

@@ -20,7 +20,7 @@ public class ActionUnitFormMappingId implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "fk_custom_form", nullable = false)
-    private transient CustomForm form;
+    private CustomForm form;
 
     @ManyToOne
     @JoinColumn(name = "fk_concept", nullable = false)
