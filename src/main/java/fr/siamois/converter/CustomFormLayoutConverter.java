@@ -3,13 +3,14 @@ package fr.siamois.converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.siamois.domain.models.exceptions.form.CantDeserializeFormPanelException;
+import fr.siamois.domain.models.exceptions.form.CantSerializeFormPanelException;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.infrastructure.database.repositories.form.CustomFieldRepository;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -25,8 +26,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CustomFormLayoutConverter implements AttributeConverter<List<CustomFormPanel>, String> {
 
-    @Autowired
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
+
+    private static final String FIELDSKEY = "action1";
+
+    public CustomFormLayoutConverter(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     private CustomFieldRepository getCustomFieldRepository() {
         return applicationContext.getBean(CustomFieldRepository.class);
@@ -47,16 +53,16 @@ public class CustomFormLayoutConverter implements AttributeConverter<List<Custom
                         if (panel.getFields() != null) {
                             List<Long> fieldIds = panel.getFields().stream()
                                     .map(CustomField::getId)
-                                    .collect(Collectors.toList());
-                            map.put("fields", fieldIds);
+                                    .toList();
+                            map.put(FIELDSKEY, fieldIds);
                         }
                         return map;
                     })
-                    .collect(Collectors.toList());
+                    .toList();
 
             return objectMapper.writeValueAsString(serializableLayout);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Error serializing CustomFormPanel list to JSON", e);
+            throw new CantSerializeFormPanelException(e.getMessage());
         }
     }
 
@@ -75,24 +81,24 @@ public class CustomFormLayoutConverter implements AttributeConverter<List<Custom
                         panel.setClassName((String) map.get("className"));
 
                         // Get all fields from the repository using field IDs
-                        if (map.containsKey("fields")) {
-                            List<Integer> fieldIds = (List<Integer>) map.get("fields");
+                        if (map.containsKey(FIELDSKEY)) {
+                            List<Integer> fieldIds = (List<Integer>) map.get(FIELDSKEY);
                             if (fieldIds != null) {
                                 List<CustomField> fields = fieldIds.stream()
                                         .map(id -> getCustomFieldRepository().findById(id.longValue())
                                                 .orElse(null))
                                         .filter(Objects::nonNull)
-                                        .collect(Collectors.toList());
+                                        .toList();
                                 panel.setFields(fields);
                             }
                         }
 
                         return panel;
                     })
-                    .collect(Collectors.toList());
+                    .toList();
         } catch (IOException e) {
             log.error("Error deserializing JSON to CustomFormPanel list", e);
-            throw new RuntimeException("Error deserializing JSON to CustomFormPanel list", e);
+            throw new CantDeserializeFormPanelException(e.getMessage());
         }
     }
 }

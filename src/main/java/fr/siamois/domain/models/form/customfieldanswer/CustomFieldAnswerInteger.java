@@ -1,6 +1,5 @@
 package fr.siamois.domain.models.form.customfieldanswer;
 
-import fr.siamois.converter.IntegerToJsonConverter;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

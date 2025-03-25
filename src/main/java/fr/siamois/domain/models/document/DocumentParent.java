@@ -2,7 +2,6 @@ package fr.siamois.domain.models.document;
 
 import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.ark.Ark;
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -40,14 +39,6 @@ public abstract class DocumentParent extends TraceableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_parent")
     protected Document parent;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "spatial_unit_document",
-            joinColumns = { @JoinColumn(name = "fk_document_id")},
-            inverseJoinColumns = { @JoinColumn(name = "fk_spatial_unit_id") }
-    )
-    protected SpatialUnit spatialUnit;
 
     @Column(name = "url", length = Integer.MAX_VALUE)
     protected String url;

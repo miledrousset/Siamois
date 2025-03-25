@@ -27,7 +27,6 @@ public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
     @FieldCode
     public static final String CATEGORY_FIELD_CODE = "SIASU.TYPE";
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "spatialUnit")
-    private Set<Document> fields = new HashSet<>();
+
 
 }
