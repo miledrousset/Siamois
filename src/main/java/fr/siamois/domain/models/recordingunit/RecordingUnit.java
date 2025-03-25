@@ -38,7 +38,7 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
             cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
     @JoinColumn(name = "fk_custom_form_response", referencedColumnName = "custom_form_response_id")
-    private transient CustomFormResponse formResponse;
+    private CustomFormResponse formResponse;
 
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIARU.TYPE";

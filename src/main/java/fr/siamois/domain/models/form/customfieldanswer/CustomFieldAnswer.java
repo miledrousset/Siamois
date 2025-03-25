@@ -3,6 +3,7 @@ package fr.siamois.domain.models.form.customfieldanswer;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Data
@@ -10,7 +11,7 @@ import java.util.Objects;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "answer_type", discriminatorType = DiscriminatorType.STRING)
-public abstract class CustomFieldAnswer {
+public abstract class CustomFieldAnswer implements Serializable {
 
     @EmbeddedId
     private CustomFieldAnswerId pk;

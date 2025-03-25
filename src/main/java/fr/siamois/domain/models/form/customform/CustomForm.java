@@ -5,6 +5,7 @@ import fr.siamois.domain.models.form.customfield.CustomField;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,7 +13,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "custom_form")
-public class CustomForm {
+public class CustomForm implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

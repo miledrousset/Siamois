@@ -5,6 +5,8 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 import java.util.Objects;
 
 
@@ -14,7 +16,7 @@ import java.util.Objects;
 @Table(name = "custom_field")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "answer_type", discriminatorType = DiscriminatorType.STRING)
-public abstract class CustomField {
+public abstract class CustomField implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
