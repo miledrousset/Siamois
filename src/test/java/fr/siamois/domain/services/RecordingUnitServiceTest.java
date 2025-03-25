@@ -179,12 +179,6 @@ class RecordingUnitServiceTest {
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
 
-//        when(stratigraphicRelationshipService.saveOrGet(recordingUnitToSave, synchronousUnit, StratigraphicRelationshipService.SYNCHRONOUS))
-//                .thenReturn(syncRelationship);
-//        when(stratigraphicRelationshipService.saveOrGet(anteriorUnit, recordingUnitToSave, StratigraphicRelationshipService.ASYNCHRONOUS))
-//                .thenReturn(antRelationship);
-//        when(stratigraphicRelationshipService.saveOrGet(recordingUnitToSave, posteriorUnit, StratigraphicRelationshipService.ASYNCHRONOUS))
-//                .thenReturn(postRelationship);
         doNothing().when(customFormResponseService).saveFormResponse(
                 any(CustomFormResponse.class),
                 any(CustomFormResponse.class)
@@ -200,15 +194,6 @@ class RecordingUnitServiceTest {
         assertNotNull(result);
         assertEquals("MOM-2025-5", result.getFullIdentifier());
 
-//        // Verify that saveOrGet was called the correct number of times with expected arguments
-//        verify(stratigraphicRelationshipService, times(1))
-//                .saveOrGet(recordingUnitToSave, synchronousUnit, StratigraphicRelationshipService.SYNCHRONOUS);
-//
-//        verify(stratigraphicRelationshipService, times(1))
-//                .saveOrGet(anteriorUnit, recordingUnitToSave, StratigraphicRelationshipService.ASYNCHRONOUS);
-//
-//        verify(stratigraphicRelationshipService, times(1))
-//                .saveOrGet(recordingUnitToSave, posteriorUnit, StratigraphicRelationshipService.ASYNCHRONOUS);
 
 
     }

@@ -209,11 +209,11 @@ public class SpatialUnitPanel extends AbstractPanel {
         if (value instanceof Number) {
             // Integer or Number case
             return value.toString();
-        } else if (value instanceof List<?>) {
+        } else if (value instanceof List<?> list) {
             // Handle list of concepts
-            List<?> list = (List<?>) value;
+
             return list.stream()
-                    .map(item -> (item instanceof Concept) ? ((Concept) item).getLabel() : item.toString())
+                    .map(item -> (item instanceof Concept concept) ? concept.getLabel() : item.toString())
                     .collect(Collectors.joining(", "));
         }
 
