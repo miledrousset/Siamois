@@ -62,8 +62,8 @@ public class ActionUnitService implements ArkEntityService {
         }
     }
 
-    @Transactional
-    public ActionUnit save(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
+
+    public ActionUnit saveNotTransactional(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
 
         try {
 
@@ -87,6 +87,11 @@ public class ActionUnitService implements ArkEntityService {
         } catch (RuntimeException e) {
             throw new FailedRecordingUnitSaveException(e.getMessage());
         }
+    }
+
+    @Transactional
+    public ActionUnit save(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
+        return saveNotTransactional(info, actionUnit, typeConcept);
     }
 
     public List<ActionCode> findAllActionCodeByCodeIsContainingIgnoreCase(String query) {
@@ -150,7 +155,7 @@ public class ActionUnitService implements ArkEntityService {
             actionUnit.setSecondaryActionCodes(currentSecondaryActionCodes);
 
             // Saving the action unit
-            return save(info, actionUnit, actionUnit.getType());
+            return saveNotTransactional(info, actionUnit, actionUnit.getType());
 
         } catch (RuntimeException e) {
             throw new FailedActionUnitSaveException(e.getMessage());
