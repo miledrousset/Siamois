@@ -14,6 +14,15 @@
 
         <!-- Recording unit bean header -->
 
+        <h:panelGroup id="missingFormWarning">
+            <p:staticMessage severity="warn"
+                             summary="WARN"
+                             detail="No form configured the type #{newRecordingUnitFormBean.FType.label}"
+                             style="width: 100%"
+                             rendered="#{newRecordingUnitFormBean.recordingUnit.formResponse.form == null and newRecordingUnitFormBean.FType != null}"/>
+        </h:panelGroup>
+
+
         <h:form id="recordingUnitFormId">
 
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -33,35 +42,45 @@
                 </div>
                 <!-- UE Type -->
                 <div class="field col-md-3">
-                    <sharedLabel:openthesoLabel label="Type d'UE" forId="auto-complete-recording-type"/>
-                    <sharedInput:conceptAutocomplete
-                            selectedConcept="#{newRecordingUnitFormBean.FType}"
-                            completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitType}"
-                            itemSelectListener="#{newRecordingUnitFormBean.handleSelectType}"
-                            editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingTypeFieldCode()}" />
+                    <sharedLabel:openthesoLabel label="Type d'UE" forId="typeComponent"/>
+                    <sharedInput:conceptAutocomplete id="typeComponent"
+                                                     selectedConcept="#{newRecordingUnitFormBean.FType}"
+                                                     ajaxProcessTargets="@this
+                                                        :recordingUnitFormId:recordingUnitTabsId:customForm"
+                                                     ajaxUpdateTargets=":missingFormWarning
+                                                     :recordingUnitFormId:recordingUnitTabsId:customForm
+                                                     :recordingUnitFormId:thirdTypeComponent:conceptAutocomplete
+                                                     :recordingUnitFormId:secondTypeComponent:conceptAutocomplete"
+                                                     completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitType}"
+                                                     itemSelectListener="#{newRecordingUnitFormBean.handleSelectType}"
+                                                     editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingTypeFieldCode()}"/>
 
                 </div>
                 <!-- UE Secondary Type -->
                 <div class="field col-md-3">
-                    <sharedLabel:openthesoLabel forId="select-one-menu-ue-secondary-type" label="Sous type d'ue"/>
-                    <sharedInput:conceptAutocomplete
-                            selectedConcept="#{newRecordingUnitFormBean.FSecondaryType}"
-                            completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitSecondaryType}"
-                            disabled="#{!newRecordingUnitFormBean.hasSecondaryTypeOptions}"
-                            itemSelectListener="#{newRecordingUnitFormBean.handleSelectSecondaryType}"
-                            editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingSecondaryType()}" />
+                    <sharedLabel:openthesoLabel forId="secondTypeComponent" label="Sous type d'ue"/>
+                    <sharedInput:conceptAutocomplete id="secondTypeComponent"
+                                                     selectedConcept="#{newRecordingUnitFormBean.FSecondaryType}"
+                                                     ajaxProcessTargets="@this :recordingUnitFormId:thirdTypeComponent:conceptAutocomplete"
+                                                     ajaxUpdateTargets=":recordingUnitFormId:secondTypeComponent:conceptAutocomplete
+                                                     :recordingUnitFormId:thirdTypeComponent:conceptAutocomplete"
+                                                     completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitSecondaryType}"
+                                                     disabled="#{!newRecordingUnitFormBean.hasSecondaryTypeOptions}"
+                                                     itemSelectListener="#{newRecordingUnitFormBean.handleSelectSecondaryType}"
+                                                     editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingSecondaryType()}"/>
                 </div>
 
                 <!-- Interpretation -->
                 <div class="field col-md-3">
-                    <sharedLabel:openthesoLabel forId="select-one-menu-ue-interpretation" label="Interpretation"/>
-                    <sharedInput:conceptAutocomplete
-                            disabled="#{!newRecordingUnitFormBean.hasThirdTypeOptions}"
-                            selectedConcept="#{newRecordingUnitFormBean.FThirdType}"
-                            completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitThirdType}"
-                            editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingThirdType()}" />
+                    <sharedLabel:openthesoLabel forId="thirdTypeComponent" label="Interpretation"/>
+                    <sharedInput:conceptAutocomplete id="thirdTypeComponent"
+                                                     disabled="#{!newRecordingUnitFormBean.hasThirdTypeOptions}"
+                                                     selectedConcept="#{newRecordingUnitFormBean.FThirdType}"
+                                                     completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitThirdType}"
+                                                     editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingThirdType()}"/>
                 </div>
             </div>
+
 
             <!-- Tabs -->
             <p:tabView id="recordingUnitTabsId">
@@ -73,7 +92,7 @@
                 <p:tab title="Détails">
                     <!-- General informations -->
                     <div class="row">
-                        <div class="form-panel col">
+                        <div class="form-panel col-6">
                             <p:panel id="panel-general" header='#{langBean.msg("recordingunit.panel.general")}'
                                      toggleable="true">
                                 <div class="field grid">
@@ -118,9 +137,7 @@
                                 </div>
                             </p:panel>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-panel col">
+                        <div class="form-panel col-6">
                             <p:panel id="panel-description" header='#{langBean.msg("recordingunit.panel.description")}'
                                      toggleable="true">
                                 <!-- Description -->
@@ -138,7 +155,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="form-panel col-12 col-lg-4 col-xl-4">
+                        <div class="form-panel col-6 col-lg-4 col-xl-4">
                             <p:panel id="panel-location" header='#{langBean.msg("recordingunit.panel.location")}'
                                      toggleable="true">
                                 <h5>SIG</h5>
@@ -147,7 +164,7 @@
                                                 offIcon="pi pi-times"/>
                             </p:panel>
                         </div>
-                        <div class="form-panel col-12 col-lg-4 col-xl-4">
+                        <div class="form-panel col-6 col-lg-4 col-xl-4">
                             <p:panel id="panel-dimension" header='#{langBean.msg("recordingunit.panel.dimension")}'
                                      toggleable="true">
                                 <div class="field grid">
@@ -247,6 +264,74 @@
                             </p:panel>
                         </div>
                     </div>
+
+                    <!-- Iterate on the custom form questions -->
+                    <p:outputPanel id="customForm">
+                        <div class="row">
+                            <ui:repeat value="#{newRecordingUnitFormBean.recordingUnit.formResponse.form.layout}"
+                                       var="panel">
+                                <p:panel header='Formulaire personalisé'
+                                         class="#{panel.className}"
+                                         toggleable="true">
+
+                                    <ui:repeat value="#{panel.fields}"
+                                               var="field">
+
+                                        <!-- Afficher le label de la question -->
+                                        <h:outputLabel value="#{field.label}"/>
+
+                                        <!-- Affichage dynamique du champ de réponse en fonction du type de la question -->
+                                        <h:panelGroup id="inputField">
+                                            <!-- Si la question est de type INTEGER -->
+                                            <h:inputText
+                                                    value="#{newRecordingUnitFormBean.recordingUnit.formResponse.answers.get(field).value}"
+                                                    type="number"
+                                                    required="false"
+                                                    rendered="#{field['class'].simpleName eq 'CustomFieldInteger'}"/>
+
+                                            <!-- Si la question est de type SELECT_MULTIPLE -->
+                                            <!-- Use autoComplete component for the multi-select field -->
+                                            <p:autoComplete
+                                                    value="#{newRecordingUnitFormBean.recordingUnit.formResponse.answers.get(field).value}"
+                                                    multiple="true"
+                                                    rendered="#{field['class'].simpleName eq 'CustomFieldSelectMultiple'}"
+                                                    completeMethod="#{newRecordingUnitFormBean.suggestValues}"
+                                                    var="option" itemLabel="#{option.label}"
+                                                    itemValue="#{option}"
+                                                    required="false"
+                                                    converter="#{conceptConverter}"
+                                                    forceSelection="true"
+                                                    scrollHeight="300"
+                                                    dropdown="true">
+
+
+                                                <p:column>
+                                                    <p:commandButton icon="fa fa-external-link"
+                                                                     styleClass="btn btn-primary"
+                                                                     onclick="event.stopPropagation(); window.open('#{option.vocabulary.baseUri}/?idc=#{option.externalId}&amp;idt=#{option.vocabulary.externalVocabularyId}', '_blank'); return false;"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <div style="display:flex; flex-direction: column">
+                                                        <h:outputText style="vertical-align: middle; margin-left: .5rem"
+                                                                      value="#{option.label}"/>
+                                                        <small>#{option.vocabulary.baseUri} - #{option.vocabulary.vocabularyName}</small>
+                                                    </div>
+
+                                                </p:column>
+
+                                                <!-- Pass the specific question as a parameter to the complete method -->
+                                                <f:attribute name="question" value="#{field}"/>
+
+
+                                            </p:autoComplete>
+                                        </h:panelGroup>
+
+                                    </ui:repeat>
+                                </p:panel>
+                            </ui:repeat>
+                        </div>
+                    </p:outputPanel>
+
 
                 </p:tab>
 

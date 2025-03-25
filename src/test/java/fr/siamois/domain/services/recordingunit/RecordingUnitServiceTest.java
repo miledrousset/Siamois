@@ -4,6 +4,7 @@ import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
+import fr.siamois.domain.services.form.CustomFormResponseService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.recordingunit.RecordingUnitRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,8 @@ class RecordingUnitServiceTest {
 
     @Mock
     private ConceptService conceptService;
+    @Mock
+    private CustomFormResponseService customFormResponseService;
 
     @Mock
     private StratigraphicRelationshipService stratigraphicRelationshipService;
@@ -36,7 +39,8 @@ class RecordingUnitServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        recordingUnitService = new RecordingUnitService(recordingUnitRepository, conceptService, stratigraphicRelationshipService);
+        recordingUnitService = new RecordingUnitService(recordingUnitRepository, conceptService,
+                customFormResponseService);
     }
 
     @Test

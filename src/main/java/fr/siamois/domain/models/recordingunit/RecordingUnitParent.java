@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
 /**
  * The common attributes of the history recording unit table and the real recording table.
@@ -35,6 +36,7 @@ public abstract class RecordingUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_secondary_type")
     protected Concept secondaryType;
 
+
     @Column(name = "start_date")
     protected OffsetDateTime startDate;
 
@@ -48,6 +50,7 @@ public abstract class RecordingUnitParent extends TraceableEntity {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_action_unit_id", nullable = false)
     protected ActionUnit actionUnit;
+
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
@@ -68,6 +71,18 @@ public abstract class RecordingUnitParent extends TraceableEntity {
     @Embedded
     protected RecordingUnitAltimetry altitude;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RecordingUnit that = (RecordingUnit) o;
+        return Objects.equals(fullIdentifier, that.fullIdentifier);  // Compare based on RecordingUnit
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fullIdentifier);  // Hash based on RecordingUnit
+    }
 
 
 }

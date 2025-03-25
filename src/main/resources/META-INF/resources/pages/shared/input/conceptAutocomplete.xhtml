@@ -8,16 +8,19 @@
     <cc:interface>
 
         <cc:attribute name="completeMethod" required="true" method-signature="java.util.List &lt;java.lang.String&gt;(java.lang.String)" />
-        <cc:attribute name="itemSelectListener" required="false" method-signature="void &lt;java.lang.String&gt;(org.primefaces.event.SelectEvent)" />
+        <cc:attribute name="itemSelectListener" required="false" method-signature="void &lt;java.lang.String&gt;()" />
         <cc:attribute name="selectedConcept" type="fr.siamois.domain.models.vocabulary.Concept" required="true"/>
         <cc:attribute name="editConceptUrl" required="true"/>
         <cc:attribute name="disabled" required="false" default="false"/>
+        <cc:attribute name="ajaxUpdateTargets" required="false"/>
+        <cc:attribute name="ajaxProcessTargets" required="false"/>
 
 
     </cc:interface>
 
     <cc:implementation>
         <p:autoComplete value="#{cc.attrs.selectedConcept}"
+                        id="conceptAutocomplete"
                         completeMethod="#{cc.attrs.completeMethod}"
                         var="field" itemLabel="#{field.label}"
                         itemValue="#{field}"
@@ -30,10 +33,24 @@
                         dropdown="true">
 
             <!-- If defined, we need to update on select to synchronise secondary type choices -->
-            <p:ajax event="itemSelect"
+            <p:ajax
                     listener="#{cc.attrs.itemSelectListener}"
                     disabled="#{empty cc.attrs.itemSelectListener}"
-                    update="@form"/>
+                    update="#{cc.attrs.ajaxUpdateTargets}"
+                    immediate="false"
+                    process="#{cc.attrs.ajaxProcessTargets}"/>
+
+            <p:column>
+                <p:commandButton icon="fa fa-external-link" styleClass="btn btn-primary"
+                                 onclick="event.stopPropagation(); window.open('#{field.vocabulary.baseUri}/?idc=#{field.externalId}&amp;idt=#{field.vocabulary.externalVocabularyId}', '_blank'); return false;" />
+            </p:column>
+            <p:column>
+                <div style="display:flex; flex-direction: column">
+                    <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{field.label}"/>
+                    <small>#{field.vocabulary.baseUri} - #{field.vocabulary.vocabularyName}</small>
+                </div>
+
+            </p:column>
 
             <f:facet name="footer">
                 <div class="ui-fluid" style="padding:0.5rem 1rem 1rem 1rem">

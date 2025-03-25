@@ -19,13 +19,13 @@ class SynchronousGroupBuilderTest {
     @Test
     void testSynchronousGroupsFormation() {
         // Create Recording Units
-        RecordingUnit unitA = new RecordingUnit(); unitA.setFullIdentifier("A"); unitA.setId(1L);
+        RecordingUnit unitA = new RecordingUnit(); unitA.setFullIdentifier("A");
         unitA.setRelationshipsAsUnit1(new HashSet<>()); unitA.setRelationshipsAsUnit2(new HashSet<>());
-        RecordingUnit unitB = new RecordingUnit(); unitB.setFullIdentifier("B"); unitB.setId(2L);
+        RecordingUnit unitB = new RecordingUnit(); unitB.setFullIdentifier("B");
         unitB.setRelationshipsAsUnit1(new HashSet<>()); unitB.setRelationshipsAsUnit2(new HashSet<>());
-        RecordingUnit unitC = new RecordingUnit(); unitC.setFullIdentifier("C"); unitC.setId(3L);
+        RecordingUnit unitC = new RecordingUnit(); unitC.setFullIdentifier("C");
         unitC.setRelationshipsAsUnit1(new HashSet<>()); unitC.setRelationshipsAsUnit2(new HashSet<>());
-        RecordingUnit unitD = new RecordingUnit(); unitD.setFullIdentifier("D"); unitD.setId(4L);
+        RecordingUnit unitD = new RecordingUnit(); unitD.setFullIdentifier("D");
         unitD.setRelationshipsAsUnit1(new HashSet<>()); unitD.setRelationshipsAsUnit2(new HashSet<>());
 
         // Create Relationships (A ↔ B, A ↔ C)

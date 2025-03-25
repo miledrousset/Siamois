@@ -2,9 +2,17 @@ package fr.siamois.ui.bean.recordingunit;
 
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.actionunit.ActionUnitFormMapping;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.recordingunit.RecordingUnitNotFoundException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.form.customform.CustomForm;
+import fr.siamois.domain.models.form.customfield.CustomFieldInteger;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerInteger;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectMultiple;
+import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectMultiple;
+import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.history.RecordingUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.recordingunit.RecordingUnitAltimetry;
@@ -18,10 +26,12 @@ import fr.siamois.domain.services.recordingunit.StratigraphicRelationshipService
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
+import fr.siamois.domain.services.form.FormService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import jakarta.faces.application.FacesMessage;
+import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +45,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static java.time.OffsetDateTime.now;
 
@@ -53,6 +61,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     private final transient HistoryService historyService;
     private final transient PersonService personService;
     private final transient FieldService fieldService;
+    private final transient FormService formService;
     private final LangBean langBean;
     private final transient ConceptService conceptService;
     private final SessionSettingsBean sessionSettingsBean;
@@ -71,7 +80,9 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     private transient List<Concept> concepts;
     private Concept fType = null;
+    private Concept previousFType = null;
     private Concept fSecondaryType = null;
+    private Concept previousSecondaryFType = null;
     private Boolean hasSecondaryTypeOptions = false;
     private Concept fThirdType = null;
     private Boolean hasThirdTypeOptions = false;
@@ -83,6 +94,9 @@ public class NewRecordingUnitFormBean implements Serializable {
     private transient List<RecordingUnitHist> historyVersion;
     private RecordingUnitHist revisionToDisplay = null;
 
+    // Form
+    private transient CustomForm additionalForm;
+
     // Stratigraphy
     private transient List<Event> events; // Strati
     private transient List<StratigraphyValidationEvent> validationEvents; // Strati
@@ -93,8 +107,8 @@ public class NewRecordingUnitFormBean implements Serializable {
     private static final int ANTERIOR = 2;
     private static final int CERTAIN = 0;
     private static final int UNCERTAIN = 1;
-    private int stratiDialogType ; // Index from 0 to 2
-    private int stratiDialogCertainty ; // 0 or 1
+    private int stratiDialogType; // Index from 0 to 2
+    private int stratiDialogCertainty; // 0 or 1
     private List<RecordingUnit> stratiDialogSelection;
 
     @Data
@@ -166,22 +180,32 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
-    public void handleSelectType(SelectEvent<Concept> event) {
-        this.fType = event.getObject();
-        this.fSecondaryType = null;
-        this.fThirdType = null;
-        this.hasThirdTypeOptions = null;
+    public void handleSelectType() {
 
-        // We check if we have secondary types options
-        hasSecondaryTypeOptions = !(this.fetchChildrenOfConcept(fType).isEmpty());
+        if (fType != null) {
+            hasSecondaryTypeOptions = !(this.fetchChildrenOfConcept(fType).isEmpty());
+            changeCustomForm();
+        } else {
+            hasSecondaryTypeOptions = false;
+        }
+
+        fSecondaryType = null;
+        hasThirdTypeOptions = false;
+        fThirdType = null;
+
+
     }
 
-    public void handleSelectSecondaryType(SelectEvent<Concept> event) {
-        this.fSecondaryType = event.getObject();
-        this.fThirdType = null;
 
-        // We check if we have third types options
-        hasThirdTypeOptions = !(this.fetchChildrenOfConcept(fSecondaryType).isEmpty());
+    public void handleSelectSecondaryType() {
+
+        if (fSecondaryType != null) {
+            hasThirdTypeOptions = !(this.fetchChildrenOfConcept(fSecondaryType).isEmpty());
+        } else {
+            hasThirdTypeOptions = false;
+        }
+
+        fThirdType = null;
     }
 
     public LocalDate offsetDateTimeToLocalDate(OffsetDateTime offsetDT) {
@@ -195,7 +219,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     public boolean save() {
         try {
 
-            save(this.recordingUnit, fType, startDate, endDate);
+            recordingUnit = save(this.recordingUnit, fType, startDate, endDate);
 
             // Return page with id
             FacesContext.getCurrentInstance().addMessage(null,
@@ -204,7 +228,7 @@ public class NewRecordingUnitFormBean implements Serializable {
                             "Info",
                             langBean.msg("recordingunit.created", recordingUnit.getIdentifier())));
 
-            redirectBean.redirectTo("/recordingunit/" + recordingUnit.getId());
+            redirectBean.redirectTo("/recording-unit/" + recordingUnit.getId());
             return true;
 
         } catch (RuntimeException e) {
@@ -225,7 +249,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     public NewRecordingUnitFormBean(RecordingUnitService recordingUnitService,
                                     ActionUnitService actionUnitService, HistoryService historyService,
                                     PersonService personService,
-                                    FieldService fieldService,
+                                    FieldService fieldService, FormService formService,
                                     LangBean langBean,
                                     ConceptService conceptService,
                                     SessionSettingsBean sessionSettingsBean,
@@ -237,6 +261,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         this.historyService = historyService;
         this.personService = personService;
         this.fieldService = fieldService;
+        this.formService = formService;
         this.langBean = langBean;
         this.conceptService = conceptService;
         this.sessionSettingsBean = sessionSettingsBean;
@@ -275,15 +300,33 @@ public class NewRecordingUnitFormBean implements Serializable {
 
         // Init neighbors
         Event posterior = new Event("Posterior", "15/10/2020 16:15", "pi pi-arrow-circle-up", "#FF9800");
-        posterior.setRecordingUnitList(stratigraphicRelationshipService.getPosteriorUnits(recordingUnit));
+        try {
+            posterior.setRecordingUnitList(stratigraphicRelationshipService.getPosteriorUnits(recordingUnit));
+        } catch (RuntimeException e) {
+            // add warning
+            posterior.setRecordingUnitList(new ArrayList<>());
+        }
+
         posterior.setType(POSTERIOR);
 
         Event synchronous = new Event("Synchronous", "15/10/2020 14:00", "pi pi-sync", "#673AB7");
-        synchronous.setRecordingUnitList(stratigraphicRelationshipService.getSynchronousUnits(recordingUnit));
+
+        try {
+            synchronous.setRecordingUnitList(stratigraphicRelationshipService.getSynchronousUnits(recordingUnit));
+        } catch (RuntimeException e) {
+            // add warning
+            synchronous.setRecordingUnitList(new ArrayList<>());
+        }
         synchronous.setType(SYNCHRONOUS);
 
         Event anterior = new Event("Anterior", "15/10/2020 10:30", "pi pi-arrow-circle-down", "#9C27B0", "game-controller.jpg");
-        anterior.setRecordingUnitList(stratigraphicRelationshipService.getAnteriorUnits(recordingUnit));
+
+        try {
+            anterior.setRecordingUnitList(stratigraphicRelationshipService.getAnteriorUnits(recordingUnit));
+        } catch (RuntimeException e) {
+            // add warning
+            anterior.setRecordingUnitList(new ArrayList<>());
+        }
         anterior.setType(ANTERIOR);
 
         events.add(posterior);
@@ -297,6 +340,66 @@ public class NewRecordingUnitFormBean implements Serializable {
 
     }
 
+    public CustomForm getFormForRecordingUnitType(Concept type, Set<ActionUnitFormMapping> availableForms) {
+        return availableForms.stream()
+                .filter(mapping -> mapping.getPk().getConcept().equals(type) // Vérifier le concept
+                        && "RECORDING_UNIT".equals(mapping.getPk().getTableName())) // Vérifier le tableName
+                .map(mapping -> mapping.getPk().getForm())
+                .findFirst()
+                .orElse(null); // Retourner null si aucun match
+    }
+
+    public void initializeAnswer(CustomField field) {
+        if (recordingUnit.getFormResponse().getAnswers().get(field) == null) {
+            // Init missing parameters
+            if (field instanceof CustomFieldSelectMultiple) {
+                recordingUnit.getFormResponse().getAnswers().put(field, new CustomFieldAnswerSelectMultiple());
+            } else if (field instanceof CustomFieldInteger) {
+                recordingUnit.getFormResponse().getAnswers().put(field, new CustomFieldAnswerInteger());
+            }
+        }
+    }
+
+    public void initFormResponseAnswers() {
+
+        if (recordingUnit.getFormResponse().getForm() != null) {
+
+            recordingUnit.getFormResponse().getForm().getLayout().stream()
+                    .flatMap(section -> section.getFields().stream()) // Flatten the nested lists
+                    .forEach(this::initializeAnswer); // Process each field
+        }
+
+
+    }
+
+    public void changeCustomForm() {
+        // Do we have a form available for the selected type?
+        Set<ActionUnitFormMapping> formsAvailable = recordingUnit.getActionUnit().getFormsAvailable();
+        additionalForm = getFormForRecordingUnitType(fType, formsAvailable);
+        if (recordingUnit.getFormResponse() == null) {
+            recordingUnit.setFormResponse(new CustomFormResponse());
+            recordingUnit.getFormResponse().setAnswers(new HashMap<>());
+        }
+        recordingUnit.getFormResponse().setForm(additionalForm);
+        if (additionalForm != null) {
+            initFormResponseAnswers();
+        }
+
+
+    }
+
+    public void initCustomForm() {
+
+        if (recordingUnit.getFormResponse() == null) {
+            changeCustomForm();
+        } else {
+            additionalForm = formService.findById(
+                    recordingUnit.getFormResponse().getForm().getId());
+            initFormResponseAnswers();
+        }
+
+    }
+
     // Init for new recording units
     public void init(ActionUnit actionUnit) {
         try {
@@ -307,7 +410,7 @@ public class NewRecordingUnitFormBean implements Serializable {
             this.recordingUnit = new RecordingUnit();
             this.recordingUnit.setDescription("Nouvelle description");
             this.startDate = offsetDateTimeToLocalDate(now());
-            this.recordingUnit.setActionUnit(actionUnit);
+            this.recordingUnit.setActionUnit(actionUnitService.findById(actionUnit.getId()));
 
             // Init size & altimetry
             this.recordingUnit.setSize(new RecordingUnitSize());
@@ -323,15 +426,39 @@ public class NewRecordingUnitFormBean implements Serializable {
             recordingUnit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
             recordingUnit.setExcavator(sessionSettingsBean.getAuthenticatedUser());
 
+            fType = null;
+            fSecondaryType = null;
+
+
+            initCustomForm();
             initStratigraphy();
 
 
-
-
-
         } catch (RuntimeException err) {
-            recordingUnitErrorMessage = "Error initializing the form";
+            recordingUnitErrorMessage = err.getMessage();
         }
+    }
+
+    public List<Concept> suggestValues(String query) {
+        List<Concept> suggestions = new ArrayList<>();
+
+        // Might be better to only pass question index
+        FacesContext context = FacesContext.getCurrentInstance();
+        CustomField question = (CustomField) UIComponent.getCurrentComponent(context).getAttributes().get("question");
+
+        // Check if the question is an instance of QuestionSelectMultiple
+        if (question instanceof CustomFieldSelectMultiple selectMultipleQuestion) {
+            List<Concept> allOptions = new ArrayList<>(selectMultipleQuestion.getConcepts());
+
+            // Filter the options based on user input (query)
+            for (Concept value : allOptions) {
+                if (value.getLabel().toLowerCase().contains(query.toLowerCase())) {
+                    suggestions.add(value);
+                }
+            }
+        }
+
+        return suggestions;
     }
 
     public void initStratiDialog(int type) {
@@ -366,9 +493,11 @@ public class NewRecordingUnitFormBean implements Serializable {
                 fType = this.recordingUnit.getType();
                 fSecondaryType = this.recordingUnit.getSecondaryType();
 
+                initCustomForm();
                 initStratigraphy();
 
                 historyVersion = historyService.findRecordingUnitHistory(recordingUnit);
+
             } else if (this.id == null) {
                 log.error("The Recording Unit page should not be accessed without ID or by direct page path");
                 redirectBean.redirectTo(HttpStatus.NOT_FOUND);
@@ -411,7 +540,7 @@ public class NewRecordingUnitFormBean implements Serializable {
     public List<Concept> completeRecordingUnitSecondaryType(String input) {
 
         // The main type needs to be set
-        if(fType == null) {
+        if (fType == null) {
             return new ArrayList<>();
         }
 
@@ -426,17 +555,24 @@ public class NewRecordingUnitFormBean implements Serializable {
     }
 
     public String getUrlForRecordingSecondaryType() {
-        return fieldConfigurationService.getUrlOfConcept(fType);
+        if (fType != null) {
+            return fieldConfigurationService.getUrlOfConcept(fType);
+        }
+        return null;
+
     }
 
     public String getUrlForRecordingThirdType() {
-        return fieldConfigurationService.getUrlOfConcept(fSecondaryType);
+        if (fSecondaryType != null) {
+            return fieldConfigurationService.getUrlOfConcept(fSecondaryType);
+        }
+        return null;
     }
 
     public List<Concept> completeRecordingUnitThirdType(String input) {
 
         // The main type needs to be set
-        if(fSecondaryType == null) {
+        if (fSecondaryType == null) {
             return new ArrayList<>();
         }
 

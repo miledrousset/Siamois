@@ -6,11 +6,27 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 @Entity
 @Table(name = "concept")
 public class Concept implements Serializable {
+
+    // Copy constructor
+    public Concept(Concept concept) {
+        this.id = concept.getId();
+        this.ark = concept.getArk();
+        this.label = concept.getLabel();
+        this.vocabulary = concept.getVocabulary();
+        this.externalId = concept.getExternalId();
+        this.langCode = concept.getLangCode();
+    }
+
+    public Concept() {
+
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "concept_id", nullable = false)
@@ -35,5 +51,24 @@ public class Concept implements Serializable {
     @NotNull
     @Column(name = "label_lang", length = Integer.MAX_VALUE)
     private String langCode;
+
+
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Concept concept)) return false;
+
+        return Objects.equals(ark, concept.ark) &&
+                Objects.equals(externalId, concept.externalId) &&
+                Objects.equals(vocabulary, concept.vocabulary);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ark, externalId, vocabulary);
+    }
+
 
 }

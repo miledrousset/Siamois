@@ -18,7 +18,7 @@ public class RecordingUnitController {
         this.newRecordingUnitFormBean = newRecordingUnitFormBean;
     }
 
-    @GetMapping("/recordingunit/{id}")
+    @GetMapping("/recording-unit/{id}")
     public String toRecordingUnit(@PathVariable Long id, Model model) {
         model.addAttribute("id", id);
         newRecordingUnitFormBean.setId(id);

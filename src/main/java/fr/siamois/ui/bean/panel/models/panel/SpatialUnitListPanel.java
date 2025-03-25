@@ -20,6 +20,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
     private List<SpatialUnit> spatialUnitList;
     private String spatialUnitListErrorMessage;
 
+
     public SpatialUnitListPanel(SpatialUnitService spatialUnitService, SessionSettingsBean sessionSettingsBean) {
         super("welcome", "Welcome", "welcome-panel", "pi pi-home");
         this.spatialUnitService = spatialUnitService;
@@ -36,6 +37,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
             } else {
                 spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettingsBean.getSelectedInstitution());
             }
+
         } catch (RuntimeException e) {
             spatialUnitList = null;
             spatialUnitListErrorMessage = "Failed to load spatial units: " + e.getMessage();

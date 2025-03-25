@@ -16,9 +16,9 @@ import fr.siamois.domain.services.ArkEntityService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -52,6 +52,7 @@ public class ActionUnitService implements ArkEntityService {
      * @throws ActionUnitNotFoundException If no action unit are found for the given id
      * @throws RuntimeException             If the repository method returns a RuntimeException
      */
+    @Transactional(readOnly = true)
     public ActionUnit findById(long id) {
         try {
             return actionUnitRepository.findById(id).orElseThrow(() -> new ActionUnitNotFoundException("ActionUnit not found with ID: " + id));
@@ -61,8 +62,8 @@ public class ActionUnitService implements ArkEntityService {
         }
     }
 
-    @Transactional
-    public ActionUnit save(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
+
+    public ActionUnit saveNotTransactional(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
 
         try {
 
@@ -86,6 +87,11 @@ public class ActionUnitService implements ArkEntityService {
         } catch (RuntimeException e) {
             throw new FailedRecordingUnitSaveException(e.getMessage());
         }
+    }
+
+    @Transactional
+    public ActionUnit save(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
+        return saveNotTransactional(info, actionUnit, typeConcept);
     }
 
     public List<ActionCode> findAllActionCodeByCodeIsContainingIgnoreCase(String query) {
@@ -149,7 +155,7 @@ public class ActionUnitService implements ArkEntityService {
             actionUnit.setSecondaryActionCodes(currentSecondaryActionCodes);
 
             // Saving the action unit
-            return save(info, actionUnit, actionUnit.getType());
+            return saveNotTransactional(info, actionUnit, actionUnit.getType());
 
         } catch (RuntimeException e) {
             throw new FailedActionUnitSaveException(e.getMessage());

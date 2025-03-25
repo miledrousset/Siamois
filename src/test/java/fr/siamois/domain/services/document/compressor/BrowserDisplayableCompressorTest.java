@@ -40,6 +40,7 @@ class BrowserDisplayableCompressorTest {
         assertThrows(UnsupportedOperationException.class, () -> compressor.encodingTypes());
     }
 
+
     @Test
     void testUpdateStoredFilename() {
         Document document = new Document();

@@ -2,12 +2,16 @@ package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
+import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.document.DocumentService;
+import fr.siamois.domain.services.form.CustomFieldService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.ui.bean.SessionSettingsBean;
@@ -35,6 +39,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>This bean handles the spatial unit page</p>
@@ -53,6 +58,7 @@ public class SpatialUnitPanel extends AbstractPanel {
     private SpatialUnitHelperService spatialUnitHelperService;
     private DocumentService documentService;
     private DocumentCreationBean documentCreationBean;
+    private CustomFieldService customFieldService;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -68,18 +74,22 @@ public class SpatialUnitPanel extends AbstractPanel {
     private List<SpatialUnitHist> historyVersion;
     private SpatialUnitHist revisionToDisplay = null;
 
+    private List<CustomField> availableFields;
+    private List<CustomField> selectedFields;
+
     private String barModel;
 
     private Long idunit;  // ID of the spatial unit
 
     private List<Document> documents;
 
+
     private SpatialUnitPanel(PanelBreadcrumb currentBreadcrumb) {
-        super("spatial", "Unité spatiale", "spatial", "pi pi-map-marker");
-        this.setBreadcrumb(new PanelBreadcrumb());
-        this.getBreadcrumb().getModel().getElements().clear();
-        this.getBreadcrumb().getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
-    }
+            super("spatial", "Unité spatiale", "spatial", "pi pi-map-marker");
+            this.setBreadcrumb(new PanelBreadcrumb());
+            this.getBreadcrumb().getModel().getElements().clear();
+            this.getBreadcrumb().getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+        }
 
     @Override
     public String display() {
@@ -136,6 +146,9 @@ public class SpatialUnitPanel extends AbstractPanel {
 
         try {
             this.spatialUnit = spatialUnitService.findById(idunit);
+            availableFields = customFieldService.findAllFieldsBySpatialUnitId(idunit);
+            selectedFields = new ArrayList<>();
+
             this.setTitle(spatialUnit.getName()); // Set panel title
             // add to BC
             this.getBreadcrumb().addSpatialUnit(spatialUnit);
@@ -188,6 +201,25 @@ public class SpatialUnitPanel extends AbstractPanel {
         spatialUnitHelperService.restore(history);
     }
 
+    public String getFormattedValue(Object value) {
+        if (value == null) {
+            return "";
+        }
+
+        if (value instanceof Number) {
+            // Integer or Number case
+            return value.toString();
+        } else if (value instanceof List<?> list) {
+            // Handle list of concepts
+
+            return list.stream()
+                    .map(item -> (item instanceof Concept concept) ? concept.getLabel() : item.toString())
+                    .collect(Collectors.joining(", "));
+        }
+
+        return value.toString(); // Default case
+    }
+
     public StreamedContent streamOf(Document document) {
         return DocumentUtils.streamOf(documentService , document);
     }
@@ -235,6 +267,7 @@ public class SpatialUnitPanel extends AbstractPanel {
 
     public static class SpatialUnitPanelBuilder {
         private SpatialUnitService spatialUnitService;
+        private CustomFieldService customFieldService;
         private RecordingUnitService recordingUnitService;
         private ActionUnitService actionUnitService;
         private SessionSettingsBean sessionSettings;
@@ -256,6 +289,11 @@ public class SpatialUnitPanel extends AbstractPanel {
 
         public SpatialUnitPanelBuilder actionUnitService(ActionUnitService actionUnitService) {
             this.actionUnitService = actionUnitService;
+            return this;
+        }
+
+        public SpatialUnitPanelBuilder customFieldService(CustomFieldService customFieldService) {
+            this.customFieldService = customFieldService;
             return this;
         }
 
@@ -292,6 +330,7 @@ public class SpatialUnitPanel extends AbstractPanel {
         public SpatialUnitPanel build() {
             SpatialUnitPanel panel = new SpatialUnitPanel(currentBreadcrumb);
             panel.setSpatialUnitService(spatialUnitService);
+            panel.setCustomFieldService(customFieldService);
             panel.setRecordingUnitService(recordingUnitService);
             panel.setActionUnitService(actionUnitService);
             panel.setSessionSettings(sessionSettings);

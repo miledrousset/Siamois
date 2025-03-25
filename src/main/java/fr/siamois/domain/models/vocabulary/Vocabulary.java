@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -34,5 +35,22 @@ public class Vocabulary implements Serializable {
 
     @Column(name = "last_lang")
     private String lastLang;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Vocabulary that)) return false;
+
+        return Objects.equals(baseUri, that.baseUri) &&
+                Objects.equals(externalVocabularyId, that.externalVocabularyId) &&
+                Objects.equals(type, that.type);  // Added comparison for VocabularyType
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(baseUri, externalVocabularyId, type);  // Added VocabularyType to hashCode
+    }
+
+
 
 }

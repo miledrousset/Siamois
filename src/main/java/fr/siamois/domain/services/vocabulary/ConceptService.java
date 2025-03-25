@@ -100,4 +100,7 @@ public class ConceptService {
         return result;
     }
 
+    public Object findAllById(List<Long> conceptIds) {
+        return conceptRepository.findAllById(conceptIds);
+    }
 }

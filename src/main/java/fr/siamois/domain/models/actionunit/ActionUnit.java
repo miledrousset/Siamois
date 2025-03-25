@@ -21,13 +21,16 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Column(name = "action_unit_id", nullable = false)
     private Long id;
 
+    @OneToMany(fetch= FetchType.EAGER, mappedBy = "actionUnit")
+    private transient Set<ActionUnitFormMapping> formsAvailable = new HashSet<>();
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "action_action_code",
             joinColumns = { @JoinColumn(name = "fk_action_id") },
             inverseJoinColumns = { @JoinColumn(name = "fk_action_code_id") }
     )
-    protected transient Set<ActionCode> secondaryActionCodes = new HashSet<>();
+    private Set<ActionCode> secondaryActionCodes = new HashSet<>();
 
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIAAU.TYPE";

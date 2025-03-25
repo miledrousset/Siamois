@@ -3,11 +3,13 @@ package fr.siamois.domain.services;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
+import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.services.form.CustomFormResponseService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.recordingunit.StratigraphicRelationshipService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
@@ -42,6 +44,8 @@ class RecordingUnitServiceTest {
     private ConceptService conceptService;
     @Mock
     private StratigraphicRelationshipService stratigraphicRelationshipService;
+    @Mock
+    private CustomFormResponseService customFormResponseService;
 
     @InjectMocks
     private RecordingUnitService recordingUnitService;
@@ -81,6 +85,7 @@ class RecordingUnitServiceTest {
         recordingUnitToSave = new RecordingUnit();
         recordingUnitToSave.setActionUnit(actionUnit);
         recordingUnitToSave.setCreatedByInstitution(parentInstitution);
+        recordingUnitToSave.setFormResponse(new CustomFormResponse());
 
 
     }
@@ -170,16 +175,14 @@ class RecordingUnitServiceTest {
 
         when(recordingUnitRepository.findMaxUsedIdentifierByAction(anyLong())).thenReturn(null);
 
-        when(recordingUnitRepository.save(
-                any(RecordingUnit.class)
-        )).thenReturn(recordingUnitToSave);
+        when(recordingUnitRepository.save(any(RecordingUnit.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        when(stratigraphicRelationshipService.saveOrGet(recordingUnitToSave, synchronousUnit, StratigraphicRelationshipService.SYNCHRONOUS))
-                .thenReturn(syncRelationship);
-        when(stratigraphicRelationshipService.saveOrGet(anteriorUnit, recordingUnitToSave, StratigraphicRelationshipService.ASYNCHRONOUS))
-                .thenReturn(antRelationship);
-        when(stratigraphicRelationshipService.saveOrGet(recordingUnitToSave, posteriorUnit, StratigraphicRelationshipService.ASYNCHRONOUS))
-                .thenReturn(postRelationship);
+
+        doNothing().when(customFormResponseService).saveFormResponse(
+                any(CustomFormResponse.class),
+                any(CustomFormResponse.class)
+        );
 
         RecordingUnit result = recordingUnitService.save(recordingUnitToSave,c,
                 List.of(anteriorUnit),
@@ -191,15 +194,6 @@ class RecordingUnitServiceTest {
         assertNotNull(result);
         assertEquals("MOM-2025-5", result.getFullIdentifier());
 
-        // Verify that saveOrGet was called the correct number of times with expected arguments
-        verify(stratigraphicRelationshipService, times(1))
-                .saveOrGet(recordingUnitToSave, synchronousUnit, StratigraphicRelationshipService.SYNCHRONOUS);
-
-        verify(stratigraphicRelationshipService, times(1))
-                .saveOrGet(anteriorUnit, recordingUnitToSave, StratigraphicRelationshipService.ASYNCHRONOUS);
-
-        verify(stratigraphicRelationshipService, times(1))
-                .saveOrGet(recordingUnitToSave, posteriorUnit, StratigraphicRelationshipService.ASYNCHRONOUS);
 
 
     }

@@ -31,11 +31,11 @@ public class StratigraphicRelationshipService {
     // sync/async
     static {
         SYNCHRONOUS = new Concept();
-        SYNCHRONOUS.setId(-1L);
+        SYNCHRONOUS.setExternalId("SIAMOIS_SYNCHRONOUS");
         ASYNCHRONOUS = new Concept();
-        ASYNCHRONOUS.setId(-2L);
+        ASYNCHRONOUS.setExternalId("SIAMOIS_ASYNCHRONOUS");
         ASYNCHRONOUS_DEDUCTED = new Concept();
-        ASYNCHRONOUS_DEDUCTED.setId(-3L);
+        ASYNCHRONOUS_DEDUCTED.setExternalId("SIAMOIS_ASYNCHRONOUS_DEDUCTED");
     }
 
     public StratigraphicRelationshipService(
