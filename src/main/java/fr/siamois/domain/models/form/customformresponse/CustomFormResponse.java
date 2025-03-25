@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -16,7 +17,7 @@ import java.util.Objects;
 @Data
 @Table(name = "custom_form_response")
 @ToString
-public class CustomFormResponse {
+public class CustomFormResponse implements Serializable {
 
 
     @Id
