@@ -10,7 +10,7 @@ import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectMu
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.infrastructure.repositories.form.CustomFormRepository;
+import fr.siamois.infrastructure.database.repositories.form.CustomFormRepository;
 import org.springframework.stereotype.Service;
 import java.util.*;
 

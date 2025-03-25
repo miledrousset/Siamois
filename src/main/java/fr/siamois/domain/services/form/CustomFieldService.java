@@ -1,7 +1,7 @@
 package fr.siamois.domain.services.form;
 
 import fr.siamois.domain.models.form.customfield.CustomField;
-import fr.siamois.infrastructure.repositories.form.CustomFieldRepository;
+import fr.siamois.infrastructure.database.repositories.form.CustomFieldRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

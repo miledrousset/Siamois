@@ -1,4 +1,4 @@
-package fr.siamois.infrastructure.repositories.form;
+package fr.siamois.infrastructure.database.repositories.form;
 
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import org.springframework.data.repository.CrudRepository;

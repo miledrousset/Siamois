@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.infrastructure.repositories.vocabulary.ConceptRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import lombok.extern.slf4j.Slf4j;

@@ -34,15 +34,14 @@ public class PanelFactory {
             RecordingUnitService recordingUnitService,
             ActionUnitService actionUnitService,
             SessionSettingsBean sessionSettings,
-            SpatialUnitHelperService spatialUnitHelperService, CustomFieldService customFieldService) {
-            SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService,
-                DocumentCreationBean documentCreationBean) {
+            CustomFieldService customFieldService,
+            SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService, DocumentCreationBean documentCreationBean) {
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.sessionSettings = sessionSettings;
-        this.spatialUnitHelperService = spatialUnitHelperService;
         this.customFieldService = customFieldService;
+        this.spatialUnitHelperService = spatialUnitHelperService;
         this.documentService = documentService;
         this.documentCreationBean = documentCreationBean;
     }
@@ -52,6 +51,7 @@ public class PanelFactory {
                     .spatialUnitService(spatialUnitService)
                     .recordingUnitService(recordingUnitService)
                     .actionUnitService(actionUnitService)
+                    .customFieldService(customFieldService)
                     .sessionSettings(sessionSettings)
                     .id(spatialUnitId)
                     .currentBreadcrumb(currentBreadcrumb)

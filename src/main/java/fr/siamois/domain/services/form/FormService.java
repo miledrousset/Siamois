@@ -1,7 +1,7 @@
 package fr.siamois.domain.services.form;
 
 import fr.siamois.domain.models.form.customform.CustomForm;
-import fr.siamois.infrastructure.repositories.form.FormRepository;
+import fr.siamois.infrastructure.database.repositories.form.FormRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

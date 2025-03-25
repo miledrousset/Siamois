@@ -58,12 +58,7 @@ public class SpatialUnitPanel extends AbstractPanel {
     private SpatialUnitHelperService spatialUnitHelperService;
     private DocumentService documentService;
     private DocumentCreationBean documentCreationBean;
-    private final SpatialUnitService spatialUnitService;
-    private final RecordingUnitService recordingUnitService;
-    private final ActionUnitService actionUnitService;
-    private final SessionSettingsBean sessionSettings;
-    private final SpatialUnitHelperService spatialUnitHelperService;
-    private final CustomFieldService customFieldService;
+    private CustomFieldService customFieldService;
 
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
@@ -88,26 +83,13 @@ public class SpatialUnitPanel extends AbstractPanel {
 
     private List<Document> documents;
 
+
     private SpatialUnitPanel(PanelBreadcrumb currentBreadcrumb) {
-    public SpatialUnitPanel(SpatialUnitService spatialUnitService,
-                            RecordingUnitService recordingUnitService,
-                            ActionUnitService actionUnitService,
-                            SessionSettingsBean sessionSettings,
-                            Long id, PanelBreadcrumb currentBreadcrumb,
-                            SpatialUnitHelperService spatialUnitHelperService,
-                            CustomFieldService customFieldService) {
-        super("spatial", "Unité spatiale", "spatial", "pi pi-map-marker");
-        this.spatialUnitService = spatialUnitService;
-        this.recordingUnitService = recordingUnitService;
-        this.actionUnitService = actionUnitService;
-        this.sessionSettings = sessionSettings;
-        this.customFieldService = customFieldService;
-        this.idunit = id;
-        this.spatialUnitHelperService = spatialUnitHelperService;
-        this.setBreadcrumb(new PanelBreadcrumb());
-        this.getBreadcrumb().getModel().getElements().clear();
-        this.getBreadcrumb().getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
-    }
+            super("spatial", "Unité spatiale", "spatial", "pi pi-map-marker");
+            this.setBreadcrumb(new PanelBreadcrumb());
+            this.getBreadcrumb().getModel().getElements().clear();
+            this.getBreadcrumb().getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+        }
 
     @Override
     public String display() {
@@ -285,6 +267,7 @@ public class SpatialUnitPanel extends AbstractPanel {
 
     public static class SpatialUnitPanelBuilder {
         private SpatialUnitService spatialUnitService;
+        private CustomFieldService customFieldService;
         private RecordingUnitService recordingUnitService;
         private ActionUnitService actionUnitService;
         private SessionSettingsBean sessionSettings;
@@ -306,6 +289,11 @@ public class SpatialUnitPanel extends AbstractPanel {
 
         public SpatialUnitPanelBuilder actionUnitService(ActionUnitService actionUnitService) {
             this.actionUnitService = actionUnitService;
+            return this;
+        }
+
+        public SpatialUnitPanelBuilder customFieldService(CustomFieldService customFieldService) {
+            this.customFieldService = customFieldService;
             return this;
         }
 
@@ -342,6 +330,7 @@ public class SpatialUnitPanel extends AbstractPanel {
         public SpatialUnitPanel build() {
             SpatialUnitPanel panel = new SpatialUnitPanel(currentBreadcrumb);
             panel.setSpatialUnitService(spatialUnitService);
+            panel.setCustomFieldService(customFieldService);
             panel.setRecordingUnitService(recordingUnitService);
             panel.setActionUnitService(actionUnitService);
             panel.setSessionSettings(sessionSettings);

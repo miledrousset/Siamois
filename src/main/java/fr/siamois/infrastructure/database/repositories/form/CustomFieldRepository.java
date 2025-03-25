@@ -1,4 +1,4 @@
-package fr.siamois.infrastructure.repositories.form;
+package fr.siamois.infrastructure.database.repositories.form;
 
 import fr.siamois.domain.models.form.customfield.CustomField;
 import org.springframework.data.jpa.repository.Query;
