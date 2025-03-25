@@ -23,26 +23,26 @@ public class PersonDetailsService implements UserDetailsService {
     }
 
     /**
-     * Load the user by its username.
+     * Load the user by its email
      *
-     * @param username The username of the user
+     * @param email The email of the user
      * @return The user details
      * @throws UsernameNotFoundException Throws if the user is not found. Fails the authentication.
      */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return findPersonByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return findPersonByEmail(email);
     }
 
     /**
      * Find a person by its username
      *
-     * @param username The username of the person
+     * @param email The email of the person
      * @return The Person
      * @throws UsernameNotFoundException Throws if the user is not found
      */
-    public Person findPersonByUsername(String username) {
-        return personRepository.findByUsernameIgnoreCase(username).orElseThrow(() -> new UsernameNotFoundException("Person with username " + username + " not found"));
+    public Person findPersonByEmail(String email) {
+        return personRepository.findByMailIgnoreCase(email).orElseThrow(() -> new UsernameNotFoundException("Person with email " + email + " not found"));
     }
 
 

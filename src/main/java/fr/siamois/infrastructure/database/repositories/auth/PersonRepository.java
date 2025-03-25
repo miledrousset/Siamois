@@ -51,4 +51,6 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
     List<Person> findAllByIsSuperAdmin(boolean isSuperAdmin);
 
+    Optional<Person> findByMailIgnoreCase(String mail);
+
 }

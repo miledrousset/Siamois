@@ -46,19 +46,19 @@ class PersonDetailsServiceTest {
     }
 
     @Test
-    void findPersonByUsername() {
+    void findPersonByEmail() {
         Person person = new Person();
         person.setUsername("testUser");
 
         when(personRepository.findByUsernameIgnoreCase("testUser")).thenReturn(Optional.of(person));
 
-        assertEquals(person, personDetailsService.findPersonByUsername("testUser"));
+        assertEquals(person, personDetailsService.findPersonByEmail("testUser"));
     }
 
     @Test
-    void findPersonByUsername_throwsUsernameNotFoundException() {
+    void findPersonByUsername_throwsEmailNotFoundException() {
         when(personRepository.findByUsernameIgnoreCase("unknownUser")).thenReturn(Optional.empty());
 
-        assertThrows(UsernameNotFoundException.class, () -> personDetailsService.findPersonByUsername("unknownUser"));
+        assertThrows(UsernameNotFoundException.class, () -> personDetailsService.findPersonByEmail("unknownUser"));
     }
 }
