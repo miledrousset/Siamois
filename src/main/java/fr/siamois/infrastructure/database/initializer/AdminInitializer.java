@@ -70,7 +70,7 @@ public class AdminInitializer implements DatabaseInitializer {
         person.setMail(adminEmail);
         person.setName("Admin");
         person.setLastname("Admin");
-        person.setIsSuperAdmin(true);
+        person.setSuperAdmin(true);
         person.setEnabled(true);
 
         try {
@@ -91,7 +91,7 @@ public class AdminInitializer implements DatabaseInitializer {
         Person adminWithUsername = null;
         for (Person admin : admins) {
             if (isNotAskedAdmin(admin)) {
-                admin.setIsSuperAdmin(false);
+                admin.setSuperAdmin(false);
                 personRepository.save(admin);
             } else {
                 adminWithUsername = admin;

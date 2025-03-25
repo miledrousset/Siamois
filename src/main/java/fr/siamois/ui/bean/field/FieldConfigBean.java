@@ -58,6 +58,7 @@ public class FieldConfigBean implements Serializable {
     public void resetVariables() {
         vocabularies = null;
         userVocab = null;
+        fUri = null;
     }
 
     public void onLoad() {
@@ -66,11 +67,9 @@ public class FieldConfigBean implements Serializable {
         try {
             Concept config = fieldConfigurationService.findConfigurationForFieldCode(info, SpatialUnit.CATEGORY_FIELD_CODE);
 
-            String uri = String.format("%s/?idt=%s",
+            fUri = String.format("%s/?idt=%s",
                     config.getVocabulary().getBaseUri(),
                     config.getVocabulary().getExternalVocabularyId());
-
-            fUri = uri;
 
         } catch (NoConfigForFieldException e) {
             log.trace("No config set for user {} of institution {}",
@@ -95,5 +94,6 @@ public class FieldConfigBean implements Serializable {
     @EventListener(InstitutionChangeEvent.class)
     public void onInstitutionChange() {
         resetVariables();
+        onLoad();
     }
 }

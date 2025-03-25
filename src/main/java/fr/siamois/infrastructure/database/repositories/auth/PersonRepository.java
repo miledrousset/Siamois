@@ -27,7 +27,7 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
     @Query(
             nativeQuery = true,
-            value = "SELECT p.* FROM person p " +
+            value = "SELECT DISTINCT p.* FROM person p " +
                     "JOIN institution i ON p.person_id = i.fk_manager_id;"
     )
     List<Person> findAllInstitutionManagers();
@@ -49,5 +49,6 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
     )
     void addPersonToInstitution(Long personId, Long institutionId, Long conceptId);
 
-    List<Person> findAllByIsSuperAdmin(Boolean isSuperAdmin);
+    List<Person> findAllByIsSuperAdmin(boolean isSuperAdmin);
+
 }

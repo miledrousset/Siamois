@@ -2,6 +2,7 @@ package fr.siamois.ui.bean;
 
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.events.InstitutionChangeEvent;
 import fr.siamois.domain.models.exceptions.auth.*;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
@@ -15,6 +16,7 @@ import jakarta.faces.application.FacesMessage;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -46,8 +48,10 @@ public class UserSettingsBean {
         this.vocabularyService = vocabularyService;
     }
 
+    @EventListener(InstitutionChangeEvent.class)
     public void init() throws NoConfigForFieldException {
         log.trace("UserSettingsBean init");
+        resetVariables();
         Person user = sessionSettingsBean.getUserInfo().getUser();
         firstName = user.getName();
         lastName = user.getLastname();
@@ -60,6 +64,16 @@ public class UserSettingsBean {
             fUserUri = String.format("%s/?idt=%s", parent.getVocabulary().getBaseUri(), parent.getVocabulary().getExternalVocabularyId());
         }
 
+    }
+
+    private void resetVariables() {
+        firstName = null;
+        lastName = null;
+        email = null;
+        oldPassword = null;
+        newPassword = null;
+        confirmPassword = null;
+        fUserUri = null;
     }
 
     public String getUsername() {

@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean;
 
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import jakarta.faces.context.FacesContext;
 import jakarta.servlet.ServletContext;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +17,11 @@ import java.io.Serializable;
 public class RedirectBean implements Serializable {
 
     private final transient ServletContext servletContext;
+    private final transient UserSettingsBean userSettingsBean;
 
-    public RedirectBean(ServletContext servletContext) {
+    public RedirectBean(ServletContext servletContext, UserSettingsBean userSettingsBean) {
         this.servletContext = servletContext;
+        this.userSettingsBean = userSettingsBean;
     }
 
     public String redirectUrl(String resource) {
@@ -43,6 +46,11 @@ public class RedirectBean implements Serializable {
         };
 
         redirectTo(String.format("/error/%s", errorCode));
+    }
+
+    public void goToUserSettings() throws NoConfigForFieldException {
+        userSettingsBean.init();
+        redirectTo("/user/config");
     }
 
 }
