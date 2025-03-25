@@ -16,11 +16,11 @@ public class CustomFieldAnswerId implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "fk_field_id", nullable = false)
-    private CustomField field;
+    private transient CustomField field;
 
     @ManyToOne
     @JoinColumn(name = "fk_form_response", nullable = false)
-    private CustomFormResponse formResponse;
+    private transient CustomFormResponse formResponse;
 
     @Override
     public boolean equals(Object o) {
