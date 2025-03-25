@@ -25,7 +25,7 @@ public class BrowserDisplayableCompressor implements FileCompressor {
 
     @Override
     public String encodingTypes() {
-        return "";
+        throw new UnsupportedOperationException("The file is not compressed. So there aren't any encoding types.");
     }
 
     @Override
