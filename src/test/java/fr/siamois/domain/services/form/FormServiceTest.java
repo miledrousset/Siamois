@@ -43,10 +43,8 @@ class FormServiceTest {
 
         when(formRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
-
         // act
         CustomForm res = formService.findById(anyLong());
-
         assertNull(res);
 
     }
