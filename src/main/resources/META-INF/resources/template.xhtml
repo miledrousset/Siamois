@@ -8,14 +8,11 @@
 
 <h:head>
     <title>Siamois</title>
-    <h:outputStylesheet library="css" name="bootstrap.min.css"/>
-    <!-- Option 1: Include in HTML -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
 
 
-    <!-- QUIXLAB -->
-    <link href="#{request.contextPath}/static/quixlab/css/style.css" rel="stylesheet"/>
-
+    <h:outputStylesheet library="css" name="template.css"/>
 
 
     <script type="text/javascript">
@@ -31,383 +28,79 @@
 <ui:insert name="metadata"/>
 
 <h:body>
-    <h:outputStylesheet library="css" name="styles.css"/>
-    <!-- Growl -->
-    <p:growl id="main-growl" showDetail="true" autoUpdate="true"/>
-
-    <div id="main-wrapper">
-
-        <!--**********************************
-            Nav header start
-        ***********************************-->
-        <div class="nav-header">
-            <div class="brand-logo">
-                <a href="#{request.contextPath}/dashboard">
-                    <b class="logo-abbr">
-                        <!-- Logo when MENU is closed -->
-                        <img src="https://placehold.co/21x19" alt=""/>
-                    </b>
-                    <span class="logo-compact">
-                        <!-- Logo on mobile -->
-                        <img src="https://placehold.co/88x20" alt=""/>
-                    </span>
-                    <span class="brand-title">
-                        <!-- Logo on COMPUTER -->
-                        <img src="https://placehold.co/87x20" alt=""/>
-                    </span>
+<div class="d-flex">
+    <!-- Barre latérale -->
+    <nav id="sidebar" class="sidebar">
+        <button id="toggle-btn" class="btn btn-outline-light">☰</button>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-house-door-fill"/>
+                    <span class="menu-text">Accueil</span>
                 </a>
-            </div>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-database-fill"/>
+                    <span class="menu-text">BD #{navBean.selectedInstitution.name}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-play-circle-fill"/>
+                    <span class="menu-text">Aide</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-bookmark-fill"/>
+                    <span class="menu-text">Bookmark</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-clock-fill"/>
+                    <span class="menu-text">Historique</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-person-fill"/>
+                    <span class="menu-text">Rôle et Équipe</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-gear-fill"/>
+                    <span class="menu-text">Paramètres</span>
+                </a>
+            </li>
+        </ul>
+        <hr class="sidebar-divider"/>
+        <div class="sidebar-footer">
+            <a href="mailto:contact@example.com" class="nav-link">
+                <i class="bi bi-file-earmark-person-fill"/>
+                <span class="menu-text">contact@example.com</span>
+            </a>
+            <a href="/logout" class="nav-link">
+                <i class="bi bi-door-open-fill"/>
+                <span class="menu-text">Déconnexion</span>
+            </a>
         </div>
-        <!--**********************************
-            Nav header end
-        ***********************************-->
+    </nav>
 
-        <!--**********************************
-            Header start
-        ***********************************-->
-        <div class="header">
-            <div class="header-content clearfix">
-
-                <div class="nav-control">
-                    <div class="hamburger">
-                        <span class="toggle-icon"><i class="icon-menu"/></span>
-                    </div>
-                </div>
-                <div class="header-left">
-                    <div class="input-group icons">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-transparent border-0 pr-2 pr-sm-3" id="basic-addon1"><i
-                                    class="mdi mdi-magnify"/></span>
-                        </div>
-                        <input type="search" class="form-control" placeholder="Search Dashboard"
-                               aria-label="Search Dashboard"/>
-                        <div class="drop-down   d-md-none">
-                            <form action="#">
-                                <input type="text" class="form-control" placeholder="Search"/>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="header-right">
-                    <ul class="clearfix">
-                        <li class="icons dropdown"><a href="javascript:void(0)" data-toggle="dropdown">
-                            <i class="mdi mdi-bell-outline"/>
-                            <span class="badge badge-pill gradient-2 badge-primary">9+</span>
-                        </a>
-                            <div class="drop-down animated fadeIn dropdown-menu dropdown-notfication">
-                                <div class="dropdown-content-heading d-flex justify-content-between">
-                                    <span class="">2 New Notifications</span>
-
-                                </div>
-                                <div class="dropdown-content-body">
-                                    <ul>
-                                        <li>
-                                            <a href="javascript:void()">
-                                                <span class="mr-3 avatar-icon bg-success-lighten-2"><i
-                                                        class="icon-present"/></span>
-                                                <div class="notification-content">
-                                                    <h6 class="notification-heading">Events near you</h6>
-                                                    <span class="notification-text">Within next 5 days</span>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void()">
-                                                <span class="mr-3 avatar-icon bg-danger-lighten-2"><i
-                                                        class="icon-present"/></span>
-                                                <div class="notification-content">
-                                                    <h6 class="notification-heading">Event Started</h6>
-                                                    <span class="notification-text">One hour ago</span>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void()">
-                                                <span class="mr-3 avatar-icon bg-success-lighten-2"><i
-                                                        class="icon-present"/></span>
-                                                <div class="notification-content">
-                                                    <h6 class="notification-heading">Event Ended Successfully</h6>
-                                                    <span class="notification-text">One hour ago</span>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void()">
-                                                <span class="mr-3 avatar-icon bg-danger-lighten-2"><i
-                                                        class="icon-present"/></span>
-                                                <div class="notification-content">
-                                                    <h6 class="notification-heading">Events to Join</h6>
-                                                    <span class="notification-text">After two days</span>
-                                                </div>
-                                            </a>
-                                        </li>
-                                    </ul>
-
-                                </div>
-                            </div>
-                        </li>
-
-
-                        <li class="icons dropdown d-none d-md-flex">
-                            <h:form id="institutionForm">
-                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-
-                                <h:panelGroup id="institutionSelector" rendered="#{not navBean.institutionRefIsEmpty()}">
-                                    <a href="javascript:void(0)" class="log-user" data-toggle="dropdown">
-                                        <span>#{navBean.selectedInstitution.name}</span> <i
-                                            class="fa fa-angle-down f-s-14" aria-hidden="true"/>
-                                    </a>
-                                    <div class="drop-down animated fadeIn  dropdown-menu">
-                                        <div class="dropdown-content-body">
-                                            <ul>
-                                                <ui:repeat value="#{navBean.institutions}" var="instit">
-                                                    <li>
-                                                        <h:commandLink
-                                                                action="#{navBean.changeSelectedInstitution(instit)}"
-                                                                value="#{instit.name}"
-                                                                update="main institution-form sidebar"
-                                                        />
-                                                    </li>
-                                                </ui:repeat>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </h:panelGroup>
-                                <h:panelGroup rendered="#{navBean.institutionRefIsEmpty()}">
-                                    <a href="javascript:void(0)" class="log-user" data-toggle="dropdown">
-                                        <span>NO ORGANIZATION</span> <i class="fa fa-angle-down f-s-14"
-                                                                        aria-hidden="true"/>
-                                    </a>
-                                    <div class="drop-down animated fadeIn  dropdown-menu">
-                                        <div class="dropdown-content-body">
-                                        </div>
-                                    </div>
-                                </h:panelGroup>
-                            </h:form>
-                        </li>
-
-                        <li class="icons dropdown d-none d-md-flex">
-                            <h:form id="lang-form">
-                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                <a href="javascript:void(0)" class="log-user" data-toggle="dropdown">
-                                    <span>#{langBean.languageName}</span> <i class="fa fa-angle-down f-s-14"
-                                                                             aria-hidden="true"/>
-                                </a>
-                                <div class="drop-down dropdown-language animated fadeIn  dropdown-menu">
-                                    <div class="dropdown-content-body">
-                                        <ul>
-                                            <ui:repeat value="#{langService.availableLanguages}" var="lang">
-                                                <li>
-                                                    <h:commandLink actionListener="#{langBean.setLanguage(lang)}"
-                                                                   value="#{langBean.findLanguageName(lang)}"
-                                                                   oncomplete="location.reload()"
-                                                    />
-                                                </li>
-                                            </ui:repeat>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </h:form>
-                        </li>
-                        <li class="icons dropdown">
-                            <div class="user-img c-pointer position-relative" data-toggle="dropdown">
-                                <i id="user-icon" class="icon-user"/>
-                            </div>
-                            <div class="drop-down dropdown-profile   dropdown-menu">
-                                <div class="dropdown-content-body">
-                                    <ul>
-                                        <li>
-                                            <h:form id="user_settings_form">
-                                                <input type="hidden" name="${_csrf.parameterName}"
-                                                       value="${_csrf.token}"/>
-                                                <h:commandLink action="#{redirectBean.goToUserSettings()}">
-                                                    <i class="icon-settings"/>
-                                                    <span>Paramètres</span>
-                                                </h:commandLink>
-                                            </h:form>
-
-                                        </li>
-
-                                        <li>
-                                            <form action="#{request.contextPath}/logout" method="post"
-                                                  id="disconnect_form">
-                                                <input type="hidden" name="${_csrf.parameterName}"
-                                                       value="${_csrf.token}"/>
-                                                <a href="#" onclick="disconnect()">
-                                                    <i class="icon-key"/>
-                                                    <span>Déconnexion</span>
-                                                </a>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!--**********************************
-            Header end ti-comment-alt
-        ***********************************-->
-
-        <!--**********************************
-            Sidebar start
-        ***********************************-->
-        <h:panelGroup id="sidebar">
-            <div class="nk-sidebar">
-                <div class="nk-nav-scroll">
-                    <h:form id="side_nav_form">
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                        <ul class="metismenu" id="menu">
-                            <li class="nav-label">SIAMOIS</li>
-                            <li>
-                                <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
-                                    <i class="icon-home menu-icon"/><span class="nav-text">Accueil</span>
-                                </h:commandLink>
-                            </li>
-                            <li>
-                                <h:commandLink action="#{redirectBean.redirectTo('/spatialunit')}">
-                                    <i class="icon-location-pin menu-icon"/><span class="nav-text">Unité spatiale</span>
-                                </h:commandLink>
-                            </li>
-                            <li>
-                                <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
-                                    <i class="icon-control-play menu-icon"/><span class="nav-text">Unité d'action</span>
-                                </h:commandLink>
-                            </li>
-                            <li>
-                                <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
-                                    <i class="icon-note menu-icon"/><span class="nav-text">Unité d'enregistrement</span>
-                                </h:commandLink>
-                            </li>
-                            <li>
-                                <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
-                                    <i class="icon-social-dropbox menu-icon"/><span class="nav-text">Prélèvements</span>
-                                </h:commandLink>
-                            </li>
-                            <li>
-                                <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
-                                    <i class="icon-eyeglass menu-icon"/><span class="nav-text">Études</span>
-                                </h:commandLink>
-                            </li>
-                            <li>
-                                <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
-                                    <i class="icon-docs menu-icon"/><span class="nav-text">Documents</span>
-                                </h:commandLink>
-                            </li>
-
-                            <h:panelGroup rendered="#{navBean.isManagerOrAdminOfInstitution()}">
-                                <li class="nav-label">Gestion de l'organisation</li>
-                                <li class="mega-menu mega-menu-sm">
-                                    <a class="has-arrow" aria-expanded="false">
-                                        <i class="icon-people menu-icon"/><span class="nav-text">Utilisateurs</span>
-                                    </a>
-                                    <ul>
-                                        <li>
-                                            <h:commandLink action="#{redirectBean.redirectTo('/manager/users')}">
-                                                Gestion des utilisateurs
-                                            </h:commandLink>
-                                        </li>
-                                        <li>
-                                            <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
-                                                Gestion des rôles
-                                            </h:commandLink>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <h:commandLink action="#{redirectBean.redirectTo('/fieldConfiguration')}">
-                                        <i class="icon-globe menu-icon"/><span
-                                            class="nav-text">Configuration du thésaurus</span>
-                                    </h:commandLink>
-                                </li>
-                                <li>
-                                    <h:commandLink action="#{redirectBean.redirectTo('/manager/ark')}">
-                                        <i class="icon-key menu-icon"/><span
-                                            class="nav-text">Gestion des identifiants</span>
-                                    </h:commandLink>
-                                </li>
-                            </h:panelGroup>
-
-                            <h:panelGroup rendered="#{navBean.userIsAdmin()}">
-                                <li class="nav-label">Administration</li>
-                                <li>
-                                    <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}">
-                                        <i class="icon-energy menu-icon"/><span
-                                            class="nav-text">Gestion de l'instance</span>
-                                    </h:commandLink>
-                                </li>
-                                <li>
-                                    <h:commandLink action="#{redirectBean.redirectTo('/admin/institution')}">
-                                        <i class="icon-globe-alt menu-icon"/><span
-                                            class="nav-text">Gestion des organisations</span>
-                                    </h:commandLink>
-                                </li>
-                                <li>
-                                    <h:commandLink action="#{redirectBean.redirectTo('/admin/manager')}">
-                                        <i class="icon-user-following menu-icon"/><span
-                                            class="nav-text">Gestion des administrateurs</span>
-                                    </h:commandLink>
-                                </li>
-                            </h:panelGroup>
-                        </ul>
-                    </h:form>
-                </div>
-            </div>
-        </h:panelGroup>
-        <!--**********************************
-            Sidebar end
-        ***********************************-->
-
-        <!--**********************************
-            Content body start
-        ***********************************-->
-        <div class="content-body">
-
-            <!-- Content will be inserted here -->
-            <ui:insert description="The main content" name="content"/>
-            <!-- Content will be inserted here -->
-
-        </div>
-        <!--**********************************
-            Content body end
-        ***********************************-->
-
-
-        <!--**********************************
-            Footer start
-        ***********************************-->
-        <div class="footer">
-            <div class="copyright">
-                <p>Copyright Designed &amp; Developed by <a href="https://themeforest.net/user/quixlab">Quixlab</a> 2018
-                </p>
-            </div>
-        </div>
-        <!--**********************************
-            Footer end
-        ***********************************-->
+    <!-- Contenu principal -->
+    <div class="content">
+        <h:form>
+            <p:panel header="Bienvenue !">
+                <p>Voici le contenu principal de votre application.</p>
+            </p:panel>
+        </h:form>
     </div>
+</div>
 
-    <h:outputScript library="js" name="jquery-3.7.1.min.js"/>
-    <h:outputScript library="js" name="jquery-ui.js"/>
-    <h:outputScript library="js" name="bootstrap.bundle.min.js"/>
-
-    <script>
-        function disconnect() {
-            const form = document.getElementById("disconnect_form");
-            form.submit();
-        }
-    </script>
-
-    <script src="#{request.contextPath}/static/quixlab/plugins/common/common.min.js"></script>
-    <script src="#{request.contextPath}/static/quixlab/js/custom.min.js"></script>
-    <script src="#{request.contextPath}/static/quixlab/js/settings.js"></script>
-    <script src="#{request.contextPath}/static/quixlab/js/gleek.js"></script>
-    <script src="#{request.contextPath}/static/quixlab/js/styleSwitcher.js"></script>
-
-    <h:outputScript library="js" name="jquery-3.7.1.min.js"/>
-    <h:outputScript library="js" name="jquery-ui.min.js"/>
-
+<!-- Bootstrap JS et Custom JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"/>
+<h:outputScript library="js" name="template.js"/>
 </h:body>
 </html>

@@ -19,6 +19,12 @@ body {
     }
 }
 
+@media (max-width: 769px) {
+    div#left-image {
+        display: none;
+    }
+}
+
 img {
     max-width:100%;
     max-height:100%;

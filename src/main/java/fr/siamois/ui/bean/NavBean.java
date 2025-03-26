@@ -92,4 +92,8 @@ public class NavBean implements Serializable {
         PrimeFaces.current().ajax().update("institutionForm:institutionSelector");
     }
 
+    public Person currentUser() {
+        return sessionSettingsBean.getAuthenticatedUser();
+    }
+
 }

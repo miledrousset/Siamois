@@ -121,7 +121,7 @@ html, body {
 
 
 .ui-chip.custom-chip {
-    background: var(--primary-color);
+    background: white;
     color: var(--primary-color-text);
 }
 

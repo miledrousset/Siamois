@@ -1,0 +1,126 @@
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #FFFFFF;
+    color: #2A2C30;
+    position: fixed;
+    transition: width 0.3s;
+    padding-top: 15px;
+    border-right: 1px solid #E0E0E0;
+}
+
+.sidebar .nav-link {
+    color: #2A2C30;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    transition: background 0.3s, border-radius 0.3s, padding 0.3s;
+    border-radius: 8px;
+    margin: 2px 8px;
+    width: auto;
+}
+
+/* ✅ Effet au survol */
+.sidebar .nav-link:hover {
+    background: #F3F7F3;
+    border-radius: 10px;
+}
+
+/* Icônes */
+.sidebar .nav-link i {
+    font-size: 1.4rem;
+    color: #A6CBA6;
+    margin-right: 8px;
+}
+
+.sidebar .menu-text {
+    transition: opacity 0.3s;
+}
+
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar.collapsed .menu-text {
+    display: none;
+}
+
+.sidebar.collapsed .nav-link {
+    justify-content: center;
+    padding: 8px;
+    margin: 2px auto;
+    width: 38px;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar.collapsed .nav-link:hover {
+    background: #F3F7F3;
+    border-radius: 10px;
+    padding: 8px;
+    width: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#toggle-btn {
+    width: 100%;
+    margin-top: 10px;
+    color: #2A2C30;
+    background: transparent;
+    border: none;
+    font-size: 1.6rem;
+    text-align: center;
+    transition: color 0.3s;
+}
+
+#toggle-btn:hover {
+    color: #000000;
+}
+
+.content {
+    margin-left: 250px;
+    padding: 20px;
+    transition: margin-left 0.3s;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #F9FBF9;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar.collapsed ~ .content {
+    margin-left: 60px;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+    }
+
+    .sidebar .menu-text {
+        display: none;
+    }
+
+    .sidebar .nav-link {
+        justify-content: center;
+        padding: 8px;
+        margin: 2px auto;
+        width: 38px;
+    }
+
+    .sidebar.collapsed .nav-link:hover {
+        background: #F3F7F3;
+        border-radius: 10px;
+        padding: 8px;
+        width: 38px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .content {
+        margin-left: 60px;
+    }
+}
