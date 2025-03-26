@@ -28,8 +28,12 @@ public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
     @FieldCode
     public static final String CATEGORY_FIELD_CODE = "SIASU.TYPE";
 
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "spatialUnit")
+    @OneToMany
+    @JoinTable(
+            name = "spatial_unit_document",
+            joinColumns = { @JoinColumn(name = "fk_spatial_unit_id")},
+            inverseJoinColumns = { @JoinColumn(name = "fk_document_id") }
+    )
     private Set<Document> documents = new HashSet<>();
 
     @ManyToMany

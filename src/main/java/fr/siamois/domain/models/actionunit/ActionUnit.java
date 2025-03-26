@@ -22,7 +22,12 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Column(name = "action_unit_id", nullable = false)
     private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "actionUnit")
+    @OneToMany
+    @JoinTable(
+            name = "action_unit_document",
+            joinColumns = { @JoinColumn(name = "fk_action_unit_id")},
+            inverseJoinColumns = { @JoinColumn(name = "fk_document_id") }
+    )
     private Set<Document> documents = new HashSet<>();
 
     @OneToMany(fetch= FetchType.EAGER, mappedBy = "actionUnit")

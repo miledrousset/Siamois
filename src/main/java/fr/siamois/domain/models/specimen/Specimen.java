@@ -23,7 +23,12 @@ public class Specimen extends SpecimenParent implements ArkEntity {
     @Column(name = "specimen_id", nullable = false)
     private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "specimen")
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "specimen_document",
+            joinColumns = { @JoinColumn(name = "fk_specimen_id")},
+            inverseJoinColumns = { @JoinColumn(name = "fk_document_id") }
+    )
     private Set<Document> documents = new HashSet<>();
 
     @ManyToMany(mappedBy = "specimens")

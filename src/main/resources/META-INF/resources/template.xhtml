@@ -9,23 +9,29 @@
 <h:head>
     <title>Siamois</title>
     <h:outputStylesheet library="css" name="bootstrap.min.css"/>
-    <h:outputStylesheet library="css" name="jquery-ui.min.css"/>
+    <!-- Option 1: Include in HTML -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"/>
+
 
     <!-- QUIXLAB -->
     <link href="#{request.contextPath}/static/quixlab/css/style.css" rel="stylesheet"/>
 
-    <h:outputStylesheet library="css" name="styles.css"/>
+
 
     <script type="text/javascript">
         window.csrfTokenName = "{{ craft.config.csrfTokenName }}";
         window.csrfTokenValue = "{{ craft.request.csrfTokenValue }}";
     </script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap" />
+
 </h:head>
 
 <!-- Metadata will be inserted here (JSF1103: The metadata facet must be a direct child of the view) -->
 <ui:insert name="metadata"/>
 
 <h:body>
+    <h:outputStylesheet library="css" name="styles.css"/>
     <!-- Growl -->
     <p:growl id="main-growl" showDetail="true" autoUpdate="true"/>
 

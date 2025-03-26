@@ -8,12 +8,15 @@
                 xmlns:f="http://java.sun.com/jsf/core">
 
     <ui:define name="content">
+        <h:outputStylesheet library="css" name="panel.css"/>
 
         <p:outputPanel id="flow">
 
                 <h:panelGroup style="#{flowBean.fullscreenPanelIndex == -1 ? 'display:flex;flex-direction: column;gap:1em;padding:1em;' : 'display:flex;flex-direction: column;gap:1em;padding:0.5em;'}" id="flow-panels">
                     <c:forEach items="#{flowBean.panels}" var="panel" varStatus="status">
-                        <p:panel rendered="#{flowBean.fullscreenPanelIndex ==-1 || flowBean.fullscreenPanelIndex == status.index}" id="panel-${status.index}" toggleable="true" closable="true">
+                        <p:panel styleClass="siamois-panel spatial-unit-panel"
+                                rendered="#{flowBean.fullscreenPanelIndex ==-1 || flowBean.fullscreenPanelIndex == status.index}" id="panel-${status.index}"
+                                toggleable="true" closable="true">
                             <f:facet name="header">
                                 <i class="#{panel.icon}"/> #{panel.title}
                             </f:facet>

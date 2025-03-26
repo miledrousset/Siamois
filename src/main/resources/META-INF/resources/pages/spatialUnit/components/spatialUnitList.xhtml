@@ -24,12 +24,10 @@
 
                     <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
                                  value="#{cc.attrs.spatialUnitList}">
-                        <f:facet name="header">
-                            #{cc.attrs.header}
-                        </f:facet>
+
 
                         <p:column headerText="Name">
-                            <p:commandLink
+                            <p:commandLink style="padding-right: 1em;"
                                     action="#{flowBean.goToSpatialUnitByIdCurrentPanel(item.id, cc.attrs.panelModel)}"
                                     update="flow"
                                     actionListener="#{breadcrumbBean.addBreadcrumbItem(item.name, '/pages/spatialUnit/spatialUnit', 'pi pi-map-marker')}"
@@ -40,12 +38,8 @@
                             <p:commandButton icon="pi pi-external-link" update="flow" action="#{flowBean.goToSpatialUnitByIdNewPanel(item.id,cc.attrs.panelModel)}" />
                         </p:column>
 
-                        <p:column headerText="ARK">
-                            <h:outputText value="#{item.ark.arkId}"/>
-                        </p:column>
-
                         <p:column headerText="Category">
-                            <p:chip label="#{item.category.label}" icon="pi pi-map-marker" styleClass="mr-2"/>
+                            <p:chip label="#{item.category.label}" icon="pi pi-map-marker" styleClass="mr-2 spatial-unit-type-chip"/>
                         </p:column>
                     </p:dataTable>
                 </div>
