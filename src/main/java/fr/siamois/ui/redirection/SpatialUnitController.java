@@ -13,6 +13,7 @@ import java.io.IOException;
 @SessionScope
 public class SpatialUnitController {
 
+
     private final SpatialUnitBean spatialUnitBean;
 
     public SpatialUnitController(SpatialUnitBean spatialUnitBean) {

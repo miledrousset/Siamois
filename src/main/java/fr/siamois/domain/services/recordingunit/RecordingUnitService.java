@@ -135,18 +135,23 @@ public class RecordingUnitService implements ArkEntityService {
 
             CustomFormResponse managedFormResponse;
 
-            // Get the existing response or create a new one
-            if (managedRecordingUnit.getFormResponse() == null) {
-                managedFormResponse = new CustomFormResponse();
-                // Add a form response if no form response associated
-                managedRecordingUnit.setFormResponse(managedFormResponse);
-            } else {
-                managedFormResponse = managedRecordingUnit.getFormResponse();
+            // Save the form response if there is one
+            if(recordingUnit.getFormResponse() != null && recordingUnit.getFormResponse().getForm() != null) {
+                // Get the existing response or create a new one
+                if (managedRecordingUnit.getFormResponse() == null) {
+                    managedFormResponse = new CustomFormResponse();
+                    // Add a form response if no form response associated
+                    managedRecordingUnit.setFormResponse(managedFormResponse);
+                } else {
+                    managedFormResponse = managedRecordingUnit.getFormResponse();
+                }
+                // Process form response
+                customFormResponseService
+                        .saveFormResponse(managedFormResponse, recordingUnit.getFormResponse());
             }
-
-            // Process form response
-            customFormResponseService
-                    .saveFormResponse(managedFormResponse, recordingUnit.getFormResponse());
+            else {
+                managedRecordingUnit.setFormResponse(null);
+            }
 
 
             return recordingUnitRepository.save(managedRecordingUnit);

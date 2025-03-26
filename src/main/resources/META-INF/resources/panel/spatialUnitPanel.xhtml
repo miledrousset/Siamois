@@ -11,15 +11,18 @@
                      detail="#{panelModel.spatialUnitErrorMessage}"
                      rendered="#{not empty panelModel.spatialUnitErrorMessage}"/>
     <h:panelGroup id="contentPanel" rendered="#{panelModel.spatialUnit != null}">
-        <h2>#{panelModel.spatialUnit.name}
-            <p:chip label="#{panelModel.spatialUnit.category.label}" icon="pi pi-map-marker"
-                    styleClass="mr-2"/>
-        </h2>
-        <p>ARK ID: #{panelModel.spatialUnit.ark.arkId}</p>
+        <div class="panel-top-section">
+            <h2>
+                <p:chip label="#{panelModel.spatialUnit.category.label}" icon="pi pi-map-marker"
+                        styleClass="mr-2 spatial-unit-type-chip"/>
+                #{panelModel.spatialUnit.name}
+            </h2>
+        </div>
+
         <h:form>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <p:outputPanel>
-                <div class="card">
+                <div class="siamois-toolbar">
                     <p:toolbar>
                         <p:toolbarGroup>
                             <p:commandButton value='Nouvelle action' icon="pi pi-plus"
@@ -125,8 +128,8 @@
                         </div>
                     </div>
                 </p:tab>
-                <p:tab title="Enregistrements">
-                    <div class="row siamois-row">
+                <p:tab title="Enregistrements (1)">
+                    <div class="row siamois-row recording-unit-tab">
                         <div class="col-md-12">
                             <form>
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -137,20 +140,20 @@
                                                          rendered="#{not empty panelModel.recordingUnitListErrorMessage}"/>
                                         <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
                                                      value="#{panelModel.recordingUnitList}">
-                                            <f:facet name="header">
-                                                Unités d'enregistrement
-                                            </f:facet>
-                                            <p:column headerText="Name">
+                                            <p:column headerText="Identifiant">
                                                 <p:link outcome="/pages/recordingUnit/recordingUnit.xhtml"
-                                                        value="#{item.identifier}">
+                                                        value="#{item.fullIdentifier}">
                                                     <f:param name="id" value="#{item.id}"/>
                                                 </p:link>
                                             </p:column>
-                                            <p:column headerText="ARK">
-                                                <h:outputText value="#{item.ark.arkId}"/>
+                                            <p:column headerText="Statut">
+
+                                                <p:chip label="Enregistrement fermé"
+                                                        styleClass="mr-2 valid-type-chip"/>
                                             </p:column>
                                             <p:column headerText="Type">
-                                                <p:chip label="#{item.type.label}" icon="pi pi-file" styleClass="mr-2"/>
+                                                <p:chip label="#{item.type.label}" icon="bi bi-pencil-square"
+                                                        styleClass="mr-2 recording-unit-type-chip"/>
                                             </p:column>
                                             <p:column headerText="Auteur">
                                                 <h:outputText value="#{item.author.name} #{item.author.lastname}"/>
