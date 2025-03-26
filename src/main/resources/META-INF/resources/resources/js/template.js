@@ -6,3 +6,9 @@ document.addEventListener("DOMContentLoaded", function () {
         sidebar.classList.toggle("collapsed");
     });
 });
+
+const logoutForm = document.getElementById("logout-form");
+
+function logout() {
+    logoutForm.submit();
+}

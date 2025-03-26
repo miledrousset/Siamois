@@ -1,3 +1,7 @@
+* {
+    --siamois-green-light: #A6CBA6;
+}
+
 .sidebar {
     width: 250px;
     height: 100vh;
@@ -29,7 +33,7 @@
 /* Icônes */
 .sidebar .nav-link i {
     font-size: 1.4rem;
-    color: #A6CBA6;
+    color: var(--siamois-green-light);
     margin-right: 8px;
 }
 
@@ -124,3 +128,19 @@
         margin-left: 60px;
     }
 }
+
+form#logout-form:hover {
+    cursor: pointer;
+}
+
+hr {
+    margin-left: 10%;
+    width: 80%;
+    background-color: var(--siamois-green-light);
+}
+
+.sidebar-footer {
+    position: absolute;
+    bottom: 0;
+}
+
