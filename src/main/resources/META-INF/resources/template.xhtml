@@ -21,6 +21,9 @@
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap" />
 
+
+    <ui:insert name="head"/>
+
 </h:head>
 
 <!-- Metadata will be inserted here (JSF1103: The metadata facet must be a direct child of the view) -->
@@ -98,11 +101,7 @@
 
     <!-- Contenu principal -->
     <div class="content">
-        <h:form>
-            <p:panel header="Bienvenue !">
-                <p>Voici le contenu principal de votre application.</p>
-            </p:panel>
-        </h:form>
+        <ui:insert description="The main content" name="content"/>
     </div>
 </div>
 
