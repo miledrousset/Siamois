@@ -85,7 +85,6 @@
 
 .content {
     margin-left: 250px;
-    padding: 20px;
     transition: margin-left 0.3s;
     width: 100%;
     min-height: 100vh;

@@ -8,14 +8,14 @@
                 xmlns:f="http://java.sun.com/jsf/core">
 
     <ui:define name="head">
-        
+        <link rel="stylesheet" href="#{redirectBean.redirectUrlToResource('searchBar.css', 'css')}" />
     </ui:define>
 
     <ui:define name="content">
         <h:outputStylesheet library="css" name="panel.css"/>
 
         <div id="search-bar">
-
+            <p>Test</p>
         </div>
 
         <p:outputPanel id="flow">
