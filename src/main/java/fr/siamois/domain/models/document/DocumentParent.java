@@ -1,20 +1,13 @@
 package fr.siamois.domain.models.document;
 
 import fr.siamois.domain.models.TraceableEntity;
-import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
-import fr.siamois.domain.models.recordingunit.RecordingUnit;
-import fr.siamois.domain.models.recordingunit.RecordingUnitStudy;
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
-import fr.siamois.domain.models.specimen.Specimen;
-import fr.siamois.domain.models.specimen.SpecimenStudy;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
