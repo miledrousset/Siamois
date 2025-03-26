@@ -144,3 +144,15 @@ hr {
     bottom: 0;
 }
 
+/* Centrer l'image et la redimensionner automatiquement */
+.logo {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Ajuster la taille de l'image lorsque la barre de navigation est réduite */
+.sidebar.collapsed .logo {
+    max-width: 50px; /* Ajustez cette valeur selon vos besoins */
+}

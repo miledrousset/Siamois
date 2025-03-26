@@ -30,6 +30,11 @@
 <div class="d-flex">
     <!-- Barre latérale -->
     <nav id="sidebar" class="sidebar">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <h:graphicImage library="img" name="siamois_logo.png" styleClass="logo"/>
+            </li>
+        </ul>
         <button id="toggle-btn" class="btn btn-outline-light">☰</button>
         <ul class="nav flex-column">
             <li class="nav-item">
@@ -40,7 +45,7 @@
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                    <i class="bi bi-database-fill"/>
+                    <i class="bi bi-compass-fill"/>
                     <span class="menu-text">BD #{navBean.selectedInstitution.name}</span>
                 </a>
             </li>
