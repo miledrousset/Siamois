@@ -24,8 +24,6 @@ public class PageRedirectConfig implements WebMvcConfigurer {
         // Login
         registry.addViewController("/login").setViewName("forward:/pages/login/login.xhtml");
 
-        // Spatial Unit
-        registry.addViewController("/spatialUnit").setViewName("forward:/pages/spatialUnit/list.xhtml");
 
         // Recording unit
         registry.addViewController("/recordingunit/create").setViewName("forward:/pages/create/recordingUnit.xhtml");
