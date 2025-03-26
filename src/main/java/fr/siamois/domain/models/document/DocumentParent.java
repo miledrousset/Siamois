@@ -14,6 +14,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Set;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @MappedSuperclass
@@ -61,54 +63,6 @@ public abstract class DocumentParent extends TraceableEntity {
 
     @Column(name = "md5_sum")
     protected String md5Sum;
-
-    @ManyToOne
-    @JoinTable(
-            name = "spatial_unit_document",
-            joinColumns = { @JoinColumn(name = "fk_document_id")},
-            inverseJoinColumns = { @JoinColumn(name = "fk_spatial_unit_id") }
-    )
-    protected SpatialUnit spatialUnit;
-
-    @ManyToOne
-    @JoinTable(
-            name = "action_unit_document",
-            joinColumns = { @JoinColumn(name = "fk_document_id")},
-            inverseJoinColumns = { @JoinColumn(name = "fk_action_unit_id") }
-    )
-    protected ActionUnit actionUnit;
-
-    @ManyToOne
-    @JoinTable(
-            name = "recording_unit_document",
-            joinColumns = { @JoinColumn(name = "fk_document_id")},
-            inverseJoinColumns = { @JoinColumn(name = "fk_recording_unit_id") }
-    )
-    protected RecordingUnit recordingUnit;
-
-    @ManyToOne
-    @JoinTable(
-            name = "ru_study_document",
-            joinColumns = { @JoinColumn(name = "fk_document_id")},
-            inverseJoinColumns = { @JoinColumn(name = "fk_ru_study_id") }
-    )
-    protected RecordingUnitStudy recordingUnitStudy;
-
-    @ManyToOne
-    @JoinTable(
-            name = "specimen_document",
-            joinColumns = { @JoinColumn(name = "fk_document_id")},
-            inverseJoinColumns = { @JoinColumn(name = "fk_specimen_id") }
-    )
-    protected Specimen specimen;
-
-    @ManyToOne
-    @JoinTable(
-            name = "specimen_study_document",
-            joinColumns = { @JoinColumn(name = "fk_document_id")},
-            inverseJoinColumns = { @JoinColumn(name = "fk_specimen_study_id") }
-    )
-    protected SpecimenStudy specimenStudy;
 
     protected String storedFileName;
 

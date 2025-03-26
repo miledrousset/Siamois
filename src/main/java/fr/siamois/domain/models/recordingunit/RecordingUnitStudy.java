@@ -22,7 +22,12 @@ public class RecordingUnitStudy extends RecordingUnityStudyParent implements Ark
     @Column(name = "recording_unit_study_id", nullable = false)
     private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "recordingUnitStudy")
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "ru_study_document",
+            joinColumns = { @JoinColumn(name = "fk_ru_study_id")},
+            inverseJoinColumns = { @JoinColumn(name = "fk_document_id") }
+    )
     private Set<Document> documents = new HashSet<>();
 
     @FieldCode

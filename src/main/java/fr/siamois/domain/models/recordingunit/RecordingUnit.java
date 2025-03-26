@@ -53,7 +53,12 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     @JoinColumn(name = "fk_custom_form_response", referencedColumnName = "custom_form_response_id")
     private CustomFormResponse formResponse;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "recordingUnit")
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "recording_unit_document",
+            joinColumns = { @JoinColumn(name = "fk_recording_unit_id")},
+            inverseJoinColumns = { @JoinColumn(name = "fk_document_id") }
+    )
     private Set<Document> documents = new HashSet<>();
 
     @FieldCode

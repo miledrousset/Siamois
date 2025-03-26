@@ -7,11 +7,14 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
+import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Scope;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Component
+@Scope("prototype")
 public class SpatialUnitListPanel extends AbstractPanel {
 
     private final SpatialUnitService spatialUnitService;

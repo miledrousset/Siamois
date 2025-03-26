@@ -31,11 +31,12 @@
 
 .spatial-unit-panel .ui-button {
     background: var(--context-main-color);
+    border: 1px solid var(--context-main-color);
 }
 
 .ui-chip.spatial-unit-count-chip {
     background-color: white;
-    border-color: var(--context-main-color);
+    border: 1px solid var(--context-main-color);
     color: var(--context-main-color);
     font-size: 16px;
 }
