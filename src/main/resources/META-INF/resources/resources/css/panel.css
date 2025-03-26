@@ -1,11 +1,46 @@
+.content-body {
+    background: var(--siamois-green-unknown);
+}
+
 .siamois-panel {
     border-radius: 8px;
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Inter', sans-serif;
     border: 1px solid var(--siamois-green-light-100);
 }
 
+.ui-panel.siamois-panel .ui-panel-content {
+    padding: 0;
+}
+
+.ui-panel.siamois-panel .ui-panel-titlebar {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-light)
+}
+
+.siamois-panel .ui-widget {
+    font-family: 'Inter', sans-serif;
+}
+
+.siamois-panel .panel-top-section {
+    padding: 1em;
+}
+
+.siamois-panel .ui-tabs.ui-tabs-top>.ui-tabs-nav li.ui-tabs-header {
+    background: transparent;
+}
+
+
+
+.siamois-panel .ui-tabs .ui-tabs-nav {
+    background: transparent;
+}
+
+
+
+
 .siamois-panel .ui-breadcrumb {
     border: none;
+    border-radius: 0;
 }
 
 .siamois-panel .ui-toolbar {
@@ -15,9 +50,8 @@
 
 .ui-panel.spatial-unit-panel .ui-panel-titlebar {
     background: var(--context-light-color-100);
-    color: var(--text-light)
-}
 
+}
 
 .spatial-unit-panel-title {
     color: var(--context-main-color);
@@ -46,3 +80,55 @@
     color: white;
     font-size: 16px;
 }
+
+.ui-chip.recording-unit-type-chip {
+    background-color: var(--ground-main-color);
+    color: white;
+    font-size: 16px;
+}
+
+.ui-chip.valid-type-chip {
+    background-color: var(--green-valid);
+    color: white;
+    font-size: 16px;
+}
+
+.ui-panel.spatial-unit-single-panel .ui-panel-content {
+    background: var(--context-light-color-50);
+}
+
+.spatial-unit-single-panel .ui-breadcrumb {
+    border: none;
+    background: var(--context-light-color-50);
+}
+
+.spatial-unit-single-panel .siamois-toolbar {
+    background: transparent;
+    box-shadow: none;
+}
+
+.spatial-unit-single-panel .ui-tabs.ui-tabs-top>.ui-tabs-nav li.ui-tabs-header.ui-state-active {
+    border-color: var(--context-main-color);
+}
+
+.spatial-unit-single-panel .ui-tabs .ui-tabs-nav li.ui-tabs-header.ui-state-active a {
+    color: var(--context-main-color);
+}
+
+tbody.spatial-unit-datatable .ui-link {
+    color: var(--context-main-color)
+}
+
+
+.recording-unit-tab .ui-datatable thead th {
+    background: var(--ground-light-color-100);
+}
+
+.recording-unit-tab .ui-datatable .ui-link {
+    color: var(--ground-main-color)
+}
+
+
+
+
+

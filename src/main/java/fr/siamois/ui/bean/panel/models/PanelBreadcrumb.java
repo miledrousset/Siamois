@@ -13,7 +13,6 @@ public class PanelBreadcrumb  {
 
     private MenuModel model;
 
-
     public PanelBreadcrumb() {
         createMenu();
     }

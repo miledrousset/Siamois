@@ -25,6 +25,9 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.StreamedContent;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.util.MimeType;
 import software.xdev.chartjs.model.charts.BarChart;
 import software.xdev.chartjs.model.color.RGBAColor;
@@ -49,17 +52,21 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true)
 @Slf4j
 @Data
+@Component
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SpatialUnitPanel extends AbstractPanel {
 
-    private SpatialUnitService spatialUnitService;
-    private RecordingUnitService recordingUnitService;
-    private ActionUnitService actionUnitService;
-    private SessionSettingsBean sessionSettings;
-    private SpatialUnitHelperService spatialUnitHelperService;
-    private DocumentService documentService;
-    private DocumentCreationBean documentCreationBean;
-    private CustomFieldService customFieldService;
+    // Dependencies
+    private final SpatialUnitService spatialUnitService;
+    private final RecordingUnitService recordingUnitService;
+    private final ActionUnitService actionUnitService;
+    private final SessionSettingsBean sessionSettings;
+    private final SpatialUnitHelperService spatialUnitHelperService;
+    private final DocumentService documentService;
+    private final DocumentCreationBean documentCreationBean;
+    private final CustomFieldService customFieldService;
 
+    // Locals
     private SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
     private List<SpatialUnit> spatialUnitList;
@@ -84,19 +91,22 @@ public class SpatialUnitPanel extends AbstractPanel {
     private List<Document> documents;
 
 
-    private SpatialUnitPanel(PanelBreadcrumb currentBreadcrumb) {
-            super("spatial", "Unité spatiale", "spatial", "pi pi-map-marker");
-            this.setBreadcrumb(new PanelBreadcrumb());
-            this.getBreadcrumb().getModel().getElements().clear();
-            this.getBreadcrumb().getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
-        }
+    private SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService, DocumentCreationBean documentCreationBean, CustomFieldService customFieldService) {
+        super("Unité spatiale", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-single-panel");
+        this.spatialUnitService = spatialUnitService;
+        this.recordingUnitService = recordingUnitService;
+        this.actionUnitService = actionUnitService;
+        this.sessionSettings = sessionSettings;
+        this.spatialUnitHelperService = spatialUnitHelperService;
+        this.documentService = documentService;
+        this.documentCreationBean = documentCreationBean;
+        this.customFieldService = customFieldService;
+    }
 
     @Override
     public String display() {
         return "/panel/spatialUnitPanel.xhtml";
     }
-
-
 
     public void createBarModel() {
         barModel = new BarChart()
@@ -119,7 +129,6 @@ public class SpatialUnitPanel extends AbstractPanel {
                         )
                 ).toJson();
     }
-
 
     @PostConstruct
     public void init() {
@@ -261,85 +270,28 @@ public class SpatialUnitPanel extends AbstractPanel {
         PrimeFaces.current().executeScript("PF('newDocumentDiag').show()");
     }
 
-    public static SpatialUnitPanelBuilder builder() {
-        return new SpatialUnitPanelBuilder();
-    }
-
     public static class SpatialUnitPanelBuilder {
-        private SpatialUnitService spatialUnitService;
-        private CustomFieldService customFieldService;
-        private RecordingUnitService recordingUnitService;
-        private ActionUnitService actionUnitService;
-        private SessionSettingsBean sessionSettings;
-        private Long id;
-        private PanelBreadcrumb currentBreadcrumb;
-        private SpatialUnitHelperService spatialUnitHelperService;
-        private DocumentService documentService;
-        private DocumentCreationBean documentCreationBean;
 
-        public SpatialUnitPanelBuilder spatialUnitService(SpatialUnitService spatialUnitService) {
-            this.spatialUnitService = spatialUnitService;
-            return this;
-        }
+        private final SpatialUnitPanel spatialUnitPanel;
 
-        public SpatialUnitPanelBuilder recordingUnitService(RecordingUnitService recordingUnitService) {
-            this.recordingUnitService = recordingUnitService;
-            return this;
-        }
-
-        public SpatialUnitPanelBuilder actionUnitService(ActionUnitService actionUnitService) {
-            this.actionUnitService = actionUnitService;
-            return this;
-        }
-
-        public SpatialUnitPanelBuilder customFieldService(CustomFieldService customFieldService) {
-            this.customFieldService = customFieldService;
-            return this;
-        }
-
-        public SpatialUnitPanelBuilder sessionSettings(SessionSettingsBean sessionSettings) {
-            this.sessionSettings = sessionSettings;
-            return this;
+        public SpatialUnitPanelBuilder(SpatialUnitPanel spatialUnitPanel) {
+            this.spatialUnitPanel = spatialUnitPanel;
         }
 
         public SpatialUnitPanelBuilder id(Long id) {
-            this.id = id;
+            spatialUnitPanel.setIdunit(id);
             return this;
         }
 
-        public SpatialUnitPanelBuilder currentBreadcrumb(PanelBreadcrumb currentBreadcrumb) {
-            this.currentBreadcrumb = currentBreadcrumb;
-            return this;
-        }
+        public SpatialUnitPanelBuilder breadcrumb(PanelBreadcrumb breadcrumb) {
+            spatialUnitPanel.setBreadcrumb(breadcrumb);
 
-        public SpatialUnitPanelBuilder spatialUnitHelperService(SpatialUnitHelperService spatialUnitHelperService) {
-            this.spatialUnitHelperService = spatialUnitHelperService;
-            return this;
-        }
-
-        public SpatialUnitPanelBuilder documentService(DocumentService documentService) {
-            this.documentService = documentService;
-            return this;
-        }
-
-        public SpatialUnitPanelBuilder documentCreationBean(DocumentCreationBean documentCreationBean) {
-            this.documentCreationBean = documentCreationBean;
             return this;
         }
 
         public SpatialUnitPanel build() {
-            SpatialUnitPanel panel = new SpatialUnitPanel(currentBreadcrumb);
-            panel.setSpatialUnitService(spatialUnitService);
-            panel.setCustomFieldService(customFieldService);
-            panel.setRecordingUnitService(recordingUnitService);
-            panel.setActionUnitService(actionUnitService);
-            panel.setSessionSettings(sessionSettings);
-            panel.setIdunit(id);
-            panel.setSpatialUnitHelperService(spatialUnitHelperService);
-            panel.setDocumentService(documentService);
-            panel.setDocumentCreationBean(documentCreationBean);
-            panel.init();
-            return panel;
+            spatialUnitPanel.init();
+            return spatialUnitPanel;
         }
     }
 
