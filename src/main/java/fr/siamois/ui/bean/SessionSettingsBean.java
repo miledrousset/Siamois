@@ -38,10 +38,7 @@ public class SessionSettingsBean implements Serializable {
     }
 
     public Institution getSelectedInstitution() {
-        if (selectedInstitution == null) {
-            setupSession();
-        }
-        return selectedInstitution;
+        return getUserInfo().getInstitution();
     }
 
     public List<Institution> getReferencedInstitutions() {
@@ -67,10 +64,7 @@ public class SessionSettingsBean implements Serializable {
     }
 
     public InstitutionSettings getInstitutionSettings() {
-        if (institutionSettings == null) {
-            setupInstitution();
-        }
-        return institutionSettings;
+        return getUserInfo().getInstitution().getSettings();
     }
 
 

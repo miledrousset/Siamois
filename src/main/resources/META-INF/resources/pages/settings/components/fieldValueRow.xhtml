@@ -1,0 +1,22 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+    <cc:interface>
+        <cc:attribute name="label" required="true" type="java.lang.String"/>
+        <cc:attribute name="inputId" required="true" type="java.lang.String"/>
+    </cc:interface>
+
+    <cc:implementation>
+        <div class="form-group row">
+            <label for="#{cc.attrs.inputId}" class="col-sm-2 col-form-label">#{cc.attrs.label}</label>
+            <div class="col-md-7 field-value-value">
+                <cc:insertChildren/>
+            </div>
+        </div>
+    </cc:implementation>
+
+</ui:composition>

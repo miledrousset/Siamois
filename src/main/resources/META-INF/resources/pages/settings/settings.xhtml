@@ -15,25 +15,18 @@
 
     <ui:define name="content">
         <main>
-            <div class="field-value-card col-lg-6">
-                <h1 class="field-value-title">Mon profile</h1>
-                <div class="field-value-content">
-                    <div class="form-group row">
-                        <label for="test-1" class="col-sm-2 col-form-label">Email</label>
-                        <div class="col-sm-10">
-                            <input id="test-1"/>
-                        </div>
-                    </div>
-                    <hr/>
-                    <div class="form-group row">
-                        <label for="test-2" class="col-sm-2 col-form-label">Nom complet</label>
-                        <div class="col-sm-10">
-                            <input id="test-2"/>
-                        </div>
-                    </div>
-                </div>
-                <h:commandButton styleClass="save"/>
-            </div>
+            <settingscomp:fieldValue title="Mon profil" saveMethod="#{settingsBean.save()}" formId="monProfilForm">
+                <settingscomp:fieldValueRow label="Email" inputId="profile-email">
+                    <p:inputText id="profile-email"/>
+                </settingscomp:fieldValueRow>
+                <hr/>
+                <settingscomp:fieldValueRow label="NOM" inputId="profile-lastname">
+                    <p:inputText id="profile-lastname"/>
+                </settingscomp:fieldValueRow>
+                <settingscomp:fieldValueRow label="Prénom" inputId="profile-firstname">
+                    <p:inputText id="profile-firstname"/>
+                </settingscomp:fieldValueRow>
+            </settingscomp:fieldValue>
         </main>
     </ui:define>
 

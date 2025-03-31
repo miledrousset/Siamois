@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+                xmlns:shared="http://java.sun.com/jsf/composite/pages/shared/form"
+>
+
+    <cc:interface>
+        <cc:attribute name="formId" type="java.lang.String" required="true"/>
+        <cc:attribute name="title" type="java.lang.String" required="true"/>
+        <cc:attribute name="saveMethod" required="true"/>
+    </cc:interface>
+
+    <cc:implementation>
+        <shared:csrfform id="#{cc.attrs.formId}">
+            <div class="field-value-group">
+                <h2 class="field-value-title">#{cc.attrs.title}</h2>
+                <div class="field-value-content">
+                    <cc:insertChildren/>
+                </div>
+                <p:commandButton styleClass="field-value-save" value="Enregistrer"/>
+            </div>
+        </shared:csrfform>
+    </cc:implementation>
+
+</ui:composition>
