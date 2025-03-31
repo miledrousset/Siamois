@@ -179,10 +179,6 @@ class RecordingUnitServiceTest {
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
 
-        doNothing().when(customFormResponseService).saveFormResponse(
-                any(CustomFormResponse.class),
-                any(CustomFormResponse.class)
-        );
 
         RecordingUnit result = recordingUnitService.save(recordingUnitToSave,c,
                 List.of(anteriorUnit),
