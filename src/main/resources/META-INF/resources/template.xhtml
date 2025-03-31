@@ -36,14 +36,14 @@
         <!-- Barre latérale -->
         <h:panelGroup id="siamoisNav" rendered="#{navBean.siamoisMode}">
             <nav id="sidebar" class="sidebar" aria-label="General sidebar">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <h:graphicImage library="img" name="siamois_logo.png" styleClass="logo"/>
+                    </li>
+                </ul>
+                <button id="toggle-btn" class="btn btn-outline-light">☰</button>
                 <h:form id="siamoisNavForm">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <h:graphicImage library="img" name="siamois_logo.png" styleClass="logo"/>
-                        </li>
-                    </ul>
-                    <button id="toggle-btn" class="btn btn-outline-light">☰</button>
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <a href="#" class="nav-link">
