@@ -71,6 +71,7 @@ public class NewActionUnitBean implements Serializable {
             actionUnit.setAuthor(author);
             actionUnit.setBeginDate(OffsetDateTime.now());
             actionUnit.setEndDate(OffsetDateTime.now());
+            actionUnit.setCreatedByInstitution(sessionSettingsBean.getSelectedInstitution());
 
             this.actionUnit = actionUnitService.save(sessionSettingsBean.getUserInfo() ,actionUnit, fieldType);
 
