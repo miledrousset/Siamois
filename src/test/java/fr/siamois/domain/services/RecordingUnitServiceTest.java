@@ -3,6 +3,7 @@ package fr.siamois.domain.services;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
+import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.recordingunit.StratigraphicRelationship;
@@ -179,10 +180,6 @@ class RecordingUnitServiceTest {
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
 
-        doNothing().when(customFormResponseService).saveFormResponse(
-                any(CustomFormResponse.class),
-                any(CustomFormResponse.class)
-        );
 
         RecordingUnit result = recordingUnitService.save(recordingUnitToSave,c,
                 List.of(anteriorUnit),
@@ -192,7 +189,54 @@ class RecordingUnitServiceTest {
 
         // assert
         assertNotNull(result);
+        assertNull(result.getFormResponse());
         assertEquals("MOM-2025-5", result.getFullIdentifier());
+
+
+
+    }
+
+    @Test
+    void save_saveFormIfSet() {
+
+        CustomForm form = new CustomForm();
+        recordingUnitToSave.setFormResponse(new CustomFormResponse());
+        recordingUnitToSave.getFormResponse().setForm(form);
+
+        RecordingUnit anteriorUnit = new RecordingUnit();
+        anteriorUnit.setId(1L);
+        RecordingUnit synchronousUnit = new RecordingUnit();
+        synchronousUnit.setId(2L);
+        RecordingUnit posteriorUnit = new RecordingUnit();
+        posteriorUnit.setId(3L);
+
+        StratigraphicRelationship antRelationship = new StratigraphicRelationship();
+        antRelationship.setUnit1(recordingUnitToSave);
+        antRelationship.setUnit2(anteriorUnit);
+        antRelationship.setType(StratigraphicRelationshipService.ASYNCHRONOUS);
+        StratigraphicRelationship syncRelationship = new StratigraphicRelationship();
+        syncRelationship.setUnit1(recordingUnitToSave);
+        syncRelationship.setUnit2(synchronousUnit);
+        syncRelationship.setType(StratigraphicRelationshipService.SYNCHRONOUS);
+        StratigraphicRelationship postRelationship = new StratigraphicRelationship();
+        postRelationship.setUnit1(posteriorUnit);
+        postRelationship.setUnit2(recordingUnitToSave);
+        postRelationship.setType(StratigraphicRelationshipService.ASYNCHRONOUS);
+
+        Concept c = new Concept();
+        c.setLabel("Unité strati");
+        when(conceptService.saveOrGetConcept(c)).thenReturn(c);
+
+        when(recordingUnitRepository.findMaxUsedIdentifierByAction(anyLong())).thenReturn(null);
+
+        when(recordingUnitRepository.save(any(RecordingUnit.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        RecordingUnit res = recordingUnitService.save(recordingUnitToSave, c, List.of(anteriorUnit),
+                List.of(synchronousUnit),
+                List.of(posteriorUnit));
+        assertNotNull(res);
+        assertNotNull(res.getFormResponse());
 
 
 

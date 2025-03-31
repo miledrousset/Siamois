@@ -14,7 +14,7 @@
 
                 <h:panelGroup style="#{flowBean.fullscreenPanelIndex == -1 ? 'display:flex;flex-direction: column;gap:1em;padding:1em;' : 'display:flex;flex-direction: column;gap:1em;padding:0.5em;'}" id="flow-panels">
                     <c:forEach items="#{flowBean.panels}" var="panel" varStatus="status">
-                        <p:panel styleClass="siamois-panel spatial-unit-panel"
+                        <p:panel styleClass="#{panel.panelClass}"
                                 rendered="#{flowBean.fullscreenPanelIndex ==-1 || flowBean.fullscreenPanelIndex == status.index}" id="panel-${status.index}"
                                 toggleable="true" closable="true">
                             <f:facet name="header">
@@ -31,13 +31,13 @@
                                             action="#{flowBean.fullScreen(panel)}"
                                             update="flow"
                                             styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
-                                        <h:outputText styleClass="ui-icon pi pi-question"/>
+                                        <h:outputText styleClass="ui-icon bi bi-arrows-angle-expand"/>
                                     </p:commandLink>
                                     <p:commandLink rendered="#{flowBean.fullscreenPanelIndex == status.index}"
                                                    action="#{flowBean.closeFullScreen()}"
                                                    update="flow"
                                                    styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
-                                        <h:outputText styleClass="ui-icon pi pi-question"/>
+                                        <h:outputText styleClass="ui-icon bi bi-arrows-angle-contract"/>
                                     </p:commandLink>
                                 </h:form>
                             </f:facet>

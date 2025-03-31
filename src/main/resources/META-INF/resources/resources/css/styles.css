@@ -7,7 +7,10 @@
 
 :root {
 
+    --green-valid: #22c55e;
+
     --siamois-primary: #BED730;
+    --siamois-green-unknown: #f9fbf9;
     --siamois-primary-green: #BED730;
     --siamois-green-light-100: #E6F0E6;
     --main-content-background: #FAFAFA;
@@ -18,6 +21,9 @@
     --context-light-color-50: #EDF4F6;
     --context-light-color-100: #CDE8EE;
     --context-light-color-200: #B4DDE5;
+
+    --ground-main-color: #7E1717;
+    --ground-light-color-100: #E5D1D1;
 }
 
 

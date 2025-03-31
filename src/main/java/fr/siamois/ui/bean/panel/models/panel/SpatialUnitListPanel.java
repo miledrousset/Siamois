@@ -7,6 +7,7 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.Scope;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Component
-@Scope("prototype")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SpatialUnitListPanel extends AbstractPanel {
 
     private final SpatialUnitService spatialUnitService;
@@ -25,7 +26,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
 
     public SpatialUnitListPanel(SpatialUnitService spatialUnitService, SessionSettingsBean sessionSettingsBean) {
-        super("spatial-unit-list", "Unités géographiques", "welcome-panel", "bi bi-geo-alt");
+        super("Unités géographiques", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-list-panel");
         this.spatialUnitService = spatialUnitService;
         this.sessionSettingsBean = sessionSettingsBean;
         this.setBreadcrumb(new PanelBreadcrumb());
