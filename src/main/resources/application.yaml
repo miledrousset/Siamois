@@ -54,6 +54,10 @@ spring:
     basename: language/messages
     encoding: UTF-8
 
+  web:
+    resources:
+      static-locations: classpath:/static/
+
   servlet:
     multipart:
       enabled: true
