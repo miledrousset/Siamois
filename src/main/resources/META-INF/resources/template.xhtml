@@ -35,7 +35,7 @@
     <div class="d-flex">
         <!-- Barre latérale -->
         <h:panelGroup id="siamoisNav" rendered="#{navBean.siamoisMode}">
-            <nav id="sidebar" class="sidebar">
+            <nav id="sidebar" class="sidebar" role="navigation">
                 <h:form id="siamoisNavForm">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <ul class="nav flex-column">
@@ -106,7 +106,7 @@
             </nav>
         </h:panelGroup>
         <h:panelGroup id="settingsNav" rendered="#{navBean.settingsMode}">
-            <nav id="sidebarSettings" class="sidebar">
+            <nav id="sidebarSettings" class="sidebar" role="navigation">
                 <h:form id="settingsNavForm">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <ul class="nav flex-column">
