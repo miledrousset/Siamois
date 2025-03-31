@@ -5,10 +5,36 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:c="http://java.sun.com/jsp/jstl/core"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:settingscomp="http://xmlns.jcp.org/jsf/composite/pages/settings/components"
+>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="css" name="settings.css"/>
+    </ui:define>
 
     <ui:define name="content">
-        <p>Hello world !</p>
+        <main>
+            <div class="field-value-card col-lg-6">
+                <h1 class="field-value-title">Mon profile</h1>
+                <div class="field-value-content">
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Email</label>
+                        <div class="col-sm-10">
+                            <input/>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Nom complet</label>
+                        <div class="col-sm-10">
+                            <input/>
+                        </div>
+                    </div>
+                </div>
+                <h:commandButton styleClass="save"/>
+            </div>
+        </main>
     </ui:define>
 
 </ui:composition>
