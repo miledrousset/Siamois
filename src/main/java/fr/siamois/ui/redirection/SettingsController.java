@@ -19,7 +19,18 @@ public class SettingsController {
     @GetMapping("/settings")
     public String goToSettings() {
         navBean.setApplicationMode(NavBean.ApplicationMode.SETTINGS);
-        return "forward:/pages/settings/settings.xhtml";
+        return "forward:/pages/settings/profileSettings.xhtml";
+    }
+
+    @GetMapping("/settings/profile")
+    public String goToSettingsByProfile() {
+        return goToSettings();
+    }
+
+    @GetMapping("/settings/profile/thesaurus")
+    public String goToThesaurusProfile() {
+        navBean.setApplicationMode(NavBean.ApplicationMode.SETTINGS);
+        return "forward:/pages/settings/thesaurusSettings.xhtml";
     }
 
     @GetMapping("/dashboard")

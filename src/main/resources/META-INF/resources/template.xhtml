@@ -113,16 +113,16 @@
                     <ul class="nav flex-column">
                         <li class="nav-header">Profil</li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <h:commandLink action="#{redirectBean.redirectTo('/settings/profile')}" styleClass="nav-link">
                                 <i class="bi bi-person"/>
                                 <span class="menu-text">Mon profil</span>
-                            </a>
+                            </h:commandLink>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <h:commandLink action="#{redirectBean.redirectTo('/settings/profile/thesaurus')}" styleClass="nav-link">
                                 <i class="bi bi-calendar"/>
                                 <span class="menu-text">Mon thesaurus</span>
-                            </a>
+                            </h:commandLink>
                         </li>
                     </ul>
 

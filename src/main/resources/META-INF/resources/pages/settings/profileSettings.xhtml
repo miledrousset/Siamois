@@ -19,7 +19,7 @@
 
     <ui:define name="content">
         <main>
-            <settingscomp:fieldValue title="Mon profil" formId="monProfilForm" saveMethod="#{settingsBean.saveProfile()}">
+            <settingscomp:fieldValue title="Mon profil" formId="profileForm" saveMethod="#{settingsBean.saveProfile()}">
                 <settingscomp:fieldValueRow label="Email" inputId="profile-email" >
                     <p:inputText id="profile-email" type="email" value="#{settingsBean.FEmail}"/>
                 </settingscomp:fieldValueRow>

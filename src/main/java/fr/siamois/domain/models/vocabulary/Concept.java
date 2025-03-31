@@ -52,9 +52,6 @@ public class Concept implements Serializable {
     @Column(name = "label_lang", length = Integer.MAX_VALUE)
     private String langCode;
 
-
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
