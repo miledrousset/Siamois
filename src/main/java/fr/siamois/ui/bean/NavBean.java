@@ -53,6 +53,10 @@ public class NavBean implements Serializable {
         institutions = sessionSettingsBean.getReferencedInstitutions();
     }
 
+    public boolean userIsSuperAdmin() {
+        return sessionSettingsBean.getUserInfo().getUser().isSuperAdmin();
+    }
+
     public Institution getSelectedInstitution() {
         return sessionSettingsBean.getSelectedInstitution();
     }

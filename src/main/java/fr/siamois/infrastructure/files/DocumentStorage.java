@@ -70,6 +70,8 @@ public class DocumentStorage {
             }
         }
 
+        content.close();
+
     }
 
     private byte[] compressAndSetStoredName(Document document, InputStream content) throws IOException {

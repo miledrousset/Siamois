@@ -36,6 +36,10 @@ public class Vocabulary implements Serializable {
     @Column(name = "last_lang")
     private String lastLang;
 
+    public String getUri() {
+        return String.format("%s?idt=%s", baseUri, externalVocabularyId);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
