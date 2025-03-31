@@ -5,24 +5,30 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:settingscomp="http://xmlns.jcp.org/jsf/composite/pages/settings/components"
->
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="head">
         <h:outputStylesheet library="css" name="settings.css"/>
     </ui:define>
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewAction action="#{settingsBean.init()}"/>
+        </f:metadata>
+    </ui:define>
+
     <ui:define name="content">
         <main>
-            <settingscomp:fieldValue title="Mon profil" saveMethod="#{settingsBean.save()}" formId="monProfilForm">
-                <settingscomp:fieldValueRow label="Email" inputId="profile-email">
-                    <p:inputText id="profile-email"/>
+            <settingscomp:fieldValue title="Mon profil" formId="monProfilForm" saveMethod="#{settingsBean.saveProfile()}">
+                <settingscomp:fieldValueRow label="Email" inputId="profile-email" >
+                    <p:inputText id="profile-email" type="email" value="#{settingsBean.FEmail}"/>
                 </settingscomp:fieldValueRow>
                 <hr/>
-                <settingscomp:fieldValueRow label="NOM" inputId="profile-lastname">
-                    <p:inputText id="profile-lastname"/>
+                <settingscomp:fieldValueRow label="Nom" inputId="profile-lastname">
+                    <p:inputText id="profile-lastname" value="#{settingsBean.FLastname}"/>
                 </settingscomp:fieldValueRow>
                 <settingscomp:fieldValueRow label="Prénom" inputId="profile-firstname">
-                    <p:inputText id="profile-firstname"/>
+                    <p:inputText id="profile-firstname" value="#{settingsBean.FFirstname}"/>
                 </settingscomp:fieldValueRow>
             </settingscomp:fieldValue>
         </main>

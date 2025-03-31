@@ -109,15 +109,7 @@
                             </h:commandLink>
                         </li>
                     </ul>
-                    <ul class="nav flex-column">
-                        <li class="nav-header">Organisations</li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="bi bi-house-door-fill"/>
-                                <span class="menu-text">Gestion des organisations</span>
-                            </a>
-                        </li>
-                    </ul>
+
                     <ul class="nav flex-column">
                         <li class="nav-header">Profil</li>
                         <li class="nav-item">
@@ -133,15 +125,28 @@
                             </a>
                         </li>
                     </ul>
-                    <ul class="nav flex-column">
-                        <li class="nav-header">Siamois</li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="bi bi-person"/>
-                                <span class="menu-text">Administration siamois</span>
-                            </a>
-                        </li>
-                    </ul>
+
+                    <h:panelGroup rendered="#{navBean.userIsSuperAdmin()}">
+                        <ul class="nav flex-column">
+                            <li class="nav-header">Organisations</li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="bi bi-house-door-fill"/>
+                                    <span class="menu-text">Gestion des organisations</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="nav flex-column">
+                            <li class="nav-header">Siamois</li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="bi bi-person"/>
+                                    <span class="menu-text">Administration siamois</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </h:panelGroup>
+
                     <div class="sidebar-footer">
                         <hr class="sidebar-divider"/>
                         <a class="nav-link">

@@ -50,3 +50,10 @@ main form {
 .field-value-value input {
     width: 100%;
 }
+
+.field-value-group button {
+    width: fit-content;
+    margin-left: auto;
+    background-color: var(--siamois-green);
+    border-color: var(--siamois-green);
+}
