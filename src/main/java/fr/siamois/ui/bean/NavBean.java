@@ -34,16 +34,20 @@ public class NavBean implements Serializable {
     private final transient InstitutionChangeEventPublisher institutionChangeEventPublisher;
     private final transient InstitutionConverter converter;
     private final transient InstitutionService institutionService;
+    private final RedirectBean redirectBean;
+
+    private ApplicationMode applicationMode = ApplicationMode.SIAMOIS;
 
     private transient List<Institution> institutions;
 
     public NavBean(SessionSettingsBean sessionSettingsBean,
                    InstitutionChangeEventPublisher institutionChangeEventPublisher,
-                   InstitutionConverter converter, InstitutionService institutionService) {
+                   InstitutionConverter converter, InstitutionService institutionService, RedirectBean redirectBean) {
         this.sessionSettingsBean = sessionSettingsBean;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
         this.converter = converter;
         this.institutionService = institutionService;
+        this.redirectBean = redirectBean;
     }
 
     public void init() {
@@ -94,6 +98,19 @@ public class NavBean implements Serializable {
 
     public Person currentUser() {
         return sessionSettingsBean.getAuthenticatedUser();
+    }
+
+    public boolean isSiamoisMode() {
+        return applicationMode == ApplicationMode.SIAMOIS;
+    }
+
+    public boolean isSettingsMode() {
+        return applicationMode == ApplicationMode.SETTINGS;
+    }
+
+    public enum ApplicationMode {
+        SIAMOIS,
+        SETTINGS
     }
 
 }

@@ -143,7 +143,6 @@ hr {
     bottom: 0;
 }
 
-/* Centrer l'image et la redimensionner automatiquement */
 .logo {
     display: block;
     margin: 0 auto;
@@ -151,7 +150,14 @@ hr {
     height: auto;
 }
 
-/* Ajuster la taille de l'image lorsque la barre de navigation est réduite */
 .sidebar.collapsed .logo {
-    max-width: 50px; /* Ajustez cette valeur selon vos besoins */
+    max-width: 50px;
+}
+
+.nav-header {
+    font-weight: 400;
+    margin-top: 8px;
+    letter-spacing: 1px;
+    margin-left: 13px;
+    color: var(--text-light);
 }

@@ -19,11 +19,9 @@ public class PageRedirectConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         // Entry point
         registry.addViewController("/").setViewName("forward:/index.xhtml");
-        registry.addViewController("/dashboard").setViewName("forward:/flow.xhtml");
 
         // Login
         registry.addViewController("/login").setViewName("forward:/pages/login/login.xhtml");
-
 
         // Recording unit
         registry.addViewController("/recordingunit/create").setViewName("forward:/pages/create/recordingUnit.xhtml");

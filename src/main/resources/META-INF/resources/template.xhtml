@@ -20,7 +20,8 @@
         window.csrfTokenValue = "{{ craft.request.csrfTokenValue }}";
     </script>
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap"/>
 
 
     <ui:insert name="head"/>
@@ -31,83 +32,143 @@
 <ui:insert name="metadata"/>
 
 <h:body>
-<div class="d-flex">
-    <!-- Barre latérale -->
-    <nav id="sidebar" class="sidebar">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <h:graphicImage library="img" name="siamois_logo.png" styleClass="logo"/>
-            </li>
-        </ul>
-        <button id="toggle-btn" class="btn btn-outline-light">☰</button>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="bi bi-house-door-fill"/>
-                    <span class="menu-text">Accueil</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="bi bi-compass-fill"/>
-                    <span class="menu-text">BD #{navBean.selectedInstitution.name}</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="bi bi-play-circle-fill"/>
-                    <span class="menu-text">Aide</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="bi bi-bookmark-fill"/>
-                    <span class="menu-text">Bookmark</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="bi bi-clock-fill"/>
-                    <span class="menu-text">Historique</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="bi bi-person-fill"/>
-                    <span class="menu-text">Rôle et Équipe</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="bi bi-gear-fill"/>
-                    <span class="menu-text">Paramètres</span>
-                </a>
-            </li>
-        </ul>
-        <div class="sidebar-footer">
-            <hr class="sidebar-divider"/>
-            <a class="nav-link">
-                <i class="bi bi-file-earmark-person-fill"/>
-                <span class="menu-text">#{navBean.currentUser().mail}</span>
-            </a>
-            <form id="logout-form" method="post" action="#{redirectBean.redirectUrl('/logout')}">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <a onclick="logout()" class="nav-link">
-                    <i class="bi bi-door-open-fill"/>
-                    <span class="menu-text">Déconnexion</span>
-                </a>
-            </form>
+    <div class="d-flex">
+        <!-- Barre latérale -->
+        <h:panelGroup id="siamoisNav" rendered="#{navBean.siamoisMode}">
+            <nav id="sidebar" class="sidebar">
+                <h:form id="siamoisNavForm">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <h:graphicImage library="img" name="siamois_logo.png" styleClass="logo"/>
+                        </li>
+                    </ul>
+                    <button id="toggle-btn" class="btn btn-outline-light">☰</button>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-house-door-fill"/>
+                                <span class="menu-text">Accueil</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-compass-fill"/>
+                                <span class="menu-text">BD #{navBean.selectedInstitution.name}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-play-circle-fill"/>
+                                <span class="menu-text">Aide</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-bookmark-fill"/>
+                                <span class="menu-text">Bookmark</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-clock-fill"/>
+                                <span class="menu-text">Historique</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-person-fill"/>
+                                <span class="menu-text">Rôle et Équipe</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <h:commandLink action="#{redirectBean.redirectTo('/settings')}" styleClass="nav-link">
+                                <i class="bi bi-gear-fill"/>
+                                <span class="menu-text">Paramètres</span>
+                            </h:commandLink>
+                        </li>
+                    </ul>
+                </h:form>
+                <div class="sidebar-footer">
+                    <hr class="sidebar-divider"/>
+                    <a class="nav-link">
+                        <i class="bi bi-file-earmark-person-fill"/>
+                        <span class="menu-text">#{navBean.currentUser().mail}</span>
+                    </a>
+                    <form id="logout-form" method="post" action="#{redirectBean.redirectUrl('/logout')}">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <a onclick="logout()" class="nav-link">
+                            <i class="bi bi-door-open-fill"/>
+                            <span class="menu-text">Déconnexion</span>
+                        </a>
+                    </form>
+                </div>
+            </nav>
+        </h:panelGroup>
+        <h:panelGroup id="settingsNav" rendered="#{navBean.settingsMode}">
+            <nav id="sidebarSettings" class="sidebar">
+                <h:form id="settingsNavForm">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}" styleClass="nav-link">
+                                <i class="bi bi-arrow-left"/>
+                                <span class="menu-text">Retourner à l'application</span>
+                            </h:commandLink>
+                        </li>
+                    </ul>
+                    <ul class="nav flex-column">
+                        <li class="nav-header">Organisations</li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-house-door-fill"/>
+                                <span class="menu-text">Gestion des organisations</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav flex-column">
+                        <li class="nav-header">Profil</li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-person"/>
+                                <span class="menu-text">Mon profil</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-calendar"/>
+                                <span class="menu-text">Mon thesaurus</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav flex-column">
+                        <li class="nav-header">Siamois</li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-person"/>
+                                <span class="menu-text">Administration siamois</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="sidebar-footer">
+                        <hr class="sidebar-divider"/>
+                        <a class="nav-link">
+                            <i class="bi bi-file-earmark-person-fill"/>
+                            <span class="menu-text">#{navBean.currentUser().mail}</span>
+                        </a>
+                    </div>
+                </h:form>
+            </nav>
+        </h:panelGroup>
+
+        <!-- Contenu principal -->
+        <div class="content">
+            <ui:insert description="The main content" name="content"/>
         </div>
-    </nav>
-
-    <!-- Contenu principal -->
-    <div class="content">
-        <ui:insert description="The main content" name="content"/>
     </div>
-</div>
 
-<!-- Bootstrap JS et Custom JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"/>
-<h:outputScript library="js" name="template.js"/>
+    <!-- Bootstrap JS et Custom JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"/>
+    <h:outputScript library="js" name="template.js"/>
 </h:body>
 </html>
