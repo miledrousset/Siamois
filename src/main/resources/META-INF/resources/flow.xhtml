@@ -21,17 +21,33 @@
                         <h:panelGroup id="iconSU" styleClass="ui-inputgroup-addon">
                             <i class="bi bi-geo-alt"/>
                         </h:panelGroup>
-                        <p:selectOneMenu id="selectOneMenuIconSU" value="[]" var="item">
-                            <f:selectItems value="#{['flag','wallet','map','link']}" var="item" itemLabel="#{item}"
+                        <p:selectOneMenu
+                                id="selectOneMenuIconSU"
+                                value="[]"
+                                var="item"
+                                filter="true"
+                                filterMatchMode="startsWitch"
+                                filterNormalize="true"
+                        >
+                            <f:selectItems value="#{['flag','wallet','map','link']}" var="item"
+                                           itemLabel="#{item}"
                                            itemValue="#{item}" />
 
                         </p:selectOneMenu>
                     </h:panelGroup>
                     <h:panelGroup styleClass="ui-inputgroup">
                         <h:panelGroup id="iconAU" styleClass="ui-inputgroup-addon">
-                            <i class="bi bi-arrow-90deg-right"/>
+                            <i class="bi bi-arrow-down-right-square"/>
                         </h:panelGroup>
-                        <p:selectOneMenu id="selectOneMenuIconAU" value="[]" var="item">
+                        <p:selectOneMenu
+                                id="selectOneMenuIconAU"
+                                value="[]"
+                                var="item"
+                                filter="true"
+                                filterMatchMode="startsWitch"
+                                filterNormalize="true"
+                        >
+                        >
                             <f:selectItems value="#{['flag','wallet','map','link']}" var="item" itemLabel="#{item}"
                                            itemValue="#{item}" />
 
