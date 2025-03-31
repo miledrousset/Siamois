@@ -9,13 +9,43 @@
 
     <ui:define name="head">
         <link rel="stylesheet" href="#{redirectBean.redirectUrlToResource('searchBar.css', 'css')}" />
+        <h:outputStylesheet library="css" name="panel.css"/>
     </ui:define>
 
     <ui:define name="content">
-        <h:outputStylesheet library="css" name="panel.css"/>
-
         <div id="search-bar">
-            <p>Test</p>
+            <h:form id="searchBarForm">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <article>
+                    <h:panelGroup styleClass="ui-inputgroup">
+                        <h:panelGroup id="iconSU" styleClass="ui-inputgroup-addon">
+                            <i class="bi bi-geo-alt"/>
+                        </h:panelGroup>
+                        <p:selectOneMenu id="selectOneMenuIconSU" value="[]" var="item">
+                            <f:selectItems value="#{['flag','wallet','map','link']}" var="item" itemLabel="#{item}"
+                                           itemValue="#{item}" />
+
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+                    <h:panelGroup styleClass="ui-inputgroup">
+                        <h:panelGroup id="iconAU" styleClass="ui-inputgroup-addon">
+                            <i class="bi bi-arrow-90deg-right"/>
+                        </h:panelGroup>
+                        <p:selectOneMenu id="selectOneMenuIconAU" value="[]" var="item">
+                            <f:selectItems value="#{['flag','wallet','map','link']}" var="item" itemLabel="#{item}"
+                                           itemValue="#{item}" />
+
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+                    <p:button value="+"/>
+                </article>
+                <article>
+                    <span class="ui-input-icon-right">
+                    <p:inputText styleClass="searchInput" placeholder=""/>
+                    <i class="bi bi-play-circle"/>
+                </span>
+                </article>
+            </h:form>
         </div>
 
         <p:outputPanel id="flow">

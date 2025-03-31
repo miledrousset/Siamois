@@ -1,7 +1,23 @@
-div#search-bar {
+div#search-bar form {
     background-color: var(--siamois-green-light-100);
     width: 100%;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    display: flex;
+    justify-content: center; /* Centre horizontalement */
+    align-items: center; /* Centre verticalement */
+    flex-direction: column;
+}
+
+div#search-bar form article {
+    display: flex;
+    gap: 1vw;
+    justify-content: center; /* Centre horizontalement les éléments à l'intérieur de l'article */
+    align-items: center; /* Centre verticalement les éléments à l'intérieur de l'article */
+    margin: 5px;
+}
+
+.searchInput {
+    width: 89vw;
+    margin-bottom: 5px;
 }
