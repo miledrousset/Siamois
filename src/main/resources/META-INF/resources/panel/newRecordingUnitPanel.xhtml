@@ -9,9 +9,9 @@
 >
 
     <!--@elvariable id="panelIndex" type="Integer"-->
-    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.NewSpatialUnitPanel"-->
-    <div class="spatial-unit-panel-title">
-        Création d'une nouvelle unité spatiale
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.NewRecordingUnitPanel"-->
+    <div class="recording-unit-panel-title">
+        Création d'une nouvelle unité d'enregistrement
     </div>
 
     <p:separator/>
@@ -26,14 +26,14 @@
 
             <p:panelGrid columns="4" layout="flex">
 
-                <p:outputLabel for="spatial-unit-name" value="Nom"/>
-                <p:inputText id="spatial-unit-name" required="true" value="#{panelModel.spatialUnit.name}"/>
+                <p:outputLabel for="recording-unit-id" value="Identifiant"/>
+                <p:outputLabel id="recording-unit-id" value="#{panelModel.recordingUnit.displayFullIdentifier()}"/>
 
-                <sharedLabel:openthesoLabel forId="auto-complete-spatial-type" label="Type"/>
+                <sharedLabel:openthesoLabel forId="auto-complete-recording-type" label="Type"/>
                 <sharedInput:conceptAutocomplete
-                        selectedConcept="#{panelModel.spatialUnit.category}"
-                        completeMethod="#{spatialUnitFieldBean.completeCategory}"
-                        editConceptUrl="#{spatialUnitFieldBean.getUrlForSpatialUnitTypeFieldCode()}"/>
+                        selectedConcept="#{panelModel.recordingUnit.type}"
+                        completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitType}"
+                        editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingTypeFieldCode()}"/>
 
 
             </p:panelGrid>

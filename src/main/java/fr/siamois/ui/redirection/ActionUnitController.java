@@ -22,6 +22,7 @@ public class ActionUnitController {
     public String toActionUnit(@PathVariable Long id, Model model) {
         model.addAttribute("id", id);
         actionUnitBean.setId(id);
+        // todo : redirect to proper panel
         return "forward:/pages/actionUnit/actionUnit.xhtml";
     }
 

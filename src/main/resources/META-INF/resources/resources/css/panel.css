@@ -140,6 +140,8 @@ tbody.spatial-unit-datatable .ui-link {
     color: var(--ground-main-color)
 }
 
+/* Action units panels */
+
 
 .ui-panel.action-unit-panel .ui-panel-titlebar {
     background: var(--context-light-color-100);
@@ -212,6 +214,77 @@ tbody.spatial-unit-datatable .ui-link {
 }
 
 tbody.action-unit-datatable .ui-link {
+    color: var(--context-main-color)
+}
+
+/* Recording units panels */
+
+.ui-panel.recording-unit-panel .ui-panel-titlebar {
+    background: var(--ground-light-color-100);
+
+}
+
+.recording-unit-panel-title {
+    color: var(--ground-main-color);
+    font-size: 22px;
+    padding: 0.5em;
+}
+
+.recording-unit-panel .ui-datatable thead th {
+    background: var(--ground-light-color-100);
+}
+
+.recording-unit-panel .ui-button {
+    background: var(--ground-main-color);
+    border: 1px solid var(--ground-main-color);
+}
+
+.recording-unit-panel .ui-separator {
+    background: var(--ground-light-color-100);
+}
+
+
+.recording-unit-panel .ui-divider.ui-divider-horizontal:before {
+    border-top-color: var(--ground-light-color-200);
+}
+
+.recording-unit-panel .panel-footer {
+    background: var(--ground-light-color-100);
+    border-radius: 0;
+    border: none;
+}
+
+.ui-chip.recording-unit-count-chip {
+    background-color: white;
+    border: 1px solid var(--ground-main-color);
+    color: var(--ground-main-color);
+    font-size: 16px;
+}
+
+
+.ui-panel.recording-unit-single-panel .ui-panel-content {
+    background: var(--ground-light-color-50);
+}
+
+.recording-unit-single-panel .ui-breadcrumb {
+    border: none;
+    background: var(--ground-light-color-50);
+}
+
+.recording-unit-single-panel .siamois-toolbar {
+    background: transparent;
+    box-shadow: none;
+}
+
+.recording-unit-single-panel .ui-tabs.ui-tabs-top > .ui-tabs-nav li.ui-tabs-header.ui-state-active {
+    border-color: var(--ground-main-color);
+}
+
+.recording-unit-single-panel .ui-tabs .ui-tabs-nav li.ui-tabs-header.ui-state-active a {
+    color: var(--ground-main-color);
+}
+
+tbody.recording-unit-datatable .ui-link {
     color: var(--context-main-color)
 }
 

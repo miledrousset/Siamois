@@ -104,6 +104,11 @@ public class FlowBean implements Serializable {
         panels.add(0, panelFactory.createNewActionUnitPanel(spatialUnitId, panels.get(sourcePanelIndex).getBreadcrumb()));
     }
 
+    public void addNewRecordingUnitPanel(Long actionUnitId, Integer sourcePanelIndex) {
+        panels.add(0, panelFactory.createNewRecordingUnitPanel(actionUnitId, panels.get(sourcePanelIndex).getBreadcrumb()));
+    }
+
+
     public void goToHomeCurrentPanel(AbstractPanel panel) {
         // Change current panel type add item to its breadcrumb
         int index = panels.indexOf(panel);
