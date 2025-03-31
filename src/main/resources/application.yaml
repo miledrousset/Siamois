@@ -54,13 +54,6 @@ spring:
     basename: language/messages
     encoding: UTF-8
 
-  web:
-    resources:
-      static-locations: classpath:/static/
-
-  mvc:
-    static-path-pattern: /static/**
-
   servlet:
     multipart:
       enabled: true
