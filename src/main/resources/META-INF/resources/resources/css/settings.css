@@ -1,0 +1,8 @@
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center horizontally */
+    justify-content: flex-start; /* Align items towards the top */
+    min-height: 100vh; /* Ensure it takes the full height of the viewport */
+    margin-top: 10vh;
+}
