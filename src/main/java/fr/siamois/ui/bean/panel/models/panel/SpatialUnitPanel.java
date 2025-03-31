@@ -25,6 +25,7 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.StreamedContent;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -65,6 +66,7 @@ public class SpatialUnitPanel extends AbstractPanel {
     private final DocumentService documentService;
     private final DocumentCreationBean documentCreationBean;
     private final CustomFieldService customFieldService;
+
 
     // Locals
     private SpatialUnit spatialUnit;
@@ -274,8 +276,8 @@ public class SpatialUnitPanel extends AbstractPanel {
 
         private final SpatialUnitPanel spatialUnitPanel;
 
-        public SpatialUnitPanelBuilder(SpatialUnitPanel spatialUnitPanel) {
-            this.spatialUnitPanel = spatialUnitPanel;
+        public SpatialUnitPanelBuilder(ObjectProvider<SpatialUnitPanel> spatialUnitPanelProvider) {
+            this.spatialUnitPanel = spatialUnitPanelProvider.getObject();
         }
 
         public SpatialUnitPanelBuilder id(Long id) {
