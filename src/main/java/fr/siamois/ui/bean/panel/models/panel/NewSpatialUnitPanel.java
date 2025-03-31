@@ -6,6 +6,7 @@ import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,17 +29,19 @@ public class NewSpatialUnitPanel extends AbstractPanel {
     // Deps
     private final LangBean langBean;
     private final SessionSettingsBean sessionSettingsBean;
-    private final SpatialUnitService spatialUnitService;
+    private final transient SpatialUnitService spatialUnitService;
+    private final FlowBean flowBean;
 
     // Locals
     SpatialUnit spatialUnit;
 
 
-    private NewSpatialUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService) {
+    public NewSpatialUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, FlowBean flowBean) {
         super("Nouvelle unité spatiale", "bi bi-geo-alt", "siamois-panel spatial-unit-panel new-spatial-unit-panel");
         this.langBean = langBean;
         this.sessionSettingsBean = sessionSettingsBean;
         this.spatialUnitService = spatialUnitService;
+        this.flowBean = flowBean;
     }
 
     @Override
@@ -64,7 +67,7 @@ public class NewSpatialUnitPanel extends AbstractPanel {
 
             MessageUtils.displayInfoMessage(langBean, "spatialunit.created", saved.getName());
 
-            // TODO : Replace this panel with a spatial unit panel
+            flowBean.goToSpatialUnitByIdCurrentPanel(saved.getId(), this);
 
             return true;
         } catch (SpatialUnitAlreadyExistsException e) {
@@ -80,6 +83,12 @@ public class NewSpatialUnitPanel extends AbstractPanel {
 
         public NewSpatialUnitPanelBuilder(ObjectProvider<NewSpatialUnitPanel> newSpatialUnitPanelProvider) {
             this.newSpatialUnitPanel = newSpatialUnitPanelProvider.getObject();
+        }
+
+        public NewSpatialUnitPanel.NewSpatialUnitPanelBuilder breadcrumb(PanelBreadcrumb breadcrumb) {
+            newSpatialUnitPanel.setBreadcrumb(breadcrumb);
+
+            return this;
         }
 
         public NewSpatialUnitPanel build() {

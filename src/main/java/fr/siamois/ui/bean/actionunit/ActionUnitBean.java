@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean.actionunit;
 
+import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
@@ -20,9 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -71,58 +74,27 @@ public class ActionUnitBean implements Serializable {
     }
 
     /**
-     * Fetch the autocomplete results for the action codes
-     *
-     * @param input the input of the user
-     * @return the list of codes the input to display in the autocomplete
-     */
-    public List<ActionCode> completeActionCode(String input) {
-
-        return actionUnitService.findAllActionCodeByCodeIsContainingIgnoreCase(input);
-
-    }
-
-    public String getUrlForActionCodeTypeFieldCode() {
-        return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), ActionCode.TYPE_FIELD_CODE);
-    }
-
-    /**
-     * Fetch the autocomplete results on API for the action code type field
+     * Fetch the autocomplete results on API for the type field and add them to the list of concepts.
      *
      * @param input the input of the user
      * @return the list of concepts that match the input to display in the autocomplete
      */
-    public List<Concept> completeActionCodeType(String input) {
-
+    public List<Concept> completeActionUnitType(String input) {
+        UserInfo info = sessionSettingsBean.getUserInfo();
+        List<Concept> concepts = Collections.emptyList();
         try {
-            return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), ActionCode.TYPE_FIELD_CODE, input);
+            concepts = fieldConfigurationService.fetchAutocomplete(info, ActionUnit.TYPE_FIELD_CODE, input);
         } catch (NoConfigForFieldException e) {
             log.error(e.getMessage(), e);
-            return new ArrayList<>();
         }
-
+        return concepts;
     }
 
-    public void handleSelectPrimaryCode() {
-        // To implement
+    public String getUrlForActionUnitTypeFieldCode() {
+        return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), ActionUnit.TYPE_FIELD_CODE);
     }
 
-    public void addNewSecondaryCode() {
-        ActionCode code = new ActionCode();
-        Concept c = new Concept();
-        code.setCode("");
-        code.setType(c);
-        secondaryActionCodes.add(code);
-    }
 
-    public void initNewActionCode(int index) {
-        newCodeIndex = index;
-        newCode = new ActionCode();
-    }
-
-    public void removeSecondaryCode(int index) {
-        secondaryActionCodes.remove(index);
-    }
 
     public void save() {
         try {
@@ -149,16 +121,7 @@ public class ActionUnitBean implements Serializable {
         }
     }
 
-    public void saveNewActionCode() {
-        // Update the action code
-        if (newCodeIndex == 0) {
-            // update primary action code
-            actionUnit.setPrimaryActionCode(newCode);
-        } else if (newCodeIndex > 0) {
-            actionUnit.getSecondaryActionCodes().add(newCode);
-            secondaryActionCodes.set(newCodeIndex - 1, newCode);
-        }
-    }
+
 
     public void init() {
         if (!FacesContext.getCurrentInstance().isPostback()) {

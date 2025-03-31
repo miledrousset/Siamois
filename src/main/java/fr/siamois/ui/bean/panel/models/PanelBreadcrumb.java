@@ -7,11 +7,13 @@ import org.primefaces.model.menu.BaseMenuModel;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.MenuModel;
 
+import java.io.Serializable;
+
 @Getter
 @Data
-public class PanelBreadcrumb  {
+public class PanelBreadcrumb implements Serializable {
 
-    private MenuModel model;
+    private transient MenuModel model;
 
     public PanelBreadcrumb() {
         createMenu();

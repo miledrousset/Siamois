@@ -141,6 +141,83 @@ tbody.spatial-unit-datatable .ui-link {
 }
 
 
+.ui-panel.action-unit-panel .ui-panel-titlebar {
+    background: var(--context-light-color-100);
+
+}
+
+.action-unit-panel-title {
+    color: var(--context-main-color);
+    font-size: 22px;
+    padding: 0.5em;
+}
+
+.action-unit-panel .ui-datatable thead th {
+    background: var(--context-light-color-100);
+}
+
+.action-unit-panel .ui-button {
+    background: var(--context-main-color);
+    border: 1px solid var(--context-main-color);
+}
+
+.action-unit-panel .ui-separator {
+    background: var(--context-light-color-100);
+}
+
+
+.action-unit-panel .ui-divider.ui-divider-horizontal:before {
+    border-top-color: var(--context-light-color-200);
+}
+
+.action-unit-panel .panel-footer {
+    background: var(--context-light-color-100);
+    border-radius: 0;
+    border: none;
+}
+
+.ui-chip.action-unit-count-chip {
+    background-color: white;
+    border: 1px solid var(--context-main-color);
+    color: var(--context-main-color);
+    font-size: 16px;
+}
+
+.ui-chip.action-unit-type-chip {
+    background-color: var(--context-main-color);
+    color: white;
+    font-size: 16px;
+}
+
+.ui-panel.action-unit-single-panel .ui-panel-content {
+    background: var(--context-light-color-50);
+}
+
+.action-unit-single-panel .ui-breadcrumb {
+    border: none;
+    background: var(--context-light-color-50);
+}
+
+.action-unit-single-panel .siamois-toolbar {
+    background: transparent;
+    box-shadow: none;
+}
+
+.action-unit-single-panel .ui-tabs.ui-tabs-top > .ui-tabs-nav li.ui-tabs-header.ui-state-active {
+    border-color: var(--context-main-color);
+}
+
+.action-unit-single-panel .ui-tabs .ui-tabs-nav li.ui-tabs-header.ui-state-active a {
+    color: var(--context-main-color);
+}
+
+tbody.action-unit-datatable .ui-link {
+    color: var(--context-main-color)
+}
+
+
+
+
 
 
 

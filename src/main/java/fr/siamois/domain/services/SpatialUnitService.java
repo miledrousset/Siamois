@@ -14,7 +14,9 @@ import fr.siamois.domain.services.ark.ArkService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.SpatialUnitRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -74,9 +76,12 @@ public class SpatialUnitService implements ArkEntityService {
      * @throws SpatialUnitNotFoundException If no spatial unit are found for the given id
      * @throws RuntimeException             If the repository method returns a RuntimeException
      */
+    @Transactional(readOnly = true)
     public SpatialUnit findById(long id) {
         try {
-            return spatialUnitRepository.findById(id).orElseThrow(() -> new SpatialUnitNotFoundException("SpatialUnit not found with ID: " + id));
+            SpatialUnit spatialUnit = spatialUnitRepository.findById(id).orElseThrow(() -> new SpatialUnitNotFoundException("SpatialUnit not found with ID: " + id));
+            Hibernate.initialize(spatialUnit);
+            return spatialUnit;
         } catch (RuntimeException e) {
             log.error(e.getMessage(), e);
             throw e;

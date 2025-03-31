@@ -13,6 +13,7 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.breadcrumb.BreadcrumbBean;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
+import fr.siamois.ui.bean.panel.models.panel.ActionUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel;
 import fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel;
 import lombok.Data;
@@ -59,8 +60,8 @@ public class FlowBean implements Serializable {
     private static final String RESPONSIVE_CLASS = "col-12 lg:col-6 xl:col-6";
 
     @Getter
-    private transient List<AbstractPanel>  panels = new ArrayList<>();
-    private transient  int fullscreenPanelIndex = -1;
+    private transient List<AbstractPanel> panels = new ArrayList<>();
+    private transient int fullscreenPanelIndex = -1;
 
 
     public FlowBean(SpatialUnitService spatialUnitService,
@@ -92,40 +93,59 @@ public class FlowBean implements Serializable {
 
 
     public void addSpatialUnitListPanel() {
-        panels.add(0,panelFactory.createSpatialUnitListPanel());
+        panels.add(0, panelFactory.createSpatialUnitListPanel());
     }
 
-    public void addNewSpatialUnitPanel() {
-        panels.add(0, panelFactory.createNewSpatialUnitPanel());
+    public void addNewSpatialUnitPanel(AbstractPanel currentPanel) {
+        panels.add(0, panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb()));
+    }
+
+    public void addNewActionUnitPanel(Long spatialUnitId, Integer sourcePanelIndex) {
+        panels.add(0, panelFactory.createNewActionUnitPanel(spatialUnitId, panels.get(sourcePanelIndex).getBreadcrumb()));
     }
 
     public void goToHomeCurrentPanel(AbstractPanel panel) {
         // Change current panel type add item to its breadcrumb
         int index = panels.indexOf(panel);
         SpatialUnitListPanel newPanel = panelFactory.createSpatialUnitListPanel();
-        panels.set(index,newPanel);
+        panels.set(index, newPanel);
     }
 
     public void goToSpatialUnitByIdNewPanel(Long id, AbstractPanel currentPanel) {
         // Create new panel type and add items to its breadcrumb
         SpatialUnitPanel newPanel = panelFactory.createSpatialUnitPanel(id, currentPanel.getBreadcrumb());
-        panels.add(0,newPanel);
+        panels.add(0, newPanel);
+    }
+
+    public void goToActionUnitByIdNewPanel(Long id, Integer currentPanelIndex) {
+        // Create new panel type and add items to its breadcrumb
+        ActionUnitPanel newPanel = panelFactory.createActionUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
+        panels.add(0, newPanel);
     }
 
     public void goToSpatialUnitByIdCurrentPanel(Long id, AbstractPanel currentPanel) {
         // Change current panel type add item to its breadcrumb
         int index = panels.indexOf(currentPanel);
-        if(index != -1) {
+        if (index != -1) {
             SpatialUnitPanel newPanel = panelFactory.createSpatialUnitPanel(id, currentPanel.getBreadcrumb());
-            panels.set(index,newPanel);
+            panels.set(index, newPanel);
         }
+
+    }
+
+    public void goToActionUnitByIdCurrentPanel(Long id, Integer currentPanelIndex) {
+        // Change current panel type add item to its breadcrumb
+        int index = currentPanelIndex;
+        ActionUnitPanel newPanel = panelFactory.createActionUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
+        panels.set(index, newPanel);
+
 
     }
 
     public void fullScreen(AbstractPanel panel) {
         // Could use setter if we don't add more code
         int index = panels.indexOf(panel);
-        if(index != -1) {
+        if (index != -1) {
             fullscreenPanelIndex = index;
         }
     }

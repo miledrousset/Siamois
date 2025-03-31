@@ -13,6 +13,7 @@ import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.form.CustomFieldService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.DocumentCreationBean;
@@ -41,6 +42,8 @@ import software.xdev.chartjs.model.options.Tooltip;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,36 +58,36 @@ import java.util.stream.Collectors;
 @Data
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class SpatialUnitPanel extends AbstractPanel {
+public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
     // Dependencies
-    private final SpatialUnitService spatialUnitService;
-    private final RecordingUnitService recordingUnitService;
-    private final ActionUnitService actionUnitService;
-    private final SessionSettingsBean sessionSettings;
-    private final SpatialUnitHelperService spatialUnitHelperService;
-    private final DocumentService documentService;
-    private final DocumentCreationBean documentCreationBean;
-    private final CustomFieldService customFieldService;
+    private final transient  SpatialUnitService spatialUnitService;
+    private final transient RecordingUnitService recordingUnitService;
+    private final transient ActionUnitService actionUnitService;
+    private final transient SessionSettingsBean sessionSettings;
+    private final transient SpatialUnitHelperService spatialUnitHelperService;
+    private final transient DocumentService documentService;
+    private final transient DocumentCreationBean documentCreationBean;
+    private final transient CustomFieldService customFieldService;
 
 
     // Locals
-    private SpatialUnit spatialUnit;
+    private transient SpatialUnit spatialUnit;
     private String spatialUnitErrorMessage;
-    private List<SpatialUnit> spatialUnitList;
-    private List<SpatialUnit> spatialUnitParentsList;
-    private List<RecordingUnit> recordingUnitList;
-    private List<ActionUnit> actionUnitList;
+    private transient List<SpatialUnit> spatialUnitList;
+    private transient List<SpatialUnit> spatialUnitParentsList;
+    private transient List<RecordingUnit> recordingUnitList;
+    private transient List<ActionUnit> actionUnitList;
     private String spatialUnitListErrorMessage;
     private String spatialUnitParentsListErrorMessage;
     private String actionUnitListErrorMessage;
     private String recordingUnitListErrorMessage;
 
-    private List<SpatialUnitHist> historyVersion;
-    private SpatialUnitHist revisionToDisplay = null;
+    private transient List<SpatialUnitHist> historyVersion;
+    private transient SpatialUnitHist revisionToDisplay = null;
 
-    private List<CustomField> availableFields;
-    private List<CustomField> selectedFields;
+    private transient List<CustomField> availableFields;
+    private transient List<CustomField> selectedFields;
 
     private String barModel;
 
@@ -210,6 +213,10 @@ public class SpatialUnitPanel extends AbstractPanel {
 
     public void restore(SpatialUnitHist history) {
         spatialUnitHelperService.restore(history);
+    }
+
+    public String formatDate(OffsetDateTime offsetDateTime) {
+        return DateUtils.formatOffsetDateTime(offsetDateTime);
     }
 
     public String getFormattedValue(Object value) {

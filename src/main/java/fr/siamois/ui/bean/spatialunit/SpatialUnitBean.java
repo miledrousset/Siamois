@@ -190,9 +190,7 @@ public class SpatialUnitBean implements Serializable {
         historyVersion = historyService.findSpatialUnitHistory(spatialUnit);
     }
 
-    public String formatDate(OffsetDateTime offsetDateTime) {
-        return DateUtils.formatOffsetDateTime(offsetDateTime);
-    }
+
 
     public void visualise(SpatialUnitHist history) {
         log.trace("History version changed to {}", history.toString());

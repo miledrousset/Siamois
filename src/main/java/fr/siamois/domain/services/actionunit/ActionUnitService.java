@@ -67,6 +67,8 @@ public class ActionUnitService implements ArkEntityService {
 
         try {
 
+            actionUnit.setCreatedByInstitution(info.getInstitution());
+
             // Generate unique identifier if not presents
             if (actionUnit.getFullIdentifier() == null) {
                 if (actionUnit.getIdentifier() == null) {
@@ -81,7 +83,7 @@ public class ActionUnitService implements ArkEntityService {
             actionUnit.setType(type);
 
             actionUnit.setAuthor(info.getUser());
-            actionUnit.setCreatedByInstitution(info.getInstitution());
+
 
             return actionUnitRepository.save(actionUnit);
         } catch (RuntimeException e) {

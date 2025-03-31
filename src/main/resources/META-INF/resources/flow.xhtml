@@ -23,6 +23,7 @@
                             <p:breadCrumb model="#{panel.breadcrumb.model}"/>
                             <ui:include src="#{panel.display()}">
                                 <ui:param name="panelModel" value="#{panel}"/>
+                                <ui:param name="panelIndex" value="#{status.index}"/>
                             </ui:include>
                             <f:facet name="actions">
                                 <h:form>
@@ -50,7 +51,6 @@
         </p:outputPanel>
 
         <ui:include src="/dialog/actionUnit/actionUnitDialog.xhtml"/>
-        <ui:include src="/dialog/spatialUnit/newSpatialUnitDialog.xhtml"/>
 
     </ui:define>
 

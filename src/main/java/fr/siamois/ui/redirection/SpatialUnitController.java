@@ -25,6 +25,7 @@ public class SpatialUnitController {
         model.addAttribute("id", id);
         spatialUnitBean.setId(id);
         spatialUnitBean.init();
+        // TODO : implement proper redirection (open panel)
         return "forward:/pages/spatialUnit/spatialUnit.xhtml";
     }
 
