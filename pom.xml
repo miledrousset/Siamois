@@ -64,7 +64,8 @@
             **/**Utils.*,
             **/**Listener.*,
             **/events/**/*.*,
-            **/files/**/*.*
+            **/files/**/*.*,
+            **/resources/**/*.*
         </sonar.coverage.exclusions>
 
 
