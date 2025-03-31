@@ -22,8 +22,8 @@
             <p:toolbar>
                 <p:toolbarGroup>
                     <p:commandButton value='Nouveau lieu' icon="pi pi-plus"
-                                     actionListener="#{spatialUnitFieldBean.init([], [])}"
-                                     oncomplete="PF('new-spatial-unit-dialog').show()"
+                                     actionListener="#{flowBean.addNewSpatialUnitPanel()}"
+                                     update="flow"
                                      style="margin-right: .5rem">
                     </p:commandButton>
                 </p:toolbarGroup>

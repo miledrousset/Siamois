@@ -1,0 +1,55 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             xmlns:f="http://xmlns.jcp.org/jsf/core"
+             xmlns:h="http://xmlns.jcp.org/jsf/html"
+             xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label"
+             xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
+             xmlns:p="http://primefaces.org/ui"
+
+>
+
+
+    <div class="spatial-unit-panel-title">
+        Création d'une nouvelle unité spatiale
+    </div>
+
+    <p:separator/>
+
+    <h:form>
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+        <div style="padding:1em;">
+            <p:divider align="left" class="panel-section-separator">
+                <b>Informations générales</b>
+            </p:divider>
+
+            <p:panelGrid columns="4" layout="flex">
+
+                <p:outputLabel for="spatial-unit-name" value="Nom"/>
+                <p:inputText id="spatial-unit-name" required="true" value="#{panelModel.spatialUnit.name}"/>
+
+                <sharedLabel:openthesoLabel forId="auto-complete-spatial-type" label="Type"/>
+                <sharedInput:conceptAutocomplete
+                        selectedConcept="#{panelModel.spatialUnit.category}"
+                        completeMethod="#{spatialUnitFieldBean.completeCategory}"
+                        editConceptUrl="#{spatialUnitFieldBean.getUrlForSpatialUnitTypeFieldCode()}"/>
+
+
+            </p:panelGrid>
+
+        </div>
+
+        <p:toolbar class="panel-footer">
+            <p:toolbarGroup align="right">
+                <p:commandButton value='Enregistrer'
+                                 actionListener="#{panelModel.save()}"
+                                 update="flow"
+                                 style="margin-right: .5rem">
+                </p:commandButton>
+            </p:toolbarGroup>
+        </p:toolbar>
+
+    </h:form>
+
+
+</ui:fragment>

@@ -25,17 +25,14 @@
     padding: 1em;
 }
 
-.siamois-panel .ui-tabs.ui-tabs-top>.ui-tabs-nav li.ui-tabs-header {
+.siamois-panel .ui-tabs.ui-tabs-top > .ui-tabs-nav li.ui-tabs-header {
     background: transparent;
 }
-
 
 
 .siamois-panel .ui-tabs .ui-tabs-nav {
     background: transparent;
 }
-
-
 
 
 .siamois-panel .ui-breadcrumb {
@@ -56,7 +53,7 @@
 .spatial-unit-panel-title {
     color: var(--context-main-color);
     font-size: 22px;
-    padding: 1em;
+    padding: 0.5em;
 }
 
 .spatial-unit-panel .ui-datatable thead th {
@@ -66,6 +63,21 @@
 .spatial-unit-panel .ui-button {
     background: var(--context-main-color);
     border: 1px solid var(--context-main-color);
+}
+
+.spatial-unit-panel .ui-separator {
+    background: var(--context-light-color-100);
+}
+
+
+.spatial-unit-panel .ui-divider.ui-divider-horizontal:before {
+    border-top-color: var(--context-light-color-200);
+}
+
+.spatial-unit-panel .panel-footer {
+    background: var(--context-light-color-100);
+    border-radius: 0;
+    border: none;
 }
 
 .ui-chip.spatial-unit-count-chip {
@@ -107,7 +119,7 @@
     box-shadow: none;
 }
 
-.spatial-unit-single-panel .ui-tabs.ui-tabs-top>.ui-tabs-nav li.ui-tabs-header.ui-state-active {
+.spatial-unit-single-panel .ui-tabs.ui-tabs-top > .ui-tabs-nav li.ui-tabs-header.ui-state-active {
     border-color: var(--context-main-color);
 }
 
