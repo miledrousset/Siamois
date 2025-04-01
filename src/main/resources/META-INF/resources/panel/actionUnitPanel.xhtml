@@ -33,7 +33,7 @@
                 <div class="siamois-toolbar">
                     <p:toolbar>
                         <p:toolbarGroup>
-                            <p:commandButton value='Nouvel enregistrement' icon="bi bi-plus-lg"
+                            <p:commandButton value='Nouvel enregistrement' icon="bi bi-plus-circle"
                                              update="flow"
                                              action="#{flowBean.addNewRecordingUnitPanel(panelModel.actionUnit.id, panelIndex)}"
                                              style="margin-right: .5rem">
@@ -165,11 +165,7 @@
                         </h:panelGroup>
                     </ui:repeat>
                 </h:form>
-                <h:form>
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <p:commandButton icon="pi pi-save" update="primaryCodeForm secondaryCodeForm main-growl"
-                                     action="#{panelModel.save()}"/>
-                </h:form>
+
 
 
             </p:tab>
