@@ -26,13 +26,6 @@ public class CustomForm implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "custom_form_field",
-            joinColumns = { @JoinColumn(name = "fk_field_id")},
-            inverseJoinColumns = { @JoinColumn(name = "fk_form_id") }
-    )
-    private Set<CustomField> fields = new HashSet<>();
 
     @Column(name = "layout", columnDefinition = "jsonb")
     @Convert(converter = CustomFormLayoutConverter.class)

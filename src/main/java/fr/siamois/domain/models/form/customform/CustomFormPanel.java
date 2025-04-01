@@ -10,6 +10,7 @@ import java.util.List;
 public class CustomFormPanel implements Serializable {
 
     private String className;
+    private String name;
     private List<CustomField> fields;
 
 }

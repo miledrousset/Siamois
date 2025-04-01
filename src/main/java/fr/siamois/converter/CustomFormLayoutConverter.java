@@ -28,7 +28,7 @@ public class CustomFormLayoutConverter implements AttributeConverter<List<Custom
 
     private final ApplicationContext applicationContext;
 
-    private static final String FIELDSKEY = "action1";
+    private static final String FIELDSKEY = "fields";
 
     public CustomFormLayoutConverter(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;

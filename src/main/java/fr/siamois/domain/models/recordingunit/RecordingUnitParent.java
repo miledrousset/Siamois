@@ -37,6 +37,9 @@ public abstract class RecordingUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_secondary_type")
     protected Concept secondaryType;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fk_third_type")
+    protected Concept thirdType;
 
     @Column(name = "start_date")
     protected OffsetDateTime startDate;

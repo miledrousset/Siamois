@@ -517,15 +517,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         revisionToDisplay = history;
     }
 
-    public List<Concept> completeRecordingUnitType(String input) {
-        UserInfo info = sessionSettingsBean.getUserInfo();
-        try {
-            concepts = fieldConfigurationService.fetchAutocomplete(info, RecordingUnit.TYPE_FIELD_CODE, input);
-        } catch (NoConfigForFieldException e) {
-            log.error(e.getMessage(), e);
-        }
-        return concepts;
-    }
+
 
     public List<Concept> fetchChildrenOfConcept(Concept concept) {
 
@@ -535,6 +527,16 @@ public class NewRecordingUnitFormBean implements Serializable {
 
         return concepts;
 
+    }
+
+    public List<Concept> completeRecordingUnitType(String input) {
+        UserInfo info = sessionSettingsBean.getUserInfo();
+        try {
+            concepts = fieldConfigurationService.fetchAutocomplete(info, RecordingUnit.TYPE_FIELD_CODE, input);
+        } catch (NoConfigForFieldException e) {
+            log.error(e.getMessage(), e);
+        }
+        return concepts;
     }
 
     public List<Concept> completeRecordingUnitSecondaryType(String input) {
@@ -547,6 +549,19 @@ public class NewRecordingUnitFormBean implements Serializable {
         UserInfo info = sessionSettingsBean.getUserInfo();
 
         return fieldConfigurationService.fetchConceptChildrenAutocomplete(info, fType, input);
+
+    }
+
+    public List<Concept> completeRecordingUnitThirdType(String input) {
+
+        // The main type needs to be set
+        if (fSecondaryType == null) {
+            return new ArrayList<>();
+        }
+
+        UserInfo info = sessionSettingsBean.getUserInfo();
+
+        return fieldConfigurationService.fetchConceptChildrenAutocomplete(info, fSecondaryType, input);
 
     }
 
@@ -569,16 +584,5 @@ public class NewRecordingUnitFormBean implements Serializable {
         return null;
     }
 
-    public List<Concept> completeRecordingUnitThirdType(String input) {
 
-        // The main type needs to be set
-        if (fSecondaryType == null) {
-            return new ArrayList<>();
-        }
-
-        UserInfo info = sessionSettingsBean.getUserInfo();
-
-        return fieldConfigurationService.fetchConceptChildrenAutocomplete(info, fSecondaryType, input);
-
-    }
 }

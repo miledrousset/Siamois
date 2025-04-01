@@ -61,6 +61,17 @@ public class PanelFactory {
 
     }
 
+    public ActionUnitPanel createActionUnitPanel(Long actionUnitId) {
+
+        PanelBreadcrumb bc = new PanelBreadcrumb();
+
+        return new ActionUnitPanel.ActionUnitPanelBuilder(actionUnitPanelProvider)
+                .id(actionUnitId)
+                .breadcrumb(bc)
+                .build();
+
+    }
+
     public NewSpatialUnitPanel createNewSpatialUnitPanel(PanelBreadcrumb currentBreadcrumb) {
 
         PanelBreadcrumb bc = new PanelBreadcrumb();
