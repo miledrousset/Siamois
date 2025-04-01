@@ -118,12 +118,11 @@
                                 <ui:param name="panelModel" value="#{panel}"/>
                             </ui:include>
                             <f:facet name="actions">
-                                <h:form>
-                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <form:csrfform formId="actionsFormId">
                                     <p:commandLink rendered="#{flowBean.fullscreenPanelIndex ==-1}"
-                                            action="#{flowBean.fullScreen(panel)}"
-                                            update="flow"
-                                            styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
+                                                   action="#{flowBean.fullScreen(panel)}"
+                                                   update="flow"
+                                                   styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
                                         <h:outputText styleClass="ui-icon bi bi-arrows-angle-expand"/>
                                     </p:commandLink>
                                     <p:commandLink rendered="#{flowBean.fullscreenPanelIndex == status.index}"
@@ -132,7 +131,7 @@
                                                    styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
                                         <h:outputText styleClass="ui-icon bi bi-arrows-angle-contract"/>
                                     </p:commandLink>
-                                </h:form>
+                                </form:csrfform>
                             </f:facet>
                         </p:panel>
                     </c:forEach>
