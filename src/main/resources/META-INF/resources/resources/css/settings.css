@@ -1,0 +1,59 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    display: flex;
+    justify-content: center
+}
+
+main form {
+    width: 100%;
+    display: flex;
+    justify-content: center
+}
+
+.field-value-group {
+    display: grid;
+    grid-template:
+        "title . ."
+        "card-content card-content card-content"
+        ". . save";
+    width: 45%;
+    margin-top: 10vh;
+    grid-row-gap: 2vh;
+}
+
+.field-value-title {
+    grid-area: title;
+}
+
+.field-value-content {
+    grid-area: card-content;
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+}
+
+.field-value-save {
+    grid-area: save;
+}
+
+.field-value-value {
+    margin-left: auto;
+}
+
+.field-value-value input {
+    width: 100%;
+}
+
+.field-value-group button {
+    width: fit-content;
+    margin-left: auto;
+    background-color: var(--siamois-green);
+    border-color: var(--siamois-green);
+}

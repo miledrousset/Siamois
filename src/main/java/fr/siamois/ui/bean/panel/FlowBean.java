@@ -1,5 +1,8 @@
 package fr.siamois.ui.bean.panel;
 
+import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -54,15 +57,19 @@ public class FlowBean implements Serializable {
     private final transient StratigraphicRelationshipService stratigraphicRelationshipService;
     private final transient BreadcrumbBean breadcrumbBean;
 
-
     // locals
     private transient DashboardModel responsiveModel;
     private static final String RESPONSIVE_CLASS = "col-12 lg:col-6 xl:col-6";
 
+    // Search bar
+    private List<SpatialUnit> fSpatialUnits = List.of();
+    private List<ActionUnit> fActionUnits = List.of();
+    private SpatialUnit fSelectedSpatialUnit;
+    private ActionUnit fSelectedActionUnit;
+
     @Getter
     private transient List<AbstractPanel> panels = new ArrayList<>();
     private transient int fullscreenPanelIndex = -1;
-
 
     public FlowBean(SpatialUnitService spatialUnitService,
                     RecordingUnitService recordingUnitService,
@@ -91,6 +98,10 @@ public class FlowBean implements Serializable {
         this.breadcrumbBean = breadcrumbBean;
     }
 
+    public void init() {
+        UserInfo info =  sessionSettings.getUserInfo();
+        fSpatialUnits = spatialUnitService.findAllOfInstitution(info.getInstitution());
+    }
 
     public void addSpatialUnitListPanel() {
         panels.add(0, panelFactory.createSpatialUnitListPanel());

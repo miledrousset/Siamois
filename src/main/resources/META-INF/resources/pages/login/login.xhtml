@@ -11,99 +11,60 @@
     <title>Connexion</title>
 
     <h:outputStylesheet library="css" name="login.css"/>
-    <link href="#{request.contextPath}/static/quixlab/css/style.css" rel="stylesheet"/>
 </h:head>
 
-<f:metadata>
-    <f:viewAction action="#{langBean.setLanguage(param.lang)}" if="#{not empty param.lang}"/>
-</f:metadata>
-
 <h:body>
-
-    <main class="login-container">
-        <div class="container-fluid">
-            <div class="row col-md-2">
-                <div class="card">
-                    <div class="card-body">
-                        <form action="#{request.contextPath}/login" method="post">
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-
-                            <div id="connection-head">
-                                <h2 class="mb-5">${langBean.msg("login.title")}</h2>
-                                <select class="dropdown" id="lang" onchange="loadLoginPage()">
-                                </select>
-                            </div>
-
-                            <div class="form-outline mb-4">
-                                <label class="form-label" for="username">${langBean.msg("login.username")}</label>
-                                <input type="text" id="username"  name="username" class="form-control form-control-lg" />
-                            </div>
-
-                            <div class="form-outline mb-4">
-                                <label class="form-label" for="password">${langBean.msg("login.password")}</label>
-                                <input type="password" id="password" name="password" class="form-control form-control-lg" />
-                            </div>
-
-                            <button class="btn btn-primary btn-lg btn-block" type="submit">${langBean.msg("login.submit")}</button>
-
-                            <h:panelGroup rendered="#{param.error != null}">
-                                <hr/>
-                                <div class="alert alert-danger" role="alert">
-                                    ${langBean.msg("login.error")}
+    <section class="h-100 gradient-form">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-xl-11">
+                    <div class="card rounded-3">
+                        <div class="row g-0">
+                            <div class="col-lg-6" id="left-image">
+                                <div class="card-body p-md-5 mx-md-4">
+                                    <h:graphicImage library="img" name="overview_siamois.png"/>
                                 </div>
-                            </h:panelGroup>
-
-                        </form>
+                            </div>
+                            <div class="col-lg-6 d-flex align-items-center">
+                                <div class="px-3 py-4 p-md-5 mx-md-4">
+                                    <h1>Bienvenue sur Siamois</h1>
+                                    <p class="description">
+                                        <strong>S</strong>ystème
+                                        d’<strong>I</strong>nformation
+                                        <strong>A</strong>rchéologique
+                                        <strong>M</strong>utualisé et
+                                        <strong>O</strong>uvert reposant sur l’<strong>I</strong>ntelligence
+                                        <strong>S</strong>émantique
+                                    </p>
+                                    <p class="description">Enregistrer, gérer, et partager vos données archéologiques.</p>
+                                    <hr/>
+                                    <form action="#{redirectBean.redirectUrl('/login')}" method="post">
+                                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                        <div class="form-group mb-4">
+                                            <label for="email">Email</label>
+                                            <input id="email" name="email" class="form-control" type="email"
+                                                   placeholder="Votre email professionnel"/>
+                                        </div>
+                                        <div class="form-group mb-4">
+                                            <label for="password">Mot de passe</label>
+                                            <input id="password" name="password" class="form-control" type="password"
+                                                   placeholder="Votre mot de passe"/>
+                                        </div>
+                                        <h:panelGroup rendered="#{param.error != null}">
+                                            <div class="invalid-feedback">
+                                                Email ou mot de passe invalide.
+                                            </div>
+                                        </h:panelGroup>
+                                        <button type="submit" class="btn btn-success">Se connecter à Siamois</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
-
-    <h:outputScript library="js" name="jquery-3.7.1.min.js"/>
-
-    <script>
-        const lang = document.getElementById('lang');
-        const langsRef = ${langBean.getLangs()}
-
-        function loadLoginPage() {
-            const base = window.location.href
-            const context = base.substring(0, base.lastIndexOf('/'));
-            window.location.href = context + '/login?lang=' + lang.value;
-        }
-
-        function capitalizeFirstLetter(val) {
-            return String(val).charAt(0).toUpperCase() + String(val).slice(1);
-        }
-
-        function langCodeName(langCode) {
-            const langObj = new Intl.DisplayNames([langCode], {type: 'language'});
-            return capitalizeFirstLetter(langObj.of(langCode));
-        }
-
-        function addOptions() {
-            const params = new URLSearchParams(window.location.search);
-            let paramLang = params.get('lang');
-            if (!paramLang) paramLang = "${langBean.getLanguageCode()}";
-
-            langsRef.forEach(langCode => {
-                const option = document.createElement('option');
-                option.value = langCode;
-                option.innerHTML = langCodeName(langCode);
-
-                if (langCode === paramLang) {
-                    lang.prepend(option);
-                    option.selected = true;
-                } else {
-                    lang.appendChild(option);
-                }
-            });
-        }
-
-        addOptions()
-
-    </script>
-
+    </section>
 </h:body>
 
 </HTML>

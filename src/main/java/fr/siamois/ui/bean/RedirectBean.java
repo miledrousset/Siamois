@@ -17,11 +17,9 @@ import java.io.Serializable;
 public class RedirectBean implements Serializable {
 
     private final transient ServletContext servletContext;
-    private final transient UserSettingsBean userSettingsBean;
 
-    public RedirectBean(ServletContext servletContext, UserSettingsBean userSettingsBean) {
+    public RedirectBean(ServletContext servletContext) {
         this.servletContext = servletContext;
-        this.userSettingsBean = userSettingsBean;
     }
 
     public String redirectUrl(String resource) {
@@ -48,9 +46,8 @@ public class RedirectBean implements Serializable {
         redirectTo(String.format("/error/%s", errorCode));
     }
 
-    public void goToUserSettings() throws NoConfigForFieldException {
-        userSettingsBean.init();
-        redirectTo("/user/config");
+    public String redirectUrlToResource(String name, String library) {
+        return redirectUrl(String.format("/jakarta.faces.resource/%s.xhtml?ln=%s", name, library));
     }
 
 }

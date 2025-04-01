@@ -121,4 +121,8 @@ public class UserBean implements Serializable {
         }
     }
 
+    public Person loggedUser() {
+        return sessionSettingsBean.getAuthenticatedUser();
+    }
+
 }

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 @Getter
@@ -29,4 +30,15 @@ public class ActionUnitFormMappingId implements Serializable {
     @Column(name= "table_name", nullable = false)
     private String tableName;
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ActionUnitFormMappingId that = (ActionUnitFormMappingId) o;
+        return Objects.equals(getActionUnit(), that.getActionUnit()) && Objects.equals(getForm(), that.getForm()) && Objects.equals(getConcept(), that.getConcept()) && Objects.equals(getTableName(), that.getTableName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getActionUnit(), getForm(), getConcept(), getTableName());
+    }
 }

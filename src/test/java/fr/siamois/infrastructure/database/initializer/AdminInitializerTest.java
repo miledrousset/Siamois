@@ -47,7 +47,7 @@ class AdminInitializerTest {
 
     @Test
     void initializeAdmin_shouldCreateAdminWhenNoAdminExists() throws DatabaseDataInitException {
-        when(personRepository.findAllByIsSuperAdmin(true)).thenReturn(List.of());
+        when(personRepository.findAllSuperAdmin()).thenReturn(List.of());
         when(passwordEncoder.encode("admin")).thenReturn("encodedPassword");
         when(personRepository.save(any(Person.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -62,7 +62,7 @@ class AdminInitializerTest {
     void initializeAdmin_shouldNotCreateAdminWhenAdminExists() throws DatabaseDataInitException {
         Person existingAdmin = new Person();
         existingAdmin.setUsername("admin");
-        when(personRepository.findAllByIsSuperAdmin(true)).thenReturn(List.of(existingAdmin));
+        when(personRepository.findAllSuperAdmin()).thenReturn(List.of(existingAdmin));
 
         adminInitializer.initialize();
 
@@ -71,7 +71,7 @@ class AdminInitializerTest {
 
     @Test
     void initializeAdmin_shouldThrowExceptionWhenAdminUsernameExistsButIsNotAdmin() {
-        when(personRepository.findAllByIsSuperAdmin(true)).thenReturn(List.of());
+        when(personRepository.findAllSuperAdmin()).thenReturn(List.of());
         when(personRepository.save(any(Person.class))).thenThrow(DataIntegrityViolationException.class);
 
         assertThrows(DatabaseDataInitException.class, () -> adminInitializer.initializeAdmin());

@@ -1,0 +1,30 @@
+div#search-bar form {
+    background-color: var(--siamois-green-light-100);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+div#search-bar form article {
+    display: flex;
+    gap: 1vw;
+    justify-content: center;
+    align-items: center;
+    margin: 5px;
+    width: 100%;
+}
+
+span:has(.searchInput) {
+    width: 100%;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.searchInput {
+    width: 100%;
+}

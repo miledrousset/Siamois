@@ -9,6 +9,7 @@
 
     --green-valid: #22c55e;
 
+    --siamois-green: #80B480;
     --siamois-primary: #BED730;
     --siamois-green-unknown: #f9fbf9;
     --siamois-primary-green: #BED730;
@@ -120,12 +121,12 @@ html, body {
 .ui-chronoline-event-content,
 .ui-chronoline-event-opposite {
     line-height: 1;
-    width: 0px;
+    width: 0;
 }
 
 
 .ui-chip.custom-chip {
-    background: var(--primary-color);
+    background: white;
     color: var(--primary-color-text);
 }
 
