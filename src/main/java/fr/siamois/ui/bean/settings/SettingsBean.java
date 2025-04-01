@@ -125,7 +125,7 @@ public class SettingsBean {
     }
 
     public void addInstitution() {
-        
+
     }
 
     public void filterInstitutions() {
