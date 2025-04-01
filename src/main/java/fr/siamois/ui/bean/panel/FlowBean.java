@@ -101,7 +101,11 @@ public class FlowBean implements Serializable {
     @EventListener(InstitutionChangeEvent.class)
     public void init() {
         UserInfo info =  sessionSettings.getUserInfo();
-        fSpatialUnits = spatialUnitService.findAllOfInstitution(info.getInstitution());
+        if (info.isInSuperadminInstitution()) {
+            fSpatialUnits = spatialUnitService.findAll();
+        } else {
+            fSpatialUnits = spatialUnitService.findAllOfInstitution(info.getInstitution());
+        }
         panels.clear();
         addSpatialUnitListPanel();
         log.trace("Init FlowBean");

@@ -39,6 +39,12 @@ public class SettingsController {
         return "forward:/pages/settings/institutionSettings.xhtml";
     }
 
+    @GetMapping("/settings/organisation")
+    public String goToAdminInstitutionSettings() {
+        navBean.setApplicationMode(NavBean.ApplicationMode.SETTINGS);
+        return "forward:/pages/settings/institutionListSettings.xhtml";
+    }
+
     @GetMapping("/dashboard")
     public String goToDashboard() {
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);

@@ -134,16 +134,16 @@
 
                     <h:panelGroup rendered="#{navBean.userIsSuperAdmin()}">
                         <ul class="nav flex-column">
-                            <li class="nav-header">Organisations</li>
+                            <li class="nav-header">Siamois</li>
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
+
+                                </a>
+                                <h:commandLink action="#{redirectBean.redirectTo('/settings/organisation')}" styleClass="nav-link">
                                     <i class="bi bi-house-door-fill"/>
                                     <span class="menu-text">Gestion des organisations</span>
-                                </a>
+                                </h:commandLink>
                             </li>
-                        </ul>
-                        <ul class="nav flex-column">
-                            <li class="nav-header">Siamois</li>
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="bi bi-person"/>

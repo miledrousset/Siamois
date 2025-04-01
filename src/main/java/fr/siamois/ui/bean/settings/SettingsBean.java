@@ -124,4 +124,12 @@ public class SettingsBean {
         institutionChangeEventPublisher.publishInstitutionChangeEvent();
     }
 
+    public void addInstitution() {
+        
+    }
+
+    public void filterInstitutions() {
+
+    }
+
 }

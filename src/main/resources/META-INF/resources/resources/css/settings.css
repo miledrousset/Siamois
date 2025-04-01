@@ -29,7 +29,7 @@ main form {
     grid-area: title;
 }
 
-.field-value-content {
+.field-value-content, .datatable-settings {
     grid-area: card-content;
     background-color: white;
     border-radius: 10px;
@@ -57,3 +57,29 @@ main form {
     background-color: var(--siamois-green);
     border-color: var(--siamois-green);
 }
+
+.datatable-settings {
+    display: grid;
+    grid-template:
+        "title title title title title"
+        "desc desc desc desc desc"
+        "search search . . add"
+        "content content content content content";
+}
+
+.dt-title {
+    grid-area: title;
+}
+
+.dt-desc {
+    grid-area: desc;
+}
+
+.dt-searchInput {
+    grid-area: search;
+}
+
+.dt-content {
+    grid-area: content;
+}
+
