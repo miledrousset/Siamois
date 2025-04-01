@@ -16,6 +16,7 @@
     --main-content-background: #FAFAFA;
     --main-content-top-stroke: #c4c4c4;
     --text-light: #6B7280;
+    --text-main: #2A2C30;
 
     --context-main-color: #068DA9;
     --context-light-color-50: #EDF4F6;
@@ -63,11 +64,6 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-}
-
-.label-container {
-    display: flex;
-    align-items: center; /* Ensures vertical alignment */
 }
 
 .label-icon {

@@ -288,7 +288,23 @@ tbody.recording-unit-datatable .ui-link {
     color: var(--context-main-color)
 }
 
+/* forms */
 
+
+.ui-panel.sia-form-panel .ui-panel-content {
+    background: transparent;
+    color: var(--text-main);
+    border: none;
+    padding: 0;
+}
+
+.ui-panel.sia-form-panel .ui-panel-titlebar {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--ground-light-color-200);
+    color: var(--text-main);
+    padding: 0.5em;
+}
 
 
 

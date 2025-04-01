@@ -16,9 +16,10 @@
     <h:panelGroup id="contentPanel" rendered="#{panelModel.spatialUnit != null}">
         <div class="panel-top-section">
             <h2>
+                #{panelModel.spatialUnit.name}
                 <p:chip label="#{panelModel.spatialUnit.category.label}" icon="pi pi-map-marker"
                         styleClass="mr-2 spatial-unit-type-chip"/>
-                #{panelModel.spatialUnit.name}
+
             </h2>
         </div>
 

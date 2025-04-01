@@ -20,23 +20,27 @@
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
         <div style="padding:1em;">
-            <p:divider align="left" class="panel-section-separator">
-                <b>Informations générales</b>
-            </p:divider>
-
-            <p:panelGrid columns="4" layout="flex">
-
-                <p:outputLabel for="recording-unit-id" value="Identifiant"/>
-                <p:outputLabel id="recording-unit-id" value="#{panelModel.recordingUnit.displayFullIdentifier()}"/>
-
-                <sharedLabel:openthesoLabel forId="auto-complete-recording-type" label="Type"/>
-                <sharedInput:conceptAutocomplete
-                        selectedConcept="#{panelModel.recordingUnit.type}"
-                        completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitType}"
-                        editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingTypeFieldCode()}"/>
+            <p:panel class="sia-form-panel" header="Informations générales" toggleable="true" collapsed="false">
 
 
-            </p:panelGrid>
+                <p:panelGrid columns="4" layout="flex">
+
+                    <p:outputLabel for="recording-unit-id" value="Identifiant"/>
+                    <p:outputLabel id="recording-unit-id"
+                                   value="#{panelModel.recordingUnit.displayFullIdentifier()}"/>
+
+                    <sharedLabel:openthesoLabel forId="auto-complete-recording-type" label="Type"/>
+                    <sharedInput:conceptAutocomplete
+                            selectedConcept="#{panelModel.recordingUnit.type}"
+                            completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitType}"
+                            editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingTypeFieldCode()}"/>
+
+
+                </p:panelGrid>
+            </p:panel>
+
+
+
 
         </div>
 
