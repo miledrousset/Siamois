@@ -1,6 +1,6 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
-import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.ui.bean.SessionSettingsBean;
@@ -35,8 +35,8 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
     public void init()  {
         try {
-            Person author = sessionSettingsBean.getAuthenticatedUser();
-            if (author.isSuperAdmin()) {
+            UserInfo info = sessionSettingsBean.getUserInfo();
+            if (info.getInstitution().getIdentifier().equalsIgnoreCase("SIAMOIS")) {
                 spatialUnitList = spatialUnitService.findAllWithoutParents();
             } else {
                 spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettingsBean.getSelectedInstitution());
