@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean.settings;
 
+import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
@@ -9,28 +10,38 @@ import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.person.PersonService;
+import fr.siamois.domain.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.PrimeFaces;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.annotation.SessionScope;
+
+import java.util.List;
 
 @Slf4j
 @Getter
 @Setter
 @Component
-@Scope(WebApplicationContext.SCOPE_SESSION)
+@SessionScope
 public class SettingsBean {
 
     private final SessionSettingsBean sessionSettingsBean;
     private final PersonService personService;
     private final FieldConfigurationService fieldConfigurationService;
     private final VocabularyService vocabularyService;
+    private final InstitutionService institutionService;
+    private final InstitutionChangeEventPublisher institutionChangeEventPublisher;
+
+    private List<Institution> refInstitutions;
 
     private String fEmail;
     private String fLastname;
@@ -38,11 +49,15 @@ public class SettingsBean {
 
     private String fThesaurusUrl;
 
-    public SettingsBean(SessionSettingsBean sessionSettingsBean, PersonService personService, FieldConfigurationService fieldConfigurationService, VocabularyService vocabularyService) {
+    private Institution fInstitution;
+
+    public SettingsBean(SessionSettingsBean sessionSettingsBean, PersonService personService, FieldConfigurationService fieldConfigurationService, VocabularyService vocabularyService, InstitutionService institutionService, InstitutionChangeEventPublisher institutionChangeEventPublisher) {
         this.sessionSettingsBean = sessionSettingsBean;
         this.personService = personService;
         this.fieldConfigurationService = fieldConfigurationService;
         this.vocabularyService = vocabularyService;
+        this.institutionService = institutionService;
+        this.institutionChangeEventPublisher = institutionChangeEventPublisher;
     }
 
     public void init() {
@@ -59,6 +74,13 @@ public class SettingsBean {
             log.debug("No config", e);
         }
 
+        refInstitutions = institutionService.findInstitutionsOfPerson(user);
+        fInstitution = refInstitutions.stream()
+                .filter(institution ->
+                        institution.getId().equals(info.getInstitution().getId()))
+                .findFirst()
+                .orElse(refInstitutions.get(0));
+        log.trace("Found {} institutions", refInstitutions.size());
     }
 
     public void saveProfile() {
@@ -97,6 +119,12 @@ public class SettingsBean {
                 log.error("Not siamois thesaurus", e);
             }
         }
+    }
+
+    public void changeInstitution() {
+        log.trace("Change institution");
+        sessionSettingsBean.setSelectedInstitution(fInstitution);
+        institutionChangeEventPublisher.publishInstitutionChangeEvent();
     }
 
 }

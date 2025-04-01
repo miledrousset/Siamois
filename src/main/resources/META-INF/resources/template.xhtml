@@ -36,7 +36,7 @@
                     </li>
                 </ul>
                 <button id="toggle-btn" class="btn btn-outline-light">☰</button>
-                <form:csrfform id="siamoisNavForm">
+                <form:csrfform formId="siamoisNavForm">
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <a href="#" class="nav-link">
@@ -100,7 +100,7 @@
         </h:panelGroup>
         <h:panelGroup id="settingsNav" rendered="#{navBean.settingsMode}">
             <nav id="sidebarSettings" class="sidebar" aria-label="Settings sidebar">
-                <form:csrfform id="settingsNavForm">
+                <form:csrfform formId="settingsNavForm">
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}" styleClass="nav-link">
@@ -122,6 +122,12 @@
                             <h:commandLink action="#{redirectBean.redirectTo('/settings/profile/thesaurus')}" styleClass="nav-link">
                                 <i class="bi bi-calendar"/>
                                 <span class="menu-text">Mon thesaurus</span>
+                            </h:commandLink>
+                        </li>
+                        <li class="nav-item">
+                            <h:commandLink action="#{redirectBean.redirectTo('/settings/profile/organisation')}" styleClass="nav-link">
+                                <i class="bi bi-calendar"/>
+                                <span class="menu-text">Mon organisation</span>
                             </h:commandLink>
                         </li>
                     </ul>

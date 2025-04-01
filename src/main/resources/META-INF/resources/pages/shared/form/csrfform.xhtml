@@ -5,13 +5,13 @@
 >
 
     <cc:interface>
-        <cc:attribute name="id" type="java.lang.String" required="true"/>
+        <cc:attribute name="formId" type="java.lang.String" required="true"/>
         <cc:attribute name="styleClass" type="java.lang.String" default=""/>
         <cc:attribute name="style" type="java.lang.String" default=""/>
     </cc:interface>
 
     <cc:implementation>
-        <h:form id="#{cc.attrs.id}" styleClass="#{cc.attrs.styleClass}" style="#{cc.attrs.style}">
+        <h:form id="#{cc.attrs.formId}" styleClass="#{cc.attrs.styleClass}" style="#{cc.attrs.style}">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <cc:insertChildren/>
         </h:form>

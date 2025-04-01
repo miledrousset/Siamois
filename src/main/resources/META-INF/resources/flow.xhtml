@@ -5,7 +5,8 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:c="http://java.sun.com/jsp/jstl/core"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form">
 
     <ui:define name="head">
         <link rel="stylesheet" href="#{redirectBean.redirectUrlToResource('searchBar.css', 'css')}" />
@@ -21,8 +22,7 @@
 
     <ui:define name="content">
         <div id="search-bar">
-            <h:form id="searchBarForm">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <form:csrfform formId="searchBarForm">
                 <article>
                     <h:panelGroup styleClass="ui-inputgroup">
                         <h:panelGroup id="iconSU" styleClass="ui-inputgroup-addon">
@@ -100,7 +100,7 @@
                     <i class="bi bi-play-circle"/>
                 </span>
                 </article>
-            </h:form>
+            </form:csrfform>
         </div>
 
         <p:outputPanel id="flow">

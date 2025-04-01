@@ -47,11 +47,11 @@ main form {
     margin-left: auto;
 }
 
-.field-value-value input {
+.field-value-value * {
     width: 100%;
 }
 
-.field-value-group button {
+.field-value-group button[type=submit]{
     width: fit-content;
     margin-left: auto;
     background-color: var(--siamois-green);
