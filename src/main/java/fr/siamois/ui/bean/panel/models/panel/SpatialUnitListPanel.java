@@ -39,7 +39,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
             if (info.getInstitution().getIdentifier().equalsIgnoreCase("SIAMOIS")) {
                 spatialUnitList = spatialUnitService.findAllWithoutParents();
             } else {
-                spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettingsBean.getSelectedInstitution());
+                spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(info.getInstitution());
             }
 
         } catch (RuntimeException e) {
