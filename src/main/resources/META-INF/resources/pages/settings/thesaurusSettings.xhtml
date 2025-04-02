@@ -13,15 +13,15 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewAction action="#{settingsBean.init()}"/>
+            <f:viewAction action="#{profileSettingsBean.init()}"/>
         </f:metadata>
     </ui:define>
 
     <ui:define name="content">
         <main>
-            <settingscomp:fieldValue title="Mon thésaurus" formId="thesaurusForm" saveMethod="#{settingsBean.saveThesaurusUserConfig()}">
+            <settingscomp:fieldValue title="Mon thésaurus" formId="thesaurusForm" saveMethod="#{profileSettingsBean.saveThesaurusUserConfig()}">
                 <settingscomp:fieldValueRow label="URL du thésaurus" inputId="profile-thesaurus" >
-                    <p:inputText id="profile-thesaurus" value="#{settingsBean.FThesaurusUrl}"/>
+                    <p:inputText id="profile-thesaurus" value="#{profileSettingsBean.FThesaurusUrl}"/>
                 </settingscomp:fieldValueRow>
             </settingscomp:fieldValue>
         </main>

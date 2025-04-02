@@ -1,6 +1,7 @@
 package fr.siamois.ui.redirection;
 
 import fr.siamois.ui.bean.NavBean;
+import fr.siamois.ui.bean.settings.InstitutionListSettingsBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -11,9 +12,11 @@ import javax.faces.bean.SessionScoped;
 public class SettingsController {
 
     private final NavBean navBean;
+    private final InstitutionListSettingsBean institutionListSettingsBean;
 
-    public SettingsController(NavBean navBean) {
+    public SettingsController(NavBean navBean, InstitutionListSettingsBean institutionListSettingsBean) {
         this.navBean = navBean;
+        this.institutionListSettingsBean = institutionListSettingsBean;
     }
 
     @GetMapping("/settings")
@@ -36,6 +39,7 @@ public class SettingsController {
     @GetMapping("/settings/organisation")
     public String goToAdminInstitutionSettings() {
         navBean.setApplicationMode(NavBean.ApplicationMode.SETTINGS);
+        institutionListSettingsBean.init();
         return "forward:/pages/settings/institutionListSettings.xhtml";
     }
 

@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Component
 public class InstitutionConverter implements Converter<Institution>, Serializable {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper  mapper = new ObjectMapper();
 
     @Override
     public Institution getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {

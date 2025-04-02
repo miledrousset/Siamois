@@ -39,7 +39,7 @@ import java.util.Locale;
 @Setter
 @Component
 @SessionScope
-public class SettingsBean {
+public class ProfileSettingsBean {
 
     private final SessionSettingsBean sessionSettingsBean;
     private final PersonService personService;
@@ -60,10 +60,9 @@ public class SettingsBean {
     private String fSelectedLang;
 
     private String fThesaurusUrl;
-
     private Institution fDefaultInstitution;
 
-    public SettingsBean(SessionSettingsBean sessionSettingsBean, PersonService personService, FieldConfigurationService fieldConfigurationService, VocabularyService vocabularyService, InstitutionService institutionService, InstitutionChangeEventPublisher institutionChangeEventPublisher, LangService langService, LangBean langBean) {
+    public ProfileSettingsBean(SessionSettingsBean sessionSettingsBean, PersonService personService, FieldConfigurationService fieldConfigurationService, VocabularyService vocabularyService, InstitutionService institutionService, InstitutionChangeEventPublisher institutionChangeEventPublisher, LangService langService, LangBean langBean) {
         this.sessionSettingsBean = sessionSettingsBean;
         this.personService = personService;
         this.fieldConfigurationService = fieldConfigurationService;

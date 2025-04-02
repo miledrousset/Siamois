@@ -2,7 +2,7 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:cc="http://xmlns.jcp.org/jsf/composite"
-                xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form"
+                xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form" xmlns:h="http://java.sun.com/jsf/html"
 >
     <cc:interface>
         <cc:attribute name="formId" type="java.lang.String" required="true"/>
@@ -10,22 +10,29 @@
         <cc:attribute name="description" type="java.lang.String" default=""/>
         <cc:attribute name="filterAction" method-signature="java.lang.Void f()" required="true"/>
         <cc:attribute name="addAction" method-signature="java.lang.Void f()" required="true"/>
-        <cc:attribute name="updateOnFilter" type="java.lang.String" required="true"/>
+        <cc:attribute name="searchInputTextValue" required="true"/>
+        <cc:attribute name="searchInputPlaceholder" type="java.lang.String" default=""/>
+        <cc:attribute name="isOrganisationManager" type="java.lang.Boolean" default="false"/>
     </cc:interface>
 
     <cc:implementation>
-        <form:csrfform formId="#{cc.attrs.formId}" style="width: 100%">
+        <form:csrfform formId="#{cc.attrs.formId}" style="width: 100%" onkeypress="if (event.keyCode === 13) { return false; }">
             <div class="datatable-settings">
-                <h2 class="dt-title">#{cc.attrs.title}</h2>
-                <p class="dt-desc">#{cc.attrs.description}</p>
-                <span class="ui-input-icon-left dt-searchInput">
-                    <i class="bi bi-search"/>
-                    <p:inputText placeholder="">
-                        <p:ajax event="keyup" update="#{cc.attrs.updateOnFilter}"
-                                listener="#{cc.attrs.filterAction}"/>
-                    </p:inputText>
-                </span>
-                <p:commandButton action="#{cc.attrs.addAction}"/>
+                <div class="datatable-info">
+                    <h2 class="dt-title">#{cc.attrs.title}</h2>
+                    <p class="dt-desc">#{cc.attrs.description}</p>
+                    <span class="ui-input-icon-left dt-searchInput">
+                        <i class="bi bi-search"/>
+                        <p:inputText placeholder="#{cc.attrs.searchInputPlaceholder}"
+                                     value="#{cc.attrs.searchInputTextValue}">
+                            <p:ajax event="keyup" update="@form"
+                                    listener="#{cc.attrs.filterAction}"/>
+                        </p:inputText>
+                    </span>
+                    <h:panelGroup rendered="#{cc.attrs.isOrganisationManager}">
+                        <p:commandButton action="#{cc.attrs.addAction}" value="Créer une organisation" styleClass="addButton"/>
+                    </h:panelGroup>
+                </div>
                 <div class="dt-content">
                     <cc:insertChildren/>
                 </div>

@@ -13,34 +13,34 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewAction action="#{settingsBean.init()}"/>
+            <f:viewAction action="#{profileSettingsBean.init()}"/>
         </f:metadata>
     </ui:define>
 
     <ui:define name="content">
         <main>
-            <settingscomp:fieldValue title="Mon profil" formId="profileForm" saveMethod="#{settingsBean.saveProfile()}">
+            <settingscomp:fieldValue title="Mon profil" formId="profileForm" saveMethod="#{profileSettingsBean.saveProfile()}">
                 <settingscomp:fieldValueRow label="Email" inputId="profile-email" >
-                    <p:inputText id="profile-email" type="email" value="#{settingsBean.FEmail}"/>
+                    <p:inputText id="profile-email" type="email" value="#{profileSettingsBean.FEmail}"/>
                 </settingscomp:fieldValueRow>
                 <hr/>
                 <settingscomp:fieldValueRow label="Nom" inputId="profile-lastname">
-                    <p:inputText id="profile-lastname" value="#{settingsBean.FLastname}"/>
+                    <p:inputText id="profile-lastname" value="#{profileSettingsBean.FLastname}"/>
                 </settingscomp:fieldValueRow>
                 <settingscomp:fieldValueRow label="Prénom" inputId="profile-firstname">
-                    <p:inputText id="profile-firstname" value="#{settingsBean.FFirstname}"/>
+                    <p:inputText id="profile-firstname" value="#{profileSettingsBean.FFirstname}"/>
                 </settingscomp:fieldValueRow>
             </settingscomp:fieldValue>
-            <settingscomp:fieldValue title="Préférences" formId="preferenceSettingsForm" saveMethod="#{settingsBean.savePreferences()}">
+            <settingscomp:fieldValue title="Préférences" formId="preferenceSettingsForm" saveMethod="#{profileSettingsBean.savePreferences()}">
                 <settingscomp:fieldValueRow label="Choix de l'organisation par défaut" inputId="institutionSetting" >
                     <p:selectOneMenu id="institutionSetting"
-                                     value="#{settingsBean.FDefaultInstitution}"
+                                     value="#{profileSettingsBean.FDefaultInstitution}"
                                      var="inst"
                                      style="width: 100%"
                                      converter="#{institutionConverter}"
                     >
                         <f:selectItems
-                                value="#{settingsBean.refInstitutions}"
+                                value="#{profileSettingsBean.refInstitutions}"
                                 var="item"
                                 itemValue="#{item}"
                                 itemLabel="#{item.name}"
@@ -56,15 +56,15 @@
                 <settingscomp:fieldValueRow inputId="langSetting" label="Choix de la langue">
                     <p:selectOneMenu id="langSetting"
                                      var="lang"
-                                     value="#{settingsBean.FSelectedLang}"
-                                     label="#{settingsBean.codeToLangName(lang)}"
+                                     value="#{profileSettingsBean.FSelectedLang}"
+                                     label="#{profileSettingsBean.codeToLangName(lang)}"
                                      style="width: 100%"
                     >
                         <f:selectItems
-                                value="#{settingsBean.refLangs}"
+                                value="#{profileSettingsBean.refLangs}"
                                 var="langItem"
-                                itemValue="#{settingsBean.localeToLangCode(langItem)}"
-                                itemLabel="#{settingsBean.localeToLangName(langItem)}"
+                                itemValue="#{profileSettingsBean.localeToLangCode(langItem)}"
+                                itemLabel="#{profileSettingsBean.localeToLangName(langItem)}"
                         />
 
                         <p:column>

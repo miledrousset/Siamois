@@ -3,7 +3,6 @@ package fr.siamois.ui.bean;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.events.InstitutionChangeEvent;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.services.InstitutionService;
@@ -12,7 +11,6 @@ import fr.siamois.domain.utils.AuthenticatedUserUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -31,7 +29,6 @@ public class SessionSettingsBean implements Serializable {
     private final transient PersonService personService;
     private Institution selectedInstitution;
     private InstitutionSettings institutionSettings;
-    private transient List<Institution> referencedInstitutions;
     private PersonSettings personSettings;
 
     public SessionSettingsBean(InstitutionService institutionService,
@@ -52,13 +49,6 @@ public class SessionSettingsBean implements Serializable {
         return getUserInfo().getInstitution();
     }
 
-    public List<Institution> getReferencedInstitutions() {
-        if (referencedInstitutions == null || referencedInstitutions.isEmpty()) {
-            setupSession();
-        }
-        return referencedInstitutions;
-    }
-
     public void setupSession() {
         personSettings = personService.createOrGetSettingsOf(getAuthenticatedUser());
         loadLanguageSettings();
@@ -71,13 +61,13 @@ public class SessionSettingsBean implements Serializable {
         }
     }
 
-    @EventListener(InstitutionChangeEvent.class)
+
     private void loadInstitutionsSettings() {
         if (personSettings.getDefaultInstitution() != null) {
             selectedInstitution = personSettings.getDefaultInstitution();
-            referencedInstitutions = findReferencedInstitutions();
         } else {
-            setupInstitution();
+            List<Institution> allInstitutions = findReferencedInstitutions();
+            selectedInstitution = allInstitutions.get(0);
         }
         assert selectedInstitution != null;
         institutionSettings = institutionService.createOrGetSettingsOf(selectedInstitution);
@@ -105,18 +95,6 @@ public class SessionSettingsBean implements Serializable {
 
     public InstitutionSettings getInstitutionSettings() {
         return getUserInfo().getInstitution().getSettings();
-    }
-
-
-    private void setupInstitution() {
-        List<Institution> result = findReferencedInstitutions();
-
-        result.sort(((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName())));
-
-        referencedInstitutions = result;
-
-        if (selectedInstitution == null && !result.isEmpty())
-            selectedInstitution = result.get(0);
     }
 
 }

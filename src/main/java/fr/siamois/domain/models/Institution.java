@@ -1,12 +1,18 @@
 package fr.siamois.domain.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.DefaultValue;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @Entity
@@ -35,6 +41,19 @@ public class Institution implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     private InstitutionSettings settings;
+
+    @DefaultValue("NOW()")
+    @Column(name = "creation_date", nullable = false)
+    @JsonIgnore
+    private OffsetDateTime creationDate;
+
+    @JsonProperty("creationDate")
+    private String creationDateString() {
+        if (creationDate == null) {
+            return "";
+        }
+        return creationDate.atZoneSameInstant(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    }
 
     public static final int MAX_NAME_LENGTH = 40;
 

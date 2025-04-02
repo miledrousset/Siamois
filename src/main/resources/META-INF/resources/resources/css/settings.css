@@ -34,7 +34,7 @@ main form:first-child .field-value-group {
     grid-area: title;
 }
 
-.field-value-content, .datatable-settings {
+.field-value-content {
     grid-area: card-content;
     background-color: white;
     border-radius: 10px;
@@ -64,12 +64,21 @@ main form:first-child .field-value-group {
 }
 
 .datatable-settings {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10vh;
+    row-gap: 1vh;
+}
+
+.datatable-info {
+    margin-left: 3vw;
+    margin-right: 3vw;
+
     display: grid;
     grid-template:
         "title title title title title"
         "desc desc desc desc desc"
-        "search search . . add"
-        "content content content content content";
+        "search search . . add";
 }
 
 .dt-title {
@@ -88,3 +97,20 @@ main form:first-child .field-value-group {
     grid-area: content;
 }
 
+.addButton {
+    grid-area: add;
+}
+
+.ui-widget .dt-button {
+    background-color: white;
+    border-color: white;
+}
+
+.ui-widget .dt-button:hover {
+    background-color: var(siamoi);
+    border-color: white;
+}
+
+.dt-button span.bi {
+    color: var(--siamois-green);
+}
