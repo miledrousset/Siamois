@@ -14,6 +14,7 @@ import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
@@ -46,38 +47,31 @@ import static java.time.OffsetDateTime.now;
 @Slf4j
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class RecordingUnitPanel extends AbstractPanel {
+public class RecordingUnitPanel extends RecordingUnitPanelBase {
 
-    // Deps
-    private final LangBean langBean;
-    private final SessionSettingsBean sessionSettingsBean;
-    private final transient SpatialUnitService spatialUnitService;
-    private final transient ActionUnitService actionUnitService;
-    private final transient RecordingUnitService recordingUnitService;
-    private final transient ConceptService conceptService;
-    private final transient FieldConfigurationService fieldConfigurationService;
-    private final FlowBean flowBean;
 
     // ------- Locals
     String recordingUnitErrorMessage;
-    RecordingUnit recordingUnit;
     Long recordingUnitId;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    // Form
-    private transient CustomForm additionalForm;
 
 
-    public RecordingUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, ActionUnitService actionUnitService, RecordingUnitService recordingUnitService, ConceptService conceptService, FieldConfigurationService fieldConfigurationService, FlowBean flowBean) {
-        super("Unité d'enregistrement", "bi bi-pencil-square", "siamois-panel recording-unit-panel recording-unit-single-panel");
-        this.langBean = langBean;
-        this.sessionSettingsBean = sessionSettingsBean;
-        this.spatialUnitService = spatialUnitService;
-        this.actionUnitService = actionUnitService;
-        this.recordingUnitService = recordingUnitService;
-        this.conceptService = conceptService;
-        this.fieldConfigurationService = fieldConfigurationService;
-        this.flowBean = flowBean;
+    public RecordingUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService,
+                                 ActionUnitService actionUnitService, RecordingUnitService recordingUnitService,
+                                 PersonService personService, ConceptService conceptService,
+                                 FieldConfigurationService fieldConfigurationService, FlowBean flowBean) {
+        super(
+                langBean,
+                sessionSettingsBean,
+                spatialUnitService,
+                actionUnitService,
+                recordingUnitService,
+                personService,
+                conceptService,
+                fieldConfigurationService,
+                flowBean,
+                "Unité d'enregistrement",
+                "bi bi-pencil-square",
+                "siamois-panel recording-unit-panel recording-unit-single-panel");
     }
 
     @Override
@@ -85,9 +79,7 @@ public class RecordingUnitPanel extends AbstractPanel {
         return "/panel/recordingUnitPanel.xhtml";
     }
 
-    public LocalDate offsetDateTimeToLocalDate(OffsetDateTime offsetDT) {
-        return offsetDT.toLocalDate();
-    }
+
 
     void init() {
 
@@ -123,65 +115,6 @@ public class RecordingUnitPanel extends AbstractPanel {
 
     }
 
-
-    public List<Concept> fetchChildrenOfConcept(Concept concept) {
-
-        UserInfo info = sessionSettingsBean.getUserInfo();
-        List<Concept> concepts ;
-
-        concepts = conceptService.findDirectSubConceptOf(info, concept);
-
-        return concepts;
-
-    }
-
-    public void initializeAnswer(CustomField field) {
-        if (recordingUnit.getFormResponse().getAnswers().get(field) == null) {
-            // Init missing parameters
-            if (field instanceof CustomFieldSelectMultiple) {
-                recordingUnit.getFormResponse().getAnswers().put(field, new CustomFieldAnswerSelectMultiple());
-            } else if (field instanceof CustomFieldInteger) {
-                recordingUnit.getFormResponse().getAnswers().put(field, new CustomFieldAnswerInteger());
-            }
-        }
-    }
-
-    public void initFormResponseAnswers() {
-
-        if (recordingUnit.getFormResponse().getForm() != null) {
-
-            recordingUnit.getFormResponse().getForm().getLayout().stream()
-                    .flatMap(section -> section.getFields().stream()) // Flatten the nested lists
-                    .forEach(this::initializeAnswer); // Process each field
-        }
-
-
-    }
-
-    public void changeCustomForm() {
-        // Do we have a form available for the selected type?
-        Set<ActionUnitFormMapping> formsAvailable = recordingUnit.getActionUnit().getFormsAvailable();
-        additionalForm = getFormForRecordingUnitType(recordingUnit.getType(), formsAvailable);
-        if (recordingUnit.getFormResponse() == null) {
-            recordingUnit.setFormResponse(new CustomFormResponse());
-            recordingUnit.getFormResponse().setAnswers(new HashMap<>());
-        }
-        recordingUnit.getFormResponse().setForm(additionalForm);
-        if (additionalForm != null) {
-            initFormResponseAnswers();
-        }
-
-
-    }
-
-    public CustomForm getFormForRecordingUnitType(Concept type, Set<ActionUnitFormMapping> availableForms) {
-        return availableForms.stream()
-                .filter(mapping -> mapping.getPk().getConcept().equals(type) // Vérifier le concept
-                        && "RECORDING_UNIT".equals(mapping.getPk().getTableName())) // Vérifier le tableName
-                .map(mapping -> mapping.getPk().getForm())
-                .findFirst()
-                .orElse(null); // Retourner null si aucun match
-    }
 
 
     public static class RecordingUnitPanelBuilder {
