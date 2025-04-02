@@ -31,6 +31,49 @@
                     <p:inputText id="profile-firstname" value="#{settingsBean.FFirstname}"/>
                 </settingscomp:fieldValueRow>
             </settingscomp:fieldValue>
+            <settingscomp:fieldValue title="Préférences" formId="preferenceSettingsForm" saveMethod="#{settingsBean.savePreferences()}">
+                <settingscomp:fieldValueRow label="Choix de l'organisation par défaut" inputId="institutionSetting" >
+                    <p:selectOneMenu id="institutionSetting"
+                                     value="#{settingsBean.FDefaultInstitution}"
+                                     var="inst"
+                                     style="width: 100%"
+                                     converter="#{institutionConverter}"
+                    >
+                        <f:selectItems
+                                value="#{settingsBean.refInstitutions}"
+                                var="item"
+                                itemValue="#{item}"
+                                itemLabel="#{item.name}"
+                        />
+
+                        <p:column>
+                            <h:outputText value="#{item.id}"/>
+                        </p:column>
+
+                    </p:selectOneMenu>
+                </settingscomp:fieldValueRow>
+                <hr/>
+                <settingscomp:fieldValueRow inputId="langSetting" label="Choix de la langue">
+                    <p:selectOneMenu id="langSetting"
+                                     var="lang"
+                                     value="#{settingsBean.FSelectedLang}"
+                                     label="#{settingsBean.codeToLangName(lang)}"
+                                     style="width: 100%"
+                    >
+                        <f:selectItems
+                                value="#{settingsBean.refLangs}"
+                                var="langItem"
+                                itemValue="#{settingsBean.localeToLangCode(langItem)}"
+                                itemLabel="#{settingsBean.localeToLangName(langItem)}"
+                        />
+
+                        <p:column>
+                            <h:outputText value="#{item.id}"/>
+                        </p:column>
+
+                    </p:selectOneMenu>
+                </settingscomp:fieldValueRow>
+            </settingscomp:fieldValue>
         </main>
     </ui:define>
 

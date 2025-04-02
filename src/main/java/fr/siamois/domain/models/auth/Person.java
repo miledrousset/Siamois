@@ -1,5 +1,6 @@
 package fr.siamois.domain.models.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.siamois.domain.models.FieldCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -115,21 +116,25 @@ public class Person implements UserDetails {
         return roles;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return !isExpired;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return !isLocked;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return isEnabled;

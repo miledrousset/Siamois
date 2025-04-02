@@ -2,7 +2,10 @@ package fr.siamois.domain.models.actionunit;
 
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.vocabulary.Concept;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 

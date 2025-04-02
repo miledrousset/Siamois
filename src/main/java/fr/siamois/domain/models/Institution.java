@@ -18,7 +18,7 @@ public class Institution implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "institution_name", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "institution_name", nullable = false, length = MAX_NAME_LENGTH)
     private String name;
 
     @Column(name = "institution_description", length = Integer.MAX_VALUE)
@@ -35,5 +35,7 @@ public class Institution implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     private InstitutionSettings settings;
+
+    public static final int MAX_NAME_LENGTH = 40;
 
 }

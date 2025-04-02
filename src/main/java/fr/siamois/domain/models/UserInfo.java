@@ -16,4 +16,8 @@ public class UserInfo {
         this.lang = lang;
     }
 
+    public boolean isInSuperadminInstitution() {
+        return institution.getIdentifier().equalsIgnoreCase("SIAMOIS");
+    }
+
 }

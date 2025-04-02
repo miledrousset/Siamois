@@ -5,7 +5,8 @@
 
 main {
     display: flex;
-    justify-content: center
+    justify-content: center;
+    flex-direction: column;
 }
 
 main form {
@@ -21,15 +22,19 @@ main form {
         "card-content card-content card-content"
         ". . save";
     width: 45%;
-    margin-top: 10vh;
     grid-row-gap: 2vh;
+    margin-top: 4vh;
+}
+
+main form:first-child .field-value-group {
+    margin-top: 10vh;
 }
 
 .field-value-title {
     grid-area: title;
 }
 
-.field-value-content {
+.field-value-content, .datatable-settings {
     grid-area: card-content;
     background-color: white;
     border-radius: 10px;
@@ -47,13 +52,39 @@ main form {
     margin-left: auto;
 }
 
-.field-value-value input {
+.field-value-value * {
     width: 100%;
 }
 
-.field-value-group button {
+.field-value-group button[type=submit]{
     width: fit-content;
     margin-left: auto;
     background-color: var(--siamois-green);
     border-color: var(--siamois-green);
 }
+
+.datatable-settings {
+    display: grid;
+    grid-template:
+        "title title title title title"
+        "desc desc desc desc desc"
+        "search search . . add"
+        "content content content content content";
+}
+
+.dt-title {
+    grid-area: title;
+}
+
+.dt-desc {
+    grid-area: desc;
+}
+
+.dt-searchInput {
+    grid-area: search;
+}
+
+.dt-content {
+    grid-area: content;
+}
+

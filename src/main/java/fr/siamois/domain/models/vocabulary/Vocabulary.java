@@ -1,5 +1,6 @@
 package fr.siamois.domain.models.vocabulary;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -36,6 +37,7 @@ public class Vocabulary implements Serializable {
     @Column(name = "last_lang")
     private String lastLang;
 
+    @JsonIgnore
     public String getUri() {
         return String.format("%s?idt=%s", baseUri, externalVocabularyId);
     }

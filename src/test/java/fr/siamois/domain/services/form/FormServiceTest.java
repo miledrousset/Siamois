@@ -2,7 +2,6 @@ package fr.siamois.domain.services.form;
 
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.infrastructure.database.repositories.form.FormRepository;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

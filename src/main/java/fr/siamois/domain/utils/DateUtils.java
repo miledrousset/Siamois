@@ -28,4 +28,13 @@ public class DateUtils {
         return formatter.format(dateTime);
     }
 
+    public static String formatOffsetDateTime(OffsetDateTime offsetDateTime, ZoneId zoneId) {
+        if (offsetDateTime == null) {
+            log.error("Invalid offsetDatetime");
+            return "INVALID DATE";
+        }
+        LocalDateTime dateTime = offsetDateTime.atZoneSameInstant(zoneId).toLocalDateTime();
+        return formatter.format(dateTime);
+    }
+
 }

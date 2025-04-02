@@ -4,7 +4,6 @@ package fr.siamois.domain.models.specimen;
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.document.Document;
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
