@@ -18,6 +18,7 @@ import fr.siamois.domain.models.recordingunit.RecordingUnitSize;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
@@ -26,6 +27,7 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import jakarta.faces.application.FacesMessage;
+import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -57,6 +59,7 @@ public class NewRecordingUnitPanel extends AbstractPanel {
     private final transient SpatialUnitService spatialUnitService;
     private final transient ActionUnitService actionUnitService;
     private final transient RecordingUnitService recordingUnitService;
+    private final transient PersonService personService;
     private final transient ConceptService conceptService;
     private final transient FieldConfigurationService fieldConfigurationService;
     private final FlowBean flowBean;
@@ -72,13 +75,14 @@ public class NewRecordingUnitPanel extends AbstractPanel {
     private transient CustomForm additionalForm;
 
 
-    public NewRecordingUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, ActionUnitService actionUnitService, RecordingUnitService recordingUnitService, ConceptService conceptService, FieldConfigurationService fieldConfigurationService, FlowBean flowBean) {
+    public NewRecordingUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, ActionUnitService actionUnitService, RecordingUnitService recordingUnitService, PersonService personService, ConceptService conceptService, FieldConfigurationService fieldConfigurationService, FlowBean flowBean) {
         super("Nouvelle unité d'enregistrement", "bi bi-pencil-square", "siamois-panel recording-unit-panel new-recording-unit-panel");
         this.langBean = langBean;
         this.sessionSettingsBean = sessionSettingsBean;
         this.spatialUnitService = spatialUnitService;
         this.actionUnitService = actionUnitService;
         this.recordingUnitService = recordingUnitService;
+        this.personService = personService;
         this.conceptService = conceptService;
         this.fieldConfigurationService = fieldConfigurationService;
         this.flowBean = flowBean;
@@ -325,5 +329,53 @@ public class NewRecordingUnitPanel extends AbstractPanel {
             newRecordingUnitPanel.init();
             return newRecordingUnitPanel;
         }
+    }
+
+
+    public List<Concept> completeRecordingUnitType(String input) {
+        UserInfo info = sessionSettingsBean.getUserInfo();
+        List<Concept> concepts = new ArrayList<>();
+        try {
+            concepts = fieldConfigurationService.fetchAutocomplete(info, RecordingUnit.TYPE_FIELD_CODE, input);
+        } catch (NoConfigForFieldException e) {
+            log.error(e.getMessage(), e);
+        }
+        return concepts;
+    }
+
+    public List<Person> completePerson(String query) {
+        if (query == null || query.isEmpty()) {
+            return Collections.emptyList();
+        }
+        query = query.toLowerCase();
+        return personService.findAllByNameLastnameContaining(query);
+    }
+
+
+    public String getUrlForRecordingTypeFieldCode() {
+        return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), RecordingUnit.TYPE_FIELD_CODE);
+    }
+
+
+    public List<Concept> suggestValues(String query) {
+        List<Concept> suggestions = new ArrayList<>();
+
+        // Might be better to only pass question index
+        FacesContext context = FacesContext.getCurrentInstance();
+        CustomField question = (CustomField) UIComponent.getCurrentComponent(context).getAttributes().get("question");
+
+        // Check if the question is an instance of QuestionSelectMultiple
+        if (question instanceof CustomFieldSelectMultiple selectMultipleQuestion) {
+            List<Concept> allOptions = new ArrayList<>(selectMultipleQuestion.getConcepts());
+
+            // Filter the options based on user input (query)
+            for (Concept value : allOptions) {
+                if (value.getLabel().toLowerCase().contains(query.toLowerCase())) {
+                    suggestions.add(value);
+                }
+            }
+        }
+
+        return suggestions;
     }
 }

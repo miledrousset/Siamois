@@ -49,7 +49,7 @@
                             <sharedInput:panelField title="Auteur" id="authorField">
                                 <p:autoComplete id="auto-complete-author"
                                                 value="#{panelModel.recordingUnit.author}"
-                                                completeMethod="#{newRecordingUnitFormBean.completePerson}"
+                                                completeMethod="#{panelModel.completePerson}"
                                                 forceSelection="true"
                                                 scrollHeight="300"
                                                 required="false"
@@ -63,7 +63,7 @@
                             <sharedInput:panelField title="Fouilleur" id="excavatorField">
                                 <p:autoComplete id="auto-complete-excavator"
                                                 value="#{panelModel.recordingUnit.excavator}"
-                                                completeMethod="#{newRecordingUnitFormBean.completePerson}"
+                                                completeMethod="#{panelModel.completePerson}"
                                                 forceSelection="true"
                                                 required="false"
                                                 converter="#{personConverter}"
@@ -86,9 +86,9 @@
                                                                  :newRecordingUnitForm:customForm
                                                                  :newRecordingUnitForm:secondTypeField:secondTypeComponent:conceptAutocomplete
                                                             :newRecordingUnitForm:thirdTypeField:thirdTypeComponent:conceptAutocomplete"
-                                                                 completeMethod="#{newRecordingUnitFormBean.completeRecordingUnitType}"
+                                                                 completeMethod="#{panelModel.completeRecordingUnitType}"
                                                                  itemSelectListener="#{panelModel.handleSelectType}"
-                                                                 editConceptUrl="#{newRecordingUnitFormBean.getUrlForRecordingTypeFieldCode()}"/>
+                                                                 editConceptUrl="#{panelModel.getUrlForRecordingTypeFieldCode()}"/>
                             </sharedInput:panelField>
                         </p:column>
                         <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
@@ -286,7 +286,7 @@
                                             value="#{panelModel.recordingUnit.formResponse.answers.get(field).value}"
                                             multiple="true"
 
-                                            completeMethod="#{newRecordingUnitFormBean.suggestValues}"
+                                            completeMethod="#{panelModel.suggestValues}"
                                             var="option" itemLabel="#{option.label}"
                                             itemValue="#{option}"
                                             required="false"
