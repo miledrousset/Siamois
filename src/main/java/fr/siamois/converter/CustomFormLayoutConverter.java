@@ -28,7 +28,7 @@ public class CustomFormLayoutConverter implements AttributeConverter<List<Custom
 
     private final ApplicationContext applicationContext;
 
-    private static final String FIELDSKEY = "action1";
+    private static final String FIELDSKEY = "fields";
 
     public CustomFormLayoutConverter(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -48,6 +48,7 @@ public class CustomFormLayoutConverter implements AttributeConverter<List<Custom
                     .map(panel -> {
                         Map<String, Object> map = new HashMap<>();
                         map.put("className", panel.getClassName());
+                        map.put("name", panel.getName());
 
                         // Store the IDs of all fields
                         if (panel.getFields() != null) {
@@ -79,6 +80,7 @@ public class CustomFormLayoutConverter implements AttributeConverter<List<Custom
                     .map(map -> {
                         CustomFormPanel panel = new CustomFormPanel();
                         panel.setClassName((String) map.get("className"));
+                        panel.setName((String) map.get("name"));
 
                         // Get all fields from the repository using field IDs
                         if (map.containsKey(FIELDSKEY)) {

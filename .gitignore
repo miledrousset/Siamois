@@ -7,3 +7,6 @@
 /src/main/resources/application-dev.yaml
 .DS_Store
 /storage
+
+/.smarttomcat/
+/htmlReport/

@@ -1,0 +1,346 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             xmlns:f="http://xmlns.jcp.org/jsf/core"
+             xmlns:h="http://xmlns.jcp.org/jsf/html"
+             xmlns:sharedLabel="http://xmlns.jcp.org/jsf/composite/pages/shared/label"
+             xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
+             xmlns:p="http://primefaces.org/ui"
+
+>
+
+    <!--@elvariable id="panelIndex" type="Integer"-->
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.NewRecordingUnitPanel"-->
+    <div class="sia-panel-title">
+        Création d'une nouvelle unité d'enregistrement
+    </div>
+
+    <p:separator/>
+
+    <h:form id="newRecordingUnitForm">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+        <div style="padding:1em;">
+
+            <h:panelGroup id="missingFormWarning">
+                <p:staticMessage severity="warn"
+                                 summary="No custom form available"
+                                 detail="No form configured the type #{panelModel.recordingUnit.type.label}"
+                                 style="width: 100%"
+                                 rendered="#{panelModel.recordingUnit.formResponse.form == null and panelModel.recordingUnit.type != null}"/>
+            </h:panelGroup>
+
+            <!-- Common fields -->
+
+            <p:panel id="generalInfoPanel" class="sia-form-panel" header="Informations générales" toggleable="true"
+                     collapsed="false">
+
+
+                <p:panelGrid id="generalInfoPanelGrid"
+                             layout="grid"
+                >
+                    <p:row>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                            <sharedInput:panelField title="Identifiant" id="identifierField">
+                                <b><p:outputLabel id="recording-unit-id"
+                                                  value="#{panelModel.recordingUnit.displayFullIdentifier()}"/></b>
+                            </sharedInput:panelField>
+                        </p:column>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                            <sharedInput:panelField title="Auteur" id="authorField">
+                                <p:autoComplete id="auto-complete-author"
+                                                value="#{panelModel.recordingUnit.author}"
+                                                completeMethod="#{panelModel.completePerson}"
+                                                forceSelection="true"
+                                                scrollHeight="300"
+                                                required="false"
+                                                var="person" itemLabel="#{person.displayName()}"
+                                                itemValue="#{person}"
+                                                converter="#{personConverter}"
+                                                dropdown="false"/>
+                            </sharedInput:panelField>
+                        </p:column>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                            <sharedInput:panelField title="Fouilleur" id="excavatorField">
+                                <p:autoComplete id="auto-complete-excavator"
+                                                value="#{panelModel.recordingUnit.excavator}"
+                                                completeMethod="#{panelModel.completePerson}"
+                                                forceSelection="true"
+                                                required="false"
+                                                converter="#{personConverter}"
+                                                scrollHeight="300"
+                                                var="person" itemLabel="#{person.displayName()}"
+                                                itemValue="#{person}"
+                                                dropdown="false"/>
+                            </sharedInput:panelField>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                            <sharedInput:panelField title="Type" isTheso="true" id="typeField">
+                                <sharedInput:conceptAutocomplete id="typeComponent"
+                                                                 selectedConcept="#{panelModel.recordingUnit.type}"
+                                                                 ajaxProcessTargets="@this
+                                                                 :newRecordingUnitForm:customForm"
+                                                                 ajaxUpdateTargets=":newRecordingUnitForm:missingFormWarning
+                                                                 :newRecordingUnitForm:customForm
+                                                                 :newRecordingUnitForm:secondTypeField:secondTypeComponent:conceptAutocomplete
+                                                            :newRecordingUnitForm:thirdTypeField:thirdTypeComponent:conceptAutocomplete"
+                                                                 completeMethod="#{panelModel.completeRecordingUnitType}"
+                                                                 itemSelectListener="#{panelModel.handleSelectType}"
+                                                                 editConceptUrl="#{panelModel.getUrlForRecordingTypeFieldCode()}"/>
+                            </sharedInput:panelField>
+                        </p:column>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                            <sharedInput:panelField title="Sous-Type" isTheso="true" id="secondTypeField">
+                                <sharedInput:conceptAutocomplete id="secondTypeComponent"
+                                                                 selectedConcept="#{panelModel.recordingUnit.secondaryType}"
+                                                                 ajaxProcessTargets="@this"
+                                                                 ajaxUpdateTargets="
+                                                         :newRecordingUnitForm:thirdTypeField:thirdTypeComponent:conceptAutocomplete"
+                                                                 disabled="#{!panelModel.hasSecondaryTypeOptions}"
+                                                                 completeMethod="#{panelModel.completeRecordingUnitSecondaryType}"
+                                                                 itemSelectListener="#{panelModel.handleSelectSecondaryType}"
+                                                                 editConceptUrl="#{panelModel.getUrlForRecordingSecondaryType()}"/>
+                            </sharedInput:panelField>
+                        </p:column>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                            <sharedInput:panelField title="Identification" isTheso="true" id="thirdTypeField">
+                                <sharedInput:conceptAutocomplete id="thirdTypeComponent"
+                                                                 selectedConcept="#{panelModel.recordingUnit.thirdType}"
+                                                                 disabled="#{!panelModel.hasThirdTypeOptions}"
+                                                                 completeMethod="#{panelModel.completeRecordingUnitThirdType}"
+                                                                 editConceptUrl="#{panelModel.getUrlForRecordingThirdType()}"/>
+                            </sharedInput:panelField>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                            <sharedInput:panelField title="Date de début" id="openingDate">
+                                <p:datePicker id="datePickerOpen"
+                                              value="#{panelModel.startDate}"/>
+                            </sharedInput:panelField>
+
+                        </p:column>
+
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                            <sharedInput:panelField title="Date de fin" id="closingDate">
+                                <p:datePicker id="datePickerEnd"
+                                              value="#{panelModel.endDate}"/>
+                            </sharedInput:panelField>
+
+                        </p:column>
+
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-12">
+                            <!-- TODO : make is secure or remove it -->
+                            <sharedInput:panelField title="Description" id="description">
+                                <p:textEditor id="descriptionField" secure='false' height="200px"
+                                              value="#{panelModel.recordingUnit.description}"/>
+                            </sharedInput:panelField>
+
+                        </p:column>
+
+                    </p:row>
+
+
+                </p:panelGrid>
+
+
+            </p:panel>
+
+            <p:panel id="locPanel" class="sia-form-panel" header="Localisation" toggleable="true"
+                     collapsed="false">
+            </p:panel>
+
+            <p:panel id="measurementPanel" class="sia-form-panel" header="Dimensions" toggleable="true"
+                     collapsed="false">
+                <p:panelGrid id="measurementPanelGrid"
+                             layout="grid"
+
+                >
+
+
+                    <p:row>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-3">
+                            <sharedInput:panelField title="Longueur" id="length">
+                                <p:inputNumber id="lengthField"
+                                               value="#{panelModel.recordingUnit.size.sizeLength}"
+                                               decimalSeparator="," thousandSeparator="."/>
+                            </sharedInput:panelField>
+                        </p:column>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-3">
+                            <sharedInput:panelField title="Largeur" id="width">
+                                <p:inputNumber id="widthField"
+                                               value="#{panelModel.recordingUnit.size.sizeWidth}"
+                                               decimalSeparator="," thousandSeparator="."/>
+                            </sharedInput:panelField>
+                        </p:column>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-3">
+                            <sharedInput:panelField title="Hauteur" id="height">
+                                <p:inputNumber id="heightField"
+                                               value="#{panelModel.recordingUnit.size.sizeThickness}"
+                                               decimalSeparator="," thousandSeparator="."/>
+                            </sharedInput:panelField>
+                        </p:column>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-3">
+                            <sharedInput:panelField title="Dimension unit" id="dimensionUnit">
+                                <p:selectOneMenu id="dimensionUnitField"
+                                                 value="#{panelModel.recordingUnit.size.sizeUnit}"
+                                >
+                                    <f:selectItem itemLabel="cm" itemValue="cm"/>
+                                    <f:selectItem itemLabel="m" itemValue="m"/>
+                                    <f:selectItems/>
+                                </p:selectOneMenu>
+                            </sharedInput:panelField>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-3">
+                            <sharedInput:panelField title="#{langBean.msg('recordingunit.field.altitude.sup+')}"
+                                                    id="altiSupPlus">
+                                <p:inputNumber id="altiSupPlusField"
+                                               value="#{panelModel.recordingUnit.altitude.altitudeSupPlus}"
+                                               decimalSeparator="," thousandSeparator="."/>
+                            </sharedInput:panelField>
+                        </p:column>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-3">
+                            <sharedInput:panelField title="#{langBean.msg('recordingunit.field.altitude.inf+')}"
+                                                    id="altiInfPlus">
+                                <p:inputNumber id="altiInfPlusField"
+                                               value="#{panelModel.recordingUnit.altitude.altitudeInfPlus}"
+                                               decimalSeparator="," thousandSeparator="."/>
+                            </sharedInput:panelField>
+                        </p:column>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-3">
+                            <sharedInput:panelField title="#{langBean.msg('recordingunit.field.altitude.sup-')}"
+                                                    id="altiSupMinus">
+                                <p:inputNumber id="altiSupMinusField"
+                                               value="#{panelModel.recordingUnit.altitude.altitudeSupMinus}"
+                                               decimalSeparator="," thousandSeparator="."/>
+                            </sharedInput:panelField>
+                        </p:column>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-3">
+                            <sharedInput:panelField title="#{langBean.msg('recordingunit.field.altitude.inf-')}"
+                                                    id="altiInfMinus">
+                                <p:inputNumber id="altiInfMinusField"
+                                               value="#{panelModel.recordingUnit.altitude.altitudeInfMinus}"
+                                               decimalSeparator="," thousandSeparator="."/>
+                            </sharedInput:panelField>
+                        </p:column>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-3">
+                            <sharedInput:panelField title="Unité altimetrie" id="altiUnit">
+                                <p:selectOneMenu id="altiUnitField"
+                                                 value="#{panelModel.recordingUnit.altitude.altitudeUnit}"
+                                >
+                                    <f:selectItem itemLabel="m" itemValue="m"/>
+                                    <f:selectItems/>
+                                </p:selectOneMenu>
+                            </sharedInput:panelField>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:panel>
+
+            <!-- Custom forms -->
+
+            <p:outputPanel id="customForm">
+
+                <ui:repeat value="#{panelModel.recordingUnit.formResponse.form.layout}"
+                           var="customFormPanel">
+                    <p:panel header="#{customFormPanel.name}" id="customFormPanel"
+                             class="#{customFormPanel.className} sia-form-panel"
+                             toggleable="true">
+
+                        <p:panelGrid id="customFormPanelGrid"
+                                     layout="grid"
+                                     columns="1"
+                                     styleClass="ui-fluid"
+
+                        >
+                            <ui:repeat value="#{customFormPanel.fields}"
+                                       var="field">
+
+                                <sharedInput:panelField title="#{field.label}" id="fieldLabelInteger"
+                                                        rendered="#{field['class'].simpleName eq 'CustomFieldInteger'}">
+                                    <!-- Si la question est de type INTEGER -->
+                                    <p:inputNumber
+
+                                            required="false"
+                                            value="#{panelModel.recordingUnit.formResponse.answers.get(field).value}"
+                                            decimalPlaces="0"
+                                    />
+
+
+                                </sharedInput:panelField>
+
+
+                                <!-- Si la question est de type SELECT_MULTIPLE -->
+                                <!-- Use autoComplete component for the multi-select field -->
+                                <sharedInput:panelField title="#{field.label}" id="fieldLabelSelectMultiple"
+                                                        rendered="#{field['class'].simpleName eq 'CustomFieldSelectMultiple'}">
+                                    <p:autoComplete
+                                            value="#{panelModel.recordingUnit.formResponse.answers.get(field).value}"
+                                            multiple="true"
+
+                                            completeMethod="#{panelModel.suggestValues}"
+                                            var="option" itemLabel="#{option.label}"
+                                            itemValue="#{option}"
+                                            required="false"
+                                            converter="#{conceptConverter}"
+                                            forceSelection="true"
+                                            scrollHeight="300"
+                                            dropdown="true">
+
+
+                                        <p:column>
+                                            <p:commandButton icon="fa fa-external-link"
+                                                             styleClass="btn btn-primary"
+                                                             onclick="event.stopPropagation(); window.open('#{option.vocabulary.baseUri}/?idc=#{option.externalId}&amp;idt=#{option.vocabulary.externalVocabularyId}', '_blank'); return false;"/>
+                                        </p:column>
+                                        <p:column>
+                                            <div style="display:flex; flex-direction: column">
+                                                <h:outputText style="vertical-align: middle; margin-left: .5rem"
+                                                              value="#{option.label}"/>
+                                                <small>#{option.vocabulary.baseUri} - #{option.vocabulary.vocabularyName}</small>
+                                            </div>
+
+                                        </p:column>
+
+                                        <!-- Pass the specific question as a parameter to the complete method -->
+                                        <f:attribute name="question" value="#{field}"/>
+
+
+                                    </p:autoComplete>
+                                </sharedInput:panelField>
+
+
+                            </ui:repeat>
+                        </p:panelGrid>
+
+
+                    </p:panel>
+                </ui:repeat>
+
+            </p:outputPanel>
+
+
+        </div>
+
+        <p:toolbar class="panel-footer">
+            <p:toolbarGroup align="right">
+                <p:commandButton value='Enregistrer'
+                                 actionListener="#{panelModel.save()}"
+                                 update="flow"
+                                 style="margin-right: .5rem">
+                </p:commandButton>
+            </p:toolbarGroup>
+        </p:toolbar>
+
+    </h:form>
+
+
+</ui:fragment>

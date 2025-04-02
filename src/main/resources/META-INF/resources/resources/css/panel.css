@@ -8,6 +8,11 @@
     border: 1px solid var(--siamois-green-light-100);
 }
 
+.sia-panel-title {
+    font-size: 22px;
+    padding: 0.5em 0.5em 0.5em 2em;
+}
+
 .ui-panel.siamois-panel .ui-panel-content {
     padding: 0;
 }
@@ -25,17 +30,14 @@
     padding: 1em;
 }
 
-.siamois-panel .ui-tabs.ui-tabs-top>.ui-tabs-nav li.ui-tabs-header {
+.siamois-panel .ui-tabs.ui-tabs-top > .ui-tabs-nav li.ui-tabs-header {
     background: transparent;
 }
-
 
 
 .siamois-panel .ui-tabs .ui-tabs-nav {
     background: transparent;
 }
-
-
 
 
 .siamois-panel .ui-breadcrumb {
@@ -53,10 +55,8 @@
 
 }
 
-.spatial-unit-panel-title {
+.spatial-unit-panel .sia-panel-title {
     color: var(--context-main-color);
-    font-size: 22px;
-    padding: 1em;
 }
 
 .spatial-unit-panel .ui-datatable thead th {
@@ -66,6 +66,21 @@
 .spatial-unit-panel .ui-button {
     background: var(--context-main-color);
     border: 1px solid var(--context-main-color);
+}
+
+.spatial-unit-panel .ui-separator {
+    background: var(--context-light-color-100);
+}
+
+
+.spatial-unit-panel .ui-divider.ui-divider-horizontal:before {
+    border-top-color: var(--context-light-color-200);
+}
+
+.spatial-unit-panel .panel-footer {
+    background: var(--context-light-color-100);
+    border-radius: 0;
+    border: none;
 }
 
 .ui-chip.spatial-unit-count-chip {
@@ -107,7 +122,7 @@
     box-shadow: none;
 }
 
-.spatial-unit-single-panel .ui-tabs.ui-tabs-top>.ui-tabs-nav li.ui-tabs-header.ui-state-active {
+.spatial-unit-single-panel .ui-tabs.ui-tabs-top > .ui-tabs-nav li.ui-tabs-header.ui-state-active {
     border-color: var(--context-main-color);
 }
 
@@ -126,6 +141,168 @@ tbody.spatial-unit-datatable .ui-link {
 
 .recording-unit-tab .ui-datatable .ui-link {
     color: var(--ground-main-color)
+}
+
+/* Action units panels */
+
+
+.ui-panel.action-unit-panel .ui-panel-titlebar {
+    background: var(--context-light-color-100);
+
+}
+
+.action-unit-panel .sia-panel-title {
+    color: var(--context-main-color);
+}
+
+.action-unit-panel .ui-datatable thead th {
+    background: var(--context-light-color-100);
+}
+
+.action-unit-panel .ui-button {
+    background: var(--context-main-color);
+    border: 1px solid var(--context-main-color);
+}
+
+.action-unit-panel .ui-separator {
+    background: var(--context-light-color-100);
+}
+
+
+.action-unit-panel .ui-divider.ui-divider-horizontal:before {
+    border-top-color: var(--context-light-color-200);
+}
+
+.action-unit-panel .panel-footer {
+    background: var(--context-light-color-100);
+    border-radius: 0;
+    border: none;
+}
+
+.ui-chip.action-unit-count-chip {
+    background-color: white;
+    border: 1px solid var(--context-main-color);
+    color: var(--context-main-color);
+    font-size: 16px;
+}
+
+.ui-chip.action-unit-type-chip {
+    background-color: var(--context-main-color);
+    color: white;
+    font-size: 16px;
+}
+
+.ui-panel.action-unit-single-panel .ui-panel-content {
+    background: var(--context-light-color-50);
+}
+
+.action-unit-single-panel .ui-breadcrumb {
+    border: none;
+    background: var(--context-light-color-50);
+}
+
+.action-unit-single-panel .siamois-toolbar {
+    background: transparent;
+    box-shadow: none;
+}
+
+.action-unit-single-panel .ui-tabs.ui-tabs-top > .ui-tabs-nav li.ui-tabs-header.ui-state-active {
+    border-color: var(--context-main-color);
+}
+
+.action-unit-single-panel .ui-tabs .ui-tabs-nav li.ui-tabs-header.ui-state-active a {
+    color: var(--context-main-color);
+}
+
+tbody.action-unit-datatable .ui-link {
+    color: var(--context-main-color)
+}
+
+/* Recording units panels */
+
+.ui-panel.recording-unit-panel .ui-panel-titlebar {
+    background: var(--ground-light-color-100);
+
+}
+
+.recording-unit-panel .sia-panel-title {
+    color: var(--ground-main-color);
+}
+
+.recording-unit-panel .ui-datatable thead th {
+    background: var(--ground-light-color-100);
+}
+
+.recording-unit-panel .ui-button {
+    background: var(--ground-main-color);
+    border: 1px solid var(--ground-main-color);
+}
+
+.recording-unit-panel .ui-separator {
+    background: var(--ground-light-color-100);
+}
+
+
+.recording-unit-panel .ui-divider.ui-divider-horizontal:before {
+    border-top-color: var(--ground-light-color-200);
+}
+
+.recording-unit-panel .panel-footer {
+    background: var(--ground-light-color-100);
+    border-radius: 0;
+    border: none;
+}
+
+.ui-chip.recording-unit-count-chip {
+    background-color: white;
+    border: 1px solid var(--ground-main-color);
+    color: var(--ground-main-color);
+    font-size: 16px;
+}
+
+
+.ui-panel.recording-unit-single-panel .ui-panel-content {
+    background: var(--ground-light-color-50);
+}
+
+.recording-unit-single-panel .ui-breadcrumb {
+    border: none;
+    background: var(--ground-light-color-50);
+}
+
+.recording-unit-single-panel .siamois-toolbar {
+    background: transparent;
+    box-shadow: none;
+}
+
+.recording-unit-single-panel .ui-tabs.ui-tabs-top > .ui-tabs-nav li.ui-tabs-header.ui-state-active {
+    border-color: var(--ground-main-color);
+}
+
+.recording-unit-single-panel .ui-tabs .ui-tabs-nav li.ui-tabs-header.ui-state-active a {
+    color: var(--ground-main-color);
+}
+
+tbody.recording-unit-datatable .ui-link {
+    color: var(--context-main-color)
+}
+
+/* forms */
+
+
+.ui-panel.sia-form-panel .ui-panel-content {
+    background: transparent;
+    color: var(--text-main);
+    border: none;
+    padding: 0;
+}
+
+.ui-panel.sia-form-panel .ui-panel-titlebar {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--ground-light-color-200);
+    color: var(--text-main);
+    padding: 0.5em;
 }
 
 

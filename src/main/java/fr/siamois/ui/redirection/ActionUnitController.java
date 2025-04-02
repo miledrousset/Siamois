@@ -1,6 +1,6 @@
 package fr.siamois.ui.redirection;
 
-import fr.siamois.ui.bean.actionunit.ActionUnitBean;
+import fr.siamois.ui.bean.panel.FlowBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,17 +12,16 @@ import javax.faces.bean.SessionScoped;
 @SessionScoped
 public class ActionUnitController {
 
-    private final ActionUnitBean actionUnitBean;
+    private final FlowBean flowBean;
 
-    public ActionUnitController(ActionUnitBean actionUnitBean) {
-        this.actionUnitBean = actionUnitBean;
+    public ActionUnitController(FlowBean flowBean) {
+        this.flowBean = flowBean;
     }
 
     @GetMapping("/action-unit/{id}")
     public String toActionUnit(@PathVariable Long id, Model model) {
-        model.addAttribute("id", id);
-        actionUnitBean.setId(id);
-        return "forward:/pages/actionUnit/actionUnit.xhtml";
+        flowBean.addActionUnitPanel(id);
+        return "forward:/flow.xhtml";
     }
 
 }

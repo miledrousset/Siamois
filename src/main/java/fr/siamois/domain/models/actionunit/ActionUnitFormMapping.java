@@ -16,8 +16,4 @@ public class ActionUnitFormMapping implements Serializable {
     @EmbeddedId
     private ActionUnitFormMappingId pk;
 
-    @ManyToOne
-    @MapsId("actionUnit")  // Explicitly map the ID field
-    @JoinColumn(name = "fk_action_unit", insertable = false, updatable = false)
-    private ActionUnit actionUnit;
 }

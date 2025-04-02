@@ -159,7 +159,7 @@ class ActionUnitServiceTest {
 
     @Test
     void save_withUserInfo_success() {
-        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
+
 
         ActionUnit actionUnit = new ActionUnit();
         actionUnit.setIdentifier("Test");
@@ -167,6 +167,8 @@ class ActionUnitServiceTest {
         institution.setIdentifier("MOM");
         actionUnit.setCreatedByInstitution(institution);
         Concept typeConcept = new Concept();
+
+        UserInfo userInfo = new UserInfo(institution, new Person(), "fr");
 
         when(conceptService.saveOrGetConcept(typeConcept)).thenReturn(typeConcept);
         when(actionUnitRepository.save(actionUnit)).thenReturn(actionUnit);

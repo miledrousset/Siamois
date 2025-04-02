@@ -1,6 +1,6 @@
 package fr.siamois.ui.redirection;
 
-import fr.siamois.ui.bean.recordingunit.NewRecordingUnitFormBean;
+import fr.siamois.ui.bean.panel.FlowBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,17 +12,17 @@ import javax.faces.bean.SessionScoped;
 @SessionScoped
 public class RecordingUnitController {
 
-    private final NewRecordingUnitFormBean newRecordingUnitFormBean;
 
-    public RecordingUnitController(NewRecordingUnitFormBean newRecordingUnitFormBean) {
-        this.newRecordingUnitFormBean = newRecordingUnitFormBean;
+    private final FlowBean flowBean;
+
+    public RecordingUnitController(FlowBean flowBean) {
+        this.flowBean = flowBean;
     }
 
     @GetMapping("/recording-unit/{id}")
     public String toRecordingUnit(@PathVariable Long id, Model model) {
-        model.addAttribute("id", id);
-        newRecordingUnitFormBean.setId(id);
-        return "forward:/pages/recordingUnit/recordingUnit.xhtml";
+        flowBean.addRecordingUnitPanel(id);
+        return "forward:/flow.xhtml";
     }
 
 }
