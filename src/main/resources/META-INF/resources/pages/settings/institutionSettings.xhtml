@@ -20,28 +20,7 @@
 
     <ui:define name="content">
         <main>
-            <settingscomp:fieldValue title="Mon organisation" formId="institutionSettingsForm" saveMethod="#{settingsBean.changeInstitution()}">
-                <settingscomp:fieldValueRow label="Choix de l'organisation actuelle" inputId="institutionSetting" >
-                    <p:selectOneMenu id="institutionSetting"
-                                     value="#{settingsBean.FInstitution}"
-                                     var="inst"
-                                     style="width: 100%"
-                                     converter="#{institutionConverter}"
-                    >
-                        <f:selectItems
-                                value="#{settingsBean.refInstitutions}"
-                                var="item"
-                                itemValue="#{item}"
-                                itemLabel="#{item.name}"
-                        />
 
-                        <p:column>
-                            <h:outputText value="#{item.id}"/>
-                        </p:column>
-
-                    </p:selectOneMenu>
-                </settingscomp:fieldValueRow>
-            </settingscomp:fieldValue>
         </main>
     </ui:define>
 

@@ -5,7 +5,8 @@
 
 main {
     display: flex;
-    justify-content: center
+    justify-content: center;
+    flex-direction: column;
 }
 
 main form {
@@ -21,8 +22,12 @@ main form {
         "card-content card-content card-content"
         ". . save";
     width: 45%;
-    margin-top: 10vh;
     grid-row-gap: 2vh;
+    margin-top: 4vh;
+}
+
+main form:first-child .field-value-group {
+    margin-top: 10vh;
 }
 
 .field-value-title {

@@ -9,6 +9,7 @@ import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.UsernameVerifier;
 import fr.siamois.infrastructure.database.repositories.auth.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.auth.TeamRepository;
+import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +35,8 @@ class PersonServiceTest {
     private PersonRepository personRepository;
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
+    @Mock
+    private PersonSettingsRepository personSettingsRepository;
 
     private final EmailVerifier emailVerifier = new EmailVerifier();
     private final PasswordVerifier passwordVerifier = new PasswordVerifier();
@@ -43,7 +46,12 @@ class PersonServiceTest {
     @BeforeEach
     void setUp() {
         UsernameVerifier usernameVerifier = new UsernameVerifier(personRepository);
-        personService = new PersonService(teamRepository, personRepository, passwordEncoder, List.of(usernameVerifier, emailVerifier, passwordVerifier));
+        personService = new PersonService(teamRepository,
+                personRepository,
+                passwordEncoder,
+                List.of(usernameVerifier, emailVerifier, passwordVerifier),
+                personSettingsRepository
+        );
     }
 
     @Test

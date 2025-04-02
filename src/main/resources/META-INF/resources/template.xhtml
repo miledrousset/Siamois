@@ -124,10 +124,14 @@
                                 <span class="menu-text">Mon thesaurus</span>
                             </h:commandLink>
                         </li>
+                    </ul>
+
+                    <ul class="nav flex-column">
+                        <li class="nav-header">Organisations</li>
                         <li class="nav-item">
-                            <h:commandLink action="#{redirectBean.redirectTo('/settings/profile/organisation')}" styleClass="nav-link">
-                                <i class="bi bi-calendar"/>
-                                <span class="menu-text">Mon organisation</span>
+                            <h:commandLink action="#{redirectBean.redirectTo('/settings/organisation')}" styleClass="nav-link">
+                                <i class="bi bi-house-door-fill"/>
+                                <span class="menu-text">Gestion des organisations</span>
                             </h:commandLink>
                         </li>
                     </ul>
@@ -135,15 +139,6 @@
                     <h:panelGroup rendered="#{navBean.userIsSuperAdmin()}">
                         <ul class="nav flex-column">
                             <li class="nav-header">Siamois</li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-
-                                </a>
-                                <h:commandLink action="#{redirectBean.redirectTo('/settings/organisation')}" styleClass="nav-link">
-                                    <i class="bi bi-house-door-fill"/>
-                                    <span class="menu-text">Gestion des organisations</span>
-                                </h:commandLink>
-                            </li>
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="bi bi-person"/>

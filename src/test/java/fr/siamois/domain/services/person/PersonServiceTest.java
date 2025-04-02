@@ -6,6 +6,7 @@ import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
 import fr.siamois.infrastructure.database.repositories.auth.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.auth.TeamRepository;
+import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +35,9 @@ class PersonServiceTest {
     @Mock
     private PasswordVerifier passwordVerifier;
 
+    @Mock
+    private PersonSettingsRepository personSettingsRepository;
+
     private PersonService personService;
 
     Person person;
@@ -50,7 +54,8 @@ class PersonServiceTest {
                 teamRepository,
                 personRepository,
                 passwordEncoder,
-                verifiers
+                verifiers,
+                personSettingsRepository
         );
     }
 
