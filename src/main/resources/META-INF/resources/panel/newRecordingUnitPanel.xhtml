@@ -10,7 +10,7 @@
 
     <!--@elvariable id="panelIndex" type="Integer"-->
     <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.NewRecordingUnitPanel"-->
-    <div class="recording-unit-panel-title">
+    <div class="sia-panel-title">
         Création d'une nouvelle unité d'enregistrement
     </div>
 
@@ -200,28 +200,32 @@
 
                     <p:row>
                         <p:column styleClass="ui-g-12 ui-md-6 ui-lg-3">
-                            <sharedInput:panelField title="#{langBean.msg('recordingunit.field.altitude.sup+')}" id="altiSupPlus">
+                            <sharedInput:panelField title="#{langBean.msg('recordingunit.field.altitude.sup+')}"
+                                                    id="altiSupPlus">
                                 <p:inputNumber id="altiSupPlusField"
                                                value="#{panelModel.recordingUnit.altitude.altitudeSupPlus}"
                                                decimalSeparator="," thousandSeparator="."/>
                             </sharedInput:panelField>
                         </p:column>
                         <p:column styleClass="ui-g-12 ui-md-6 ui-lg-3">
-                            <sharedInput:panelField title="#{langBean.msg('recordingunit.field.altitude.inf+')}" id="altiInfPlus">
+                            <sharedInput:panelField title="#{langBean.msg('recordingunit.field.altitude.inf+')}"
+                                                    id="altiInfPlus">
                                 <p:inputNumber id="altiInfPlusField"
                                                value="#{panelModel.recordingUnit.altitude.altitudeInfPlus}"
                                                decimalSeparator="," thousandSeparator="."/>
                             </sharedInput:panelField>
                         </p:column>
                         <p:column styleClass="ui-g-12 ui-md-6 ui-lg-3">
-                            <sharedInput:panelField title="#{langBean.msg('recordingunit.field.altitude.sup-')}" id="altiSupMinus">
+                            <sharedInput:panelField title="#{langBean.msg('recordingunit.field.altitude.sup-')}"
+                                                    id="altiSupMinus">
                                 <p:inputNumber id="altiSupMinusField"
                                                value="#{panelModel.recordingUnit.altitude.altitudeSupMinus}"
                                                decimalSeparator="," thousandSeparator="."/>
                             </sharedInput:panelField>
                         </p:column>
                         <p:column styleClass="ui-g-12 ui-md-6 ui-lg-3">
-                            <sharedInput:panelField title="#{langBean.msg('recordingunit.field.altitude.inf-')}" id="altiInfMinus">
+                            <sharedInput:panelField title="#{langBean.msg('recordingunit.field.altitude.inf-')}"
+                                                    id="altiInfMinus">
                                 <p:inputNumber id="altiInfMinusField"
                                                value="#{panelModel.recordingUnit.altitude.altitudeInfMinus}"
                                                decimalSeparator="," thousandSeparator="."/>
@@ -245,75 +249,81 @@
 
             <p:outputPanel id="customForm">
 
-                    <ui:repeat value="#{panelModel.recordingUnit.formResponse.form.layout}"
-                               var="customFormPanel">
-                        <p:panel header='Formulaire personalisé' id="customFormPanel"
-                                 class="#{customFormPanel.className} sia-form-panel"
-                                 toggleable="true">
+                <ui:repeat value="#{panelModel.recordingUnit.formResponse.form.layout}"
+                           var="customFormPanel">
+                    <p:panel header="#{customFormPanel.name}" id="customFormPanel"
+                             class="#{customFormPanel.className} sia-form-panel"
+                             toggleable="true">
 
-                            <p:panelGrid id="customFormPanelGrid"
-                                         layout="grid"
+                        <p:panelGrid id="customFormPanelGrid"
+                                     layout="grid"
+                                     columns="1"
+                                     styleClass="ui-fluid"
 
-                            >
-                                <ui:repeat value="#{customFormPanel.fields}"
-                                           var="field">
+                        >
+                            <ui:repeat value="#{customFormPanel.fields}"
+                                       var="field">
 
-                                    <p:row>
-                                        <p:column styleClass="ui-g-12 ui-md-12 ui-lg-12">
-                                            <sharedInput:panelField title="#{field.label}" id="fieldLabel">
-                                                <!-- Si la question est de type INTEGER -->
-                                                <p:inputNumber
-                                                               rendered="#{field['class'].simpleName eq 'CustomFieldInteger'}"
-                                                               required="false"
-                                                               value="#{panelModel.recordingUnit.formResponse.answers.get(field).value}" decimalPlaces="0"
-                                                               />
+                                <sharedInput:panelField title="#{field.label}" id="fieldLabelInteger"
+                                                        rendered="#{field['class'].simpleName eq 'CustomFieldInteger'}">
+                                    <!-- Si la question est de type INTEGER -->
+                                    <p:inputNumber
 
-                                                <!-- Si la question est de type SELECT_MULTIPLE -->
-                                                <!-- Use autoComplete component for the multi-select field -->
-                                                <p:autoComplete
-                                                        value="#{panelModel.recordingUnit.formResponse.answers.get(field).value}"
-                                                        multiple="true"
-                                                        rendered="#{field['class'].simpleName eq 'CustomFieldSelectMultiple'}"
-                                                        completeMethod="#{newRecordingUnitFormBean.suggestValues}"
-                                                        var="option" itemLabel="#{option.label}"
-                                                        itemValue="#{option}"
-                                                        required="false"
-                                                        converter="#{conceptConverter}"
-                                                        forceSelection="true"
-                                                        scrollHeight="300"
-                                                        dropdown="true">
+                                            required="false"
+                                            value="#{panelModel.recordingUnit.formResponse.answers.get(field).value}"
+                                            decimalPlaces="0"
+                                    />
 
 
-                                                    <p:column>
-                                                        <p:commandButton icon="fa fa-external-link"
-                                                                         styleClass="btn btn-primary"
-                                                                         onclick="event.stopPropagation(); window.open('#{option.vocabulary.baseUri}/?idc=#{option.externalId}&amp;idt=#{option.vocabulary.externalVocabularyId}', '_blank'); return false;"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <div style="display:flex; flex-direction: column">
-                                                            <h:outputText style="vertical-align: middle; margin-left: .5rem"
-                                                                          value="#{option.label}"/>
-                                                            <small>#{option.vocabulary.baseUri} - #{option.vocabulary.vocabularyName}</small>
-                                                        </div>
-
-                                                    </p:column>
-
-                                                    <!-- Pass the specific question as a parameter to the complete method -->
-                                                    <f:attribute name="question" value="#{field}"/>
+                                </sharedInput:panelField>
 
 
-                                                </p:autoComplete>
-                                            </sharedInput:panelField>
+                                <!-- Si la question est de type SELECT_MULTIPLE -->
+                                <!-- Use autoComplete component for the multi-select field -->
+                                <sharedInput:panelField title="#{field.label}" id="fieldLabelSelectMultiple"
+                                                        rendered="#{field['class'].simpleName eq 'CustomFieldSelectMultiple'}">
+                                    <p:autoComplete
+                                            value="#{panelModel.recordingUnit.formResponse.answers.get(field).value}"
+                                            multiple="true"
+
+                                            completeMethod="#{newRecordingUnitFormBean.suggestValues}"
+                                            var="option" itemLabel="#{option.label}"
+                                            itemValue="#{option}"
+                                            required="false"
+                                            converter="#{conceptConverter}"
+                                            forceSelection="true"
+                                            scrollHeight="300"
+                                            dropdown="true">
+
+
+                                        <p:column>
+                                            <p:commandButton icon="fa fa-external-link"
+                                                             styleClass="btn btn-primary"
+                                                             onclick="event.stopPropagation(); window.open('#{option.vocabulary.baseUri}/?idc=#{option.externalId}&amp;idt=#{option.vocabulary.externalVocabularyId}', '_blank'); return false;"/>
+                                        </p:column>
+                                        <p:column>
+                                            <div style="display:flex; flex-direction: column">
+                                                <h:outputText style="vertical-align: middle; margin-left: .5rem"
+                                                              value="#{option.label}"/>
+                                                <small>#{option.vocabulary.baseUri} - #{option.vocabulary.vocabularyName}</small>
+                                            </div>
 
                                         </p:column>
-                                    </p:row>
 
-                                </ui:repeat>
-                            </p:panelGrid>
+                                        <!-- Pass the specific question as a parameter to the complete method -->
+                                        <f:attribute name="question" value="#{field}"/>
 
 
-                        </p:panel>
-                    </ui:repeat>
+                                    </p:autoComplete>
+                                </sharedInput:panelField>
+
+
+                            </ui:repeat>
+                        </p:panelGrid>
+
+
+                    </p:panel>
+                </ui:repeat>
 
             </p:outputPanel>
 

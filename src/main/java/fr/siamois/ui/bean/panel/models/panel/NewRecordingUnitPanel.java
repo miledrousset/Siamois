@@ -13,9 +13,12 @@ import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectMu
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
+import fr.siamois.domain.models.recordingunit.RecordingUnitAltimetry;
+import fr.siamois.domain.models.recordingunit.RecordingUnitSize;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
@@ -34,11 +37,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.time.ZoneOffset;
+import java.util.*;
 
 import static java.time.OffsetDateTime.now;
 
@@ -54,6 +56,7 @@ public class NewRecordingUnitPanel extends AbstractPanel {
     private final SessionSettingsBean sessionSettingsBean;
     private final transient SpatialUnitService spatialUnitService;
     private final transient ActionUnitService actionUnitService;
+    private final transient RecordingUnitService recordingUnitService;
     private final transient ConceptService conceptService;
     private final transient FieldConfigurationService fieldConfigurationService;
     private final FlowBean flowBean;
@@ -69,12 +72,13 @@ public class NewRecordingUnitPanel extends AbstractPanel {
     private transient CustomForm additionalForm;
 
 
-    public NewRecordingUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, ActionUnitService actionUnitService, ConceptService conceptService, FieldConfigurationService fieldConfigurationService, FlowBean flowBean) {
+    public NewRecordingUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, ActionUnitService actionUnitService, RecordingUnitService recordingUnitService, ConceptService conceptService, FieldConfigurationService fieldConfigurationService, FlowBean flowBean) {
         super("Nouvelle unité d'enregistrement", "bi bi-pencil-square", "siamois-panel recording-unit-panel new-recording-unit-panel");
         this.langBean = langBean;
         this.sessionSettingsBean = sessionSettingsBean;
         this.spatialUnitService = spatialUnitService;
         this.actionUnitService = actionUnitService;
+        this.recordingUnitService = recordingUnitService;
         this.conceptService = conceptService;
         this.fieldConfigurationService = fieldConfigurationService;
         this.flowBean = flowBean;
@@ -95,6 +99,8 @@ public class NewRecordingUnitPanel extends AbstractPanel {
         recordingUnit.setCreatedByInstitution(recordingUnit.getActionUnit().getCreatedByInstitution());
         recordingUnit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
         recordingUnit.setExcavator(sessionSettingsBean.getAuthenticatedUser());
+        recordingUnit.setSize(new RecordingUnitSize());
+        recordingUnit.setAltitude(new RecordingUnitAltimetry());
         this.startDate = offsetDateTimeToLocalDate(now());
         DefaultMenuItem item = DefaultMenuItem.builder()
                 .value("Nouvelle unité d'enregistrement")
@@ -107,7 +113,7 @@ public class NewRecordingUnitPanel extends AbstractPanel {
     public List<Concept> fetchChildrenOfConcept(Concept concept) {
 
         UserInfo info = sessionSettingsBean.getUserInfo();
-        List<Concept> concepts = new ArrayList<>();
+        List<Concept> concepts ;
 
         concepts = conceptService.findDirectSubConceptOf(info, concept);
 
@@ -136,6 +142,69 @@ public class NewRecordingUnitPanel extends AbstractPanel {
         }
 
 
+    }
+
+    public OffsetDateTime localDateToOffsetDateTime(LocalDate localDate) {
+        return localDate.atTime(LocalTime.NOON).atOffset(ZoneOffset.UTC);
+    }
+
+    public RecordingUnit save(RecordingUnit recordingUnit,
+                              Concept typeConcept,
+                              LocalDate startDate,
+                              LocalDate endDate) {
+
+
+        // handle dates
+        if (startDate != null) {
+            recordingUnit.setStartDate(localDateToOffsetDateTime(startDate));
+        }
+        if (endDate != null) {
+            recordingUnit.setEndDate(localDateToOffsetDateTime(endDate));
+        }
+
+        return recordingUnitService.save(recordingUnit,
+                typeConcept,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList());
+
+    }
+
+    public boolean save() {
+        try {
+
+            RecordingUnit saved = save(this.recordingUnit, recordingUnit.getType(), startDate, endDate);
+
+            // Return page with id
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_INFO,
+                            "Info",
+                            langBean.msg("recordingunit.created", recordingUnit.getIdentifier())));
+
+            Integer idx = flowBean.getPanels().indexOf(this);
+
+            // If unable to find idx, we create new panel?
+
+            // Remove last item from breadcrumb
+            this.getBreadcrumb().getModel().getElements().remove(this.getBreadcrumb().getModel().getElements().size() - 1);
+            flowBean.goToRecordingUnitByIdCurrentPanel(saved.getId(), idx);
+
+
+            return true;
+
+        } catch (RuntimeException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_ERROR,
+                            "Error",
+                            langBean.msg("recordingunit.creationfailed", recordingUnit.getIdentifier()) + ": " + e.getMessage()
+                    ));
+
+            log.error("Error while saving: {}", e.getMessage());
+
+        }
+        return false;
     }
 
     public void changeCustomForm() {

@@ -1,6 +1,5 @@
 package fr.siamois.ui.redirection;
 
-import fr.siamois.ui.bean.actionunit.ActionUnitBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,11 +12,9 @@ import javax.faces.bean.SessionScoped;
 @SessionScoped
 public class ActionUnitController {
 
-    private final ActionUnitBean actionUnitBean;
     private final FlowBean flowBean;
 
-    public ActionUnitController(ActionUnitBean actionUnitBean, FlowBean flowBean) {
-        this.actionUnitBean = actionUnitBean;
+    public ActionUnitController(FlowBean flowBean) {
         this.flowBean = flowBean;
     }
 

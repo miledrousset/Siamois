@@ -1,7 +1,9 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
+import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,6 +56,8 @@ public class NewSpatialUnitPanel extends AbstractPanel {
         spatialUnit = new SpatialUnit();
     }
 
+
+
     /**
      * Save the spatial unit in the database.
      * Display a message if the spatial unit already exists.
@@ -67,6 +72,8 @@ public class NewSpatialUnitPanel extends AbstractPanel {
 
             MessageUtils.displayInfoMessage(langBean, "spatialunit.created", saved.getName());
 
+            // remove last bc item before swaqping panel
+            this.getBreadcrumb().getModel().getElements().remove(this.getBreadcrumb().getModel().getElements().size() - 1);
             flowBean.goToSpatialUnitByIdCurrentPanel(saved.getId(), this);
 
             return true;

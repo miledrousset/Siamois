@@ -15,10 +15,7 @@ import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.breadcrumb.BreadcrumbBean;
-import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
-import fr.siamois.ui.bean.panel.models.panel.ActionUnitPanel;
-import fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel;
-import fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -115,8 +112,12 @@ public class FlowBean implements Serializable {
         panels.add(0, panelFactory.createNewActionUnitPanel(spatialUnitId, panels.get(sourcePanelIndex).getBreadcrumb()));
     }
 
-    public void addActionUnitPanel(Long actionUnitPanelId) {
-        panels.add(0, panelFactory.createActionUnitPanel(actionUnitPanelId));
+    public void addActionUnitPanel(Long actionUnitId) {
+        panels.add(0, panelFactory.createActionUnitPanel(actionUnitId));
+    }
+
+    public void addRecordingUnitPanel(Long recordingUnitId) {
+        panels.add(0, panelFactory.createRecordingUnitPanel(recordingUnitId));
     }
 
     public void addNewRecordingUnitPanel(Long actionUnitId, Integer sourcePanelIndex) {
@@ -136,6 +137,13 @@ public class FlowBean implements Serializable {
         SpatialUnitPanel newPanel = panelFactory.createSpatialUnitPanel(id, currentPanel.getBreadcrumb());
         panels.add(0, newPanel);
     }
+
+   public void  goToRecordingUnitByIdCurrentPanel(Long id, Integer currentPanelIndex) {
+
+           RecordingUnitPanel newPanel = panelFactory.createRecordingUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
+           panels.set(currentPanelIndex, newPanel);
+
+   }
 
     public void goToActionUnitByIdNewPanel(Long id, Integer currentPanelIndex) {
         // Create new panel type and add items to its breadcrumb
@@ -175,4 +183,7 @@ public class FlowBean implements Serializable {
     }
 
 
+    public void addSpatialUnitPanel(Long id) {
+        panels.add(0, panelFactory.createSpatialUnitPanel(id));
+    }
 }

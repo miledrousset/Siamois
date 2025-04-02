@@ -18,6 +18,7 @@ public class PanelFactory {
     private final ObjectProvider<NewActionUnitPanel> newActionUnitPanelProvider;
     private final ObjectProvider<ActionUnitPanel> actionUnitPanelProvider;
     private final ObjectProvider<NewRecordingUnitPanel> newRecordingUnitPanelProvider;
+    private final ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider;
 
 
     public PanelFactory(
@@ -25,7 +26,7 @@ public class PanelFactory {
             ObjectProvider<SpatialUnitPanel> spatialUnitPanelProvider,
             ObjectProvider<NewSpatialUnitPanel> newSpatialUnitPanelProvider,
             ObjectProvider<NewActionUnitPanel> newActionUnitPanelProvider,
-            ObjectProvider<ActionUnitPanel> actionUnitPanelProvider, ObjectProvider<NewRecordingUnitPanel> newRecordingUnitPanelProvider) {
+            ObjectProvider<ActionUnitPanel> actionUnitPanelProvider, ObjectProvider<NewRecordingUnitPanel> newRecordingUnitPanelProvider, ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider) {
 
         this.spatialUnitListPanelProvider = spatialUnitListPanelProvider;
         this.spatialUnitPanelProvider = spatialUnitPanelProvider;
@@ -33,6 +34,18 @@ public class PanelFactory {
         this.newActionUnitPanelProvider = newActionUnitPanelProvider;
         this.actionUnitPanelProvider = actionUnitPanelProvider;
         this.newRecordingUnitPanelProvider = newRecordingUnitPanelProvider;
+        this.recordingUnitPanelProvider = recordingUnitPanelProvider;
+    }
+
+    public SpatialUnitPanel createSpatialUnitPanel(Long spatialUnitId) {
+
+        PanelBreadcrumb bc = new PanelBreadcrumb();
+
+        return new SpatialUnitPanel.SpatialUnitPanelBuilder(spatialUnitPanelProvider)
+                .id(spatialUnitId)
+                .breadcrumb(bc)
+                .build();
+
     }
 
     public SpatialUnitPanel createSpatialUnitPanel(Long spatialUnitId, PanelBreadcrumb currentBreadcrumb) {
@@ -79,6 +92,30 @@ public class PanelFactory {
         bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
 
         return new NewSpatialUnitPanel.NewSpatialUnitPanelBuilder(newSpatialUnitPanelProvider)
+                .breadcrumb(bc)
+                .build();
+
+    }
+
+    public RecordingUnitPanel createRecordingUnitPanel(Long recordingUnitId, PanelBreadcrumb currentBreadcrumb) {
+
+        PanelBreadcrumb bc = new PanelBreadcrumb();
+        bc.getModel().getElements().clear();
+        bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+
+        return new RecordingUnitPanel.RecordingUnitPanelBuilder(recordingUnitPanelProvider)
+                .id(recordingUnitId)
+                .breadcrumb(bc)
+                .build();
+
+    }
+
+    public RecordingUnitPanel createRecordingUnitPanel(Long recordingUnitId) {
+
+        PanelBreadcrumb bc = new PanelBreadcrumb();
+
+        return new RecordingUnitPanel.RecordingUnitPanelBuilder(recordingUnitPanelProvider)
+                .id(recordingUnitId)
                 .breadcrumb(bc)
                 .build();
 

@@ -8,6 +8,11 @@
     border: 1px solid var(--siamois-green-light-100);
 }
 
+.sia-panel-title {
+    font-size: 22px;
+    padding: 0.5em 0.5em 0.5em 2em;
+}
+
 .ui-panel.siamois-panel .ui-panel-content {
     padding: 0;
 }
@@ -50,10 +55,8 @@
 
 }
 
-.spatial-unit-panel-title {
+.spatial-unit-panel .sia-panel-title {
     color: var(--context-main-color);
-    font-size: 22px;
-    padding: 0.5em;
 }
 
 .spatial-unit-panel .ui-datatable thead th {
@@ -148,10 +151,8 @@ tbody.spatial-unit-datatable .ui-link {
 
 }
 
-.action-unit-panel-title {
+.action-unit-panel .sia-panel-title {
     color: var(--context-main-color);
-    font-size: 22px;
-    padding: 0.5em;
 }
 
 .action-unit-panel .ui-datatable thead th {
@@ -224,10 +225,8 @@ tbody.action-unit-datatable .ui-link {
 
 }
 
-.recording-unit-panel-title {
+.recording-unit-panel .sia-panel-title {
     color: var(--ground-main-color);
-    font-size: 22px;
-    padding: 0.5em;
 }
 
 .recording-unit-panel .ui-datatable thead th {
