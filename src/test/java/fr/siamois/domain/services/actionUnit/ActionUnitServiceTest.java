@@ -66,6 +66,7 @@ class ActionUnitServiceTest {
 
         Person p =new Person();
         Institution i = new Institution();
+        i.setIdentifier("MOM");
         info = new UserInfo(i,p,"fr");
         spatialUnit1 = new SpatialUnit();
         actionUnit1 = new ActionUnit();

@@ -58,20 +58,18 @@ public class ArkRedirectionService {
 
         Optional<SpatialUnit> optSU = spatialUnitService.findByArk(ark);
 
-        // TODO : open corresponding panel
-//        if (optSU.isPresent()){
-//            currentBuilder.path("/pages/spatialUnit/spatialUnit.xhtml")
-//                    .queryParam("id", optSU.get().getId());
-//            return Optional.of(currentBuilder.build().toUri());
-//        }
+        if (optSU.isPresent()){
+            currentBuilder.path("/spatial-unit")
+                    .queryParam("id", optSU.get().getId());
+            return Optional.of(currentBuilder.build().toUri());
+        }
 
         Optional<ActionUnit> optAU = actionUnitService.findByArk(ark);
-        // todo : open corresponding panelm
-//        if (optAU.isPresent()){
-//            currentBuilder.path("/pages/actionUnit/actionUnit.xhtml")
-//                    .queryParam("id", optAU.get().getId());
-//            return Optional.of(currentBuilder.build().toUri());
-//        }
+        if (optAU.isPresent()){
+            currentBuilder.path("/action-unit")
+                    .queryParam("id", optAU.get().getId());
+            return Optional.of(currentBuilder.build().toUri());
+        }
 
         return Optional.empty();
     }

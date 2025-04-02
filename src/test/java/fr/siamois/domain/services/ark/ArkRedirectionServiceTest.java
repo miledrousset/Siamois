@@ -71,8 +71,8 @@ class ArkRedirectionServiceTest {
         Optional<URI> result = arkRedirectionService.getResourceUriFromArk(naan, qualifier);
 
         assertThat(result).isPresent();
-        // TODO : fix following test
-        verify(builder2).path("/pages/spatialUnit/spatialUnit.xhtml");
+
+        verify(builder2).path("/spatial-unit");
         verify(builder2).queryParam("id", 1L);
     }
 
@@ -105,8 +105,8 @@ class ArkRedirectionServiceTest {
         Optional<URI> result = arkRedirectionService.getResourceUriFromArk(naan, qualifier);
 
         assertThat(result).isPresent();
-        // tood: fix test
-        verify(builder2).path("/pages/actionUnit/actionUnit.xhtml");
+
+        verify(builder2).path("/action-unit");
         verify(builder2).queryParam("id", 12L);
     }
 
