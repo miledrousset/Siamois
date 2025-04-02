@@ -107,7 +107,7 @@ main form:first-child .field-value-group {
 }
 
 .ui-widget .dt-button:hover {
-    background-color: var(siamoi);
+    background-color: var(--siamois-over-grey);
     border-color: white;
 }
 

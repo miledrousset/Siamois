@@ -151,12 +151,6 @@ public class ProfileSettingsBean {
         }
     }
 
-    public void changeInstitution() {
-        log.trace("Change institution");
-        sessionSettingsBean.setSelectedInstitution(fDefaultInstitution);
-        institutionChangeEventPublisher.publishInstitutionChangeEvent();
-    }
-
     public List<Locale> getRefLangs() {
         List<String> langCodes = langService.getAvailableLanguages();
         return langCodes.stream()
