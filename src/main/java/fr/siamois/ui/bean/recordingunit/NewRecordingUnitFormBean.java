@@ -461,13 +461,7 @@ public class NewRecordingUnitFormBean implements Serializable {
         return suggestions;
     }
 
-    public void initStratiDialog(int type) {
 
-        // should we filter the following list to remove the UE already added with another type/certainty?
-        stratiDialogType = type;
-        this.recordingUnitList = recordingUnitService.findAllByActionUnit(recordingUnit.getActionUnit());
-        stratiDialogSelection = events.get(stratiDialogType).recordingUnitList;
-    }
 
     public void addStratigraphicRelationshipFromSelection() {
         events.get(stratiDialogType).setRecordingUnitList(stratiDialogSelection);
@@ -539,50 +533,11 @@ public class NewRecordingUnitFormBean implements Serializable {
         return concepts;
     }
 
-    public List<Concept> completeRecordingUnitSecondaryType(String input) {
-
-        // The main type needs to be set
-        if (fType == null) {
-            return new ArrayList<>();
-        }
-
-        UserInfo info = sessionSettingsBean.getUserInfo();
-
-        return fieldConfigurationService.fetchConceptChildrenAutocomplete(info, fType, input);
-
-    }
-
-    public List<Concept> completeRecordingUnitThirdType(String input) {
-
-        // The main type needs to be set
-        if (fSecondaryType == null) {
-            return new ArrayList<>();
-        }
-
-        UserInfo info = sessionSettingsBean.getUserInfo();
-
-        return fieldConfigurationService.fetchConceptChildrenAutocomplete(info, fSecondaryType, input);
-
-    }
 
     public String getUrlForRecordingTypeFieldCode() {
         return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), RecordingUnit.TYPE_FIELD_CODE);
     }
 
-    public String getUrlForRecordingSecondaryType() {
-        if (fType != null) {
-            return fieldConfigurationService.getUrlOfConcept(fType);
-        }
-        return null;
-
-    }
-
-    public String getUrlForRecordingThirdType() {
-        if (fSecondaryType != null) {
-            return fieldConfigurationService.getUrlOfConcept(fSecondaryType);
-        }
-        return null;
-    }
 
 
 }
