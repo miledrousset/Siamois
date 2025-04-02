@@ -1,29 +1,20 @@
 package fr.siamois.infrastructure.database.initializer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.zaxxer.hikari.HikariDataSource;
 import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
 import fr.siamois.domain.models.exceptions.database.WrongTableNameException;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.web.reactive.context.AnnotationConfigReactiveWebApplicationContext;
+
+import java.sql.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 class HistoryTriggerInitializerDiffblueTest {
     /**

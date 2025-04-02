@@ -1,6 +1,5 @@
 package fr.siamois.ui.bean;
 
-import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import jakarta.faces.context.FacesContext;
 import jakarta.servlet.ServletContext;
 import lombok.extern.slf4j.Slf4j;

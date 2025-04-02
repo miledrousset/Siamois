@@ -8,8 +8,9 @@ import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
