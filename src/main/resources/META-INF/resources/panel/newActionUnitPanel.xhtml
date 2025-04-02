@@ -20,32 +20,53 @@
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
         <div style="padding:1em;">
-            <p:divider align="left" class="panel-section-separator">
-                <b>Informations générales</b>
-            </p:divider>
+            <!-- Common fields -->
 
-            <p:panelGrid columns="4" layout="flex">
-
-                <p:outputLabel for="action-unit-name" value="Nom"/>
-                <p:inputText id="action-unit-name" required="true" value="#{panelModel.actionUnit.name}"/>
-
-                <sharedLabel:openthesoLabel forId="auto-complete-action-type" label="Type"/>
-                <sharedInput:conceptAutocomplete
-                        selectedConcept="#{panelModel.actionUnit.type}"
-                        completeMethod="#{panelModel.completeActionUnitType}"
-                        editConceptUrl="#{panelModel.getUrlForActionUnitTypeFieldCode()}"/>
-
-                <!-- Unique identifier for the action (in the context of the institution) -->
-                <p:outputLabel for="identifier">Identifier</p:outputLabel>
-                <div style="display:flex;">
-                    <p:commandButton action="#{panelModel.generateRandomActionUnitIdentifier}"
-                                     icon="pi pi-refresh" styleClass="rounded-button" update="identifier"
-                                     process="@this"/>
-                    <p:inputText id="identifier" required="true" value="#{panelModel.actionUnit.identifier}"/>
-                </div>
+            <p:panel id="generalInfoPanel" class="sia-form-panel" header="Informations générales" toggleable="true"
+                     collapsed="false">
 
 
-            </p:panelGrid>
+                <p:panelGrid id="generalInfoPanelGrid"
+                             layout="grid"
+                >
+                    <p:row>
+
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                            <sharedInput:panelField title="Name" id="actionUnitName">
+                                <p:inputText id="actionUnitNameField" required="true"
+                                             value="#{panelModel.actionUnit.name}"/>
+                            </sharedInput:panelField>
+                        </p:column>
+
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                            <sharedInput:panelField title="Type" id="type">
+                                <sharedInput:conceptAutocomplete
+                                        panelStyleClass="action-unit-autocomplete"
+                                        selectedConcept="#{panelModel.actionUnit.type}"
+                                        completeMethod="#{panelModel.completeActionUnitType}"
+                                        editConceptUrl="#{panelModel.getUrlForActionUnitTypeFieldCode()}"/>
+                            </sharedInput:panelField>
+                        </p:column>
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                            <sharedInput:panelField title="Identifiant" id="identifier">
+                                <div style="display:flex;">
+                                    <p:commandButton action="#{panelModel.generateRandomActionUnitIdentifier}"
+                                                     icon="pi pi-refresh" styleClass="rounded-button"
+                                                     update="identifierField"
+                                                     process="@this"/>
+                                    <p:inputText id="identifierField" required="true"
+                                                 value="#{panelModel.actionUnit.identifier}"/>
+                                </div>
+                            </sharedInput:panelField>
+                        </p:column>
+                    </p:row>
+
+
+                </p:panelGrid>
+
+
+            </p:panel>
+
 
         </div>
 

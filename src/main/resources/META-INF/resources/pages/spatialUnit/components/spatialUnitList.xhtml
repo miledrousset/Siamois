@@ -16,7 +16,7 @@
         <h:form>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <p:outputPanel>
-                <div class="card">
+
 
                     <cc:renderFacet name="toolbar" />
 
@@ -42,7 +42,7 @@
                             <p:chip label="#{item.category.label}" icon="pi pi-map-marker" styleClass="mr-2 spatial-unit-type-chip"/>
                         </p:column>
                     </p:dataTable>
-                </div>
+
             </p:outputPanel>
         </h:form>
     </cc:implementation>
