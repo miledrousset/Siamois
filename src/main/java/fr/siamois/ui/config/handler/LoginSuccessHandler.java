@@ -42,7 +42,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         sessionSettingsBean.setupSession();
         // We add the "welcome panel" if the flowBean is empty
         if(flowBean.getPanels().isEmpty()) {
-            flowBean.addSpatialUnitListPanel();
+            flowBean.addWelcomePanel();
         }
         redirectRequest(request, response);
     }

@@ -1,0 +1,100 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+>
+    <!--@elvariable id="panelIndex" type="Integer"-->
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel"-->
+    <!-- Conditionally render the message if it's set in the bean -->
+    <p:staticMessage severity="error" summary="Error" closable="false"
+                     detail="#{panelModel.spatialUnitListErrorMessage}"
+                     rendered="#{not empty panelModel.spatialUnitListErrorMessage}"/>
+    <div class="sia-panel-title">
+        Bienvenue sur Siamois. Que voulez-vous faire?
+    </div>
+
+    <h:form>
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+        <div style="padding:1em;">
+            <!-- Common fields -->
+
+            <p:panel id="latestActivity" class="sia-form-panel" header="Mes dernières unités d'action" toggleable="true"
+                     collapsed="false">
+            </p:panel>
+
+            <p:panel id="dbAccess" class="sia-form-panel" header="Accéder aux bases de données" toggleable="true"
+                     collapsed="false">
+
+
+                <p:panelGrid id="dbAccessPanelGrid"
+                             layout="grid"
+                >
+                    <p:row>
+
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+
+                            <p:card style="background: var(--context-light-color-50)">
+
+                                <f:facet name="title" >
+                                    <div style="color: var(--context-main-color)">
+                                        Unités spatiales
+                                    </div>
+
+                                </f:facet>
+
+                                <f:facet name="footer">
+                                    <p:commandButton styleClass="spatial-unit-btn" value="Voir les unités spatiales"/>
+                                </f:facet>
+                            </p:card>
+
+                        </p:column>
+
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+
+                            <p:card style="background: var(--context-light-color-50)">
+
+                                <f:facet name="title" >
+                                    <div style="color: var(--context-main-color)">
+                                        Unités d'action
+                                    </div>
+
+                                </f:facet>
+
+                                <f:facet name="footer">
+                                    <p:commandButton styleClass="action-unit-btn" value="Voir les unités d'action"/>
+                                </f:facet>
+                            </p:card>
+
+                        </p:column>
+
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+
+                            <p:card style="background: var(--ground-light-color-50)">
+
+                                <f:facet name="title" >
+                                    <div style="color: var(--ground-main-color)">
+                                        Unités d'enregistrement
+                                    </div>
+
+                                </f:facet>
+
+                                <f:facet name="footer">
+                                    <p:commandButton styleClass="recording-unit-btn" value="Voir les unités d'enregistrement"/>
+                                </f:facet>
+                            </p:card>
+
+                        </p:column>
+
+                    </p:row>
+
+                </p:panelGrid>
+
+            </p:panel>
+
+        </div>
+
+    </h:form>
+
+
+</ui:fragment>

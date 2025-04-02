@@ -19,6 +19,7 @@ public class PanelFactory {
     private final ObjectProvider<ActionUnitPanel> actionUnitPanelProvider;
     private final ObjectProvider<NewRecordingUnitPanel> newRecordingUnitPanelProvider;
     private final ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider;
+    private final ObjectProvider<WelcomePanel> welcomePanelProvider;
 
 
     public PanelFactory(
@@ -26,7 +27,7 @@ public class PanelFactory {
             ObjectProvider<SpatialUnitPanel> spatialUnitPanelProvider,
             ObjectProvider<NewSpatialUnitPanel> newSpatialUnitPanelProvider,
             ObjectProvider<NewActionUnitPanel> newActionUnitPanelProvider,
-            ObjectProvider<ActionUnitPanel> actionUnitPanelProvider, ObjectProvider<NewRecordingUnitPanel> newRecordingUnitPanelProvider, ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider) {
+            ObjectProvider<ActionUnitPanel> actionUnitPanelProvider, ObjectProvider<NewRecordingUnitPanel> newRecordingUnitPanelProvider, ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider, ObjectProvider<WelcomePanel> welcomePanelProvider) {
 
         this.spatialUnitListPanelProvider = spatialUnitListPanelProvider;
         this.spatialUnitPanelProvider = spatialUnitPanelProvider;
@@ -35,6 +36,7 @@ public class PanelFactory {
         this.actionUnitPanelProvider = actionUnitPanelProvider;
         this.newRecordingUnitPanelProvider = newRecordingUnitPanelProvider;
         this.recordingUnitPanelProvider = recordingUnitPanelProvider;
+        this.welcomePanelProvider = welcomePanelProvider;
     }
 
     public SpatialUnitPanel createSpatialUnitPanel(Long spatialUnitId) {
@@ -149,6 +151,10 @@ public class PanelFactory {
 
     public SpatialUnitListPanel createSpatialUnitListPanel() {
         return spatialUnitListPanelProvider.getObject();
+    }
+
+    public WelcomePanel createWelcomePanel() {
+        return welcomePanelProvider.getObject();
     }
 
 }

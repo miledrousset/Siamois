@@ -8,11 +8,15 @@
     border: 1px solid var(--siamois-green-light-100);
 }
 
+.ui-panel.siamois-panel .ui-panel-titlebar {
+    background: var(--siamois-green-light-100);
+
+}
+
 .sia-panel-title {
     font-size: 22px;
     padding: 0.5em 0.5em 0.5em 2em;
 }
-
 /* input fields */
 
 body .ui-inputfield.ui-state-hover {
@@ -97,6 +101,16 @@ body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-stat
 }
 
 .spatial-unit-autocomplete.ui-autocomplete-panel .ui-button:hover {
+    background: var(--context-light-color-200);
+    border-color: var(--context-light-color-200);
+}
+
+.spatial-unit-btn.ui-button {
+    background: var(--context-main-color);
+    border-color: var(--context-main-color);
+}
+
+.spatial-unit-btn.ui-button:hover {
     background: var(--context-light-color-200);
     border-color: var(--context-light-color-200);
 }
@@ -255,6 +269,17 @@ body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-stat
     border: 1px solid var(--context-dark-color);
 }
 
+
+.action-unit-btn.ui-button {
+    background: var(--context-main-color);
+    border: 1px solid var(--context-main-color);
+}
+
+.action-unit-btn.ui-button:hover {
+    background: var(--context-dark-color);
+    border: 1px solid var(--context-dark-color);
+}
+
 .action-unit-panel .ui-separator {
     background: var(--context-light-color-100);
 }
@@ -356,6 +381,16 @@ tbody.action-unit-datatable .ui-link {
 }
 
 .recording-unit-panel .ui-button:hover {
+    background: var(--ground-dark-color);
+    border: 1px solid var(--ground-dark-color);
+}
+
+.recording-unit-btn.ui-button {
+    background: var(--ground-main-color);
+    border: 1px solid var(--ground-main-color);
+}
+
+.recording-unit-btn.ui-button:hover {
     background: var(--ground-dark-color);
     border: 1px solid var(--ground-dark-color);
 }

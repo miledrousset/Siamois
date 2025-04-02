@@ -104,6 +104,10 @@ public class FlowBean implements Serializable {
         panels.add(0, panelFactory.createSpatialUnitListPanel());
     }
 
+    public void addWelcomePanel() {
+        panels.add(0, panelFactory.createWelcomePanel());
+    }
+
     public void addNewSpatialUnitPanel(AbstractPanel currentPanel) {
         panels.add(0, panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb()));
     }
