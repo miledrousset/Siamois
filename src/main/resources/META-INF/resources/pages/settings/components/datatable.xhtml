@@ -30,7 +30,10 @@
                         </p:inputText>
                     </span>
                     <h:panelGroup rendered="#{cc.attrs.isOrganisationManager}">
-                        <p:commandButton action="#{cc.attrs.addAction}" value="Créer une organisation" styleClass="addButton"/>
+                        <span class="ui-button-text-icon-left addButton">
+                            <i class="bi bi-plus-circle"/>
+                            <p:commandButton action="#{cc.attrs.addAction}" value="Créer une organisation"/>
+                        </span>
                     </h:panelGroup>
                 </div>
                 <div class="dt-content">
