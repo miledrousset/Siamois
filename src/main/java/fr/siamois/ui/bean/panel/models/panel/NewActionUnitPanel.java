@@ -1,11 +1,15 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
+import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
+import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
@@ -24,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -38,19 +43,21 @@ public class NewActionUnitPanel extends AbstractPanel {
     private final transient SpatialUnitService spatialUnitService;
     private final transient ActionUnitService actionUnitService;
     private final FlowBean flowBean;
+    private final transient FieldConfigurationService fieldConfigurationService;
 
     // Locals
     ActionUnit actionUnit;
     Long spatialUnitId;
 
 
-    public NewActionUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, ActionUnitService actionUnitService, FlowBean flowBean) {
+    public NewActionUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, ActionUnitService actionUnitService, FlowBean flowBean, FieldConfigurationService fieldConfigurationService) {
         super("Nouvelle unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel new-action-unit-panel");
         this.langBean = langBean;
         this.sessionSettingsBean = sessionSettingsBean;
         this.spatialUnitService = spatialUnitService;
         this.actionUnitService = actionUnitService;
         this.flowBean = flowBean;
+        this.fieldConfigurationService = fieldConfigurationService;
     }
 
 
@@ -71,6 +78,27 @@ public class NewActionUnitPanel extends AbstractPanel {
                 .icon("bi bi-arrow-down-square")
                 .build();
         this.getBreadcrumb().getModel().getElements().add(item);
+    }
+
+    /**
+     * Fetch the autocomplete results on API for the type field and add them to the list of concepts.
+     *
+     * @param input the input of the user
+     * @return the list of concepts that match the input to display in the autocomplete
+     */
+    public List<Concept> completeActionUnitType(String input) {
+        UserInfo info = sessionSettingsBean.getUserInfo();
+        List<Concept> concepts = Collections.emptyList();
+        try {
+            concepts = fieldConfigurationService.fetchAutocomplete(info, ActionUnit.TYPE_FIELD_CODE, input);
+        } catch (NoConfigForFieldException e) {
+            log.error(e.getMessage(), e);
+        }
+        return concepts;
+    }
+
+    public String getUrlForActionUnitTypeFieldCode() {
+        return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), ActionUnit.TYPE_FIELD_CODE);
     }
 
 

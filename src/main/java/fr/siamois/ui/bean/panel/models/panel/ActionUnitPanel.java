@@ -166,9 +166,6 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
 
 
 
-
-
-
     /**
      * Fetch the autocomplete results for the action codes
      *
@@ -244,6 +241,8 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
 
 
 
+
+
     public static class ActionUnitPanelBuilder {
 
         private final ActionUnitPanel actionUnitPanel;
@@ -262,6 +261,8 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
 
             return this;
         }
+
+
 
         public ActionUnitPanel build() {
             actionUnitPanel.init();

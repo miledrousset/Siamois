@@ -32,8 +32,8 @@
                 <sharedLabel:openthesoLabel forId="auto-complete-action-type" label="Type"/>
                 <sharedInput:conceptAutocomplete
                         selectedConcept="#{panelModel.actionUnit.type}"
-                        completeMethod="#{actionUnitBean.completeActionUnitType}"
-                        editConceptUrl="#{actionUnitBean.getUrlForActionUnitTypeFieldCode()}"/>
+                        completeMethod="#{panelModel.completeActionUnitType}"
+                        editConceptUrl="#{panelModel.getUrlForActionUnitTypeFieldCode()}"/>
 
                 <!-- Unique identifier for the action (in the context of the institution) -->
                 <p:outputLabel for="identifier">Identifier</p:outputLabel>

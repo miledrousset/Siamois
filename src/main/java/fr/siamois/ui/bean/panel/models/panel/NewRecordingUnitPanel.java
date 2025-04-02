@@ -51,41 +51,29 @@ import static java.time.OffsetDateTime.now;
 @Slf4j
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class NewRecordingUnitPanel extends AbstractPanel {
+public class NewRecordingUnitPanel extends RecordingUnitPanelBase {
 
-    // Deps
-    private final LangBean langBean;
-    private final SessionSettingsBean sessionSettingsBean;
-    private final transient SpatialUnitService spatialUnitService;
-    private final transient ActionUnitService actionUnitService;
-    private final transient RecordingUnitService recordingUnitService;
-    private final transient PersonService personService;
-    private final transient ConceptService conceptService;
-    private final transient FieldConfigurationService fieldConfigurationService;
-    private final FlowBean flowBean;
 
     // ------- Locals
-    RecordingUnit recordingUnit;
     Long actionUnitId;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private Boolean hasSecondaryTypeOptions = false;
-    private Boolean hasThirdTypeOptions = false;
-    // Form
-    private transient CustomForm additionalForm;
 
-
-    public NewRecordingUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, ActionUnitService actionUnitService, RecordingUnitService recordingUnitService, PersonService personService, ConceptService conceptService, FieldConfigurationService fieldConfigurationService, FlowBean flowBean) {
-        super("Nouvelle unité d'enregistrement", "bi bi-pencil-square", "siamois-panel recording-unit-panel new-recording-unit-panel");
-        this.langBean = langBean;
-        this.sessionSettingsBean = sessionSettingsBean;
-        this.spatialUnitService = spatialUnitService;
-        this.actionUnitService = actionUnitService;
-        this.recordingUnitService = recordingUnitService;
-        this.personService = personService;
-        this.conceptService = conceptService;
-        this.fieldConfigurationService = fieldConfigurationService;
-        this.flowBean = flowBean;
+    public NewRecordingUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService,
+                                 ActionUnitService actionUnitService, RecordingUnitService recordingUnitService,
+                                 PersonService personService, ConceptService conceptService,
+                                 FieldConfigurationService fieldConfigurationService, FlowBean flowBean) {
+        super(
+                langBean,
+                sessionSettingsBean,
+                spatialUnitService,
+                actionUnitService,
+                recordingUnitService,
+                personService,
+                conceptService,
+                fieldConfigurationService,
+                flowBean,
+                "Nouvelle unité d'enregistrement",
+                "bi bi-pencil-square",
+                "siamois-panel recording-unit-panel new-recording-unit-panel");
     }
 
     @Override
@@ -93,9 +81,7 @@ public class NewRecordingUnitPanel extends AbstractPanel {
         return "/panel/newRecordingUnitPanel.xhtml";
     }
 
-    public LocalDate offsetDateTimeToLocalDate(OffsetDateTime offsetDT) {
-        return offsetDT.toLocalDate();
-    }
+
 
     void init() {
         recordingUnit = new RecordingUnit();
@@ -114,43 +100,7 @@ public class NewRecordingUnitPanel extends AbstractPanel {
     }
 
 
-    public List<Concept> fetchChildrenOfConcept(Concept concept) {
 
-        UserInfo info = sessionSettingsBean.getUserInfo();
-        List<Concept> concepts ;
-
-        concepts = conceptService.findDirectSubConceptOf(info, concept);
-
-        return concepts;
-
-    }
-
-    public void initializeAnswer(CustomField field) {
-        if (recordingUnit.getFormResponse().getAnswers().get(field) == null) {
-            // Init missing parameters
-            if (field instanceof CustomFieldSelectMultiple) {
-                recordingUnit.getFormResponse().getAnswers().put(field, new CustomFieldAnswerSelectMultiple());
-            } else if (field instanceof CustomFieldInteger) {
-                recordingUnit.getFormResponse().getAnswers().put(field, new CustomFieldAnswerInteger());
-            }
-        }
-    }
-
-    public void initFormResponseAnswers() {
-
-        if (recordingUnit.getFormResponse().getForm() != null) {
-
-            recordingUnit.getFormResponse().getForm().getLayout().stream()
-                    .flatMap(section -> section.getFields().stream()) // Flatten the nested lists
-                    .forEach(this::initializeAnswer); // Process each field
-        }
-
-
-    }
-
-    public OffsetDateTime localDateToOffsetDateTime(LocalDate localDate) {
-        return localDate.atTime(LocalTime.NOON).atOffset(ZoneOffset.UTC);
-    }
 
     public RecordingUnit save(RecordingUnit recordingUnit,
                               Concept typeConcept,
@@ -211,46 +161,7 @@ public class NewRecordingUnitPanel extends AbstractPanel {
         return false;
     }
 
-    public void changeCustomForm() {
-        // Do we have a form available for the selected type?
-        Set<ActionUnitFormMapping> formsAvailable = recordingUnit.getActionUnit().getFormsAvailable();
-        additionalForm = getFormForRecordingUnitType(recordingUnit.getType(), formsAvailable);
-        if (recordingUnit.getFormResponse() == null) {
-            recordingUnit.setFormResponse(new CustomFormResponse());
-            recordingUnit.getFormResponse().setAnswers(new HashMap<>());
-        }
-        recordingUnit.getFormResponse().setForm(additionalForm);
-        if (additionalForm != null) {
-            initFormResponseAnswers();
-        }
 
-
-    }
-
-    public CustomForm getFormForRecordingUnitType(Concept type, Set<ActionUnitFormMapping> availableForms) {
-        return availableForms.stream()
-                .filter(mapping -> mapping.getPk().getConcept().equals(type) // Vérifier le concept
-                        && "RECORDING_UNIT".equals(mapping.getPk().getTableName())) // Vérifier le tableName
-                .map(mapping -> mapping.getPk().getForm())
-                .findFirst()
-                .orElse(null); // Retourner null si aucun match
-    }
-
-    public void handleSelectType() {
-
-        if (recordingUnit.getType() != null) {
-            hasSecondaryTypeOptions = !(this.fetchChildrenOfConcept(recordingUnit.getType()).isEmpty());
-            changeCustomForm();
-        } else {
-            hasSecondaryTypeOptions = false;
-        }
-
-        recordingUnit.setSecondaryType(null);
-        recordingUnit.setThirdType(null);
-        hasThirdTypeOptions = false;
-
-
-    }
 
 
     public void handleSelectSecondaryType() {
