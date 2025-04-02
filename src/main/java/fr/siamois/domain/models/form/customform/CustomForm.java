@@ -1,14 +1,11 @@
 package fr.siamois.domain.models.form.customform;
 
 import fr.siamois.converter.CustomFormLayoutConverter;
-import fr.siamois.domain.models.form.customfield.CustomField;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Entity
