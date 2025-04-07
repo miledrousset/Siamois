@@ -20,6 +20,8 @@
     --text-light: #6B7280;
     --text-main: #2A2C30;
 
+    --siamois-over-grey: #F3F7F3;
+
     --context-main-color: #068DA9;
     --context-light-color-50: #EDF4F6;
     --context-light-color-100: #CDE8EE;
@@ -155,4 +157,3 @@ i#user-icon {
     width: 40px;
     height: 40px;
 }
-

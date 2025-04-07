@@ -4,10 +4,13 @@ import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.settings.InstitutionSettings;
+import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.services.InstitutionService;
+import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.utils.AuthenticatedUserUtils;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -23,14 +26,19 @@ public class SessionSettingsBean implements Serializable {
     private final transient InstitutionService institutionService;
     private final LangBean langBean;
     private final transient RedirectBean redirectBean;
+    private final transient PersonService personService;
     private Institution selectedInstitution;
-    private transient InstitutionSettings institutionSettings;
-    private transient List<Institution> referencedInstitutions;
+    private InstitutionSettings institutionSettings;
+    private PersonSettings personSettings;
 
-    public SessionSettingsBean(InstitutionService institutionService, LangBean langBean, RedirectBean redirectBean) {
+    public SessionSettingsBean(InstitutionService institutionService,
+                               LangBean langBean,
+                               RedirectBean redirectBean,
+                               PersonService personService) {
         this.institutionService = institutionService;
         this.langBean = langBean;
         this.redirectBean = redirectBean;
+        this.personService = personService;
     }
 
     public Person getAuthenticatedUser() {
@@ -41,15 +49,37 @@ public class SessionSettingsBean implements Serializable {
         return getUserInfo().getInstitution();
     }
 
-    public List<Institution> getReferencedInstitutions() {
-        if (referencedInstitutions == null || referencedInstitutions.isEmpty()) {
-            setupSession();
-        }
-        return referencedInstitutions;
+    public void setupSession() {
+        personSettings = personService.createOrGetSettingsOf(getAuthenticatedUser());
+        loadLanguageSettings();
+        loadInstitutionsSettings();
     }
 
-    public void setupSession() {
-        setupInstitution();
+    private void loadLanguageSettings() {
+        if (!StringUtils.isEmpty(personSettings.getLangCode())) {
+            langBean.setLanguage(personSettings.getLangCode());
+        }
+    }
+
+
+    private void loadInstitutionsSettings() {
+        if (personSettings.getDefaultInstitution() != null) {
+            selectedInstitution = personSettings.getDefaultInstitution();
+        } else {
+            List<Institution> allInstitutions = findReferencedInstitutions();
+            selectedInstitution = allInstitutions.get(0);
+        }
+        assert selectedInstitution != null;
+        institutionSettings = institutionService.createOrGetSettingsOf(selectedInstitution);
+    }
+
+    private List<Institution> findReferencedInstitutions() {
+        Person person = getAuthenticatedUser();
+        if (person.isSuperAdmin()) {
+            return institutionService.findAll();
+        } else {
+            return institutionService.findInstitutionsOfPerson(person);
+        }
     }
 
     public String getLanguageCode() {
@@ -65,28 +95,6 @@ public class SessionSettingsBean implements Serializable {
 
     public InstitutionSettings getInstitutionSettings() {
         return getUserInfo().getInstitution().getSettings();
-    }
-
-
-    private void setupInstitution() {
-        Person authUser = getAuthenticatedUser();
-        List<Institution> result;
-        if (authUser.isSuperAdmin()) {
-            result = institutionService.findAll();
-        } else {
-            result = institutionService.findInstitutionsOfPerson(authUser);
-        }
-
-        result.sort(((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName())));
-
-        referencedInstitutions = result;
-
-        if (selectedInstitution == null && !result.isEmpty())
-            selectedInstitution = result.get(0);
-
-        assert selectedInstitution != null;
-        institutionSettings = institutionService.createOrGetSettingsOf(selectedInstitution);
-
     }
 
 }

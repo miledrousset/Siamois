@@ -1,17 +1,6 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
-import fr.siamois.domain.models.UserInfo;
-import fr.siamois.domain.models.actionunit.ActionUnitFormMapping;
 import fr.siamois.domain.models.exceptions.recordingunit.RecordingUnitNotFoundException;
-import fr.siamois.domain.models.form.customfield.CustomField;
-import fr.siamois.domain.models.form.customfield.CustomFieldInteger;
-import fr.siamois.domain.models.form.customfield.CustomFieldSelectMultiple;
-import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerInteger;
-import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectMultiple;
-import fr.siamois.domain.models.form.customform.CustomForm;
-import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
-import fr.siamois.domain.models.recordingunit.RecordingUnit;
-import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.person.PersonService;
@@ -22,7 +11,6 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
-import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -30,17 +18,7 @@ import org.primefaces.model.menu.DefaultMenuItem;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
-import static java.time.OffsetDateTime.now;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

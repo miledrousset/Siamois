@@ -5,6 +5,7 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.ui.bean.converter.InstitutionConverter;
+import fr.siamois.ui.bean.settings.InstitutionListSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
-import java.util.List;
 
 
 /**
@@ -33,25 +33,21 @@ public class NavBean implements Serializable {
     private final transient InstitutionConverter converter;
     private final transient InstitutionService institutionService;
     private final RedirectBean redirectBean;
+    private final InstitutionListSettingsBean institutionListSettingsBean;
 
     private ApplicationMode applicationMode = ApplicationMode.SIAMOIS;
 
-    private transient List<Institution> institutions;
-
     public NavBean(SessionSettingsBean sessionSettingsBean,
                    InstitutionChangeEventPublisher institutionChangeEventPublisher,
-                   InstitutionConverter converter, InstitutionService institutionService, RedirectBean redirectBean) {
+                   InstitutionConverter converter, InstitutionService institutionService, RedirectBean redirectBean, InstitutionListSettingsBean institutionListSettingsBean) {
         this.sessionSettingsBean = sessionSettingsBean;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
         this.converter = converter;
         this.institutionService = institutionService;
         this.redirectBean = redirectBean;
+        this.institutionListSettingsBean = institutionListSettingsBean;
     }
 
-    public void init() {
-        log.trace("Initializing NavBean");
-        institutions = sessionSettingsBean.getReferencedInstitutions();
-    }
 
     public boolean userIsSuperAdmin() {
         return sessionSettingsBean.getUserInfo().getUser().isSuperAdmin();
@@ -76,6 +72,11 @@ public class NavBean implements Serializable {
 
     public boolean isSettingsMode() {
         return applicationMode == ApplicationMode.SETTINGS;
+    }
+
+    public void goToInstitutionManager() {
+        institutionListSettingsBean.init();
+        redirectBean.redirectTo("/settings/organisation");
     }
 
     public enum ApplicationMode {

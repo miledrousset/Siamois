@@ -2,10 +2,12 @@ package fr.siamois.domain.services.person;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.*;
+import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
 import fr.siamois.infrastructure.database.repositories.auth.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.auth.TeamRepository;
+import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,9 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,6 +37,9 @@ class PersonServiceTest {
     @Mock
     private PasswordVerifier passwordVerifier;
 
+    @Mock
+    private PersonSettingsRepository personSettingsRepository;
+
     private PersonService personService;
 
     Person person;
@@ -50,7 +56,8 @@ class PersonServiceTest {
                 teamRepository,
                 personRepository,
                 passwordEncoder,
-                verifiers
+                verifiers,
+                personSettingsRepository
         );
     }
 
@@ -103,6 +110,43 @@ class PersonServiceTest {
         verify(passwordVerifier, times(1)).verify(person);
         verify(personRepository, times(1)).save(person);
         assertEquals("encodedNewPassword", person.getPassword());
+    }
+
+    @Test
+    void createOrGetSettingsOf() {
+        person = new Person();
+        person.setId(1L);
+        PersonSettings settings = new PersonSettings();
+        settings.setPerson(person);
+
+        when(personSettingsRepository.findByPerson(person)).thenReturn(Optional.empty());
+        when(personSettingsRepository.save(any(PersonSettings.class))).thenReturn(settings);
+
+        PersonSettings result = personService.createOrGetSettingsOf(person);
+
+        assertNotNull(result);
+        assertEquals(person, result.getPerson());
+        verify(personSettingsRepository).save(any(PersonSettings.class));
+    }
+
+    @Test
+    void updatePersonSettings() {
+        PersonSettings settings = new PersonSettings();
+        when(personSettingsRepository.save(settings)).thenReturn(settings);
+
+        PersonSettings result = personService.updatePersonSettings(settings);
+
+        assertNotNull(result);
+        assertEquals(settings, result);
+        verify(personSettingsRepository).save(settings);
+    }
+
+    @Test
+    void findPasswordVerifier() {
+        Optional<PasswordVerifier> verifier = personService.findPasswordVerifier();
+
+        assertTrue(verifier.isPresent());
+        assertEquals(PasswordVerifier.class, verifier.get().getClass());
     }
 
 }

@@ -5,7 +5,8 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:c="http://java.sun.com/jsp/jstl/core"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form">
 
     <ui:define name="head">
         <link rel="stylesheet" href="#{redirectBean.redirectUrlToResource('searchBar.css', 'css')}" />
@@ -13,16 +14,9 @@
 
     </ui:define>
 
-    <ui:define name="metadata">
-        <f:metadata>
-            <f:viewAction action="#{flowBean.init()}"/>
-        </f:metadata>
-    </ui:define>
-
     <ui:define name="content">
         <div id="search-bar">
-            <h:form id="searchBarForm">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <form:csrfform formId="searchBarForm">
                 <article>
                     <h:panelGroup styleClass="ui-inputgroup">
                         <h:panelGroup id="iconSU" styleClass="ui-inputgroup-addon">
@@ -96,11 +90,11 @@
                 </article>
                 <article>
                     <span class="ui-input-icon-right">
-                    <p:inputText styleClass="searchInput" placeholder=""/>
-                    <i class="bi bi-play-circle"/>
-                </span>
+                        <p:inputText styleClass="searchInput" placeholder=""/>
+                        <i class="bi bi-play-circle"/>
+                    </span>
                 </article>
-            </h:form>
+            </form:csrfform>
         </div>
 
         <p:outputPanel id="flow">
@@ -124,12 +118,11 @@
                                 <ui:param name="panelIndex" value="#{status.index}"/>
                             </ui:include>
                             <f:facet name="actions">
-                                <h:form>
-                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <form:csrfform formId="actionsFormId">
                                     <p:commandLink rendered="#{flowBean.fullscreenPanelIndex ==-1}"
-                                            action="#{flowBean.fullScreen(panel)}"
-                                            update="flow"
-                                            styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
+                                                   action="#{flowBean.fullScreen(panel)}"
+                                                   update="flow"
+                                                   styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
                                         <h:outputText styleClass="ui-icon bi bi-arrows-angle-expand"/>
                                     </p:commandLink>
                                     <p:commandLink rendered="#{flowBean.fullscreenPanelIndex == status.index}"
@@ -138,7 +131,7 @@
                                                    styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
                                         <h:outputText styleClass="ui-icon bi bi-arrows-angle-contract"/>
                                     </p:commandLink>
-                                </h:form>
+                                </form:csrfform>
                             </f:facet>
                         </p:panel>
                     </c:forEach>

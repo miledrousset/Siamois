@@ -2,7 +2,9 @@ package fr.siamois.domain.models.form.customfieldanswer;
 
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
-import jakarta.persistence.*;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 

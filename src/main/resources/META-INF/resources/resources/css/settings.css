@@ -5,7 +5,8 @@
 
 main {
     display: flex;
-    justify-content: center
+    justify-content: center;
+    flex-direction: column;
 }
 
 main form {
@@ -21,8 +22,12 @@ main form {
         "card-content card-content card-content"
         ". . save";
     width: 45%;
-    margin-top: 10vh;
     grid-row-gap: 2vh;
+    margin-top: 4vh;
+}
+
+main form:first-child .field-value-group {
+    margin-top: 10vh;
 }
 
 .field-value-title {
@@ -47,13 +52,102 @@ main form {
     margin-left: auto;
 }
 
-.field-value-value input {
+.field-value-value * {
     width: 100%;
 }
 
-.field-value-group button {
+.field-value-group button[type=submit]{
     width: fit-content;
     margin-left: auto;
     background-color: var(--siamois-green);
     border-color: var(--siamois-green);
+}
+
+.datatable-settings {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10vh;
+    row-gap: 1vh;
+}
+
+.datatable-info {
+    margin-left: 3vw;
+    margin-right: 3vw;
+
+    display: grid;
+    grid-template:
+        "title title title title title"
+        "desc desc desc desc desc"
+        "search search . . add";
+}
+
+.dt-title {
+    grid-area: title;
+}
+
+.dt-desc {
+    grid-area: desc;
+}
+
+.dt-searchInput {
+    grid-area: search;
+}
+
+.dt-content {
+    grid-area: content;
+}
+
+.addButton {
+    grid-area: add;
+    background-color: var(--siamois-green-light);
+    margin-left: auto !important;
+    width: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.addButton button {
+    background-color: var(--siamois-green-light) !important;
+    border-color: var(--siamois-green-light) !important;
+}
+
+.addButton i {
+    display: none;
+}
+
+@media (min-width: 720px) {
+    .addButton i {
+        display: block;
+    }
+}
+
+.ui-widget .dt-button {
+    background-color: white;
+    border-color: white;
+}
+
+.ui-widget .dt-button:hover {
+    background-color: var(--siamois-over-grey);
+    border-color: white;
+}
+
+.dt-button span.bi {
+    color: var(--siamois-green);
+}
+
+.dialog-new-institution {
+    flex-direction: column;
+}
+
+.dialog-new-institution input {
+    margin-left: auto;
+}
+
+.dialog-new-institution .dialog-buttons {
+    margin-left: auto;
+    display: flex;
+    gap: 30px
 }

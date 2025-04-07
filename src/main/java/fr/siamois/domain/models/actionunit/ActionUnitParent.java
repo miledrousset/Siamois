@@ -2,7 +2,6 @@ package fr.siamois.domain.models.actionunit;
 
 import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.ark.Ark;
-
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;

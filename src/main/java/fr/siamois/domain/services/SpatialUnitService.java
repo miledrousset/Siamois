@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -148,5 +149,13 @@ public class SpatialUnitService implements ArkEntityService {
 
     public long countByInstitution(Institution institution) {
         return spatialUnitRepository.countByCreatedByInstitution(institution);
+    }
+
+    public List<SpatialUnit> findAll() {
+        List<SpatialUnit> result = new ArrayList<>();
+        for (SpatialUnit spatialUnit : spatialUnitRepository.findAll()) {
+            result.add(spatialUnit);
+        }
+        return result;
     }
 }
