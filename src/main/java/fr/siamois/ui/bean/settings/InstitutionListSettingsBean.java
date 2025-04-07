@@ -67,7 +67,7 @@ public class InstitutionListSettingsBean implements Serializable {
         if (filterText != null && !filterText.isEmpty() && filterText.length() > 2) {
             filteredInstitutions = institutions.stream()
                     .filter(institution -> institution.getName().toLowerCase().contains(filterText.toLowerCase()))
-                    .toList(); // Java 16+, sinon utilisez new ArrayList<>(...)
+                    .toList();
         } else {
             filteredInstitutions = new ArrayList<>(institutions);
         }
