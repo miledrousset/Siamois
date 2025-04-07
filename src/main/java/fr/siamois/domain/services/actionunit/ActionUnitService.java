@@ -177,4 +177,8 @@ public class ActionUnitService implements ArkEntityService {
     public ArkEntity save(ArkEntity toSave) {
         return actionUnitRepository.save((ActionUnit) toSave);
     }
+
+    public long countByInstitution(Institution institution) {
+        return actionUnitRepository.countByCreatedByInstitution(institution);
+    }
 }

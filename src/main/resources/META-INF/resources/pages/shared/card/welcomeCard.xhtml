@@ -12,6 +12,7 @@
         <cc:attribute name="chipStyleClass" type="java.lang.String" required="true"/>
         <cc:attribute name="btnStyleClass" type="java.lang.String" required="true"/>
         <cc:attribute name="label" type="java.lang.String" required="true"/>
+        <cc:attribute name="count" type="long" required="true" />
         <cc:attribute name="btnLabel" type="java.lang.String" required="true"/>
     </cc:interface>
 
@@ -20,9 +21,9 @@
         <p:card styleClass="#{cc.attrs.cardStyleClass}">
 
             <div>
-                <i class="#{cc.attrs.icon}"></i>
+                <i class="#{cc.attrs.icon}"/>
                 #{cc.attrs.label}
-                <p:chip styleClass="#{cc.attrs.chipStyleClass}" label="258" />
+                <p:chip styleClass="#{cc.attrs.chipStyleClass}" label="#{cc.attrs.count}" />
             </div>
 
             <f:facet name="footer">
