@@ -13,14 +13,14 @@
             appendToBody="true"
     >
         <div class="dialog-new-institution">
-            <h3>Créer une organisation</h3>
+            <h3>#{institutionDialogBean.title}</h3>
             <hr/>
             <div class="form-group row">
                 <label class="col-lg-4 col-form-label" for="name">Nom de l'organisation</label>
                 <div class="col-lg-6 ms-auto">
                     <p:inputText
                             id="name"
-                            value="#{institutionCreationBean.institutionName}"
+                            value="#{institutionDialogBean.institutionName}"
                             maxlength="#{documentCreationBean.maxTitleLength()}"
                     />
                 </div>
@@ -30,7 +30,7 @@
                 <div class="col-lg-6 ms-auto">
                     <p:inputText
                             id="identifier"
-                            value="#{institutionCreationBean.identifier}"
+                            value="#{institutionDialogBean.identifier}"
                     />
                 </div>
             </div>
@@ -39,14 +39,14 @@
                 <div class="col-lg-6 ms-auto">
                     <p:inputTextarea
                             id="description"
-                            value="#{institutionCreationBean.description}"
+                            value="#{institutionDialogBean.description}"
                     />
                 </div>
             </div>
             <hr/>
             <div class="dialog-buttons">
-                <p:commandButton value="Annuler" action="#{institutionCreationBean.exit()}"/>
-                <p:commandButton value="Créer une organisation" action="#{institutionCreationBean.save()}" update="@form"/>
+                <p:commandButton value="Annuler" action="#{institutionDialogBean.exit()}"/>
+                <p:commandButton value="Créer une organisation" action="#{institutionDialogBean.save()}" update="@form"/>
             </div>
         </div>
     </p:dialog>

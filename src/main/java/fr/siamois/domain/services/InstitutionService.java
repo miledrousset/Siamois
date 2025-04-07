@@ -101,4 +101,7 @@ public class InstitutionService {
         return institutionRepository.isManagerOf(institution.getId(), person.getId());
     }
 
+    public Institution update(Institution institution) {
+        return institutionRepository.save(institution);
+    }
 }

@@ -20,7 +20,10 @@ import java.io.Serializable;
 @SessionScope
 @Getter
 @Setter
-public class InstitutionCreationBean implements Serializable {
+public class InstitutionDialogBean implements Serializable {
+
+    private String title = "Créer une organisation";
+    private String buttonLabel = "Créer l'organisation";
 
     private final transient InstitutionService institutionService;
     private final SessionSettingsBean sessionSettingsBean;
@@ -29,7 +32,7 @@ public class InstitutionCreationBean implements Serializable {
     private String identifier;
     private String description;
 
-    public InstitutionCreationBean(InstitutionService institutionService, SessionSettingsBean sessionSettingsBean) {
+    public InstitutionDialogBean(InstitutionService institutionService, SessionSettingsBean sessionSettingsBean) {
         this.institutionService = institutionService;
         this.sessionSettingsBean = sessionSettingsBean;
     }
@@ -47,6 +50,19 @@ public class InstitutionCreationBean implements Serializable {
         institution.setManager(sessionSettingsBean.getAuthenticatedUser());
         institution.setDescription(description);
         return institutionService.createInstitution(institution);
+    }
+
+    public Institution updateInstitution(Institution institution) {
+        if (institutionName != null && !institution.getName().isBlank()  && !institutionName.equals(institution.getName())) {
+            institution.setName(institutionName);
+        }
+        if (identifier != null && !identifier.isBlank() && !identifier.equals(institution.getIdentifier())) {
+            institution.setIdentifier(identifier);
+        }
+        if (description != null && !description.isBlank() && !description.equals(institution.getDescription())) {
+            institution.setDescription(description);
+        }
+        return institutionService.update(institution);
     }
 
     public void save() {

@@ -49,7 +49,12 @@
                     </p:column>
                     <p:column>
                         <p:menuButton buttonStyleClass="dt-button" icon="bi bi-three-dots">
-                            <p:menuitem value="Modifier" icon="bi bi-arrow-clockwise"/>
+                            <p:menuitem
+                                    value="Modifier"
+                                    icon="bi bi-arrow-clockwise"
+                                    action="#{institutionListSettingsBean.update(organisation)}"
+                                    update="@form"
+                            />
                             <p:menuitem value="Supprimer" icon="bi bi-x"/>
                         </p:menuButton>
                     </p:column>

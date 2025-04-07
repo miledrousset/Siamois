@@ -8,7 +8,7 @@ import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.bean.dialog.institution.InstitutionCreationBean;
+import fr.siamois.ui.bean.dialog.institution.InstitutionDialogBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class InstitutionListSettingsBean implements Serializable {
     private final transient InstitutionService institutionService;
     private final SessionSettingsBean sessionSettingsBean;
     private final transient InstitutionChangeEventPublisher institutionChangeEventPublisher;
-    private final InstitutionCreationBean institutionCreationBean;
+    private final InstitutionDialogBean institutionDialogBean;
     private List<Institution> institutions = null;
     private List<Institution> filteredInstitutions = null;
     private List<SortMeta> sortBy;
@@ -46,11 +46,11 @@ public class InstitutionListSettingsBean implements Serializable {
     public InstitutionListSettingsBean(InstitutionService institutionService,
                                        SessionSettingsBean sessionSettingsBean,
                                        InstitutionChangeEventPublisher institutionChangeEventPublisher,
-                                       InstitutionCreationBean institutionCreationBean) {
+                                       InstitutionDialogBean institutionDialogBean) {
         this.institutionService = institutionService;
         this.sessionSettingsBean = sessionSettingsBean;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
-        this.institutionCreationBean = institutionCreationBean;
+        this.institutionDialogBean = institutionDialogBean;
     }
 
     public void init() {
@@ -106,15 +106,17 @@ public class InstitutionListSettingsBean implements Serializable {
     }
 
     public void displayCreateDialog() {
-        institutionCreationBean.reset();
-        institutionCreationBean.setSaveActionFromBean(this::createInstitution);
+        institutionDialogBean.reset();
+        institutionDialogBean.setTitle("Créer une organisation");
+        institutionDialogBean.setButtonLabel("Créer l'organisation");
+        institutionDialogBean.setSaveActionFromBean(this::createInstitution);
         PrimeFaces.current().executeScript("PF('newInstitutionDialog').show();");
     }
 
     public void createInstitution() {
         Institution institution = null;
         try {
-            institution = institutionCreationBean.createInstitution();
+            institution = institutionDialogBean.createInstitution();
         } catch (InstitutionAlreadyExistException e) {
             log.error("Institution already exists");
             return;
@@ -126,9 +128,49 @@ public class InstitutionListSettingsBean implements Serializable {
             institutions.add(institution);
             filteredInstitutions.add(institution);
             toggleSwitchState.put(institution.getId(), false);
-            institutionCreationBean.reset();
+            institutionDialogBean.reset();
             PrimeFaces.current().executeScript("PF('newInstitutionDialog').hide();");
         }
+    }
+
+    private void updateInstitution(Institution institutionRef) {
+        Institution institution = institutionDialogBean.updateInstitution(institutionRef);
+        if (institution != null) {
+            int index = institutions.stream()
+                    .filter(i -> i.getId().equals(institution.getId()))
+                    .findFirst()
+                    .map(institutions::indexOf)
+                    .orElse(-1);
+
+            if (index != -1) {
+                institutions.set(index, institution);
+            }
+
+            int indexInFiltered = filteredInstitutions.stream()
+                    .filter(i -> i.getId().equals(institution.getId()))
+                    .findFirst()
+                    .map(filteredInstitutions::indexOf)
+                    .orElse(-1);
+
+            if (indexInFiltered != -1) {
+                filteredInstitutions.set(indexInFiltered, institution);
+            }
+
+            institutionDialogBean.reset();
+            PrimeFaces.current().executeScript("PF('newInstitutionDialog').hide();");
+        }
+    }
+
+    public void update(Institution institution) {
+        log.trace("Update institution received : {}", institution);
+        institutionDialogBean.reset();
+        institutionDialogBean.setTitle("Modifier une organisation");
+        institutionDialogBean.setButtonLabel("Modifier l'organisation");
+        institutionDialogBean.setInstitutionName(institution.getName());
+        institutionDialogBean.setIdentifier(institution.getIdentifier());
+        institutionDialogBean.setDescription(institution.getDescription());
+        institutionDialogBean.setSaveActionFromBean(() -> updateInstitution(institution));
+        PrimeFaces.current().executeScript("PF('newInstitutionDialog').show();");
     }
 
 }
