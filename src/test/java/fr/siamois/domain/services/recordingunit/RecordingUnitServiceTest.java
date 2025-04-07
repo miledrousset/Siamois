@@ -86,4 +86,10 @@ class RecordingUnitServiceTest {
         assertNotNull(result);
         assertEquals(recordingUnit, result);
     }
+
+    @Test
+    void countByInstitution_success() {
+        when(recordingUnitRepository.countByCreatedByInstitution(any(Institution.class))).thenReturn(3L);
+        assertEquals(3,recordingUnitService.countByInstitution(new Institution()));
+    }
 }

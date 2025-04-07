@@ -20,23 +20,40 @@
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
         <div style="padding:1em;">
-            <p:divider align="left" class="panel-section-separator">
-                <b>Informations générales</b>
-            </p:divider>
-
-            <p:panelGrid columns="4" layout="flex">
-
-                <p:outputLabel for="spatial-unit-name" value="Nom"/>
-                <p:inputText id="spatial-unit-name" required="true" value="#{panelModel.spatialUnit.name}"/>
-
-                <sharedLabel:openthesoLabel forId="auto-complete-spatial-type" label="Type"/>
-                <sharedInput:conceptAutocomplete
-                        selectedConcept="#{panelModel.spatialUnit.category}"
-                        completeMethod="#{spatialUnitFieldBean.completeCategory}"
-                        editConceptUrl="#{spatialUnitFieldBean.getUrlForSpatialUnitTypeFieldCode()}"/>
+            <p:panel id="generalInfoPanel" class="sia-form-panel" header="Informations générales" toggleable="true"
+                     collapsed="false">
 
 
-            </p:panelGrid>
+                <p:panelGrid id="generalInfoPanelGrid"
+                             layout="grid"
+                >
+                    <p:row>
+
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                            <sharedInput:panelField title="Name" id="spatialUnitName">
+                                <p:inputText id="spatialUnitNameField" required="true"
+                                             value="#{panelModel.spatialUnit.name}"/>
+                            </sharedInput:panelField>
+                        </p:column>
+
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                            <sharedInput:panelField title="Type" id="type">
+                                <sharedInput:conceptAutocomplete
+                                        panelStyleClass="spatial-unit-autocomplete"
+                                        selectedConcept="#{panelModel.spatialUnit.category}"
+                                        completeMethod="#{spatialUnitFieldBean.completeCategory}"
+                                        editConceptUrl="#{spatialUnitFieldBean.getUrlForSpatialUnitTypeFieldCode()}"/>
+                            </sharedInput:panelField>
+
+                        </p:column>
+                    </p:row>
+
+
+                </p:panelGrid>
+
+
+            </p:panel>
+
 
         </div>
 

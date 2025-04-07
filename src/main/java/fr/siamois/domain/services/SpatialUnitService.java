@@ -145,4 +145,8 @@ public class SpatialUnitService implements ArkEntityService {
     public ArkEntity save(ArkEntity toSave) {
         return spatialUnitRepository.save((SpatialUnit) toSave);
     }
+
+    public long countByInstitution(Institution institution) {
+        return spatialUnitRepository.countByCreatedByInstitution(institution);
+    }
 }

@@ -48,6 +48,7 @@
                         <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
                             <sharedInput:panelField title="Auteur" id="authorField">
                                 <p:autoComplete id="auto-complete-author"
+                                                panelStyleClass="recording-unit-autocomplete"
                                                 value="#{panelModel.recordingUnit.author}"
                                                 completeMethod="#{panelModel.completePerson}"
                                                 forceSelection="true"
@@ -62,6 +63,7 @@
                         <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
                             <sharedInput:panelField title="Fouilleur" id="excavatorField">
                                 <p:autoComplete id="auto-complete-excavator"
+                                                panelStyleClass="recording-unit-autocomplete"
                                                 value="#{panelModel.recordingUnit.excavator}"
                                                 completeMethod="#{panelModel.completePerson}"
                                                 forceSelection="true"
@@ -79,8 +81,10 @@
                         <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
                             <sharedInput:panelField title="Type" isTheso="true" id="typeField">
                                 <sharedInput:conceptAutocomplete id="typeComponent"
+                                                                 panelStyleClass="recording-unit-autocomplete"
                                                                  selectedConcept="#{panelModel.recordingUnit.type}"
                                                                  ajaxProcessTargets="@this
+
                                                                  :newRecordingUnitForm:customForm"
                                                                  ajaxUpdateTargets=":newRecordingUnitForm:missingFormWarning
                                                                  :newRecordingUnitForm:customForm
@@ -94,6 +98,7 @@
                         <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
                             <sharedInput:panelField title="Sous-Type" isTheso="true" id="secondTypeField">
                                 <sharedInput:conceptAutocomplete id="secondTypeComponent"
+                                                                 panelStyleClass="recording-unit-autocomplete"
                                                                  selectedConcept="#{panelModel.recordingUnit.secondaryType}"
                                                                  ajaxProcessTargets="@this"
                                                                  ajaxUpdateTargets="
@@ -107,6 +112,7 @@
                         <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
                             <sharedInput:panelField title="Identification" isTheso="true" id="thirdTypeField">
                                 <sharedInput:conceptAutocomplete id="thirdTypeComponent"
+                                                                 panelStyleClass="recording-unit-autocomplete"
                                                                  selectedConcept="#{panelModel.recordingUnit.thirdType}"
                                                                  disabled="#{!panelModel.hasThirdTypeOptions}"
                                                                  completeMethod="#{panelModel.completeRecordingUnitThirdType}"
@@ -285,7 +291,7 @@
                                     <p:autoComplete
                                             value="#{panelModel.recordingUnit.formResponse.answers.get(field).value}"
                                             multiple="true"
-
+                                            panelStyleClass="recording-unit-autocomplete"
                                             completeMethod="#{panelModel.suggestValues}"
                                             var="option" itemLabel="#{option.label}"
                                             itemValue="#{option}"

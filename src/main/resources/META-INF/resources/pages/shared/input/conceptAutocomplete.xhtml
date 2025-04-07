@@ -14,6 +14,7 @@
         <cc:attribute name="disabled" required="false" default="false"/>
         <cc:attribute name="ajaxUpdateTargets" required="false"/>
         <cc:attribute name="ajaxProcessTargets" required="false"/>
+        <cc:attribute name="panelStyleClass" required="false" default="sia-autocomplete-panel"/>
 
 
     </cc:interface>
@@ -23,6 +24,7 @@
                         id="conceptAutocomplete"
                         completeMethod="#{cc.attrs.completeMethod}"
                         var="field" itemLabel="#{field.label}"
+                        panelStyleClass="#{cc.attrs.panelStyleClass}"
                         itemValue="#{field}"
                         disabled="#{cc.attrs.disabled}"
                         required="true"
@@ -41,7 +43,7 @@
                     process="#{cc.attrs.ajaxProcessTargets}"/>
 
             <p:column>
-                <p:commandButton icon="fa fa-external-link" styleClass="btn btn-primary"
+                <p:commandButton icon="bi bi-box-arrow-up-right" styleClass="btn btn-primary"
                                  onclick="event.stopPropagation(); window.open('#{field.vocabulary.baseUri}/?idc=#{field.externalId}&amp;idt=#{field.vocabulary.externalVocabularyId}', '_blank'); return false;" />
             </p:column>
             <p:column>

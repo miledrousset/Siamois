@@ -74,5 +74,7 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
     Optional<SpatialUnit> findByArk(@NotNull Ark ark);
 
     List<SpatialUnit> findAllByArkIsNullAndCreatedByInstitution(@NotNull Institution createdByInstitution);
+
+    long countByCreatedByInstitution(Institution institution);
 }
 

@@ -13,6 +13,8 @@ public abstract class AbstractPanel implements Serializable {
     private String panelClass;
     private String icon;
     private PanelBreadcrumb breadcrumb;
+    private Boolean isBreadcrumbVisible = true;
+    private Boolean collapsed = false;
 
     protected AbstractPanel() {
     }
