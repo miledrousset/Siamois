@@ -9,8 +9,8 @@
             id="newInstitutionDialog"
             width="40vw"
             showEffect="fade"
-            closeOnEscape="true"
             appendToBody="true"
+            closable="false"
     >
         <div class="dialog-new-institution">
             <h3>#{institutionDialogBean.title}</h3>
@@ -45,8 +45,8 @@
             </div>
             <hr/>
             <div class="dialog-buttons">
-                <p:commandButton value="Annuler" action="#{institutionDialogBean.exit()}"/>
-                <p:commandButton value="Créer une organisation" action="#{institutionDialogBean.save()}" update="@form"/>
+                <p:commandButton value="Annuler" action="#{institutionDialogBean.exit()}" update="@form"/>
+                <p:commandButton value="#{institutionDialogBean.buttonLabel}" action="#{institutionDialogBean.save()}" update="@form"/>
             </div>
         </div>
     </p:dialog>

@@ -26,8 +26,8 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.model.file.UploadedFile;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeType;
-import org.springframework.web.context.annotation.SessionScope;
 
+import javax.faces.bean.SessionScoped;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -37,7 +37,7 @@ import java.util.List;
 @Component
 @Getter
 @Setter
-@SessionScope
+@SessionScoped
 public class DocumentCreationBean implements Serializable {
 
     private final SessionSettingsBean sessionSettingsBean;

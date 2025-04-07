@@ -13,11 +13,12 @@ import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 
 @Slf4j
 @Component
-@SessionScope
+@SessionScoped
 @Getter
 @Setter
 public class InstitutionDialogBean implements Serializable {
@@ -38,8 +39,13 @@ public class InstitutionDialogBean implements Serializable {
     }
 
     public void reset() {
+        log.trace("Reset called");
         saveActionFromBean = null;
         institutionName = "";
+        identifier = "";
+        description = "";
+        title = "";
+        buttonLabel = "";
     }
 
     public Institution createInstitution() throws InstitutionAlreadyExistException, FailedInstitutionSaveException {
@@ -71,8 +77,9 @@ public class InstitutionDialogBean implements Serializable {
     }
 
     public void exit() {
+        log.trace("Exit organization dialog");
         reset();
-        PrimeFaces.current().executeScript("PF('institutionCreationDialog').hide();");
+        PrimeFaces.current().executeScript("PF('newInstitutionDialog').close();");
     }
 
 }

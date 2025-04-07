@@ -32,7 +32,7 @@
                     <h:panelGroup rendered="#{cc.attrs.isOrganisationManager}">
                         <span class="ui-button-text-icon-left addButton">
                             <i class="bi bi-plus-circle"/>
-                            <p:commandButton action="#{cc.attrs.addAction}" value="Créer une organisation"/>
+                            <p:commandButton action="#{cc.attrs.addAction}" value="Créer une organisation" update="@form"/>
                         </span>
                     </h:panelGroup>
                 </div>

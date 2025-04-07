@@ -39,7 +39,7 @@ public class Institution implements Serializable {
     @Column(name = "identifier", nullable = false, length = Integer.MAX_VALUE)
     private String identifier;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private InstitutionSettings settings;
 
     @DefaultValue("NOW()")

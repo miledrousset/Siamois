@@ -29,7 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.SessionScope;
+import javax.faces.bean.SessionScoped;
 
 import java.io.Serializable;
 import java.util.List;
@@ -39,7 +39,7 @@ import java.util.Locale;
 @Getter
 @Setter
 @Component
-@SessionScope
+@SessionScoped
 public class ProfileSettingsBean implements Serializable {
 
     private final SessionSettingsBean sessionSettingsBean;
@@ -63,7 +63,14 @@ public class ProfileSettingsBean implements Serializable {
     private String fThesaurusUrl;
     private Institution fDefaultInstitution;
 
-    public ProfileSettingsBean(SessionSettingsBean sessionSettingsBean, PersonService personService, FieldConfigurationService fieldConfigurationService, VocabularyService vocabularyService, InstitutionService institutionService, InstitutionChangeEventPublisher institutionChangeEventPublisher, LangService langService, LangBean langBean) {
+    public ProfileSettingsBean(SessionSettingsBean sessionSettingsBean,
+                               PersonService personService,
+                               FieldConfigurationService fieldConfigurationService,
+                               VocabularyService vocabularyService,
+                               InstitutionService institutionService,
+                               InstitutionChangeEventPublisher institutionChangeEventPublisher,
+                               LangService langService,
+                               LangBean langBean) {
         this.sessionSettingsBean = sessionSettingsBean;
         this.personService = personService;
         this.fieldConfigurationService = fieldConfigurationService;

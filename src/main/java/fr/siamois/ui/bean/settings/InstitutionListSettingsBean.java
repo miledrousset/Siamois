@@ -16,8 +16,8 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.SessionScope;
 
+import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Component
-@SessionScope
+@SessionScoped
 public class InstitutionListSettingsBean implements Serializable {
 
     private final transient InstitutionService institutionService;
@@ -106,10 +106,12 @@ public class InstitutionListSettingsBean implements Serializable {
     }
 
     public void displayCreateDialog() {
+        log.trace("Display create institution dialog");
         institutionDialogBean.reset();
         institutionDialogBean.setTitle("Créer une organisation");
         institutionDialogBean.setButtonLabel("Créer l'organisation");
         institutionDialogBean.setSaveActionFromBean(this::createInstitution);
+        PrimeFaces.current().ajax().update("newInstitutionDialog");
         PrimeFaces.current().executeScript("PF('newInstitutionDialog').show();");
     }
 

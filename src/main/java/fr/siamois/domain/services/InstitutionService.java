@@ -104,4 +104,8 @@ public class InstitutionService {
     public Institution update(Institution institution) {
         return institutionRepository.save(institution);
     }
+
+    public void delete(Institution institution) {
+        institutionRepository.delete(institution);
+    }
 }
