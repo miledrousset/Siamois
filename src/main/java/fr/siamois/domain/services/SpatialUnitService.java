@@ -15,6 +15,8 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.SpatialUnitRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,6 +98,10 @@ public class SpatialUnitService implements ArkEntityService {
 
     public List<SpatialUnit> findAllWithoutParentsOfInstitution(Institution institution) {
         return spatialUnitRepository.findAllWithoutParentsOfInstitution(institution.getId());
+    }
+
+    public Page<SpatialUnit> findAllWithoutParentsOfInstitution(Institution institution, Pageable pageable) {
+        return spatialUnitRepository.findAllWithoutParentsOfInstitution(institution.getId(), pageable);
     }
 
     public List<SpatialUnit> findAllOfInstitution(Institution institution) {

@@ -13,20 +13,35 @@
 
     </cc:interface>
     <cc:implementation>
+        <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel"-->
         <h:form>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <p:outputPanel>
 
 
-                    <cc:renderFacet name="toolbar" />
+                <p:toolbar>
+                <p:toolbarGroup>
+                <span class="filter-container ui-input-icon-left"> <i class="bi bi-search"></i>
+                        <p:inputText id="globalFilter" onkeyup="PF('spatialUnitListTable').filter()" placeholder="Rechercher"  value="#{cc.attrs.panelModel.globalFilter}" >
+
+                        </p:inputText>
+                    </span>
+                </p:toolbarGroup>
+                </p:toolbar>
 
 
 
-                    <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
-                                 value="#{cc.attrs.spatialUnitList}" class="spatial-unit-datatable">
+                    <p:dataTable paginator="true" paginatorPosition="bottom" var="item"
+                                 widgetVar="spatialUnitListTable"
+                                 lazy="true"
+                                 emptyMessage="Aucune unité spatiale trouvée avec ces critères"
+                                 rows="10"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,20,25"
+                                 value="#{cc.attrs.panelModel.lazyDataModel}" class="spatial-unit-datatable">
 
 
-                        <p:column headerText="Name">
+                        <p:column headerText="Name" sortBy="#{item.name}" filterBy="#{item.name}">
                             <p:commandLink style="padding-right: 1em;"
                                     action="#{flowBean.goToSpatialUnitByIdCurrentPanel(item.id, cc.attrs.panelModel)}"
                                     update="flow"
@@ -38,7 +53,7 @@
                             <p:commandButton icon="pi pi-external-link" update="flow" action="#{flowBean.goToSpatialUnitByIdNewPanel(item.id,cc.attrs.panelModel)}" />
                         </p:column>
 
-                        <p:column headerText="Category">
+                        <p:column headerText="Category" sortBy="#{item.category}" filterBy="#{item.category}">
                             <p:chip label="#{item.category.label}" icon="pi pi-map-marker" styleClass="mr-2 spatial-unit-type-chip"/>
                         </p:column>
                     </p:dataTable>

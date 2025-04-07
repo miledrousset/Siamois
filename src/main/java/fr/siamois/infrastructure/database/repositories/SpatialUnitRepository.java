@@ -5,6 +5,8 @@ import fr.siamois.domain.models.ark.Ark;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -48,6 +50,21 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "  AND sh.fk_parent_id IS NULL"
     )
     List<SpatialUnit> findAllWithoutParentsOfInstitution(Long institutionId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT su.* " +
+                    "FROM spatial_unit su " +
+                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
+                    "WHERE su.fk_institution_id = :institutionId " +
+                    "  AND sh.fk_parent_id IS NULL",
+            countQuery = "SELECT count(su.*) " +
+                    "FROM spatial_unit su " +
+                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
+                    "WHERE su.fk_institution_id = :institutionId " +
+                    "  AND sh.fk_parent_id IS NULL"
+    )
+    Page<SpatialUnit> findAllWithoutParentsOfInstitution(Long institutionId, Pageable pageable);
 
     @Query(
             nativeQuery = true,
