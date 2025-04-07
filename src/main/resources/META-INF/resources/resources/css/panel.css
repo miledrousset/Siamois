@@ -8,11 +8,6 @@
     border: 1px solid var(--siamois-green-light-100);
 }
 
-.ui-panel.siamois-panel .ui-panel-titlebar {
-    background: var(--siamois-green-light-100);
-
-}
-
 .sia-panel-title {
     font-size: 22px;
     padding: 0.5em 0.5em 0.5em 2em;
@@ -35,6 +30,7 @@ body .ui-inputfield.ui-state-focus {
 
 .ui-panel.siamois-panel .ui-panel-titlebar {
     font-family: 'Inter', sans-serif;
+    background: var(--siamois-green-light-100);
     color: var(--text-light)
 }
 
