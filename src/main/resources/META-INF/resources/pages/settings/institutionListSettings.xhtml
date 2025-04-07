@@ -29,11 +29,13 @@
                         widgetVar="institutionManagerDatatable"
                         rowKey="#{organisation.id}"
                 >
-                    <p:column headerText="Organisation active">
+
+                    <p:column headerText="Organisation active" rendered="#{institutionListSettingsBean.hasMoreThenOneInstitution()}">
                         <p:toggleSwitch value="#{institutionListSettingsBean.toggleSwitchState[organisation.id]}">
                             <p:ajax event="change" listener="#{institutionListSettingsBean.changeCurrentInstitution(organisation)}" update="@form"/>
                         </p:toggleSwitch>
                     </p:column>
+
                     <p:column headerText="Nom de l'organisation">
                         <p:outputLabel value="#{organisation.name}"/>
                     </p:column>

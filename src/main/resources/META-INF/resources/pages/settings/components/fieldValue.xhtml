@@ -18,7 +18,10 @@
                 <div class="field-value-content">
                     <cc:insertChildren/>
                 </div>
-                <p:commandButton styleClass="field-value-save" value="Enregistrer" action="#{cc.attrs.saveMethod}"/>
+                <p:commandButton
+                        styleClass="field-value-save"
+                        value="Enregistrer"
+                        action="#{cc.attrs.saveMethod}"/>
             </div>
         </shared:csrfform>
     </cc:implementation>

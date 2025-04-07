@@ -92,4 +92,8 @@ public class InstitutionListSettingsBean implements Serializable {
         return sessionSettingsBean.getAuthenticatedUser().isSuperAdmin();
     }
 
+    public boolean hasMoreThenOneInstitution() {
+        return institutions.size() > 1;
+    }
+
 }

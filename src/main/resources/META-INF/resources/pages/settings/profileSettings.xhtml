@@ -38,6 +38,9 @@
                                      var="inst"
                                      style="width: 100%"
                                      converter="#{institutionConverter}"
+                                     filter="true"
+                                     filterMatchMode="contains"
+                                     filterNormalize="true"
                     >
                         <f:selectItems
                                 value="#{profileSettingsBean.refInstitutions}"
@@ -47,7 +50,7 @@
                         />
 
                         <p:column>
-                            <h:outputText value="#{item.id}"/>
+                            <h:outputText value="#{inst.name}"/>
                         </p:column>
 
                     </p:selectOneMenu>
@@ -68,7 +71,7 @@
                         />
 
                         <p:column>
-                            <h:outputText value="#{item.id}"/>
+                            <h:outputText value="#{profileSettingsBean.codeToLangName(lang)}"/>
                         </p:column>
 
                     </p:selectOneMenu>

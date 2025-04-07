@@ -31,6 +31,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,15 +40,15 @@ import java.util.Locale;
 @Setter
 @Component
 @SessionScope
-public class ProfileSettingsBean {
+public class ProfileSettingsBean implements Serializable {
 
     private final SessionSettingsBean sessionSettingsBean;
-    private final PersonService personService;
-    private final FieldConfigurationService fieldConfigurationService;
-    private final VocabularyService vocabularyService;
-    private final InstitutionService institutionService;
-    private final InstitutionChangeEventPublisher institutionChangeEventPublisher;
-    private final LangService langService;
+    private final transient PersonService personService;
+    private final transient FieldConfigurationService fieldConfigurationService;
+    private final transient VocabularyService vocabularyService;
+    private final transient InstitutionService institutionService;
+    private final transient InstitutionChangeEventPublisher institutionChangeEventPublisher;
+    private final transient LangService langService;
     private final LangBean langBean;
 
     private List<Institution> refInstitutions;
@@ -101,7 +102,7 @@ public class ProfileSettingsBean {
             Concept result = fieldConfigurationService.findConfigurationForFieldCode(info, SpatialUnit.CATEGORY_FIELD_CODE);
             fThesaurusUrl = result.getVocabulary().getUri();
         } catch (NoConfigForFieldException e) {
-            log.debug("No config", e);
+            log.debug("User has no thesaurus configuration for fieldCode {}", SpatialUnit.CATEGORY_FIELD_CODE);
         }
     }
 
@@ -172,13 +173,21 @@ public class ProfileSettingsBean {
 
     public void savePreferences() {
         boolean reloadPage = false;
+        log.trace("Save preferences called");
         personSettings.setDefaultInstitution(fDefaultInstitution);
+        log.trace("New default institution: {}", fDefaultInstitution);
+        log.trace("Language is {}. Existing is {}", fSelectedLang, personSettings.getLangCode());
         if (!fSelectedLang.equalsIgnoreCase(personSettings.getLangCode())) {
             personSettings.setLangCode(fSelectedLang);
+            log.trace("Selected language code: {}", fSelectedLang);
             reloadPage = true;
+        } else {
+            log.trace("No new language code selected");
         }
 
         personSettings = personService.updatePersonSettings(personSettings);
+        log.trace("Settings updated");
+
 
         if (reloadPage) {
             PrimeFaces.current().executeScript("location.reload();");

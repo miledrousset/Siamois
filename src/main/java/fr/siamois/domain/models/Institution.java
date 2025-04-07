@@ -45,7 +45,7 @@ public class Institution implements Serializable {
     @DefaultValue("NOW()")
     @Column(name = "creation_date", nullable = false)
     @JsonIgnore
-    private OffsetDateTime creationDate;
+    private OffsetDateTime creationDate = OffsetDateTime.now();
 
     @JsonProperty("creationDate")
     private String creationDateString() {
