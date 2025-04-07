@@ -14,6 +14,7 @@
         <cc:attribute name="label" type="java.lang.String" required="true"/>
         <cc:attribute name="count" type="long" required="true" />
         <cc:attribute name="btnLabel" type="java.lang.String" required="true"/>
+        <cc:attribute name="btnAction" required="false" method-signature="java.lang.Void f()"/>
     </cc:interface>
 
     <cc:implementation>
@@ -27,7 +28,8 @@
             </div>
 
             <f:facet name="footer">
-                <p:commandButton styleClass="#{cc.attrs.btnStyleClass}" value="#{cc.attrs.btnLabel}"/>
+                <p:commandButton styleClass="#{cc.attrs.btnStyleClass}" value="#{cc.attrs.btnLabel}"
+                action="#{cc.attrs.btnAction}" disabled="#{empty cc.attrs.btnAction}" update="flow"/>
             </f:facet>
         </p:card>
 

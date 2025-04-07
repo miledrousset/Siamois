@@ -39,8 +39,8 @@ public class WelcomePanel extends AbstractPanel {
         this.actionUnitService = actionUnitService;
         this.spatialUnitService = spatialUnitService;
 
-
-        this.setBreadcrumb(null);
+        setBreadcrumb(null);
+        setIsBreadcrumbVisible(false);
         init();
 
     }

@@ -40,6 +40,7 @@
                                     btnLabel="Voir les unités spatiales"
                                     label="Unités géographiques"
                                     count="#{panelModel.nbOfSpatialUnits}"
+                                    btnAction="#{flowBean.addSpatialUnitListPanel(panelModel.breadcrumb)}"
                             />
 
 
@@ -54,7 +55,7 @@
                                     btnStyleClass="action-unit-btn"
                                     btnLabel="Voir les unités d'action"
                                     label="Unités d'action"
-                                    count="#{panelModel.nbOfSpatialUnits}"
+                                    count="#{panelModel.nbOfActionUnits}"
                             />
 
 

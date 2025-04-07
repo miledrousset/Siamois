@@ -215,18 +215,26 @@ body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-stat
 }
 
 
-.spatial-unit-panel .ui-datatable .ui-command-link {
+.spatial-unit-panel .ui-commandlink, .spatial-unit-panel .ui-link{
     color: var(--context-main-color);
 }
 
+.spatial-unit-panel .ui-commandlink:hover, .spatial-unit-panel .ui-link:hover {
+    color: var(--context-main-color);
+}
 
 .recording-unit-tab .ui-datatable thead th {
     background: var(--ground-light-color-100);
 }
 
-.recording-unit-tab .ui-datatable .ui-link {
+.recording-unit-tab .ui-commandlink, .recording-unit-tab .ui-link {
     color: var(--ground-main-color)
 }
+
+.recording-unit-tab .ui-commandlink:hover, .recording-unit-tab:hover .ui-link {
+    color: var(--ground-main-color)
+}
+
 
 /* Action units panels */
 
@@ -345,8 +353,12 @@ body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-stat
     color: var(--context-main-color);
 }
 
-tbody.action-unit-datatable .ui-link {
-    color: var(--context-main-color)
+.action-unit-panel .ui-commandlink, .action-unit-panel .ui-link{
+    color: var(--context-main-color);
+}
+
+.action-unit-panel .ui-commandlink:hover, .action-unit-panel .ui-link:hover {
+    color: var(--context-main-color);
 }
 
 
@@ -472,11 +484,13 @@ tbody.action-unit-datatable .ui-link {
     border: 1px solid var(--ground-dark-color);
 }
 
-.recording-unit-tab .ui-command-link {
+.recording-unit-panel .ui-commandlink, .recording-unit-panel .ui-link{
     color: var(--ground-main-color);
 }
 
-
+.recording-unit-panel .ui-commandlink:hover, .recording-unit-panel .ui-link:hover {
+    color: var(--ground-main-color);
+}
 
 /* forms */
 

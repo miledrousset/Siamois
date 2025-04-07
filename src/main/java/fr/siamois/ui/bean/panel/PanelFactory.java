@@ -149,12 +149,16 @@ public class PanelFactory {
 
     }
 
-    public SpatialUnitListPanel createSpatialUnitListPanel() {
-        return spatialUnitListPanelProvider.getObject();
+    public SpatialUnitListPanel createSpatialUnitListPanel(PanelBreadcrumb currentBreadcrumb) {
+        return new SpatialUnitListPanel.SpatialUnitListPanelBuilder(spatialUnitListPanelProvider)
+                .breadcrumb(currentBreadcrumb)
+                .build();
     }
 
     public WelcomePanel createWelcomePanel() {
-        return welcomePanelProvider.getObject();
+        WelcomePanel wp = welcomePanelProvider.getObject();
+        wp.setBreadcrumb(new PanelBreadcrumb());
+        return wp;
     }
 
 }

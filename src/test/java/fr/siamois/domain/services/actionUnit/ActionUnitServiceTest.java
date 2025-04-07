@@ -333,4 +333,10 @@ class ActionUnitServiceTest {
 
         assertTrue(result.isPresent());
     }
+
+    @Test
+    void countByInstitution_success() {
+        when(actionUnitRepository.countByCreatedByInstitution(any(Institution.class))).thenReturn(3L);
+        assertEquals(3,actionUnitService.countByInstitution(new Institution()));
+    }
 }

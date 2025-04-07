@@ -15,6 +15,7 @@ import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.breadcrumb.BreadcrumbBean;
+import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.models.panel.*;
 import lombok.Data;
 import lombok.Getter;
@@ -100,12 +101,35 @@ public class FlowBean implements Serializable {
         fSpatialUnits = spatialUnitService.findAllOfInstitution(info.getInstitution());
     }
 
-    public void addSpatialUnitListPanel() {
-        panels.add(0, panelFactory.createSpatialUnitListPanel());
+    public void addSpatialUnitListPanel(PanelBreadcrumb bc) {
+        panels.add(0, panelFactory.createSpatialUnitListPanel(bc));
     }
 
     public void addWelcomePanel() {
+        // We find the index of the welcome panel in the flow, if it does not exist we add it,
+        // otherwise we move it on top.
+        if (panels == null || panels.isEmpty()) {
+            panels = new ArrayList<>();
+        }
+
+        // Find the index of the first object of the desired type
+        int indexToMove = -1;
+        for (int i = 0; i < panels.size(); i++) {
+            if (panels.get(i) instanceof WelcomePanel) {
+                indexToMove = i;
+                break;
+            }
+        }
+
+        // If found and not already at index 0, move it to the top
+        if (indexToMove >= 0) {
+            panels.remove(indexToMove);
+        }
+
+        // Add a new instance to refresh the panel
         panels.add(0, panelFactory.createWelcomePanel());
+
+
     }
 
     public void addNewSpatialUnitPanel(AbstractPanel currentPanel) {
@@ -129,12 +153,6 @@ public class FlowBean implements Serializable {
     }
 
 
-    public void goToHomeCurrentPanel(AbstractPanel panel) {
-        // Change current panel type add item to its breadcrumb
-        int index = panels.indexOf(panel);
-        SpatialUnitListPanel newPanel = panelFactory.createSpatialUnitListPanel();
-        panels.set(index, newPanel);
-    }
 
     public void goToSpatialUnitByIdNewPanel(Long id, AbstractPanel currentPanel) {
         // Create new panel type and add items to its breadcrumb
@@ -196,5 +214,15 @@ public class FlowBean implements Serializable {
 
     public void addSpatialUnitPanel(Long id) {
         panels.add(0, panelFactory.createSpatialUnitPanel(id));
+    }
+
+    public void handleToggleOfPanelAtIndex(int idx)
+    {
+        AbstractPanel panel = panels.get(idx);
+        panel.setCollapsed(!panel.getCollapsed());
+    }
+
+    public void closePanelAtIndex(int idx) {
+        panels.remove(idx);
     }
 }
