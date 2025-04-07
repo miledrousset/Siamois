@@ -1,0 +1,57 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://java.sun.com/jsf/facelets"
+             xmlns:h="http://xmlns.jcp.org/jsf/html"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
+             xmlns:form="http://xmlns.jcp.org/jsf/composite/pages/shared/form"
+
+>
+
+    <p:dialog
+            widgetVar="newInstitutionDialog"
+            id="newInstitutionDialog"
+            width="40vw"
+            showEffect="fade"
+            closeOnEscape="true"
+            appendToBody="true"
+    >
+        <div class="dialog-new-institution">
+            <h3>Créer une organisation</h3>
+            <hr/>
+            <div class="form-group row">
+                <label class="col-lg-4 col-form-label" for="name">Nom de l'organisation</label>
+                <div class="col-lg-6 ms-auto">
+                    <p:inputText
+                            id="name"
+                            value="#{institutionCreationBean.institutionName}"
+                            maxlength="#{documentCreationBean.maxTitleLength()}"
+                    />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-form-label" for="identifier">Identifiant</label>
+                <div class="col-lg-6 ms-auto">
+                    <p:inputText
+                            id="identifier"
+                            value="#{institutionCreationBean.identifier}"
+                    />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-form-label" for="description">Description</label>
+                <div class="col-lg-6 ms-auto">
+                    <p:inputTextarea
+                            id="description"
+                            value="#{institutionCreationBean.description}"
+                    />
+                </div>
+            </div>
+            <hr/>
+            <div class="dialog-buttons">
+                <p:commandButton value="Annuler" action="#{institutionCreationBean.exit()}"/>
+                <p:commandButton value="Créer une organisation" action="#{institutionCreationBean.save()}" update="@form"/>
+            </div>
+        </div>
+    </p:dialog>
+
+</ui:fragment>

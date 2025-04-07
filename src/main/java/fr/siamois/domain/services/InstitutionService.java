@@ -50,14 +50,14 @@ public class InstitutionService {
         return personRepository.findAllInstitutionManagers();
     }
 
-    public void createInstitution(Institution institution) throws InstitutionAlreadyExistException, FailedInstitutionSaveException {
+    public Institution createInstitution(Institution institution) throws InstitutionAlreadyExistException, FailedInstitutionSaveException {
         Optional<Institution> existing = institutionRepository.findInstitutionByIdentifier(institution.getIdentifier());
         if (existing.isPresent()) throw new InstitutionAlreadyExistException("Institution with code " + institution.getIdentifier() + " already exists");
         try {
-            institutionRepository.save(institution);
+            return institutionRepository.save(institution);
         } catch (Exception e) {
             log.error("Error while saving institution", e);
-            throw new FailedInstitutionSaveException("Institution with code " + institution.getIdentifier() + " already exists");
+            throw new FailedInstitutionSaveException("Failed to save institution");
         }
     }
 

@@ -1,4 +1,4 @@
-package fr.siamois.ui.bean.dialog;
+package fr.siamois.ui.bean.dialog.document;
 
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.ark.Ark;
@@ -16,6 +16,7 @@ import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.dialog.SaveActionFromBean;
 import jakarta.faces.application.FacesMessage;
 import jakarta.servlet.ServletContext;
 import lombok.Getter;
@@ -52,7 +53,7 @@ public class DocumentCreationBean implements Serializable {
     private Concept docType;
     private String docDescription;
 
-    private transient DocumentSaveAction actionOnSave = null;
+    private transient SaveActionFromBean actionOnSave = null;
     private Concept parentNature = null;
     private Concept parentScale = null;
     private Concept parentType = null;
@@ -177,7 +178,7 @@ public class DocumentCreationBean implements Serializable {
     }
 
     public void callActionOnSave() {
-        actionOnSave.saveDocument();
+        actionOnSave.save();
     }
 
 }

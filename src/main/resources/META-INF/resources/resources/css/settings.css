@@ -137,3 +137,17 @@ main form:first-child .field-value-group {
 .dt-button span.bi {
     color: var(--siamois-green);
 }
+
+.dialog-new-institution {
+    flex-direction: column;
+}
+
+.dialog-new-institution input {
+    margin-left: auto;
+}
+
+.dialog-new-institution .dialog-buttons {
+    margin-left: auto;
+    display: flex;
+    gap: 30px
+}

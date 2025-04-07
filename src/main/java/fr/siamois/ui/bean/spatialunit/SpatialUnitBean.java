@@ -15,7 +15,7 @@ import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.bean.dialog.DocumentCreationBean;
+import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;

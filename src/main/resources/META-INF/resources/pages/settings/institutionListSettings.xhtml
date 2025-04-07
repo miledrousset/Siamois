@@ -12,16 +12,16 @@
     <ui:define name="content">
         <main>
             <comp:datatable
-                    formId="institutionManager"
+                    formId="institutionManagerForm"
                     title="Organisations"
                     filterAction="#{institutionListSettingsBean.onFilterType()}"
-                    addAction="#{institutionListSettingsBean.onFilterType()}"
+                    addAction="#{institutionListSettingsBean.displayCreateDialog()}"
                     searchInputTextValue="#{institutionListSettingsBean.filterText}"
                     searchInputPlaceholder="Rechercher une organisation"
                     isOrganisationManager="#{institutionListSettingsBean.userIsSuperadmin()}"
             >
                 <p:dataTable
-                        id="organisationArray"
+                        id="organisationDatatable"
                         value="#{institutionListSettingsBean.filteredInstitutions}"
                         var="organisation"
                         sortMode="single"
@@ -54,6 +54,7 @@
                         </p:menuButton>
                     </p:column>
                 </p:dataTable>
+                <ui:include src="/dialog/institution/newInstitution.xhtml"/>
             </comp:datatable>
         </main>
     </ui:define>
