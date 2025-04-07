@@ -42,6 +42,7 @@ import java.util.List;
 @Data
 public class FlowBean implements Serializable {
 
+
     private final transient SpatialUnitService spatialUnitService;
     private final transient RecordingUnitService recordingUnitService;
     private final transient ActionUnitService actionUnitService;
@@ -100,14 +101,7 @@ public class FlowBean implements Serializable {
     @EventListener(InstitutionChangeEvent.class)
     public void init() {
         UserInfo info =  sessionSettings.getUserInfo();
-        if (info.isInSuperadminInstitution()) {
-            fSpatialUnits = spatialUnitService.findAll();
-        } else {
-            fSpatialUnits = spatialUnitService.findAllOfInstitution(info.getInstitution());
-        }
-        panels.clear();
-        addSpatialUnitListPanel();
-        log.trace("Init FlowBean");
+        fSpatialUnits = spatialUnitService.findAllOfInstitution(info.getInstitution());
     }
 
     public void addSpatialUnitListPanel(PanelBreadcrumb bc) {
@@ -169,12 +163,12 @@ public class FlowBean implements Serializable {
         panels.add(0, newPanel);
     }
 
-   public void  goToRecordingUnitByIdCurrentPanel(Long id, Integer currentPanelIndex) {
+    public void  goToRecordingUnitByIdCurrentPanel(Long id, Integer currentPanelIndex) {
 
-           RecordingUnitPanel newPanel = panelFactory.createRecordingUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
-           panels.set(currentPanelIndex, newPanel);
+        RecordingUnitPanel newPanel = panelFactory.createRecordingUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
+        panels.set(currentPanelIndex, newPanel);
 
-   }
+    }
 
     public void  goToRecordingUnitByIdNewPanel(Long id, Integer currentPanelIndex) {
 
