@@ -3,6 +3,7 @@
              xmlns:h="http://xmlns.jcp.org/jsf/html"
              xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
              xmlns:p="http://primefaces.org/ui"
+             xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form"
 
 >
 
@@ -14,9 +15,7 @@
 
     <p:separator/>
 
-    <h:form>
-        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-
+    <form:csrfform formId="newActionUnitForm">
         <div style="padding:1em;">
             <!-- Common fields -->
 
@@ -77,8 +76,7 @@
                 </p:commandButton>
             </p:toolbarGroup>
         </p:toolbar>
-
-    </h:form>
+    </form:csrfform>
 
 
 </ui:fragment>
