@@ -95,7 +95,7 @@ public class PersonService {
         return passwordEncoder.matches(plainPassword, person.getPassword());
     }
 
-    private Optional<PasswordVerifier> findPasswordVerifier() {
+    Optional<PasswordVerifier> findPasswordVerifier() {
         for (PersonDataVerifier verifier : verifiers) {
             if (verifier.getClass().equals(PasswordVerifier.class)) return Optional.of((PasswordVerifier) verifier);
         }
