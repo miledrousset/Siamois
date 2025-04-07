@@ -113,7 +113,7 @@
                             <f:facet name="header">
                                 <i class="#{panel.icon}"/> #{panel.title}
                             </f:facet>
-                            <p:breadCrumb model="#{panel.breadcrumb.model}"/>
+                            <p:breadCrumb model="#{panel.breadcrumb.model}" rendered="#{not empty panel.breadcrumb}"/>
                             <ui:include src="#{panel.display()}">
                                 <ui:param name="panelModel" value="#{panel}"/>
                                 <ui:param name="panelIndex" value="#{status.index}"/>

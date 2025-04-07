@@ -111,8 +111,8 @@ body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-stat
 }
 
 .spatial-unit-btn.ui-button:hover {
-    background: var(--context-light-color-200);
-    border-color: var(--context-light-color-200);
+    background: var(--context-dark-color);
+    border-color: var(--context-dark-color);
 }
 
 .spatial-unit-autocomplete.ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-state-highlight {
@@ -164,6 +164,13 @@ body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-stat
     background-color: white;
     border: 1px solid var(--context-main-color);
     color: var(--context-main-color);
+    font-size: 12px;
+}
+
+.ui-chip.spatial-unit-count-chip-alt {
+    background-color: var(--context-main-color);
+    border: 1px solid var(--context-main-color);
+    color: white;
     font-size: 12px;
 }
 
@@ -302,6 +309,14 @@ body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-stat
     font-size: 12px;
 }
 
+.ui-chip.action-unit-count-chip-alt {
+    background-color: var(--context-main-color);
+    border: 1px solid var(--context-main-color);
+    color: white;
+    font-size: 12px;
+}
+
+
 .ui-chip.action-unit-type-chip {
     background-color: var(--context-main-color);
     color: white;
@@ -417,6 +432,13 @@ tbody.action-unit-datatable .ui-link {
     font-size: 12px;
 }
 
+.ui-chip.recording-unit-count-chip-alt {
+    background-color: var(--ground-main-color);
+    border: 1px solid var(--ground-main-color);
+    color: white;
+    font-size: 12px;
+}
+
 
 .ui-panel.recording-unit-single-panel .ui-panel-content {
     background: var(--ground-light-color-50);
@@ -483,6 +505,35 @@ tbody.action-unit-datatable .ui-link {
 
 .spatial-unit-panel .sia-form-panel .ui-panel-titlebar {
     border-bottom: 1px solid var(--context-light-color-200);
+}
+
+
+/* Welcome cards */
+.sia-welcome-card .ui-card-body {
+    height: 20vh;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sia-welcome-card.sia-spatial-unit {
+    background: var(--context-light-color-50);
+    color: var(--context-main-color)
+}
+
+.sia-welcome-card.sia-action-unit {
+    background: var(--context-light-color-50);
+    color: var(--context-main-color)
+}
+
+.sia-welcome-card.sia-recording-unit {
+    background: var(--ground-light-color-50);
+    color: var(--ground-main-color)
+}
+
+.sia-welcome-card .ui-card-footer {
+    text-align: center;
 }
 
 

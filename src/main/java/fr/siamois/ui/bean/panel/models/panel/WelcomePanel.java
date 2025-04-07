@@ -2,7 +2,6 @@ package fr.siamois.ui.bean.panel.models.panel;
 
 
 import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -25,7 +24,7 @@ public class WelcomePanel extends AbstractPanel {
     public WelcomePanel(SessionSettingsBean sessionSettingsBean) {
         super("Accueil", "bi bi-house", "siamois-panel");
         this.sessionSettingsBean = sessionSettingsBean;
-        this.setBreadcrumb(new PanelBreadcrumb());
+        this.setBreadcrumb(null);
     }
 
 
