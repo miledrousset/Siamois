@@ -103,13 +103,19 @@
                     <c:forEach items="#{flowBean.panels}" var="panel" varStatus="status">
                         <p:panel styleClass="#{panel.panelClass}"
                                 rendered="#{flowBean.fullscreenPanelIndex ==-1 || flowBean.fullscreenPanelIndex == status.index}" id="panel-${status.index}"
-                                toggleable="true" closable="true">
+                                toggleable="true" closable="true"
+                                 toggleableHeader="true" collapsed="#{panel.collapsed}">
+
+                            <p:ajax event="close" listener="#{flowBean.closePanelAtIndex(status.index)}" />
+                            <p:ajax event="toggle" listener="#{flowBean.handleToggleOfPanelAtIndex(status.index)}"/>
+
                             <f:facet name="header">
                                 <i class="#{panel.icon}"/> #{panel.title}
                             </f:facet>
-                            <p:breadCrumb model="#{panel.breadcrumb.model}"/>
+                            <p:breadCrumb model="#{panel.breadcrumb.model}" rendered="#{panel.isBreadcrumbVisible}"/>
                             <ui:include src="#{panel.display()}">
                                 <ui:param name="panelModel" value="#{panel}"/>
+                                <ui:param name="panelIndex" value="#{status.index}"/>
                             </ui:include>
                             <f:facet name="actions">
                                 <form:csrfform formId="actionsFormId">
@@ -135,8 +141,7 @@
 
         </p:outputPanel>
 
-        <ui:include src="/dialog/actionUnit/actionUnitDialog.xhtml"/>
-        <ui:include src="/dialog/spatialUnit/newSpatialUnitDialog.xhtml"/>
+
 
     </ui:define>
 

@@ -41,7 +41,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         sessionSettingsBean.setupSession();
         // We add the "welcome panel" if the flowBean is empty
-        flowBean.init();
+        if(flowBean.getPanels().isEmpty()) {
+            flowBean.addWelcomePanel();
+        }
         redirectRequest(request, response);
     }
 

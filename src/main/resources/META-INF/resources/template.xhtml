@@ -39,10 +39,11 @@
                 <form:csrfform formId="siamoisNavForm">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="bi bi-house-door-fill"/>
+                            <h:commandLink action="#{flowBean.addWelcomePanel}" styleClass="nav-link"
+                            update="flow">
+                                <i class="bi bi-gear-fill"/>
                                 <span class="menu-text">Accueil</span>
-                            </a>
+                            </h:commandLink>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">

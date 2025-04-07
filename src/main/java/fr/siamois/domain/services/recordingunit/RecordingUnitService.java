@@ -189,6 +189,10 @@ public class RecordingUnitService implements ArkEntityService {
         return recordingUnitRepository.save((RecordingUnit) toSave);
     }
 
+    public long countByInstitution(Institution institution) {
+        return recordingUnitRepository.countByCreatedByInstitution(institution);
+    }
+
 }
 
 

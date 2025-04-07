@@ -1,0 +1,89 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+             xmlns:siaCard="http://xmlns.jcp.org/jsf/composite/pages/shared/card"
+>
+    <!--@elvariable id="panelIndex" type="Integer"-->
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.WelcomePanel"-->
+
+    <div class="sia-panel-title">
+        Bienvenue sur Siamois. Que voulez-vous faire?
+    </div>
+
+    <h:form>
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+        <div style="padding:1em;">
+            <!-- Common fields -->
+
+            <p:panel id="latestActivity" class="sia-form-panel" header="Mes dernières unités d'action" toggleable="true"
+                     collapsed="false">
+            </p:panel>
+
+            <p:panel id="dbAccess" class="sia-form-panel" header="Accéder aux bases de données" toggleable="true"
+                     collapsed="false">
+
+
+                <p:panelGrid id="dbAccessPanelGrid"
+                             layout="grid"
+                >
+                    <p:row>
+
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+
+                            <siaCard:welcomeCard
+                                    icon="bi bi-geo-alt"
+                                    cardStyleClass="sia-welcome-card sia-spatial-unit"
+                                    chipStyleClass="spatial-unit-count-chip-alt"
+                                    btnStyleClass="spatial-unit-btn"
+                                    btnLabel="Voir les unités spatiales"
+                                    label="Unités géographiques"
+                                    count="#{panelModel.nbOfSpatialUnits}"
+                                    btnAction="#{flowBean.addSpatialUnitListPanel(panelModel.breadcrumb)}"
+                            />
+
+
+                        </p:column>
+
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+
+                            <siaCard:welcomeCard
+                                    icon="bi bi-arrow-down-square"
+                                    cardStyleClass="sia-welcome-card sia-action-unit"
+                                    chipStyleClass="action-unit-count-chip-alt"
+                                    btnStyleClass="action-unit-btn"
+                                    btnLabel="Voir les unités d'action"
+                                    label="Unités d'action"
+                                    count="#{panelModel.nbOfActionUnits}"
+                            />
+
+
+                        </p:column>
+
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+
+                            <siaCard:welcomeCard
+                                    icon="bi bi-pencil-square"
+                                    cardStyleClass="sia-welcome-card sia-recording-unit"
+                                    chipStyleClass="recording-unit-count-chip-alt"
+                                    btnStyleClass="recording-unit-btn"
+                                    btnLabel="Voir les unités d'enregistrement"
+                                    label="Unités d'enregistrement"
+                                    count="#{panelModel.nbOfRecordingUnits}"
+                            />
+
+                        </p:column>
+
+                    </p:row>
+
+                </p:panelGrid>
+
+            </p:panel>
+
+        </div>
+
+    </h:form>
+
+
+</ui:fragment>

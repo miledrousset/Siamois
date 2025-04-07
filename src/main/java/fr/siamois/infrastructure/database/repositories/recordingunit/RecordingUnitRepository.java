@@ -1,6 +1,7 @@
 package fr.siamois.infrastructure.database.repositories.recordingunit;
 
 
+import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.transaction.Transactional;
@@ -57,4 +58,6 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
                     "WHERE ru.fk_ark_id IS NULL AND ru.fk_institution_id = :institutionId"
     )
     List<RecordingUnit> findAllWithoutArkOfInstitution(Long institutionId);
+
+    long countByCreatedByInstitution(Institution institution);
 }

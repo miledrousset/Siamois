@@ -1,0 +1,30 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+                xmlns:shared="http://java.sun.com/jsf/composite/pages/shared/form"
+                xmlns:h="http://java.sun.com/jsf/html"
+>
+
+   <cc:interface>
+      <cc:attribute name="title" type="java.lang.String" required="true"/>
+      <cc:attribute name="isTheso" type="java.lang.Boolean" required="false" default="false"/>
+   </cc:interface>
+
+   <cc:implementation>
+         <div class="field-value-group">
+            <div>
+               <h:outputText value="#{cc.attrs.title}"/>
+               <h:graphicImage rendered="#{cc.attrs.isTheso}"
+                       library="img"
+                       name="icon_opentheso2.png"
+                       styleClass="label-icon"
+                       alt="Opentheso Icon"/>
+            </div>
+            <div >
+               <cc:insertChildren/>
+            </div>
+         </div>
+   </cc:implementation>
+
+</ui:composition>

@@ -1,0 +1,193 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             xmlns:f="http://xmlns.jcp.org/jsf/core"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:h="http://xmlns.jcp.org/jsf/html"
+             xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components"
+>
+
+    <!--@elvariable id="panelIndex" type="Integer"-->
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.ActionUnitPanel"-->
+
+    <!-- Content -->
+    <!-- General description of the action unit -->
+    <p:staticMessage severity="error" summary="Error" closable="false"
+                     detail="#{panelModel.actionUnitErrorMessage}"
+                     rendered="#{not empty panelModel.actionUnitErrorMessage}"/>
+
+    <h:panelGroup rendered="#{panelModel.actionUnit != null}">
+
+        <div class="panel-top-section">
+            <h2>
+                #{panelModel.actionUnit.name}
+                <p:chip label="#{panelModel.actionUnit.type.label}" icon="bi bi-arrow-down-square"
+                        styleClass="mr-2 action-unit-type-chip"/>
+
+            </h2>
+        </div>
+
+
+        <h:form>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <p:outputPanel>
+                <div class="siamois-toolbar">
+                    <p:toolbar>
+                        <p:toolbarGroup>
+                            <p:commandButton value='Nouvel enregistrement' icon="bi bi-plus-circle"
+                                             update="flow"
+                                             action="#{flowBean.addNewRecordingUnitPanel(panelModel.actionUnit.id, panelIndex)}"
+                                             style="margin-right: .5rem">
+                            </p:commandButton>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+                </div>
+            </p:outputPanel>
+        </h:form>
+
+
+        <p:tabView id="spatialUnitTabsId">
+
+            <p:tab title="Aperçu">
+
+            </p:tab>
+
+            <p:tab title="Détails" id="spatialUnitDetailsTabId">
+                <!-- Action codes (OA, OP, ...) -->
+                <h3>Manage Codes</h3>
+                <!-- The primary code attached to this action -->
+                <h4>Main code</h4>
+
+                <h:form id="primaryCodeForm">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+                    <div style="display:flex;">
+                        <p:chip label="#{panelModel.actionUnit.primaryActionCode.type.label}"
+                                icon="pi pi-qrcode" >
+                        </p:chip>
+
+                        <p:autoComplete id="auto-complete-primary-action-code"
+                                        value="#{panelModel.actionUnit.primaryActionCode}"
+                                        var="actionCode" itemLabel="#{actionCode.code}"
+                                        completeMethod="#{panelModel.completeActionCode}"
+                                        converter="#{actionCodeConverter}"
+                                        itemValue="#{actionCode}"
+                                        required="true"
+                                        forceSelection="true"
+                                        scrollHeight="300"
+                                        dropdown="false">
+                            <p:ajax event="itemSelect"
+                                    update="@form"/>
+                            <p:column>
+                                <div style="display:flex;">
+                                    <span class="pi pi-qrcode ui-chip ui-chip-icon"/>
+                                    <div style="width:max-content;" class="ui-chip-text">#{actionCode.type.label}
+                                    </div>
+                                </div>
+
+                            </p:column>
+                            <p:column>
+                                        <span>
+                                            #{actionCode.code}
+                                        </span>
+                            </p:column>
+                            <f:facet name="footer">
+                                <div class="ui-fluid" style="padding:0.5rem 1rem 1rem 1rem">
+                                    <p:commandButton value='Nouveau code' icon="pi pi-plus"
+                                                     action="#{panelModel.initNewActionCode(0)}"
+                                                     update="form-new-action-code"
+                                                     immediate="true"
+                                                     style="margin-right: .5rem">
+                                    </p:commandButton>
+
+                                </div>
+                            </f:facet>
+                        </p:autoComplete>
+                    </div>
+                </h:form>
+
+                <h4>Additional codes</h4>
+                <h:messages id="msg"></h:messages>
+                <h:form id="secondaryCodesForm">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <p:commandButton value="Add new code" icon="pi pi-plus" process="@this" update="secondaryCodesForm"
+                                     action="#{panelModel.addNewSecondaryCode}"/>
+                    <ui:repeat id="secondaryCodeRepeat" var="secondaryCode" value="#{panelModel.secondaryActionCodes}" varStatus="status">
+                        <h:panelGroup style="display:flex;" id="secondaryCodeField">
+                            <p:chip label="#{panelModel.secondaryActionCodes[status.index].type.label}"
+                                    icon="pi pi-qrcode" >
+                            </p:chip>
+                            <p:autoComplete id="SecondaryCodeAutoCompleteId"
+                                            value="#{panelModel.secondaryActionCodes[status.index]}"
+                                            var="actionCode"
+                                            itemLabel="#{actionCode.code}"
+                                            completeMethod="#{panelModel.completeActionCode}"
+                                            converter="#{actionCodeConverter}"
+                                            itemValue="#{actionCode}"
+                                            required="true"
+                                            forceSelection="true"
+                                            scrollHeight="300"
+                                            dropdown="false">
+                                <p:ajax event="itemSelect"
+                                        update="spatialUnitTabsId:secondaryCodesForm:secondaryCodeRepeat:#{status.index}:secondaryCodeField"/>
+                                />
+                                <p:column>
+                                    <div style="display:flex;">
+                                        <span class="pi pi-qrcode ui-chip ui-chip-icon"/>
+                                        <div style="width:max-content;" class="ui-chip-text">#{actionCode.type.label}
+                                        </div>
+                                    </div>
+
+                                </p:column>
+                                <p:column>
+                                        <span>
+                                            #{actionCode.code}
+                                        </span>
+                                </p:column>
+                                <f:facet name="footer">
+                                    <div class="ui-fluid" style="padding:0.5rem 1rem 1rem 1rem">
+                                        <p:commandButton value='Nouveau code' icon="pi pi-plus"
+                                                         immediate="true"
+                                                         update="form-new-action-code"
+                                                         action="#{panelModel.initNewActionCode(status.index+1)}"
+                                                         oncomplete="PF('new-action-code-dialog').show()"
+                                                         style="margin-right: .5rem">
+                                        </p:commandButton>
+
+                                    </div>
+                                </f:facet>
+                            </p:autoComplete>
+                            <p:commandButton icon="pi pi-minus" process="@this" update="@form"
+                                             action="#{panelModel.removeSecondaryCode(status.index)}"/>
+                        </h:panelGroup>
+                    </ui:repeat>
+                </h:form>
+
+
+
+            </p:tab>
+
+            <p:tab title="Hierarchie">
+
+            </p:tab>
+
+            <p:tab title="Equipe">
+
+            </p:tab>
+
+            <p:tab title="Enregistrements">
+                <div class="row siamois-row recording-unit-tab">
+                </div>
+            </p:tab>
+
+            <p:tab title="Prelevements">
+
+            </p:tab>
+
+        </p:tabView>
+
+    </h:panelGroup>
+
+    <!-- Tabs -->
+
+
+</ui:fragment>

@@ -347,4 +347,10 @@ class SpatialUnitServiceTest {
         assertEquals(spatialUnit, result);
         verify(spatialUnitRepository, times(1)).save(spatialUnit);
     }
+
+    @Test
+    void countByInstitution_success() {
+        when(spatialUnitRepository.countByCreatedByInstitution(any(Institution.class))).thenReturn(3L);
+        assertEquals(3,spatialUnitService.countByInstitution(new Institution()));
+    }
 }

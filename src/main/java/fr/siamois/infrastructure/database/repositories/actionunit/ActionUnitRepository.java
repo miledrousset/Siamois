@@ -18,4 +18,6 @@ public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long> {
     Optional<ActionUnit> findByArk(Ark ark);
 
     List<ActionUnit> findAllByArkIsNullAndCreatedByInstitution(@NotNull Institution createdByInstitution);
+
+    long countByCreatedByInstitution(Institution institution);
 }

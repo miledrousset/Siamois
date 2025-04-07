@@ -4,11 +4,12 @@
              xmlns:p="http://primefaces.org/ui"
              xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components"
 >
-
+    <!--@elvariable id="panelIndex" type="Integer"-->
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel"-->
     <!-- Conditionally render the message if it's set in the bean -->
     <p:staticMessage severity="error" summary="Error" closable="false" detail="#{panelModel.spatialUnitListErrorMessage}"
                      rendered="#{not empty panelModel.spatialUnitListErrorMessage}"/>
-    <div class="spatial-unit-panel-title">
+    <div class="sia-panel-title">
         <i class="bi bi-geo-alt"></i>
         Unités géographiques
         <p:chip label="258" styleClass="spatial-unit-count-chip"/>
@@ -22,8 +23,8 @@
             <p:toolbar>
                 <p:toolbarGroup>
                     <p:commandButton value='Nouveau lieu' icon="pi pi-plus"
-                                     actionListener="#{spatialUnitFieldBean.init([], [])}"
-                                     oncomplete="PF('new-spatial-unit-dialog').show()"
+                                     action="#{flowBean.addNewSpatialUnitPanel(panelModel)}"
+                                     update="flow"
                                      style="margin-right: .5rem">
                     </p:commandButton>
                 </p:toolbarGroup>

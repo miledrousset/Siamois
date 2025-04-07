@@ -30,7 +30,7 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     )
     private Set<Document> documents = new HashSet<>();
 
-    @OneToMany(fetch= FetchType.EAGER, mappedBy = "actionUnit")
+    @OneToMany(fetch= FetchType.EAGER, mappedBy = "pk.actionUnit")
     private Set<ActionUnitFormMapping> formsAvailable = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
