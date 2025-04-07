@@ -1,8 +1,8 @@
 package fr.siamois.domain.models.form.customformresponse;
 
-import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
+import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.persistence.*;
 import lombok.Data;

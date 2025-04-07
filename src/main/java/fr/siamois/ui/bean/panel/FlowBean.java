@@ -2,6 +2,7 @@ package fr.siamois.ui.bean.panel;
 
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.events.InstitutionChangeEvent;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.SpatialUnitService;
@@ -21,6 +22,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.model.dashboard.DashboardModel;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -96,6 +98,7 @@ public class FlowBean implements Serializable {
         this.breadcrumbBean = breadcrumbBean;
     }
 
+    @EventListener(InstitutionChangeEvent.class)
     public void init() {
         UserInfo info =  sessionSettings.getUserInfo();
         fSpatialUnits = spatialUnitService.findAllOfInstitution(info.getInstitution());
@@ -160,12 +163,12 @@ public class FlowBean implements Serializable {
         panels.add(0, newPanel);
     }
 
-   public void  goToRecordingUnitByIdCurrentPanel(Long id, Integer currentPanelIndex) {
+    public void  goToRecordingUnitByIdCurrentPanel(Long id, Integer currentPanelIndex) {
 
-           RecordingUnitPanel newPanel = panelFactory.createRecordingUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
-           panels.set(currentPanelIndex, newPanel);
+        RecordingUnitPanel newPanel = panelFactory.createRecordingUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
+        panels.set(currentPanelIndex, newPanel);
 
-   }
+    }
 
     public void  goToRecordingUnitByIdNewPanel(Long id, Integer currentPanelIndex) {
 

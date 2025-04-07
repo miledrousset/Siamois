@@ -3,7 +3,7 @@
              xmlns:f="http://xmlns.jcp.org/jsf/core"
              xmlns:p="http://primefaces.org/ui"
              xmlns:h="http://xmlns.jcp.org/jsf/html"
-             xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components"
+                xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form"
 >
 
     <!--@elvariable id="panelIndex" type="Integer"-->
@@ -27,8 +27,7 @@
         </div>
 
 
-        <h:form>
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <form:csrfform formId="actionUnitPanelForm">
             <p:outputPanel>
                 <div class="siamois-toolbar">
                     <p:toolbar>
@@ -42,7 +41,7 @@
                     </p:toolbar>
                 </div>
             </p:outputPanel>
-        </h:form>
+        </form:csrfform>
 
 
         <p:tabView id="spatialUnitTabsId">
@@ -57,9 +56,7 @@
                 <!-- The primary code attached to this action -->
                 <h4>Main code</h4>
 
-                <h:form id="primaryCodeForm">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-
+                <form:csrfform formId="primaryCodeForm">
                     <div style="display:flex;">
                         <p:chip label="#{panelModel.actionUnit.primaryActionCode.type.label}"
                                 icon="pi pi-qrcode" >
@@ -103,12 +100,11 @@
                             </f:facet>
                         </p:autoComplete>
                     </div>
-                </h:form>
+                </form:csrfform>
 
                 <h4>Additional codes</h4>
                 <h:messages id="msg"></h:messages>
-                <h:form id="secondaryCodesForm">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <form:csrfform formId="secondaryCodesForm">
                     <p:commandButton value="Add new code" icon="pi pi-plus" process="@this" update="secondaryCodesForm"
                                      action="#{panelModel.addNewSecondaryCode}"/>
                     <ui:repeat id="secondaryCodeRepeat" var="secondaryCode" value="#{panelModel.secondaryActionCodes}" varStatus="status">
@@ -160,7 +156,7 @@
                                              action="#{panelModel.removeSecondaryCode(status.index)}"/>
                         </h:panelGroup>
                     </ui:repeat>
-                </h:form>
+                </form:csrfform>
 
 
 

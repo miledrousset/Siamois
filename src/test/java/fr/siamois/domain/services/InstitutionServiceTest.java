@@ -235,4 +235,19 @@ class InstitutionServiceTest {
 
         assertThat(result).isTrue();
     }
+
+    @Test
+    void update() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+        institution.setName("Updated Institution");
+
+        when(institutionRepository.save(institution)).thenReturn(institution);
+
+        Institution result = institutionService.update(institution);
+
+        assertThat(result).isEqualTo(institution);
+        verify(institutionRepository, times(1)).save(institution);
+    }
+
 }

@@ -24,13 +24,11 @@
     width: auto;
 }
 
-/* ✅ Effet au survol */
 .sidebar .nav-link:hover {
-    background: #F3F7F3;
+    background: var(--siamois-over-grey);
     border-radius: 10px;
 }
 
-/* Icônes */
 .sidebar .nav-link i {
     font-size: 1.4rem;
     color: var(--siamois-green-light);

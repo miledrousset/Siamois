@@ -1,9 +1,7 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
-import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
-import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
@@ -18,9 +16,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.Collections;
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

@@ -3,7 +3,7 @@ package fr.siamois.domain.utils;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
-import fr.siamois.ui.bean.dialog.DocumentCreationBean;
+import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import jakarta.annotation.Nullable;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.primefaces.model.DefaultStreamedContent;
