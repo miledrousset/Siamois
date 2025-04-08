@@ -39,10 +39,10 @@
                         <p:outputLabel value="#{organisation.name}"/>
                     </p:column>
                     <p:column headerText="Membres">
-                        <p:outputLabel value="12"/>
+                        <p:outputLabel value="#{institutionListSettingsBean.numberOfMemberInInstitution(organisation)}"/>
                     </p:column>
                     <p:column headerText="Enregistrements">
-                        <p:outputLabel value="12"/>
+                        <p:outputLabel value="#{institutionListSettingsBean.numberOfRecordingUnitInInstitution(organisation)}"/>
                     </p:column>
                     <p:column headerText="Date de création" >
                         <p:outputLabel value="#{institutionListSettingsBean.displayDate(organisation.creationDate)}"/>

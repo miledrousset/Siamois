@@ -250,4 +250,36 @@ class InstitutionServiceTest {
         verify(institutionRepository, times(1)).save(institution);
     }
 
+    @Test
+    void countMembersInInstitution_withManagerAndNoMembers() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+        institution.setManager(manager);
+
+        when(personRepository.findMembersOfInstitution(institution.getId())).thenReturn(new ArrayList<>());
+
+        long result = institutionService.countMembersInInstitution(institution);
+
+        assertThat(result).isEqualTo(1);
+    }
+
+    @Test
+    void countMembersInInstitution_withManagerAndMembers() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+        institution.setManager(manager);
+
+        Person member = new Person();
+        member.setId(2L);
+
+        List<Person> members = new ArrayList<>();
+        members.add(member);
+
+        when(personRepository.findMembersOfInstitution(institution.getId())).thenReturn(members);
+
+        long result = institutionService.countMembersInInstitution(institution);
+
+        assertThat(result).isEqualTo(2);
+    }
+
 }

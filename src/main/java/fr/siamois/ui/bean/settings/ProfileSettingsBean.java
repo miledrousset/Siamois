@@ -29,8 +29,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import javax.faces.bean.SessionScoped;
 
+import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
