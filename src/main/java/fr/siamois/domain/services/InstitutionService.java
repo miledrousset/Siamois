@@ -111,7 +111,7 @@ public class InstitutionService {
         return institutionRepository.save(institution);
     }
 
-    public int findNumberOfPersonInInstitution(Institution institution) {
+    public long countMembersInInstitution(Institution institution) {
         return findMembersOf(institution).size();
     }
 

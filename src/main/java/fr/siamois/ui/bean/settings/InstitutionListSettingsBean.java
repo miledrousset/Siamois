@@ -6,6 +6,7 @@ import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveExce
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.publisher.InstitutionChangeEventPublisher;
+import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.institution.InstitutionDialogBean;
@@ -36,6 +37,7 @@ public class InstitutionListSettingsBean implements Serializable {
     private final SessionSettingsBean sessionSettingsBean;
     private final transient InstitutionChangeEventPublisher institutionChangeEventPublisher;
     private final InstitutionDialogBean institutionDialogBean;
+    private final RecordingUnitService recordingUnitService;
     private List<Institution> institutions = null;
     private List<Institution> filteredInstitutions = null;
     private List<SortMeta> sortBy;
@@ -46,11 +48,12 @@ public class InstitutionListSettingsBean implements Serializable {
     public InstitutionListSettingsBean(InstitutionService institutionService,
                                        SessionSettingsBean sessionSettingsBean,
                                        InstitutionChangeEventPublisher institutionChangeEventPublisher,
-                                       InstitutionDialogBean institutionDialogBean) {
+                                       InstitutionDialogBean institutionDialogBean, RecordingUnitService recordingUnitService) {
         this.institutionService = institutionService;
         this.sessionSettingsBean = sessionSettingsBean;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
         this.institutionDialogBean = institutionDialogBean;
+        this.recordingUnitService = recordingUnitService;
     }
 
     public void init() {
@@ -175,8 +178,12 @@ public class InstitutionListSettingsBean implements Serializable {
         PrimeFaces.current().executeScript("PF('newInstitutionDialog').show();");
     }
 
-    public int numberOfMemberInInstitution(Institution institution) {
-        return institutionService.findNumberOfPersonInInstitution(institution);
+    public long numberOfMemberInInstitution(Institution institution) {
+        return institutionService.countMembersInInstitution(institution);
+    }
+
+    public long numberOfRecordingUnitInInstitution(Institution institution) {
+        return recordingUnitService.countByInstitution(institution);
     }
 
 }
