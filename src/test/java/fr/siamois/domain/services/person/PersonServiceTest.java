@@ -53,7 +53,6 @@ class PersonServiceTest {
         List<PersonDataVerifier> verifiers = List.of(passwordVerifier);
 
         personService = new PersonService(
-                teamRepository,
                 personRepository,
                 passwordEncoder,
                 verifiers,

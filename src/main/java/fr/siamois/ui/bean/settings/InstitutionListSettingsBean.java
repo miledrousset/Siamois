@@ -116,7 +116,7 @@ public class InstitutionListSettingsBean implements Serializable {
     }
 
     public void createInstitution() {
-        Institution institution = null;
+        Institution institution;
         try {
             institution = institutionDialogBean.createInstitution();
         } catch (InstitutionAlreadyExistException e) {
@@ -173,6 +173,10 @@ public class InstitutionListSettingsBean implements Serializable {
         institutionDialogBean.setDescription(institution.getDescription());
         institutionDialogBean.setSaveActionFromBean(() -> updateInstitution(institution));
         PrimeFaces.current().executeScript("PF('newInstitutionDialog').show();");
+    }
+
+    public int numberOfMemberInInstitution(Institution institution) {
+        return institutionService.findNumberOfPersonInInstitution(institution);
     }
 
 }

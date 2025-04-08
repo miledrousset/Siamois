@@ -1,18 +1,15 @@
 package fr.siamois.domain.services.person;
 
-import fr.siamois.domain.models.Team;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.*;
 import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
 import fr.siamois.infrastructure.database.repositories.auth.PersonRepository;
-import fr.siamois.infrastructure.database.repositories.auth.TeamRepository;
 import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,32 +19,19 @@ import java.util.Optional;
 @Service
 public class PersonService {
 
-    private final TeamRepository teamRepository;
     private final PersonRepository personRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final List<PersonDataVerifier> verifiers;
     private final PersonSettingsRepository personSettingsRepository;
 
-    public PersonService(TeamRepository teamRepository,
-                         PersonRepository personRepository,
+    public PersonService(PersonRepository personRepository,
                          BCryptPasswordEncoder passwordEncoder,
                          List<PersonDataVerifier> verifiers,
                          PersonSettingsRepository personSettingsRepository) {
-        this.teamRepository = teamRepository;
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
         this.verifiers = verifiers;
         this.personSettingsRepository = personSettingsRepository;
-    }
-
-    /**
-     * Find all the teams in the database
-     * @return The list of teams in the database
-     */
-    public List<Team> findAllTeams() {
-        List<Team> result = new ArrayList<>();
-        for (Team t : teamRepository.findAll()) result.add(t);
-        return result;
     }
 
     public Person createPerson(Person person) throws InvalidUsernameException, InvalidEmailException, UserAlreadyExistException, InvalidPasswordException, InvalidNameException {

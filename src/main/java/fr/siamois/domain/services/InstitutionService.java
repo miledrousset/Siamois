@@ -62,7 +62,13 @@ public class InstitutionService {
 
     public List<Person> findMembersOf(Institution institution) {
         List<Person> members = personRepository.findMembersOfInstitution(institution.getId());
-        members.add(institution.getManager());
+        boolean managerIsPresent = members.stream()
+                .anyMatch(member -> Objects.equals(member.getId(), institution.getManager().getId()));
+
+        if (!managerIsPresent) {
+            members.add(institution.getManager());
+        }
+
         return members;
     }
 
@@ -103,6 +109,10 @@ public class InstitutionService {
 
     public Institution update(Institution institution) {
         return institutionRepository.save(institution);
+    }
+
+    public int findNumberOfPersonInInstitution(Institution institution) {
+        return findMembersOf(institution).size();
     }
 
 }

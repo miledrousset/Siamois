@@ -7,6 +7,7 @@
 /src/main/resources/application-dev.yaml
 .DS_Store
 /storage
+siamois.iml
 
 /.smarttomcat/
 /htmlReport/
