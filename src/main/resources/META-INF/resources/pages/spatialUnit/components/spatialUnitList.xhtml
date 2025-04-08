@@ -13,14 +13,9 @@
 
     </cc:interface>
     <cc:implementation>
+        <cc:renderFacet name="toolbar" />
         <form:csrfform formId="spatialUnitListForm">
             <p:outputPanel>
-
-
-                    <cc:renderFacet name="toolbar" />
-
-
-
                     <p:dataTable paginator="true" paginatorPosition="bottom" rows="10" var="item"
                                  value="#{cc.attrs.spatialUnitList}" class="spatial-unit-datatable">
 
