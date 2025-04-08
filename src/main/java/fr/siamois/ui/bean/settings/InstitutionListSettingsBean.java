@@ -37,7 +37,7 @@ public class InstitutionListSettingsBean implements Serializable {
     private final SessionSettingsBean sessionSettingsBean;
     private final transient InstitutionChangeEventPublisher institutionChangeEventPublisher;
     private final InstitutionDialogBean institutionDialogBean;
-    private final RecordingUnitService recordingUnitService;
+    private final transient RecordingUnitService recordingUnitService;
     private List<Institution> institutions = null;
     private List<Institution> filteredInstitutions = null;
     private List<SortMeta> sortBy;
