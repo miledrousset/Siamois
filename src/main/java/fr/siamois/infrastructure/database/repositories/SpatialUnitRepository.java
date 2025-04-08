@@ -33,11 +33,11 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
 
 
     @Query(
-        nativeQuery = true,
-        value = "SELECT su.* " +
-        "FROM spatial_unit su LEFT JOIN spatial_hierarchy sh " +
-        "ON su.spatial_unit_id = sh.fk_child_id " +
-        "WHERE sh.fk_parent_id IS NULL;"
+            nativeQuery = true,
+            value = "SELECT su.* " +
+                    "FROM spatial_unit su LEFT JOIN spatial_hierarchy sh " +
+                    "ON su.spatial_unit_id = sh.fk_child_id " +
+                    "WHERE sh.fk_parent_id IS NULL;"
     )
     List<SpatialUnit> findAllWithoutParents();
 
@@ -65,6 +65,34 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "  AND sh.fk_parent_id IS NULL"
     )
     Page<SpatialUnit> findAllWithoutParentsOfInstitution(Long institutionId, Pageable pageable);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT su.*, c.label as c_label " +
+                    "FROM spatial_unit su " +
+                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
+                    "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
+                    "WHERE su.fk_institution_id = :institutionId " +
+                    "  AND sh.fk_parent_id IS NULL " +
+                    "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
+                    "  AND (su.fk_concept_category_id IN (:categoryIds)) " +
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(c.label) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
+            countQuery = "SELECT count(su.*) " +
+                    "FROM spatial_unit su " +
+                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
+                    "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
+                    "WHERE su.fk_institution_id = :institutionId " +
+                    "  AND sh.fk_parent_id IS NULL " +
+                    "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
+                    "  AND (su.fk_concept_category_id IN (:categoryIds)) " +
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(c.label) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
+    )
+    Page<SpatialUnit> findWithFilters(@Param("institutionId") Long institutionId,
+                                      @Param("name") String name,
+                                      @Param("categoryIds") List<Long> categoryIds,
+                                      @Param("global") String global,
+                                      Pageable pageable);
+
 
     @Query(
             nativeQuery = true,

@@ -7,7 +7,8 @@
     <!--@elvariable id="panelIndex" type="Integer"-->
     <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel"-->
     <!-- Conditionally render the message if it's set in the bean -->
-    <p:staticMessage severity="error" summary="Error" closable="false" detail="#{panelModel.spatialUnitListErrorMessage}"
+    <p:staticMessage severity="error" summary="Error" closable="false"
+                     detail="#{panelModel.spatialUnitListErrorMessage}"
                      rendered="#{not empty panelModel.spatialUnitListErrorMessage}"/>
     <div class="sia-panel-title">
         <i class="bi bi-geo-alt"></i>
@@ -18,20 +19,25 @@
 
                                  panelModel="#{panelModel}"
                                  header='${langBean.msg("spatialunit.label")}'
-                                 >
+    >
         <f:facet name="toolbar">
             <p:toolbar>
                 <p:toolbarGroup>
-                    <span class="filter-container ui-input-icon-left"> <i class="bi bi-search"></i>
-                        <p:inputText id="globalFilter" onkeyup="PF('spatialUnitListTable').filter()" placeholder="Rechercher" />
+
+                    <span class="filter-container ui-input-icon-left">
+                    <i class="bi bi-search"/>
+                                <p:inputText id="globalFilter" onkeyup="PF('spatialUnitListTable').filter()"
+                                             placeholder="Rechercher">
+
+                                </p:inputText>
                     </span>
 
 
                 </p:toolbarGroup>
 
                 <p:toolbarGroup>
-                    <p:fileUpload mode="simple" skinSimple="true" chooseIcon="bi bi-upload" />
-                    <p:commandButton  icon="bi bi-download" >
+                    <p:fileUpload mode="simple" skinSimple="true" chooseIcon="bi bi-upload"/>
+                    <p:commandButton icon="bi bi-download">
 
                     </p:commandButton>
                 </p:toolbarGroup>

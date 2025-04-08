@@ -105,6 +105,10 @@ public class SpatialUnitService implements ArkEntityService {
         return spatialUnitRepository.findAllWithoutParentsOfInstitution(institution.getId(), pageable);
     }
 
+    public Page<SpatialUnit> findFiltered(Long institutionId, String name, List<Long> categoryIds, String global, Pageable pageable) {
+        return spatialUnitRepository.findWithFilters(institutionId, name, categoryIds, global, pageable);
+    }
+
     public List<SpatialUnit> findAllOfInstitution(Institution institution) {
         return spatialUnitRepository.findAllOfInstitution(institution.getId());
     }

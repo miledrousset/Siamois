@@ -8,10 +8,16 @@
     border: 1px solid var(--siamois-green-light-100);
 }
 
+.siamois-panel .ui-datatable .ui-datatable-header {
+    background: transparent;
+    border: none;
+}
+
 .sia-panel-title {
     font-size: 22px;
     padding: 0.5em 0.5em 0.5em 2em;
 }
+
 /* input fields */
 
 body .ui-inputfield.ui-state-hover {
@@ -126,10 +132,49 @@ body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-stat
 }
 
 
-
 .spatial-unit-panel .ui-datatable thead th {
     background: var(--context-light-color-100);
 }
+
+.spatial-unit-panel .ui-datatable thead th.ui-state-active {
+    background: var(--context-light-color-200);
+    color: var(--context-main-color);
+}
+
+.spatial-unit-panel .ui-datatable thead th.ui-state-hover {
+    background: var(--context-light-color-50);
+    color: var(--context-main-color);
+}
+
+.spatial-unit-panel .ui-datatable thead th.ui-state-active.ui-state-hover {
+    background: var(--context-light-color-50);
+    color: var(--context-main-color);
+}
+
+.spatial-unit-panel .ui-datatable thead th.ui-sortable-column.ui-state-focus {
+    outline: 0 none;
+    outline-offset: 0;
+    box-shadow: inset 0 0 0 .2rem var(--context-main-color);
+}
+
+.spatial-unit-panel .ui-datatable-data td[role="gridcell"]:focus, .ui-datatable-data td[role="gridcell"] *:focus, .ui-datatable-data td[role="grid"] [tabindex="0"]:focus {
+    outline: var(--context-main-color);
+    outline-style: solid;
+    outline-width: 2px;
+    border: 0;
+}
+
+body .ui-datatable thead th .ui-sortable-column-badge {
+    border-radius: 50%;
+    height: 1.143rem;
+    min-width: 1.143rem;
+    line-height: 1.143rem;
+    color: #fff;
+    background: var(--context-main-color);
+    margin-left: .5rem;
+    font-size: .75rem;
+}
+
 
 .spatial-unit-panel .ui-button {
     background: var(--context-main-color);
@@ -211,7 +256,7 @@ body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-stat
 }
 
 
-.spatial-unit-panel .ui-commandlink, .spatial-unit-panel .ui-link{
+.spatial-unit-panel .ui-commandlink, .spatial-unit-panel .ui-link {
     color: var(--context-main-color);
 }
 
@@ -349,15 +394,13 @@ body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-stat
     color: var(--context-main-color);
 }
 
-.action-unit-panel .ui-commandlink, .action-unit-panel .ui-link{
+.action-unit-panel .ui-commandlink, .action-unit-panel .ui-link {
     color: var(--context-main-color);
 }
 
 .action-unit-panel .ui-commandlink:hover, .action-unit-panel .ui-link:hover {
     color: var(--context-main-color);
 }
-
-
 
 
 /* Recording units panels */
@@ -480,7 +523,7 @@ body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-stat
     border: 1px solid var(--ground-dark-color);
 }
 
-.recording-unit-panel .ui-commandlink, .recording-unit-panel .ui-link{
+.recording-unit-panel .ui-commandlink, .recording-unit-panel .ui-link {
     color: var(--ground-main-color);
 }
 

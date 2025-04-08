@@ -1,27 +1,29 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
+import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
+import jakarta.faces.model.SelectItem;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.Scope;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -36,7 +38,6 @@ public class SpatialUnitListPanel extends AbstractPanel {
     private List<SpatialUnit> filteredSpatialUnits = new ArrayList<>();
     private List<SpatialUnit> spatialUnitList;
     private String spatialUnitListErrorMessage;
-    private String globalFilter;
 
     private LazyDataModel<SpatialUnit> lazyDataModel ;
 
@@ -54,12 +55,59 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
         @Override
         public List<SpatialUnit> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
-            // Calculate the page number from the first index and page size
             int pageNumber = first / pageSize;
-            Pageable pageable = PageRequest.of(pageNumber, pageSize);
-            Page<SpatialUnit> res = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettingsBean.getSelectedInstitution(), pageable);
-            setRowCount((int) res.getTotalElements());
-            return res.getContent();
+            Pageable pageable = PageRequest.of(pageNumber, pageSize, buildSort(sortBy));
+
+            String nameFilter = null;
+            List<Long> categoryIds = null;
+            String globalFilter = null;
+
+            if (filterBy != null) {
+                FilterMeta nameMeta = filterBy.get("name");
+                if (nameMeta != null && nameMeta.getFilterValue() != null) {
+                    nameFilter = nameMeta.getFilterValue().toString();
+                }
+
+                FilterMeta categoryMeta = filterBy.get("category");
+                if (categoryMeta != null && categoryMeta.getFilterValue() != null) {
+                    categoryIds = Arrays.stream((Object[]) categoryMeta.getFilterValue())
+                            .map(o -> ((Concept) o).getId())
+                            .filter(Objects::nonNull) // Ne garder que les IDs non null
+                            .toList();
+                }
+
+                FilterMeta globalMeta = filterBy.get("globalFilter");
+                if (globalMeta != null && globalMeta.getFilterValue() != null) {
+                    globalFilter = globalMeta.getFilterValue().toString();
+                }
+            }
+
+            Page<SpatialUnit> result = spatialUnitService.findFiltered(
+                    sessionSettingsBean.getSelectedInstitution().getId(),
+                    nameFilter, categoryIds, globalFilter,
+                    pageable);
+
+            setRowCount((int) result.getTotalElements());
+            return result.getContent();
+        }
+
+        private Sort buildSort(Map<String, SortMeta> sortBy) {
+            if (sortBy == null || sortBy.isEmpty()) {
+                return Sort.unsorted();
+            }
+
+            List<Sort.Order> orders = new ArrayList<>();
+            for (Map.Entry<String, SortMeta> entry : sortBy.entrySet()) {
+                String field = entry.getKey();
+                if(Objects.equals(field, "category.label")) {
+                    field = "c_label";
+                }
+                SortMeta meta = entry.getValue();
+                Sort.Order order = new Sort.Order(meta.getOrder() == SortOrder.ASCENDING ? Sort.Direction.ASC : Sort.Direction.DESC, field);
+                orders.add(order);
+            }
+
+            return Sort.by(orders);
         }
     }
 
@@ -106,6 +154,17 @@ public class SpatialUnitListPanel extends AbstractPanel {
             return spatialUnitListPanel;
         }
     }
+
+    public List<SelectItem> getCategoriesSelectItems() {
+        Concept c = new Concept();
+        c.setId(14L);
+        return List.of(
+                new SelectItem(c, "Testing"),
+                new SelectItem(new Concept(), "Another Category"),
+                new SelectItem(new Concept(), "Demo")
+        );
+    }
+
 
 
 }
