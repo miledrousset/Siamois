@@ -34,17 +34,20 @@ class VocabularyServiceIntTest {
     @Mock
     private VocabularyTypeRepository vocabularyTypeRepository;
 
+    @Mock
+    private LabelService labelService;
+
     private VocabularyService vocabularyService;
 
     @BeforeEach
     void setUp() {
         ThesaurusApi thesaurusApi = new ThesaurusApi(new RequestFactory(new RestTemplateBuilder()));
-        vocabularyService = new VocabularyService(vocabularyRepository, thesaurusApi, vocabularyTypeRepository);
+        vocabularyService = new VocabularyService(vocabularyRepository, thesaurusApi, vocabularyTypeRepository, labelService);
     }
 
     @Test
     @Tag("integration")
-    void findVocabularyOfUri_withNativeLink() throws InvalidEndpointException {
+    void findOrCreateVocabularyOfUri_withNativeLink() throws InvalidEndpointException {
         String nativeLink = "https://thesaurus.mom.fr/?idt=th227";
 
         UserInfo info = new UserInfo(new Institution(), new Person(), "fr");
@@ -68,17 +71,15 @@ class VocabularyServiceIntTest {
             return vocabulary;
         });
 
-        Vocabulary result = vocabularyService.findVocabularyOfUri(info, nativeLink);
-
+        Vocabulary result = vocabularyService.findOrCreateVocabularyOfUri(nativeLink);
         assertNotNull(result);
         assertEquals("https://thesaurus.mom.fr", result.getBaseUri());
-        assertEquals("Celtic Brass Coins", result.getVocabularyName());
         assertEquals("th227", result.getExternalVocabularyId());
     }
 
     @Test
     @Tag("integration")
-    void findVocabularyOfUri_withArkLink() throws InvalidEndpointException {
+    void findOrCreateVocabularyOfUri_withArkLink() throws InvalidEndpointException {
         String nativeLink = "https://thesaurus.mom.fr/api/ark:/66666/SIA-TTDBMLCXLNL9Q93GK17L7-S";
 
         UserInfo info = new UserInfo(new Institution(), new Person(), "fr");
@@ -102,11 +103,10 @@ class VocabularyServiceIntTest {
             return vocabulary;
         });
 
-        Vocabulary result = vocabularyService.findVocabularyOfUri(info, nativeLink);
+        Vocabulary result = vocabularyService.findOrCreateVocabularyOfUri(nativeLink);
 
         assertNotNull(result);
         assertEquals("https://thesaurus.mom.fr", result.getBaseUri());
-        assertEquals("Siamois", result.getVocabularyName());
         assertEquals("th223", result.getExternalVocabularyId());
     }
 

@@ -6,6 +6,7 @@ import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.infrastructure.api.ConceptApi;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
@@ -16,9 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static fr.siamois.domain.utils.FullInfoDTOUtils.getPrefLabelOfLang;
 
@@ -33,18 +32,20 @@ public class FieldConfigurationService {
     private final ConceptService conceptService;
 
     private static final double SIMILARITY_CAP = 0.5;
+    private final LabelService labelService;
 
 
     public FieldConfigurationService(ConceptApi conceptApi,
                                      FieldService fieldService,
                                      FieldRepository fieldRepository,
                                      ConceptRepository conceptRepository,
-                                     ConceptService conceptService) {
+                                     ConceptService conceptService, LabelService labelService) {
         this.conceptApi = conceptApi;
         this.fieldService = fieldService;
         this.fieldRepository = fieldRepository;
         this.conceptRepository = conceptRepository;
         this.conceptService = conceptService;
+        this.labelService = labelService;
     }
 
     private boolean containsFieldCode(FullInfoDTO conceptDTO) {
@@ -57,7 +58,7 @@ public class FieldConfigurationService {
         if (config.isWrongConfig()) return Optional.of(config);
 
         for (FullInfoDTO conceptDTO : config.conceptWithValidFieldCode()) {
-            Concept concept = conceptService.saveOrGetConceptFromFullDTO(info, vocabulary, conceptDTO);
+            Concept concept = conceptService.saveOrGetConceptFromFullDTO(vocabulary, conceptDTO);
             String fieldCode = conceptDTO.getFieldcode().orElseThrow(() -> FIELD_CODE_NOT_FOUND);
 
             int rowAffected = fieldRepository.updateConfigForFieldOfInstitution(info.getInstitution().getId(), fieldCode, concept.getId());
@@ -97,7 +98,7 @@ public class FieldConfigurationService {
         if (config.isWrongConfig()) return Optional.of(config);
 
         for (FullInfoDTO conceptDTO : config.conceptWithValidFieldCode()) {
-            Concept concept = conceptService.saveOrGetConceptFromFullDTO(info, vocabulary, conceptDTO);
+            Concept concept = conceptService.saveOrGetConceptFromFullDTO(vocabulary, conceptDTO);
             String fieldCode = conceptDTO.getFieldcode().orElseThrow(() -> FIELD_CODE_NOT_FOUND);
 
             int rowAffected = fieldRepository.updateConfigForFieldOfUser(info.getInstitution().getId(),
@@ -146,8 +147,8 @@ public class FieldConfigurationService {
     }
 
     public List<Concept> fetchConceptChildrenAutocomplete(UserInfo info, Concept concept, String input) {
-
-        List<Concept> candidates = conceptService.findDirectSubConceptOf(info, concept);
+        List<Concept> candidates = conceptService.findDirectSubConceptOf(concept);
+        Map<Concept, ConceptLabel> labels = new HashMap<>();
 
         if (StringUtils.isEmpty(input)) return candidates;
 
@@ -156,14 +157,17 @@ public class FieldConfigurationService {
         input = input.toLowerCase();
 
         for (Concept c : candidates) {
-            if (c.getLabel().toLowerCase().contains(input)) {
+            ConceptLabel label = labelService.findLabelOf(c, info.getLang());
+            labels.put(c, label);
+            if (label.getValue().toLowerCase().contains(input)) {
                 result.add(c);
             }
         }
 
         if (result.isEmpty()) {
             for (Concept c : candidates) {
-                double similarity = stringSimilarity(c.getLabel().toLowerCase(), input);
+                ConceptLabel label = labels.get(c);
+                double similarity = stringSimilarity(label.getValue().toLowerCase(), input);
                 if (similarity >= SIMILARITY_CAP) {
                     result.add(c);
                 }
@@ -174,7 +178,7 @@ public class FieldConfigurationService {
     }
 
     public List<Concept> fetchAutocomplete(UserInfo info, Concept parentConcept, String input) {
-        if (StringUtils.isEmpty(input)) return fetchAllValues(info, parentConcept);
+        if (StringUtils.isEmpty(input)) return fetchAllValues(parentConcept);
 
         ConceptBranchDTO terms = conceptApi.fetchConceptsUnderTopTerm(parentConcept);
         List<Concept> result = new ArrayList<>();
@@ -185,7 +189,7 @@ public class FieldConfigurationService {
             if (isNotParentConcept(fullConcept, parentConcept)) {
                 PurlInfoDTO label = getPrefLabelOfLang(info, fullConcept);
                 if (label.getValue().toLowerCase().contains(input)) {
-                    result.add(createConceptFromDTO(parentConcept.getVocabulary(), label, fullConcept));
+                    result.add(conceptService.saveOrGetConceptFromFullDTO(parentConcept.getVocabulary(), fullConcept));
                 }
             }
         }
@@ -195,7 +199,7 @@ public class FieldConfigurationService {
                 PurlInfoDTO label = getPrefLabelOfLang(info, fullInfoDTO);
                 double similarity = stringSimilarity(label.getValue().toLowerCase(), input);
                 if (similarity >= SIMILARITY_CAP) {
-                    result.add(createConceptFromDTO(parentConcept.getVocabulary(), label, fullInfoDTO));
+                    result.add(conceptService.saveOrGetConceptFromFullDTO(parentConcept.getVocabulary(), fullInfoDTO));
                 }
             }
         }
@@ -226,26 +230,17 @@ public class FieldConfigurationService {
         return (longerLength - distance) / (double) longerLength;
     }
 
-    public List<Concept> fetchAllValues(UserInfo info, Concept parent) {
+    public List<Concept> fetchAllValues(Concept parent) {
         ConceptBranchDTO terms = conceptApi.fetchConceptsUnderTopTerm(parent);
         List<Concept> result = new ArrayList<>();
         for (FullInfoDTO fullConcept : terms.getData().values()) {
             if (isNotParentConcept(fullConcept, parent)) {
-                PurlInfoDTO label = getPrefLabelOfLang(info, fullConcept);
-                result.add(createConceptFromDTO(parent.getVocabulary(), label, fullConcept));
+                result.add(conceptService.saveOrGetConceptFromFullDTO(parent.getVocabulary(), fullConcept));
             }
         }
         return result;
     }
 
-    private Concept createConceptFromDTO(Vocabulary vocabulary, PurlInfoDTO label, FullInfoDTO conceptDTO) {
-        Concept concept = new Concept();
-        concept.setVocabulary(vocabulary);
-        concept.setExternalId(conceptDTO.getIdentifier()[0].getValue());
-        concept.setLabel(label.getValue());
-        concept.setLangCode(label.getLang());
-        return concept;
-    }
 
     private static boolean isNotParentConcept(FullInfoDTO fullConcept, Concept parentConcept) {
         return !fullConcept.getIdentifier()[0].getValue().equalsIgnoreCase(parentConcept.getExternalId());

@@ -17,7 +17,7 @@
         <div class="panel-top-section">
             <h2>
                 #{panelModel.spatialUnit.name}
-                <p:chip label="#{panelModel.spatialUnit.category.label}" icon="pi pi-map-marker"
+                <p:chip label="#{labelBean.findLabelOf(panelModel.spatialUnit.category)}" icon="pi pi-map-marker"
                         styleClass="mr-2 spatial-unit-type-chip"/>
 
             </h2>
@@ -123,7 +123,7 @@
 
                                             </p:column>
                                             <p:column headerText="Type">
-                                                <p:chip label="#{item.type.label}" icon="bi bi-arrow-down-square" styleClass="mr-2 action-unit-type-chip"/>
+                                                <p:chip label="#{labelBean.findLabelOf(item.type)}" icon="bi bi-arrow-down-square" styleClass="mr-2 action-unit-type-chip"/>
                                             </p:column>
                                         </p:dataTable>
                                     </div>
@@ -163,7 +163,7 @@
                                                         styleClass="mr-2 valid-type-chip"/>
                                             </p:column>
                                             <p:column headerText="Type">
-                                                <p:chip label="#{item.type.label}" icon="bi bi-pencil-square"
+                                                <p:chip label="#{labelBean.findLabelOf(item.type)}" icon="bi bi-pencil-square"
                                                         styleClass="mr-2 recording-unit-type-chip"/>
                                             </p:column>
                                             <p:column headerText="Auteur">
@@ -226,15 +226,15 @@
                             </p:column>
 
                             <p:column headerText="Nature">
-                                <h:outputText value="#{siamoisDocument.nature.label}"/>
+                                <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.nature)}"/>
                             </p:column>
 
                             <p:column headerText="Grandeur">
-                                <h:outputText value="#{siamoisDocument.scale.label}"/>
+                                <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.scale)}"/>
                             </p:column>
 
                             <p:column headerText="Type de document">
-                                <h:outputText value="#{siamoisDocument.format.label}"/>
+                                <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.format)}"/>
                             </p:column>
 
                             <p:column headerText="Auteur">
@@ -271,7 +271,7 @@
             <h:panelGroup id="versionVisualizer" rendered="#{panelModel.revisionToDisplay != null}">
                 <p>Name : #{panelModel.revisionToDisplay.name}</p>
                 <p>Ark : #{panelModel.revisionToDisplay.ark.arkId}</p>
-                <p>Category : #{panelModel.revisionToDisplay.category.label}</p>
+                <p>Category : #{labelBean.findLabelOf(panelModel.revisionToDisplay.category)}</p>
             </h:panelGroup>
         </h:form>
     </p:dialog>

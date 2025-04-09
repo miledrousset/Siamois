@@ -3,7 +3,6 @@ package fr.siamois.ui.bean.user;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
-import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.InstitutionService;
@@ -84,18 +83,6 @@ public class UserBean implements Serializable {
     private void loadTeamMembers() {
         teamMembers = institutionService.findMembersOf(sessionSettingsBean.getSelectedInstitution());
         log.trace("Team members : {}", teamMembers);
-    }
-
-    /**
-     * Autocomplete the roles
-     *
-     * @param input the input to autocomplete
-     * @return the list of roles
-     * @throws NoConfigForFieldException if the field configuration is not found
-     */
-    public List<String> autocompleteRoles(String input) throws NoConfigForFieldException {
-        concepts = fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), Person.USER_ROLE_FIELD_CODE, input);
-        return concepts.stream().map(Concept::getLabel).toList();
     }
 
     /**

@@ -61,7 +61,7 @@ public class ProfileSettingsBean implements Serializable {
     private String fSelectedLang;
 
     private String fThesaurusUrl;
-    private Institution fDefaultInstitution;
+    private Long fDefaultInstitutionId;
 
     public ProfileSettingsBean(SessionSettingsBean sessionSettingsBean,
                                PersonService personService,
@@ -83,7 +83,7 @@ public class ProfileSettingsBean implements Serializable {
 
     @EventListener(InstitutionChangeEvent.class)
     public void init() {
-        if (fDefaultInstitution == null) {
+        if (fDefaultInstitutionId == null) {
             UserInfo info = sessionSettingsBean.getUserInfo();
             Person user = info.getUser();
             initPersonSection(info);
@@ -96,11 +96,12 @@ public class ProfileSettingsBean implements Serializable {
 
     private void initInstitutions(Person user, UserInfo info) {
         refInstitutions = institutionService.findInstitutionsOfPerson(user);
-        fDefaultInstitution = refInstitutions.stream()
+        fDefaultInstitutionId = refInstitutions.stream()
                 .filter(institution ->
                         institution.getId().equals(info.getInstitution().getId()))
                 .findFirst()
-                .orElse(refInstitutions.get(0));
+                .orElse(refInstitutions.get(0))
+                .getId();
         log.trace("Found {} institutions", refInstitutions.size());
     }
 
@@ -148,7 +149,7 @@ public class ProfileSettingsBean implements Serializable {
         if (fThesaurusUrl != null && !fThesaurusUrl.isEmpty()) {
             UserInfo info = sessionSettingsBean.getUserInfo();
             try {
-                Vocabulary vocabulary = vocabularyService.findVocabularyOfUri(info, fThesaurusUrl);
+                Vocabulary vocabulary = vocabularyService.findOrCreateVocabularyOfUri(fThesaurusUrl);
                 fieldConfigurationService.setupFieldConfigurationForUser(info, vocabulary);
                 log.debug("Thesaurus configuration updated");
             } catch (InvalidEndpointException e) {
@@ -167,10 +168,16 @@ public class ProfileSettingsBean implements Serializable {
     }
 
     public String localeToLangName(Locale locale) {
+        if (locale == null) {
+            return "NULL";
+        }
         return StringUtils.capitalize(locale.getDisplayName(locale));
     }
 
     public String localeToLangCode(Locale locale) {
+        if (locale == null) {
+            return "NULL";
+        }
         return locale.getLanguage();
     }
 
@@ -178,11 +185,18 @@ public class ProfileSettingsBean implements Serializable {
         return localeToLangName(new Locale(code));
     }
 
+    private Institution findInstitutionById(Long id) {
+        return refInstitutions.stream()
+                .filter(institution -> institution.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Institution not found"));
+    }
+
     public void savePreferences() {
         boolean reloadPage = false;
         log.trace("Save preferences called");
-        personSettings.setDefaultInstitution(fDefaultInstitution);
-        log.trace("New default institution: {}", fDefaultInstitution);
+        personSettings.setDefaultInstitution(findInstitutionById(fDefaultInstitutionId));
+        log.trace("New default institution: {}", fDefaultInstitutionId);
         log.trace("Language is {}. Existing is {}", fSelectedLang, personSettings.getLangCode());
         if (!fSelectedLang.equalsIgnoreCase(personSettings.getLangCode())) {
             personSettings.setLangCode(fSelectedLang);
@@ -200,5 +214,10 @@ public class ProfileSettingsBean implements Serializable {
             PrimeFaces.current().executeScript("location.reload();");
         }
     }
+
+    public String labelOfInstitutionWithId(Long id) {
+        return findInstitutionById(id).getName();
+    }
+
 
 }

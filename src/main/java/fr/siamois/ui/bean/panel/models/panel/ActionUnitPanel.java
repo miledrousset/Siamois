@@ -8,6 +8,7 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
+import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
@@ -48,6 +49,7 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
     private final transient FieldConfigurationService fieldConfigurationService;
     private final transient FieldService fieldService;
     private final RedirectBean redirectBean;
+    private final transient LabelService labelService;
 
 
     // Local
@@ -67,7 +69,7 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
     private transient List<ActionCode> secondaryActionCodes;
 
 
-    public ActionUnitPanel(ActionUnitService actionUnitService, LangBean langBean, SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService, FieldService fieldService, RedirectBean redirectBean) {
+    public ActionUnitPanel(ActionUnitService actionUnitService, LangBean langBean, SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService, FieldService fieldService, RedirectBean redirectBean, LabelService labelService) {
         super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel action-unit-single-panel");
         this.actionUnitService = actionUnitService;
         this.langBean = langBean;
@@ -75,7 +77,7 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
         this.fieldConfigurationService = fieldConfigurationService;
         this.fieldService = fieldService;
         this.redirectBean = redirectBean;
-
+        this.labelService = labelService;
     }
 
     @Override
@@ -200,9 +202,9 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
             return value.toString();
         } else if (value instanceof List<?> list) {
             // Handle list of concepts
-
+            String langCode = sessionSettingsBean.getLanguageCode();
             return list.stream()
-                    .map(item -> (item instanceof Concept concept) ? concept.getLabel() : item.toString())
+                    .map(item -> (item instanceof Concept concept) ? labelService.findLabelOf(concept, langCode).getValue() : item.toString())
                     .collect(Collectors.joining(", "));
         }
 

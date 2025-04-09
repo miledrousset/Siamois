@@ -1,6 +1,5 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.domain.models.exceptions.vocabulary.VocabularyNotFoundException;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
@@ -12,8 +11,6 @@ import fr.siamois.infrastructure.database.repositories.vocabulary.VocabularyRepo
 import fr.siamois.infrastructure.database.repositories.vocabulary.VocabularyTypeRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -27,11 +24,13 @@ public class VocabularyService {
     private final VocabularyRepository vocabularyRepository;
     private final ThesaurusApi thesaurusApi;
     private final VocabularyTypeRepository vocabularyTypeRepository;
+    private final LabelService labelService;
 
-    public VocabularyService(VocabularyRepository vocabularyRepository, ThesaurusApi thesaurusApi, VocabularyTypeRepository vocabularyTypeRepository) {
+    public VocabularyService(VocabularyRepository vocabularyRepository, ThesaurusApi thesaurusApi, VocabularyTypeRepository vocabularyTypeRepository, LabelService labelService) {
         this.vocabularyRepository = vocabularyRepository;
         this.thesaurusApi = thesaurusApi;
         this.vocabularyTypeRepository = vocabularyTypeRepository;
+        this.labelService = labelService;
     }
 
     /**
@@ -45,54 +44,28 @@ public class VocabularyService {
         return this.vocabularyRepository.findById(id).orElseThrow(() -> new VocabularyNotFoundException("Vocabulary not found with ID: " + id));
     }
 
-    public List<Vocabulary> findAllPublicThesaurus(String vocabInstanceUri, String languageCode) throws InvalidEndpointException {
-        List<ThesaurusDTO> thesaurusDTOList = thesaurusApi.fetchAllPublicThesaurus(vocabInstanceUri);
-        List<Vocabulary> result = new ArrayList<>();
-
-        VocabularyType type = vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus").orElseThrow(() -> new IllegalArgumentException("Thesaurus entry does not exist"));
-
-
-        for (ThesaurusDTO thesaurusDTO : thesaurusDTOList) {
-            Vocabulary vocabulary = new Vocabulary();
-            Optional<LabelDTO> labelForLang = thesaurusDTO.getLabels().stream()
-                    .filter((labelDTO -> labelDTO.getLang().equalsIgnoreCase(languageCode)))
-                    .findFirst();
-            LabelDTO labelDTO = labelForLang.orElseGet(() -> thesaurusDTO.getLabels().get(0));
-            vocabulary.setVocabularyName(labelDTO.getTitle());
-            vocabulary.setLastLang(labelDTO.getLang());
-            vocabulary.setExternalVocabularyId(thesaurusDTO.getIdTheso());
-            vocabulary.setBaseUri(vocabInstanceUri);
-            vocabulary.setType(type);
-
-            result.add(vocabulary);
-        }
-
-        return result;
-    }
-
     public Vocabulary saveOrGetVocabulary(Vocabulary vocabulary) {
         Optional<Vocabulary> vocabOpt = vocabularyRepository.findVocabularyByBaseUriAndVocabExternalId(vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId());
         return vocabOpt.orElseGet(() -> vocabularyRepository.save(vocabulary));
     }
 
-    public Vocabulary findVocabularyOfUri(UserInfo info, String uri) throws InvalidEndpointException {
+    public Vocabulary findOrCreateVocabularyOfUri(String uri) throws InvalidEndpointException {
         ThesaurusDTO thesaurus = thesaurusApi.fetchThesaurusInfo(uri);
 
         VocabularyType type = vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus").orElseThrow(() -> new IllegalStateException("Thesaurus type not found"));
 
-        LabelDTO labelDTO = thesaurus.getLabels().stream()
-                .filter(label -> label.getLang().equalsIgnoreCase(info.getLang()))
-                .findFirst()
-                .orElse(thesaurus.getLabels().get(0));
-
         Vocabulary vocabulary = new Vocabulary();
-        vocabulary.setVocabularyName(labelDTO.getTitle());
         vocabulary.setExternalVocabularyId(thesaurus.getIdTheso());
         vocabulary.setBaseUri(thesaurus.getBaseUri());
         vocabulary.setType(type);
-        vocabulary.setLastLang(labelDTO.getLang());
 
-        return saveOrGetVocabulary(vocabulary);
+        Vocabulary savedVocabulary = saveOrGetVocabulary(vocabulary);
+
+        for (LabelDTO label : thesaurus.getLabels()) {
+            labelService.updateLabel(savedVocabulary, label.getLang(), label.getTitle());
+        }
+
+        return savedVocabulary;
     }
 
 }

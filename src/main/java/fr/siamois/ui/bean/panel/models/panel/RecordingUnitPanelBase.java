@@ -1,6 +1,5 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
-import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnitFormMapping;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.form.customfield.CustomFieldInteger;
@@ -85,11 +84,9 @@ public abstract class RecordingUnitPanelBase extends AbstractPanel{
     }
 
     public List<Concept> fetchChildrenOfConcept(Concept concept) {
-
-        UserInfo info = sessionSettingsBean.getUserInfo();
         List<Concept> concepts ;
 
-        concepts = conceptService.findDirectSubConceptOf(info, concept);
+        concepts = conceptService.findDirectSubConceptOf(concept);
 
         return concepts;
 

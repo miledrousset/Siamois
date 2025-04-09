@@ -30,7 +30,7 @@ public class FieldConfigUtils {
 
         try {
 
-            Vocabulary dbVocabulary = vocabularyService.findVocabularyOfUri(info, uri);
+            Vocabulary dbVocabulary = vocabularyService.findOrCreateVocabularyOfUri(uri);
             Optional<GlobalFieldConfig> wrongConfig;
 
             if (isForInstitution) {
