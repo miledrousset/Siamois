@@ -1,6 +1,5 @@
 package fr.siamois.ui.bean.panel;
 
-import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
@@ -100,8 +99,9 @@ public class FlowBean implements Serializable {
 
     @EventListener(InstitutionChangeEvent.class)
     public void init() {
-        UserInfo info =  sessionSettings.getUserInfo();
-        fSpatialUnits = spatialUnitService.findAllOfInstitution(info.getInstitution());
+        fullscreenPanelIndex = -1;
+        panels = new ArrayList<>();
+        addWelcomePanel();
     }
 
     public void addSpatialUnitListPanel(PanelBreadcrumb bc) {

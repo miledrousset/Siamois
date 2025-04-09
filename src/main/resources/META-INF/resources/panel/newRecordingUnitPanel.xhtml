@@ -16,7 +16,7 @@
 
     <p:separator/>
 
-    <form:csrfform formId="recordingUnitId">
+    <form:csrfform formId="newRecordingUnitForm" id="newRecordingUnitCsrfForm">
         <div style="padding:1em;">
 
             <h:panelGroup id="missingFormWarning">
@@ -83,11 +83,11 @@
                                                                  selectedConcept="#{panelModel.recordingUnit.type}"
                                                                  ajaxProcessTargets="@this
 
-                                                                 :newRecordingUnitForm:customForm"
-                                                                 ajaxUpdateTargets=":newRecordingUnitForm:missingFormWarning
-                                                                 :newRecordingUnitForm:customForm
-                                                                 :newRecordingUnitForm:secondTypeField:secondTypeComponent:conceptAutocomplete
-                                                            :newRecordingUnitForm:thirdTypeField:thirdTypeComponent:conceptAutocomplete"
+                                                                 :newRecordingUnitCsrfForm:newRecordingUnitForm:customForm"
+                                                                 ajaxUpdateTargets=":newRecordingUnitCsrfForm:newRecordingUnitForm:missingFormWarning
+                                                                 :newRecordingUnitCsrfForm:newRecordingUnitForm:customForm
+                                                                 :newRecordingUnitCsrfForm:newRecordingUnitForm:secondTypeField:secondTypeComponent:conceptAutocomplete
+                                                            :newRecordingUnitCsrfForm:newRecordingUnitForm:thirdTypeField:thirdTypeComponent:conceptAutocomplete"
                                                                  completeMethod="#{panelModel.completeRecordingUnitType}"
                                                                  itemSelectListener="#{panelModel.handleSelectType}"
                                                                  editConceptUrl="#{panelModel.getUrlForRecordingTypeFieldCode()}"/>
@@ -100,7 +100,7 @@
                                                                  selectedConcept="#{panelModel.recordingUnit.secondaryType}"
                                                                  ajaxProcessTargets="@this"
                                                                  ajaxUpdateTargets="
-                                                         :newRecordingUnitForm:thirdTypeField:thirdTypeComponent:conceptAutocomplete"
+                                                         :newRecordingUnitCsrfForm:newRecordingUnitForm:thirdTypeField:thirdTypeComponent:conceptAutocomplete"
                                                                  disabled="#{!panelModel.hasSecondaryTypeOptions}"
                                                                  completeMethod="#{panelModel.completeRecordingUnitSecondaryType}"
                                                                  itemSelectListener="#{panelModel.handleSelectSecondaryType}"
