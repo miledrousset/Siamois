@@ -2,6 +2,7 @@ package fr.siamois.domain.models.vocabulary.label;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.DiscriminatorFormula;
 
 @Entity
@@ -10,6 +11,7 @@ import org.hibernate.annotations.DiscriminatorFormula;
         "WHEN fk_vocabulary_id IS NOT NULL THEN 'vocabulary' " +
         "ELSE NULL END")
 @Data
+@EqualsAndHashCode
 public abstract class Label {
 
     @Id

@@ -6,10 +6,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @DiscriminatorValue("vocabulary")
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class VocabularyLabel extends Label {
 
     @ManyToOne

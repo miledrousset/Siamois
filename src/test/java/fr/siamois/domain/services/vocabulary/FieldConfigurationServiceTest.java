@@ -139,13 +139,6 @@ class FieldConfigurationServiceTest {
     void setupFieldConfigurationForInstitution_shouldReturnWrongConfig_whenMandatoryCodeIsNotSet() throws NotSiamoisThesaurusException {
         ConceptBranchDTO dto = conceptBranchDTO();
 
-        Concept parentConcept = new Concept();
-        parentConcept.setId(-1L);
-        parentConcept.setExternalId("1212");
-        parentConcept.setVocabulary(vocabulary);
-        parentConcept.setLangCode("fr");
-        parentConcept.setLabel("Test concept");
-
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST", "SIAMAND"));
         when(conceptApi.fetchFieldsBranch(vocabulary)).thenReturn(dto);
 
@@ -205,13 +198,6 @@ class FieldConfigurationServiceTest {
     @Test
     void setupFieldConfigurationForUser_shouldReturnWrongConfig_whenMandatoryCodeIsNotSet() throws NotSiamoisThesaurusException {
         ConceptBranchDTO dto = conceptBranchDTO();
-
-        Concept parentConcept = new Concept();
-        parentConcept.setId(-1L);
-        parentConcept.setExternalId("1212");
-        parentConcept.setVocabulary(vocabulary);
-        parentConcept.setLangCode("fr");
-        parentConcept.setLabel("Test concept");
 
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST", "SIAMAND"));
         when(conceptApi.fetchFieldsBranch(vocabulary)).thenReturn(dto);
@@ -381,15 +367,6 @@ class FieldConfigurationServiceTest {
 
     @Test
     void getUrlForFieldCode_noConfigForField() {
-
-        Concept concept = new Concept();
-        concept.setId(-1L);
-        concept.setLabel("Parent config concept");
-        concept.setVocabulary(vocabulary);
-        concept.setExternalId("1212");
-        concept.setLangCode("fr");
-
-
         when(conceptRepository.findTopTermConfigForFieldCodeOfUser(anyLong(), anyLong(), anyString()))
                 .thenReturn(Optional.empty());
         when(conceptRepository.findTopTermConfigForFieldCodeOfInstitution(anyLong(), anyString()))

@@ -6,10 +6,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @DiscriminatorValue("concept")
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class ConceptLabel extends Label {
 
     @ManyToOne
