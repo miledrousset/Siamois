@@ -1,6 +1,7 @@
 package fr.siamois.domain.models.vocabulary.label;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.DiscriminatorFormula;
 
 @Entity
@@ -8,6 +9,7 @@ import org.hibernate.annotations.DiscriminatorFormula;
 @DiscriminatorFormula("CASE WHEN fk_concept_id IS NOT NULL THEN 'concept' " +
         "WHEN fk_vocabulary_id IS NOT NULL THEN 'vocabulary' " +
         "ELSE NULL END")
+@Data
 public abstract class Label {
 
     @Id

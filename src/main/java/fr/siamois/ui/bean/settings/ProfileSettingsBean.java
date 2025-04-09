@@ -148,7 +148,7 @@ public class ProfileSettingsBean implements Serializable {
         if (fThesaurusUrl != null && !fThesaurusUrl.isEmpty()) {
             UserInfo info = sessionSettingsBean.getUserInfo();
             try {
-                Vocabulary vocabulary = vocabularyService.findVocabularyOfUri(info, fThesaurusUrl);
+                Vocabulary vocabulary = vocabularyService.findOrCreateVocabularyOfUri(fThesaurusUrl);
                 fieldConfigurationService.setupFieldConfigurationForUser(info, vocabulary);
                 log.debug("Thesaurus configuration updated");
             } catch (InvalidEndpointException e) {

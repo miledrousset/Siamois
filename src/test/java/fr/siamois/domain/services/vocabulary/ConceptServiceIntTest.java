@@ -43,7 +43,6 @@ class ConceptServiceIntTest {
     void findDirectSubConceptOf() {
         Vocabulary vocabulary = new Vocabulary();
         vocabulary.setId(1L);
-        vocabulary.setVocabularyName("Siamois");
         vocabulary.setExternalVocabularyId("th223");
         vocabulary.setBaseUri("https://thesaurus.mom.fr");
 
@@ -82,7 +81,6 @@ class ConceptServiceIntTest {
     void findDirectSubConceptOf_shouldOnlyReturnDirectChilds() {
         Vocabulary vocabulary = new Vocabulary();
         vocabulary.setId(1L);
-        vocabulary.setVocabularyName("Siamois");
         vocabulary.setExternalVocabularyId("th223");
         vocabulary.setBaseUri("https://thesaurus.mom.fr");
 

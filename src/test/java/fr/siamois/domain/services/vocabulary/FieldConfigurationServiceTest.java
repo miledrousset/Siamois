@@ -56,9 +56,7 @@ class FieldConfigurationServiceTest {
         vocabulary = new Vocabulary();
         vocabulary.setId(-12L);
         vocabulary.setType(type);
-        vocabulary.setVocabularyName("Vocabulary name");
         vocabulary.setBaseUri("http://localhost");
-        vocabulary.setLastLang("fr");
         vocabulary.setExternalVocabularyId("1313");
 
         userInfo = new UserInfo(new Institution(), new Person(), "fr");

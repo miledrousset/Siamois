@@ -50,7 +50,6 @@ class ConceptServiceTest {
         vocabulary.setId(-1L);
         vocabulary.setBaseUri("http://localhost:8080");
         vocabulary.setExternalVocabularyId("th233");
-        vocabulary.setVocabularyName("Test thesaurus");
         vocabulary.setType(type);
 
     }
@@ -161,7 +160,6 @@ class ConceptServiceTest {
         // Arrange
         Vocabulary currentVocab = new Vocabulary();
         currentVocab.setId(1L);
-        currentVocab.setVocabularyName("Siamois");
         currentVocab.setExternalVocabularyId("th223");
         currentVocab.setBaseUri("https://thesaurus.mom.fr");
 
@@ -227,7 +225,6 @@ class ConceptServiceTest {
         // Arrange
         Vocabulary currentVocab = new Vocabulary();
         currentVocab.setId(1L);
-        currentVocab.setVocabularyName("Siamois");
         currentVocab.setExternalVocabularyId("th223");
         currentVocab.setBaseUri("https://thesaurus.mom.fr");
 
