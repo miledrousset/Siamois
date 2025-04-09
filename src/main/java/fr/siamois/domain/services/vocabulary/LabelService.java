@@ -23,6 +23,12 @@ public class LabelService {
     }
 
     public ConceptLabel findLabelOf(Concept concept, String langCode) {
+        if (concept == null) {
+            ConceptLabel label = new ConceptLabel();
+            label.setValue("NULL");
+            return label;
+        }
+
         Optional<ConceptLabel> label = conceptLabelRepository.findByConceptAndLangCode(concept, langCode);
         if (label.isPresent())
             return label.get();
@@ -58,32 +64,44 @@ public class LabelService {
         return allLabels.get(0);
     }
 
-    public ConceptLabel updateLabel(Concept concept, String langCode, String value) {
-        ConceptLabel label = new ConceptLabel();
-        label.setLangCode(langCode);
-        label.setValue(value);
-        label.setConcept(concept);
-        return conceptLabelRepository.save(label);
+    public void updateLabel(Concept concept, String langCode, String value) {
+        Optional<ConceptLabel> existingLabelOpt = conceptLabelRepository.findByConceptAndLangCode(concept, langCode);
+        if (existingLabelOpt.isEmpty()) {
+            ConceptLabel label = new ConceptLabel();
+            label.setLangCode(langCode);
+            label.setValue(value);
+            label.setConcept(concept);
+            conceptLabelRepository.save(label);
+            return;
+        }
+
+        ConceptLabel existingLabel = existingLabelOpt.get();
+
+        if (existingLabel.getValue() == null || !existingLabel.getValue().equals(value)) {
+            existingLabel.setValue(value);
+            conceptLabelRepository.save(existingLabel);
+        }
+
     }
 
-    public VocabularyLabel updateLabel(Vocabulary vocabulary, String langCode, String value) {
+    public void updateLabel(Vocabulary vocabulary, String langCode, String value) {
         Optional<VocabularyLabel> existingLabelOpt = vocabularyLabelRepository.findByVocabularyAndLangCode(vocabulary, langCode);
         if (existingLabelOpt.isEmpty()) {
             VocabularyLabel label = new VocabularyLabel();
             label.setLangCode(langCode);
             label.setValue(value);
             label.setVocabulary(vocabulary);
-            return vocabularyLabelRepository.save(label);
+            vocabularyLabelRepository.save(label);
+            return;
         }
 
         VocabularyLabel existingLabel = existingLabelOpt.get();
 
         if (existingLabel.getValue() == null || !existingLabel.getValue().equals(value)) {
             existingLabel.setValue(value);
-            return vocabularyLabelRepository.save(existingLabel);
+            vocabularyLabelRepository.save(existingLabel);
         }
 
-        return existingLabel;
     }
 
 }

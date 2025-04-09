@@ -23,7 +23,7 @@
         <p:autoComplete value="#{cc.attrs.selectedConcept}"
                         id="conceptAutocomplete"
                         completeMethod="#{cc.attrs.completeMethod}"
-                        var="field" itemLabel="#{field.label}"
+                        var="field"
                         panelStyleClass="#{cc.attrs.panelStyleClass}"
                         itemValue="#{field}"
                         disabled="#{cc.attrs.disabled}"
@@ -32,7 +32,10 @@
                         converter="#{conceptConverter}"
                         forceSelection="true"
                         scrollHeight="300"
-                        dropdown="true">
+                        dropdown="true"
+                        itemLabel="#{conceptAutocompleteBean.findLabelOf(field)}"
+                        placeholder="Choisissez un concept"
+        >
 
             <!-- If defined, we need to update on select to synchronise secondary type choices -->
             <p:ajax
@@ -48,8 +51,8 @@
             </p:column>
             <p:column>
                 <div style="display:flex; flex-direction: column">
-                    <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{field.label}"/>
-                    <small>#{field.vocabulary.baseUri} - #{field.vocabulary.vocabularyName}</small>
+                    <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{conceptAutocompleteBean.findLabelOf(field)}"/>
+                    <small>#{field.vocabulary.baseUri} - #{conceptAutocompleteBean.findVocabularyLabelOf(field)}</small>
                 </div>
 
             </p:column>

@@ -171,7 +171,6 @@ class RecordingUnitServiceTest {
         postRelationship.setType(StratigraphicRelationshipService.ASYNCHRONOUS);
 
         Concept c = new Concept();
-        c.setLabel("Unité strati");
         when(conceptService.saveOrGetConcept(c)).thenReturn(c);
 
         when(recordingUnitRepository.findMaxUsedIdentifierByAction(anyLong())).thenReturn(null);
@@ -224,7 +223,6 @@ class RecordingUnitServiceTest {
         postRelationship.setType(StratigraphicRelationshipService.ASYNCHRONOUS);
 
         Concept c = new Concept();
-        c.setLabel("Unité strati");
         when(conceptService.saveOrGetConcept(c)).thenReturn(c);
 
         when(recordingUnitRepository.findMaxUsedIdentifierByAction(anyLong())).thenReturn(null);
@@ -246,7 +244,6 @@ class RecordingUnitServiceTest {
     void save_Failure_MaxNbOfRecordingsReached() {
 
         Concept c = new Concept();
-        c.setLabel("Unité strati");
 
         when(recordingUnitRepository.findMaxUsedIdentifierByAction(anyLong())).thenReturn(5);
 

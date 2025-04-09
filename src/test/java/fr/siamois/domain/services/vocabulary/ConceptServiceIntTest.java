@@ -1,7 +1,6 @@
 package fr.siamois.domain.services.vocabulary;
 
 import fr.siamois.domain.models.Institution;
-import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
@@ -31,12 +30,15 @@ class ConceptServiceIntTest {
     @Mock
     private ConceptRepository conceptRepository;
 
+    @Mock
+    private LabelService labelService;
+
     private ConceptService conceptService;
 
     @BeforeEach
     void setUp() {
         ConceptApi conceptApi = new ConceptApi(new TestRestTemplate().getRestTemplate());
-        conceptService = new ConceptService(conceptRepository, conceptApi);
+        conceptService = new ConceptService(conceptRepository, conceptApi, labelService);
     }
 
     @Test
@@ -50,8 +52,6 @@ class ConceptServiceIntTest {
         concept.setId(1L);
         concept.setVocabulary(vocabulary);
         concept.setExternalId("4282375");
-        concept.setLabel("Unité stratigraphique");
-        concept.setLangCode("fr");
 
         Person person = new Person();
         person.setId(1L);
@@ -63,12 +63,10 @@ class ConceptServiceIntTest {
         institution.setName("SIADev");
         institution.setManager(person);
 
-        UserInfo userInfo = new UserInfo(institution, person, "fr");
-
         when(conceptRepository.findConceptByExternalIdIgnoreCase(anyString(), anyString())).thenReturn(Optional.empty());
         when(conceptRepository.save(any(Concept.class))).then(invocationOnMock -> invocationOnMock.getArgument(0));
 
-        List<Concept> result = conceptService.findDirectSubConceptOf(userInfo, concept);
+        List<Concept> result = conceptService.findDirectSubConceptOf(concept);
 
         assertThat(result)
                 .hasSize(2)
@@ -88,8 +86,6 @@ class ConceptServiceIntTest {
         concept.setId(1L);
         concept.setVocabulary(vocabulary);
         concept.setExternalId("4283543");
-        concept.setLabel("Codes d'action");
-        concept.setLangCode("fr");
 
         Person person = new Person();
         person.setId(1L);
@@ -101,14 +97,12 @@ class ConceptServiceIntTest {
         institution.setName("SIADev");
         institution.setManager(person);
 
-        UserInfo userInfo = new UserInfo(institution, person, "fr");
-
         List<String> unwantedId = List.of("4283550", "4283545", "4283546");
 
         when(conceptRepository.findConceptByExternalIdIgnoreCase(anyString(), anyString())).thenReturn(Optional.empty());
         when(conceptRepository.save(any(Concept.class))).then(invocationOnMock -> invocationOnMock.getArgument(0));
 
-        List<Concept> result = conceptService.findDirectSubConceptOf(userInfo, concept);
+        List<Concept> result = conceptService.findDirectSubConceptOf(concept);
 
         assertThat(result)
                 .hasSize(1)

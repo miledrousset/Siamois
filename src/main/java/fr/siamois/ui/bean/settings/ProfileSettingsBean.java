@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -167,10 +168,16 @@ public class ProfileSettingsBean implements Serializable {
     }
 
     public String localeToLangName(Locale locale) {
+        if (locale == null) {
+            return "NULL";
+        }
         return StringUtils.capitalize(locale.getDisplayName(locale));
     }
 
     public String localeToLangCode(Locale locale) {
+        if (locale == null) {
+            return "NULL";
+        }
         return locale.getLanguage();
     }
 
@@ -199,6 +206,21 @@ public class ProfileSettingsBean implements Serializable {
         if (reloadPage) {
             PrimeFaces.current().executeScript("location.reload();");
         }
+    }
+
+    public List<Locale> autocompleteLangs(String input) {
+        List<Locale> result = new ArrayList<>();
+        List<Locale> refs = getRefLangs();
+        if (input == null || input.length() < 2) {
+            return refs;
+        }
+
+        for (Locale locale : getRefLangs()) {
+            if (locale.getDisplayName(locale).toLowerCase().contains(input.toLowerCase())) {
+                result.add(locale);
+            }
+        }
+        return result;
     }
 
 }

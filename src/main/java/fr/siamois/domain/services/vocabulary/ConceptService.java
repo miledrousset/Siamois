@@ -1,12 +1,11 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.ConceptApi;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
-import fr.siamois.infrastructure.api.dto.LabelDTO;
+import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
 import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +19,12 @@ public class ConceptService {
 
     private final ConceptRepository conceptRepository;
     private final ConceptApi conceptApi;
+    private final LabelService labelService;
 
-    public ConceptService(ConceptRepository conceptRepository, ConceptApi conceptApi) {
+    public ConceptService(ConceptRepository conceptRepository, ConceptApi conceptApi, LabelService labelService) {
         this.conceptRepository = conceptRepository;
         this.conceptApi = conceptApi;
+        this.labelService = labelService;
     }
 
     public Concept saveOrGetConcept(Concept concept) {
@@ -32,48 +33,38 @@ public class ConceptService {
         return optConcept.orElseGet(() -> conceptRepository.save(concept));
     }
 
-    public Concept saveOrGetConceptFromFullDTO(UserInfo info, Vocabulary vocabulary, FullInfoDTO conceptDTO) {
+    public Concept saveOrGetConceptFromFullDTO(Vocabulary vocabulary, FullInfoDTO conceptDTO) {
         Optional<Concept> optConcept = conceptRepository
                 .findConceptByExternalIdIgnoreCase(
                         vocabulary.getExternalVocabularyId(),
                         conceptDTO.getIdentifier()[0].getValue()
                 );
-        if (optConcept.isPresent()) return optConcept.get();
+
+        if (optConcept.isPresent()) {
+            updateAllLabelsFromDTO(optConcept.get(), conceptDTO);
+            return optConcept.get();
+        }
 
         Concept concept = new Concept();
-        LabelDTO labelDTO = findLabelOfLang(conceptDTO, info.getLang()).orElse(firstAvailableLabel(conceptDTO));
-        concept.setLabel(labelDTO.getTitle());
-        concept.setLangCode(labelDTO.getLang());
         concept.setVocabulary(vocabulary);
         concept.setExternalId(conceptDTO.getIdentifier()[0].getValue());
 
-        return conceptRepository.save(concept);
+        concept = conceptRepository.save(concept);
+
+        updateAllLabelsFromDTO(concept, conceptDTO);
+
+        return concept;
     }
 
-    private Optional<LabelDTO> findLabelOfLang(FullInfoDTO conceptDTO, String lang) {
-        if (lang == null) return Optional.empty();
-
-        return Arrays.stream(conceptDTO.getPrefLabel())
-                .filter(purlInfoDTO -> purlInfoDTO.getLang().equals(lang))
-                .map(elt -> {
-                    LabelDTO labelDTO = new LabelDTO();
-                    labelDTO.setTitle(elt.getValue());
-                    labelDTO.setLang(elt.getLang());
-                    return labelDTO;
-                })
-                .findFirst();
+    public void updateAllLabelsFromDTO(Concept savedConcept, FullInfoDTO conceptDto) {
+        if (conceptDto.getPrefLabel() != null) {
+            for (PurlInfoDTO label : conceptDto.getPrefLabel()) {
+                labelService.updateLabel(savedConcept, label.getLang(), label.getValue());
+            }
+        }
     }
 
-    private LabelDTO firstAvailableLabel(FullInfoDTO fullInfoDTO) {
-        LabelDTO labelDTO = new LabelDTO();
-        labelDTO.setTitle(fullInfoDTO.getPrefLabel()[0].getValue());
-        labelDTO.setLang(fullInfoDTO.getPrefLabel()[0].getLang());
-        return labelDTO;
-    }
-
-
-
-    public List<Concept> findDirectSubConceptOf(UserInfo userInfo, Concept concept) {
+    public List<Concept> findDirectSubConceptOf(Concept concept) {
         ConceptBranchDTO branch = conceptApi.fetchDownExpansion(concept.getVocabulary(), concept.getExternalId());
         List<Concept> result = new ArrayList<>();
         if (branch.isEmpty()) {
@@ -93,7 +84,7 @@ public class ConceptService {
                 .toList();
 
         for (FullInfoDTO child : childs) {
-            Concept newConcept = saveOrGetConceptFromFullDTO(userInfo, concept.getVocabulary(), child);
+            Concept newConcept = saveOrGetConceptFromFullDTO(concept.getVocabulary(), child);
             result.add(newConcept);
         }
 
