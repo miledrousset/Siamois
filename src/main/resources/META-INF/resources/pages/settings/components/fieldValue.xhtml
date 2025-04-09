@@ -3,6 +3,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:cc="http://xmlns.jcp.org/jsf/composite"
                 xmlns:shared="http://java.sun.com/jsf/composite/pages/shared/form"
+                xmlns:f="http://java.sun.com/jsf/core"
 >
 
     <cc:interface>
@@ -20,8 +21,9 @@
                 </div>
                 <p:commandButton
                         styleClass="field-value-save"
-                        value="Enregistrer"
-                        action="#{cc.attrs.saveMethod}"/>
+                        value="Enregistrer">
+                    <f:ajax listener="#{cc.attrs.saveMethod}" />
+                </p:commandButton>
             </div>
         </shared:csrfform>
     </cc:implementation>

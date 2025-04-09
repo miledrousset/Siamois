@@ -7,6 +7,7 @@ import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
 import fr.siamois.infrastructure.database.repositories.auth.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.Optional;
 /**
  * Service to manage Person
  */
+@Slf4j
 @Service
 public class PersonService {
 
@@ -107,6 +109,7 @@ public class PersonService {
     }
 
     public PersonSettings updatePersonSettings(PersonSettings personSettings) {
+        log.trace("Updating person settings {}", personSettings);
         return personSettingsRepository.save(personSettings);
     }
 }
