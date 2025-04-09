@@ -1,4 +1,4 @@
-package fr.siamois.domain.models.label;
+package fr.siamois.domain.models.vocabulary.label;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.DiscriminatorFormula;

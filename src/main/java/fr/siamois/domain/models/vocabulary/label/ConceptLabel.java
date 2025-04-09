@@ -1,4 +1,4 @@
-package fr.siamois.domain.models.label;
+package fr.siamois.domain.models.vocabulary.label;
 
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.DiscriminatorValue;
