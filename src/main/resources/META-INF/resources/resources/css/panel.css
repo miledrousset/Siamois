@@ -29,7 +29,6 @@ body .ui-inputfield.ui-state-focus {
     box-shadow: 0 0 0 .2em var(--siamois-green-light-350);
 }
 
-
 .ui-panel.siamois-panel .ui-panel-content {
     padding: 0;
 }
@@ -84,6 +83,66 @@ body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-stat
     background: var(--siamois-green-light-100);
 }
 
+.spatial-unit-panel .ui-datatable thead th {
+    background: var(--context-light-color-100);
+}
+
+.spatial-unit-panel .ui-datatable thead th.ui-state-active {
+    background: var(--siamois-green-light-200);
+    color: var(--siamois-green);
+}
+
+.spatial-unit-panel .ui-datatable thead th.ui-state-hover {
+    background: var(--siamois-green-light-50);
+    color: var(--siamois-green);
+}
+
+.spatial-unit-panel .ui-datatable thead th.ui-state-active.ui-state-hover {
+    background: var(--siamois-green-light-50);
+    color: var(--siamois-green);
+}
+
+.spatial-unit-panel .ui-datatable thead th.ui-sortable-column.ui-state-focus {
+    outline: 0 none;
+    outline-offset: 0;
+    box-shadow: inset 0 0 0 .2rem var(--siamois-green);
+}
+
+.spatial-unit-panel .ui-datatable-data td[role="gridcell"]:focus, .ui-datatable-data td[role="gridcell"] *:focus, .ui-datatable-data td[role="grid"] [tabindex="0"]:focus {
+    outline: var(--siamois-green);
+    outline-style: solid;
+    outline-width: 2px;
+    border: 0;
+}
+
+body .ui-datatable thead th .ui-sortable-column-badge {
+    border-radius: 50%;
+    height: 1.143rem;
+    min-width: 1.143rem;
+    line-height: 1.143rem;
+    color: #fff;
+    background: var(--siamois-green);
+    margin-left: .5rem;
+    font-size: .75rem;
+}
+
+body .ui-paginator .ui-paginator-pages .ui-paginator-page.ui-state-active {
+    background: var(--siamois-green-light-100);
+    color: var(--text-main);
+}
+
+body .ui-paginator .ui-paginator-pages .ui-paginator-page.ui-state-focus {
+    outline: 0 none;
+    outline-offset: 0;
+    box-shadow: 0 0 0 .2rem var(--siamois-green-light-200);
+}
+
+
+body .ui-paginator .ui-paginator-first.ui-state-focus, body .ui-paginator .ui-paginator-prev.ui-state-focus, body .ui-paginator .ui-paginator-next.ui-state-focus, body .ui-paginator .ui-paginator-last.ui-state-focus {
+    outline: 0 none;
+    outline-offset: 0;
+    box-shadow: 0 0 0 .2rem var(--siamois-green-light-200);
+}
 
 /* spatial-unit */
 
