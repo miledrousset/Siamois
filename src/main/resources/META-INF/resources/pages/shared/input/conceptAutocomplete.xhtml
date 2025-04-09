@@ -33,7 +33,7 @@
                         forceSelection="true"
                         scrollHeight="300"
                         dropdown="true"
-                        itemLabel="#{conceptAutocompleteBean.findLabelOf(field)}"
+                        itemLabel="#{labelBean.findLabelOf(field)}"
                         placeholder="Choisissez un concept"
         >
 
@@ -51,8 +51,8 @@
             </p:column>
             <p:column>
                 <div style="display:flex; flex-direction: column">
-                    <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{conceptAutocompleteBean.findLabelOf(field)}"/>
-                    <small>#{field.vocabulary.baseUri} - #{conceptAutocompleteBean.findVocabularyLabelOf(field)}</small>
+                    <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{labelBean.findLabelOf(field)}"/>
+                    <small>#{field.vocabulary.baseUri} - #{labelBean.findVocabularyLabelOf(field)}</small>
                 </div>
 
             </p:column>

@@ -20,7 +20,7 @@
         <div class="panel-top-section">
             <h2>
                 #{panelModel.actionUnit.name}
-                <p:chip label="#{panelModel.actionUnit.type.label}" icon="bi bi-arrow-down-square"
+                <p:chip label="#{labelBean.findLabelOf(panelModel.actionUnit.type)}" icon="bi bi-arrow-down-square"
                         styleClass="mr-2 action-unit-type-chip"/>
 
             </h2>
@@ -58,7 +58,7 @@
 
                 <form:csrfform formId="primaryCodeForm">
                     <div style="display:flex;">
-                        <p:chip label="#{panelModel.actionUnit.primaryActionCode.type.label}"
+                        <p:chip label="#{labelBean.findLabelOf(panelModel.actionUnit.primaryActionCode.type)}"
                                 icon="pi pi-qrcode" >
                         </p:chip>
 
@@ -77,7 +77,7 @@
                             <p:column>
                                 <div style="display:flex;">
                                     <span class="pi pi-qrcode ui-chip ui-chip-icon"/>
-                                    <div style="width:max-content;" class="ui-chip-text">#{actionCode.type.label}
+                                    <div style="width:max-content;" class="ui-chip-text">#{labelBean.findLabelOf(actionCode.type)}
                                     </div>
                                 </div>
 
@@ -109,7 +109,7 @@
                                      action="#{panelModel.addNewSecondaryCode}"/>
                     <ui:repeat id="secondaryCodeRepeat" var="secondaryCode" value="#{panelModel.secondaryActionCodes}" varStatus="status">
                         <h:panelGroup style="display:flex;" id="secondaryCodeField">
-                            <p:chip label="#{panelModel.secondaryActionCodes[status.index].type.label}"
+                            <p:chip label="#{labelBean.findLabelOf(panelModel.secondaryActionCodes[status.index].type)}"
                                     icon="pi pi-qrcode" >
                             </p:chip>
                             <p:autoComplete id="SecondaryCodeAutoCompleteId"
@@ -129,7 +129,7 @@
                                 <p:column>
                                     <div style="display:flex;">
                                         <span class="pi pi-qrcode ui-chip ui-chip-icon"/>
-                                        <div style="width:max-content;" class="ui-chip-text">#{actionCode.type.label}
+                                        <div style="width:max-content;" class="ui-chip-text">#{labelBean.findLabelOf(actionCode.type)}
                                         </div>
                                     </div>
 

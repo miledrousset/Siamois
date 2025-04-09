@@ -33,7 +33,7 @@
                         </p:column>
 
                         <p:column headerText="Category">
-                            <p:chip label="#{item.category.label}" icon="pi pi-map-marker" styleClass="mr-2 spatial-unit-type-chip"/>
+                            <p:chip label="#{labelBean.findLabelOf(item.category)}" icon="pi pi-map-marker" styleClass="mr-2 spatial-unit-type-chip"/>
                         </p:column>
                     </p:dataTable>
 
