@@ -6,8 +6,6 @@
     width: 250px;
     height: 100vh;
     background-color: #FFFFFF;
-    color: #2A2C30;
-    position: fixed;
     transition: width 0.3s;
     padding-top: 15px;
     border-right: 1px solid #E0E0E0;
@@ -82,17 +80,12 @@
 }
 
 .content {
-    margin-left: 250px;
     transition: margin-left 0.3s;
     width: 100%;
     min-height: 100vh;
     background-color: #F9FBF9;
     display: flex;
     flex-direction: column;
-}
-
-.sidebar.collapsed ~ .content {
-    margin-left: 60px;
 }
 
 @media (max-width: 768px) {

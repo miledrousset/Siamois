@@ -7,6 +7,14 @@ body {
     background-color: var(--siamois-green-light);
 }
 
+html, body {
+    height: 100%;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main)
+}
+
+
 @media (min-width: 768px) {
     .gradient-form {
         height: 100vh !important;
