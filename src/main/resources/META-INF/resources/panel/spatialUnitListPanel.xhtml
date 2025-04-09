@@ -15,43 +15,11 @@
         Unités géographiques
         <p:chip label="258" styleClass="spatial-unit-count-chip"/>
     </div>
-    <spatialUnit:spatialUnitList spatialUnitList="#{panelModel.spatialUnitList}"
-
-                                 panelModel="#{panelModel}"
-                                 header='${langBean.msg("spatialunit.label")}'
-    >
-        <f:facet name="toolbar">
-            <p:toolbar>
-                <p:toolbarGroup>
-
-                    <span class="filter-container ui-input-icon-left">
-                    <i class="bi bi-search"/>
-                                <p:inputText id="globalFilter" onkeyup="PF('spatialUnitListTable').filter()"
-                                             placeholder="Rechercher">
-
-                                </p:inputText>
-                    </span>
-
-
-                </p:toolbarGroup>
-
-                <p:toolbarGroup>
-                    <p:fileUpload mode="simple" skinSimple="true" chooseIcon="bi bi-upload"/>
-                    <p:commandButton icon="bi bi-download">
-
-                    </p:commandButton>
-                </p:toolbarGroup>
-
-                <p:toolbarGroup>
-                    <p:commandButton value='Ajouter' icon="bi bi-plus-square"
-                                     action="#{flowBean.addNewSpatialUnitPanel(panelModel)}"
-                                     update="flow"
-                                     style="margin-right: .5rem">
-                    </p:commandButton>
-                </p:toolbarGroup>
-            </p:toolbar>
-        </f:facet>
-    </spatialUnit:spatialUnitList>
+    <spatialUnit:spatialUnitList
+            lazyDataModel="#{panelModel.lazyDataModel}"
+            panelModel="#{panelModel}"
+            selectedCategories="#{panelModel.selectedCategories}"
+    />
 
 
 </ui:fragment>

@@ -53,7 +53,7 @@ public class SpatialUnitService implements ArkEntityService {
      * Find all the children of a spatial unit
      *
      * @return The List of SpatialUnit
-     * @throws RuntimeException             If the repository method throws an Exception
+     * @throws RuntimeException If the repository method throws an Exception
      */
     public List<SpatialUnit> findAllChildOfSpatialUnit(SpatialUnit spatialUnit) {
         return spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit.getId());
@@ -94,6 +94,20 @@ public class SpatialUnitService implements ArkEntityService {
             String name, Long[] categoryIds, String global, Pageable pageable) {
         return spatialUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
                 institutionId, name, categoryIds, global, pageable);
+    }
+
+    public Page<SpatialUnit> findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
+            SpatialUnit parent,
+            String name, Long[] categoryIds, String global, Pageable pageable) {
+        return spatialUnitRepository.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                parent.getId(), name, categoryIds, global, pageable);
+    }
+
+    public Page<SpatialUnit> findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
+            SpatialUnit child,
+            String name, Long[] categoryIds, String global, Pageable pageable) {
+        return spatialUnitRepository.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                child.getId(), name, categoryIds, global, pageable);
     }
 
     public List<SpatialUnit> findAllOfInstitution(Institution institution) {

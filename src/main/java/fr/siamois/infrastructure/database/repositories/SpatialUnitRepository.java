@@ -60,6 +60,59 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                                       @Param("global") String global,
                                       Pageable pageable);
 
+    @Query(
+            nativeQuery = true,
+            value = "SELECT su.*, c.label as c_label " +
+                    "FROM spatial_unit su " +
+                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
+                    "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
+                    "         JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_child_id "+
+                    "WHERE suh.fk_parent_id = :parentId " +
+                    "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
+                    "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(c.label) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
+            countQuery = "SELECT count(su.*) " +
+                    "FROM spatial_unit su " +
+                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
+                    "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
+                    "         JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_child_id "+
+                    "WHERE suh.fk_parent_id = :parentId " +
+                    "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
+                    "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(c.label) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
+    )
+    Page<SpatialUnit> findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(@Param("parentId") Long parentId,
+                                                                                                  @Param("name") String name,
+                                                                                                  @Param("categoryIds") Long[] categoryIds,
+                                                                                                  @Param("global") String global,
+                                                                                                  Pageable pageable);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT su.*, c.label as c_label " +
+                    "FROM spatial_unit su " +
+                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
+                    "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
+                    "         JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_parent_id "+
+                    "WHERE suh.fk_child_id = :childId " +
+                    "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
+                    "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(c.label) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
+            countQuery = "SELECT count(su.*) " +
+                    "FROM spatial_unit su " +
+                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
+                    "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
+                    "         JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_parent_id "+
+                    "WHERE suh.fk_child_id = :childId " +
+                    "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
+                    "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(c.label) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
+    )
+    Page<SpatialUnit> findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(@Param("childId") Long childId,
+                                                                                             @Param("name") String name,
+                                                                                             @Param("categoryIds") Long[] categoryIds,
+                                                                                             @Param("global") String global,
+                                                                                             Pageable pageable);
 
     @Query(
             nativeQuery = true,

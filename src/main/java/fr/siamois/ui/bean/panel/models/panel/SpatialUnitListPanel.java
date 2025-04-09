@@ -6,7 +6,6 @@ import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
-import jakarta.faces.model.SelectItem;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.primefaces.model.FilterMeta;
@@ -39,7 +38,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
     // locals
     private String spatialUnitListErrorMessage;
-
+    private List<Concept> selectedCategories;
     private LazyDataModel<SpatialUnit> lazyDataModel ;
 
     public SpatialUnitListPanel(SpatialUnitService spatialUnitService, ConceptService conceptService, SessionSettingsBean sessionSettingsBean) {
@@ -50,6 +49,11 @@ public class SpatialUnitListPanel extends AbstractPanel {
     }
 
     public class SpatialUnitLazyDataModel extends LazyDataModel<SpatialUnit> {
+
+        Integer first ;
+        Integer pageSize ;
+
+
         @Override
         public int count(Map<String, FilterMeta> map) {
             return 0;
@@ -57,11 +61,15 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
         @Override
         public List<SpatialUnit> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
+
+            this.first = first; // Save to use in getters
+            this.pageSize = pageSize;
+
             int pageNumber = first / pageSize;
             Pageable pageable = PageRequest.of(pageNumber, pageSize, buildSort(sortBy));
 
             String nameFilter = null;
-            Long[] categoryIds = null;
+            Long[] categoryIds = null; // sql server needs a Long[] to cast argument value (the list) into bigint[] for null check
             String globalFilter = null;
 
             if (filterBy != null) {
@@ -72,10 +80,12 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
                 FilterMeta categoryMeta = filterBy.get("category");
                 if (categoryMeta != null && categoryMeta.getFilterValue() != null) {
-                    categoryIds = (Arrays.stream((Object[]) categoryMeta.getFilterValue())
-                            .map(o -> ((Concept) o).getId())
-                            .filter(Objects::nonNull) // Ne garder que les IDs non null
-                            .toList()).toArray(new Long[0]);
+                    selectedCategories = (List<Concept>) categoryMeta.getFilterValue();
+                    categoryIds = selectedCategories.stream()
+                            .filter(Objects::nonNull) // exclude null Concepts
+                            .map(Concept::getId)
+                            .filter(Objects::nonNull) // exclude null IDs
+                            .toArray(Long[]::new);
                 }
 
                 FilterMeta globalMeta = filterBy.get("globalFilter");
@@ -111,6 +121,16 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
             return Sort.by(orders);
         }
+
+        public int getFirstIndexOnPage() {
+            return first + 1; // Adding 1 because indexes are zero-based
+        }
+
+        public int getLastIndexOnPage() {
+            int last = first + pageSize;
+            int total = this.getRowCount();
+            return Math.min(last, total); // Ensure it doesn’t exceed total records
+        }
     }
 
     public void init()  {
@@ -121,8 +141,8 @@ public class SpatialUnitListPanel extends AbstractPanel {
                     .icon("bi bi-geo-alt")
                     .build();
             this.getBreadcrumb().getModel().getElements().add(item);
-            // Get all the spatial unit within the institution that don't have a parent
-
+            // Get all the spatial unit within the institution
+            selectedCategories = new ArrayList<>();
             lazyDataModel = new SpatialUnitLazyDataModel();
 
         } catch (RuntimeException e) {
@@ -130,12 +150,9 @@ public class SpatialUnitListPanel extends AbstractPanel {
         }
     }
 
-    public List<SelectItem> getCategoriesSelectItems() {
-        List<Concept> cList = conceptService.findAllConceptsByInstitution(sessionSettingsBean.getSelectedInstitution());
+    public List<Concept> categoriesAvailable() {
+        return conceptService.findAllConceptsByInstitution(sessionSettingsBean.getSelectedInstitution());
 
-        return cList.stream()
-                .map(concept -> new SelectItem(concept, concept.getLabel()))
-                .toList();
 
     }
 
