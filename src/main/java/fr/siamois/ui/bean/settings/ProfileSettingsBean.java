@@ -17,7 +17,6 @@ import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.services.person.PersonService;
-import fr.siamois.domain.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
 import fr.siamois.ui.bean.LangBean;
@@ -47,7 +46,6 @@ public class ProfileSettingsBean implements Serializable {
     private final transient FieldConfigurationService fieldConfigurationService;
     private final transient VocabularyService vocabularyService;
     private final transient InstitutionService institutionService;
-    private final transient InstitutionChangeEventPublisher institutionChangeEventPublisher;
     private final transient LangService langService;
     private final LangBean langBean;
 
@@ -68,7 +66,6 @@ public class ProfileSettingsBean implements Serializable {
                                FieldConfigurationService fieldConfigurationService,
                                VocabularyService vocabularyService,
                                InstitutionService institutionService,
-                               InstitutionChangeEventPublisher institutionChangeEventPublisher,
                                LangService langService,
                                LangBean langBean) {
         this.sessionSettingsBean = sessionSettingsBean;
@@ -76,7 +73,6 @@ public class ProfileSettingsBean implements Serializable {
         this.fieldConfigurationService = fieldConfigurationService;
         this.vocabularyService = vocabularyService;
         this.institutionService = institutionService;
-        this.institutionChangeEventPublisher = institutionChangeEventPublisher;
         this.langService = langService;
         this.langBean = langBean;
     }

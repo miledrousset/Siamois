@@ -1,5 +1,6 @@
 package fr.siamois.domain.services.vocabulary;
 
+import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
@@ -30,6 +31,11 @@ public class ConceptService {
         Vocabulary vocabulary = concept.getVocabulary();
         Optional<Concept> optConcept = conceptRepository.findConceptByExternalIdIgnoreCase(vocabulary.getExternalVocabularyId(), concept.getExternalId());
         return optConcept.orElseGet(() -> conceptRepository.save(concept));
+    }
+
+
+    public List<Concept> findAllConceptsByInstitution(Institution institution) {
+        return conceptRepository.findAllBySpatialUnitOfInstitution(institution.getId());
     }
 
     public Concept saveOrGetConceptFromFullDTO(UserInfo info, Vocabulary vocabulary, FullInfoDTO conceptDTO) {

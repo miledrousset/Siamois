@@ -32,39 +32,7 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
     List<SpatialUnit> findAllParentsOfSpatialUnit(@Param("spatialUnitId") Long spatialUnitId);
 
 
-    @Query(
-            nativeQuery = true,
-            value = "SELECT su.* " +
-                    "FROM spatial_unit su LEFT JOIN spatial_hierarchy sh " +
-                    "ON su.spatial_unit_id = sh.fk_child_id " +
-                    "WHERE sh.fk_parent_id IS NULL;"
-    )
-    List<SpatialUnit> findAllWithoutParents();
 
-    @Query(
-            nativeQuery = true,
-            value = "SELECT su.* " +
-                    "FROM spatial_unit su " +
-                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
-                    "WHERE su.fk_institution_id = :institutionId " +
-                    "  AND sh.fk_parent_id IS NULL"
-    )
-    List<SpatialUnit> findAllWithoutParentsOfInstitution(Long institutionId);
-
-    @Query(
-            nativeQuery = true,
-            value = "SELECT su.* " +
-                    "FROM spatial_unit su " +
-                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
-                    "WHERE su.fk_institution_id = :institutionId " +
-                    "  AND sh.fk_parent_id IS NULL",
-            countQuery = "SELECT count(su.*) " +
-                    "FROM spatial_unit su " +
-                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
-                    "WHERE su.fk_institution_id = :institutionId " +
-                    "  AND sh.fk_parent_id IS NULL"
-    )
-    Page<SpatialUnit> findAllWithoutParentsOfInstitution(Long institutionId, Pageable pageable);
 
     @Query(
             nativeQuery = true,
@@ -73,9 +41,8 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
                     "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
                     "WHERE su.fk_institution_id = :institutionId " +
-                    "  AND sh.fk_parent_id IS NULL " +
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
-                    "  AND (su.fk_concept_category_id IN (:categoryIds)) " +
+                    "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
                     "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(c.label) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
             countQuery = "SELECT count(su.*) " +
                     "FROM spatial_unit su " +
@@ -84,12 +51,12 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "WHERE su.fk_institution_id = :institutionId " +
                     "  AND sh.fk_parent_id IS NULL " +
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
-                    "  AND (su.fk_concept_category_id IN (:categoryIds)) " +
+                    "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
                     "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(c.label) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
     )
-    Page<SpatialUnit> findWithFilters(@Param("institutionId") Long institutionId,
+    Page<SpatialUnit> findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(@Param("institutionId") Long institutionId,
                                       @Param("name") String name,
-                                      @Param("categoryIds") List<Long> categoryIds,
+                                      @Param("categoryIds") Long[] categoryIds,
                                       @Param("global") String global,
                                       Pageable pageable);
 

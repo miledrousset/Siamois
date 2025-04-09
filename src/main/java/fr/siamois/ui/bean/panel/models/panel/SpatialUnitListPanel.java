@@ -3,6 +3,7 @@ package fr.siamois.ui.bean.panel.models.panel;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
+import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import jakarta.faces.model.SelectItem;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.Scope;
 
 
+
 import java.util.*;
 
 @EqualsAndHashCode(callSuper = true)
@@ -32,18 +34,18 @@ import java.util.*;
 public class SpatialUnitListPanel extends AbstractPanel {
 
     private final transient SpatialUnitService spatialUnitService;
+    private final transient ConceptService conceptService;
     private final SessionSettingsBean sessionSettingsBean;
 
     // locals
-    private List<SpatialUnit> filteredSpatialUnits = new ArrayList<>();
-    private List<SpatialUnit> spatialUnitList;
     private String spatialUnitListErrorMessage;
 
     private LazyDataModel<SpatialUnit> lazyDataModel ;
 
-    public SpatialUnitListPanel(SpatialUnitService spatialUnitService, SessionSettingsBean sessionSettingsBean) {
+    public SpatialUnitListPanel(SpatialUnitService spatialUnitService, ConceptService conceptService, SessionSettingsBean sessionSettingsBean) {
         super("Unités géographiques", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-list-panel");
         this.spatialUnitService = spatialUnitService;
+        this.conceptService = conceptService;
         this.sessionSettingsBean = sessionSettingsBean;
     }
 
@@ -59,7 +61,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
             Pageable pageable = PageRequest.of(pageNumber, pageSize, buildSort(sortBy));
 
             String nameFilter = null;
-            List<Long> categoryIds = null;
+            Long[] categoryIds = null;
             String globalFilter = null;
 
             if (filterBy != null) {
@@ -70,10 +72,10 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
                 FilterMeta categoryMeta = filterBy.get("category");
                 if (categoryMeta != null && categoryMeta.getFilterValue() != null) {
-                    categoryIds = Arrays.stream((Object[]) categoryMeta.getFilterValue())
+                    categoryIds = (Arrays.stream((Object[]) categoryMeta.getFilterValue())
                             .map(o -> ((Concept) o).getId())
                             .filter(Objects::nonNull) // Ne garder que les IDs non null
-                            .toList();
+                            .toList()).toArray(new Long[0]);
                 }
 
                 FilterMeta globalMeta = filterBy.get("globalFilter");
@@ -82,7 +84,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
                 }
             }
 
-            Page<SpatialUnit> result = spatialUnitService.findFiltered(
+            Page<SpatialUnit> result = spatialUnitService.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
                     sessionSettingsBean.getSelectedInstitution().getId(),
                     nameFilter, categoryIds, globalFilter,
                     pageable);
@@ -122,11 +124,19 @@ public class SpatialUnitListPanel extends AbstractPanel {
             // Get all the spatial unit within the institution that don't have a parent
 
             lazyDataModel = new SpatialUnitLazyDataModel();
-            spatialUnitList = spatialUnitService.findAllWithoutParentsOfInstitution(sessionSettingsBean.getSelectedInstitution());
+
         } catch (RuntimeException e) {
-            spatialUnitList = null;
             spatialUnitListErrorMessage = "Failed to load spatial units: " + e.getMessage();
         }
+    }
+
+    public List<SelectItem> getCategoriesSelectItems() {
+        List<Concept> cList = conceptService.findAllConceptsByInstitution(sessionSettingsBean.getSelectedInstitution());
+
+        return cList.stream()
+                .map(concept -> new SelectItem(concept, concept.getLabel()))
+                .toList();
+
     }
 
 
@@ -155,15 +165,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
         }
     }
 
-    public List<SelectItem> getCategoriesSelectItems() {
-        Concept c = new Concept();
-        c.setId(14L);
-        return List.of(
-                new SelectItem(c, "Testing"),
-                new SelectItem(new Concept(), "Another Category"),
-                new SelectItem(new Concept(), "Demo")
-        );
-    }
+
 
 
 
