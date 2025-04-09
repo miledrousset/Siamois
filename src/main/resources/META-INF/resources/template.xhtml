@@ -28,8 +28,8 @@
 <h:body>
     <div class="d-flex">
         <!-- Barre latérale -->
-        <h:panelGroup id="siamoisNav" rendered="#{navBean.siamoisMode}">
-            <nav id="sidebar" class="sidebar" aria-label="General sidebar">
+        <h:panelGroup rendered="#{navBean.siamoisMode}" layout="none">
+            <nav id="siamoisNav" class="sidebar collapsed" aria-label="General sidebar">
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <h:graphicImage library="img" name="siamois_logo.png" styleClass="logo"/>
@@ -99,7 +99,7 @@
                 </div>
             </nav>
         </h:panelGroup>
-        <h:panelGroup id="settingsNav" rendered="#{navBean.settingsMode}">
+        <h:panelGroup rendered="#{navBean.settingsMode}" layout="none">
             <nav id="sidebarSettings" class="sidebar" aria-label="Settings sidebar">
                 <form:csrfform formId="settingsNavForm">
                     <ul class="nav flex-column">

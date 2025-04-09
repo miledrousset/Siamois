@@ -27,7 +27,10 @@ public class PanelFactory {
             ObjectProvider<SpatialUnitPanel> spatialUnitPanelProvider,
             ObjectProvider<NewSpatialUnitPanel> newSpatialUnitPanelProvider,
             ObjectProvider<NewActionUnitPanel> newActionUnitPanelProvider,
-            ObjectProvider<ActionUnitPanel> actionUnitPanelProvider, ObjectProvider<NewRecordingUnitPanel> newRecordingUnitPanelProvider, ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider, ObjectProvider<WelcomePanel> welcomePanelProvider) {
+            ObjectProvider<ActionUnitPanel> actionUnitPanelProvider,
+            ObjectProvider<NewRecordingUnitPanel> newRecordingUnitPanelProvider,
+            ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider,
+            ObjectProvider<WelcomePanel> welcomePanelProvider) {
 
         this.spatialUnitListPanelProvider = spatialUnitListPanelProvider;
         this.spatialUnitPanelProvider = spatialUnitPanelProvider;

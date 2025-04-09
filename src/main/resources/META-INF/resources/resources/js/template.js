@@ -1,4 +1,4 @@
-const sidebar = document.getElementById("sidebar");
+const sidebar = document.getElementsByClassName("sidebar")[0];
 const toggleBtn = document.getElementById("toggle-btn");
 const logoutForm = document.getElementById("logout-form");
 
