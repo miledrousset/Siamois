@@ -129,4 +129,8 @@ public class InstitutionService {
         return findMembersOf(institution).size();
     }
 
+    public Optional<PersonRoleInstitution> findPersonInInstitution(Institution institution, Person person) {
+        return personRoleInstitutionRepository.findByInstitutionAndPerson(institution, person);
+    }
+
 }

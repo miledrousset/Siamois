@@ -2,18 +2,23 @@ package fr.siamois.ui.bean.settings.institution;
 
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.settings.PersonRoleInstitution;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.person.PersonService;
+import fr.siamois.domain.utils.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+@Slf4j
 @Component
 @SessionScoped
 @Getter
@@ -23,9 +28,11 @@ public class InstitutionManagerSettingsBean implements Serializable {
     private final transient InstitutionService institutionService;
     private final transient PersonService personService;
     private Institution institution;
-    private Map<Person, String> roles;
+    private transient Map<Person, String> roles;
 
-    private Set<Person> members;
+    private transient Set<Person> members;
+    private transient Set<Person> refMembers;
+    private String textSearch;
 
     public InstitutionManagerSettingsBean(InstitutionService institutionService, PersonService personService) {
         this.institutionService = institutionService;
@@ -34,13 +41,16 @@ public class InstitutionManagerSettingsBean implements Serializable {
 
     public void init(Institution institution) {
         this.institution = institution;
-        members = new HashSet<>();
+        refMembers = new HashSet<>();
+        roles = new HashMap<>();
         for (Person member : institutionService.findMembersOf(institution)) {
             String name = strRoleOf(member);
             if (!name.equalsIgnoreCase("ERROR")) {
-                members.add(member);
+                refMembers.add(member);
+                roles.put(member, name);
             }
         }
+        members = new HashSet<>(refMembers);
     }
 
     private boolean userIsManagerOf(Institution institution, Person p) {
@@ -65,6 +75,39 @@ public class InstitutionManagerSettingsBean implements Serializable {
         } else {
             return "ERROR";
         }
+    }
+
+    public String addDateOf(Person person) {
+        if (userIsOwnerOf(institution, person) || userIsSuperAdmin(person)) {
+            return DateUtils.formatOffsetDateTime(institution.getCreationDate());
+        }
+
+        PersonRoleInstitution result =  institutionService.findPersonInInstitution(institution, person).orElseThrow(() ->
+                new IllegalStateException("User should exist"));
+        return DateUtils.formatOffsetDateTime(result.getAddedAt());
+    }
+
+    public void filterValues() {
+        log.trace("Filtering values with text: {}", textSearch);
+        if (textSearch == null || textSearch.isEmpty()) {
+            members = new HashSet<>(refMembers);
+        } else {
+            members = new HashSet<>();
+            for (Person person : refMembers) {
+                if (person.displayName().toLowerCase().contains(textSearch.toLowerCase())) {
+                    members.add(person);
+                }
+            }
+            for (Person person : refMembers) {
+                if (person.getMail().toLowerCase().contains(textSearch.toLowerCase())) {
+                    members.add(person);
+                }
+            }
+        }
+    }
+
+    public void createManager() {
+        log.trace("Creating manager");
     }
 
 }
