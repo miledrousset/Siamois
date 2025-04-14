@@ -11,7 +11,7 @@
     <cc:interface>
         <cc:attribute name="formId" type="java.lang.String" required="true"/>
         <cc:attribute name="title" type="java.lang.String" required="true"/>
-        <cc:attribute name="options" type="java.util.List" required="true"/>
+        <cc:attribute name="options" required="true"/>
     </cc:interface>
 
     <cc:implementation>
@@ -20,17 +20,20 @@
                 formId="#{cc.attrs.formId}"
                 displaySaveButton="false"
         >
-            <ui:repeat value="#{cc.attrs.options}" var="linkOption">
-                <h:commandLink action="#{linkOption.actionFromBean.redirect()}">
+            <ui:repeat value="#{cc.attrs.options}" var="elt" varStatus="status">
+                <h:commandLink action="#{elt.actionFromBean.redirect()}">
                     <article class="category-container">
-                        <i class="#{linkOption.bootstrapIconClass} cat-icon"/>
+                        <i class="#{elt.bootstrapIconClass} cat-icon"/>
                         <div style="display: flex; flex-direction: column">
-                            <h3>#{linkOption.title}</h3>
-                            <p>#{linkOption.description}</p>
+                            <h3>#{elt.title}</h3>
+                            <p>#{elt.description}</p>
                         </div>
                         <i class="bi bi-chevron-right"/>
                     </article>
                 </h:commandLink>
+                <h:panelGroup layout="none" rendered="#{status.index lt (cc.attrs.options.size() - 1)}">
+                    <hr/>
+                </h:panelGroup>
             </ui:repeat>
 
         </settings:fieldValue>
