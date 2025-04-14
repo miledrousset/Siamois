@@ -46,6 +46,7 @@ main form:first-child .field-value-group {
 
 .field-value-save {
     grid-area: save;
+    margin-left: auto;
 }
 
 .field-value-value {
