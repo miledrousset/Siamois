@@ -2,6 +2,7 @@ package fr.siamois.ui.bean.settings;
 
 import fr.siamois.domain.models.Institution;
 import fr.siamois.ui.bean.settings.components.OptionElement;
+import fr.siamois.ui.bean.settings.institution.InstitutionInfoSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,14 +20,19 @@ import java.util.List;
 @SessionScoped
 public class InstitutionDetailsBean implements Serializable {
 
+    private final InstitutionInfoSettingsBean institutionInfoSettingsBean;
     private Institution institution;
     private transient List<OptionElement> elements;
+
+    public InstitutionDetailsBean(InstitutionInfoSettingsBean institutionInfoSettingsBean) {
+        this.institutionInfoSettingsBean = institutionInfoSettingsBean;
+    }
 
     public void addInstitutionManagementElements() {
         elements = new ArrayList<>();
         elements.add(new OptionElement("bi bi-building", "Paramètres de l'organisation", "Nom de l'organisation", () -> {
-            log.trace("Clicked on institution settings");
-            return "";
+            institutionInfoSettingsBean.init(institution);
+            return "/pages/settings/institution/institutionInfoSettings.xhtml?faces-redirect=true";
         }));
         elements.add(new OptionElement("bi bi-person-circle", "Responsables d'organisation", "Gérer les administrateurs de Bibracte", () -> {
             log.trace("Clicked on institution managers");
@@ -46,6 +52,10 @@ public class InstitutionDetailsBean implements Serializable {
         institution = null;
         elements.clear();
         return "/pages/settings/institutionListSettings.xhtml?faces-redirect=true";
+    }
+
+    public String backToInstitutionSettings() {
+        return "/pages/settings/institutionSettings.xhtml?faces-redirect=true";
     }
 
 }
