@@ -9,26 +9,19 @@ import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
+import fr.siamois.ui.model.SpatialUnitLazyDataModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortMeta;
-import org.primefaces.model.SortOrder;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.Scope;
 
 
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -58,91 +51,6 @@ public class SpatialUnitListPanel extends AbstractPanel {
         this.labelService = labelService;
     }
 
-    public class SpatialUnitLazyDataModel extends LazyDataModel<SpatialUnit> {
-
-        Integer first ;
-        Integer pageSize ;
-
-
-        @Override
-        public int count(Map<String, FilterMeta> map) {
-            return 0;
-        }
-
-        @Override
-        public List<SpatialUnit> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
-
-            this.first = first; // Save to use in getters
-            this.pageSize = pageSize;
-
-            int pageNumber = first / pageSize;
-            Pageable pageable = PageRequest.of(pageNumber, pageSize, buildSort(sortBy));
-
-            String nameFilter = null;
-            Long[] categoryIds = null; // sql server needs a Long[] to cast argument value (the list) into bigint[] for null check
-            String globalFilter = null;
-
-            if (filterBy != null) {
-                FilterMeta nameMeta = filterBy.get("name");
-                if (nameMeta != null && nameMeta.getFilterValue() != null) {
-                    nameFilter = nameMeta.getFilterValue().toString();
-                }
-
-                FilterMeta categoryMeta = filterBy.get("category");
-                if (categoryMeta != null && categoryMeta.getFilterValue() != null) {
-                    List<ConceptLabel> selectedCategoryLabels = (List<ConceptLabel>) categoryMeta.getFilterValue();
-                    selectedCategories = selectedCategoryLabels.stream().map(ConceptLabel::getConcept).toList();
-                    categoryIds = selectedCategories.stream()
-                            .filter(Objects::nonNull) // exclude null Concepts
-                            .map(Concept::getId)
-                            .filter(Objects::nonNull) // exclude null IDs
-                            .toArray(Long[]::new);
-                }
-
-                FilterMeta globalMeta = filterBy.get("globalFilter");
-                if (globalMeta != null && globalMeta.getFilterValue() != null) {
-                    globalFilter = globalMeta.getFilterValue().toString();
-                }
-            }
-
-            Page<SpatialUnit> result = spatialUnitService.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                    sessionSettingsBean.getSelectedInstitution().getId(),
-                    nameFilter, categoryIds, globalFilter,
-                    pageable);
-
-            setRowCount((int) result.getTotalElements());
-            return result.getContent();
-        }
-
-        private Sort buildSort(Map<String, SortMeta> sortBy) {
-            if (sortBy == null || sortBy.isEmpty()) {
-                return Sort.unsorted();
-            }
-
-            List<Sort.Order> orders = new ArrayList<>();
-            for (Map.Entry<String, SortMeta> entry : sortBy.entrySet()) {
-                String field = entry.getKey();
-                if(Objects.equals(field, "category.label")) {
-                    field = "c_label";
-                }
-                SortMeta meta = entry.getValue();
-                Sort.Order order = new Sort.Order(meta.getOrder() == SortOrder.ASCENDING ? Sort.Direction.ASC : Sort.Direction.DESC, field);
-                orders.add(order);
-            }
-
-            return Sort.by(orders);
-        }
-
-        public int getFirstIndexOnPage() {
-            return first + 1; // Adding 1 because indexes are zero-based
-        }
-
-        public int getLastIndexOnPage() {
-            int last = first + pageSize;
-            int total = this.getRowCount();
-            return Math.min(last, total); // Ensure it doesn’t exceed total records
-        }
-    }
 
     public void init()  {
         try {
@@ -154,7 +62,11 @@ public class SpatialUnitListPanel extends AbstractPanel {
             this.getBreadcrumb().getModel().getElements().add(item);
             // Get all the spatial unit within the institution
             selectedCategories = new ArrayList<>();
-            lazyDataModel = new SpatialUnitLazyDataModel();
+            lazyDataModel = new SpatialUnitLazyDataModel(
+                    spatialUnitService,
+                    sessionSettingsBean,
+                    langBean
+            );
 
         } catch (RuntimeException e) {
             spatialUnitListErrorMessage = "Failed to load spatial units: " + e.getMessage();

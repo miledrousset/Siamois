@@ -91,23 +91,23 @@ public class SpatialUnitService implements ArkEntityService {
 
     public Page<SpatialUnit> findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
             Long institutionId,
-            String name, Long[] categoryIds, String global, Pageable pageable) {
+            String name, Long[] categoryIds, String global, String langCode, Pageable pageable) {
         return spatialUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                institutionId, name, categoryIds, global, pageable);
+                institutionId, name, categoryIds, global, langCode, pageable);
     }
 
     public Page<SpatialUnit> findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
             SpatialUnit parent,
-            String name, Long[] categoryIds, String global, Pageable pageable) {
+            String name, Long[] categoryIds, String global, String langCode, Pageable pageable) {
         return spatialUnitRepository.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                parent.getId(), name, categoryIds, global, pageable);
+                parent.getId(), name, categoryIds, global, langCode, pageable);
     }
 
     public Page<SpatialUnit> findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
             SpatialUnit child,
-            String name, Long[] categoryIds, String global, Pageable pageable) {
+            String name, Long[] categoryIds, String global, String langCode, Pageable pageable) {
         return spatialUnitRepository.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                child.getId(), name, categoryIds, global, pageable);
+                child.getId(), name, categoryIds, global, langCode, pageable);
     }
 
     public List<SpatialUnit> findAllOfInstitution(Institution institution) {

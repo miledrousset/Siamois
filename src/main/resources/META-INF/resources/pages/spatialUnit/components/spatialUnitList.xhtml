@@ -19,18 +19,18 @@
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
 
-
+                <!-- datatable property partialUpdate=false because otherwise the paginator template is reset after sort or filter actions-->
                 <p:dataTable paginator="true"
                              id="spatialUnitDataTable"
                              paginatorPosition="bottom" var="item"
                              widgetVar="#{cc.clientId}_spatialUnitListTable"
                              lazy="true"
                              sortMode="multiple"
-
+                             partialUpdate="false"
                              emptyMessage="Aucune unité spatiale trouvée avec ces critères"
-                             rows="1"
+                             rows="10"
                              paginatorTemplate="Rows per page: {RowsPerPageDropdown} {RowReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                             rowsPerPageTemplate="1,5,10,15,20,25"
+                             rowsPerPageTemplate="5,10,15,20,25"
                              value="#{cc.attrs.lazyDataModel}" class="spatial-unit-datatable">
 
                     <f:facet name="{RowReport}">

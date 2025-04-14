@@ -7,6 +7,7 @@ import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.document.DocumentService;
@@ -16,11 +17,15 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.domain.utils.DocumentUtils;
+import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.utils.DataLoaderUtils;
 import fr.siamois.ui.bean.panel.utils.SpatialUnitHelperService;
+import fr.siamois.ui.model.SpatialUnitChildrenLazyDataModel;
+import fr.siamois.ui.model.SpatialUnitLazyDataModel;
+import fr.siamois.ui.model.SpatialUnitParentsLazyDataModel;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -79,7 +84,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private final transient CustomFieldService customFieldService;
     private final transient ConceptService conceptService;
     private final transient LabelService labelService;
-
+    private final transient LangBean langBean;
 
     // Locals
     private transient SpatialUnit spatialUnit;
@@ -117,7 +122,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
     @Autowired
     private SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService, DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
-                             ConceptService conceptService, LabelService labelService) {
+                             ConceptService conceptService, LabelService labelService, LangBean langBean) {
         super("Unité spatiale", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-single-panel");
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
@@ -129,181 +134,18 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         this.customFieldService = customFieldService;
         this.labelService = labelService;
         this.conceptService = conceptService;
+        this.langBean = langBean;
     }
 
 
-    // todo : refactor to avoid duplicated code
-    public class SpatialUnitLazyDataModelChildren extends LazyDataModel<SpatialUnit> {
+    public List<ConceptLabel> categoriesAvailable() {
+        List<Concept> cList = conceptService.findAllConceptsByInstitution(sessionSettings.getSelectedInstitution());
 
-        Integer first ;
-        Integer pageSize ;
-
-
-        @Override
-        public int count(Map<String, FilterMeta> map) {
-            return 0;
-        }
-
-        @Override
-        public List<SpatialUnit> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
-
-            this.first = first; // Save to use in getters
-            this.pageSize = pageSize;
-
-            int pageNumber = first / pageSize;
-            Pageable pageable = PageRequest.of(pageNumber, pageSize, buildSort(sortBy));
-
-            String nameFilter = null;
-            Long[] categoryIds = null; // sql server needs a Long[] to cast argument value (the list) into bigint[] for null check
-            String globalFilter = null;
-
-            if (filterBy != null) {
-                FilterMeta nameMeta = filterBy.get("name");
-                if (nameMeta != null && nameMeta.getFilterValue() != null) {
-                    nameFilter = nameMeta.getFilterValue().toString();
-                }
-
-                FilterMeta categoryMeta = filterBy.get("category");
-                if (categoryMeta != null && categoryMeta.getFilterValue() != null) {
-                    selectedCategoriesChildren = (List<Concept>) categoryMeta.getFilterValue();
-                    categoryIds = selectedCategoriesChildren.stream()
-                            .filter(Objects::nonNull) // exclude null Concepts
-                            .map(Concept::getId)
-                            .filter(Objects::nonNull) // exclude null IDs
-                            .toArray(Long[]::new);
-                }
-
-                FilterMeta globalMeta = filterBy.get("globalFilter");
-                if (globalMeta != null && globalMeta.getFilterValue() != null) {
-                    globalFilter = globalMeta.getFilterValue().toString();
-                }
-            }
-
-            Page<SpatialUnit> result = spatialUnitService.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                    spatialUnit,
-                    nameFilter, categoryIds, globalFilter,
-                    pageable);
-
-            setRowCount((int) result.getTotalElements());
-            return result.getContent();
-        }
-
-        private Sort buildSort(Map<String, SortMeta> sortBy) {
-            if (sortBy == null || sortBy.isEmpty()) {
-                return Sort.unsorted();
-            }
-
-            List<Sort.Order> orders = new ArrayList<>();
-            for (Map.Entry<String, SortMeta> entry : sortBy.entrySet()) {
-                String field = entry.getKey();
-                if(Objects.equals(field, "category.label")) {
-                    field = "c_label";
-                }
-                SortMeta meta = entry.getValue();
-                Sort.Order order = new Sort.Order(meta.getOrder() == SortOrder.ASCENDING ? Sort.Direction.ASC : Sort.Direction.DESC, field);
-                orders.add(order);
-            }
-
-            return Sort.by(orders);
-        }
-
-        public int getFirstIndexOnPage() {
-            return first + 1; // Adding 1 because indexes are zero-based
-        }
-
-        public int getLastIndexOnPage() {
-            int last = first + pageSize;
-            int total = this.getRowCount();
-            return Math.min(last, total); // Ensure it doesn’t exceed total records
-        }
-    }
-    public class SpatialUnitLazyDataModelParents extends LazyDataModel<SpatialUnit> {
-
-        Integer first ;
-        Integer pageSize ;
-
-
-        @Override
-        public int count(Map<String, FilterMeta> map) {
-            return 0;
-        }
-
-        @Override
-        public List<SpatialUnit> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
-
-            this.first = first; // Save to use in getters
-            this.pageSize = pageSize;
-
-            int pageNumber = first / pageSize;
-            Pageable pageable = PageRequest.of(pageNumber, pageSize, buildSort(sortBy));
-
-            String nameFilter = null;
-            Long[] categoryIds = null; // sql server needs a Long[] to cast argument value (the list) into bigint[] for null check
-            String globalFilter = null;
-
-            if (filterBy != null) {
-                FilterMeta nameMeta = filterBy.get("name");
-                if (nameMeta != null && nameMeta.getFilterValue() != null) {
-                    nameFilter = nameMeta.getFilterValue().toString();
-                }
-
-                FilterMeta categoryMeta = filterBy.get("category");
-                if (categoryMeta != null && categoryMeta.getFilterValue() != null) {
-                    selectedCategoriesParents= (List<Concept>) categoryMeta.getFilterValue();
-                    categoryIds = selectedCategoriesParents.stream()
-                            .filter(Objects::nonNull) // exclude null Concepts
-                            .map(Concept::getId)
-                            .filter(Objects::nonNull) // exclude null IDs
-                            .toArray(Long[]::new);
-                }
-
-                FilterMeta globalMeta = filterBy.get("globalFilter");
-                if (globalMeta != null && globalMeta.getFilterValue() != null) {
-                    globalFilter = globalMeta.getFilterValue().toString();
-                }
-            }
-
-            Page<SpatialUnit> result = spatialUnitService.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                    spatialUnit,
-                    nameFilter, categoryIds, globalFilter,
-                    pageable);
-
-            setRowCount((int) result.getTotalElements());
-            return result.getContent();
-        }
-
-        private Sort buildSort(Map<String, SortMeta> sortBy) {
-            if (sortBy == null || sortBy.isEmpty()) {
-                return Sort.unsorted();
-            }
-
-            List<Sort.Order> orders = new ArrayList<>();
-            for (Map.Entry<String, SortMeta> entry : sortBy.entrySet()) {
-                String field = entry.getKey();
-                if(Objects.equals(field, "category.label")) {
-                    field = "c_label";
-                }
-                SortMeta meta = entry.getValue();
-                Sort.Order order = new Sort.Order(meta.getOrder() == SortOrder.ASCENDING ? Sort.Direction.ASC : Sort.Direction.DESC, field);
-                orders.add(order);
-            }
-
-            return Sort.by(orders);
-        }
-
-        public int getFirstIndexOnPage() {
-            return first + 1; // Adding 1 because indexes are zero-based
-        }
-
-        public int getLastIndexOnPage() {
-            int last = first + pageSize;
-            int total = this.getRowCount();
-            return Math.min(last, total); // Ensure it doesn’t exceed total records
-        }
-    }
-
-    public List<Concept> categoriesAvailable() {
-        return conceptService.findAllConceptsByInstitution(sessionSettings.getSelectedInstitution());
+        return cList.stream()
+                .map(concept -> labelService.findLabelOf(
+                        concept, langBean.getLanguageCode()
+                ))
+                .toList();
 
     }
 
@@ -366,12 +208,20 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
             // Get all the CHILDREN of the spatial unit
             selectedCategoriesChildren = new ArrayList<>();
-            lazyDataModelChildren = new SpatialUnitPanel.SpatialUnitLazyDataModelChildren();
+            lazyDataModelChildren= new SpatialUnitChildrenLazyDataModel(
+                    spatialUnitService,
+                    langBean,
+                    spatialUnit
+            );
             totalChildrenCount = lazyDataModelChildren.getRowCount();
 
             // Get all the Parents of the spatial unit
             selectedCategoriesParents = new ArrayList<>();
-            lazyDataModelParents = new SpatialUnitPanel.SpatialUnitLazyDataModelParents();
+            lazyDataModelParents = new SpatialUnitParentsLazyDataModel(
+                    spatialUnitService,
+                    langBean,
+                    spatialUnit
+            );
             totalParentsCount = lazyDataModelParents.getRowCount();
 
             this.setTitle(spatialUnit.getName()); // Set panel title
