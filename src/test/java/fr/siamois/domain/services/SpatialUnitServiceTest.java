@@ -20,6 +20,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,6 +51,9 @@ class SpatialUnitServiceTest {
 
     SpatialUnit spatialUnit2;
 
+    Page<SpatialUnit> p ;
+    Pageable pageable;
+
 
     @BeforeEach
     void setUp() {
@@ -54,30 +61,70 @@ class SpatialUnitServiceTest {
         spatialUnit2 = new SpatialUnit();
         spatialUnit1.setId(1L);
         spatialUnit2.setId(2L);
-        lenient().when(spatialUnitRepository.findAllWithoutParents()).thenReturn(List.of(spatialUnit1, spatialUnit2));
-        lenient().when(spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit1.getId())).thenReturn(List.of(spatialUnit2));
+        p = new PageImpl<>(List.of(spatialUnit1, spatialUnit2));
+        pageable = PageRequest.of(0, 10);
+
+
+        lenient().when(spatialUnitRepository.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                any(Long.class),
+                any(String.class),
+                any(Long[].class),
+                any(String.class),
+                any(String.class),
+                any(Pageable.class)
+        )).thenReturn(p);
+        lenient().when(spatialUnitRepository.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                any(Long.class),
+                any(String.class),
+                any(Long[].class),
+                any(String.class),
+                any(String.class),
+                any(Pageable.class)
+        )).thenReturn(p);
+
     }
 
     @Test
-    void testFindAllWithoutParents_Success() {
+    void testFindAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining_Success() {
+
+        when(spatialUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                any(Long.class),
+                any(String.class),
+                any(Long[].class),
+                any(String.class),
+                any(String.class),
+                any(Pageable.class)
+        )).thenReturn(p);
 
         // Act
-        List<SpatialUnit> actualResult = spatialUnitService.findAllWithoutParents();
+        Page<SpatialUnit> actualResult = spatialUnitService.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                1L, "null", new Long[2], "null", "fr", pageable
+        );
 
         // Assert
-        assertEquals(List.of(spatialUnit1, spatialUnit2), actualResult);
+        assertEquals(spatialUnit1, actualResult.getContent().get(0));
+        assertEquals(spatialUnit2, actualResult.getContent().get(1));
     }
 
     @Test
-    void testFindAllWithoutParents_Exception() {
+    void testFindAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining_Exception() {
 
         // Arrange
-        when(spatialUnitRepository.findAllWithoutParents()).thenThrow(new RuntimeException("Database error"));
+        when(spatialUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                any(Long.class),
+                any(String.class),
+                any(Long[].class),
+                any(String.class),
+                any(String.class),
+                any(Pageable.class)
+        )).thenThrow(new RuntimeException("Database error"));
 
         // Act & Assert
         Exception exception = assertThrows(
                 Exception.class,
-                () -> spatialUnitService.findAllWithoutParents()
+                () -> spatialUnitService.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                        1L, "null", new Long[2], "null", "fr", pageable
+                )
         );
 
         assertEquals("Database error", exception.getMessage());
@@ -87,11 +134,24 @@ class SpatialUnitServiceTest {
     @Test
     void findAllChildOfSpatialUnit_Success() {
 
+        when(spatialUnitRepository.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                any(Long.class),
+                any(String.class),
+                any(Long[].class),
+                any(String.class),
+                any(String.class),
+                any(Pageable.class)
+        )).thenReturn(p);
+
         // Act
-        List<SpatialUnit> actualResult = spatialUnitService.findAllChildOfSpatialUnit(spatialUnit1);
+        Page<SpatialUnit> actualResult = spatialUnitService.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                spatialUnit1, "null", new Long[2], "null", "fr", pageable);
+
 
         // Assert
-        assertEquals(List.of(spatialUnit2), actualResult);
+        // Assert
+        assertEquals(spatialUnit1, actualResult.getContent().get(0));
+        assertEquals(spatialUnit2, actualResult.getContent().get(1));
 
     }
 
@@ -99,12 +159,20 @@ class SpatialUnitServiceTest {
     void findAllChildOfSpatialUnit_Exception() {
 
         // Arrange
-        when(spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit1.getId())).thenThrow(new RuntimeException("Database error"));
+        when(spatialUnitRepository.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                any(Long.class),
+                any(String.class),
+                any(Long[].class),
+                any(String.class),
+                any(String.class),
+                any(Pageable.class)
+        )).thenThrow(new RuntimeException("Database error"));
 
         // Act & Assert
         Exception exception = assertThrows(
                 Exception.class,
-                () -> spatialUnitService.findAllChildOfSpatialUnit(spatialUnit1)
+                () -> spatialUnitService.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                        spatialUnit1, "null", new Long[2], "null", "fr", pageable)
         );
 
         assertEquals("Database error", exception.getMessage());
@@ -158,25 +226,44 @@ class SpatialUnitServiceTest {
 
     @Test
     void findAllParentsOfSpatialUnit_Success() {
+
         // Arrange
-        when(spatialUnitRepository.findAllParentsOfSpatialUnit(spatialUnit1.getId())).thenReturn(List.of(spatialUnit2));
+        when(spatialUnitRepository.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                any(Long.class),
+                any(String.class),
+                any(Long[].class),
+                any(String.class),
+                any(String.class),
+                any(Pageable.class)
+        )).thenReturn(p);
 
         // Act
-        List<SpatialUnit> actualResult = spatialUnitService.findAllParentsOfSpatialUnit(spatialUnit1);
+        Page<SpatialUnit> actualResult = spatialUnitService.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                spatialUnit1, "null", new Long[2], "null", "fr", pageable);
 
         // Assert
-        assertEquals(List.of(spatialUnit2), actualResult);
+        assertEquals(spatialUnit1, actualResult.getContent().get(0));
+        assertEquals(spatialUnit2, actualResult.getContent().get(1));
+
     }
 
     @Test
     void findAllParentsOfSpatialUnit_Exception() {
         // Arrange
-        when(spatialUnitRepository.findAllParentsOfSpatialUnit(spatialUnit1.getId())).thenThrow(new RuntimeException("Database error"));
+        when(spatialUnitRepository.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                any(Long.class),
+                any(String.class),
+                any(Long[].class),
+                any(String.class),
+                any(String.class),
+                any(Pageable.class)
+        )).thenThrow(new RuntimeException("Database error"));
 
         // Act & Assert
         Exception exception = assertThrows(
                 Exception.class,
-                () -> spatialUnitService.findAllParentsOfSpatialUnit(spatialUnit1)
+                () -> spatialUnitService.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                        spatialUnit1, "null", new Long[2], "null", "fr", pageable)
         );
 
         assertEquals("Database error", exception.getMessage());
@@ -196,35 +283,6 @@ class SpatialUnitServiceTest {
         verify(spatialUnitRepository).save(any(SpatialUnit.class));
     }
 
-    @Test
-    void findAllWithoutParentsOfInstitution_Success() {
-        // Arrange
-        Institution institution = new Institution();
-        institution.setId(1L);
-        when(spatialUnitRepository.findAllWithoutParentsOfInstitution(institution.getId())).thenReturn(List.of(spatialUnit1, spatialUnit2));
-
-        // Act
-        List<SpatialUnit> actualResult = spatialUnitService.findAllWithoutParentsOfInstitution(institution);
-
-        // Assert
-        assertEquals(List.of(spatialUnit1, spatialUnit2), actualResult);
-    }
-
-    @Test
-    void findAllWithoutParentsOfInstitution_Exception() {
-        // Arrange
-        Institution institution = new Institution();
-        institution.setId(1L);
-        when(spatialUnitRepository.findAllWithoutParentsOfInstitution(institution.getId())).thenThrow(new RuntimeException("Database error"));
-
-        // Act & Assert
-        Exception exception = assertThrows(
-                Exception.class,
-                () -> spatialUnitService.findAllWithoutParentsOfInstitution(institution)
-        );
-
-        assertEquals("Database error", exception.getMessage());
-    }
 
     @Test
     void findAllOfInstitution_Success() {
@@ -351,7 +409,7 @@ class SpatialUnitServiceTest {
     @Test
     void countByInstitution_success() {
         when(spatialUnitRepository.countByCreatedByInstitution(any(Institution.class))).thenReturn(3L);
-        assertEquals(3,spatialUnitService.countByInstitution(new Institution()));
+        assertEquals(3, spatialUnitService.countByInstitution(new Institution()));
     }
 
     @Test

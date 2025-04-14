@@ -49,19 +49,7 @@ public class SpatialUnitService implements ArkEntityService {
         this.institutionService = institutionService;
     }
 
-    /**
-     * Find all the children of a spatial unit
-     *
-     * @return The List of SpatialUnit
-     * @throws RuntimeException If the repository method throws an Exception
-     */
-    public List<SpatialUnit> findAllChildOfSpatialUnit(SpatialUnit spatialUnit) {
-        return spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit.getId());
-    }
 
-    public List<SpatialUnit> findAllParentsOfSpatialUnit(SpatialUnit spatialUnit) {
-        return spatialUnitRepository.findAllParentsOfSpatialUnit(spatialUnit.getId());
-    }
 
     /**
      * Find a spatial unit by its ID

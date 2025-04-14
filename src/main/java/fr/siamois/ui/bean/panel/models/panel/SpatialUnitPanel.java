@@ -236,19 +236,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
             return;
         }
 
-        DataLoaderUtils.loadData(
-                () -> spatialUnitService.findAllChildOfSpatialUnit(spatialUnit),
-                list -> this.spatialUnitList = list,
-                msg -> this.spatialUnitListErrorMessage = msg,
-                "Unable to load spatial units: "
-        );
 
-        DataLoaderUtils.loadData(
-                () -> spatialUnitService.findAllParentsOfSpatialUnit(spatialUnit),
-                list -> this.spatialUnitParentsList = list,
-                msg -> this.spatialUnitParentsListErrorMessage = msg,
-                "Unable to load the parents: "
-        );
 
         DataLoaderUtils.loadData(
                 () -> recordingUnitService.findAllBySpatialUnit(spatialUnit),
