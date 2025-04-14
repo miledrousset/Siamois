@@ -57,19 +57,6 @@ public class InstitutionDialogBean implements Serializable {
         return institutionService.createInstitution(institution);
     }
 
-    public Institution updateInstitution(Institution institution) {
-        if (institutionName != null && !institution.getName().isBlank()  && !institutionName.equals(institution.getName())) {
-            institution.setName(institutionName);
-        }
-        if (identifier != null && !identifier.isBlank() && !identifier.equals(institution.getIdentifier())) {
-            institution.setIdentifier(identifier);
-        }
-        if (description != null && !description.isBlank() && !description.equals(institution.getDescription())) {
-            institution.setDescription(description);
-        }
-        return institutionService.update(institution);
-    }
-
     public void save() {
         assert actionFromBean != null;
         actionFromBean.apply();
