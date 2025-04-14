@@ -23,7 +23,7 @@
                 <p:dataTable paginator="true"
                              id="spatialUnitDataTable"
                              paginatorPosition="bottom" var="item"
-                             widgetVar="spatialUnitListTable"
+                             widgetVar="#{cc.clientId}_spatialUnitListTable"
                              lazy="true"
                              sortMode="multiple"
 
@@ -45,7 +45,7 @@
 
                                 <span class="filter-container ui-input-icon-left">
                                 <i class="bi bi-search"/>
-                                            <p:inputText id="globalFilter" onkeyup="PF('spatialUnitListTable').filter()"
+                                            <p:inputText id="globalFilter" onkeyup="PF('#{cc.clientId}_spatialUnitListTable').filter()"
                                                          placeholder="Rechercher">
 
                                             </p:inputText>
@@ -75,7 +75,7 @@
 
 
                     <p:column headerText="Name" sortBy="#{item.name}" filterBy="#{item.name}">
-                        <p:commandLink style="padding-right: 1em;"
+                        <p:commandLink style="&padding-right: 1em;"
                                        action="#{flowBean.goToSpatialUnitByIdCurrentPanel(item.id, cc.attrs.panelModel)}"
                                        update="flow"
                         >
@@ -94,7 +94,7 @@
                                     value="#{cc.attrs.selectedCategories}"
                                     filter="true"
                                     filterMatchMode="contains"
-                                    onchange="PF('spatialUnitListTable').filter()"
+                                    onchange="PF('#{cc.clientId}_spatialUnitListTable').filter()"
                                     converter="#{conceptConverter}">
                                 <f:selectItems value="#{cc.attrs.panelModel.categoriesAvailable()}"
                                                var="cat"
