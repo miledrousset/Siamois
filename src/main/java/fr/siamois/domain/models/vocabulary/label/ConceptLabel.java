@@ -18,4 +18,11 @@ public class ConceptLabel extends Label {
     @JoinColumn(name = "fk_concept_id")
     private Concept concept;
 
+    public ConceptLabel() {}
+
+    public ConceptLabel(String emptyLabelValue) {
+        concept = new Concept();
+        value = emptyLabelValue;
+    }
+
 }

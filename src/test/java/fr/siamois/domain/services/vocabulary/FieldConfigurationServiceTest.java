@@ -9,6 +9,7 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
+import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.infrastructure.api.ConceptApi;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
@@ -38,6 +39,7 @@ class FieldConfigurationServiceTest {
     @Mock private FieldRepository fieldRepository;
     @Mock private ConceptRepository conceptRepository;
     @Mock private ConceptService conceptService;
+    @Mock private LabelService labelService;
 
     @InjectMocks
     private FieldConfigurationService service;
@@ -346,6 +348,102 @@ class FieldConfigurationServiceTest {
         boolean result = service.hasUserConfig(userInfo);
 
         assertThat(result).isFalse();
+    }
+
+    @Test
+    void fetchConceptChildrenAutocomplete_shouldReturnAllChildren_whenInputIsEmpty() {
+        // Given
+        Concept parentConcept = new Concept();
+        parentConcept.setId(1L);
+
+        Concept child1 = new Concept();
+        Concept child2 = new Concept();
+        List<Concept> children = List.of(child1, child2);
+
+        when(conceptService.findDirectSubConceptOf(parentConcept)).thenReturn(children);
+
+        // When
+        List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "");
+
+        // Then
+        assertThat(result).hasSize(2).containsExactlyInAnyOrder(child1, child2);
+    }
+
+    @Test
+    void fetchConceptChildrenAutocomplete_shouldReturnExactMatches_whenInputMatchesLabel() {
+        // Given
+        Concept parentConcept = new Concept();
+        parentConcept.setId(1L);
+
+        Concept child1 = new Concept();
+        child1.setId(1L);
+        child1.setExternalId("12121212");
+        Concept child2 = new Concept();
+        child2.setId(2L);
+        child2.setExternalId("121233333");
+
+        List<Concept> children = List.of(child1, child2);
+
+        when(conceptService.findDirectSubConceptOf(parentConcept)).thenReturn(children);
+        when(labelService.findLabelOf(child1, "fr")).thenReturn(new ConceptLabel("Label1"));
+        when(labelService.findLabelOf(child2, "fr")).thenReturn(new ConceptLabel("Label2"));
+
+        // When
+        List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "Label1");
+
+        // Then
+        assertThat(result).hasSize(1).containsExactly(child1);
+    }
+
+    @Test
+    void fetchConceptChildrenAutocomplete_shouldReturnSimilarMatches_whenNoExactMatch() {
+        // Given
+        Concept parentConcept = new Concept();
+        parentConcept.setId(1L);
+
+        Concept child1 = new Concept();
+        child1.setId(1L);
+        child1.setExternalId("12121212");
+        Concept child2 = new Concept();
+        child2.setId(2L);
+        child2.setExternalId("121233333");
+        List<Concept> children = List.of(child1, child2);
+
+        when(conceptService.findDirectSubConceptOf(parentConcept)).thenReturn(children);
+        when(labelService.findLabelOf(child1, "fr")).thenReturn(new ConceptLabel("Label1"));
+        when(labelService.findLabelOf(child2, "fr")).thenReturn(new ConceptLabel("Label2"));
+
+        // When
+        List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "Lzbel");
+
+        // Then
+        assertThat(result).hasSize(2).containsExactly(child1, child2);
+    }
+
+    @Test
+    void fetchConceptChildrenAutocomplete_shouldReturnEmptyList_whenNoMatchOrSimilarity() {
+        // Given
+        Concept parentConcept = new Concept();
+        parentConcept.setId(1L);
+
+        Concept child1 = new Concept();
+        child1.setId(1L);
+        child1.setExternalId("12121212");
+        Concept child2 = new Concept();
+        child2.setId(2L);
+        child2.setExternalId("121233333");
+        List<Concept> children = List.of(child1, child2);
+
+        when(conceptService.findDirectSubConceptOf(parentConcept)).thenReturn(children);
+        when(labelService.findLabelOf(child1, "fr")).thenReturn(new ConceptLabel("Label1"));
+        when(labelService.findLabelOf(child2, "fr")).thenReturn(new ConceptLabel("Label2"));
+
+
+        // When
+        List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "NoMatch");
+
+        // Then
+        assertThat(result).isEmpty();
     }
 
 }

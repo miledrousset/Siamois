@@ -218,7 +218,7 @@ public class FieldConfigurationService {
      * @param s2 Second String
      * @return A number between 0.0 and 1.0 representing the similarity of the two strings. The number is equal to 1 if the strings are the same.
      */
-    private double stringSimilarity(String s1, String s2) {
+    double stringSimilarity(String s1, String s2) {
         String longer = s1;
         String shorter = s2;
         if (s1.length() < shorter.length()) {
