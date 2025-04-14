@@ -23,19 +23,12 @@ public class Vocabulary implements Serializable {
     private VocabularyType type;
 
     @NotNull
-    @Column(name = "vocabulary_name", nullable = false, length = Integer.MAX_VALUE)
-    private String vocabularyName;
-
-    @NotNull
     @Column(name = "external_id", nullable = false)
     private String externalVocabularyId;
 
     @NotNull
     @Column(name = "base_uri", nullable = false)
     private String baseUri;
-
-    @Column(name = "last_lang")
-    private String lastLang;
 
     @JsonIgnore
     public String getUri() {

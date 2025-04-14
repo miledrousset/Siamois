@@ -1,8 +1,5 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.domain.models.Institution;
-import fr.siamois.domain.models.UserInfo;
-import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
@@ -14,251 +11,259 @@ import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptReposit
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ConceptServiceTest {
 
     @Mock
-    private ConceptRepository repository;
+    private ConceptRepository conceptRepository;
 
     @Mock
     private ConceptApi conceptApi;
 
-    @InjectMocks
+    @Mock
+    private LabelService labelService;
+
     private ConceptService conceptService;
 
     private Vocabulary vocabulary;
+    private Concept concept;
 
     @BeforeEach
-    void beforeEach() {
-        VocabularyType type = new VocabularyType();
-        type.setId(-1L);
-        type.setLabel("Thesaurus");
-
+    void setUp() {
+        conceptService = new ConceptService(conceptRepository, conceptApi, labelService);
         vocabulary = new Vocabulary();
-        vocabulary.setId(-1L);
-        vocabulary.setBaseUri("http://localhost:8080");
-        vocabulary.setExternalVocabularyId("th233");
-        vocabulary.setVocabularyName("Test thesaurus");
-        vocabulary.setType(type);
+        VocabularyType vocabularyType = new VocabularyType();
 
-    }
+        vocabularyType.setId(1L);
+        vocabularyType.setLabel("Thesaurus");
 
-    @Test
-    void saveOrGetConcept_shoudSaveConcept_whenNotExist() {
-        when(repository.findConceptByExternalIdIgnoreCase("th233", "1003")).thenReturn(Optional.empty());
-        when(repository.save(any(Concept.class))).then(invocation -> invocation.getArgument(0, Concept.class));
+        vocabulary.setId(1L);
+        vocabulary.setBaseUri("http://example.com");
+        vocabulary.setExternalVocabularyId("vocab1");
+        vocabulary.setType(vocabularyType);
 
-        Concept concept = new Concept();
-        concept.setVocabulary(vocabulary);
-        concept.setLangCode("fr");
-        concept.setExternalId("1003");
-        concept.setLabel("Test Concept");
-
-        Concept result = conceptService.saveOrGetConcept(concept);
-
-        assertThat(result).isEqualTo(concept);
-        verify(repository).save(any(Concept.class));
-    }
-
-    @Test
-    void saveOrGetConcept_shoudGetConcept_whenExist() {
-        Concept refConcept = new Concept();
-        refConcept.setVocabulary(vocabulary);
-        refConcept.setLangCode("fr");
-        refConcept.setExternalId("1003");
-        refConcept.setLabel("Test Concept");
-        refConcept.setId(-120L);
-
-        when(repository.findConceptByExternalIdIgnoreCase("th233", "1003")).thenReturn(Optional.of(refConcept));
-
-        Concept concept = new Concept();
-        concept.setVocabulary(vocabulary);
-        concept.setLangCode("fr");
-        concept.setExternalId("1003");
-        concept.setLabel("Test Concept");
-
-        Concept result = conceptService.saveOrGetConcept(concept);
-
-        assertThat(result).isEqualTo(refConcept);
-        verify(repository, never()).save(any(Concept.class));
-    }
-
-    private FullInfoDTO createDto() {
-        PurlInfoDTO id = new PurlInfoDTO();
-        id.setType("string");
-        id.setValue("1023");
-
-        PurlInfoDTO prefLabel = new PurlInfoDTO();
-        prefLabel.setLang("fr");
-        prefLabel.setValue("Test label");
-        prefLabel.setType("string");
-
-        FullInfoDTO dto = new FullInfoDTO();
-        dto.setIdentifier(new PurlInfoDTO[]{id});
-        dto.setPrefLabel(new PurlInfoDTO[]{prefLabel});
-
-        return dto;
-    }
-
-    @Test
-    void saveOrGetConceptFromFullDTO_shouldSaveNewConcept_whenNotExist() {
-        FullInfoDTO dto = createDto();
-
-        when(repository.findConceptByExternalIdIgnoreCase(vocabulary.getExternalVocabularyId(), "1023"))
-                .thenReturn(Optional.empty());
-        when(repository.save(any(Concept.class))).then(invocation -> invocation.getArgument(0, Concept.class));
-
-        Concept refConcept = new Concept();
-        refConcept.setLabel("Test label");
-        refConcept.setLangCode("fr");
-        refConcept.setVocabulary(vocabulary);
-        refConcept.setExternalId("1023");
-
-        UserInfo info = new UserInfo(new Institution(), new Person(), "fr");
-
-        Concept result = conceptService.saveOrGetConceptFromFullDTO(info, vocabulary, dto);
-
-        assertThat(result).isEqualTo(refConcept);
-        verify(repository).save(any(Concept.class));
-    }
-
-    @Test
-    void saveOrGetConceptFromFullDTO_shouldReturnConcept_whenExist() {
-        FullInfoDTO dto = createDto();
-
-        Concept refConcept = new Concept();
-        refConcept.setLabel("Test label");
-        refConcept.setLangCode("fr");
-        refConcept.setVocabulary(vocabulary);
-        refConcept.setExternalId("1023");
-        refConcept.setId(-12L);
-
-        when(repository.findConceptByExternalIdIgnoreCase(vocabulary.getExternalVocabularyId(), "1023"))
-                .thenReturn(Optional.of(refConcept));
-
-        UserInfo info = new UserInfo(new Institution(), new Person(), "fr");
-
-        Concept result = conceptService.saveOrGetConceptFromFullDTO(info, vocabulary, dto);
-
-        assertThat(result).isEqualTo(refConcept);
-        verify(repository, never()).save(any(Concept.class));
-    }
-
-    @Test
-    void findSubConceptOf_shouldReturnDirectSubConcepts() {
-        // Arrange
-        Vocabulary currentVocab = new Vocabulary();
-        currentVocab.setId(1L);
-        currentVocab.setVocabularyName("Siamois");
-        currentVocab.setExternalVocabularyId("th223");
-        currentVocab.setBaseUri("https://thesaurus.mom.fr");
-
-        Concept concept = new Concept();
+        concept = new Concept();
         concept.setId(1L);
-        concept.setVocabulary(currentVocab);
-        concept.setExternalId("4282375");
-        concept.setLabel("Unité stratigraphique");
-        concept.setLangCode("fr");
+        concept.setExternalId("concept1");
+        concept.setVocabulary(vocabulary);
+    }
 
-        Person person = new Person();
-        person.setId(1L);
-        person.setUsername("someUsername");
-        person.setPassword("somePassword");
+    @Test
+    void saveOrGetConcept_shouldSaveConcept_whenNotExist() {
+        // Given
+        Concept fakeConcept = new Concept();
+        fakeConcept.setExternalId("concept1");
+        fakeConcept.setVocabulary(vocabulary);
 
-        Institution institution = new Institution();
-        institution.setId(1L);
-        institution.setName("SIADev");
-        institution.setManager(person);
+        when(conceptRepository.findConceptByExternalIdIgnoreCase("vocab1", "concept1")).thenReturn(Optional.empty());
+        when(conceptRepository.save(any(Concept.class))).thenReturn(concept);
 
-        UserInfo userInfo = new UserInfo(institution, person, "fr");
+        // When
+        Concept result = conceptService.saveOrGetConcept(fakeConcept);
 
-        FullInfoDTO subConcept1 = new FullInfoDTO();
-        subConcept1.setIdentifier(new PurlInfoDTO[]{new PurlInfoDTO("string", "4282377")});
-        subConcept1.setPrefLabel(new PurlInfoDTO[]{new PurlInfoDTO("string", "Sub Concept 1", "fr")});
-        subConcept1.setNarrower(new PurlInfoDTO[]{});
+        // Then
+        assertNotNull(result);
+        verify(conceptRepository, times(1)).save(concept);
+    }
 
-        FullInfoDTO subConcept2 = new FullInfoDTO();
-        subConcept2.setIdentifier(new PurlInfoDTO[]{new PurlInfoDTO("string", "4284785")});
-        subConcept2.setPrefLabel(new PurlInfoDTO[]{new PurlInfoDTO("string", "Sub Concept 2", "fr")});
-        subConcept2.setNarrower(new PurlInfoDTO[]{});
+    @Test
+    void saveOrGetConcept_shouldReturnConcept_whenExist() {
+        // Given
+        Concept fakeConcept = new Concept();
+        fakeConcept.setExternalId("concept1");
+        fakeConcept.setVocabulary(vocabulary);
 
-        FullInfoDTO parentConcept = new FullInfoDTO();
-        parentConcept.setIdentifier(new PurlInfoDTO[]{new PurlInfoDTO("string", "4282375")});
-        parentConcept.setPrefLabel(new PurlInfoDTO[]{new PurlInfoDTO("string", "Unité stratigraphique", "fr")});
-        parentConcept.setNarrower(new PurlInfoDTO[]{
-                new PurlInfoDTO("string", "4282377"),
-                new PurlInfoDTO("string", "4284785")
+        when(conceptRepository.findConceptByExternalIdIgnoreCase("vocab1", "concept1")).thenReturn(Optional.of(concept));
+
+        // When
+        Concept result = conceptService.saveOrGetConcept(fakeConcept);
+
+        // Then
+        assertNotNull(result);
+        verify(conceptRepository, never()).save(concept);
+        assertEquals(concept, result);
+    }
+
+    @Test
+    void saveOrGetConceptFromFullDTO_shouldUpdateLabels_whenConceptExists() {
+        // Given
+        FullInfoDTO conceptDTO = new FullInfoDTO();
+        PurlInfoDTO identifier = new PurlInfoDTO();
+        identifier.setValue("concept1");
+        conceptDTO.setIdentifier(new PurlInfoDTO[]{identifier});
+
+        PurlInfoDTO label = new PurlInfoDTO();
+        label.setLang("en");
+        label.setValue("Updated Label");
+        conceptDTO.setPrefLabel(new PurlInfoDTO[]{label});
+
+        when(conceptRepository.findConceptByExternalIdIgnoreCase("vocab1", "concept1")).thenReturn(Optional.of(concept));
+
+        // When
+        Concept result = conceptService.saveOrGetConceptFromFullDTO(vocabulary, conceptDTO);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(concept, result);
+        verify(labelService, times(1)).updateLabel(concept, "en", "Updated Label");
+        verify(conceptRepository, never()).save(any(Concept.class));
+    }
+
+    @Test
+    void saveOrGetConceptFromFullDTO_shouldCreateConcept_whenNotExist() {
+        // Given
+        FullInfoDTO conceptDTO = new FullInfoDTO();
+        PurlInfoDTO identifier = new PurlInfoDTO();
+        identifier.setValue("concept2");
+        conceptDTO.setIdentifier(new PurlInfoDTO[]{identifier});
+
+        PurlInfoDTO label = new PurlInfoDTO();
+        label.setLang("fr");
+        label.setValue("Nouveau Label");
+        conceptDTO.setPrefLabel(new PurlInfoDTO[]{label});
+
+        when(conceptRepository.findConceptByExternalIdIgnoreCase("vocab1", "concept2")).thenReturn(Optional.empty());
+        when(conceptRepository.save(any(Concept.class))).thenAnswer(invocation -> {
+            Concept savedConcept = invocation.getArgument(0);
+            savedConcept.setId(2L);
+            return savedConcept;
         });
 
-        ConceptBranchDTO branchDTO = new ConceptBranchDTO();
-        branchDTO.getData().put("4282375", parentConcept);
-        branchDTO.getData().put("4282377", subConcept1);
-        branchDTO.getData().put("4284785", subConcept2);
+        // When
+        Concept result = conceptService.saveOrGetConceptFromFullDTO(vocabulary, conceptDTO);
 
-        when(conceptApi.fetchDownExpansion(any(Vocabulary.class), anyString())).thenReturn(branchDTO);
-        when(repository.findConceptByExternalIdIgnoreCase(anyString(), anyString())).thenReturn(Optional.empty());
-        when(repository.save(any(Concept.class))).then(invocation -> invocation.getArgument(0));
-
-        // Act
-        List<Concept> result = conceptService.findDirectSubConceptOf(userInfo, concept);
-
-        // Assert
-        assertThat(result)
-                .hasSize(2)
-                .allMatch(Objects::nonNull)
-                .anyMatch(currentConcept -> currentConcept.getExternalId().equalsIgnoreCase("4282377"))
-                .anyMatch(currentConcept -> currentConcept.getExternalId().equalsIgnoreCase("4284785"));
+        // Then
+        assertNotNull(result);
+        assertEquals("concept2", result.getExternalId());
+        assertEquals(vocabulary, result.getVocabulary());
+        verify(labelService, times(1)).updateLabel(result, "fr", "Nouveau Label");
+        verify(conceptRepository, times(1)).save(any(Concept.class));
     }
 
     @Test
-    void findDirectSubConceptOf_shouldReturnEmptyList_whenBranchIsEmpty() {
-        // Arrange
-        Vocabulary currentVocab = new Vocabulary();
-        currentVocab.setId(1L);
-        currentVocab.setVocabularyName("Siamois");
-        currentVocab.setExternalVocabularyId("th223");
-        currentVocab.setBaseUri("https://thesaurus.mom.fr");
+    void updateAllLabelsFromDTO_shouldUpdateLabels_whenLabelsArePresent() {
+        // Given
+        FullInfoDTO conceptDTO = new FullInfoDTO();
+        PurlInfoDTO label1 = new PurlInfoDTO();
+        label1.setLang("en");
+        label1.setValue("Label in English");
 
-        Concept concept = new Concept();
-        concept.setId(1L);
-        concept.setVocabulary(currentVocab);
-        concept.setExternalId("4282375");
-        concept.setLabel("Unité stratigraphique");
-        concept.setLangCode("fr");
+        PurlInfoDTO label2 = new PurlInfoDTO();
+        label2.setLang("fr");
+        label2.setValue("Label en Français");
 
-        Person person = new Person();
-        person.setId(1L);
-        person.setUsername("someUsername");
-        person.setPassword("somePassword");
+        conceptDTO.setPrefLabel(new PurlInfoDTO[]{label1, label2});
 
-        Institution institution = new Institution();
-        institution.setId(1L);
-        institution.setName("SIADev");
-        institution.setManager(person);
+        // When
+        conceptService.updateAllLabelsFromDTO(concept, conceptDTO);
 
-        UserInfo userInfo = new UserInfo(institution, person, "fr");
+        // Then
+        verify(labelService, times(1)).updateLabel(concept, "en", "Label in English");
+        verify(labelService, times(1)).updateLabel(concept, "fr", "Label en Français");
+    }
 
-        ConceptBranchDTO branchDTO = new ConceptBranchDTO();
+    @Test
+    void updateAllLabelsFromDTO_shouldDoNothing_whenLabelsAreNull() {
+        // Given
+        FullInfoDTO conceptDTO = new FullInfoDTO();
+        conceptDTO.setPrefLabel(null);
 
-        when(conceptApi.fetchDownExpansion(any(Vocabulary.class), anyString())).thenReturn(branchDTO);
+        // When
+        conceptService.updateAllLabelsFromDTO(concept, conceptDTO);
 
-        // Act
-        List<Concept> result = conceptService.findDirectSubConceptOf(userInfo, concept);
+        // Then
+        verify(labelService, never()).updateLabel(any(Concept.class), anyString(), anyString());
+    }
 
-        // Assert
-        assertThat(result).isEmpty();
+    @Test
+    void findDirectSubConceptOf_shouldReturnSubConcepts_whenSubConceptsExist() {
+        // Given
+        ConceptBranchDTO branch = new ConceptBranchDTO();
+        FullInfoDTO parentConceptDTO = new FullInfoDTO();
+        PurlInfoDTO parentIdentifier = new PurlInfoDTO();
+        parentIdentifier.setValue("concept1");
+        parentConceptDTO.setIdentifier(new PurlInfoDTO[]{parentIdentifier});
+
+        FullInfoDTO childConceptDTO = new FullInfoDTO();
+        PurlInfoDTO childIdentifier = new PurlInfoDTO();
+        childIdentifier.setValue("concept2");
+        childConceptDTO.setIdentifier(new PurlInfoDTO[]{childIdentifier});
+
+        PurlInfoDTO narrower = new PurlInfoDTO();
+        narrower.setValue("concept2");
+        parentConceptDTO.setNarrower(new PurlInfoDTO[]{narrower});
+
+        branch.getData().put("concept1", parentConceptDTO);
+        branch.getData().put("concept2", childConceptDTO);
+
+        when(conceptApi.fetchDownExpansion(vocabulary, "concept1")).thenReturn(branch);
+        when(conceptRepository.findConceptByExternalIdIgnoreCase("vocab1", "concept2")).thenReturn(Optional.empty());
+        when(conceptRepository.save(any(Concept.class))).thenAnswer(invocation -> {
+            Concept savedConcept = invocation.getArgument(0);
+            savedConcept.setId(2L);
+            return savedConcept;
+        });
+
+        // When
+        List<Concept> result = conceptService.findDirectSubConceptOf(concept);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("concept2", result.get(0).getExternalId());
+        verify(conceptRepository, times(1)).save(any(Concept.class));
+    }
+
+    @Test
+    void findDirectSubConceptOf_shouldReturnEmptyList_whenNoSubConceptsExist() {
+        // Given
+        ConceptBranchDTO branch = new ConceptBranchDTO();
+
+        when(conceptApi.fetchDownExpansion(vocabulary, "concept1")).thenReturn(branch);
+
+        // When
+        List<Concept> result = conceptService.findDirectSubConceptOf(concept);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(conceptRepository, never()).save(any(Concept.class));
+    }
+
+    @Test
+    void findAllById_shouldReturnConcepts_whenIdsExist() {
+        // Given
+        Concept concept1 = new Concept();
+        concept1.setId(1L);
+        concept1.setExternalId("concept1");
+        concept1.setVocabulary(vocabulary);
+
+        Concept concept2 = new Concept();
+        concept2.setId(2L);
+        concept2.setExternalId("concept2");
+        concept2.setVocabulary(vocabulary);
+
+        List<Long> conceptIds = List.of(1L, 2L);
+        List<Concept> expectedConcepts = List.of(concept1, concept2);
+
+        when(conceptRepository.findAllById(conceptIds)).thenReturn(expectedConcepts);
+
+        // When
+        Object result = conceptService.findAllById(conceptIds);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(expectedConcepts, result);
+        verify(conceptRepository, times(1)).findAllById(conceptIds);
     }
 
 }

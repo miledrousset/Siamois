@@ -75,7 +75,7 @@
 
 
                     <p:column headerText="Name" sortBy="#{item.name}" filterBy="#{item.name}">
-                        <p:commandLink style="&padding-right: 1em;"
+                        <p:commandLink style="padding-right: 1em;"
                                        action="#{flowBean.goToSpatialUnitByIdCurrentPanel(item.id, cc.attrs.panelModel)}"
                                        update="flow"
                         >
@@ -95,15 +95,15 @@
                                     filter="true"
                                     filterMatchMode="contains"
                                     onchange="PF('#{cc.clientId}_spatialUnitListTable').filter()"
-                                    converter="#{conceptConverter}">
+                                    converter="#{conceptLabelConverter}">
                                 <f:selectItems value="#{cc.attrs.panelModel.categoriesAvailable()}"
                                                var="cat"
                                                itemValue="#{cat}"
-                                               itemLabel="#{cat.label}" />
+                                               itemLabel="#{cat.value}"
+                                                />
                             </p:selectCheckboxMenu>
                         </f:facet>
-                        <p:chip label="#{item.category.label}" icon="pi pi-map-marker"
-                                styleClass="mr-2 spatial-unit-type-chip"/>
+                        <p:chip label="#{labelBean.findLabelOf(item.category)}" icon="pi pi-map-marker" styleClass="mr-2 spatial-unit-type-chip"/>
                     </p:column>
 
                     <p:column exportable="false" ariaHeaderText="Actions">

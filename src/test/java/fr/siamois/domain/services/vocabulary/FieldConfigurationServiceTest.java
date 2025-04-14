@@ -9,6 +9,7 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
+import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.infrastructure.api.ConceptApi;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
@@ -22,7 +23,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +39,7 @@ class FieldConfigurationServiceTest {
     @Mock private FieldRepository fieldRepository;
     @Mock private ConceptRepository conceptRepository;
     @Mock private ConceptService conceptService;
+    @Mock private LabelService labelService;
 
     @InjectMocks
     private FieldConfigurationService service;
@@ -56,9 +57,7 @@ class FieldConfigurationServiceTest {
         vocabulary = new Vocabulary();
         vocabulary.setId(-12L);
         vocabulary.setType(type);
-        vocabulary.setVocabularyName("Vocabulary name");
         vocabulary.setBaseUri("http://localhost");
-        vocabulary.setLastLang("fr");
         vocabulary.setExternalVocabularyId("1313");
 
         userInfo = new UserInfo(new Institution(), new Person(), "fr");
@@ -99,12 +98,12 @@ class FieldConfigurationServiceTest {
         parentConcept.setId(-1L);
         parentConcept.setExternalId("1212");
         parentConcept.setVocabulary(vocabulary);
-        parentConcept.setLangCode("fr");
-        parentConcept.setLabel("Test concept");
+        
+        
 
         when(conceptApi.fetchFieldsBranch(vocabulary)).thenReturn(dto);
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST"));
-        when(conceptService.saveOrGetConceptFromFullDTO(any(UserInfo.class), any(Vocabulary.class), any(FullInfoDTO.class)))
+        when(conceptService.saveOrGetConceptFromFullDTO( any(Vocabulary.class), any(FullInfoDTO.class)))
                 .thenReturn(parentConcept);
         when(fieldRepository.updateConfigForFieldOfInstitution(anyLong(), anyString(), anyLong())).thenReturn(0);
 
@@ -122,12 +121,12 @@ class FieldConfigurationServiceTest {
         parentConcept.setId(-1L);
         parentConcept.setExternalId("1212");
         parentConcept.setVocabulary(vocabulary);
-        parentConcept.setLangCode("fr");
-        parentConcept.setLabel("Test concept");
+        
+        
 
         when(conceptApi.fetchFieldsBranch(vocabulary)).thenReturn(dto);
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST"));
-        when(conceptService.saveOrGetConceptFromFullDTO(any(UserInfo.class), any(Vocabulary.class), any(FullInfoDTO.class)))
+        when(conceptService.saveOrGetConceptFromFullDTO( any(Vocabulary.class), any(FullInfoDTO.class)))
                 .thenReturn(parentConcept);
         when(fieldRepository.updateConfigForFieldOfInstitution(anyLong(), anyString(), anyLong())).thenReturn(1);
 
@@ -140,13 +139,6 @@ class FieldConfigurationServiceTest {
     @Test
     void setupFieldConfigurationForInstitution_shouldReturnWrongConfig_whenMandatoryCodeIsNotSet() throws NotSiamoisThesaurusException {
         ConceptBranchDTO dto = conceptBranchDTO();
-
-        Concept parentConcept = new Concept();
-        parentConcept.setId(-1L);
-        parentConcept.setExternalId("1212");
-        parentConcept.setVocabulary(vocabulary);
-        parentConcept.setLangCode("fr");
-        parentConcept.setLabel("Test concept");
 
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST", "SIAMAND"));
         when(conceptApi.fetchFieldsBranch(vocabulary)).thenReturn(dto);
@@ -166,12 +158,12 @@ class FieldConfigurationServiceTest {
         parentConcept.setId(-1L);
         parentConcept.setExternalId("1212");
         parentConcept.setVocabulary(vocabulary);
-        parentConcept.setLangCode("fr");
-        parentConcept.setLabel("Test concept");
+        
+        
 
         when(conceptApi.fetchFieldsBranch(vocabulary)).thenReturn(dto);
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST"));
-        when(conceptService.saveOrGetConceptFromFullDTO(any(UserInfo.class), any(Vocabulary.class), any(FullInfoDTO.class)))
+        when(conceptService.saveOrGetConceptFromFullDTO( any(Vocabulary.class), any(FullInfoDTO.class)))
                 .thenReturn(parentConcept);
         when(fieldRepository.updateConfigForFieldOfUser(anyLong(), anyLong(), anyString(), anyLong())).thenReturn(0);
 
@@ -189,12 +181,12 @@ class FieldConfigurationServiceTest {
         parentConcept.setId(-1L);
         parentConcept.setExternalId("1212");
         parentConcept.setVocabulary(vocabulary);
-        parentConcept.setLangCode("fr");
-        parentConcept.setLabel("Test concept");
+        
+        
 
         when(conceptApi.fetchFieldsBranch(vocabulary)).thenReturn(dto);
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST"));
-        when(conceptService.saveOrGetConceptFromFullDTO(any(UserInfo.class), any(Vocabulary.class), any(FullInfoDTO.class)))
+        when(conceptService.saveOrGetConceptFromFullDTO( any(Vocabulary.class), any(FullInfoDTO.class)))
                 .thenReturn(parentConcept);
         when(fieldRepository.updateConfigForFieldOfUser(anyLong(), anyLong(),anyString(), anyLong())).thenReturn(1);
 
@@ -207,13 +199,6 @@ class FieldConfigurationServiceTest {
     @Test
     void setupFieldConfigurationForUser_shouldReturnWrongConfig_whenMandatoryCodeIsNotSet() throws NotSiamoisThesaurusException {
         ConceptBranchDTO dto = conceptBranchDTO();
-
-        Concept parentConcept = new Concept();
-        parentConcept.setId(-1L);
-        parentConcept.setExternalId("1212");
-        parentConcept.setVocabulary(vocabulary);
-        parentConcept.setLangCode("fr");
-        parentConcept.setLabel("Test concept");
 
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST", "SIAMAND"));
         when(conceptApi.fetchFieldsBranch(vocabulary)).thenReturn(dto);
@@ -234,10 +219,10 @@ class FieldConfigurationServiceTest {
     void findConfigurationForFieldCode_shouldReturnUserConcept_whenUserConfig() throws NoConfigForFieldException {
         Concept concept = new Concept();
         concept.setId(-1L);
-        concept.setLabel("Parent config concept");
+        
         concept.setVocabulary(vocabulary);
         concept.setExternalId("1212");
-        concept.setLangCode("fr");
+        
 
         when(conceptRepository.findTopTermConfigForFieldCodeOfUser(anyLong(), anyLong(), anyString()))
                 .thenReturn(Optional.of(concept));
@@ -251,10 +236,10 @@ class FieldConfigurationServiceTest {
     void findConfigurationForFieldCode_shouldReturnInstitConcept_whenNoUserConfig() throws NoConfigForFieldException {
         Concept concept = new Concept();
         concept.setId(-1L);
-        concept.setLabel("Parent config concept");
+        
         concept.setVocabulary(vocabulary);
         concept.setExternalId("1212");
-        concept.setLangCode("fr");
+        
 
         when(conceptRepository.findTopTermConfigForFieldCodeOfInstitution(anyLong(), anyString()))
                 .thenReturn(Optional.of(concept));
@@ -263,23 +248,6 @@ class FieldConfigurationServiceTest {
 
         assertThat(result).isEqualTo(concept);
     }
-
-    @Test
-    void fetchAutocomplete_shouldReturnExactTerm() throws NoConfigForFieldException {
-        ConceptBranchDTO dto = new ConceptBranchDTO();
-        dto.addConceptBranchDTO("http://localhost/th223/1213", fullConceptDTO("1213", "", "First value"));
-        dto.addConceptBranchDTO("http://localhost/th223/1213", fullConceptDTO("1214", "", "Second value"));
-        dto.addConceptBranchDTO("http://localhost/th223/1214", fullConceptDTO("1215", "", "Third value"));
-
-        when(conceptRepository.findTopTermConfigForFieldCodeOfInstitution(anyLong(), eq("SIATEST")))
-                .thenReturn(Optional.of(new Concept()));
-        when(conceptApi.fetchConceptsUnderTopTerm(any(Concept.class))).thenReturn(dto);
-
-        List<Concept> result = service.fetchAutocomplete(userInfo, "SIATEST", "ue");
-
-        assertThat(result).isNotEmpty().allMatch(val -> val.getLabel().contains("value"));
-    }
-
     @Test
     void fetchAutocomplete_shouldReturnCloseTerms_whenNoExactTerms() throws NoConfigForFieldException {
         ConceptBranchDTO dto = new ConceptBranchDTO();
@@ -293,7 +261,8 @@ class FieldConfigurationServiceTest {
 
         List<Concept> result = service.fetchAutocomplete(userInfo, "SIATEST", "Sie");
 
-        assertThat(result).isNotEmpty().allMatch(match -> match.getLabel().equals("Sites"));
+        assertThat(result).isNotEmpty()
+                .hasSize(1);
     }
 
     @Test
@@ -307,50 +276,13 @@ class FieldConfigurationServiceTest {
         parentConcept.setId(-1L);
         parentConcept.setExternalId("1212");
         parentConcept.setVocabulary(vocabulary);
-        parentConcept.setLangCode("fr");
-        parentConcept.setLabel("Parent concept");
+
 
         when(conceptApi.fetchConceptsUnderTopTerm(parentConcept)).thenReturn(dto);
 
-        List<Concept> result = service.fetchAllValues(userInfo, parentConcept);
+        List<Concept> result = service.fetchAllValues(parentConcept);
 
         assertThat(result).hasSize(3);
-        assertThat(result).extracting(Concept::getLabel).containsExactlyInAnyOrder("First value", "Second value", "Third value");
-    }
-
-
-    @Test
-    void fetchConceptChildrenAutocomplete_shouldReturnExactTerm()  {
-        List<Concept> children = new ArrayList<>();
-        Concept parentConcept = new Concept();
-        Concept c1 = new Concept(); c1.setLabel("Sites");
-        Concept c2 = new Concept(); c2.setLabel("Zone");
-        children.add(c1);
-        children.add(c2);
-
-        when(conceptService.findDirectSubConceptOf(any(UserInfo.class), any(Concept.class)))
-                .thenReturn(children);
-
-        List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "Zone");
-
-        assertThat(result).isNotEmpty().allMatch(match -> match.getLabel().equals("Zone"));
-    }
-
-    @Test
-    void fetchConceptChildrenAutocomplete_shouldReturnCloseTerms_whenNoExactTerms()  {
-        List<Concept> children = new ArrayList<>();
-        Concept parentConcept = new Concept();
-        Concept c1 = new Concept(); c1.setLabel("Sites");
-        Concept c2 = new Concept(); c2.setLabel("Zone");
-        children.add(c1);
-        children.add(c2);
-
-        when(conceptService.findDirectSubConceptOf(any(UserInfo.class), any(Concept.class)))
-                .thenReturn(children);
-
-        List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "Sie");
-
-        assertThat(result).isNotEmpty().allMatch(match -> match.getLabel().equals("Sites"));
     }
 
     @Test
@@ -369,10 +301,10 @@ class FieldConfigurationServiceTest {
 
         Concept concept = new Concept();
         concept.setId(-1L);
-        concept.setLabel("Parent config concept");
+        
         concept.setVocabulary(vocabulary);
         concept.setExternalId("1212");
-        concept.setLangCode("fr");
+        
 
         when(conceptRepository.findTopTermConfigForFieldCodeOfInstitution(anyLong(), anyString()))
                 .thenReturn(Optional.of(concept));
@@ -383,15 +315,6 @@ class FieldConfigurationServiceTest {
 
     @Test
     void getUrlForFieldCode_noConfigForField() {
-
-        Concept concept = new Concept();
-        concept.setId(-1L);
-        concept.setLabel("Parent config concept");
-        concept.setVocabulary(vocabulary);
-        concept.setExternalId("1212");
-        concept.setLangCode("fr");
-
-
         when(conceptRepository.findTopTermConfigForFieldCodeOfUser(anyLong(), anyLong(), anyString()))
                 .thenReturn(Optional.empty());
         when(conceptRepository.findTopTermConfigForFieldCodeOfInstitution(anyLong(), anyString()))
@@ -425,6 +348,102 @@ class FieldConfigurationServiceTest {
         boolean result = service.hasUserConfig(userInfo);
 
         assertThat(result).isFalse();
+    }
+
+    @Test
+    void fetchConceptChildrenAutocomplete_shouldReturnAllChildren_whenInputIsEmpty() {
+        // Given
+        Concept parentConcept = new Concept();
+        parentConcept.setId(1L);
+
+        Concept child1 = new Concept();
+        Concept child2 = new Concept();
+        List<Concept> children = List.of(child1, child2);
+
+        when(conceptService.findDirectSubConceptOf(parentConcept)).thenReturn(children);
+
+        // When
+        List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "");
+
+        // Then
+        assertThat(result).hasSize(2).containsExactlyInAnyOrder(child1, child2);
+    }
+
+    @Test
+    void fetchConceptChildrenAutocomplete_shouldReturnExactMatches_whenInputMatchesLabel() {
+        // Given
+        Concept parentConcept = new Concept();
+        parentConcept.setId(1L);
+
+        Concept child1 = new Concept();
+        child1.setId(1L);
+        child1.setExternalId("12121212");
+        Concept child2 = new Concept();
+        child2.setId(2L);
+        child2.setExternalId("121233333");
+
+        List<Concept> children = List.of(child1, child2);
+
+        when(conceptService.findDirectSubConceptOf(parentConcept)).thenReturn(children);
+        when(labelService.findLabelOf(child1, "fr")).thenReturn(new ConceptLabel("Label1"));
+        when(labelService.findLabelOf(child2, "fr")).thenReturn(new ConceptLabel("Label2"));
+
+        // When
+        List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "Label1");
+
+        // Then
+        assertThat(result).hasSize(1).containsExactly(child1);
+    }
+
+    @Test
+    void fetchConceptChildrenAutocomplete_shouldReturnSimilarMatches_whenNoExactMatch() {
+        // Given
+        Concept parentConcept = new Concept();
+        parentConcept.setId(1L);
+
+        Concept child1 = new Concept();
+        child1.setId(1L);
+        child1.setExternalId("12121212");
+        Concept child2 = new Concept();
+        child2.setId(2L);
+        child2.setExternalId("121233333");
+        List<Concept> children = List.of(child1, child2);
+
+        when(conceptService.findDirectSubConceptOf(parentConcept)).thenReturn(children);
+        when(labelService.findLabelOf(child1, "fr")).thenReturn(new ConceptLabel("Label1"));
+        when(labelService.findLabelOf(child2, "fr")).thenReturn(new ConceptLabel("Label2"));
+
+        // When
+        List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "Lzbel");
+
+        // Then
+        assertThat(result).hasSize(2).containsExactly(child1, child2);
+    }
+
+    @Test
+    void fetchConceptChildrenAutocomplete_shouldReturnEmptyList_whenNoMatchOrSimilarity() {
+        // Given
+        Concept parentConcept = new Concept();
+        parentConcept.setId(1L);
+
+        Concept child1 = new Concept();
+        child1.setId(1L);
+        child1.setExternalId("12121212");
+        Concept child2 = new Concept();
+        child2.setId(2L);
+        child2.setExternalId("121233333");
+        List<Concept> children = List.of(child1, child2);
+
+        when(conceptService.findDirectSubConceptOf(parentConcept)).thenReturn(children);
+        when(labelService.findLabelOf(child1, "fr")).thenReturn(new ConceptLabel("Label1"));
+        when(labelService.findLabelOf(child2, "fr")).thenReturn(new ConceptLabel("Label2"));
+
+
+        // When
+        List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "NoMatch");
+
+        // Then
+        assertThat(result).isEmpty();
     }
 
 }

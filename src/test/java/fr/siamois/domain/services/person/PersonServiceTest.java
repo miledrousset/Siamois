@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,7 +52,6 @@ class PersonServiceTest {
         List<PersonDataVerifier> verifiers = List.of(passwordVerifier);
 
         personService = new PersonService(
-                teamRepository,
                 personRepository,
                 passwordEncoder,
                 verifiers,

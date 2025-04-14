@@ -17,7 +17,7 @@
         <div class="panel-top-section">
             <h2>
                 #{panelModel.spatialUnit.name}
-                <p:chip label="#{panelModel.spatialUnit.category.label}" icon="pi pi-map-marker"
+                <p:chip label="#{labelBean.findLabelOf(panelModel.spatialUnit.category)}" icon="pi pi-map-marker"
                         styleClass="mr-2 spatial-unit-type-chip"/>
 
             </h2>
@@ -100,8 +100,7 @@
 
                                     </p:column>
                                     <p:column headerText="Type">
-                                        <p:chip label="#{item.type.label}" icon="bi bi-arrow-down-square"
-                                                styleClass="mr-2 action-unit-type-chip"/>
+                                        <p:chip label="#{labelBean.findLabelOf(item.type)}" icon="bi bi-arrow-down-square" styleClass="mr-2 action-unit-type-chip"/>
                                     </p:column>
                                 </p:dataTable>
                             </div>
@@ -138,23 +137,23 @@
                                     </p:column>
                                     <p:column headerText="Statut">
 
-                                        <p:chip label="Enregistrement fermé"
-                                                styleClass="mr-2 valid-type-chip"/>
-                                    </p:column>
-                                    <p:column headerText="Type">
-                                        <p:chip label="#{item.type.label}" icon="bi bi-pencil-square"
-                                                styleClass="mr-2 recording-unit-type-chip"/>
-                                    </p:column>
-                                    <p:column headerText="Auteur">
-                                        <h:outputText value="#{item.author.name} #{item.author.lastname}"/>
-                                    </p:column>
-                                    <p:column headerText="Fouilleur">
-                                        <h:outputText
-                                                value="#{item.excavator.name} #{item.excavator.lastname}"/>
-                                    </p:column>
-                                </p:dataTable>
-                            </div>
-                        </p:outputPanel>
+                                                <p:chip label="Enregistrement fermé"
+                                                        styleClass="mr-2 valid-type-chip"/>
+                                            </p:column>
+                                            <p:column headerText="Type">
+                                                <p:chip label="#{labelBean.findLabelOf(item.type)}" icon="bi bi-pencil-square"
+                                                        styleClass="mr-2 recording-unit-type-chip"/>
+                                            </p:column>
+                                            <p:column headerText="Auteur">
+                                                <h:outputText value="#{item.author.name} #{item.author.lastname}"/>
+                                            </p:column>
+                                            <p:column headerText="Fouilleur">
+                                                <h:outputText
+                                                        value="#{item.excavator.name} #{item.excavator.lastname}"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </p:outputPanel>
 
                     </div>
                     <!-- Table des unités action -->
@@ -204,17 +203,17 @@
                             <h:outputText value="#{siamoisDocument.title}"/>
                         </p:column>
 
-                        <p:column headerText="Nature">
-                            <h:outputText value="#{siamoisDocument.nature.label}"/>
-                        </p:column>
+                            <p:column headerText="Nature">
+                                <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.nature)}"/>
+                            </p:column>
 
-                        <p:column headerText="Grandeur">
-                            <h:outputText value="#{siamoisDocument.scale.label}"/>
-                        </p:column>
+                            <p:column headerText="Grandeur">
+                                <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.scale)}"/>
+                            </p:column>
 
-                        <p:column headerText="Type de document">
-                            <h:outputText value="#{siamoisDocument.format.label}"/>
-                        </p:column>
+                            <p:column headerText="Type de document">
+                                <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.format)}"/>
+                            </p:column>
 
                         <p:column headerText="Auteur">
                             <h:outputText value="#{siamoisDocument.author.displayName()}"/>
@@ -250,7 +249,7 @@
             <h:panelGroup id="versionVisualizer" rendered="#{panelModel.revisionToDisplay != null}">
                 <p>Name : #{panelModel.revisionToDisplay.name}</p>
                 <p>Ark : #{panelModel.revisionToDisplay.ark.arkId}</p>
-                <p>Category : #{panelModel.revisionToDisplay.category.label}</p>
+                <p>Category : #{labelBean.findLabelOf(panelModel.revisionToDisplay.category)}</p>
             </h:panelGroup>
         </h:form>
     </p:dialog>

@@ -2,8 +2,11 @@ package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
+import fr.siamois.domain.services.vocabulary.LabelService;
+import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import lombok.Data;
@@ -25,6 +28,7 @@ import org.springframework.context.annotation.Scope;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -35,17 +39,23 @@ public class SpatialUnitListPanel extends AbstractPanel {
     private final transient SpatialUnitService spatialUnitService;
     private final transient ConceptService conceptService;
     private final SessionSettingsBean sessionSettingsBean;
+    private final LangBean langBean;
+    private final transient LabelService labelService;
 
     // locals
     private String spatialUnitListErrorMessage;
     private List<Concept> selectedCategories;
     private LazyDataModel<SpatialUnit> lazyDataModel ;
 
-    public SpatialUnitListPanel(SpatialUnitService spatialUnitService, ConceptService conceptService, SessionSettingsBean sessionSettingsBean) {
+    public SpatialUnitListPanel(SpatialUnitService spatialUnitService,
+                                ConceptService conceptService,
+                                SessionSettingsBean sessionSettingsBean, LangBean langBean, LabelService labelService) {
         super("Unités géographiques", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-list-panel");
         this.spatialUnitService = spatialUnitService;
         this.conceptService = conceptService;
         this.sessionSettingsBean = sessionSettingsBean;
+        this.langBean = langBean;
+        this.labelService = labelService;
     }
 
     public class SpatialUnitLazyDataModel extends LazyDataModel<SpatialUnit> {
@@ -80,7 +90,8 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
                 FilterMeta categoryMeta = filterBy.get("category");
                 if (categoryMeta != null && categoryMeta.getFilterValue() != null) {
-                    selectedCategories = (List<Concept>) categoryMeta.getFilterValue();
+                    List<ConceptLabel> selectedCategoryLabels = (List<ConceptLabel>) categoryMeta.getFilterValue();
+                    selectedCategories = selectedCategoryLabels.stream().map(ConceptLabel::getConcept).toList();
                     categoryIds = selectedCategories.stream()
                             .filter(Objects::nonNull) // exclude null Concepts
                             .map(Concept::getId)
@@ -150,9 +161,14 @@ public class SpatialUnitListPanel extends AbstractPanel {
         }
     }
 
-    public List<Concept> categoriesAvailable() {
-        return conceptService.findAllConceptsByInstitution(sessionSettingsBean.getSelectedInstitution());
+    public List<ConceptLabel> categoriesAvailable() {
+        List<Concept> cList = conceptService.findAllConceptsByInstitution(sessionSettingsBean.getSelectedInstitution());
 
+        return cList.stream()
+                .map(concept -> labelService.findLabelOf(
+                        concept, langBean.getLanguageCode()
+                ))
+                .toList();
 
     }
 

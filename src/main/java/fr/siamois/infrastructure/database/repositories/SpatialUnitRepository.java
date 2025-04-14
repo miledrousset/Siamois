@@ -36,14 +36,16 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
 
     @Query(
             nativeQuery = true,
-            value = "SELECT su.*, c.label as c_label " +
+            value = "SELECT su.*, l.* " +
                     "FROM spatial_unit su " +
                     "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
                     "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
+                    "         LEFT JOIN label l ON c.concept_id = l.fk_concept_id " +
                     "WHERE su.fk_institution_id = :institutionId " +
+                    "  AND :langCode = l.lang_code "+
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
                     "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
-                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(c.label) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
             countQuery = "SELECT count(su.*) " +
                     "FROM spatial_unit su " +
                     "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
@@ -52,7 +54,7 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "  AND sh.fk_parent_id IS NULL " +
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
                     "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
-                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(c.label) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
     )
     Page<SpatialUnit> findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(@Param("institutionId") Long institutionId,
                                       @Param("name") String name,
@@ -62,7 +64,7 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
 
     @Query(
             nativeQuery = true,
-            value = "SELECT su.*, c.label as c_label " +
+            value = "SELECT su.*" +
                     "FROM spatial_unit su " +
                     "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
                     "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
@@ -70,7 +72,7 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "WHERE suh.fk_parent_id = :parentId " +
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
                     "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
-                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(c.label) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
             countQuery = "SELECT count(su.*) " +
                     "FROM spatial_unit su " +
                     "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
@@ -79,7 +81,7 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "WHERE suh.fk_parent_id = :parentId " +
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
                     "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
-                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(c.label) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
     )
     Page<SpatialUnit> findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(@Param("parentId") Long parentId,
                                                                                                   @Param("name") String name,
@@ -89,7 +91,7 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
 
     @Query(
             nativeQuery = true,
-            value = "SELECT su.*, c.label as c_label " +
+            value = "SELECT su.*" +
                     "FROM spatial_unit su " +
                     "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
                     "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
@@ -97,7 +99,7 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "WHERE suh.fk_child_id = :childId " +
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
                     "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
-                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(c.label) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
             countQuery = "SELECT count(su.*) " +
                     "FROM spatial_unit su " +
                     "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
@@ -106,7 +108,7 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "WHERE suh.fk_child_id = :childId " +
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
                     "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
-                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(c.label) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
     )
     Page<SpatialUnit> findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(@Param("childId") Long childId,
                                                                                              @Param("name") String name,
