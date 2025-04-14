@@ -131,7 +131,7 @@ main form:first-child .field-value-group {
 }
 
 .ui-widget .dt-button:hover {
-    background-color: var(--siamois-over-grey);
+    background-color: var(--siamois-green-light-50);
     border-color: white;
 }
 
@@ -152,3 +152,61 @@ main form:first-child .field-value-group {
     display: flex;
     gap: 30px
 }
+
+.category-container {
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+    align-items: center;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+    border-radius: 10px;
+}
+
+.category-container .cat-icon {
+    align-self: center;
+    justify-self: center;
+    color: var(--siamois-green);
+    background-color: var(--siamois-green-light-50);
+    border-color: var(--siamois-green-light-350);
+    padding: 20px;
+    font-size: 20px;
+    border-radius: 10px;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.category-container .bi-chevron-right {
+    margin-left: auto;
+}
+
+.category-container i.bi-chevron-right {
+    color: var(--text-light);
+}
+
+.category-container h3 {
+    color: var(--text-main);
+}
+
+.category-container p {
+    color: var(--text-light);
+}
+
+a {
+    text-decoration: none !important;
+    color: var(--text-main);
+}
+
+a:hover {
+    background-color: var(--siamois-green-light-50);
+}
+
+.ui-breadcrumb {
+    background-color: var(--siamois-green-unknown) !important;
+    border: none !important;
+}
+
+.breadCrumpForm {
+    justify-content: start;
+}
+
+

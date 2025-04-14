@@ -23,7 +23,7 @@
 }
 
 .sidebar .nav-link:hover {
-    background: var(--siamois-over-grey);
+    background: var(--siamois-green-light-50);
     border-radius: 10px;
 }
 
