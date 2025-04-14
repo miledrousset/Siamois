@@ -23,11 +23,13 @@
             </form:csrfform>
             <settings:datatable
                     title="Responsables de l'organisation #{institutionInfoSettingsBean.institution.name}"
-                    filterAction=""
+                    filterAction="#{institutionManagerSettingsBean.filterValues()}"
                     formId="institutionManagerForm"
-                    addAction=""
-                    searchInputTextValue=""
+                    addAction="#{institutionManagerSettingsBean.createManager()}"
+                    searchInputTextValue="#{institutionManagerSettingsBean.textSearch}"
                     description="Les responsables de l'organisation peuvent configurer les connexions au thésaurus, ajouter d'autres utilisateurs et ont un accès complet à toute la donnée créée au sein de l'organisation."
+                    isOrganisationManager="true"
+                    createButtonLabel="Ajouter un responsable"
             >
                 <p:dataTable
                         id="managerDatatable"
@@ -40,7 +42,7 @@
 
                     <p:column headerText="Utilisateur">
                         <div style="display: flex; flex-direction: column">
-                            <h3>#{member.displayName()}</h3>
+                            <strong>#{member.displayName()}</strong>
                             <p>#{member.mail}</p>
                         </div>
                     </p:column>
@@ -48,7 +50,7 @@
                         <p:outputLabel value="#{institutionManagerSettingsBean.roles.get(member)}"/>
                     </p:column>
                     <p:column headerText="Date d'ajout">
-                        <p:outputLabel value="#{institutionListSettingsBean.numberOfRecordingUnitInInstitution(organisation)}"/>
+                        <p:outputLabel value="#{institutionManagerSettingsBean.addDateOf(member)}"/>
                     </p:column>
                 </p:dataTable>
             </settings:datatable>

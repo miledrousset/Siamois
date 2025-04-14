@@ -11,6 +11,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serial;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Getter
@@ -38,6 +39,10 @@ public class PersonRoleInstitution {
     @ColumnDefault("false")
     @Column(name = "is_manager")
     private Boolean isManager;
+
+    @ColumnDefault("NOW()")
+    @Column(name = "added_at")
+    private OffsetDateTime addedAt = OffsetDateTime.now();
 
     @Getter
     @Setter
