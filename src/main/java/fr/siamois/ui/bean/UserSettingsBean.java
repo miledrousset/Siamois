@@ -50,7 +50,6 @@ public class UserSettingsBean {
 
     @EventListener(InstitutionChangeEvent.class)
     public void init() throws NoConfigForFieldException {
-        log.trace("UserSettingsBean init");
         resetVariables();
         Person user = sessionSettingsBean.getUserInfo().getUser();
         firstName = user.getName();

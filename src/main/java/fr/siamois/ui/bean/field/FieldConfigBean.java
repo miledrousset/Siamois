@@ -62,7 +62,6 @@ public class FieldConfigBean implements Serializable {
     }
 
     public void onLoad() {
-        log.trace("On Load called");
         UserInfo info = sessionSettingsBean.getUserInfo();
         try {
             Concept config = fieldConfigurationService.findConfigurationForFieldCode(info, SpatialUnit.CATEGORY_FIELD_CODE);
