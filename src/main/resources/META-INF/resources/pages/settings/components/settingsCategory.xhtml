@@ -21,14 +21,18 @@
                 displaySaveButton="false"
         >
             <ui:repeat value="#{cc.attrs.options}" var="linkOption">
-                <article class="detail-settings-option">
-                    <i class="#{linkOption.bootstrapIconClass}"/>
-                    <div>
-                        <h3>#{linkOption.title}</h3>
-                        <p>#{linkOption.description}</p>
-                    </div>
-                </article>
+                <h:commandLink action="#{linkOption.actionFromBean.redirect()}">
+                    <article class="category-container">
+                        <i class="#{linkOption.bootstrapIconClass} cat-icon"/>
+                        <div style="display: flex; flex-direction: column">
+                            <h3>#{linkOption.title}</h3>
+                            <p>#{linkOption.description}</p>
+                        </div>
+                        <i class="bi bi-chevron-right"/>
+                    </article>
+                </h:commandLink>
             </ui:repeat>
+
         </settings:fieldValue>
     </cc:implementation>
 
