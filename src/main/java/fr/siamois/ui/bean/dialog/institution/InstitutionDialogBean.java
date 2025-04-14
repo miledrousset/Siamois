@@ -5,7 +5,7 @@ import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveExce
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.bean.dialog.SaveActionFromBean;
+import fr.siamois.ui.bean.ActionFromBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class InstitutionDialogBean implements Serializable {
 
     private final transient InstitutionService institutionService;
     private final SessionSettingsBean sessionSettingsBean;
-    private transient SaveActionFromBean saveActionFromBean;
+    private transient ActionFromBean actionFromBean;
     private String institutionName;
     private String identifier;
     private String description;
@@ -39,7 +39,7 @@ public class InstitutionDialogBean implements Serializable {
 
     public void reset() {
         log.trace("Reset called");
-        saveActionFromBean = null;
+        actionFromBean = null;
         institutionName = "";
         identifier = "";
         description = "";
@@ -71,8 +71,8 @@ public class InstitutionDialogBean implements Serializable {
     }
 
     public void save() {
-        assert saveActionFromBean != null;
-        saveActionFromBean.save();
+        assert actionFromBean != null;
+        actionFromBean.apply();
     }
 
     public void exit() {

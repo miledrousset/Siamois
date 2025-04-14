@@ -38,6 +38,7 @@ public class InstitutionListSettingsBean implements Serializable {
     private final transient InstitutionChangeEventPublisher institutionChangeEventPublisher;
     private final InstitutionDialogBean institutionDialogBean;
     private final transient RecordingUnitService recordingUnitService;
+    private final InstitutionDetailsBean institutionDetailsBean;
     private List<Institution> institutions = null;
     private List<Institution> filteredInstitutions = null;
     private List<SortMeta> sortBy;
@@ -48,12 +49,13 @@ public class InstitutionListSettingsBean implements Serializable {
     public InstitutionListSettingsBean(InstitutionService institutionService,
                                        SessionSettingsBean sessionSettingsBean,
                                        InstitutionChangeEventPublisher institutionChangeEventPublisher,
-                                       InstitutionDialogBean institutionDialogBean, RecordingUnitService recordingUnitService) {
+                                       InstitutionDialogBean institutionDialogBean, RecordingUnitService recordingUnitService, InstitutionDetailsBean institutionDetailsBean) {
         this.institutionService = institutionService;
         this.sessionSettingsBean = sessionSettingsBean;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
         this.institutionDialogBean = institutionDialogBean;
         this.recordingUnitService = recordingUnitService;
+        this.institutionDetailsBean = institutionDetailsBean;
     }
 
     public void init() {
@@ -113,7 +115,7 @@ public class InstitutionListSettingsBean implements Serializable {
         institutionDialogBean.reset();
         institutionDialogBean.setTitle("Créer une organisation");
         institutionDialogBean.setButtonLabel("Créer l'organisation");
-        institutionDialogBean.setSaveActionFromBean(this::createInstitution);
+        institutionDialogBean.setActionFromBean(this::createInstitution);
         PrimeFaces.current().ajax().update("newInstitutionDialog");
         PrimeFaces.current().executeScript("PF('newInstitutionDialog').show();");
     }
@@ -138,52 +140,18 @@ public class InstitutionListSettingsBean implements Serializable {
         }
     }
 
-    private void updateInstitution(Institution institutionRef) {
-        Institution institution = institutionDialogBean.updateInstitution(institutionRef);
-        if (institution != null) {
-            int index = institutions.stream()
-                    .filter(i -> i.getId().equals(institution.getId()))
-                    .findFirst()
-                    .map(institutions::indexOf)
-                    .orElse(-1);
-
-            if (index != -1) {
-                institutions.set(index, institution);
-            }
-
-            int indexInFiltered = filteredInstitutions.stream()
-                    .filter(i -> i.getId().equals(institution.getId()))
-                    .findFirst()
-                    .map(filteredInstitutions::indexOf)
-                    .orElse(-1);
-
-            if (indexInFiltered != -1) {
-                filteredInstitutions.set(indexInFiltered, institution);
-            }
-
-            institutionDialogBean.reset();
-            PrimeFaces.current().executeScript("PF('newInstitutionDialog').hide();");
-        }
-    }
-
-    public void update(Institution institution) {
-        log.trace("Update institution received : {}", institution);
-        institutionDialogBean.reset();
-        institutionDialogBean.setTitle("Modifier une organisation");
-        institutionDialogBean.setButtonLabel("Modifier l'organisation");
-        institutionDialogBean.setInstitutionName(institution.getName());
-        institutionDialogBean.setIdentifier(institution.getIdentifier());
-        institutionDialogBean.setDescription(institution.getDescription());
-        institutionDialogBean.setSaveActionFromBean(() -> updateInstitution(institution));
-        PrimeFaces.current().executeScript("PF('newInstitutionDialog').show();");
-    }
-
     public long numberOfMemberInInstitution(Institution institution) {
         return institutionService.countMembersInInstitution(institution);
     }
 
     public long numberOfRecordingUnitInInstitution(Institution institution) {
         return recordingUnitService.countByInstitution(institution);
+    }
+
+    public String redirectToInstitution(Institution institution) {
+        institutionDetailsBean.setInstitution(institution);
+        institutionDetailsBean.addInstitutionManagementElements();
+        return "/pages/settings/institutionSettings.xhtml?faces-redirect=true";
     }
 
 }

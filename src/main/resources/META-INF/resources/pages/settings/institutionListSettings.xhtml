@@ -48,14 +48,10 @@
                         <p:outputLabel value="#{institutionListSettingsBean.displayDate(organisation.creationDate)}"/>
                     </p:column>
                     <p:column>
-                        <p:menuButton buttonStyleClass="dt-button" icon="bi bi-three-dots">
-                            <p:menuitem
-                                    value="Modifier"
-                                    icon="bi bi-arrow-clockwise"
-                                    action="#{institutionListSettingsBean.update(organisation)}"
-                                    update="@form"
-                            />
-                        </p:menuButton>
+                        <p:commandButton
+                                icon="bi bi-three-dots"
+                                action="#{institutionListSettingsBean.redirectToInstitution(organisation)}"
+                        />
                     </p:column>
                 </p:dataTable>
                 <ui:include src="/dialog/institution/newInstitution.xhtml"/>
