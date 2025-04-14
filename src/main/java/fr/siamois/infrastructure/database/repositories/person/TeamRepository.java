@@ -1,4 +1,4 @@
-package fr.siamois.infrastructure.database.repositories.auth;
+package fr.siamois.infrastructure.database.repositories.person;
 
 import fr.siamois.domain.models.Team;
 import org.springframework.data.repository.CrudRepository;

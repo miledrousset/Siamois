@@ -3,6 +3,7 @@ package fr.siamois.ui.bean.settings;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.ui.bean.settings.components.OptionElement;
 import fr.siamois.ui.bean.settings.institution.InstitutionInfoSettingsBean;
+import fr.siamois.ui.bean.settings.institution.InstitutionManagerSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -21,11 +22,14 @@ import java.util.List;
 public class InstitutionDetailsBean implements Serializable {
 
     private final InstitutionInfoSettingsBean institutionInfoSettingsBean;
+    private final InstitutionManagerSettingsBean institutionManagerSettingsBean;
     private Institution institution;
     private transient List<OptionElement> elements;
 
-    public InstitutionDetailsBean(InstitutionInfoSettingsBean institutionInfoSettingsBean) {
+    public InstitutionDetailsBean(InstitutionInfoSettingsBean institutionInfoSettingsBean,
+                                  InstitutionManagerSettingsBean institutionManagerSettingsBean) {
         this.institutionInfoSettingsBean = institutionInfoSettingsBean;
+        this.institutionManagerSettingsBean = institutionManagerSettingsBean;
     }
 
     public void addInstitutionManagementElements() {
@@ -35,8 +39,8 @@ public class InstitutionDetailsBean implements Serializable {
             return "/pages/settings/institution/institutionInfoSettings.xhtml?faces-redirect=true";
         }));
         elements.add(new OptionElement("bi bi-person-circle", "Responsables d'organisation", "Gérer les administrateurs de Bibracte", () -> {
-            log.trace("Clicked on institution managers");
-            return "";
+            institutionManagerSettingsBean.init(institution);
+            return "/pages/settings/institution/institutionManagerSettings.xhtml?faces-redirect=true";
         }));
         elements.add(new OptionElement("bi bi-people", "Équipes", "Gérer les équipes de Bibracte", () -> {
             log.trace("Clicked on institution teams");

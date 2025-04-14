@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:settings="http://java.sun.com/jsf/composite/pages/settings/components"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form"
+>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="css" name="settings.css"/>
+    </ui:define>
+
+    <ui:define name="content">
+        <main>
+            <form:csrfform formId="breadCrumbForm" styleClass="breadCrumpForm">
+                <p:breadCrumb homeDisplay="false">
+                    <p:menuitem value="Organisations" action="#{institutionDetailsBean.goToInstitutionList()}"/>
+                    <p:menuitem value="#{institutionInfoSettingsBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
+                    <p:menuitem value="Responsables d'organisation"/>
+                </p:breadCrumb>
+            </form:csrfform>
+            <settings:datatable
+                    title="Responsables de l'organisation #{institutionInfoSettingsBean.institution.name}"
+                    filterAction=""
+                    formId="institutionManagerForm"
+                    addAction=""
+                    searchInputTextValue=""
+                    description="Les responsables de l'organisation peuvent configurer les connexions au thésaurus, ajouter d'autres utilisateurs et ont un accès complet à toute la donnée créée au sein de l'organisation."
+            >
+                <p:dataTable
+                        id="managerDatatable"
+                        value="#{institutionManagerSettingsBean.members}"
+                        var="member"
+                        sortMode="single"
+                        widgetVar="institutionManagerDatatable"
+                        rowKey="#{member.id}"
+                >
+
+                    <p:column headerText="Utilisateur">
+                        <div style="display: flex; flex-direction: column">
+                            <h3>#{member.displayName()}</h3>
+                            <p>#{member.mail}</p>
+                        </div>
+                    </p:column>
+                    <p:column headerText="Rôle">
+                        <p:outputLabel value="#{institutionManagerSettingsBean.roles.get(member)}"/>
+                    </p:column>
+                    <p:column headerText="Date d'ajout">
+                        <p:outputLabel value="#{institutionListSettingsBean.numberOfRecordingUnitInInstitution(organisation)}"/>
+                    </p:column>
+                </p:dataTable>
+            </settings:datatable>
+        </main>
+    </ui:define>
+
+</ui:composition>
