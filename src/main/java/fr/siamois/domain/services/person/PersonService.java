@@ -5,7 +5,7 @@ import fr.siamois.domain.models.exceptions.auth.*;
 import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
-import fr.siamois.infrastructure.database.repositories.auth.PersonRepository;
+import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

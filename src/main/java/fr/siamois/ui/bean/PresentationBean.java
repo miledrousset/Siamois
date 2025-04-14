@@ -17,7 +17,6 @@ import java.util.Optional;
 public class PresentationBean implements Serializable {
 
     public void checkAuth() {
-        log.trace("CheckAuth called");
         Optional<Person> opt = AuthenticatedUserUtils.getAuthenticatedUser();
         try {
             if (opt.isPresent()) {
