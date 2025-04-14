@@ -47,6 +47,12 @@ public class LabelService {
     }
 
     public VocabularyLabel findLabelOf(Vocabulary vocabulary, String langCode) {
+        if (vocabulary == null) {
+            VocabularyLabel label = new VocabularyLabel();
+            label.setValue("NULL");
+            return label;
+        }
+
         Optional<VocabularyLabel> label = vocabularyLabelRepository.findByVocabularyAndLangCode(vocabulary, langCode);
         if (label.isPresent())
             return label.get();
