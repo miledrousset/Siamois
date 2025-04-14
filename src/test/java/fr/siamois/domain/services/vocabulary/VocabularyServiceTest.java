@@ -1,8 +1,5 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.domain.models.Institution;
-import fr.siamois.domain.models.UserInfo;
-import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
@@ -18,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +34,9 @@ class VocabularyServiceTest {
 
     @Mock
     private VocabularyTypeRepository vocabularyTypeRepository;
+
+    @Mock
+    private LabelService labelService;
 
     @InjectMocks
     private VocabularyService vocabularyService;
@@ -60,29 +59,6 @@ class VocabularyServiceTest {
     }
 
     @Test
-    void findAllPublicThesaurus_Success() throws InvalidEndpointException {
-        String vocabInstanceUri = "http://example.com";
-        String languageCode = "en";
-        List<ThesaurusDTO> thesaurusDTOList = new ArrayList<>();
-        ThesaurusDTO thesaurusDTO = new ThesaurusDTO();
-        LabelDTO labelDTO = new LabelDTO();
-        labelDTO.setLang("en");
-        labelDTO.setTitle("Test Thesaurus");
-        thesaurusDTO.setLabels(List.of(labelDTO));
-        thesaurusDTO.setIdTheso("123");
-        thesaurusDTOList.add(thesaurusDTO);
-
-        when(thesaurusApi.fetchAllPublicThesaurus(vocabInstanceUri)).thenReturn(thesaurusDTOList);
-        when(vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus")).thenReturn(Optional.of(new VocabularyType()));
-
-        List<Vocabulary> result = vocabularyService.findAllPublicThesaurus(vocabInstanceUri, languageCode);
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("Test Thesaurus", result.get(0).getVocabularyName());
-    }
-
-    @Test
     void saveOrGetVocabulary_Success() {
         Vocabulary newVocabulary = new Vocabulary();
         newVocabulary.setBaseUri("http://example.com");
@@ -98,8 +74,7 @@ class VocabularyServiceTest {
     }
 
     @Test
-    void findVocabularyOfUri_Success() throws InvalidEndpointException {
-        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "en");
+    void findOrCreateVocabularyOfUri_Success() throws InvalidEndpointException {
         String uri = "http://example.com/openapi/v1/thesaurus?idt=123";
 
         ThesaurusDTO thesaurusDTO = new ThesaurusDTO();
@@ -117,13 +92,11 @@ class VocabularyServiceTest {
         when(vocabularyTypeRepository.findVocabularyTypeByLabel("Thesaurus")).thenReturn(Optional.of(vocabularyType));
         when(vocabularyRepository.save(any(Vocabulary.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Vocabulary result = vocabularyService.findVocabularyOfUri(userInfo, uri);
+        Vocabulary result = vocabularyService.findOrCreateVocabularyOfUri(uri);
 
         assertNotNull(result);
-        assertEquals("Test Thesaurus", result.getVocabularyName());
         assertEquals("123", result.getExternalVocabularyId());
         assertEquals("http://example.com", result.getBaseUri());
-        assertEquals("en", result.getLastLang());
         assertEquals(vocabularyType, result.getType());
     }
 

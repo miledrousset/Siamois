@@ -69,11 +69,8 @@ class ActionUnitServiceTest {
         c3 = new Concept();
         // For action codes test
         c1.setExternalId("1");
-        c1.setLabel("Code OA");
         c2.setExternalId("2");
-        c2.setLabel("Code OB");
         c3.setExternalId("3");
-        c3.setLabel("Code libre");
 
         actionUnitWithCodesAfter = new ActionUnit();
         actionUnitWithCodesBefore = new ActionUnit();

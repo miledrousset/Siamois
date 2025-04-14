@@ -1,4 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
@@ -9,11 +9,11 @@
 
     <cc:implementation>
         <div class="form-group row">
-            <label for="#{cc.attrs.inputId}" class="col-sm-2 col-form-label" style="width: 40%">#{cc.attrs.label}</label>
+            <label for="#{inputId}" class="col-sm-2 col-form-label" style="width: 40%">#{label}</label>
             <div class="col-md-7 field-value-value">
                 <cc:insertChildren/>
             </div>
         </div>
     </cc:implementation>
 
-</ui:composition>
+</ui:fragment>

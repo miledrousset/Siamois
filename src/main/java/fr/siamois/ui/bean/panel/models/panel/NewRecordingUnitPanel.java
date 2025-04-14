@@ -9,12 +9,14 @@ import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.recordingunit.RecordingUnitAltimetry;
 import fr.siamois.domain.models.recordingunit.RecordingUnitSize;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
+import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
@@ -46,13 +48,14 @@ import static java.time.OffsetDateTime.now;
 public class NewRecordingUnitPanel extends RecordingUnitPanelBase {
 
 
+    private final transient LabelService labelService;
     // ------- Locals
     Long actionUnitId;
 
     public NewRecordingUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService,
                                  ActionUnitService actionUnitService, RecordingUnitService recordingUnitService,
                                  PersonService personService, ConceptService conceptService,
-                                 FieldConfigurationService fieldConfigurationService, FlowBean flowBean) {
+                                 FieldConfigurationService fieldConfigurationService, FlowBean flowBean, LabelService labelService) {
         super(
                 langBean,
                 sessionSettingsBean,
@@ -66,6 +69,7 @@ public class NewRecordingUnitPanel extends RecordingUnitPanelBase {
                 "Nouvelle unité d'enregistrement",
                 "bi bi-pencil-square",
                 "siamois-panel recording-unit-panel new-recording-unit-panel");
+        this.labelService = labelService;
     }
 
     @Override
@@ -270,10 +274,12 @@ public class NewRecordingUnitPanel extends RecordingUnitPanelBase {
         // Check if the question is an instance of QuestionSelectMultiple
         if (question instanceof CustomFieldSelectMultiple selectMultipleQuestion) {
             List<Concept> allOptions = new ArrayList<>(selectMultipleQuestion.getConcepts());
+            String langCode = sessionSettingsBean.getLanguageCode();
 
             // Filter the options based on user input (query)
             for (Concept value : allOptions) {
-                if (value.getLabel().toLowerCase().contains(query.toLowerCase())) {
+                ConceptLabel label = labelService.findLabelOf(value, langCode);
+                if (label.getValue().toLowerCase().contains(query.toLowerCase())) {
                     suggestions.add(value);
                 }
             }

@@ -63,8 +63,4 @@ public class FullInfoDTO {
                 .findFirst();
     }
 
-    public String retrieveIdentifier() {
-        return identifier[0].getValue();
-    }
-
 }

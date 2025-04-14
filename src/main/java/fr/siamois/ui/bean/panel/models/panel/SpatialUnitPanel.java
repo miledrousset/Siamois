@@ -12,6 +12,7 @@ import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.form.CustomFieldService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.ui.bean.SessionSettingsBean;
@@ -26,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -68,6 +70,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private final transient DocumentService documentService;
     private final transient DocumentCreationBean documentCreationBean;
     private final transient CustomFieldService customFieldService;
+    private final transient LabelService labelService;
 
 
     // Locals
@@ -94,8 +97,17 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
     private List<Document> documents;
 
-
-    private SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService, DocumentCreationBean documentCreationBean, CustomFieldService customFieldService) {
+    @Autowired
+    private SpatialUnitPanel(
+            SpatialUnitService spatialUnitService,
+            RecordingUnitService recordingUnitService,
+            ActionUnitService actionUnitService,
+            SessionSettingsBean sessionSettings,
+            SpatialUnitHelperService spatialUnitHelperService,
+            DocumentService documentService,
+            DocumentCreationBean documentCreationBean,
+            CustomFieldService customFieldService,
+            LabelService labelService) {
         super("Unité spatiale", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-single-panel");
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
@@ -105,6 +117,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         this.documentService = documentService;
         this.documentCreationBean = documentCreationBean;
         this.customFieldService = customFieldService;
+        this.labelService = labelService;
     }
 
     @Override
@@ -228,9 +241,9 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
             return value.toString();
         } else if (value instanceof List<?> list) {
             // Handle list of concepts
-
+            String langCode = sessionSettings.getLanguageCode();
             return list.stream()
-                    .map(item -> (item instanceof Concept concept) ? concept.getLabel() : item.toString())
+                    .map(item -> (item instanceof Concept concept) ? labelService.findLabelOf(concept, langCode).getValue() : item.toString())
                     .collect(Collectors.joining(", "));
         }
 
