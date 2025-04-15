@@ -32,101 +32,195 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
     List<SpatialUnit> countAllParentsOfSpatialUnit(@Param("spatialUnitId") Long spatialUnitId);
 
 
-
-
     @Query(
             nativeQuery = true,
-            value = "SELECT su.*, l.label_value as c_label " +
+            value = "WITH ranked_labels AS ( " +
+                    "    SELECT " +
+                    "        l.fk_concept_id, " +
+                    "        l.label_value, " +
+                    "        l.lang_code, " +
+                    "        ROW_NUMBER() OVER ( " +
+                    "            PARTITION BY l.fk_concept_id " +
+                    "            ORDER BY  " +
+                    "                CASE  " +
+                    "                    WHEN l.lang_code = :langCode THEN 1 " +
+                    "                    WHEN l.lang_code = 'en' THEN 2 " +
+                    "                    ELSE 3 " +
+                    "                END " +
+                    "        ) AS rank " +
+                    "    FROM label l " +
+                    ") " +
+                    "SELECT " +
+                    "    su.*, " +
+                    "    rl.label_value AS c_label " +
                     "FROM spatial_unit su " +
-                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
-                    "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
-                    "         LEFT JOIN label l ON c.concept_id = l.fk_concept_id " +
+                    "LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
+                    "LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
+                    "LEFT JOIN ranked_labels rl ON c.concept_id = rl.fk_concept_id AND rl.rank = 1 " +
                     "WHERE su.fk_institution_id = :institutionId " +
-                    "  AND :langCode = l.lang_code "+
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
                     "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
-                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(l.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))  ",
-            countQuery = "SELECT count(su.*) " +
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%'))  " +
+                    "                                     OR LOWER(rl.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
+            countQuery = "WITH ranked_labels AS ( " +
+                    "    SELECT " +
+                    "        l.fk_concept_id, " +
+                    "        l.label_value, " +
+                    "        l.lang_code, " +
+                    "        ROW_NUMBER() OVER ( " +
+                    "            PARTITION BY l.fk_concept_id " +
+                    "            ORDER BY  " +
+                    "                CASE  " +
+                    "                    WHEN l.lang_code = :langCode THEN 1 " +
+                    "                    WHEN l.lang_code = 'en' THEN 2 " +
+                    "                    ELSE 3 " +
+                    "                END " +
+                    "        ) AS rank " +
+                    "    FROM label l " +
+                    ") " +
+                    "SELECT count(su.*) " +
                     "FROM spatial_unit su " +
-                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
-                    "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
-                    "         LEFT JOIN label l ON c.concept_id = l.fk_concept_id " +
+                    "LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
+                    "LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
+                    "LEFT JOIN ranked_labels rl ON c.concept_id = rl.fk_concept_id AND rl.rank = 1 " +
                     "WHERE su.fk_institution_id = :institutionId " +
-                    "  AND :langCode = l.lang_code "+
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
                     "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
-                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(l.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))  "
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%'))  " +
+                    "                                     OR LOWER(rl.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
     )
     Page<SpatialUnit> findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(@Param("institutionId") Long institutionId,
-                                      @Param("name") String name,
-                                      @Param("categoryIds") Long[] categoryIds,
-                                      @Param("global") String global,
-                                      @Param("langCode") String langCode,
-                                      Pageable pageable);
-
-    @Query(
-            nativeQuery = true,
-            value = "SELECT su.*, l.label_value as c_label " +
-                    "FROM spatial_unit su " +
-                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
-                    "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
-                    "         LEFT JOIN label l ON c.concept_id = l.fk_concept_id " +
-                    "         JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_child_id "+
-                    "WHERE suh.fk_parent_id = :parentId " +
-                    "  AND :langCode = l.lang_code "+
-                    "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
-                    "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
-                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(l.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
-            countQuery = "SELECT count(su.*) " +
-                    "FROM spatial_unit su " +
-                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
-                    "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
-                    "         LEFT JOIN label l ON c.concept_id = l.fk_concept_id " +
-                    "         JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_child_id "+
-                    "WHERE suh.fk_parent_id = :parentId " +
-                    "  AND :langCode = l.lang_code "+
-                    "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
-                    "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
-                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(l.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
-    )
-    Page<SpatialUnit> findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(@Param("parentId") Long parentId,
                                                                                                   @Param("name") String name,
                                                                                                   @Param("categoryIds") Long[] categoryIds,
                                                                                                   @Param("global") String global,
-                                                                                                    @Param("langCode") String langCode,
+                                                                                                  @Param("langCode") String langCode,
                                                                                                   Pageable pageable);
 
     @Query(
             nativeQuery = true,
-            value = "SELECT su.*, l.label_value as c_label " +
+            value = "WITH ranked_labels AS ( " +
+                    "    SELECT " +
+                    "        l.fk_concept_id, " +
+                    "        l.label_value, " +
+                    "        l.lang_code, " +
+                    "        ROW_NUMBER() OVER ( " +
+                    "            PARTITION BY l.fk_concept_id " +
+                    "            ORDER BY  " +
+                    "                CASE  " +
+                    "                    WHEN l.lang_code = :langCode THEN 1 " +
+                    "                    WHEN l.lang_code = 'en' THEN 2 " +
+                    "                    ELSE 3 " +
+                    "                END " +
+                    "        ) AS rank " +
+                    "    FROM label l " +
+                    ") " +
+                    "SELECT " +
+                    "    su.*, " +
+                    "    rl.label_value AS c_label " +
                     "FROM spatial_unit su " +
                     "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
                     "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
-                    "         LEFT JOIN label l ON c.concept_id = l.fk_concept_id " +
-                    "         JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_parent_id "+
-                    "WHERE suh.fk_child_id = :childId " +
-                    "  AND :langCode = l.lang_code "+
+                    "         LEFT JOIN ranked_labels rl ON c.concept_id = rl.fk_concept_id AND rl.rank = 1 " +
+                    "WHERE sh.fk_parent_id = :parentId " +
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
                     "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
-                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(l.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
-            countQuery = "SELECT count(su.*) " +
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(rl.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
+            countQuery = "WITH ranked_labels AS ( " +
+                    "SELECT " +
+                    "        l.fk_concept_id, " +
+                    "        l.label_value, " +
+                    "        l.lang_code, " +
+                    "        ROW_NUMBER() OVER ( " +
+                    "            PARTITION BY l.fk_concept_id " +
+                    "            ORDER BY  " +
+                    "                CASE  " +
+                    "                    WHEN l.lang_code = :langCode THEN 1 " +
+                    "                    WHEN l.lang_code = 'en' THEN 2 " +
+                    "                    ELSE 3 " +
+                    "                END " +
+                    "        ) AS rank " +
+                    "    FROM label l " +
+                    ") " +
+                    "SELECT " +
+                    "    count(su.*) " +
                     "FROM spatial_unit su " +
                     "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
                     "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
-                    "         LEFT JOIN label l ON c.concept_id = l.fk_concept_id " +
-                    "         JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_parent_id "+
-                    "WHERE suh.fk_child_id = :childId " +
-                    "  AND :langCode = l.lang_code "+
+                    "         LEFT JOIN ranked_labels rl ON c.concept_id = rl.fk_concept_id AND rl.rank = 1 " +
+                    "WHERE sh.fk_parent_id = :parentId " +
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
                     "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
-                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(l.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(rl.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
     )
-    Page<SpatialUnit> findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(@Param("childId") Long childId,
+    Page<SpatialUnit> findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(@Param("parentId") Long parentId,
                                                                                              @Param("name") String name,
                                                                                              @Param("categoryIds") Long[] categoryIds,
                                                                                              @Param("global") String global,
-                                                                                            @Param("langCode") String langCode,
+                                                                                             @Param("langCode") String langCode,
                                                                                              Pageable pageable);
+
+    @Query(
+            nativeQuery = true,
+            value = "WITH ranked_labels AS ( " +
+                    "    SELECT " +
+                    "        l.fk_concept_id, " +
+                    "        l.label_value, " +
+                    "        l.lang_code, " +
+                    "        ROW_NUMBER() OVER ( " +
+                    "            PARTITION BY l.fk_concept_id " +
+                    "            ORDER BY  " +
+                    "                CASE  " +
+                    "                    WHEN l.lang_code = :langCode THEN 1 " +
+                    "                    WHEN l.lang_code = 'en' THEN 2 " +
+                    "                    ELSE 3 " +
+                    "                END " +
+                    "        ) AS rank " +
+                    "    FROM label l " +
+                    ") " +
+                    "SELECT " +
+                    "    su.*, " +
+                    "    rl.label_value AS c_label " +
+                    "FROM spatial_unit su " +
+                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_parent_id " +
+                    "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
+                    "         LEFT JOIN ranked_labels rl ON c.concept_id = rl.fk_concept_id AND rl.rank = 1 " +
+                    "WHERE sh.fk_child_id = :childId " +
+                    "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
+                    "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(rl.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
+            countQuery = "WITH ranked_labels AS ( " +
+                    "SELECT " +
+                    "        l.fk_concept_id, " +
+                    "        l.label_value, " +
+                    "        l.lang_code, " +
+                    "        ROW_NUMBER() OVER ( " +
+                    "            PARTITION BY l.fk_concept_id " +
+                    "            ORDER BY  " +
+                    "                CASE  " +
+                    "                    WHEN l.lang_code = :langCode THEN 1 " +
+                    "                    WHEN l.lang_code = 'en' THEN 2 " +
+                    "                    ELSE 3 " +
+                    "                END " +
+                    "        ) AS rank " +
+                    "    FROM label l " +
+                    ") " +
+                    "SELECT " +
+                    "    count(su.*) " +
+                    "FROM spatial_unit su " +
+                    "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_parent_id " +
+                    "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
+                    "         LEFT JOIN ranked_labels rl ON c.concept_id = rl.fk_concept_id AND rl.rank = 1 " +
+                    "WHERE sh.fk_child_id = :parentId " +
+                    "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
+                    "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(rl.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
+    )
+    Page<SpatialUnit> findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(@Param("childId") Long childId,
+                                                                                            @Param("name") String name,
+                                                                                            @Param("categoryIds") Long[] categoryIds,
+                                                                                            @Param("global") String global,
+                                                                                            @Param("langCode") String langCode,
+                                                                                            Pageable pageable);
 
     @Query(
             nativeQuery = true,
