@@ -7,29 +7,39 @@ import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.form.CustomFieldService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.domain.utils.DocumentUtils;
+import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.utils.DataLoaderUtils;
 import fr.siamois.ui.bean.panel.utils.SpatialUnitHelperService;
+import fr.siamois.ui.model.SpatialUnitChildrenLazyDataModel;
+import fr.siamois.ui.model.SpatialUnitLazyDataModel;
+import fr.siamois.ui.model.SpatialUnitParentsLazyDataModel;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
-import org.primefaces.model.StreamedContent;
+import org.primefaces.model.*;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeType;
 import software.xdev.chartjs.model.charts.BarChart;
@@ -47,6 +57,8 @@ import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -70,8 +82,9 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private final transient DocumentService documentService;
     private final transient DocumentCreationBean documentCreationBean;
     private final transient CustomFieldService customFieldService;
+    private final transient ConceptService conceptService;
     private final transient LabelService labelService;
-
+    private final transient LangBean langBean;
 
     // Locals
     private transient SpatialUnit spatialUnit;
@@ -85,11 +98,21 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private String actionUnitListErrorMessage;
     private String recordingUnitListErrorMessage;
 
+
     private transient List<SpatialUnitHist> historyVersion;
     private transient SpatialUnitHist revisionToDisplay = null;
 
     private transient List<CustomField> availableFields;
     private transient List<CustomField> selectedFields;
+
+    // lazy model for children
+    private Integer totalChildrenCount = 0;
+    private List<Concept> selectedCategoriesChildren;
+    private LazyDataModel<SpatialUnit> lazyDataModelChildren ;
+    // lazy model for parents
+    private Integer totalParentsCount = 0;
+    private List<Concept> selectedCategoriesParents;
+    private LazyDataModel<SpatialUnit> lazyDataModelParents ;
 
     private String barModel;
 
@@ -98,16 +121,8 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private List<Document> documents;
 
     @Autowired
-    private SpatialUnitPanel(
-            SpatialUnitService spatialUnitService,
-            RecordingUnitService recordingUnitService,
-            ActionUnitService actionUnitService,
-            SessionSettingsBean sessionSettings,
-            SpatialUnitHelperService spatialUnitHelperService,
-            DocumentService documentService,
-            DocumentCreationBean documentCreationBean,
-            CustomFieldService customFieldService,
-            LabelService labelService) {
+    private SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService, DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
+                             ConceptService conceptService, LabelService labelService, LangBean langBean) {
         super("Unité spatiale", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-single-panel");
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
@@ -118,6 +133,20 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         this.documentCreationBean = documentCreationBean;
         this.customFieldService = customFieldService;
         this.labelService = labelService;
+        this.conceptService = conceptService;
+        this.langBean = langBean;
+    }
+
+
+    public List<ConceptLabel> categoriesAvailable() {
+        List<Concept> cList = conceptService.findAllConceptsByInstitution(sessionSettings.getSelectedInstitution());
+
+        return cList.stream()
+                .map(concept -> labelService.findLabelOf(
+                        concept, langBean.getLanguageCode()
+                ))
+                .toList();
+
     }
 
     @Override
@@ -172,8 +201,28 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
         try {
             this.spatialUnit = spatialUnitService.findById(idunit);
+
+            // Fields for recording unit table
             availableFields = customFieldService.findAllFieldsBySpatialUnitId(idunit);
             selectedFields = new ArrayList<>();
+
+            // Get all the CHILDREN of the spatial unit
+            selectedCategoriesChildren = new ArrayList<>();
+            lazyDataModelChildren= new SpatialUnitChildrenLazyDataModel(
+                    spatialUnitService,
+                    langBean,
+                    spatialUnit
+            );
+            totalChildrenCount = lazyDataModelChildren.getRowCount();
+
+            // Get all the Parents of the spatial unit
+            selectedCategoriesParents = new ArrayList<>();
+            lazyDataModelParents = new SpatialUnitParentsLazyDataModel(
+                    spatialUnitService,
+                    langBean,
+                    spatialUnit
+            );
+            totalParentsCount = lazyDataModelParents.getRowCount();
 
             this.setTitle(spatialUnit.getName()); // Set panel title
             // add to BC
@@ -187,19 +236,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
             return;
         }
 
-        DataLoaderUtils.loadData(
-                () -> spatialUnitService.findAllChildOfSpatialUnit(spatialUnit),
-                list -> this.spatialUnitList = list,
-                msg -> this.spatialUnitListErrorMessage = msg,
-                "Unable to load spatial units: "
-        );
 
-        DataLoaderUtils.loadData(
-                () -> spatialUnitService.findAllParentsOfSpatialUnit(spatialUnit),
-                list -> this.spatialUnitParentsList = list,
-                msg -> this.spatialUnitParentsListErrorMessage = msg,
-                "Unable to load the parents: "
-        );
 
         DataLoaderUtils.loadData(
                 () -> recordingUnitService.findAllBySpatialUnit(spatialUnit),

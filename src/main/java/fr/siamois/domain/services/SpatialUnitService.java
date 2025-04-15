@@ -13,8 +13,12 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ark.ArkService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.SpatialUnitRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,29 +49,7 @@ public class SpatialUnitService implements ArkEntityService {
         this.institutionService = institutionService;
     }
 
-    /**
-     * Find all the spatial unit not having any spatial unit as parent
-     *
-     * @return The List of SpatialUnit
-     * @throws RuntimeException             If the repository method throws an Exception
-     */
-    public List<SpatialUnit> findAllWithoutParents() {
-        return spatialUnitRepository.findAllWithoutParents();
-    }
 
-    /**
-     * Find all the children of a spatial unit
-     *
-     * @return The List of SpatialUnit
-     * @throws RuntimeException             If the repository method throws an Exception
-     */
-    public List<SpatialUnit> findAllChildOfSpatialUnit(SpatialUnit spatialUnit) {
-        return spatialUnitRepository.findAllChildOfSpatialUnit(spatialUnit.getId());
-    }
-
-    public List<SpatialUnit> findAllParentsOfSpatialUnit(SpatialUnit spatialUnit) {
-        return spatialUnitRepository.findAllParentsOfSpatialUnit(spatialUnit.getId());
-    }
 
     /**
      * Find a spatial unit by its ID
@@ -95,13 +77,31 @@ public class SpatialUnitService implements ArkEntityService {
         spatialUnitRepository.save(spatialUnit);
     }
 
-    public List<SpatialUnit> findAllWithoutParentsOfInstitution(Institution institution) {
-        return spatialUnitRepository.findAllWithoutParentsOfInstitution(institution.getId());
+    public Page<SpatialUnit> findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
+            Long institutionId,
+            String name, Long[] categoryIds, String global, String langCode, Pageable pageable) {
+        return spatialUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                institutionId, name, categoryIds, global, langCode, pageable);
+    }
+
+    public Page<SpatialUnit> findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
+            SpatialUnit parent,
+            String name, Long[] categoryIds, String global, String langCode, Pageable pageable) {
+        return spatialUnitRepository.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                parent.getId(), name, categoryIds, global, langCode, pageable);
+    }
+
+    public Page<SpatialUnit> findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
+            SpatialUnit child,
+            String name, Long[] categoryIds, String global, String langCode, Pageable pageable) {
+        return spatialUnitRepository.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                child.getId(), name, categoryIds, global, langCode, pageable);
     }
 
     public List<SpatialUnit> findAllOfInstitution(Institution institution) {
         return spatialUnitRepository.findAllOfInstitution(institution.getId());
     }
+
 
     public SpatialUnit save(UserInfo info, String name, Concept type, List<SpatialUnit> parents) throws SpatialUnitAlreadyExistsException {
         Optional<SpatialUnit> optSpatialUnit = spatialUnitRepository.findByNameAndInstitution(name, info.getInstitution().getId());
