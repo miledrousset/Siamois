@@ -19,6 +19,7 @@ import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 import org.springframework.data.domain.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,7 +126,12 @@ class SpatialUnitLazyDataModelTest {
         sortBy.put("category.label", sortMeta);
 
         // Mock data
-        List<SpatialUnit> spatialUnits = List.of(spatialUnit1, spatialUnit2);
+        List<SpatialUnit> spatialUnits = new ArrayList<>();
+        spatialUnits.add(spatialUnit1);
+        for (int i = 0; i < 29; i++) {
+            spatialUnits.add(spatialUnit2);
+        }
+
         Page<SpatialUnit> page = new PageImpl<>(spatialUnits);
 
         doReturn(page).when(lazyModel).loadSpatialUnits(
@@ -136,7 +142,7 @@ class SpatialUnitLazyDataModelTest {
         List<SpatialUnit> result = lazyModel.load(first, pageSize, sortBy, filters);
 
         // Assert
-        assertEquals(2, result.size());
+        assertEquals(30, result.size());
         assertEquals("Unit 1", result.get(0).getName());
         verify(lazyModel).loadSpatialUnits(
                 eq("name"), eq(new Long[]{1L}), eq("global"), pageableCaptor.capture()
@@ -149,5 +155,17 @@ class SpatialUnitLazyDataModelTest {
         assertEquals(2, capturedPageable.getPageNumber());
         assertEquals(10, capturedPageable.getPageSize());
         assertEquals(Sort.Direction.ASC, order.getDirection());
+
+        // also test paginator value getters
+
+        int firstIndexOnPage = lazyModel.getFirstIndexOnPage();
+        int lastIndexOnPage = lazyModel.getLastIndexOnPage();
+
+        assertEquals(21, firstIndexOnPage);
+        assertEquals(30, lastIndexOnPage);
+
+
     }
+
+
 }

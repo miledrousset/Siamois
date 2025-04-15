@@ -1,5 +1,6 @@
 package fr.siamois.domain.services.vocabulary;
 
+import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
@@ -264,6 +265,36 @@ class ConceptServiceTest {
         assertNotNull(result);
         assertEquals(expectedConcepts, result);
         verify(conceptRepository, times(1)).findAllById(conceptIds);
+    }
+
+    @Test
+    void findAllConceptsByInstitution_Success() {
+
+        // Given
+        Concept concept1 = new Concept();
+        concept1.setId(1L);
+        concept1.setExternalId("concept1");
+        concept1.setVocabulary(vocabulary);
+
+        Concept concept2 = new Concept();
+        concept2.setId(2L);
+        concept2.setExternalId("concept2");
+        concept2.setVocabulary(vocabulary);
+
+        Institution i = new Institution();
+        i.setId(1L);
+
+
+        List<Concept> expectedConcepts = List.of(concept1, concept2);
+
+        when(conceptRepository.findAllBySpatialUnitOfInstitution(any(Long.class))).thenReturn(expectedConcepts);
+
+        List<Concept> result = conceptService.findAllConceptsByInstitution(i);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(expectedConcepts, result);
+
     }
 
 }
