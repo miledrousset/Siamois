@@ -83,25 +83,23 @@ public class ProfileSettingsBean implements Serializable {
 
     @EventListener(InstitutionChangeEvent.class)
     public void init() {
-        if (fDefaultInstitutionId == null) {
-            UserInfo info = sessionSettingsBean.getUserInfo();
-            Person user = info.getUser();
-            initPersonSection(info);
-            initThesaurusSection(info);
-            initInstitutions(user, info);
+        UserInfo info = sessionSettingsBean.getUserInfo();
+        Person user = info.getUser();
+        initPersonSection(info);
+        initThesaurusSection(info);
+        initInstitutions(user, info);
 
-            fSelectedLang = langBean.getLanguageCode();
-        }
+        fSelectedLang = langBean.getLanguageCode();
     }
 
     private void initInstitutions(Person user, UserInfo info) {
         refInstitutions = institutionService.findInstitutionsOfPerson(user);
-        fDefaultInstitutionId = refInstitutions.stream()
-                .filter(institution ->
-                        institution.getId().equals(info.getInstitution().getId()))
-                .findFirst()
-                .orElse(refInstitutions.get(0))
-                .getId();
+        PersonSettings settings = personService.createOrGetSettingsOf(user);
+        if (settings.getDefaultInstitution() != null) {
+            fDefaultInstitutionId = settings.getDefaultInstitution().getId();
+        } else {
+            fDefaultInstitutionId = info.getInstitution().getId();
+        }
         log.trace("Found {} institutions", refInstitutions.size());
     }
 

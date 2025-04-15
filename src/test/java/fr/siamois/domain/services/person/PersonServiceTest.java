@@ -3,6 +3,8 @@ package fr.siamois.domain.services.person;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.*;
 import fr.siamois.domain.models.settings.PersonSettings;
+import fr.siamois.domain.services.InstitutionService;
+import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
@@ -25,9 +27,6 @@ import static org.mockito.Mockito.*;
 class PersonServiceTest {
 
     @Mock
-    private TeamRepository teamRepository;
-
-    @Mock
     private PersonRepository personRepository;
 
     @Mock
@@ -38,6 +37,12 @@ class PersonServiceTest {
 
     @Mock
     private PersonSettingsRepository personSettingsRepository;
+
+    @Mock
+    private InstitutionService institutionService;
+
+    @Mock
+    private LangService langService;
 
     private PersonService personService;
 
@@ -55,7 +60,9 @@ class PersonServiceTest {
                 personRepository,
                 passwordEncoder,
                 verifiers,
-                personSettingsRepository
+                personSettingsRepository,
+                institutionService,
+                langService
         );
     }
 
