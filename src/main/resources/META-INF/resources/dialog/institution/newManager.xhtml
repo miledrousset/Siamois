@@ -1,0 +1,27 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://java.sun.com/jsf/facelets"
+             xmlns:p="http://primefaces.org/ui"
+
+>
+
+    <p:dialog
+            widgetVar="newManagerDialog"
+            id="newManagerDialog"
+            width="40vw"
+            showEffect="fade"
+            appendToBody="true"
+            closable="false"
+    >
+        <div class="dialog-new-manager">
+            <h3>#{userDialogBean.title}</h3>
+            <hr/>
+
+            <hr/>
+            <div class="dialog-buttons">
+                <p:commandButton value="Annuler" action="#{userDialogBean.exit()}" update="@form"/>
+                <p:commandButton value="#{userDialogBean.buttonLabel}" action="#{userDialogBean.save()}" update="@form"/>
+            </div>
+        </div>
+    </p:dialog>
+
+</ui:fragment>

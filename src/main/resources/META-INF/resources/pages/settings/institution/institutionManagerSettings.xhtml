@@ -17,7 +17,7 @@
             <form:csrfform formId="breadCrumbForm" styleClass="breadCrumpForm">
                 <p:breadCrumb homeDisplay="false">
                     <p:menuitem value="Organisations" action="#{institutionDetailsBean.goToInstitutionList()}"/>
-                    <p:menuitem value="#{institutionInfoSettingsBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
+                    <p:menuitem value="#{institutionManagerSettingsBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
                     <p:menuitem value="Responsables d'organisation"/>
                 </p:breadCrumb>
             </form:csrfform>
@@ -53,6 +53,7 @@
                         <p:outputLabel value="#{institutionManagerSettingsBean.addDateOf(member)}"/>
                     </p:column>
                 </p:dataTable>
+                <ui:include src="/dialog/institution/newManager.xhtml"/>
             </settings:datatable>
         </main>
     </ui:define>

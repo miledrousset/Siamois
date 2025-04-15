@@ -50,7 +50,7 @@ public class Person implements UserDetails {
     private String lastname;
 
     @NotNull
-    @Column(name = "username", nullable = false, length = USERNAME_MAX_LENGTH, unique = true)
+    @Column(name = "username", length = USERNAME_MAX_LENGTH, unique = true)
     private String username;
 
     // The password length shouldn't be set in the database as we don't know their size after hash.
@@ -139,6 +139,10 @@ public class Person implements UserDetails {
     public boolean isEnabled() {
         return isEnabled;
     }
+
+    @JsonIgnore
+    @Column(name = "pending_token", length = 1024)
+    public String pendingToken;
 
     @FieldCode
     public static final String USER_ROLE_FIELD_CODE = "SIAP.ROLE";

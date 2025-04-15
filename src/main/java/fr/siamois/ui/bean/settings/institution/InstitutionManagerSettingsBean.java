@@ -6,9 +6,11 @@ import fr.siamois.domain.models.settings.PersonRoleInstitution;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -27,6 +29,7 @@ public class InstitutionManagerSettingsBean implements Serializable {
 
     private final transient InstitutionService institutionService;
     private final transient PersonService personService;
+    private final UserDialogBean userDialogBean;
     private Institution institution;
     private transient Map<Person, String> roles;
 
@@ -34,9 +37,10 @@ public class InstitutionManagerSettingsBean implements Serializable {
     private transient Set<Person> refMembers;
     private String textSearch;
 
-    public InstitutionManagerSettingsBean(InstitutionService institutionService, PersonService personService) {
+    public InstitutionManagerSettingsBean(InstitutionService institutionService, PersonService personService, UserDialogBean userDialogBean) {
         this.institutionService = institutionService;
         this.personService = personService;
+        this.userDialogBean = userDialogBean;
     }
 
     public void init(Institution institution) {
@@ -108,6 +112,11 @@ public class InstitutionManagerSettingsBean implements Serializable {
 
     public void createManager() {
         log.trace("Creating manager");
+        // Display create manager dialog
+        userDialogBean.reset();
+        userDialogBean.setTitle("Créer un responsable");
+        userDialogBean.setButtonLabel("Créer un responsable");
+        PrimeFaces.current().executeScript("PF('newManagerDialog').show();");
     }
 
 }
