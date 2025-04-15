@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean.dialog.institution;
 
+import fr.siamois.ui.email.EmailManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,15 +17,20 @@ import java.io.Serializable;
 @Setter
 public class UserDialogBean implements Serializable {
 
+    private final EmailManager emailManager;
     private String title;
     private String buttonLabel;
+
+    public UserDialogBean(EmailManager emailManager) {
+        this.emailManager = emailManager;
+    }
 
     public void reset() {
         log.trace("Reset users");
     }
 
     public void save() {
-        log.trace("Save users");
+        emailManager.sendEmail("siamois@siamois.fr", title, buttonLabel);
     }
 
     public void exit() {
