@@ -1,6 +1,8 @@
 package fr.siamois.domain.services;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,10 @@ import java.util.Objects;
 public class LangService {
 
     private final MessageSource messageSource;
+
+    @Getter
+    @Value("${siamois.lang.default}")
+    private String defaultLang;
 
     public LangService(MessageSource messageSource) {
         this.messageSource = messageSource;

@@ -1,8 +1,11 @@
 package fr.siamois.domain.services.person;
 
+import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.*;
 import fr.siamois.domain.models.settings.PersonSettings;
+import fr.siamois.domain.services.InstitutionService;
+import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
@@ -25,15 +28,19 @@ public class PersonService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final List<PersonDataVerifier> verifiers;
     private final PersonSettingsRepository personSettingsRepository;
+    private final InstitutionService institutionService;
+    private final LangService langService;
 
     public PersonService(PersonRepository personRepository,
                          BCryptPasswordEncoder passwordEncoder,
                          List<PersonDataVerifier> verifiers,
-                         PersonSettingsRepository personSettingsRepository) {
+                         PersonSettingsRepository personSettingsRepository, InstitutionService institutionService, LangService langService) {
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
         this.verifiers = verifiers;
         this.personSettingsRepository = personSettingsRepository;
+        this.institutionService = institutionService;
+        this.langService = langService;
     }
 
     public Person createPerson(Person person) throws InvalidUsernameException, InvalidEmailException, UserAlreadyExistException, InvalidPasswordException, InvalidNameException {
@@ -105,7 +112,19 @@ public class PersonService {
 
         PersonSettings toSave = new PersonSettings();
         toSave.setPerson(person);
+        toSave.setDefaultInstitution(findDefaultInstitution(person));
+        toSave.setLangCode(findDefaultLang());
+
         return personSettingsRepository.save(toSave);
+    }
+
+    private String findDefaultLang() {
+        return langService.getDefaultLang();
+    }
+
+    private Institution findDefaultInstitution(Person person) {
+        List<Institution> institutions = institutionService.findInstitutionsOfPerson(person);
+        return institutions.isEmpty() ? null : institutions.get(0);
     }
 
     public PersonSettings updatePersonSettings(PersonSettings personSettings) {
