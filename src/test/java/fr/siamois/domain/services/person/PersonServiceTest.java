@@ -7,9 +7,11 @@ import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
+import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
-import fr.siamois.infrastructure.database.repositories.person.TeamRepository;
 import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
+import fr.siamois.ui.email.EmailManager;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,23 +28,15 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
 
-    @Mock
-    private PersonRepository personRepository;
-
-    @Mock
-    private BCryptPasswordEncoder passwordEncoder;
-
-    @Mock
-    private PasswordVerifier passwordVerifier;
-
-    @Mock
-    private PersonSettingsRepository personSettingsRepository;
-
-    @Mock
-    private InstitutionService institutionService;
-
-    @Mock
-    private LangService langService;
+    @Mock private PersonRepository personRepository;
+    @Mock private BCryptPasswordEncoder passwordEncoder;
+    @Mock private PasswordVerifier passwordVerifier;
+    @Mock private PersonSettingsRepository personSettingsRepository;
+    @Mock private InstitutionService institutionService;
+    @Mock private LangService langService;
+    @Mock private EmailManager emailManager;
+    @Mock private PendingPersonRepository pendingPersonRepository;
+    @Mock private HttpServletRequest httpServletRequest;
 
     private PersonService personService;
 
@@ -62,7 +56,10 @@ class PersonServiceTest {
                 verifiers,
                 personSettingsRepository,
                 institutionService,
-                langService
+                langService,
+                emailManager,
+                pendingPersonRepository,
+                httpServletRequest
         );
     }
 

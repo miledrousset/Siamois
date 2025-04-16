@@ -36,6 +36,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/jakarta.faces.resource/**").permitAll()
                 .requestMatchers("/error/**", "/pages/error/**").permitAll()
                 .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/register/**").permitAll()
                 .anyRequest().authenticated()
         );
         http.formLogin(login -> login

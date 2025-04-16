@@ -10,7 +10,7 @@ import lombok.Setter;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.io.Serial;
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
@@ -19,6 +19,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "person_role_institution")
 public class PersonRoleInstitution {
+
     @EmbeddedId
     private PersonRoleInstitutionId id;
 
@@ -47,9 +48,8 @@ public class PersonRoleInstitution {
     @Getter
     @Setter
     @Embeddable
-    public static class PersonRoleInstitutionId implements java.io.Serializable {
-        @Serial
-        private static final long serialVersionUID = -4502700731210054365L;
+    public static class PersonRoleInstitutionId implements Serializable {
+
         @NotNull
         @Column(name = "fk_person_id", nullable = false)
         private Long fkPersonId;
