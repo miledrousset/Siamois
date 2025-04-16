@@ -71,7 +71,7 @@ public class PersonService {
         person = personRepository.save(person);
 
         Optional<PendingPerson> pendingPerson = pendingPersonRepository.findByEmail((person.getMail()));
-        pendingPerson.ifPresent(pendingPersonRepository::delete);
+        pendingPerson.ifPresent(this::deletePending);
 
         return person;
     }
@@ -212,5 +212,13 @@ public class PersonService {
 
     public Optional<PendingPerson> findPendingByToken(String token) {
         return pendingPersonRepository.findByRegisterToken(token);
+    }
+
+    public Optional<Person> findByEmail(String email) {
+        return personRepository.findByMailIgnoreCase(email);
+    }
+
+    public void deletePending(PendingPerson pendingPerson) {
+        pendingPersonRepository.delete(pendingPerson);
     }
 }
