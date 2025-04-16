@@ -236,7 +236,7 @@ class InstitutionServiceTest {
         Institution institution = new Institution();
         institution.setId(2L);
 
-        when(personRoleInstitutionRepository.findByInstitutionAndPersonAndIsManager(institution, person, true)).thenReturn(true);
+        when(personRoleInstitutionRepository.personExistInInstitution(institution.getId(), person.getId(), true)).thenReturn(true);
 
         boolean result = institutionService.isManagerOf(institution, person);
 

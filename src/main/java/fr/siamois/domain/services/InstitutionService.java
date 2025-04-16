@@ -121,7 +121,7 @@ public class InstitutionService {
     public boolean isManagerOf(Institution institution, Person person) {
         if (Objects.equals(institution.getManager(), person))
             return true;
-        return personRoleInstitutionRepository.findByInstitutionAndPersonAndIsManager(institution, person, true);
+        return personRoleInstitutionRepository.personExistInInstitution(institution.getId(), person.getId(), true);
     }
 
     public Institution update(Institution institution) {
