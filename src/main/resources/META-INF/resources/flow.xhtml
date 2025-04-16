@@ -12,9 +12,27 @@
         <link rel="stylesheet" href="#{redirectBean.redirectUrlToResource('searchBar.css', 'css')}" />
         <h:outputStylesheet library="css" name="panel.css"/>
 
+        <script>
+            function scrollToPanel(index) {
+                // TODO: implement the scroll; no time to test it now before atelier utilisateur
+                // const el = document.getElementById("panel-" + index);
+                // if (el) {
+                //     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                //     el.classList.add("panel-highlight");
+                //     setTimeout(() => el.classList.remove("panel-highlight"), 1500);
+                // }
+            }
+        </script>
+
     </ui:define>
 
     <ui:define name="content">
+
+        <!-- Remote command to scroll after update -->
+        <p:remoteCommand name="scrollToLastPanel"
+                         autoRun="false"
+                         onstart="setTimeout(() => scrollToPanel(#{flowBean.lastUpdatedPanelIndex}), 200);"/>
+
         <div id="search-bar">
             <form:csrfform formId="searchBarForm">
                 <article>

@@ -56,6 +56,7 @@
         <p:toolbar class="panel-footer">
             <p:toolbarGroup align="right">
                 <p:commandButton value='Enregistrer'
+                                 oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
                                  actionListener="#{panelModel.save()}"
                                  update="flow"
                                  style="margin-right: .5rem">

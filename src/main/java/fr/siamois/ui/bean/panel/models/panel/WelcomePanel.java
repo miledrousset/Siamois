@@ -5,6 +5,7 @@ import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,7 @@ public class WelcomePanel extends AbstractPanel {
         this.actionUnitService = actionUnitService;
         this.spatialUnitService = spatialUnitService;
 
-        setBreadcrumb(null);
+        setBreadcrumb(new PanelBreadcrumb());
         setIsBreadcrumbVisible(false);
         init();
 

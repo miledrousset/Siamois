@@ -63,6 +63,7 @@
 
                             <p:toolbarGroup align="right">
                                 <p:commandButton value='Ajouter' icon="bi bi-plus-square"
+                                                 oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
                                                  action="#{flowBean.addNewSpatialUnitPanel(cc.attrs.panelModel)}"
                                                  update="flow"
                                                  style="margin-right: .5rem">
@@ -77,6 +78,7 @@
                     <p:column headerText="Name" sortBy="#{item.name}" filterBy="#{item.name}">
                         <p:commandLink style="padding-right: 1em;"
                                        action="#{flowBean.goToSpatialUnitByIdCurrentPanel(item.id, cc.attrs.panelModel)}"
+                                       oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
                                        update="flow"
                         >
                             <h:outputText value="#{item.name}"/>
@@ -110,6 +112,7 @@
                         <p:toolbar>
                             <p:toolbarGroup>
                                 <p:commandButton icon="bi bi-box-arrow-up-right" update="flow" styleClass="sia-icon-btn"
+                                                 oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
                                                  action="#{flowBean.goToSpatialUnitByIdNewPanel(item.id,cc.attrs.panelModel)}"/>
                                 <p:commandButton icon="bi bi-bookmark" disabled="true" styleClass="sia-icon-btn"/>
                                 <p:commandButton icon="bi bi-copy" disabled="true" styleClass="sia-icon-btn"/>
