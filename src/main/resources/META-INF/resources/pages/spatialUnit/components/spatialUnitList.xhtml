@@ -10,6 +10,7 @@
         <cc:attribute name="lazyDataModel" required="true" type="org.primefaces.model.LazyDataModel"/>
         <cc:attribute name="panelModel" required="true" type="fr.siamois.ui.bean.panel.models.panel.AbstractPanel"/>
         <cc:attribute name="selectedCategories" required="true"/>
+        <cc:attribute name="disableAddBtn" required="false" default="false" type="java.lang.Boolean"/>
 
     </cc:interface>
     <cc:implementation>
@@ -64,6 +65,7 @@
                             <p:toolbarGroup align="right">
                                 <p:commandButton value='Ajouter' icon="bi bi-plus-square"
                                                  oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
+                                                 disabled="#{cc.attrs.disableAddBtn}"
                                                  action="#{flowBean.addNewSpatialUnitPanel(cc.attrs.panelModel)}"
                                                  update="flow"
                                                  style="margin-right: .5rem">
