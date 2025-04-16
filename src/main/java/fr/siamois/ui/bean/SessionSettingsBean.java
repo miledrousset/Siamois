@@ -93,8 +93,9 @@ public class SessionSettingsBean implements Serializable {
         return new UserInfo(selectedInstitution, getAuthenticatedUser(), getLanguageCode());
     }
 
-    public InstitutionSettings getInstitutionSettings() {
-        return getUserInfo().getInstitution().getSettings();
-    }
+    // TODO : figure out what to do with this after atelier utilisateur
+//    public InstitutionSettings getInstitutionSettings() {
+//        return getUserInfo().getInstitution().getSettings();
+//    }
 
 }

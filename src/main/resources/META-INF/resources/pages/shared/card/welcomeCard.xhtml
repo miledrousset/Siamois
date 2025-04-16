@@ -15,6 +15,7 @@
         <cc:attribute name="count" type="long" required="true" />
         <cc:attribute name="btnLabel" type="java.lang.String" required="true"/>
         <cc:attribute name="btnAction" required="false" method-signature="java.lang.Void f()"/>
+        <cc:attribute name="panelModel" required="false"/>
     </cc:interface>
 
     <cc:implementation>
@@ -28,8 +29,20 @@
             </div>
 
             <f:facet name="footer">
-                <p:commandButton styleClass="#{cc.attrs.btnStyleClass}" value="#{cc.attrs.btnLabel}"
-                action="#{cc.attrs.btnAction}" disabled="#{empty cc.attrs.btnAction}" update="flow"/>
+                <div style="display: flex; flex-direction: row; gap: 1em; justify-content: center;">
+                    <p:commandButton styleClass="#{cc.attrs.btnStyleClass}" value="#{cc.attrs.btnLabel}"
+                                     oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
+                                     action="#{cc.attrs.btnAction}" disabled="#{empty cc.attrs.btnAction}" update="flow"/>
+                    <p:commandButton value='Nouvelle' icon="bi bi-plus-square" styleClass="#{cc.attrs.btnStyleClass}"
+                                     action="#{flowBean.addNewSpatialUnitPanel(cc.attrs.panelModel)}"
+                                     update="flow"
+                                     oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
+                                     disabled="#{empty cc.attrs.btnAction}"
+                                     style="margin-right: .5rem">
+                    </p:commandButton>
+                </div>
+
+
             </f:facet>
         </p:card>
 

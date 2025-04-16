@@ -2,6 +2,11 @@
     background: var(--siamois-green-unknown);
 }
 
+.panel-highlight {
+    outline: 3px solid var(--siamois-green-light-350);
+    transition: outline 0.5s ease-in-out;
+}
+
 .siamois-panel {
     border-radius: 8px;
     font-family: 'Inter', sans-serif;

@@ -291,7 +291,7 @@
                                             multiple="true"
                                             panelStyleClass="recording-unit-autocomplete"
                                             completeMethod="#{panelModel.suggestValues}"
-                                            var="option" itemLabel="#{option.label}"
+                                            var="option" itemLabel="#{labelBean.findLabelOf(option)}"
                                             itemValue="#{option}"
                                             required="false"
                                             converter="#{conceptConverter}"
@@ -308,13 +308,13 @@
                                         <p:column>
                                             <div style="display:flex; flex-direction: column">
                                                 <h:outputText style="vertical-align: middle; margin-left: .5rem"
-                                                              value="#{option.label}"/>
-                                                <small>#{option.vocabulary.baseUri} - #{option.vocabulary.vocabularyName}</small>
+                                                              value="#{labelBean.findLabelOf(option)}"/>
+                                                <small>#{option.vocabulary.baseUri} - #{labelBean.findVocabularyLabelOf(option)}</small>
                                             </div>
 
                                         </p:column>
 
-                                        <!-- Pass the specific question as a parameter to the complete method -->
+                                        <!-- Pass the field as a parameter to the complete method -->
                                         <f:attribute name="question" value="#{field}"/>
 
 
@@ -324,6 +324,7 @@
 
                             </ui:repeat>
                         </p:panelGrid>
+
 
 
                     </p:panel>
