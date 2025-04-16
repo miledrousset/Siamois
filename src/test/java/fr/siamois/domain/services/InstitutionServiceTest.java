@@ -289,4 +289,49 @@ class InstitutionServiceTest {
         assertThat(result).isEqualTo(2);
     }
 
+    @Test
+    void findPersonInInstitution_shouldReturnPersonRoleInstitution_whenExists() {
+        // Arrange
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(2L);
+
+        PersonRoleInstitution personRoleInstitution = new PersonRoleInstitution();
+        personRoleInstitution.setInstitution(institution);
+        personRoleInstitution.setPerson(person);
+
+        when(personRoleInstitutionRepository.findByInstitutionAndPerson(institution, person))
+                .thenReturn(Optional.of(personRoleInstitution));
+
+        // Act
+        Optional<PersonRoleInstitution> result = institutionService.findPersonInInstitution(institution, person);
+
+        // Assert
+        assertThat(result)
+                .isPresent()
+                .contains(personRoleInstitution);
+        verify(personRoleInstitutionRepository, times(1)).findByInstitutionAndPerson(institution, person);
+    }
+
+    @Test
+    void findPersonInInstitution_shouldReturnEmpty_whenNotExists() {
+        // Arrange
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(2L);
+
+        when(personRoleInstitutionRepository.findByInstitutionAndPerson(institution, person))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<PersonRoleInstitution> result = institutionService.findPersonInInstitution(institution, person);
+
+        // Assert
+        assertThat(result).isEmpty();
+        verify(personRoleInstitutionRepository, times(1)).findByInstitutionAndPerson(institution, person);
+    }
 }

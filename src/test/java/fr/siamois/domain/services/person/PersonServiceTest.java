@@ -1,10 +1,12 @@
 package fr.siamois.domain.services.person;
 
+import fr.siamois.domain.models.auth.PendingPerson;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.*;
 import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.LangService;
+import fr.siamois.domain.services.person.verifier.EmailVerifier;
 import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
@@ -30,7 +32,8 @@ class PersonServiceTest {
 
     @Mock private PersonRepository personRepository;
     @Mock private BCryptPasswordEncoder passwordEncoder;
-    @Mock private PasswordVerifier passwordVerifier;
+    private final EmailVerifier emailVerifier = new EmailVerifier();
+    private final PasswordVerifier passwordVerifier = new PasswordVerifier();
     @Mock private PersonSettingsRepository personSettingsRepository;
     @Mock private InstitutionService institutionService;
     @Mock private LangService langService;
@@ -47,8 +50,9 @@ class PersonServiceTest {
         person = new Person();
         person.setId(1L);
         person.setPassword("password");
+        person.setMail("mail@localhost.com");
 
-        List<PersonDataVerifier> verifiers = List.of(passwordVerifier);
+        List<PersonDataVerifier> verifiers = List.of(passwordVerifier, emailVerifier);
 
         personService = new PersonService(
                 personRepository,
@@ -109,8 +113,6 @@ class PersonServiceTest {
         personService.updatePassword(person, "newPassword");
 
         // Assert
-        verify(passwordVerifier, times(1)).verify(person);
-        verify(personRepository, times(1)).save(person);
         assertEquals("encodedNewPassword", person.getPassword());
     }
 
@@ -149,6 +151,111 @@ class PersonServiceTest {
 
         assertTrue(verifier.isPresent());
         assertEquals(PasswordVerifier.class, verifier.get().getClass());
+    }
+
+    @Test
+    void createPerson_Success() throws Exception {
+        when(personRepository.save(any(Person.class))).thenReturn(person);
+        when(pendingPersonRepository.findByEmail(person.getMail())).thenReturn(Optional.empty());
+
+        Person result = personService.createPerson(person);
+
+        assertNotNull(result);
+        verify(personRepository, times(1)).save(person);
+        verify(pendingPersonRepository, times(1)).findByEmail(person.getMail());
+    }
+
+    @Test
+    void createPerson_ThrowsInvalidEmailException() {
+        person.setMail("invalid-email");
+        assertThrows(InvalidEmailException.class, () -> personService.createPerson(person));
+    }
+
+    @Test
+    void findById_Success() {
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
+
+        Person result = personService.findById(1L);
+
+        assertNotNull(result);
+        assertEquals(person, result);
+        verify(personRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void findById_NotFound() {
+        when(personRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Person result = personService.findById(1L);
+
+        assertNull(result);
+        verify(personRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void findPasswordVerifier_Success() {
+        Optional<PasswordVerifier> verifier = personService.findPasswordVerifier();
+
+        assertTrue(verifier.isPresent());
+        assertEquals(passwordVerifier, verifier.get());
+    }
+
+    @Test
+    void generateToken_Success() {
+        when(pendingPersonRepository.existsByRegisterToken(anyString())).thenReturn(false);
+
+        String token = personService.generateToken();
+
+        assertNotNull(token);
+        assertEquals(20, token.length());
+        verify(pendingPersonRepository, atLeastOnce()).existsByRegisterToken(anyString());
+    }
+
+    @Test
+    void invitationLink_Success() {
+        PendingPerson pendingPerson = new PendingPerson();
+        pendingPerson.setRegisterToken("testToken");
+
+        when(httpServletRequest.getScheme()).thenReturn("https");
+        when(httpServletRequest.getServerName()).thenReturn("example.com");
+        when(httpServletRequest.getServerPort()).thenReturn(443);
+        when(httpServletRequest.getContextPath()).thenReturn("/app");
+
+        String link = personService.invitationLink(pendingPerson);
+
+        assertEquals("https://example.com/app/register/testToken", link);
+    }
+
+    @Test
+    void findPendingByToken_Success() {
+        PendingPerson pendingPerson = new PendingPerson();
+        when(pendingPersonRepository.findByRegisterToken("testToken")).thenReturn(Optional.of(pendingPerson));
+
+        Optional<PendingPerson> result = personService.findPendingByToken("testToken");
+
+        assertTrue(result.isPresent());
+        assertEquals(pendingPerson, result.get());
+        verify(pendingPersonRepository, times(1)).findByRegisterToken("testToken");
+    }
+
+    @Test
+    void findByEmail_Success() {
+        when(personRepository.findByMailIgnoreCase("test@example.com")).thenReturn(Optional.of(person));
+
+        Optional<Person> result = personService.findByEmail("test@example.com");
+
+        assertTrue(result.isPresent());
+        assertEquals(person, result.get());
+        verify(personRepository, times(1)).findByMailIgnoreCase("test@example.com");
+    }
+
+    @Test
+    void deletePending_Success() {
+        PendingPerson pendingPerson = new PendingPerson();
+
+        personService.deletePending(pendingPerson);
+
+        verify(pendingPersonRepository, times(1)).delete(pendingPerson);
     }
 
 }

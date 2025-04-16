@@ -155,7 +155,7 @@ public class PersonService {
         return personSettingsRepository.save(personSettings);
     }
 
-    private String generateToken() {
+    String generateToken() {
         String allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder token;
         int attempts = 0;
@@ -176,7 +176,7 @@ public class PersonService {
         return token.toString();
     }
 
-    private String invitationLink(PendingPerson pendingPerson) {
+    String invitationLink(PendingPerson pendingPerson) {
         String domain = httpServletRequest.getScheme() + "://" + httpServletRequest.getServerName() +
                 (httpServletRequest.getServerPort() != 80 && httpServletRequest.getServerPort() != 443 ? ":" + httpServletRequest.getServerPort() : "");
         return String.format("%s%s/register/%s", domain, httpServletRequest.getContextPath(), pendingPerson.getRegisterToken());
