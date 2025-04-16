@@ -6,8 +6,12 @@
       xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form"
 >
 
+<h:head>
+    <title>Inscription</title>
+</h:head>
+
 <h:body>
-    <h1>Register</h1>
+    <h1>Inscription</h1>
     <h:outputText value="Invitation à rejoindre #{registerBean.institution.name}"/>
     <form:csrfform formId="registerForm">
         <p:messages id="messages" closable="true" showDetail="true">
