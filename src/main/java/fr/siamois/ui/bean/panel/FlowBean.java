@@ -2,6 +2,7 @@ package fr.siamois.ui.bean.panel;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.SpatialUnitService;
@@ -97,11 +98,21 @@ public class FlowBean implements Serializable {
         this.breadcrumbBean = breadcrumbBean;
     }
 
-    @EventListener(InstitutionChangeEvent.class)
+
     public void init() {
         fullscreenPanelIndex = -1;
         panels = new ArrayList<>();
         addWelcomePanel();
+    }
+
+    @EventListener(InstitutionChangeEvent.class)
+    public void handleInstitutionChange() {
+        init();
+    }
+
+    @EventListener(LoginEvent.class)
+    public void handleLoginSuccess() {
+        init();
     }
 
     public void addSpatialUnitListPanel(PanelBreadcrumb bc) {
