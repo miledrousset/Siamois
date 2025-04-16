@@ -25,6 +25,7 @@ public class RegisterBean {
     private final PersonService personService;
     private final InstitutionService institutionService;
     private final LangBean langBean;
+    private final RedirectBean redirectBean;
     private String email;
     private String password;
     private String confirmPassword;
@@ -33,10 +34,11 @@ public class RegisterBean {
     private String lastName;
     private String username;
 
-    public RegisterBean(PersonService personService, InstitutionService institutionService, LangBean langBean) {
+    public RegisterBean(PersonService personService, InstitutionService institutionService, LangBean langBean, RedirectBean redirectBean) {
         this.personService = personService;
         this.institutionService = institutionService;
         this.langBean = langBean;
+        this.redirectBean = redirectBean;
     }
 
     public void reset() {
@@ -80,6 +82,8 @@ public class RegisterBean {
 
             institutionService.addToManagers(institution, person);
             log.trace("Person added as manager to institution");
+
+            redirectBean.redirectTo("/login");
 
         } catch (InvalidUserInformationException e) {
             log.trace("Person could not be created");
