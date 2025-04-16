@@ -91,7 +91,6 @@
                                 <div class="ui-fluid" style="padding:0.5rem 1rem 1rem 1rem">
                                     <p:commandButton value='Nouveau code' icon="pi pi-plus"
                                                      action="#{panelModel.initNewActionCode(0)}"
-                                                     update="form-new-action-code"
                                                      immediate="true"
                                                      style="margin-right: .5rem">
                                     </p:commandButton>
@@ -106,7 +105,7 @@
                 <h:messages id="msg"></h:messages>
                 <form:csrfform formId="secondaryCodesForm">
                     <p:commandButton value="Add new code" icon="pi pi-plus" process="@this" update="secondaryCodesForm"
-                                     action="#{panelModel.addNewSecondaryCode}"/>
+                                     action="#{panelModel.addNewSecondaryCode}" disabled="true"/>
                     <ui:repeat id="secondaryCodeRepeat" var="secondaryCode" value="#{panelModel.secondaryActionCodes}" varStatus="status">
                         <h:panelGroup style="display:flex;" id="secondaryCodeField">
                             <p:chip label="#{labelBean.findLabelOf(panelModel.secondaryActionCodes[status.index].type)}"

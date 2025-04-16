@@ -18,7 +18,7 @@
         <div class="panel-top-section">
             <h2>
                 #{panelModel.recordingUnit.fullIdentifier}
-                <p:chip label="#{panelModel.recordingUnit.type.label}" icon="bi bi-pencil-square"
+                <p:chip label="#{labelBean.findLabelOf(panelModel.recordingUnit.type)}" icon="bi bi-pencil-square"
                         styleClass="mr-2 recording-unit-type-chip"/>
 
             </h2>

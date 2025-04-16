@@ -22,7 +22,7 @@
             <h:panelGroup id="missingFormWarning">
                 <p:staticMessage severity="warn"
                                  summary="No custom form available"
-                                 detail="No form configured the type #{panelModel.recordingUnit.type.label}"
+                                 detail="No form configured the type #{labelBean.findLabelOf(panelModel.recordingUnit.type)}"
                                  style="width: 100%"
                                  rendered="#{panelModel.recordingUnit.formResponse.form == null and panelModel.recordingUnit.type != null}"/>
             </h:panelGroup>
