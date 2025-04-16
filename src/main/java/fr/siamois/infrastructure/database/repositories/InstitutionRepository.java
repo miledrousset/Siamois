@@ -18,4 +18,12 @@ public interface InstitutionRepository extends CrudRepository<Institution, Long>
     )
     List<Institution> findAllManagedBy(Long personId);
 
+    @Query(
+            nativeQuery = true,
+            value = "SELECT i.* FROM institution i " +
+                    "JOIN person_role_institution pri ON i.institution_id = pri.fk_institution_id " +
+                    "WHERE pri.fk_person_id = :personId"
+    )
+    List<Institution> findAllOfPerson(Long personId);
+
 }

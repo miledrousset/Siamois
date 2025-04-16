@@ -2,6 +2,7 @@ package fr.siamois.infrastructure.database.repositories.person;
 
 import fr.siamois.domain.models.auth.Person;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -57,4 +58,5 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
     Optional<Person> findByMailIgnoreCase(String mail);
 
+    boolean existsByMail(@NotNull String mail);
 }

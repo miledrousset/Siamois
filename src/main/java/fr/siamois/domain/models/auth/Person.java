@@ -140,10 +140,6 @@ public class Person implements UserDetails {
         return isEnabled;
     }
 
-    @JsonIgnore
-    @Column(name = "pending_token", length = 1024)
-    public String pendingToken;
-
     @FieldCode
     public static final String USER_ROLE_FIELD_CODE = "SIAP.ROLE";
 

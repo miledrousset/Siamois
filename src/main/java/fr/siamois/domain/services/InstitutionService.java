@@ -43,7 +43,7 @@ public class InstitutionService {
     }
 
     public List<Institution> findInstitutionsOfPerson(Person person) {
-        List<Institution> notManaged = personRoleInstitutionRepository.findAllOfPerson(person.getId());
+        List<Institution> notManaged = institutionRepository.findAllOfPerson(person.getId());
         List<Institution> managed = institutionRepository.findAllManagedBy(person.getId());
         managed.addAll(notManaged);
         return managed;
@@ -101,6 +101,9 @@ public class InstitutionService {
         Optional<PersonRoleInstitution> opt = personRoleInstitutionRepository.findByInstitutionAndPerson(institution, person);
         if (opt.isEmpty()) {
             PersonRoleInstitution personRoleInstitution = new PersonRoleInstitution();
+            personRoleInstitution.setId(new PersonRoleInstitution.PersonRoleInstitutionId());
+            personRoleInstitution.getId().setFkInstitutionId(institution.getId());
+            personRoleInstitution.getId().setFkPersonId(person.getId());
             personRoleInstitution.setPerson(person);
             personRoleInstitution.setInstitution(institution);
             personRoleInstitution.setRoleConcept(null);
