@@ -4,6 +4,7 @@ import fr.siamois.domain.models.Institution;
 import fr.siamois.ui.bean.settings.components.OptionElement;
 import fr.siamois.ui.bean.settings.institution.InstitutionInfoSettingsBean;
 import fr.siamois.ui.bean.settings.institution.InstitutionManagerSettingsBean;
+import fr.siamois.ui.bean.settings.institution.InstitutionThesaurusSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +24,15 @@ public class InstitutionDetailsBean implements Serializable {
 
     private final InstitutionInfoSettingsBean institutionInfoSettingsBean;
     private final InstitutionManagerSettingsBean institutionManagerSettingsBean;
+    private final InstitutionThesaurusSettingsBean institutionThesaurusSettingsBean;
     private Institution institution;
     private transient List<OptionElement> elements;
 
     public InstitutionDetailsBean(InstitutionInfoSettingsBean institutionInfoSettingsBean,
-                                  InstitutionManagerSettingsBean institutionManagerSettingsBean) {
+                                  InstitutionManagerSettingsBean institutionManagerSettingsBean, InstitutionThesaurusSettingsBean institutionThesaurusSettingsBean) {
         this.institutionInfoSettingsBean = institutionInfoSettingsBean;
         this.institutionManagerSettingsBean = institutionManagerSettingsBean;
+        this.institutionThesaurusSettingsBean = institutionThesaurusSettingsBean;
     }
 
     public void addInstitutionManagementElements() {
@@ -47,8 +50,8 @@ public class InstitutionDetailsBean implements Serializable {
             return "";
         }));
         elements.add(new OptionElement("bi bi-table", "Thesaurus","Configurer le thesaurus utilisé par l'organisation", () -> {
-            log.trace("Clicked on thesaurus settings");
-            return "";
+            institutionThesaurusSettingsBean.init(institution);
+            return "/pages/settings/institution/thesaurusSettings.xhtml?faces-redirect=true";
         }));
     }
 

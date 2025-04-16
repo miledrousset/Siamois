@@ -42,7 +42,9 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
             nativeQuery = true,
             value = "SELECT c.* FROM concept c " +
                     "JOIN concept_field_config cfc ON cfc.fk_concept_id = c.concept_id " +
-                    "WHERE cfc.fk_institution_id = :institutionId AND cfc.field_code = :fieldCode "
+                    "WHERE cfc.fk_institution_id = :institutionId " +
+                    "AND cfc.field_code = :fieldCode " +
+                    "AND cfc.fk_user_id IS NULL"
     )
     Optional<Concept> findTopTermConfigForFieldCodeOfInstitution(Long institutionId, String fieldCode);
 
