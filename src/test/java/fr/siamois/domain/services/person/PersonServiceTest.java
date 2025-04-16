@@ -1,5 +1,6 @@
 package fr.siamois.domain.services.person;
 
+import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.PendingPerson;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.*;
@@ -146,14 +147,6 @@ class PersonServiceTest {
     }
 
     @Test
-    void findPasswordVerifier() {
-        Optional<PasswordVerifier> verifier = personService.findPasswordVerifier();
-
-        assertTrue(verifier.isPresent());
-        assertEquals(PasswordVerifier.class, verifier.get().getClass());
-    }
-
-    @Test
     void createPerson_Success() throws Exception {
         when(personRepository.save(any(Person.class))).thenReturn(person);
         when(pendingPersonRepository.findByEmail(person.getMail())).thenReturn(Optional.empty());
@@ -256,6 +249,90 @@ class PersonServiceTest {
         personService.deletePending(pendingPerson);
 
         verify(pendingPersonRepository, times(1)).delete(pendingPerson);
+    }
+
+    @Test
+    void createPendingManager_ShouldReturnTrue_WhenSuccess() {
+        // Arrange
+        PendingPerson pendingPerson = new PendingPerson();
+        pendingPerson.setEmail("test@example.com");
+        pendingPerson.setInstitution(new Institution());
+        when(personRepository.existsByMail(pendingPerson.getEmail())).thenReturn(false);
+        when(pendingPersonRepository.save(any(PendingPerson.class))).thenReturn(pendingPerson);
+
+        // Act
+        boolean result = personService.createPendingManager(pendingPerson);
+
+        // Assert
+        assertTrue(result);
+        verify(pendingPersonRepository, times(1)).save(pendingPerson);
+        verify(emailManager, times(1)).sendEmail(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    void createPendingManager_ShouldReturnFalse_WhenEmailExists() {
+        // Arrange
+        PendingPerson pendingPerson = new PendingPerson();
+        pendingPerson.setEmail("test@example.com");
+        when(personRepository.existsByMail(pendingPerson.getEmail())).thenReturn(true);
+
+        // Act
+        boolean result = personService.createPendingManager(pendingPerson);
+
+        // Assert
+        assertFalse(result);
+        verify(pendingPersonRepository, never()).save(any(PendingPerson.class));
+        verify(emailManager, never()).sendEmail(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    void createPendingManager_ShouldReturnFalse_WhenExceptionThrown() {
+        // Arrange
+        PendingPerson pendingPerson = new PendingPerson();
+        pendingPerson.setEmail("test@example.com");
+        when(personRepository.existsByMail(pendingPerson.getEmail())).thenReturn(false);
+        when(pendingPersonRepository.save(any(PendingPerson.class))).thenThrow(new RuntimeException("Database error"));
+
+        // Act
+        boolean result = personService.createPendingManager(pendingPerson);
+
+        // Assert
+        assertFalse(result);
+        verify(pendingPersonRepository, times(1)).save(pendingPerson);
+        verify(emailManager, never()).sendEmail(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    void findPasswordVerifier_ShouldReturnVerifier_WhenPresent() {
+        // Act
+        Optional<PasswordVerifier> verifier = personService.findPasswordVerifier();
+
+        // Assert
+        assertTrue(verifier.isPresent());
+        assertEquals(PasswordVerifier.class, verifier.get().getClass());
+    }
+
+    @Test
+    void findPasswordVerifier_ShouldReturnEmpty_WhenNotPresent() {
+        // Arrange
+        List<PersonDataVerifier> verifiers = List.of(); // Liste vide
+        personService = new PersonService(
+                personRepository,
+                passwordEncoder,
+                verifiers,
+                personSettingsRepository,
+                institutionService,
+                langService,
+                emailManager,
+                pendingPersonRepository,
+                httpServletRequest
+        );
+
+        // Act
+        Optional<PasswordVerifier> verifier = personService.findPasswordVerifier();
+
+        // Assert
+        assertTrue(verifier.isEmpty());
     }
 
 }
