@@ -59,7 +59,7 @@ public class InstitutionListSettingsBean implements Serializable {
     }
 
     public void init() {
-        if (institutions == null) {
+
             UserInfo info = sessionSettingsBean.getUserInfo();
             institutions = institutionService.findInstitutionsOfPerson(info.getUser());
             onFilterType();
@@ -70,7 +70,7 @@ public class InstitutionListSettingsBean implements Serializable {
                     .order(SortOrder.ASCENDING)
                     .priority(1)
                     .build());
-        }
+
     }
 
     public String displayDate(OffsetDateTime date) {
