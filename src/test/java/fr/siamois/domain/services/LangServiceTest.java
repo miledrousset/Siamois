@@ -60,4 +60,9 @@ class LangServiceTest {
         assertNotNull(languages);
         assertFalse(languages.isEmpty());
     }
+
+    @Test
+    void getDefaultLang() {
+        assertNull(langService.getDefaultLang());
+    }
 }

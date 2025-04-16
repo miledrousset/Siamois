@@ -1,8 +1,10 @@
 package fr.siamois.domain.services.vocabulary;
 
+import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
@@ -114,6 +116,14 @@ public class FieldConfigurationService {
         }
 
         return Optional.empty();
+    }
+
+    public Optional<String> findVocabularyUrlOfInstitution(Institution institution) {
+        Optional<Concept> optConcept = conceptRepository
+                .findTopTermConfigForFieldCodeOfInstitution(institution.getId(), SpatialUnit.CATEGORY_FIELD_CODE);
+        if (optConcept.isEmpty()) return Optional.empty();
+        Vocabulary vocabulary = optConcept.get().getVocabulary();
+        return Optional.of(vocabulary.getBaseUri() + "/?idt=" + vocabulary.getExternalVocabularyId());
     }
 
     public Concept findConfigurationForFieldCode(UserInfo info, String fieldCode) throws NoConfigForFieldException {

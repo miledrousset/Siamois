@@ -3,7 +3,7 @@ package fr.siamois.domain.services.person.verifier;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.InvalidUsernameException;
 import fr.siamois.domain.models.exceptions.auth.UserAlreadyExistException;
-import fr.siamois.infrastructure.database.repositories.auth.PersonRepository;
+import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;

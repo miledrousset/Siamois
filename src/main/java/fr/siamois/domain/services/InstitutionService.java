@@ -5,9 +5,11 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.settings.InstitutionSettings;
+import fr.siamois.domain.models.settings.PersonRoleInstitution;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.database.repositories.InstitutionRepository;
-import fr.siamois.infrastructure.database.repositories.auth.PersonRepository;
+import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
+import fr.siamois.infrastructure.database.repositories.person.PersonRoleInstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,11 +26,13 @@ public class InstitutionService {
     private final InstitutionRepository institutionRepository;
     private final InstitutionSettingsRepository institutionSettingsRepository;
     private final PersonRepository personRepository;
+    private final PersonRoleInstitutionRepository personRoleInstitutionRepository;
 
-    public InstitutionService(InstitutionRepository institutionRepository, PersonRepository personRepository, InstitutionSettingsRepository institutionSettingsRepository) {
+    public InstitutionService(InstitutionRepository institutionRepository, PersonRepository personRepository, InstitutionSettingsRepository institutionSettingsRepository, PersonRoleInstitutionRepository personRoleInstitutionRepository) {
         this.institutionRepository = institutionRepository;
         this.personRepository = personRepository;
         this.institutionSettingsRepository = institutionSettingsRepository;
+        this.personRoleInstitutionRepository = personRoleInstitutionRepository;
     }
 
     public List<Institution> findAll() {
@@ -94,17 +98,30 @@ public class InstitutionService {
     }
 
     public void addToManagers(Institution institution, Person person) {
-        boolean personExistInInstitution = institutionRepository.personExistInInstitution(person.getId(), institution.getId());
-        if (!personExistInInstitution) {
-            institutionRepository.addPersonTo(person.getId(), institution.getId());
+        Optional<PersonRoleInstitution> opt = personRoleInstitutionRepository.findByInstitutionAndPerson(institution, person);
+        if (opt.isEmpty()) {
+            PersonRoleInstitution personRoleInstitution = new PersonRoleInstitution();
+            personRoleInstitution.setId(new PersonRoleInstitution.PersonRoleInstitutionId());
+            personRoleInstitution.getId().setFkInstitutionId(institution.getId());
+            personRoleInstitution.getId().setFkPersonId(person.getId());
+            personRoleInstitution.setPerson(person);
+            personRoleInstitution.setInstitution(institution);
+            personRoleInstitution.setRoleConcept(null);
+            personRoleInstitution.setIsManager(true);
+            personRoleInstitutionRepository.save(personRoleInstitution);
+        } else {
+            PersonRoleInstitution personRoleInstitution = opt.get();
+            if (Boolean.FALSE.equals(personRoleInstitution.getIsManager())) {
+                personRoleInstitution.setIsManager(true);
+                personRoleInstitutionRepository.save(personRoleInstitution);
+            }
         }
-        institutionRepository.setPersonAsManagerOf(person.getId(), institution.getId());
     }
 
     public boolean isManagerOf(Institution institution, Person person) {
         if (Objects.equals(institution.getManager(), person))
             return true;
-        return institutionRepository.isManagerOf(institution.getId(), person.getId());
+        return personRoleInstitutionRepository.personExistInInstitution(institution.getId(), person.getId(), true);
     }
 
     public Institution update(Institution institution) {
@@ -113,6 +130,10 @@ public class InstitutionService {
 
     public long countMembersInInstitution(Institution institution) {
         return findMembersOf(institution).size();
+    }
+
+    public Optional<PersonRoleInstitution> findPersonInInstitution(Institution institution, Person person) {
+        return personRoleInstitutionRepository.findByInstitutionAndPerson(institution, person);
     }
 
 }

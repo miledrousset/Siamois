@@ -446,4 +446,34 @@ class FieldConfigurationServiceTest {
         assertThat(result).isEmpty();
     }
 
+    @Test
+    void findVocabularyUrl_OfInstitution_shouldReturnEmpty_whenNoConfigForInstitution() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        when(conceptRepository.findTopTermConfigForFieldCodeOfInstitution(anyLong(), anyString())).thenReturn(Optional.empty());
+
+        Optional<String> result = service.findVocabularyUrlOfInstitution(institution);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void findVocabularyUrl_OfInstitution_shouldReturnString_whenExist() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Concept child1 = new Concept();
+        child1.setId(1L);
+        child1.setVocabulary(vocabulary);
+
+        when(conceptRepository.findTopTermConfigForFieldCodeOfInstitution(anyLong(), anyString())).thenReturn(Optional.of(child1));
+
+        Optional<String> result = service.findVocabularyUrlOfInstitution(institution);
+
+        assertThat(result)
+                .isPresent()
+                .contains("http://localhost/?idt=1313");
+    }
+
 }

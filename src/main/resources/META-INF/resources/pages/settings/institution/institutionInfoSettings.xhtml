@@ -17,14 +17,20 @@
             <form:csrfform formId="breadCrumbForm" styleClass="breadCrumpForm">
                 <p:breadCrumb homeDisplay="false">
                     <p:menuitem value="Organisations" action="#{institutionDetailsBean.goToInstitutionList()}"/>
-                    <p:menuitem value="#{institutionDetailsBean.institution.name}"/>
+                    <p:menuitem value="#{institutionInfoSettingsBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
+                    <p:menuitem value="Paramètres de l'organisation"/>
                 </p:breadCrumb>
             </form:csrfform>
-            <settings:settingsCategory
-                    title="#{institutionDetailsBean.institution.name}"
-                    formId="institutionDetailsForm"
-                    options="#{institutionDetailsBean.elements}"
-            />
+            <settings:fieldValue
+                    formId="institutionInfoForm"
+                    title="Paramètres de l'organisation"
+                    saveMethod="#{institutionInfoSettingsBean.updateName()}"
+                    reloadOnComplete="true"
+            >
+                <settings:fieldValueRow label="Nom de l'organisation" inputId="institution-name">
+                    <p:inputText id="institution-name" value="#{institutionInfoSettingsBean.FName}"/>
+                </settings:fieldValueRow>
+            </settings:fieldValue>
         </main>
     </ui:define>
 

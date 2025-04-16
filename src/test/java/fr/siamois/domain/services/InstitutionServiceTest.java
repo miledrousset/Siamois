@@ -5,9 +5,11 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.settings.InstitutionSettings;
+import fr.siamois.domain.models.settings.PersonRoleInstitution;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.database.repositories.InstitutionRepository;
-import fr.siamois.infrastructure.database.repositories.auth.PersonRepository;
+import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
+import fr.siamois.infrastructure.database.repositories.person.PersonRoleInstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +31,7 @@ class InstitutionServiceTest {
     @Mock private InstitutionRepository institutionRepository;
     @Mock private PersonRepository personRepository;
     @Mock private InstitutionSettingsRepository institutionSettingsRepository;
+    @Mock private PersonRoleInstitutionRepository personRoleInstitutionRepository;
 
     private InstitutionService institutionService;
 
@@ -37,7 +40,7 @@ class InstitutionServiceTest {
 
     @BeforeEach
     void setUp() {
-        institutionService = new InstitutionService(institutionRepository, personRepository, institutionSettingsRepository);
+        institutionService = new InstitutionService(institutionRepository, personRepository, institutionSettingsRepository, personRoleInstitutionRepository);
 
         manager = new Person();
         manager.setId(1L);
@@ -175,12 +178,11 @@ class InstitutionServiceTest {
         institution.setId(2L);
         institution.setName("institution");
 
-        when(institutionRepository.personExistInInstitution(12L, 2L)).thenReturn(false);
+        when(personRoleInstitutionRepository.findByInstitutionAndPerson(any(Institution.class), any(Person.class))).thenReturn(Optional.empty());
 
         institutionService.addToManagers(institution, person);
 
-        verify(institutionRepository, atMostOnce()).addPersonTo(12L, 2L);
-        verify(institutionRepository, atMostOnce()).setPersonAsManagerOf(12L, 2L);
+        verify(personRoleInstitutionRepository, atMostOnce()).save(any(PersonRoleInstitution.class));
     }
 
     @Test
@@ -195,12 +197,17 @@ class InstitutionServiceTest {
         institution.setId(2L);
         institution.setName("institution");
 
-        when(institutionRepository.personExistInInstitution(12L, 2L)).thenReturn(true);
+        PersonRoleInstitution personRoleInstitution = new PersonRoleInstitution();
+        personRoleInstitution.setPerson(person);
+        personRoleInstitution.setInstitution(institution);
+        personRoleInstitution.setRoleConcept(null);
+        personRoleInstitution.setIsManager(false);
+
+        when(personRoleInstitutionRepository.findByInstitutionAndPerson(any(Institution.class), any(Person.class))).thenReturn(Optional.of(personRoleInstitution));
 
         institutionService.addToManagers(institution, person);
 
-        verify(institutionRepository, never()).addPersonTo(anyLong(), anyLong());
-        verify(institutionRepository, atMostOnce()).setPersonAsManagerOf(12L, 2L);
+        verify(personRoleInstitutionRepository, atMostOnce()).save(any(PersonRoleInstitution.class));
     }
 
     @Test
@@ -229,7 +236,7 @@ class InstitutionServiceTest {
         Institution institution = new Institution();
         institution.setId(2L);
 
-        when(institutionRepository.isManagerOf(2L, 12L)).thenReturn(true);
+        when(personRoleInstitutionRepository.personExistInInstitution(institution.getId(), person.getId(), true)).thenReturn(true);
 
         boolean result = institutionService.isManagerOf(institution, person);
 
@@ -282,4 +289,49 @@ class InstitutionServiceTest {
         assertThat(result).isEqualTo(2);
     }
 
+    @Test
+    void findPersonInInstitution_shouldReturnPersonRoleInstitution_whenExists() {
+        // Arrange
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(2L);
+
+        PersonRoleInstitution personRoleInstitution = new PersonRoleInstitution();
+        personRoleInstitution.setInstitution(institution);
+        personRoleInstitution.setPerson(person);
+
+        when(personRoleInstitutionRepository.findByInstitutionAndPerson(institution, person))
+                .thenReturn(Optional.of(personRoleInstitution));
+
+        // Act
+        Optional<PersonRoleInstitution> result = institutionService.findPersonInInstitution(institution, person);
+
+        // Assert
+        assertThat(result)
+                .isPresent()
+                .contains(personRoleInstitution);
+        verify(personRoleInstitutionRepository, times(1)).findByInstitutionAndPerson(institution, person);
+    }
+
+    @Test
+    void findPersonInInstitution_shouldReturnEmpty_whenNotExists() {
+        // Arrange
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(2L);
+
+        when(personRoleInstitutionRepository.findByInstitutionAndPerson(institution, person))
+                .thenReturn(Optional.empty());
+
+        // Act
+        Optional<PersonRoleInstitution> result = institutionService.findPersonInInstitution(institution, person);
+
+        // Assert
+        assertThat(result).isEmpty();
+        verify(personRoleInstitutionRepository, times(1)).findByInstitutionAndPerson(institution, person);
+    }
 }

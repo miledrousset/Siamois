@@ -55,4 +55,5 @@ public interface FieldRepository extends CrudRepository<CustomField, Long> {
                     "cfc.fk_institution_id = :institutionId"
     )
     boolean hasUserConfig(Long personId, Long institutionId);
+
 }
