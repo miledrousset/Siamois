@@ -21,6 +21,8 @@ public class UserDialogBean implements Serializable {
     private String title;
     private String buttonLabel;
 
+    private String userEmail;
+
     public UserDialogBean(EmailManager emailManager) {
         this.emailManager = emailManager;
     }
