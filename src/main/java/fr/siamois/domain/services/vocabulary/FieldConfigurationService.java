@@ -118,7 +118,7 @@ public class FieldConfigurationService {
         return Optional.empty();
     }
 
-    public Optional<String> findVocabularyUrl(Institution institution) {
+    public Optional<String> findVocabularyUrlOfInstitution(Institution institution) {
         Optional<Concept> optConcept = conceptRepository
                 .findTopTermConfigForFieldCodeOfInstitution(institution.getId(), SpatialUnit.CATEGORY_FIELD_CODE);
         if (optConcept.isEmpty()) return Optional.empty();
