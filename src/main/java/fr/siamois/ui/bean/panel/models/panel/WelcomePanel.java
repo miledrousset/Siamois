@@ -26,13 +26,16 @@ public class WelcomePanel extends AbstractPanel {
     private final transient ActionUnitService actionUnitService;
     private final transient SpatialUnitService spatialUnitService;
 
+
+
+
     // Locals
     private long nbOfSpatialUnits;
     private long nbOfActionUnits;
     private long nbOfRecordingUnits;
 
     public WelcomePanel(SessionSettingsBean sessionSettingsBean, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SpatialUnitService spatialUnitService) {
-        super("Accueil", "bi bi-house", "siamois-panel");
+        super("Accueil "+sessionSettingsBean.getSelectedInstitution().getName(), "bi bi-house", "siamois-panel");
 
         this.sessionSettingsBean = sessionSettingsBean;
         this.recordingUnitService = recordingUnitService;
