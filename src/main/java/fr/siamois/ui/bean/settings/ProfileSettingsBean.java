@@ -27,7 +27,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.primefaces.PrimeFaces;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -53,6 +52,7 @@ public class ProfileSettingsBean implements Serializable {
 
     private List<Institution> refInstitutions;
     private PersonSettings personSettings;
+    private Concept refConfigConcept;
 
     private String fEmail;
     private String fLastname;
@@ -103,8 +103,8 @@ public class ProfileSettingsBean implements Serializable {
 
     private void initThesaurusSection(UserInfo info) {
         try {
-            Concept result = fieldConfigurationService.findConfigurationForFieldCode(info, SpatialUnit.CATEGORY_FIELD_CODE);
-            fThesaurusUrl = result.getVocabulary().getUri();
+            refConfigConcept = fieldConfigurationService.findConfigurationForFieldCode(info, SpatialUnit.CATEGORY_FIELD_CODE);
+            fThesaurusUrl = refConfigConcept.getVocabulary().getUri();
         } catch (NoConfigForFieldException e) {
             log.debug("User has no thesaurus configuration for fieldCode {}", SpatialUnit.CATEGORY_FIELD_CODE);
         }
@@ -119,17 +119,26 @@ public class ProfileSettingsBean implements Serializable {
     }
 
     public void saveProfile() {
+        boolean updated = false;
         Person user = sessionSettingsBean.getAuthenticatedUser();
         if (fEmail != null && !fEmail.isEmpty() && !fEmail.equals(user.getMail())) {
             user.setMail(fEmail);
+            updated = true;
         }
 
         if (fLastname != null && !fLastname.isEmpty() && !fLastname.equals(user.getLastname())) {
             user.setLastname(fLastname);
+            updated = true;
         }
 
         if (fFirstname != null && !fFirstname.isEmpty() && !fFirstname.equals(user.getName())) {
             user.setName(fFirstname);
+            updated = true;
+        }
+
+        if (!updated) {
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_WARN, "Aucune valeur n'a été changée.");
+            return;
         }
 
         try {
@@ -145,17 +154,25 @@ public class ProfileSettingsBean implements Serializable {
     }
 
     public void saveThesaurusUserConfig() {
-        if (fThesaurusUrl != null && !fThesaurusUrl.isEmpty()) {
-            UserInfo info = sessionSettingsBean.getUserInfo();
-            try {
-                Vocabulary vocabulary = vocabularyService.findOrCreateVocabularyOfUri(fThesaurusUrl);
-                fieldConfigurationService.setupFieldConfigurationForUser(info, vocabulary);
-                log.debug("Thesaurus configuration updated");
-            } catch (InvalidEndpointException e) {
-                log.error("Invalid endpoint", e);
-            } catch (NotSiamoisThesaurusException e) {
-                log.error("Not siamois thesaurus", e);
-            }
+        if (fThesaurusUrl == null || fThesaurusUrl.isEmpty()) {
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_WARN, "Aucun thésaurus n'a été renseigné.");
+            return;
+        }
+
+        if (refConfigConcept != null && refConfigConcept.getVocabulary().getUri().equals(fThesaurusUrl)) {
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_WARN, "La configuration du thésaurus n'a pas été modifiée.");
+            return;
+        }
+
+        UserInfo info = sessionSettingsBean.getUserInfo();
+        try {
+            Vocabulary vocabulary = vocabularyService.findOrCreateVocabularyOfUri(fThesaurusUrl);
+            fieldConfigurationService.setupFieldConfigurationForUser(info, vocabulary);
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_INFO, "La configuration a bien été enregistrée");
+        } catch (InvalidEndpointException e) {
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "L'URI renseignée n'est pas valide. Vérifiez l'URI entrée.");
+        } catch (NotSiamoisThesaurusException e) {
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Le thésaurus sélectionné ne dispose pas des notations d'un thésaurus SIAMOIS. Vérifiez les notations des concepts.");
         }
     }
 
@@ -192,26 +209,14 @@ public class ProfileSettingsBean implements Serializable {
     }
 
     public void savePreferences() {
-        boolean reloadPage = false;
-        log.trace("Save preferences called");
         personSettings.setDefaultInstitution(findInstitutionById(fDefaultInstitutionId));
-        log.trace("New default institution: {}", fDefaultInstitutionId);
-        log.trace("Language is {}. Existing is {}", fSelectedLang, personSettings.getLangCode());
         if (!fSelectedLang.equalsIgnoreCase(personSettings.getLangCode())) {
             personSettings.setLangCode(fSelectedLang);
-            log.trace("Selected language code: {}", fSelectedLang);
-            reloadPage = true;
-        } else {
-            log.trace("No new language code selected");
         }
 
         personSettings = personService.updatePersonSettings(personSettings);
-        log.trace("Settings updated");
 
-
-        if (reloadPage) {
-            PrimeFaces.current().executeScript("location.reload();");
-        }
+        MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_INFO, "Les préférences ont bien été sauvegardées.");
     }
 
     public String labelOfInstitutionWithId(Long id) {
