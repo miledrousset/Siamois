@@ -4,6 +4,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xml:lang="#{langBean.languageCode}"
       xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form"
+      xmlns:p="http://primefaces.org/ui"
 >
 
 <h:head>
@@ -162,6 +163,11 @@
 
         <!-- Contenu principal -->
         <div class="content">
+            <form:csrfform formId="templateForm">
+                <p:growl id="templateGrowl" showDetail="true">
+                    <p:autoUpdate/>
+                </p:growl>
+            </form:csrfform>
             <ui:insert description="The main content" name="content"/>
         </div>
     </div>

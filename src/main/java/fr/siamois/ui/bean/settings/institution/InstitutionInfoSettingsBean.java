@@ -21,7 +21,8 @@ public class InstitutionInfoSettingsBean implements Serializable {
     private Institution institution;
     private String fName;
 
-    public InstitutionInfoSettingsBean(InstitutionService institutionService, InstitutionChangeEventPublisher institutionChangeEventPublisher) {
+    public InstitutionInfoSettingsBean(InstitutionService institutionService,
+                                       InstitutionChangeEventPublisher institutionChangeEventPublisher) {
         this.institutionService = institutionService;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
     }

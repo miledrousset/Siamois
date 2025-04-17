@@ -40,7 +40,7 @@ public class MessageUtils {
 
     public static void displayMessage(FacesMessage.Severity severity, String title, String msgCode) {
         FacesMessage facesMessage = new FacesMessage(severity, title, msgCode);
-        FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        FacesContext.getCurrentInstance().addMessage("templateForm:templateGrowl", facesMessage);
     }
 
     public static void displayInfoMessage(LangBean langBean, String msgCode, Object... args) {
