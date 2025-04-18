@@ -19,8 +19,10 @@ import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
+import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import jakarta.faces.application.FacesMessage;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -132,10 +134,13 @@ public class ProfileSettingsBean implements Serializable {
 
         try {
             personService.updatePerson(user);
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_INFO, "Informations modifiés avec succès");
         } catch (InvalidNameException e) {
             log.error(e.getMessage());
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, e.getMessage());
         } catch (InvalidUserInformationException | UserAlreadyExistException e) {
             log.error("There was a problem while updating the person", e);
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Erreur interne");
         }
     }
 
