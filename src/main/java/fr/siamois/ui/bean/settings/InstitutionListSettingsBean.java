@@ -8,8 +8,11 @@ import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.domain.utils.MessageUtils;
+import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.institution.InstitutionDialogBean;
+import jakarta.faces.application.FacesMessage;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +42,7 @@ public class InstitutionListSettingsBean implements Serializable {
     private final InstitutionDialogBean institutionDialogBean;
     private final transient RecordingUnitService recordingUnitService;
     private final InstitutionDetailsBean institutionDetailsBean;
+    private final LangBean langBean;
     private List<Institution> institutions = null;
     private List<Institution> filteredInstitutions = null;
     private List<SortMeta> sortBy;
@@ -49,13 +53,14 @@ public class InstitutionListSettingsBean implements Serializable {
     public InstitutionListSettingsBean(InstitutionService institutionService,
                                        SessionSettingsBean sessionSettingsBean,
                                        InstitutionChangeEventPublisher institutionChangeEventPublisher,
-                                       InstitutionDialogBean institutionDialogBean, RecordingUnitService recordingUnitService, InstitutionDetailsBean institutionDetailsBean) {
+                                       InstitutionDialogBean institutionDialogBean, RecordingUnitService recordingUnitService, InstitutionDetailsBean institutionDetailsBean, LangBean langBean) {
         this.institutionService = institutionService;
         this.sessionSettingsBean = sessionSettingsBean;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
         this.institutionDialogBean = institutionDialogBean;
         this.recordingUnitService = recordingUnitService;
         this.institutionDetailsBean = institutionDetailsBean;
+        this.langBean = langBean;
     }
 
     public void init() {
@@ -122,22 +127,25 @@ public class InstitutionListSettingsBean implements Serializable {
 
     public void createInstitution() {
         Institution institution;
+
         try {
             institution = institutionDialogBean.createInstitution();
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_INFO, "L'institution %s a bien été crée", institution.getName());
         } catch (InstitutionAlreadyExistException e) {
             log.error("Institution already exists");
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Une institution avec ce nom ou cet identifiant existe déjà.");
             return;
         } catch (FailedInstitutionSaveException e) {
             log.error("Failed to create institution", e);
+            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Erreur interne lors de la création de l'institution.");
             return;
         }
-        if (institution != null) {
-            institutions.add(institution);
-            filteredInstitutions.add(institution);
-            toggleSwitchState.put(institution.getId(), false);
-            institutionDialogBean.reset();
-            PrimeFaces.current().executeScript("PF('newInstitutionDialog').hide();");
-        }
+
+        institutions.add(institution);
+        filteredInstitutions.add(institution);
+        toggleSwitchState.put(institution.getId(), false);
+        institutionDialogBean.reset();
+        PrimeFaces.current().executeScript("PF('newInstitutionDialog').hide();");
     }
 
     public long numberOfMemberInInstitution(Institution institution) {

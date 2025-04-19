@@ -49,7 +49,12 @@ public class ThesaurusApi {
 
     public ThesaurusDTO fetchThesaurusInfo(String uri) throws InvalidEndpointException {
         URI uriObj = URI.create(uri);
-        uriObj = findRedirectUriIfArk(uriObj);
+        try {
+            uriObj = findRedirectUriIfArk(uriObj);
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid URI: {}", uri, e);
+            throw new InvalidEndpointException("Invalid URI: " + uri);
+        }
 
         String[] data = uriObj.toString().split("\\?idt=");
         String host = data[0];
