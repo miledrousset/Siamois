@@ -140,7 +140,6 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
     public List<ConceptLabel> categoriesAvailable() {
         List<Concept> cList = conceptService.findAllConceptsByInstitution(sessionSettings.getSelectedInstitution());
-
         return cList.stream()
                 .map(concept -> labelService.findLabelOf(
                         concept, langBean.getLanguageCode()
@@ -309,9 +308,12 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         Document created = documentCreationBean.createDocument();
         if (created == null)
             return;
+
         log.trace("Document created: {}", created);
         documentService.addToSpatialUnit(created, spatialUnit);
         log.trace("Document added to spatial unit: {}", spatialUnit);
+
+        documents.add(created);
         PrimeFaces.current().executeScript("PF('newDocumentDiag').hide()");
         PrimeFaces.current().ajax().update("spatialUnitFormTabs:suDocumentsTab");
     }

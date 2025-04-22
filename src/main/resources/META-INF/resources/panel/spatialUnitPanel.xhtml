@@ -201,6 +201,8 @@
                             value="#{panelModel.documents}"
                             var="siamoisDocument"
                     >
+                        <p:autoUpdate/>
+
                         <p:column headerText="Titre">
                             <h:outputText value="#{siamoisDocument.title}"/>
                         </p:column>
