@@ -64,12 +64,18 @@ public class DocumentController {
                 .filename(document.contentFileName())
                 .build();
 
-        FileCompressor compressor = documentService.findCompressorOf(document);
+        String mimeStringType;
+        try {
+            FileCompressor compressor = documentService.findCompressorOf(document);
+            mimeStringType = compressor.encodingTypes();
+        } catch (UnsupportedOperationException e) {
+            mimeStringType = document.getMimeType();
+        }
 
         return  ResponseEntity
                 .ok()
                 .contentType(MediaType.parseMediaType(document.getMimeType()))
-                .header(HttpHeaders.CONTENT_ENCODING, compressor.encodingTypes())
+                .header(HttpHeaders.CONTENT_ENCODING, mimeStringType)
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
                 .body(new InputStreamResource(fileStream));
 
