@@ -234,8 +234,7 @@
                         <p:column>
                             <p:commandButton
                                     value="Télécharger"
-                                    ajax="false"
-                                    onclick="PrimeFaces.monitorDownload(start, stop);"
+                                    ajax="true"
                                     styleClass="mr-2">
                                 <p:fileDownload value="#{panelModel.streamOf(siamoisDocument)}"/>
                             </p:commandButton>
