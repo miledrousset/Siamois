@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean.panel;
 
+import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
 import fr.siamois.domain.models.events.LoginEvent;
@@ -104,6 +105,8 @@ public class FlowBean implements Serializable {
         fullscreenPanelIndex = -1;
         panels = new ArrayList<>();
         addWelcomePanel();
+        Institution institution = sessionSettings.getSelectedInstitution();
+        fSpatialUnits = spatialUnitService.findAllOfInstitution(institution);
     }
 
     @EventListener(InstitutionChangeEvent.class)
@@ -146,7 +149,6 @@ public class FlowBean implements Serializable {
         // Add a new instance to refresh the panel
         panels.add(0, panelFactory.createWelcomePanel());
         lastUpdatedPanelIndex = 0;
-
 
     }
 
