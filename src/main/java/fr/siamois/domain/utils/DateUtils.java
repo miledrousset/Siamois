@@ -20,21 +20,27 @@ public class DateUtils {
      * @return The string representation of the offsetDateTime at the system time zone
      */
     public static String formatOffsetDateTime(OffsetDateTime offsetDateTime) {
-        if (offsetDateTime == null) {
-            log.error("Invalid offsetDatetime");
-            return "INVALID DATE";
-        }
+        String msg = invalidMessageIfNull(offsetDateTime);
+        if (msg != null)
+            return msg;
         LocalDateTime dateTime = offsetDateTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
         return formatter.format(dateTime);
     }
 
     public static String formatOffsetDateTime(OffsetDateTime offsetDateTime, ZoneId zoneId) {
-        if (offsetDateTime == null) {
+        String msg = invalidMessageIfNull(offsetDateTime);
+        if (msg != null)
+            return msg;
+        LocalDateTime dateTime = offsetDateTime.atZoneSameInstant(zoneId).toLocalDateTime();
+        return formatter.format(dateTime);
+    }
+
+    private static String invalidMessageIfNull(OffsetDateTime obj) {
+        if (obj == null) {
             log.error("Invalid offsetDatetime");
             return "INVALID DATE";
         }
-        LocalDateTime dateTime = offsetDateTime.atZoneSameInstant(zoneId).toLocalDateTime();
-        return formatter.format(dateTime);
+        return null;
     }
 
 }

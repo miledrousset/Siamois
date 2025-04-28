@@ -113,7 +113,7 @@ public class InstitutionManagerSettingsBean implements Serializable {
     public void createManager() {
         log.trace("Creating manager");
         // Display create manager dialog
-        userDialogBean.init("Créer une responsable", "Créer un responsable", institution);
+        userDialogBean.init("Créer un responsable", "Créer un responsable", institution);
         PrimeFaces.current().executeScript("PF('newManagerDialog').show();");
     }
 

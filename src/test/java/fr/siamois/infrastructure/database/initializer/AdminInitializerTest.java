@@ -3,7 +3,7 @@ package fr.siamois.infrastructure.database.initializer;
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
-import fr.siamois.infrastructure.database.repositories.InstitutionRepository;
+import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

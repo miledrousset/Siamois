@@ -3,7 +3,6 @@ package fr.siamois.domain.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.settings.InstitutionSettings;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.DefaultValue;
@@ -38,9 +37,6 @@ public class Institution implements Serializable {
     @NotNull
     @Column(name = "identifier", nullable = false, length = Integer.MAX_VALUE)
     private String identifier;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private InstitutionSettings settings;
 
     @DefaultValue("NOW()")
     @Column(name = "creation_date", nullable = false)

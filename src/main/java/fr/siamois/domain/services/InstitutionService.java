@@ -7,7 +7,7 @@ import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistEx
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.settings.PersonRoleInstitution;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.infrastructure.database.repositories.InstitutionRepository;
+import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRoleInstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;

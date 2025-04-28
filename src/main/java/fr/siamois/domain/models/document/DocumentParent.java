@@ -37,10 +37,6 @@ public abstract class DocumentParent extends TraceableEntity {
     @JoinColumn(name = "fk_format")
     protected Concept format;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_parent")
-    protected Document parent;
-
     @Column(name = "url", length = Integer.MAX_VALUE)
     protected String url;
 
