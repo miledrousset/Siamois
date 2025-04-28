@@ -7,10 +7,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Service to manage the language of the application
@@ -53,9 +50,9 @@ public class LangService {
     public List<String> getAvailableLanguages() {
         String path = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("language")).getPath();
         File[] files = new File(path).listFiles();
-        List<String> languages = new ArrayList<>();
+        Set<String> languages = new TreeSet<>();
 
-        if (files == null) return languages;
+        if (files == null) return List.of();
 
         for (File file : files) {
             if (file.getName().startsWith("messages_") && file.getName().endsWith(".properties")) {
@@ -63,7 +60,9 @@ public class LangService {
             }
         }
 
-        return languages;
+        languages.add("en");
+
+        return languages.stream().toList();
     }
 
 }

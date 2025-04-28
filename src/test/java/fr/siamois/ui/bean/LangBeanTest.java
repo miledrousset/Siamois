@@ -1,6 +1,7 @@
 package fr.siamois.ui.bean;
 
 import fr.siamois.domain.services.LangService;
+import fr.siamois.domain.services.person.PersonService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,9 +21,12 @@ class LangBeanTest {
     @Mock
     private LangService langService;
 
+    @Mock
+    private PersonService personService;
+
     @BeforeEach
     void setUp() {
-        langBean = new LangBean(langService);
+        langBean = new LangBean(langService, personService);
     }
 
     @Test

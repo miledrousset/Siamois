@@ -17,6 +17,7 @@ import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.services.person.PersonService;
+import fr.siamois.domain.services.publisher.LangageChangeEventPublisher;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
 import fr.siamois.domain.utils.MessageUtils;
@@ -49,6 +50,7 @@ public class ProfileSettingsBean implements Serializable {
     private final transient InstitutionService institutionService;
     private final transient LangService langService;
     private final LangBean langBean;
+    private final transient LangageChangeEventPublisher langageChangeEventPublisher;
 
     private List<Institution> refInstitutions;
     private PersonSettings personSettings;
@@ -69,7 +71,7 @@ public class ProfileSettingsBean implements Serializable {
                                VocabularyService vocabularyService,
                                InstitutionService institutionService,
                                LangService langService,
-                               LangBean langBean) {
+                               LangBean langBean, LangageChangeEventPublisher langageChangeEventPublisher) {
         this.sessionSettingsBean = sessionSettingsBean;
         this.personService = personService;
         this.fieldConfigurationService = fieldConfigurationService;
@@ -77,6 +79,7 @@ public class ProfileSettingsBean implements Serializable {
         this.institutionService = institutionService;
         this.langService = langService;
         this.langBean = langBean;
+        this.langageChangeEventPublisher = langageChangeEventPublisher;
     }
 
     @EventListener(InstitutionChangeEvent.class)
@@ -215,6 +218,7 @@ public class ProfileSettingsBean implements Serializable {
         }
 
         personSettings = personService.updatePersonSettings(personSettings);
+        langageChangeEventPublisher.publishInstitutionChangeEvent();
 
         MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_INFO, "Les préférences ont bien été sauvegardées.");
     }
