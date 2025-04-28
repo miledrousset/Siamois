@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <HTML xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:p="http://java.sun.com/jsf/html"
       xml:lang="#{langBean.languageCode}"
 >
 
@@ -26,7 +26,7 @@
                             </div>
                             <div class="col-lg-6 d-flex align-items-center">
                                 <div class="px-3 py-4 p-md-5 mx-md-4">
-                                    <h1>Bienvenue sur Siamois</h1>
+                                    <h1>#{langBean.msg('login.title')}</h1>
                                     <p class="description">
                                         <strong>S</strong>ystème
                                         d’<strong>I</strong>nformation
@@ -35,26 +35,26 @@
                                         <strong>O</strong>uvert reposant sur l’<strong>I</strong>ntelligence
                                         <strong>S</strong>émantique
                                     </p>
-                                    <p class="description">Enregistrer, gérer, et partager vos données archéologiques.</p>
+                                    <p class="description">#{langBean.msg("login.description")}</p>
                                     <hr/>
                                     <form action="#{redirectBean.redirectUrl('/login')}" method="post">
                                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                         <div class="form-group mb-4">
-                                            <label for="email">Email</label>
+                                            <p:outputLabel for="email" value="#{langBean.msg('login.form.email')}"/>
                                             <input id="email" name="email" class="form-control" type="email"
-                                                   placeholder="Votre email professionnel"/>
+                                                   placeholder="#{langBean.msg('login.form.email.placeholder')}"/>
                                         </div>
                                         <div class="form-group mb-4">
-                                            <label for="password">Mot de passe</label>
+                                            <label for="password">#{langBean.msg("login.form.password")}</label>
                                             <input id="password" name="password" class="form-control" type="password"
-                                                   placeholder="Votre mot de passe"/>
+                                                   placeholder="#{langBean.msg('login.form.password.placeholder')}"/>
                                         </div>
                                         <h:panelGroup rendered="#{param.error != null}">
                                             <div class="invalid-feedback">
-                                                Email ou mot de passe invalide.
+                                                <h:outputText value="#{langBean.msg('login.form.error')}"/>
                                             </div>
                                         </h:panelGroup>
-                                        <button type="submit" class="btn btn-success">Se connecter à Siamois</button>
+                                        <button type="submit" class="btn btn-success">#{langBean.msg('login.form.submit')}</button>
                                     </form>
                                 </div>
                             </div>
