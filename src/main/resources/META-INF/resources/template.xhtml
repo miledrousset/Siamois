@@ -43,43 +43,43 @@
                             <h:commandLink action="#{flowBean.addWelcomePanel}" styleClass="nav-link"
                             update="flow">
                                 <i class="bi bi-gear-fill"/>
-                                <span class="menu-text">Accueil</span>
+                                <span class="menu-text">#{langBean.msg('flowPanel.nav.home')}</span>
                             </h:commandLink>
                         </li>
                         <li class="nav-item">
                             <h:commandLink href="#" class="nav-link">
                                 <i class="bi bi-compass-fill"/>
-                                <span class="menu-text">BD #{navBean.selectedInstitution.name}</span>
+                                <span class="menu-text">#{langBean.msg('flowPanel.nav.database')} #{navBean.selectedInstitution.name}</span>
                             </h:commandLink>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="bi bi-play-circle-fill"/>
-                                <span class="menu-text">Aide</span>
+                                <span class="menu-text">#{langBean.msg('flowPanel.nav.help')}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="bi bi-bookmark-fill"/>
-                                <span class="menu-text">Bookmark</span>
+                                <span class="menu-text">#{langBean.msg('flowPanel.nav.bookmark')}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="bi bi-clock-fill"/>
-                                <span class="menu-text">Historique</span>
+                                <span class="menu-text">#{langBean.msg('flowPanel.nav.history')}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="bi bi-person-fill"/>
-                                <span class="menu-text">Rôle et Équipe</span>
+                                <span class="menu-text">#{langBean.msg('flowPanel.nav.roleTeam')}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <h:commandLink action="#{redirectBean.redirectTo('/settings')}" styleClass="nav-link">
                                 <i class="bi bi-gear-fill"/>
-                                <span class="menu-text">Paramètres</span>
+                                <span class="menu-text">#{langBean.msg('flowPanel.nav.settings')}</span>
                             </h:commandLink>
                         </li>
                     </ul>
@@ -94,7 +94,7 @@
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         <a onclick="logout()" class="nav-link">
                             <i class="bi bi-door-open-fill"/>
-                            <span class="menu-text">Déconnexion</span>
+                            <span class="menu-text">#{langBean.msg('flowPanel.nav.logout')}</span>
                         </a>
                     </form>
                 </div>
