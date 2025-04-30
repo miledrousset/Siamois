@@ -18,16 +18,16 @@
                 <p:breadCrumb homeDisplay="false">
                     <p:menuitem value="Organisations" action="#{institutionDetailsBean.goToInstitutionList()}"/>
                     <p:menuitem value="#{institutionInfoSettingsBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
-                    <p:menuitem value="Paramètres de l'organisation"/>
+                    <p:menuitem value="#{langBean.msg('organisationSettings.titles.settings')}"/>
                 </p:breadCrumb>
             </form:csrfform>
             <settings:fieldValue
                     formId="institutionInfoForm"
-                    title="Paramètres de l'organisation"
+                    title="#{langBean.msg('organisationSettings.titles.settings')}"
                     saveMethod="#{institutionInfoSettingsBean.updateName()}"
                     reloadOnComplete="true"
             >
-                <settings:fieldValueRow label="Nom de l'organisation" inputId="institution-name">
+                <settings:fieldValueRow label="#{langBean.msg('organisationManagement.orgName')}" inputId="institution-name">
                     <p:inputText id="institution-name" value="#{institutionInfoSettingsBean.FName}"/>
                 </settings:fieldValueRow>
             </settings:fieldValue>
