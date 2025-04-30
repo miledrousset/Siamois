@@ -23,24 +23,24 @@
             <h:form id="profileForm">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <div class="field-value-group">
-                    <h2 class="field-value-title">Mon profil</h2>
+                    <h2 class="field-value-title">#{langBean.msg('nav.profile')}</h2>
                     <div class="field-value-content">
                         <div class="form-group row">
-                            <label for="profile-email" class="col-sm-2 col-form-label" style="width: 40%">Email</label>
+                            <label for="profile-email" class="col-sm-2 col-form-label" style="width: 40%">#{langBean.msg('common.label.email')}</label>
                             <div class="col-md-7 field-value-value">
                                 <p:inputText id="profile-email" type="email" value="#{profileSettingsBean.FEmail}"/>
                             </div>
                         </div>
                         <hr/>
                         <div class="form-group row">
-                            <label for="profile-email" class="col-sm-2 col-form-label" style="width: 40%">Nom</label>
+                            <label for="profile-email" class="col-sm-2 col-form-label" style="width: 40%">#{langBean.msg('common.label.lastname')}</label>
                             <div class="col-md-7 field-value-value">
                                 <p:inputText id="profile-lastname" value="#{profileSettingsBean.FLastname}"/>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="profile-firstname" class="col-sm-2 col-form-label"
-                                   style="width: 40%">Prénom</label>
+                                   style="width: 40%">#{langBean.msg("common.label.firstname")}</label>
                             <div class="col-md-7 field-value-value">
                                 <p:inputText id="profile-firstname" value="#{profileSettingsBean.FFirstname}"/>
                             </div>
@@ -48,7 +48,7 @@
                     </div>
                     <p:commandButton
                             styleClass="field-value-save"
-                            value="Enregistrer"
+                            value="#{langBean.msg('common.action.save')}"
                             action="#{profileSettingsBean.saveProfile()}"
                     />
                 </div>
@@ -56,10 +56,10 @@
             <h:form id="preferenceSettingsForm">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <div class="field-value-group">
-                    <h2 class="field-value-title">Préférences</h2>
+                    <h2 class="field-value-title">#{langBean.msg('myProfile.preferences')}</h2>
                     <div class="field-value-content">
                         <div class="form-group row">
-                            <label for="institutionSelectionMenu" class="col-sm-2 col-form-label" style="width: 40%">Choix de l'organisation par défaut</label>
+                            <label for="institutionSelectionMenu" class="col-sm-2 col-form-label" style="width: 40%">#{langBean.msg('myProfile.preferences.institution')}</label>
                             <div class="col-md-7 field-value-value">
                                 <p:selectOneMenu id="institutionSelectionMenu"
                                                  value="#{profileSettingsBean.FDefaultInstitutionId}"
@@ -85,7 +85,7 @@
                         </div>
                         <hr/>
                         <div class="form-group row">
-                            <label for="langSetting" class="col-sm-2 col-form-label" style="width: 40%">Choix de la langue</label>
+                            <label for="langSetting" class="col-sm-2 col-form-label" style="width: 40%">#{langBean.msg('myProfile.preferences.lang')}</label>
                             <div class="col-md-7 field-value-value">
                                 <p:selectOneMenu id="langSetting"
                                                  var="lang"
@@ -110,7 +110,7 @@
                     </div>
                     <p:commandButton
                             styleClass="field-value-save"
-                            value="Enregistrer"
+                            value="#{langBean.msg('common.action.save')}"
                             actionListener="#{profileSettingsBean.savePreferences()}"/>
 
                 </div>

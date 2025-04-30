@@ -40,7 +40,7 @@
                                     <form action="#{redirectBean.redirectUrl('/login')}" method="post">
                                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                         <div class="form-group mb-4">
-                                            <p:outputLabel for="email" value="#{langBean.msg('login.form.email')}"/>
+                                            <p:outputLabel for="email" value="#{langBean.msg('common.label.email')}"/>
                                             <input id="email" name="email" class="form-control" type="email"
                                                    placeholder="#{langBean.msg('login.form.email.placeholder')}"/>
                                         </div>
