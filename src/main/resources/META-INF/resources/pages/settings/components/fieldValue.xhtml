@@ -23,7 +23,7 @@
                 </div>
                 <p:outputPanel rendered="#{cc.attrs.displaySaveButton}" layout="block" styleClass="field-value-save">
                     <p:commandButton
-                            value="Enregistrer"
+                            value="#{langBean.msg('common.action.save')}"
                             oncomplete="#{cc.attrs.reloadOnComplete ? 'location.reload()' : ''}"
                     >
                         <f:ajax listener="#{cc.attrs.saveMethod}" />
