@@ -177,6 +177,7 @@ class InstitutionServiceTest {
         Institution institution = new Institution();
         institution.setId(2L);
         institution.setName("institution");
+        institution.setManager(manager);
 
         when(personRoleInstitutionRepository.findByInstitutionAndPerson(any(Institution.class), any(Person.class))).thenReturn(Optional.empty());
 
