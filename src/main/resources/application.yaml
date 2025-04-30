@@ -52,7 +52,8 @@ spring:
 
   messages:
     basename: language/messages
-    encoding: UTF-8
+    encoding: ISO-8859-1
+    fallback-to-system-locale: false
 
   web:
     resources:

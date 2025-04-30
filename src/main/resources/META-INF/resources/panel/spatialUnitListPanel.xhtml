@@ -12,7 +12,7 @@
                      rendered="#{not empty panelModel.spatialUnitListErrorMessage}"/>
     <div class="sia-panel-title">
         <i class="bi bi-geo-alt"></i>
-        Unités géographiques
+        #{langBean.msg("common.entity.spatialUnits")}
         <p:chip label="258" styleClass="spatial-unit-count-chip"/>
     </div>
     <spatialUnit:spatialUnitList

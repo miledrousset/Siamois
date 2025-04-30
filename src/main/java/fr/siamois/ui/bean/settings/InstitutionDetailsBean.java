@@ -1,6 +1,7 @@
 package fr.siamois.ui.bean.settings;
 
 import fr.siamois.domain.models.Institution;
+import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.settings.components.OptionElement;
 import fr.siamois.ui.bean.settings.institution.InstitutionInfoSettingsBean;
 import fr.siamois.ui.bean.settings.institution.InstitutionManagerSettingsBean;
@@ -25,31 +26,37 @@ public class InstitutionDetailsBean implements Serializable {
     private final InstitutionInfoSettingsBean institutionInfoSettingsBean;
     private final InstitutionManagerSettingsBean institutionManagerSettingsBean;
     private final InstitutionThesaurusSettingsBean institutionThesaurusSettingsBean;
+    private final LangBean langBean;
     private Institution institution;
     private transient List<OptionElement> elements;
 
     public InstitutionDetailsBean(InstitutionInfoSettingsBean institutionInfoSettingsBean,
-                                  InstitutionManagerSettingsBean institutionManagerSettingsBean, InstitutionThesaurusSettingsBean institutionThesaurusSettingsBean) {
+                                  InstitutionManagerSettingsBean institutionManagerSettingsBean, InstitutionThesaurusSettingsBean institutionThesaurusSettingsBean, LangBean langBean) {
         this.institutionInfoSettingsBean = institutionInfoSettingsBean;
         this.institutionManagerSettingsBean = institutionManagerSettingsBean;
         this.institutionThesaurusSettingsBean = institutionThesaurusSettingsBean;
+        this.langBean = langBean;
     }
 
     public void addInstitutionManagementElements() {
         elements = new ArrayList<>();
-        elements.add(new OptionElement("bi bi-building", "Paramètres de l'organisation", "Nom de l'organisation", () -> {
+        elements.add(new OptionElement("bi bi-building", langBean.msg("organisationSettings.titles.settings"),
+                langBean.msg("organisationSettings.descriptions.settings"), () -> {
             institutionInfoSettingsBean.init(institution);
             return "/pages/settings/institution/institutionInfoSettings.xhtml?faces-redirect=true";
         }));
-        elements.add(new OptionElement("bi bi-person-circle", "Responsables d'organisation", "Gérer les administrateurs de Bibracte", () -> {
+        elements.add(new OptionElement("bi bi-person-circle", langBean.msg("organisationSettings.titles.managers"),
+                langBean.msg("organisationSettings.descriptions.managers", institution.getName()), () -> {
             institutionManagerSettingsBean.init(institution);
             return "/pages/settings/institution/institutionManagerSettings.xhtml?faces-redirect=true";
         }));
-        elements.add(new OptionElement("bi bi-people", "Équipes", "Gérer les équipes de Bibracte", () -> {
+        elements.add(new OptionElement("bi bi-people", langBean.msg("organisationSettings.titles.teams"),
+                langBean.msg("organisationSettings.descriptions.teams", institution.getName()), () -> {
             log.trace("Clicked on institution teams");
             return "";
         }));
-        elements.add(new OptionElement("bi bi-table", "Thesaurus","Configurer le thesaurus utilisé par l'organisation", () -> {
+        elements.add(new OptionElement("bi bi-table", langBean.msg("common.label.thesaurus"),
+                langBean.msg("organisationSettings.descriptions.thesaurus"), () -> {
             institutionThesaurusSettingsBean.init(institution);
             return "/pages/settings/institution/thesaurusSettings.xhtml?faces-redirect=true";
         }));

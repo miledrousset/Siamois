@@ -1,6 +1,7 @@
 package fr.siamois.ui.bean;
 
 import fr.siamois.domain.services.LangService;
+import fr.siamois.domain.services.person.PersonService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,16 +21,19 @@ class LangBeanTest {
     @Mock
     private LangService langService;
 
+    @Mock
+    private PersonService personService;
+
     @BeforeEach
     void setUp() {
-        langBean = new LangBean(langService);
+        langBean = new LangBean(langService, personService);
     }
 
     @Test
-    void getLangs_shouldReturnAllLangsWithQuote() {
+    void getLangs_shouldReturnAllLangsWithQuotesWithQuote() {
         when(langService.getAvailableLanguages()).thenReturn(List.of("fr", "en", "de"));
 
-        List<String> result = langBean.getLangs();
+        List<String> result = langBean.getLangsWithQuotes();
 
         assertThat(result).containsExactlyInAnyOrder("'fr'", "'en'", "'de'");
     }

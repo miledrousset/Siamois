@@ -11,7 +11,6 @@
         <cc:attribute name="title" type="java.lang.String" required="true"/>
         <cc:attribute name="saveMethod" method-signature="java.lang.Void f()" required="false"/>
         <cc:attribute name="displaySaveButton" type="boolean" default="true"/>
-        <cc:attribute name="reloadOnComplete" type="boolean" default="false"/>
     </cc:interface>
 
     <cc:implementation>
@@ -23,11 +22,8 @@
                 </div>
                 <p:outputPanel rendered="#{cc.attrs.displaySaveButton}" layout="block" styleClass="field-value-save">
                     <p:commandButton
-                            value="Enregistrer"
-                            oncomplete="#{cc.attrs.reloadOnComplete ? 'location.reload()' : ''}"
-                    >
-                        <f:ajax listener="#{cc.attrs.saveMethod}" />
-                    </p:commandButton>
+                            value="#{langBean.msg('common.action.save')}"
+                            action="#{cc.attrs.saveMethod}"/>
                 </p:outputPanel>
             </div>
         </shared:csrfform>

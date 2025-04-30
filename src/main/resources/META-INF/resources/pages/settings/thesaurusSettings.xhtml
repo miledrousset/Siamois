@@ -20,11 +20,11 @@
     <ui:define name="content">
         <main>
             <settingscomp:fieldValue
-                    title="Mon thésaurus"
+                    title="#{langBean.msg('nav.myThesaurus')}"
                     formId="thesaurusForm"
                     saveMethod="#{profileSettingsBean.saveThesaurusUserConfig()}"
             >
-                <settingscomp:fieldValueRow label="URL du thésaurus" inputId="profile-thesaurus" >
+                <settingscomp:fieldValueRow label="#{langBean.msg('myThesaurus.url')}" inputId="profile-thesaurus" >
                     <p:inputText id="profile-thesaurus" value="#{profileSettingsBean.FThesaurusUrl}"/>
                 </settingscomp:fieldValueRow>
             </settingscomp:fieldValue>

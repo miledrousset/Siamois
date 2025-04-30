@@ -7,6 +7,8 @@ import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
+import fr.siamois.domain.utils.MessageUtils;
+import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,13 +30,15 @@ public class InstitutionThesaurusSettingsBean implements Serializable {
     private final transient FieldConfigurationService fieldConfigurationService;
     private final SessionSettingsBean sessionSettingsBean;
     private final transient VocabularyService vocabularyService;
+    private final LangBean langBean;
     private String thesaurusUrl;
     private Institution institution;
 
-    public InstitutionThesaurusSettingsBean(FieldConfigurationService fieldConfigurationService, SessionSettingsBean sessionSettingsBean, VocabularyService vocabularyService) {
+    public InstitutionThesaurusSettingsBean(FieldConfigurationService fieldConfigurationService, SessionSettingsBean sessionSettingsBean, VocabularyService vocabularyService, LangBean langBean) {
         this.fieldConfigurationService = fieldConfigurationService;
         this.sessionSettingsBean = sessionSettingsBean;
         this.vocabularyService = vocabularyService;
+        this.langBean = langBean;
     }
 
     public void reset() {
@@ -58,10 +62,11 @@ public class InstitutionThesaurusSettingsBean implements Serializable {
         try {
             Vocabulary vocabulary = vocabularyService.findOrCreateVocabularyOfUri(thesaurusUrl);
             fieldConfigurationService.setupFieldConfigurationForInstitution(userInfo, vocabulary);
+            MessageUtils.displayInfoMessage(langBean, "myProfile.thesaurus.message.success");
         } catch (InvalidEndpointException e) {
-            log.error("The endpoint is invalid", e);
+            MessageUtils.displayErrorMessage(langBean, "myProfile.thesaurus.uri.invalid");
         } catch (NotSiamoisThesaurusException e) {
-            log.trace("The thesaurus is not a Siamois thesaurus", e);
+            MessageUtils.displayErrorMessage(langBean, "myProfile.thesaurus.siamois.invalid");
         }
 
 

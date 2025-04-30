@@ -18,18 +18,18 @@
                 <p:breadCrumb homeDisplay="false">
                     <p:menuitem value="Organisations" action="#{institutionDetailsBean.goToInstitutionList()}"/>
                     <p:menuitem value="#{institutionThesaurusSettingsBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
-                    <p:menuitem value="Thesaurus"/>
+                    <p:menuitem value="#{langBean.msg('common.label.thesaurus')}"/>
                 </p:breadCrumb>
             </form:csrfform>
 
             <settingscomp:fieldValue
-                    title="Thesaurus par défaut de #{institutionThesaurusSettingsBean.institution.name}"
+                    title="#{langBean.msg('organisationSettings.thesaurus.title', institutionThesaurusSettingsBean.institution.name)}"
                     formId="thesaurusForm"
                     saveMethod="#{institutionThesaurusSettingsBean.saveConfig()}"
             >
                 <p:messages showDetail="true" autoUpdate="true" closable="true" id="messages"/>
 
-                <settingscomp:fieldValueRow label="URL du thésaurus" inputId="profile-thesaurus" >
+                <settingscomp:fieldValueRow label="#{langBean.msg('myThesaurus.url')}" inputId="profile-thesaurus" >
                     <p:inputText id="profile-thesaurus" value="#{institutionThesaurusSettingsBean.thesaurusUrl}"/>
                 </settingscomp:fieldValueRow>
             </settingscomp:fieldValue>
