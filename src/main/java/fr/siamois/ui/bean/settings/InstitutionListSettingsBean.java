@@ -118,8 +118,8 @@ public class InstitutionListSettingsBean implements Serializable {
     public void displayCreateDialog() {
         log.trace("Display create institution dialog");
         institutionDialogBean.reset();
-        institutionDialogBean.setTitle("Créer une organisation");
-        institutionDialogBean.setButtonLabel("Créer l'organisation");
+        institutionDialogBean.setTitle(langBean.msg("organisationManagement.create"));
+        institutionDialogBean.setButtonLabel(langBean.msg("organisationManagement.dialog.create"));
         institutionDialogBean.setActionFromBean(this::createInstitution);
         PrimeFaces.current().ajax().update("newInstitutionDialog");
         PrimeFaces.current().executeScript("PF('newInstitutionDialog').show();");

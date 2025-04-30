@@ -16,7 +16,7 @@
             <h3>#{institutionDialogBean.title}</h3>
             <hr/>
             <div class="form-group row">
-                <label class="col-lg-4 col-form-label" for="name">Nom de l'organisation</label>
+                <label class="col-lg-4 col-form-label" for="name">#{langBean.msg('organisationManagement.orgName')}</label>
                 <div class="col-lg-6 ms-auto">
                     <p:inputText
                             id="name"
@@ -26,7 +26,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-lg-4 col-form-label" for="identifier">Identifiant</label>
+                <label class="col-lg-4 col-form-label" for="identifier">#{langBean.msg('common.label.identifier')}</label>
                 <div class="col-lg-6 ms-auto">
                     <p:inputText
                             id="identifier"
@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-lg-4 col-form-label" for="description">Description</label>
+                <label class="col-lg-4 col-form-label" for="description">#{langBean.msg('common.label.description')}</label>
                 <div class="col-lg-6 ms-auto">
                     <p:inputTextarea
                             id="description"
@@ -45,7 +45,7 @@
             </div>
             <hr/>
             <div class="dialog-buttons">
-                <p:commandButton value="Annuler" action="#{institutionDialogBean.exit()}" update="@form"/>
+                <p:commandButton value="#{langBean.msg('common.action.cancel')}" action="#{institutionDialogBean.exit()}" update="@form"/>
                 <p:commandButton value="#{institutionDialogBean.buttonLabel}" action="#{institutionDialogBean.save()}" update="@form"/>
             </div>
         </div>

@@ -14,8 +14,8 @@ public class MessageUtils {
     private MessageUtils() {}
 
     static {
-        titlesCodes.put(FacesMessage.SEVERITY_INFO, "commons.message.state.info");
-        titlesCodes.put(FacesMessage.SEVERITY_ERROR, "commons.message.state.error");
+        titlesCodes.put(FacesMessage.SEVERITY_INFO, "common.message.state.info");
+        titlesCodes.put(FacesMessage.SEVERITY_ERROR, "common.message.state.error");
     }
 
     public static void displayMessage(LangBean langBean, FacesMessage.Severity severity, String messageCode, Object... args) {

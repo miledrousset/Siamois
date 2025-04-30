@@ -17,9 +17,9 @@
                     filterAction="#{institutionListSettingsBean.onFilterType()}"
                     addAction="#{institutionListSettingsBean.displayCreateDialog()}"
                     searchInputTextValue="#{institutionListSettingsBean.filterText}"
-                    searchInputPlaceholder="Rechercher une organisation"
+                    searchInputPlaceholder="#{langBean.msg('organisationManagement.search')}"
                     isOrganisationManager="#{institutionListSettingsBean.userIsSuperadmin()}"
-                    createButtonLabel="Créer une organisation"
+                    createButtonLabel="#{langBean.msg('organisationManagement.create')}"
             >
                 <p:dataTable
                         id="organisationDatatable"
@@ -30,22 +30,22 @@
                         rowKey="#{organisation.id}"
                 >
 
-                    <p:column headerText="Organisation active" rendered="#{institutionListSettingsBean.hasMoreThenOneInstitution()}">
+                    <p:column headerText="#{langBean.msg('organisationManagement.orgActive')}" rendered="#{institutionListSettingsBean.hasMoreThenOneInstitution()}">
                         <p:toggleSwitch value="#{institutionListSettingsBean.toggleSwitchState[organisation.id]}">
                             <p:ajax event="change" listener="#{institutionListSettingsBean.changeCurrentInstitution(organisation)}" update="@form"/>
                         </p:toggleSwitch>
                     </p:column>
 
-                    <p:column headerText="Nom de l'organisation">
+                    <p:column headerText="#{langBean.msg('organisationManagement.orgName')}">
                         <p:outputLabel value="#{organisation.name}"/>
                     </p:column>
-                    <p:column headerText="Membres">
+                    <p:column headerText="#{langBean.msg('organisationManagement.orgMembers')}">
                         <p:outputLabel value="#{institutionListSettingsBean.numberOfMemberInInstitution(organisation)}"/>
                     </p:column>
-                    <p:column headerText="Enregistrements">
+                    <p:column headerText="#{langBean.msg('organisationManagement.orgRecording')}">
                         <p:outputLabel value="#{institutionListSettingsBean.numberOfRecordingUnitInInstitution(organisation)}"/>
                     </p:column>
-                    <p:column headerText="Date de création" >
+                    <p:column headerText="#{langBean.msg('common.label.creationdate')}" >
                         <p:outputLabel value="#{institutionListSettingsBean.displayDate(organisation.creationDate)}"/>
                     </p:column>
                     <p:column>
