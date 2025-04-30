@@ -141,30 +141,30 @@ public class ProfileSettingsBean implements Serializable {
         }
 
         if (!updated) {
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_WARN, "Aucune valeur n'a été changée.");
+            MessageUtils.displayMessage(langBean, FacesMessage.SEVERITY_WARN, "myProfile.message.unchanged");
             return;
         }
 
         try {
             personService.updatePerson(user);
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_INFO, "Informations modifiés avec succès");
+            MessageUtils.displayMessage(langBean, FacesMessage.SEVERITY_INFO, "myProfile.message.success");
         } catch (InvalidNameException e) {
             log.error(e.getMessage());
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, e.getMessage());
+            MessageUtils.displayMessage(langBean, FacesMessage.SEVERITY_ERROR, "common.entity.person.invalidname", Person.NAME_MAX_LENGTH);
         } catch (InvalidUserInformationException | UserAlreadyExistException e) {
             log.error("There was a problem while updating the person", e);
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Erreur interne");
+            MessageUtils.displayMessage(langBean, FacesMessage.SEVERITY_ERROR, "common.error.internal");
         }
     }
 
     public void saveThesaurusUserConfig() {
         if (fThesaurusUrl == null || fThesaurusUrl.isEmpty()) {
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_WARN, "Aucun thésaurus n'a été renseigné.");
+            MessageUtils.displayMessage(langBean, FacesMessage.SEVERITY_WARN, "myProfile.thesaurus.message.missing");
             return;
         }
 
         if (refConfigConcept != null && refConfigConcept.getVocabulary().getUri().equals(fThesaurusUrl)) {
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_WARN, "La configuration du thésaurus n'a pas été modifiée.");
+            MessageUtils.displayMessage(langBean, FacesMessage.SEVERITY_WARN, "myProfile.thesaurus.message.unchanged");
             return;
         }
 
@@ -172,11 +172,11 @@ public class ProfileSettingsBean implements Serializable {
         try {
             Vocabulary vocabulary = vocabularyService.findOrCreateVocabularyOfUri(fThesaurusUrl);
             fieldConfigurationService.setupFieldConfigurationForUser(info, vocabulary);
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_INFO, "La configuration a bien été enregistrée");
+            MessageUtils.displayMessage(langBean, FacesMessage.SEVERITY_INFO, "myProfile.thesaurus.message.success");
         } catch (InvalidEndpointException e) {
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "L'URI renseignée n'est pas valide. Vérifiez l'URI entrée.");
+            MessageUtils.displayMessage(langBean, FacesMessage.SEVERITY_ERROR, "myProfile.thesaurus.uri.invalid");
         } catch (NotSiamoisThesaurusException e) {
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Le thésaurus sélectionné ne dispose pas des notations d'un thésaurus SIAMOIS. Vérifiez les notations des concepts.");
+            MessageUtils.displayMessage(langBean, FacesMessage.SEVERITY_ERROR, "myProfile.thesaurus.siamois.invalid");
         }
     }
 
@@ -221,7 +221,7 @@ public class ProfileSettingsBean implements Serializable {
         personSettings = personService.updatePersonSettings(personSettings);
         langageChangeEventPublisher.publishInstitutionChangeEvent();
 
-        MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_INFO, "Les préférences ont bien été sauvegardées.");
+        MessageUtils.displayMessage(langBean, FacesMessage.SEVERITY_INFO, "myProfile.preferences.message.success");
     }
 
     public String labelOfInstitutionWithId(Long id) {
