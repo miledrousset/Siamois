@@ -34,7 +34,8 @@
                         scrollHeight="300"
                         dropdown="true"
                         itemLabel="#{labelBean.findLabelOf(field)}"
-                        placeholder="Choisissez un concept"
+                        placeholder="#{langBean.msg('common.action.chooseConcept')}"
+                        showEmptyMessage="false"
         >
 
             <!-- If defined, we need to update on select to synchronise secondary type choices -->
@@ -62,7 +63,7 @@
                     <h:outputLink value="#{cc.attrs.editConceptUrl}" target="_blank"
                                   disabled="#{empty cc.attrs.editConceptUrl}"
                                   styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-                        <span class="ui-button-text">Edit concept in OpenTheso</span>
+                        <span class="ui-button-text">#{langBean.msg('common.action.editConcept')}</span>
                     </h:outputLink>
                 </div>
             </f:facet>
