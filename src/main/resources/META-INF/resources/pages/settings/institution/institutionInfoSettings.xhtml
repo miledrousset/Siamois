@@ -25,7 +25,6 @@
                     formId="institutionInfoForm"
                     title="#{langBean.msg('organisationSettings.titles.settings')}"
                     saveMethod="#{institutionInfoSettingsBean.updateName()}"
-                    reloadOnComplete="true"
             >
                 <settings:fieldValueRow label="#{langBean.msg('organisationManagement.orgName')}" inputId="institution-name">
                     <p:inputText id="institution-name" value="#{institutionInfoSettingsBean.FName}"/>
