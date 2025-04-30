@@ -71,7 +71,8 @@ public class ProfileSettingsBean implements Serializable {
                                VocabularyService vocabularyService,
                                InstitutionService institutionService,
                                LangService langService,
-                               LangBean langBean, LangageChangeEventPublisher langageChangeEventPublisher) {
+                               LangBean langBean,
+                               LangageChangeEventPublisher langageChangeEventPublisher) {
         this.sessionSettingsBean = sessionSettingsBean;
         this.personService = personService;
         this.fieldConfigurationService = fieldConfigurationService;

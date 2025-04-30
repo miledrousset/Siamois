@@ -79,20 +79,7 @@ public class LangBean implements Serializable {
         return locale.getLanguage();
     }
 
-    private String capitalize(String s) {
-        return s.substring(0, 1).toUpperCase() + s.substring(1);
-    }
-
-    public String getLanguageName() {
-        return capitalize(locale.getDisplayName(locale));
-    }
-
-    public String findLanguageName(String lang) {
-        Locale tmp = new Locale(lang);
-        return capitalize(tmp.getDisplayName(tmp));
-    }
-
-    public List<String> getLangs() {
+    public List<String> getLangsWithQuotes() {
         return langService.getAvailableLanguages()
                 .stream()
                 .map(lang -> "'" + lang + "'")

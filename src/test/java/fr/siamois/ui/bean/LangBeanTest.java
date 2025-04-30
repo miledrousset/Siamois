@@ -30,10 +30,10 @@ class LangBeanTest {
     }
 
     @Test
-    void getLangs_shouldReturnAllLangsWithQuote() {
+    void getLangs_shouldReturnAllLangsWithQuotesWithQuote() {
         when(langService.getAvailableLanguages()).thenReturn(List.of("fr", "en", "de"));
 
-        List<String> result = langBean.getLangs();
+        List<String> result = langBean.getLangsWithQuotes();
 
         assertThat(result).containsExactlyInAnyOrder("'fr'", "'en'", "'de'");
     }
