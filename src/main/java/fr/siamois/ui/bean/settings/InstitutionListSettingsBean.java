@@ -10,6 +10,7 @@ import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
+import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.institution.InstitutionDialogBean;
 import jakarta.faces.application.FacesMessage;
@@ -43,6 +44,7 @@ public class InstitutionListSettingsBean implements Serializable {
     private final transient RecordingUnitService recordingUnitService;
     private final InstitutionDetailsBean institutionDetailsBean;
     private final LangBean langBean;
+    private final RedirectBean redirectBean;
     private List<Institution> institutions = null;
     private List<Institution> filteredInstitutions = null;
     private List<SortMeta> sortBy;
@@ -53,7 +55,7 @@ public class InstitutionListSettingsBean implements Serializable {
     public InstitutionListSettingsBean(InstitutionService institutionService,
                                        SessionSettingsBean sessionSettingsBean,
                                        InstitutionChangeEventPublisher institutionChangeEventPublisher,
-                                       InstitutionDialogBean institutionDialogBean, RecordingUnitService recordingUnitService, InstitutionDetailsBean institutionDetailsBean, LangBean langBean) {
+                                       InstitutionDialogBean institutionDialogBean, RecordingUnitService recordingUnitService, InstitutionDetailsBean institutionDetailsBean, LangBean langBean, RedirectBean redirectBean) {
         this.institutionService = institutionService;
         this.sessionSettingsBean = sessionSettingsBean;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
@@ -61,6 +63,7 @@ public class InstitutionListSettingsBean implements Serializable {
         this.recordingUnitService = recordingUnitService;
         this.institutionDetailsBean = institutionDetailsBean;
         this.langBean = langBean;
+        this.redirectBean = redirectBean;
     }
 
     public void init() {
@@ -110,6 +113,11 @@ public class InstitutionListSettingsBean implements Serializable {
     }
 
     public boolean hasMoreThenOneInstitution() {
+        if (institutions == null) {
+            UserInfo info = sessionSettingsBean.getUserInfo();
+            institutions = institutionService.findInstitutionsOfPerson(info.getUser());
+            return false;
+        }
         return institutions.size() > 1;
     }
 
