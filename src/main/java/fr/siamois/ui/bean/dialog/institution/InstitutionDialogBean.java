@@ -22,8 +22,8 @@ import java.io.Serializable;
 @Setter
 public class InstitutionDialogBean implements Serializable {
 
-    private String title = "Créer une organisation";
-    private String buttonLabel = "Créer l'organisation";
+    private String title;
+    private String buttonLabel;
 
     private final transient InstitutionService institutionService;
     private final SessionSettingsBean sessionSettingsBean;

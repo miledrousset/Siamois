@@ -23,12 +23,12 @@
             </form:csrfform>
             <settings:datatable
                     title="#{langBean.msg('organisationSettings.managers.title', institutionManagerSettingsBean.institution.name)}"
-                    filterAction="#{institutionManagerSettingsBean.filterValues()}"
+                    filterAction="#{institutionManagerSettingsBean.filter()}"
                     formId="institutionManagerForm"
-                    addAction="#{institutionManagerSettingsBean.createManager()}"
-                    searchInputTextValue="#{institutionManagerSettingsBean.textSearch}"
+                    addAction="#{institutionManagerSettingsBean.add()}"
+                    searchInputTextValue="#{institutionManagerSettingsBean.searchInput}"
                     description="#{langBean.msg('organisationSettings.managers.description')}"
-                    isOrganisationManager="true"
+                    renderCreateButton="true"
                     createButtonLabel="#{langBean.msg('organisationSettings.managers.add')}"
             >
                 <p:dataTable

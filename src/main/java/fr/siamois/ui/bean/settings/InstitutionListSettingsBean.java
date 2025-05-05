@@ -64,7 +64,6 @@ public class InstitutionListSettingsBean implements Serializable {
     }
 
     public void init() {
-
             UserInfo info = sessionSettingsBean.getUserInfo();
             institutions = institutionService.findInstitutionsOfPerson(info.getUser());
             onFilterType();
@@ -75,7 +74,6 @@ public class InstitutionListSettingsBean implements Serializable {
                     .order(SortOrder.ASCENDING)
                     .priority(1)
                     .build());
-
     }
 
     public String displayDate(OffsetDateTime date) {
@@ -130,14 +128,14 @@ public class InstitutionListSettingsBean implements Serializable {
 
         try {
             institution = institutionDialogBean.createInstitution();
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_INFO, "L'institution %s a bien été crée", institution.getName());
+            MessageUtils.displayInfoMessage(langBean, "common.entity.institution.created");
         } catch (InstitutionAlreadyExistException e) {
             log.error("Institution already exists");
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Une institution avec ce nom ou cet identifiant existe déjà.");
+            MessageUtils.displayErrorMessage(langBean, "common.entity.institution.error.alreadyExist");
             return;
         } catch (FailedInstitutionSaveException e) {
             log.error("Failed to create institution", e);
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Erreur interne lors de la création de l'institution.");
+            MessageUtils.displayErrorMessage(langBean, "common.error.internal");
             return;
         }
 

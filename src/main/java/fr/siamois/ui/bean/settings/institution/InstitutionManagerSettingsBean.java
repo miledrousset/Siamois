@@ -8,6 +8,7 @@ import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
+import fr.siamois.ui.bean.settings.SettingsDatatableBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,6 @@ import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,7 +26,7 @@ import java.util.Set;
 @SessionScoped
 @Getter
 @Setter
-public class InstitutionManagerSettingsBean implements Serializable {
+public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
 
     private final transient InstitutionService institutionService;
     private final transient PersonService personService;
@@ -37,7 +37,7 @@ public class InstitutionManagerSettingsBean implements Serializable {
 
     private transient Set<Person> members;
     private transient Set<Person> refMembers;
-    private String textSearch;
+    private String searchInput;
 
     public InstitutionManagerSettingsBean(InstitutionService institutionService, PersonService personService, UserDialogBean userDialogBean, LangBean langBean) {
         this.institutionService = institutionService;
@@ -46,6 +46,7 @@ public class InstitutionManagerSettingsBean implements Serializable {
         this.langBean = langBean;
     }
 
+    @Override
     public void init(Institution institution) {
         this.institution = institution;
         refMembers = new HashSet<>();
@@ -94,26 +95,28 @@ public class InstitutionManagerSettingsBean implements Serializable {
         return DateUtils.formatOffsetDateTime(result.getAddedAt());
     }
 
-    public void filterValues() {
-        log.trace("Filtering values with text: {}", textSearch);
-        if (textSearch == null || textSearch.isEmpty()) {
+    @Override
+    public void filter() {
+        log.trace("Filtering values with text: {}", searchInput);
+        if (searchInput == null || searchInput.isEmpty()) {
             members = new HashSet<>(refMembers);
         } else {
             members = new HashSet<>();
             for (Person person : refMembers) {
-                if (person.displayName().toLowerCase().contains(textSearch.toLowerCase())) {
+                if (person.displayName().toLowerCase().contains(searchInput.toLowerCase())) {
                     members.add(person);
                 }
             }
             for (Person person : refMembers) {
-                if (person.getMail().toLowerCase().contains(textSearch.toLowerCase())) {
+                if (person.getMail().toLowerCase().contains(searchInput.toLowerCase())) {
                     members.add(person);
                 }
             }
         }
     }
 
-    public void createManager() {
+    @Override
+    public void add() {
         log.trace("Creating manager");
         userDialogBean.init(langBean.msg("organisationSettings.managers.add"), langBean.msg("organisationSettings.managers.add"), institution);
         PrimeFaces.current().executeScript("PF('newManagerDialog').show();");
