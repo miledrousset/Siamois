@@ -43,7 +43,7 @@ public class InstitutionService {
         Set<Institution> institutions = new HashSet<>();
         institutions.addAll(institutionRepository.findAllOfPerson(person.getId()));
         institutions.addAll(institutionRepository.findAllManagedBy(person.getId()));
-        return institutions.stream().toList();
+        return new ArrayList<>(institutions);
     }
 
     public List<Person> findAllManagers() {
