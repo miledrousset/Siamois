@@ -19,11 +19,11 @@
                     <p:menuitem value="Organisations" action="#{institutionDetailsBean.goToInstitutionList()}"/>
                     <p:menuitem value="#{institutionDetailsBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
                     <p:menuitem value="#{langBean.msg('organisationSettings.titles.teams')}" action="#{teamListBean.goToTeamList()}"/>
-                    <p:menuitem value="#{teamDetailsBean.team.name}"/>
+                    <p:menuitem value="#{teamListBean.nameOf(teamDetailsBean.team)}"/>
                 </p:breadCrumb>
             </form:csrfform>
             <settings:settingsCategory
-                    title="#{teamDetailsBean.team.name}"
+                    title="#{teamListBean.nameOf(teamDetailsBean.team)}"
                     formId="teamDetailsForm"
                     options="#{teamDetailsBean.elements}"
             />
