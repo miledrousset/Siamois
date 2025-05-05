@@ -1,9 +1,5 @@
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+
 
 :root {
 
@@ -38,6 +34,10 @@
     --ground-dark-color: #581011;
 }
 
+/* in order to align boostrap icons */
+[class^="bi-"]::before, [class*=" bi-"]::before {
+    vertical-align: baseline !important;
+}
 
 html, body {
     height: 100%;
