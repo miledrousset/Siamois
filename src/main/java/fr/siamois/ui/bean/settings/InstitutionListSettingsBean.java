@@ -13,7 +13,6 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.institution.InstitutionDialogBean;
-import jakarta.faces.application.FacesMessage;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -136,7 +135,7 @@ public class InstitutionListSettingsBean implements Serializable {
 
         try {
             institution = institutionDialogBean.createInstitution();
-            MessageUtils.displayInfoMessage(langBean, "common.entity.institution.created");
+            MessageUtils.displayInfoMessage(langBean, "common.entity.institution.created", institution.getName());
         } catch (InstitutionAlreadyExistException e) {
             log.error("Institution already exists");
             MessageUtils.displayErrorMessage(langBean, "common.entity.institution.error.alreadyExist");

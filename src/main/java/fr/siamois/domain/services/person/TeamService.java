@@ -8,6 +8,7 @@ import fr.siamois.infrastructure.database.repositories.person.TeamRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -40,9 +41,28 @@ public class TeamService {
     }
 
     public Team create(Team team) throws TeamAlreadyExistException {
-        if (teamRepository.findTeamByNameInInstitution(team.getInstitution().getId(), team.getName()).isPresent()) {
+        if (nameAlreadyExists(team.getInstitution(), team.getName())) {
             throw new TeamAlreadyExistException(team.getName(), team.getInstitution().getName());
         }
         return teamRepository.save(team);
+    }
+
+    private boolean nameAlreadyExists(Institution institution, String name) {
+        return teamRepository.findTeamByNameInInstitution(institution.getId(), name).isPresent();
+    }
+
+    public Team update(Team team) throws TeamAlreadyExistException {
+        Optional<Team> optTeam = teamRepository.findById(team.getId());
+        if (optTeam.isPresent()) {
+            Team oldTeam = optTeam.get();
+            if (nameHasChanged(team, oldTeam) && nameAlreadyExists(team.getInstitution(), team.getName())) {
+                throw new TeamAlreadyExistException(team.getName(), team.getInstitution().getName());
+            }
+        }
+        return teamRepository.save(team);
+    }
+
+    private static boolean nameHasChanged(Team newTeam, Team oldTeam) {
+        return !oldTeam.getName().equalsIgnoreCase(newTeam.getName());
     }
 }
