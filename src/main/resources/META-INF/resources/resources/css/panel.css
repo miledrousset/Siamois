@@ -702,6 +702,15 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     color: var(--ground-main-color);
 }
 
+
+.ui-commandlink.sia-recording-unit-command-link , .sia-recording-unit-command-link.ui-link:hover {
+    color: var(--ground-main-color);
+}
+
+.ui-commandlink.sia-recording-unit-command-link:hover , .sia-recording-unit-command-link.ui-link:hover  {
+    color: var(--ground-main-color);
+}
+
 /* forms */
 
 .ui-panel.sia-form-panel .ui-panel-content {

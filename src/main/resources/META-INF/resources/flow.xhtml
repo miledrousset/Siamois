@@ -139,7 +139,7 @@
                             </ui:include>
                         </f:facet>
                         <p:breadCrumb model="#{panel.breadcrumb.model}" rendered="#{panel.isBreadcrumbVisible}"/>
-                        <ui:include src="#{panel.display()}">
+                        <ui:include src="#{panel.display()}" id="panel-body">
                             <ui:param name="panelModel" value="#{panel}"/>
                             <ui:param name="panelIndex" value="#{status.index}"/>
                         </ui:include>

@@ -2,6 +2,7 @@ package fr.siamois.domain.models.spatialunit;
 
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.persistence.*;
@@ -45,10 +46,13 @@ public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
     private Set<SpatialUnit> children = new HashSet<>();
 
     @OneToMany(mappedBy="spatialUnit")
-    private Set<RecordingUnit> recordingUnits;
+    private Set<RecordingUnit> recordingUnitList;
 
     @ManyToMany(mappedBy = "children", fetch = FetchType.LAZY)
     private Set<SpatialUnit> parents = new HashSet<>();
+
+    @ManyToMany(mappedBy = "spatialContext")
+    private Set<ActionUnit> relatedActionUnitList = new HashSet<>();
 
     @Override
     public String toString() {

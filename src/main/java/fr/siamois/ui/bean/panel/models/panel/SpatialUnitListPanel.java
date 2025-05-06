@@ -12,9 +12,14 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.model.SpatialUnitLazyDataModel;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.primefaces.component.api.UIColumn;
+import org.primefaces.event.ColumnToggleEvent;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.Visibility;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -43,6 +48,15 @@ public class SpatialUnitListPanel extends AbstractPanel {
     private List<Person> selectedAuthors;
     private LazyDataModel<SpatialUnit> lazyDataModel ;
     private long totalNumberOfUnits ;
+
+    public void onToggle(ColumnToggleEvent e) {
+        Integer index = (Integer) e.getData();
+        UIColumn column = e.getColumn();
+        Visibility visibility = e.getVisibility();
+        String header = column.getAriaHeaderText() != null ? column.getAriaHeaderText() : column.getHeaderText();
+        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Column " + index + " toggled: " + header + " " + visibility, null);
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
 
     public SpatialUnitListPanel(SpatialUnitService spatialUnitService, PersonService personService,
                                 ConceptService conceptService,

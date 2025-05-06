@@ -143,7 +143,12 @@ public class SpatialUnitService implements ArkEntityService {
         Page<SpatialUnit> res = spatialUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
                 institutionId, name, categoryIds, personIds, global, langCode, pageable);
 
-        wireChildrenAndParents(res.getContent());  // Load and attach relationships
+        wireChildrenAndParents(res.getContent());  // Load and attach spatial hierarchy relationships
+
+        // load related actions
+        res.forEach(spatialUnit -> Hibernate.initialize(spatialUnit.getRelatedActionUnitList()));
+        // Load related recording units
+        res.forEach(spatialUnit -> Hibernate.initialize(spatialUnit.getRecordingUnitList()));
 
         return res;
     }

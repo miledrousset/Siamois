@@ -4,6 +4,8 @@ import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -52,6 +54,14 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
 
     @ManyToMany(mappedBy = "children")
     private Set<ActionUnit> parents = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name="action_unit_spatial_context",
+            joinColumns = { @JoinColumn(name = "fk_action_unit_id") },
+            inverseJoinColumns = { @JoinColumn(name = "fk_spatial_unit_id") }
+    )
+    private Set<SpatialUnit> spatialContext = new HashSet<>();
 
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIAAU.TYPE";

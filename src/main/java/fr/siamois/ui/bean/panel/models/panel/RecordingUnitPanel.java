@@ -20,6 +20,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
@@ -29,8 +32,8 @@ public class RecordingUnitPanel extends RecordingUnitPanelBase {
 
 
     // ------- Locals
-    String recordingUnitErrorMessage;
-    Long recordingUnitId;
+    private String recordingUnitErrorMessage;
+    private Long recordingUnitId;
 
 
     public RecordingUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService,
