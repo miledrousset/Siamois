@@ -14,14 +14,7 @@
                      detail="#{panelModel.spatialUnitErrorMessage}"
                      rendered="#{not empty panelModel.spatialUnitErrorMessage}"/>
     <h:panelGroup id="contentPanel" rendered="#{panelModel.spatialUnit != null}">
-        <div class="panel-top-section">
-            <h2>
-                #{panelModel.spatialUnit.name}
-                <p:chip label="#{labelBean.findLabelOf(panelModel.spatialUnit.category)}" icon="pi pi-map-marker"
-                        styleClass="mr-2 spatial-unit-type-chip"/>
 
-            </h2>
-        </div>
 
         <h:form>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>

@@ -26,7 +26,10 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Service to manage SpatialUnit
@@ -48,7 +51,6 @@ public class SpatialUnitService implements ArkEntityService {
         this.arkService = arkService;
         this.institutionService = institutionService;
     }
-
 
 
     /**
@@ -77,11 +79,73 @@ public class SpatialUnitService implements ArkEntityService {
         spatialUnitRepository.save(spatialUnit);
     }
 
+    public void wireChildrenAndParents(List<SpatialUnit> units) {
+        Map<Long, SpatialUnit> idToUnit = units.stream()
+                .collect(Collectors.toMap(SpatialUnit::getId, Function.identity()));
+
+        List<Long> ids = new ArrayList<>(idToUnit.keySet());
+
+        // Load all linked SpatialUnits
+        List<SpatialUnit> allChildren = spatialUnitRepository.findChildrenByParentIds(ids);
+        List<SpatialUnit> allParents = spatialUnitRepository.findParentsByChildIds(ids);
+
+        Map<Long, SpatialUnit> childMap = allChildren.stream()
+                .collect(Collectors.toMap(
+                        SpatialUnit::getId,
+                        Function.identity(),
+                        (existing, duplicate) -> existing  // or choose how to resolve the conflict
+                ));
+
+        Map<Long, SpatialUnit> parentMap = allParents.stream()
+                .collect(Collectors.toMap(
+                        SpatialUnit::getId,
+                        Function.identity(),
+                        (existing, duplicate) -> existing
+                ));
+
+        // Get link rows
+        List<Object[]> childLinks = spatialUnitRepository.findChildLinks(ids);
+        List<Object[]> parentLinks = spatialUnitRepository.findParentLinks(ids);
+
+        // Wire children
+        for (Object[] row : childLinks) {
+            Long parentId = ((Number) row[0]).longValue();
+            Long childId = ((Number) row[1]).longValue();
+
+            SpatialUnit parent = idToUnit.get(parentId);
+            SpatialUnit child = childMap.get(childId);
+
+            if (parent != null && child != null) {
+                parent.getChildren().add(child);
+            }
+        }
+
+        // Wire parents
+        for (Object[] row : parentLinks) {
+            Long childId = ((Number) row[0]).longValue();
+            Long parentId = ((Number) row[1]).longValue();
+
+            SpatialUnit child = idToUnit.get(childId);
+            SpatialUnit parent = parentMap.get(parentId);
+
+            if (child != null && parent != null) {
+                child.getParents().add(parent);
+            }
+        }
+    }
+
+
+    @Transactional(readOnly = true)
     public Page<SpatialUnit> findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
             Long institutionId,
-            String name, Long[] categoryIds, String global, String langCode, Pageable pageable) {
-        return spatialUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                institutionId, name, categoryIds, global, langCode, pageable);
+            String name, Long[] categoryIds, Long[] personIds, String global, String langCode, Pageable pageable) {
+
+        Page<SpatialUnit> res = spatialUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                institutionId, name, categoryIds, personIds, global, langCode, pageable);
+
+        wireChildrenAndParents(res.getContent());  // Load and attach relationships
+
+        return res;
     }
 
     public Page<SpatialUnit> findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(

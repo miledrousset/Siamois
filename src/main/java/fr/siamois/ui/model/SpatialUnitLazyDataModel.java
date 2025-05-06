@@ -20,10 +20,10 @@ public class SpatialUnitLazyDataModel extends BaseSpatialUnitLazyDataModel {
     }
 
     @Override
-    protected Page<SpatialUnit> loadSpatialUnits(String nameFilter, Long[] categoryIds, String globalFilter, Pageable pageable) {
+    protected Page<SpatialUnit> loadSpatialUnits(String nameFilter, Long[] categoryIds, Long[] personIds, String globalFilter, Pageable pageable) {
         return spatialUnitService.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
                 sessionSettings.getSelectedInstitution().getId(),
-                nameFilter, categoryIds, globalFilter,
+                nameFilter, categoryIds, personIds, globalFilter,
                 langBean.getLanguageCode(),
                 pageable);
     }

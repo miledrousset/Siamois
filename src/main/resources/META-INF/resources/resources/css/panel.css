@@ -81,6 +81,8 @@ body .ui-datatable .ui-datatable-data>tr>td {
 
 .siamois-panel .ui-toolbar {
     border: none;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
     background: none;
 }
 

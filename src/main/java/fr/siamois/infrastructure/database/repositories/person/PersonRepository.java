@@ -24,6 +24,15 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
     )
     List<Person> findAllByNameOrLastname(String nameOrLastname);
 
+    @Query(
+            nativeQuery = true,
+            value = "SELECT DISTINCT p.* " +
+            "FROM person p " +
+            "JOIN spatial_unit su ON su.fk_author_id = p.person_id " +
+                    "WHERE su.fk_institution_id = :institutionId"
+    )
+    List<Person> findAllAuthorsOfSpatialUnitByInstitution(Long institutionId);
+
     Optional<Person> findById(long id);
 
     @Query(

@@ -9,7 +9,7 @@
                 xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form">
 
     <ui:define name="head">
-        <link rel="stylesheet" href="#{redirectBean.redirectUrlToResource('searchBar.css', 'css')}" />
+        <link rel="stylesheet" href="#{redirectBean.redirectUrlToResource('searchBar.css', 'css')}"/>
         <h:outputStylesheet library="css" name="panel.css"/>
 
         <script>
@@ -117,53 +117,57 @@
 
         <p:outputPanel id="flow">
 
-                <h:panelGroup style="#{flowBean.fullscreenPanelIndex == -1 ? 'display:flex;flex-direction: column;gap:1em;padding:1em;' : 'display:flex;flex-direction: column;gap:1em;padding:0.5em;'}" id="flow-panels">
-                    <c:forEach items="#{flowBean.panels}" var="panel" varStatus="status">
-                        <p:panel styleClass="#{panel.panelClass}"
-                                rendered="#{flowBean.fullscreenPanelIndex ==-1 || flowBean.fullscreenPanelIndex == status.index}" id="panel-${status.index}"
-                                toggleable="true" closable="true"
-                                 toggleableHeader="true" collapsed="#{panel.collapsed}">
+            <h:panelGroup
+                    style="#{flowBean.fullscreenPanelIndex == -1 ? 'display:flex;flex-direction: column;gap:1em;padding:1em;' : 'display:flex;flex-direction: column;gap:1em;padding:0.5em;'}"
+                    id="flow-panels">
+                <c:forEach items="#{flowBean.panels}" var="panel" varStatus="status">
+                    <p:panel styleClass="#{panel.panelClass}"
+                             rendered="#{flowBean.fullscreenPanelIndex ==-1 || flowBean.fullscreenPanelIndex == status.index}"
+                             id="panel-${status.index}"
+                             toggleable="true" closable="true"
+                             toggleableHeader="true" collapsed="#{panel.collapsed}">
 
-                            <p:ajax event="close" listener="#{flowBean.closePanelAtIndex(status.index)}" />
-                            <p:ajax event="toggle" listener="#{flowBean.handleToggleOfPanelAtIndex(status.index)}"/>
+                        <p:ajax event="close" listener="#{flowBean.closePanelAtIndex(status.index)}"/>
+                        <p:ajax event="toggle" listener="#{flowBean.handleToggleOfPanelAtIndex(status.index)}"/>
 
-                            <f:facet name="header">
+                        <f:facet name="header">
+                            <p:outputPanel rendered="#{panel.displayHeader() == null}">
                                 <i class="#{panel.icon}"/> #{panel.title}
-                            </f:facet>
-                            <p:breadCrumb model="#{panel.breadcrumb.model}" rendered="#{panel.isBreadcrumbVisible}"/>
-                            <ui:include src="#{panel.display()}">
+                            </p:outputPanel>
+                            <ui:include rendered="#{panel.displayHeader() != null}" src="#{panel.displayHeader()}">
                                 <ui:param name="panelModel" value="#{panel}"/>
-                                <ui:param name="panelIndex" value="#{status.index}"/>
                             </ui:include>
-                            <f:facet name="actions">
-                                <form:csrfform formId="actionsFormId">
-                                    <p:commandLink rendered="#{flowBean.fullscreenPanelIndex ==-1}"
-                                                   action="#{flowBean.fullScreen(panel)}"
-                                                   update="flow"
-                                                   styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
-                                        <h:outputText styleClass="ui-icon bi bi-arrows-angle-expand"/>
-                                    </p:commandLink>
-                                    <p:commandLink rendered="#{flowBean.fullscreenPanelIndex == status.index}"
-                                                   action="#{flowBean.closeFullScreen()}"
-                                                   update="flow"
-                                                   styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
-                                        <h:outputText styleClass="ui-icon bi bi-arrows-angle-contract"/>
-                                    </p:commandLink>
-                                </form:csrfform>
-                            </f:facet>
-                        </p:panel>
-                    </c:forEach>
-                </h:panelGroup>
-
+                        </f:facet>
+                        <p:breadCrumb model="#{panel.breadcrumb.model}" rendered="#{panel.isBreadcrumbVisible}"/>
+                        <ui:include src="#{panel.display()}">
+                            <ui:param name="panelModel" value="#{panel}"/>
+                            <ui:param name="panelIndex" value="#{status.index}"/>
+                        </ui:include>
+                        <f:facet name="actions">
+                            <form:csrfform formId="actionsFormId">
+                                <p:commandLink rendered="#{flowBean.fullscreenPanelIndex ==-1}"
+                                               action="#{flowBean.fullScreen(panel)}"
+                                               update="flow"
+                                               styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
+                                    <h:outputText styleClass="ui-icon bi bi-arrows-angle-expand"/>
+                                </p:commandLink>
+                                <p:commandLink rendered="#{flowBean.fullscreenPanelIndex == status.index}"
+                                               action="#{flowBean.closeFullScreen()}"
+                                               update="flow"
+                                               styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
+                                    <h:outputText styleClass="ui-icon bi bi-arrows-angle-contract"/>
+                                </p:commandLink>
+                            </form:csrfform>
+                        </f:facet>
+                    </p:panel>
+                </c:forEach>
+            </h:panelGroup>
 
 
         </p:outputPanel>
 
 
-
     </ui:define>
-
-
 
 
 </ui:composition>

@@ -3,6 +3,8 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
                 xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form" xmlns:f="http://java.sun.com/jsf/core"
 >
     <cc:interface>
@@ -20,109 +22,198 @@
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
 
-                <!-- datatable property partialUpdate=false because otherwise the paginator template is reset after sort or filter actions-->
-                <p:dataTable paginator="true"
-                             id="spatialUnitDataTable"
-                             paginatorPosition="bottom" var="item"
-                             widgetVar="#{cc.clientId}_spatialUnitListTable"
-                             lazy="true"
-                             sortMode="multiple"
-                             partialUpdate="false"
-                             emptyMessage="Aucune unité spatiale trouvée avec ces critères"
-                             rows="10"
-                             paginatorTemplate="Rows per page: {RowsPerPageDropdown} {RowReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                             rowsPerPageTemplate="5,10,15,20,25"
-                             value="#{cc.attrs.lazyDataModel}" class="spatial-unit-datatable">
+            <!-- datatable property partialUpdate=false because otherwise the paginator template is reset after sort or filter actions-->
+            <p:dataTable paginator="true"
+                         id="spatialUnitDataTable"
+                         paginatorPosition="bottom" var="item"
+                         widgetVar="#{cc.clientId}_spatialUnitListTable"
+                         lazy="true"
+                         sortMode="multiple"
+                         partialUpdate="false"
+                         emptyMessage="Aucune unité spatiale trouvée avec ces critères"
+                         rows="10"
+                         paginatorTemplate="Rows per page: {RowsPerPageDropdown} {RowReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                         rowsPerPageTemplate="5,10,15,20,25"
+                         value="#{cc.attrs.lazyDataModel}" class="spatial-unit-datatable">
 
-                    <f:facet name="{RowReport}">
+                <f:facet name="{RowReport}">
                         <span class="ui-paginator-current">#{cc.attrs.lazyDataModel.getFirstIndexOnPage()}-#{cc.attrs.lazyDataModel.getLastIndexOnPage()}
                             of #{cc.attrs.lazyDataModel.rowCount}</span>
-                    </f:facet>
+                </f:facet>
 
-                    <f:facet name="header">
-                        <p:toolbar>
-                            <p:toolbarGroup>
-                                <p:toolbarGroup align="left">
+                <f:facet name="header">
+                    <p:toolbar>
+                        <p:toolbarGroup>
+                            <p:toolbarGroup align="left">
 
                                 <span class="filter-container ui-input-icon-left">
                                 <i class="bi bi-search"/>
-                                            <p:inputText id="globalFilter" onkeyup="PF('#{cc.clientId}_spatialUnitListTable').filter()"
+                                            <p:inputText id="globalFilter"
+                                                         onkeyup="PF('#{cc.clientId}_spatialUnitListTable').filter()"
                                                          placeholder="Rechercher">
 
                                             </p:inputText>
                                 </span>
 
 
-                                </p:toolbarGroup>
-
-                                <p:toolbarGroup align="left">
-                                    <p:commandButton icon="bi bi-upload" disabled="true" styleClass="sia-icon-btn"/>
-                                    <p:commandButton icon="bi bi-download" disabled="true" styleClass="sia-icon-btn"/>
-                                </p:toolbarGroup>
                             </p:toolbarGroup>
 
+                            <!--                                <p:toolbarGroup align="left">-->
+                            <!--                                    <p:commandButton icon="bi bi-upload" disabled="true" styleClass="sia-icon-btn"/>-->
+                            <!--                                    <p:commandButton icon="bi bi-download" disabled="true" styleClass="sia-icon-btn"/>-->
+                            <!--                                </p:toolbarGroup>-->
+                        </p:toolbarGroup>
 
-                            <p:toolbarGroup align="right">
-                                <p:commandButton value='Ajouter' icon="bi bi-plus-square"
-                                                 oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
-                                                 disabled="#{cc.attrs.disableAddBtn}"
-                                                 action="#{flowBean.addNewSpatialUnitPanel(cc.attrs.panelModel)}"
-                                                 update="flow"
-                                                 style="margin-right: .5rem">
-                                </p:commandButton>
-                            </p:toolbarGroup>
-                        </p:toolbar>
 
+                        <p:toolbarGroup align="right">
+                            <p:commandButton value='Ajouter' icon="bi bi-plus-square"
+                                             oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
+                                             disabled="#{cc.attrs.disableAddBtn}"
+                                             action="#{flowBean.addNewSpatialUnitPanel(cc.attrs.panelModel)}"
+                                             update="flow"
+                                             style="margin-right: .5rem">
+                            </p:commandButton>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+
+                </f:facet>
+
+
+                <p:column headerText="Nom" sortBy="#{item.name}" filterBy="#{item.name}">
+                    <p:commandLink style="padding-right: 1em;"
+                                   action="#{flowBean.goToSpatialUnitByIdCurrentPanel(item.id, cc.attrs.panelModel)}"
+                                   oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
+                                   update="flow"
+                    >
+                        <h:outputText value="#{item.name}"/>
+                    </p:commandLink>
+
+
+                </p:column>
+
+                <!-- Spatial unit type column -->
+                <p:column headerText="Categorie" sortBy="#{item.category.label}"
+                          filterBy="#{item.category}"
+                          filterMatchMode="exact">
+                    <f:facet name="filter">
+                        <p:selectCheckboxMenu
+                                label="Filter par catégorie"
+                                value="#{cc.attrs.selectedCategories}"
+                                filter="true"
+                                filterMatchMode="contains"
+                                onchange="PF('#{cc.clientId}_spatialUnitListTable').filter()"
+                                converter="#{conceptLabelConverter}">
+                            <f:selectItems value="#{cc.attrs.panelModel.categoriesAvailable()}"
+                                           var="cat"
+                                           itemValue="#{cat}"
+                                           itemLabel="#{cat.value}"
+                            />
+                        </p:selectCheckboxMenu>
                     </f:facet>
+                    <p:chip label="#{labelBean.findLabelOf(item.category)}" icon="pi pi-map-marker"
+                            styleClass="mr-2 spatial-unit-type-chip"/>
+                </p:column>
 
+                <!-- Creation time -->
+                <p:column headerText="Date de création" sortBy="#{item.creationTime}"
+                >
+                    <h:outputText value="#{panelModel.formatUtcDateTime(item.creationTime)}"/>
+                </p:column>
 
+                <!-- Auteur/Proprietaire -->
+                <p:column headerText="Auteur" sortBy="#{item.author}" filterMatchMode="exact" filterBy="#{item.author}"
+                >
+                    <f:facet name="filter">
+                        <p:selectCheckboxMenu
+                                label="Filtrer par auteur"
+                                value="#{cc.attrs.panelModel.selectedAuthors}"
+                                filter="true"
+                                filterMatchMode="contains"
+                                onchange="PF('#{cc.clientId}_spatialUnitListTable').filter()"
+                                converter="#{personConverter}">
+                            <f:selectItems value="#{cc.attrs.panelModel.authorsAvailable()}"
+                                           var="person"
+                                           itemValue="#{person}"
+                                           itemLabel="#{person.displayName()}"
+                            />
+                        </p:selectCheckboxMenu>
+                    </f:facet>
+                    #{item.author.displayName()}
+                </p:column>
 
-                    <p:column headerText="Name" sortBy="#{item.name}" filterBy="#{item.name}">
-                        <p:commandLink style="padding-right: 1em;"
-                                       action="#{flowBean.goToSpatialUnitByIdCurrentPanel(item.id, cc.attrs.panelModel)}"
+                <!-- Parents -->
+                <p:column headerText="Fait partie de">
+                    <ui:repeat value="#{item.parents}" var="parent" varStatus="status">
+                        <p:commandLink rendered="#{status.index lt 3}" style="display: block; padding: 2px 0;"
+                                       action="#{flowBean.goToSpatialUnitByIdCurrentPanel(parent.id, cc.attrs.panelModel)}"
                                        oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
-                                       update="flow"
-                        >
-                            <h:outputText value="#{item.name}"/>
+                                       update="flow">
+                            <h:outputText value="#{parent.name}"/>
                         </p:commandLink>
+                    </ui:repeat>
+                    <h:outputText rendered="#{fn:length(item.parents) gt 3}" value="+ #{fn:length(item.parents) - 3}"
+                                  style="display: block; color: gray; margin-top: 2px;"/>
+                </p:column>
 
+                <!-- Children -->
+                <p:column headerText="Contient">
+                    <ui:repeat value="#{item.children}" var="child" varStatus="status" size="3">
+                        <p:commandLink rendered="#{status.index lt 3}" style="display: block; padding: 2px 0;"
+                                       action="#{flowBean.goToSpatialUnitByIdCurrentPanel(child.id, cc.attrs.panelModel)}"
+                                       oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
+                                       update="flow">
+                            <h:outputText value="#{child.name}"/>
+                        </p:commandLink>
+                    </ui:repeat>
+                    <h:outputText value="+ #{fn:length(item.children) - 3}"
+                                  style="display: block; color: gray; margin-top: 2px;"
+                                  rendered="#{fn:length(item.children) gt 3}"/>
+                </p:column>
 
-                    </p:column>
+                <!-- Actions -->
+                <p:column headerText="Actions">
+                    <ui:repeat value="#{item.children}" var="child" varStatus="status" size="3">
+                        <p:commandLink rendered="#{status.index lt 3}" style="display: block; padding: 2px 0;"
+                                       action="#{flowBean.goToSpatialUnitByIdCurrentPanel(child.id, cc.attrs.panelModel)}"
+                                       oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
+                                       update="flow">
+                            <h:outputText value="#{child.name}"/>
+                        </p:commandLink>
+                    </ui:repeat>
+                    <h:outputText value="+ #{fn:length(item.children) - 3}"
+                                  style="display: block; color: gray; margin-top: 2px;"
+                                  rendered="#{fn:length(item.children) gt 3}"/>
+                </p:column>
 
-                    <p:column headerText="Category" sortBy="#{item.category.label}"
-                              filterBy="#{item.category}"
-                              filterMatchMode="exact">
-                        <f:facet name="filter">
-                            <p:selectCheckboxMenu
-                                    label="Selectionner des catégories"
-                                    value="#{cc.attrs.selectedCategories}"
-                                    filter="true"
-                                    filterMatchMode="contains"
-                                    onchange="PF('#{cc.clientId}_spatialUnitListTable').filter()"
-                                    converter="#{conceptLabelConverter}">
-                                <f:selectItems value="#{cc.attrs.panelModel.categoriesAvailable()}"
-                                               var="cat"
-                                               itemValue="#{cat}"
-                                               itemLabel="#{cat.value}"
-                                                />
-                            </p:selectCheckboxMenu>
-                        </f:facet>
-                        <p:chip label="#{labelBean.findLabelOf(item.category)}" icon="pi pi-map-marker" styleClass="mr-2 spatial-unit-type-chip"/>
-                    </p:column>
+                <!-- Enregistrements -->
+                <p:column headerText="Enregistrements">
+                    <ui:repeat value="#{item.children}" var="child" varStatus="status" size="3">
+                        <p:commandLink rendered="#{status.index lt 3}" style="display: block; padding: 2px 0;"
+                                       action="#{flowBean.goToSpatialUnitByIdCurrentPanel(child.id, cc.attrs.panelModel)}"
+                                       oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
+                                       update="flow">
+                            <h:outputText value="#{child.name}"/>
+                        </p:commandLink>
+                    </ui:repeat>
+                    <h:outputText value="+ #{fn:length(item.children) - 3}"
+                                  style="display: block; color: gray; margin-top: 2px;"
+                                  rendered="#{fn:length(item.children) gt 3}"/>
+                </p:column>
 
-                    <p:column exportable="false" ariaHeaderText="Actions">
-                        <p:toolbar>
-                            <p:toolbarGroup>
-                                <p:commandButton icon="bi bi-box-arrow-up-right" update="flow" styleClass="sia-icon-btn"
-                                                 oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
-                                                 action="#{flowBean.goToSpatialUnitByIdNewPanel(item.id,cc.attrs.panelModel)}"/>
-                                <p:commandButton icon="bi bi-bookmark" disabled="true" styleClass="sia-icon-btn"/>
-                                <p:commandButton icon="bi bi-copy" disabled="true" styleClass="sia-icon-btn"/>
-                            </p:toolbarGroup>
-                        </p:toolbar>
-                    </p:column>
+                <!-- Action toolbar-->
+                <p:column exportable="false" ariaHeaderText="Action toolbar">
+                    <p:toolbar>
+                        <p:toolbarGroup>
+                            <p:commandButton icon="bi bi-box-arrow-up-right" update="flow" styleClass="sia-icon-btn"
+                                             oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
+                                             action="#{flowBean.goToSpatialUnitByIdNewPanel(item.id,cc.attrs.panelModel)}"/>
+                            <p:commandButton icon="bi bi-bookmark" disabled="true" styleClass="sia-icon-btn"/>
+                            <p:commandButton icon="bi bi-copy" disabled="true" styleClass="sia-icon-btn"/>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+                </p:column>
 
-                </p:dataTable>
+            </p:dataTable>
 
 
         </h:form>
