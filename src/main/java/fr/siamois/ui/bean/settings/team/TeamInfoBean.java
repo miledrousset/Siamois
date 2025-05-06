@@ -1,6 +1,6 @@
 package fr.siamois.ui.bean.settings.team;
 
-import fr.siamois.domain.models.Team;
+import fr.siamois.domain.models.team.Team;
 import fr.siamois.domain.models.exceptions.TeamAlreadyExistException;
 import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.ui.bean.LangBean;

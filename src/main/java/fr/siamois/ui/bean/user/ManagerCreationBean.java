@@ -1,7 +1,7 @@
 package fr.siamois.ui.bean.user;
 
 import fr.siamois.domain.models.Institution;
-import fr.siamois.domain.models.Team;
+import fr.siamois.domain.models.team.Team;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.ui.bean.LangBean;

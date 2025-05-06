@@ -1,5 +1,6 @@
-package fr.siamois.domain.models;
+package fr.siamois.domain.models.team;
 
+import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -39,13 +40,5 @@ public class Team implements Serializable {
     @DefaultValue("NOW()")
     @Column(name = "creation_date", nullable = false)
     private OffsetDateTime creationDate = OffsetDateTime.now();
-
-    @JoinTable(
-            name = "team_person",
-            joinColumns = @JoinColumn(name = "fk_team_id", referencedColumnName = "team_id"),
-            inverseJoinColumns = @JoinColumn(name = "fk_person_id", referencedColumnName = "person_id")
-    )
-    @ManyToMany(fetch = FetchType.LAZY)
-    private Set<Person> members = new HashSet<>();
 
 }

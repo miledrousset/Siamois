@@ -1,7 +1,7 @@
 package fr.siamois.infrastructure.database.repositories.person;
 
 import fr.siamois.domain.models.Institution;
-import fr.siamois.domain.models.Team;
+import fr.siamois.domain.models.team.Team;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

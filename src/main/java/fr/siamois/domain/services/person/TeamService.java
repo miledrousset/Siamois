@@ -1,9 +1,11 @@
 package fr.siamois.domain.services.person;
 
 import fr.siamois.domain.models.Institution;
-import fr.siamois.domain.models.Team;
+import fr.siamois.domain.models.team.Team;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.TeamAlreadyExistException;
+import fr.siamois.domain.models.team.TeamPerson;
+import fr.siamois.infrastructure.database.repositories.person.TeamPersonRepository;
 import fr.siamois.infrastructure.database.repositories.person.TeamRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +17,16 @@ import java.util.Set;
 public class TeamService {
 
     private final TeamRepository teamRepository;
+    private final TeamPersonRepository teamPersonRepository;
 
-    public TeamService(TeamRepository teamRepository) {
+    public TeamService(TeamRepository teamRepository, TeamPersonRepository teamPersonRepository) {
         this.teamRepository = teamRepository;
+        this.teamPersonRepository = teamPersonRepository;
+    }
+
+    public void addPersonToTeam(Person person, Team team) {
+        TeamPerson teamPerson = new TeamPerson(team, person);
+        teamPersonRepository.save(teamPerson);
     }
 
     public List<Team> findTeamsOfInstitution(Person currentUser, Institution institution) {
@@ -28,9 +37,9 @@ public class TeamService {
             defaultTeam.setDefaultTeam(true);
             defaultTeam.setInstitution(institution);
             defaultTeam.setName("MEMBERS");
-            defaultTeam.setMembers(Set.of(currentUser));
             defaultTeam.setDescription("Generated default team for all members of the organization");
             Team saved = teamRepository.save(defaultTeam);
+            addPersonToTeam(currentUser, defaultTeam);
             teams.add(saved);
         }
         return teams;
@@ -64,5 +73,9 @@ public class TeamService {
 
     private static boolean nameHasChanged(Team newTeam, Team oldTeam) {
         return !oldTeam.getName().equalsIgnoreCase(newTeam.getName());
+    }
+
+    public List<TeamPerson> findTeamPersonByTeam(Team team) {
+        return teamPersonRepository.findByTeam(team);
     }
 }
