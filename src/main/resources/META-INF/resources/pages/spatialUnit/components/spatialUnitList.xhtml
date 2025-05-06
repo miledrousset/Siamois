@@ -47,6 +47,7 @@
                         <p:toolbarGroup>
                             <p:toolbarGroup align="left">
 
+                                <!-- Global search -->
                                 <span class="filter-container ui-input-icon-left">
                                 <i class="bi bi-search"/>
                                             <p:inputText id="globalFilter"
@@ -56,16 +57,16 @@
                                             </p:inputText>
                                 </span>
 
-
-                            </p:toolbarGroup>
-
-                            <p:toolbarGroup align="left">
+                                <!-- Column toggler -->
                                 <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify"/>
                                 <p:columnToggler datasource=":#{cc.clientId}:spatialUnitListForm:spatialUnitDataTable"
                                                  trigger=":#{cc.clientId}:spatialUnitListForm:spatialUnitDataTable:toggler">
                                     <p:ajax event="toggle" listener="#{cc.attrs.panelModel.onToggle}"/>
                                 </p:columnToggler>
+
+
                             </p:toolbarGroup>
+
 
                             <!--                                <p:toolbarGroup align="left">-->
                             <!--                                    <p:commandButton icon="bi bi-upload" disabled="true" styleClass="sia-icon-btn"/>-->
