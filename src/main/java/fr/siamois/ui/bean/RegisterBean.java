@@ -54,7 +54,7 @@ public class RegisterBean {
     public void init(PendingPerson pendingPerson) {
         reset();
         this.email = pendingPerson.getEmail();
-        this.institution = pendingPerson.getInstitution();
+        // this.institution = pendingPerson.getInstitution(); TODO: Fix this
     }
 
     public void register() {

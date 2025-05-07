@@ -34,8 +34,8 @@ public class TeamPerson {
     @JoinColumn(name = "fk_person_id", nullable = false)
     private Person person;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "fk_role_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fk_role_id")
     private Concept roleInTeam;
 
     @DefaultValue("NOW()")

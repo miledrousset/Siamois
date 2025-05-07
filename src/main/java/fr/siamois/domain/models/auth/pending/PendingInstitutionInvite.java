@@ -3,12 +3,14 @@ package fr.siamois.domain.models.auth.pending;
 import fr.siamois.domain.models.Institution;
 import jakarta.persistence.*;
 import jakarta.ws.rs.DefaultValue;
+import lombok.Data;
 
 import java.io.Serializable;
 
+@Data
 @Entity
 @Table(name = "pending_institution_invitation")
-public class PendingInstitutionInvitation implements Serializable {
+public class PendingInstitutionInvite implements Serializable {
 
     @Id
     @Column(name = "pending_institution_invitation_id")

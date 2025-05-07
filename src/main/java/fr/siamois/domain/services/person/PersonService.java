@@ -7,6 +7,7 @@ import fr.siamois.domain.models.exceptions.auth.*;
 import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.LangService;
+import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
 import fr.siamois.domain.utils.DateUtils;
@@ -38,27 +39,24 @@ public class PersonService {
     private final PersonSettingsRepository personSettingsRepository;
     private final InstitutionService institutionService;
     private final LangService langService;
-    private final EmailManager emailManager;
     private final PendingPersonRepository pendingPersonRepository;
-
-    public static final int MAX_GENERATION = 1000;
-    private final HttpServletRequest httpServletRequest;
-
-    private final Random random = new SecureRandom();
+    private final PendingPersonService pendingPersonService;
 
     public PersonService(PersonRepository personRepository,
                          BCryptPasswordEncoder passwordEncoder,
                          List<PersonDataVerifier> verifiers,
-                         PersonSettingsRepository personSettingsRepository, InstitutionService institutionService, LangService langService, EmailManager emailManager, PendingPersonRepository pendingPersonRepository, HttpServletRequest httpServletRequest) {
+                         PersonSettingsRepository personSettingsRepository,
+                         InstitutionService institutionService,
+                         LangService langService,
+                         PendingPersonRepository pendingPersonRepository, PendingPersonService pendingPersonService) {
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
         this.verifiers = verifiers;
         this.personSettingsRepository = personSettingsRepository;
         this.institutionService = institutionService;
         this.langService = langService;
-        this.emailManager = emailManager;
         this.pendingPersonRepository = pendingPersonRepository;
-        this.httpServletRequest = httpServletRequest;
+        this.pendingPersonService = pendingPersonService;
     }
 
     public Person createPerson(Person person) throws InvalidUsernameException, InvalidEmailException, UserAlreadyExistException, InvalidPasswordException, InvalidNameException {
@@ -71,7 +69,7 @@ public class PersonService {
         person = personRepository.save(person);
 
         Optional<PendingPerson> pendingPerson = pendingPersonRepository.findByEmail((person.getMail()));
-        pendingPerson.ifPresent(this::deletePending);
+        pendingPerson.ifPresent(pendingPersonService::delete);
 
         return person;
     }
@@ -165,70 +163,7 @@ public class PersonService {
         return personSettingsRepository.save(personSettings);
     }
 
-    String generateToken() {
-        String allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        StringBuilder token;
-        int attempts = 0;
-
-        do {
-            attempts++;
-            token = new StringBuilder();
-            for (int i = 0; i < 20; i++) {
-                int randomIndex = random.nextInt(allowedChars.length());
-                token.append(allowedChars.charAt(randomIndex));
-            }
-        } while (attempts < MAX_GENERATION && pendingPersonRepository.existsByRegisterToken(token.toString()));
-
-        if (attempts == MAX_GENERATION) {
-            throw new IllegalStateException("Unable to generate a unique token after " + MAX_GENERATION + " attempts");
-        }
-
-        return token.toString();
-    }
-
-    String invitationLink(PendingPerson pendingPerson) {
-        String domain = httpServletRequest.getScheme() + "://" + httpServletRequest.getServerName() +
-                (httpServletRequest.getServerPort() != 80 && httpServletRequest.getServerPort() != 443 ? ":" + httpServletRequest.getServerPort() : "");
-        return String.format("%s%s/register/%s", domain, httpServletRequest.getContextPath(), pendingPerson.getRegisterToken());
-    }
-
-    public boolean createPendingManager(PendingPerson pendingPerson) {
-        if (personRepository.existsByMail(pendingPerson.getEmail())) {
-            return false;
-        }
-
-        try {
-            pendingPerson.setId(-1L);
-            pendingPerson.setPendingInvitationExpirationDate(OffsetDateTime.now().plusHours(6));
-            pendingPerson.setRegisterToken(generateToken());
-            PendingPerson saved = pendingPersonRepository.save(pendingPerson);
-            String emailBody = """
-               Bonjour,
-                Vous avez été invité à rejoindre l'application Siamois en tant que responsable de l'organisation %s.
-                Cliquez sur le lien suivant pour vous inscrire : %s
-                Expiration de l'invitation le %s
-               \s""";
-            emailBody = String.format(emailBody, pendingPerson.getInstitution().getName(), invitationLink(saved), DateUtils.formatOffsetDateTime(saved.getPendingInvitationExpirationDate()));
-            String subject = String.format("[SIAMOIS] Invitation à rejoindre %s", pendingPerson.getInstitution().getName());
-
-            emailManager.sendEmail(pendingPerson.getEmail(), subject, emailBody);
-
-            return true;
-        } catch (Exception e) {
-            log.error("Error while creating pending manager", e);
-            return false;
-        }
-    }
-
-    public Optional<PendingPerson> findPendingByToken(String token) {
-        return pendingPersonRepository.findByRegisterToken(token);
-    }
-
     public Optional<Person> findByEmail(String email) {
         return personRepository.findByMailIgnoreCase(email);
-    }
-
-    public void deletePending(PendingPerson pendingPerson) {
-        pendingPersonRepository.delete(pendingPerson);
     }
 }

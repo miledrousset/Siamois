@@ -121,30 +121,30 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     }
 
     public void save() {
-        log.trace("Attempting to add user {}", userDialogBean.getUserEmail());
-        Optional<Person> existingsUser = personService.findByEmail(userDialogBean.getUserEmail());
-        if (existingsUser.isPresent()) {
-            boolean isAdded = institutionService.addToManagers(institution, existingsUser.get());
-            if (!isAdded) {
-                MessageUtils.displayWarnMessage(langBean, "organisationSettings.error.manager", existingsUser.get().getMail(), institution.getName());
-                PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
-                return;
-            }
-            MessageUtils.displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", existingsUser.get().getMail());
-            PrimeFaces.current().executeScript("PF('newMemberDialog').exit();");
-            return;
-        }
-
-        PendingPerson pendingPerson = new PendingPerson();
-        pendingPerson.setEmail(userDialogBean.getUserEmail());
-        pendingPerson.setInstitution(institution);
-        boolean isCreated = personService.createPendingManager(pendingPerson);
-        if (!isCreated) {
-            MessageUtils.displayErrorMessage(langBean, "common.error.internal");
-            PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
-        } else {
-            MessageUtils.displayInfoMessage(langBean, "organisationSettings.action.sendInvite", userDialogBean.getUserEmail());
-        }
+//        log.trace("Attempting to add user {}", userDialogBean.getUserEmail());
+//        Optional<Person> existingsUser = personService.findByEmail(userDialogBean.getUserEmail());
+//        if (existingsUser.isPresent()) {
+//            boolean isAdded = institutionService.addToManagers(institution, existingsUser.get());
+//            if (!isAdded) {
+//                MessageUtils.displayWarnMessage(langBean, "organisationSettings.error.manager", existingsUser.get().getMail(), institution.getName());
+//                PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
+//                return;
+//            }
+//            MessageUtils.displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", existingsUser.get().getMail());
+//            PrimeFaces.current().executeScript("PF('newMemberDialog').exit();");
+//            return;
+//        }
+//
+//        PendingPerson pendingPerson = new PendingPerson();
+//        pendingPerson.setEmail(userDialogBean.getUserEmail());
+//        pendingPerson.setInstitution(institution);
+//        boolean isCreated = personService.createPendingManager(pendingPerson);
+//        if (!isCreated) {
+//            MessageUtils.displayErrorMessage(langBean, "common.error.internal");
+//            PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
+//        } else {
+//            MessageUtils.displayInfoMessage(langBean, "organisationSettings.action.sendInvite", userDialogBean.getUserEmail());
+//        } TODO: Fix this
     }
 
 }

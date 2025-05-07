@@ -1,0 +1,142 @@
+package fr.siamois.domain.services.auth;
+
+import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
+import fr.siamois.domain.models.auth.pending.PendingPerson;
+import fr.siamois.domain.models.auth.pending.PendingTeamInvite;
+import fr.siamois.domain.models.team.Team;
+import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.services.LangService;
+import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository;
+import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
+import fr.siamois.infrastructure.database.repositories.person.PendingTeamInviteRepository;
+import fr.siamois.ui.email.EmailManager;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Email;
+import org.springframework.stereotype.Service;
+
+import java.security.SecureRandom;
+import java.time.OffsetDateTime;
+import java.util.Locale;
+import java.util.Optional;
+
+@Service
+public class PendingPersonService {
+
+    private final PendingPersonRepository pendingPersonRepository;
+    private final SecureRandom random = new SecureRandom();
+
+    public static final int MAX_GENERATION = 1000;
+    private final HttpServletRequest httpServletRequest;
+    private final PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
+    private final PendingTeamInviteRepository pendingTeamInviteRepository;
+    private final EmailManager emailManager;
+    private final LangService langService;
+
+    public PendingPersonService(PendingPersonRepository pendingPersonRepository, HttpServletRequest httpServletRequest, PendingInstitutionInviteRepository pendingInstitutionInviteRepository, PendingTeamInviteRepository pendingTeamInviteRepository, EmailManager emailManager, LangService langService) {
+        this.pendingPersonRepository = pendingPersonRepository;
+        this.httpServletRequest = httpServletRequest;
+        this.pendingInstitutionInviteRepository = pendingInstitutionInviteRepository;
+        this.pendingTeamInviteRepository = pendingTeamInviteRepository;
+        this.emailManager = emailManager;
+        this.langService = langService;
+    }
+
+    String generateToken() {
+        String allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder token;
+        int attempts = 0;
+
+        do {
+            attempts++;
+            token = new StringBuilder();
+            for (int i = 0; i < 20; i++) {
+                int randomIndex = random.nextInt(allowedChars.length());
+                token.append(allowedChars.charAt(randomIndex));
+            }
+        } while (attempts < MAX_GENERATION && pendingPersonRepository.existsByRegisterToken(token.toString()));
+
+        if (attempts == MAX_GENERATION) {
+            throw new IllegalStateException("Unable to generate a unique token after " + MAX_GENERATION + " attempts");
+        }
+
+        return token.toString();
+    }
+
+    String invitationLink(PendingPerson pendingPerson) {
+        String domain = httpServletRequest.getScheme() + "://" + httpServletRequest.getServerName() +
+                (httpServletRequest.getServerPort() != 80 && httpServletRequest.getServerPort() != 443 ? ":" + httpServletRequest.getServerPort() : "");
+        return String.format("%s%s/register/%s", domain, httpServletRequest.getContextPath(), pendingPerson.getRegisterToken());
+    }
+
+    public PendingPerson createOrGetPendingPerson(@Email String email) {
+        Optional<PendingPerson> pendingPerson = pendingPersonRepository.findByEmail(email);
+        if (pendingPerson.isPresent()) {
+            return pendingPerson.get();
+        } else {
+            PendingPerson person = new PendingPerson();
+            person.setEmail(email);
+            person.setId(-1L);
+            person.setRegisterToken(generateToken());
+            person.setPendingInvitationExpirationDate(OffsetDateTime.now().plusDays(3));
+            person = pendingPersonRepository.save(person);
+
+            return person;
+        }
+    }
+
+    public PendingInstitutionInvite createOrGetPendingInstitutionInvite(PendingPerson pendingPerson, Institution institution, String mailLang) {
+        return createOrGetPendingInstitutionInvite(pendingPerson, institution, false, mailLang);
+    }
+
+    public PendingInstitutionInvite createOrGetPendingInstitutionInvite(PendingPerson pendingPerson, Institution institution, boolean isManager, String mailLang) {
+        Optional<PendingInstitutionInvite> pendingInstitutionInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson);
+        if (pendingInstitutionInvite.isPresent()) {
+            return pendingInstitutionInvite.get();
+        } else {
+            PendingInstitutionInvite invite = new PendingInstitutionInvite();
+            invite.setPendingPerson(pendingPerson);
+            invite.setInstitution(institution);
+            invite.setId(-1L);
+            invite.setManager(isManager);
+            invite = pendingInstitutionInviteRepository.save(invite);
+
+            Locale locale = new Locale(mailLang);
+            String institutionName = institution.getName();
+            String invitationLink = invitationLink(pendingPerson);
+            String expirationDate = DateUtils.formatOffsetDateTime(pendingPerson.getPendingInvitationExpirationDate());
+
+            emailManager.sendEmail(pendingPerson.getEmail(),
+                    langService.msg("mail.invitation.subject", locale, institutionName, invitationLink, expirationDate, expirationDate),
+                    langService.msg("mail.invitation.body", locale, institutionName, invitationLink, expirationDate, expirationDate)
+            );
+
+            return invite;
+        }
+    }
+
+    public void addTeamToInvitation(PendingInstitutionInvite institutionInvite, Team team, Concept role) {
+        Optional<PendingTeamInvite> optTeam = pendingTeamInviteRepository.findByPendingInstitutionInvite(institutionInvite);
+        PendingTeamInvite teamInvite;
+        if (optTeam.isPresent()) {
+            teamInvite = optTeam.get();
+        } else {
+            teamInvite = new PendingTeamInvite();
+            teamInvite.setId(-1L);
+            teamInvite.setPendingInstitutionInvite(institutionInvite);
+        }
+        teamInvite.setTeam(team);
+        teamInvite.setRoleInTeam(role);
+        pendingTeamInviteRepository.save(teamInvite);
+    }
+
+    public void delete(PendingPerson pendingPerson) {
+        pendingPersonRepository.delete(pendingPerson);
+    }
+
+    public Optional<PendingPerson> findByToken(String token) {
+        return pendingPersonRepository.findByRegisterToken(token);
+    }
+
+}
