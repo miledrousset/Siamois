@@ -109,9 +109,9 @@ class SpatialUnitLazyDataModelTest {
         ConceptLabel label = new ConceptLabel();
         label.setConcept(concept);
         List<ConceptLabel> categoryLabels = List.of(label);
-        Person p = new Person();
-        p.setId(1L);
-        List<Person> persons = List.of(p);
+        Person pers = new Person();
+        pers.setId(1L);
+        List<Person> persons = List.of(pers);
 
         Map<String, FilterMeta> filters = new HashMap<>();
         FilterMeta catFilter = new FilterMeta();
@@ -132,6 +132,10 @@ class SpatialUnitLazyDataModelTest {
         sortMeta.setOrder(SortOrder.ASCENDING);
         Map<String, SortMeta> sortBy = new HashMap<>();
         sortBy.put("category.label", sortMeta);
+        sortBy.put("creation_time", sortMeta);
+        SortMeta sortMeta2 = new SortMeta();
+        sortMeta2.setOrder(SortOrder.DESCENDING);
+        sortBy.put("p_lastname", sortMeta2);
 
         // Mock data
         List<SpatialUnit> spatialUnits = new ArrayList<>();
@@ -162,9 +166,12 @@ class SpatialUnitLazyDataModelTest {
 
         Sort.Order order = capturedPageable.getSort().getOrderFor("c_label");
         assertNotNull(order);
+        Sort.Order order2 = capturedPageable.getSort().getOrderFor("p_lastname");
+        assertNotNull(order2);
         assertEquals(2, capturedPageable.getPageNumber());
         assertEquals(10, capturedPageable.getPageSize());
         assertEquals(Sort.Direction.ASC, order.getDirection());
+        assertEquals(Sort.Direction.DESC, order2.getDirection());
 
         // also test paginator value getters
 
