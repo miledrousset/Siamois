@@ -132,10 +132,10 @@ class SpatialUnitLazyDataModelTest {
         sortMeta.setOrder(SortOrder.ASCENDING);
         Map<String, SortMeta> sortBy = new HashMap<>();
         sortBy.put("category.label", sortMeta);
-        sortBy.put("creation_time", sortMeta);
+        sortBy.put("creationTime", sortMeta);
         SortMeta sortMeta2 = new SortMeta();
         sortMeta2.setOrder(SortOrder.DESCENDING);
-        sortBy.put("p_lastname", sortMeta2);
+        sortBy.put("author", sortMeta2);
 
         // Mock data
         List<SpatialUnit> spatialUnits = new ArrayList<>();
