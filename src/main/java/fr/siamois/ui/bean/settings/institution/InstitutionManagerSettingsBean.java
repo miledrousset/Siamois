@@ -121,6 +121,7 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     }
 
     public void save() {
+        log.trace("Attempting to add user {}", userDialogBean.getUserEmail());
         Optional<Person> existingsUser = personService.findByEmail(userDialogBean.getUserEmail());
         if (existingsUser.isPresent()) {
             boolean isAdded = institutionService.addToManagers(institution, existingsUser.get());

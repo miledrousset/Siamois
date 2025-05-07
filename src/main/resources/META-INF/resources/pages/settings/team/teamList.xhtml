@@ -58,8 +58,10 @@
                         />
                     </p:column>
                 </p:dataTable>
-                <ui:include src="/dialog/team/newTeamDialog.xhtml"/>
             </comp:datatable>
+            <form:csrfform formId="newTeamForm">
+                <ui:include src="/dialog/team/newTeamDialog.xhtml"/>
+            </form:csrfform>
         </main>
     </ui:define>
 

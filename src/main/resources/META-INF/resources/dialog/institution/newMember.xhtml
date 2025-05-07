@@ -1,7 +1,8 @@
 <ui:fragment xmlns="http://www.w3.org/1999/xhtml"
              xmlns:ui="http://java.sun.com/jsf/facelets"
-             xmlns:p="http://primefaces.org/ui" xmlns:h="http://java.sun.com/jsf/html"
-
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:h="http://java.sun.com/jsf/html"
+             xmlns:input="http://java.sun.com/jsf/composite/pages/shared/input"
 >
 
     <p:dialog
@@ -27,7 +28,7 @@
                         <h4 class="col-lg-4" >#{langBean.msg("common.label.role")}</h4>
                     </article>
                     <article class="form-group row">
-                        <p:inputText styleClass="col-lg-4" value="#{userDialogBean.roleName}" placeholder="Membre"/>
+                        <input:conceptAutocomplete completeMethod="#{userDialogBean.autocompleteConcept}" editConceptUrl="#{userDialogBean.parentConceptUrl()}" selectedConcept="#{userDialogBean.role}"/>
                     </article>
                 </h:panelGroup>
             </div>

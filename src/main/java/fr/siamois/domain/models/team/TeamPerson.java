@@ -1,10 +1,10 @@
 package fr.siamois.domain.models.team;
 
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.DefaultValue;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,15 +34,20 @@ public class TeamPerson {
     @JoinColumn(name = "fk_person_id", nullable = false)
     private Person person;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "fk_role_id", nullable = false)
+    private Concept roleInTeam;
+
     @DefaultValue("NOW()")
     @Column(name = "add_date")
     private OffsetDateTime addDate = OffsetDateTime.now();
 
-    public TeamPerson(Team team, Person person) {
+    public TeamPerson(Team team, Person person, Concept role) {
         this.id = new TeamPersonId(team, person);
         this.team = team;
         this.person = person;
         this.addDate = OffsetDateTime.now();
+        this.roleInTeam = role;
     }
 
     @NoArgsConstructor

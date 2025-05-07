@@ -1,7 +1,7 @@
 <ui:fragment xmlns="http://www.w3.org/1999/xhtml"
              xmlns:ui="http://java.sun.com/jsf/facelets"
              xmlns:p="http://primefaces.org/ui"
-
+             xmlns:input="http://java.sun.com/jsf/composite/pages/shared/input"
 >
 
     <p:dialog
@@ -30,6 +30,15 @@
                     <p:inputTextarea
                             id="description"
                             value="#{newTeamDialogBean.description}"
+                    />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-form-label" for="description">Votre rôle</label>
+                <div class="col-lg-6 ms-auto">
+                    <input:conceptAutocomplete completeMethod="#{newTeamDialogBean.completeRoles}"
+                                               editConceptUrl="#{newTeamDialogBean.findConfigUrl()}"
+                                               selectedConcept="#{newTeamDialogBean.role}"
                     />
                 </div>
             </div>

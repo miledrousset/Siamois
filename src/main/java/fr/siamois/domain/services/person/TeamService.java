@@ -5,13 +5,13 @@ import fr.siamois.domain.models.team.Team;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.TeamAlreadyExistException;
 import fr.siamois.domain.models.team.TeamPerson;
+import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.database.repositories.person.TeamPersonRepository;
 import fr.siamois.infrastructure.database.repositories.person.TeamRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class TeamService {
@@ -24,8 +24,8 @@ public class TeamService {
         this.teamPersonRepository = teamPersonRepository;
     }
 
-    public void addPersonToTeam(Person person, Team team) {
-        TeamPerson teamPerson = new TeamPerson(team, person);
+    public void addPersonToTeam(Person person, Team team, Concept role) {
+        TeamPerson teamPerson = new TeamPerson(team, person, role);
         teamPersonRepository.save(teamPerson);
     }
 
@@ -39,7 +39,7 @@ public class TeamService {
             defaultTeam.setName("MEMBERS");
             defaultTeam.setDescription("Generated default team for all members of the organization");
             Team saved = teamRepository.save(defaultTeam);
-            addPersonToTeam(currentUser, defaultTeam);
+            addPersonToTeam(currentUser, defaultTeam, null);
             teams.add(saved);
         }
         return teams;

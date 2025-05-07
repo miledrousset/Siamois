@@ -1,17 +1,19 @@
 package fr.siamois.ui.bean.settings.team;
 
-import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.team.Team;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.team.TeamPerson;
+import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.ui.bean.LabelBean;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
 import fr.siamois.ui.bean.settings.SettingsDatatableBean;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Setter
 @Getter
 @Component
@@ -29,17 +32,19 @@ public class TeamMembersBean implements SettingsDatatableBean {
     private final transient TeamService teamService;
     private final UserDialogBean userDialogBean;
     private final transient PersonService personService;
+    private final LabelBean labelBean;
     private Team team;
 
     private transient List<TeamPerson> members;
     private transient List<TeamPerson> filteredMembers;
     private String searchInput;
 
-    public TeamMembersBean(InstitutionService institutionService, TeamService teamService, UserDialogBean userDialogBean, PersonService personService) {
+    public TeamMembersBean(InstitutionService institutionService, TeamService teamService, UserDialogBean userDialogBean, PersonService personService, LabelBean labelBean) {
         this.institutionService = institutionService;
         this.teamService = teamService;
         this.userDialogBean = userDialogBean;
         this.personService = personService;
+        this.labelBean = labelBean;
     }
 
     public void init(Team team) {
@@ -56,11 +61,16 @@ public class TeamMembersBean implements SettingsDatatableBean {
 
     private void save() {
         Optional<Person> existing = personService.findByEmail(userDialogBean.getUserEmail());
+        Concept role = userDialogBean.getRole();
+        if (team.isDefaultTeam()) {
+            role = null;
+        }
+
         if (existing.isPresent()) {
             Person person = existing.get();
-            teamService.addPersonToTeam(person, team);
+            teamService.addPersonToTeam(person, team, role);
         } else {
-            personService.createPendingPerson(team.getInstitution(), userDialogBean.getUserEmail(), userDialogBean.getRoleName());
+            log.trace("Creating new person with email {}", userDialogBean.getUserEmail());
         }
     }
 
@@ -85,23 +95,15 @@ public class TeamMembersBean implements SettingsDatatableBean {
         return person.isSuperAdmin();
     }
 
-    private boolean userIsManagerOf(Institution institution, Person person) {
-        return person.getId().equals(institution.getManager().getId());
-    }
-
-    private boolean userIsOwnerOf(Institution institution, Person person) {
-        return institutionService.isManagerOf(institution, person);
-    }
-
-    public String roleOf(Person member) {
-        if (userIsSuperAdmin(member)) {
-            return "Administrateur";
-        } else if (userIsOwnerOf(team.getInstitution(), member)) {
-            return "Propriétaire";
-        } else if (userIsManagerOf(team.getInstitution(), member)) {
-            return "Responsable";
+    public String roleOf(TeamPerson member) {
+        if (userIsSuperAdmin(member.getPerson())) {
+            if (member.getRoleInTeam() == null ){
+                return "Administrateur";
+            } else {
+                return String.format("%s (Administrateur)", labelBean.findLabelOf(member.getRoleInTeam()));
+            }
         } else {
-            return "Utilisateur";
+            return labelBean.findLabelOf(member.getRoleInTeam());
         }
     }
 

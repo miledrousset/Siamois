@@ -42,7 +42,7 @@
                         widgetVar="institutionManagerDatatable"
                         rowKey="#{teamPerson.id}"
                 >
-
+                    <p:autoUpdate/>
                     <p:column headerText="#{langBean.msg('common.label.user')}">
                         <div style="display: flex; flex-direction: column">
                             <strong>#{teamPerson.person.displayName()}</strong>
@@ -50,15 +50,16 @@
                         </div>
                     </p:column>
                     <p:column headerText="#{langBean.msg('common.label.role')}">
-                        <p:outputLabel value="#{teamMembersBean.roleOf(teamPerson.person)}"/>
+                        <p:outputLabel value="#{teamMembersBean.roleOf(teamPerson)}"/>
                     </p:column>
                     <p:column headerText="#{langBean.msg('organisationSettings.managers.adddate')}">
                         <p:outputLabel value="#{teamMembersBean.formatDate(teamPerson.addDate)}"/>
                     </p:column>
                 </p:dataTable>
-                <ui:include src="/dialog/institution/newMember.xhtml"/>
-
             </settings:datatable>
+            <form:csrfform formId="newMemberDialogForm">
+                <ui:include src="/dialog/institution/newMember.xhtml"/>
+            </form:csrfform>
         </main>
     </ui:define>
 

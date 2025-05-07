@@ -59,4 +59,8 @@ public class MessageUtils {
     public static void displayWarnMessage(LangBean langBean, String msgCode, Object... args) {
         displayMessage(langBean, FacesMessage.SEVERITY_WARN, msgCode, args);
     }
+
+    public static void displayNoThesaurusConfiguredMessage(LangBean langBean) {
+        displayErrorMessage(langBean, "common.error.thesaurusConfig.notfound");
+    }
 }
