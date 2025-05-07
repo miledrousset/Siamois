@@ -61,7 +61,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
     public SpatialUnitListPanel(SpatialUnitService spatialUnitService, PersonService personService,
                                 ConceptService conceptService,
                                 SessionSettingsBean sessionSettingsBean, LangBean langBean, LabelService labelService) {
-        super("Unités géographiques", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-list-panel");
+        super("panel.title.allspatialunit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-list-panel");
         this.spatialUnitService = spatialUnitService;
         this.personService = personService;
         this.conceptService = conceptService;

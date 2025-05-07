@@ -52,13 +52,13 @@
                                 <i class="bi bi-search"/>
                                             <p:inputText id="globalFilter"
                                                          onkeyup="PF('#{cc.clientId}_spatialUnitListTable').filter()"
-                                                         placeholder="Rechercher">
+                                                         placeholder="#{langBean.msg('table.research')}">
 
                                             </p:inputText>
                                 </span>
 
                                 <!-- Column toggler -->
-                                <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify"/>
+                                <p:commandButton style="margin-left: 1em;" id="toggler" type="button" value="#{langBean.msg('table.columnvisibility')}" icon="pi pi-align-justify"/>
                                 <p:columnToggler datasource=":#{cc.clientId}:spatialUnitListForm:spatialUnitDataTable"
                                                  trigger=":#{cc.clientId}:spatialUnitListForm:spatialUnitDataTable:toggler">
                                     <p:ajax event="toggle" listener="#{cc.attrs.panelModel.onToggle}"/>
@@ -76,7 +76,7 @@
 
 
                         <p:toolbarGroup align="right">
-                            <p:commandButton value='Ajouter' icon="bi bi-plus-square"
+                            <p:commandButton value="#{langBean.msg('table.add')}" icon="bi bi-plus-square"
                                              oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
                                              disabled="#{cc.attrs.disableAddBtn}"
                                              action="#{flowBean.addNewSpatialUnitPanel(cc.attrs.panelModel)}"
@@ -88,9 +88,17 @@
 
                 </f:facet>
 
+                <p:column responsivePriority="1" exportable="false" toggleable="false">
+                    <p:toolbar>
+                        <p:toolbarGroup>
+                            <p:commandButton icon="bi bi-pin" disabled="true" styleClass="sia-icon-btn"/>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+                </p:column>
 
-                <p:column toggleable="false" responsivePriority="1" headerText="Nom" sortBy="#{item.name}" filterBy="#{item.name}">
-                    <p:commandLink style="padding-right: 1em;"
+
+                <p:column toggleable="false" responsivePriority="1" headerText="#{langBean.msg('table.spatialunit.column.name')}" sortBy="#{item.name}" filterBy="#{item.name}">
+                    <p:commandLink
                                    action="#{flowBean.goToSpatialUnitByIdNewPanel(item.id,cc.attrs.panelModel)}"
                                    oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
                                    update="flow"
@@ -102,12 +110,12 @@
                 </p:column>
 
                 <!-- Spatial unit type column -->
-                <p:column responsivePriority="1" headerText="Categorie" sortBy="#{item.category.label}"
+                <p:column responsivePriority="1" headerText="#{langBean.msg('table.spatialunit.column.type')}"  sortBy="#{item.category.label}"
                           filterBy="#{item.category}"
                           filterMatchMode="exact">
                     <f:facet name="filter">
                         <p:selectCheckboxMenu
-                                label="Filter par catégorie"
+                                label="#{langBean.msg('table.spatialunit.column.type.filter')}"
                                 value="#{cc.attrs.selectedCategories}"
                                 filter="true"
                                 filterMatchMode="contains"
@@ -125,17 +133,17 @@
                 </p:column>
 
                 <!-- Creation time -->
-                <p:column responsivePriority="2" headerText="Date de création" sortBy="#{item.creationTime}"
+                <p:column responsivePriority="2" headerText="#{langBean.msg('table.spatialunit.column.creationdate')}" sortBy="#{item.creationTime}"
                 >
                     <h:outputText value="#{panelModel.formatUtcDateTime(item.creationTime)}"/>
                 </p:column>
 
                 <!-- Auteur/Proprietaire -->
-                <p:column responsivePriority="2" headerText="Auteur" sortBy="#{item.author}" filterMatchMode="exact" filterBy="#{item.author}"
+                <p:column responsivePriority="2" headerText="#{langBean.msg('table.spatialunit.column.author')}" sortBy="#{item.author}" filterMatchMode="exact" filterBy="#{item.author}"
                 >
                     <f:facet name="filter">
                         <p:selectCheckboxMenu
-                                label="Filtrer par auteur"
+                                label="#{langBean.msg('table.spatialunit.column.author.filter')}"
                                 value="#{cc.attrs.panelModel.selectedAuthors}"
                                 filter="true"
                                 filterMatchMode="contains"
@@ -152,7 +160,11 @@
                 </p:column>
 
                 <!-- Parents -->
-                <p:column responsivePriority="3"  headerText="Fait partie de">
+                <p:column responsivePriority="3">
+                    <f:facet name="header">
+                        <i class="bi bi-geo-alt"/>
+                        <span>#{langBean.msg('table.spatialunit.column.parents')}</span>
+                    </f:facet>
                     <ui:repeat value="#{item.parents}" var="parent" varStatus="status">
                         <p:commandLink rendered="#{status.index lt 3}" style="display: block; padding: 2px 0;"
                                        action="#{flowBean.goToSpatialUnitByIdCurrentPanel(parent.id, cc.attrs.panelModel)}"
@@ -166,7 +178,11 @@
                 </p:column>
 
                 <!-- Children -->
-                <p:column responsivePriority="3"  headerText="Contient">
+                <p:column responsivePriority="3" >
+                    <f:facet name="header">
+                        <i class="bi bi-geo-alt"/>
+                        <span>#{langBean.msg('table.spatialunit.column.children')}</span>
+                    </f:facet>
                     <ui:repeat value="#{item.children}" var="child" varStatus="status">
                         <p:commandLink rendered="#{status.index lt 3}" style="display: block; padding: 2px 0;"
                                        action="#{flowBean.goToSpatialUnitByIdCurrentPanel(child.id, cc.attrs.panelModel)}"
@@ -181,7 +197,11 @@
                 </p:column>
 
                 <!-- Actions -->
-                <p:column responsivePriority="3" headerText="Actions">
+                <p:column responsivePriority="3">
+                    <f:facet name="header">
+                        <i class="bi bi-arrow-down-square"/>
+                        <span>#{langBean.msg('table.spatialunit.column.actions')}</span>
+                    </f:facet>
                     <ui:repeat value="#{item.relatedActionUnitList}" var="action" varStatus="status">
                         <p:commandLink rendered="#{status.index lt 3}" style="display: block; padding: 2px 0;"
                                        >
@@ -194,7 +214,11 @@
                 </p:column>
 
                 <!-- Enregistrements -->
-                <p:column responsivePriority="3"  headerText="Enregistrements">
+                <p:column responsivePriority="3"  >
+                    <f:facet name="header">
+                        <i class="bi bi-pencil-square"/>
+                        <span>#{langBean.msg('table.spatialunit.column.recordings')}</span>
+                    </f:facet>
                     <ui:repeat value="#{item.recordingUnitList}" var="recording" varStatus="status">
                         <p:commandLink styleClass="sia-recording-unit-command-link" rendered="#{status.index lt 3}" style="display: block; padding: 2px 0;"
                                        >
@@ -207,10 +231,11 @@
                 </p:column>
 
                 <!-- Action toolbar-->
-                <p:column responsivePriority="1" exportable="false" ariaHeaderText="Action toolbar">
+                <p:column responsivePriority="1" exportable="false" toggleable="false">
                     <p:toolbar>
                         <p:toolbarGroup>
                             <p:commandButton icon="bi bi-bookmark" disabled="true" styleClass="sia-icon-btn"/>
+                            <p:commandButton icon="bi bi-pencil" disabled="true" styleClass="sia-icon-btn"/>
                             <p:commandButton icon="bi bi-copy" disabled="true" styleClass="sia-icon-btn"/>
                         </p:toolbarGroup>
                     </p:toolbar>
