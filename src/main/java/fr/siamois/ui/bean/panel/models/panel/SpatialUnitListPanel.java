@@ -19,6 +19,8 @@ import lombok.EqualsAndHashCode;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.event.ColumnToggleEvent;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 import org.primefaces.model.Visibility;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.springframework.beans.factory.ObjectProvider;
@@ -48,6 +50,9 @@ public class SpatialUnitListPanel extends AbstractPanel {
     private List<Person> selectedAuthors;
     private LazyDataModel<SpatialUnit> lazyDataModel ;
     private long totalNumberOfUnits ;
+
+    private Set<SortMeta> sortBy = new HashSet<>();
+
 
     public void onToggle(ColumnToggleEvent e) {
         Integer index = (Integer) e.getData();
@@ -98,6 +103,11 @@ public class SpatialUnitListPanel extends AbstractPanel {
                     sessionSettingsBean,
                     langBean
             );
+            SortMeta sortMeta = new SortMeta();
+            sortMeta.setOrder(SortOrder.ASCENDING);
+
+            sortBy.add(SortMeta.builder().field("category.label").order(SortOrder.ASCENDING).build());
+
 
         } catch (RuntimeException e) {
             spatialUnitListErrorMessage = "Failed to load spatial units: " + e.getMessage();

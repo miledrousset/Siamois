@@ -36,11 +36,16 @@ public class NewSpatialUnitPanel extends AbstractPanel {
 
 
     public NewSpatialUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, FlowBean flowBean) {
-        super(langBean.msg("common.action.new.spatialUnit"), "bi bi-geo-alt", "siamois-panel spatial-unit-panel new-spatial-unit-panel");
+        super("panel.newspatialunit.title", "bi bi-geo-alt", "siamois-panel spatial-unit-panel new-spatial-unit-panel");
         this.langBean = langBean;
         this.sessionSettingsBean = sessionSettingsBean;
         this.spatialUnitService = spatialUnitService;
         this.flowBean = flowBean;
+    }
+
+    @Override
+    public String displayHeader() {
+        return "/panel/header/newSpatialUnitPanelHeader.xhtml";
     }
 
     @Override
