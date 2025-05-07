@@ -31,16 +31,24 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
 
-    @Mock private PersonRepository personRepository;
-    @Mock private BCryptPasswordEncoder passwordEncoder;
+    @Mock
+    private PersonRepository personRepository;
+    @Mock
+    private BCryptPasswordEncoder passwordEncoder;
     private final EmailVerifier emailVerifier = new EmailVerifier();
     private final PasswordVerifier passwordVerifier = new PasswordVerifier();
-    @Mock private PersonSettingsRepository personSettingsRepository;
-    @Mock private InstitutionService institutionService;
-    @Mock private LangService langService;
-    @Mock private EmailManager emailManager;
-    @Mock private PendingPersonRepository pendingPersonRepository;
-    @Mock private HttpServletRequest httpServletRequest;
+    @Mock
+    private PersonSettingsRepository personSettingsRepository;
+    @Mock
+    private InstitutionService institutionService;
+    @Mock
+    private LangService langService;
+    @Mock
+    private EmailManager emailManager;
+    @Mock
+    private PendingPersonRepository pendingPersonRepository;
+    @Mock
+    private HttpServletRequest httpServletRequest;
 
     private PersonService personService;
 
@@ -334,6 +342,25 @@ class PersonServiceTest {
 
         // Assert
         assertTrue(verifier.isEmpty());
+    }
+
+    @Test
+    void findAllAuthorsOfSpatialUnitByInstitution_Success() {
+
+        Person p = new Person();
+        Institution i = new Institution(); i.setId(1L);
+
+        when(personRepository.findAllAuthorsOfSpatialUnitByInstitution(1L)).thenReturn(
+                List.of(p));
+
+        // Act
+        List<Person> res = personService.findAllAuthorsOfSpatialUnitByInstitution(i);
+
+        // Assert
+        assertEquals(1, res.size());
+        assertEquals(p, res.get(0));
+
+
     }
 
 }
