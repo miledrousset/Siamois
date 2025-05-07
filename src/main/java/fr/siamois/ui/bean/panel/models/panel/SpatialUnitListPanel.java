@@ -79,6 +79,8 @@ public class SpatialUnitListPanel extends AbstractPanel {
     }
 
 
+
+
     public void init()  {
         try {
             // Add current item to breadcrumb

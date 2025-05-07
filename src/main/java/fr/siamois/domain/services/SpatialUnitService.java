@@ -79,61 +79,6 @@ public class SpatialUnitService implements ArkEntityService {
         spatialUnitRepository.save(spatialUnit);
     }
 
-    public void wireChildrenAndParents(List<SpatialUnit> units) {
-        Map<Long, SpatialUnit> idToUnit = units.stream()
-                .collect(Collectors.toMap(SpatialUnit::getId, Function.identity()));
-
-        List<Long> ids = new ArrayList<>(idToUnit.keySet());
-
-        // Load all linked SpatialUnits
-        List<SpatialUnit> allChildren = spatialUnitRepository.findChildrenByParentIds(ids);
-        List<SpatialUnit> allParents = spatialUnitRepository.findParentsByChildIds(ids);
-
-        Map<Long, SpatialUnit> childMap = allChildren.stream()
-                .collect(Collectors.toMap(
-                        SpatialUnit::getId,
-                        Function.identity(),
-                        (existing, duplicate) -> existing  // or choose how to resolve the conflict
-                ));
-
-        Map<Long, SpatialUnit> parentMap = allParents.stream()
-                .collect(Collectors.toMap(
-                        SpatialUnit::getId,
-                        Function.identity(),
-                        (existing, duplicate) -> existing
-                ));
-
-        // Get link rows
-        List<Object[]> childLinks = spatialUnitRepository.findChildLinks(ids);
-        List<Object[]> parentLinks = spatialUnitRepository.findParentLinks(ids);
-
-        // Wire children
-        for (Object[] row : childLinks) {
-            Long parentId = ((Number) row[0]).longValue();
-            Long childId = ((Number) row[1]).longValue();
-
-            SpatialUnit parent = idToUnit.get(parentId);
-            SpatialUnit child = childMap.get(childId);
-
-            if (parent != null && child != null) {
-                parent.getChildren().add(child);
-            }
-        }
-
-        // Wire parents
-        for (Object[] row : parentLinks) {
-            Long childId = ((Number) row[0]).longValue();
-            Long parentId = ((Number) row[1]).longValue();
-
-            SpatialUnit child = idToUnit.get(childId);
-            SpatialUnit parent = parentMap.get(parentId);
-
-            if (child != null && parent != null) {
-                child.getParents().add(parent);
-            }
-        }
-    }
-
 
     @Transactional(readOnly = true)
     public Page<SpatialUnit> findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
@@ -143,12 +88,17 @@ public class SpatialUnitService implements ArkEntityService {
         Page<SpatialUnit> res = spatialUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
                 institutionId, name, categoryIds, personIds, global, langCode, pageable);
 
-        wireChildrenAndParents(res.getContent());  // Load and attach spatial hierarchy relationships
+        //wireChildrenAndParents(res.getContent());  // Load and attach spatial hierarchy relationships
+
 
         // load related actions
-        res.forEach(spatialUnit -> Hibernate.initialize(spatialUnit.getRelatedActionUnitList()));
-        // Load related recording units
-        res.forEach(spatialUnit -> Hibernate.initialize(spatialUnit.getRecordingUnitList()));
+        res.forEach(spatialUnit -> {
+            Hibernate.initialize(spatialUnit.getRelatedActionUnitList());
+            Hibernate.initialize(spatialUnit.getRecordingUnitList());
+            Hibernate.initialize(spatialUnit.getChildren());
+            Hibernate.initialize(spatialUnit.getParents());
+        });
+
 
         return res;
     }
