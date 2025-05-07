@@ -124,7 +124,7 @@ class SpatialUnitLazyDataModelTest {
         authorFilter.setFilterValue(persons);
         filters.put("category", catFilter);
         filters.put("name", nameFilter);
-        filters.put("person", authorFilter);
+        filters.put("author", authorFilter);
         filters.put("globalFilter", globalFilter);
 
         // Sort setup
