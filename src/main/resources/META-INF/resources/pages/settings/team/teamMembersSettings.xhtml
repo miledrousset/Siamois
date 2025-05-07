@@ -31,6 +31,7 @@
                     addAction="#{teamMembersBean.add()}"
                     title="#{langBean.msg('groupSettings.members')}"
                     renderCreateButton="true"
+                    description="#{langBean.msg('groupMemberManager.description')}"
             >
 
                 <p:dataTable
@@ -55,7 +56,7 @@
                         <p:outputLabel value="#{teamMembersBean.formatDate(teamPerson.addDate)}"/>
                     </p:column>
                 </p:dataTable>
-                <ui:include src="/dialog/institution/newManager.xhtml"/>
+                <ui:include src="/dialog/institution/newMember.xhtml"/>
 
             </settings:datatable>
         </main>

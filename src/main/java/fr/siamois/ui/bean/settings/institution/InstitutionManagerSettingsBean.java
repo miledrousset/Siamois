@@ -1,11 +1,13 @@
 package fr.siamois.ui.bean.settings.institution;
 
 import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.auth.PendingPerson;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.settings.PersonRoleInstitution;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
 import fr.siamois.ui.bean.settings.SettingsDatatableBean;
@@ -16,10 +18,7 @@ import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -117,8 +116,34 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     @Override
     public void add() {
         log.trace("Creating manager");
-        userDialogBean.init(langBean.msg("organisationSettings.managers.add"), langBean.msg("organisationSettings.managers.add"), institution);
-        PrimeFaces.current().executeScript("PF('newManagerDialog').show();");
+        userDialogBean.init(langBean.msg("organisationSettings.managers.add"), langBean.msg("organisationSettings.managers.add"), institution, this::save);
+        PrimeFaces.current().executeScript("PF('newMemberDialog').show();");
+    }
+
+    public void save() {
+        Optional<Person> existingsUser = personService.findByEmail(userDialogBean.getUserEmail());
+        if (existingsUser.isPresent()) {
+            boolean isAdded = institutionService.addToManagers(institution, existingsUser.get());
+            if (!isAdded) {
+                MessageUtils.displayWarnMessage(langBean, "organisationSettings.error.manager", existingsUser.get().getMail(), institution.getName());
+                PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
+                return;
+            }
+            MessageUtils.displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", existingsUser.get().getMail());
+            PrimeFaces.current().executeScript("PF('newMemberDialog').exit();");
+            return;
+        }
+
+        PendingPerson pendingPerson = new PendingPerson();
+        pendingPerson.setEmail(userDialogBean.getUserEmail());
+        pendingPerson.setInstitution(institution);
+        boolean isCreated = personService.createPendingManager(pendingPerson);
+        if (!isCreated) {
+            MessageUtils.displayErrorMessage(langBean, "common.error.internal");
+            PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
+        } else {
+            MessageUtils.displayInfoMessage(langBean, "organisationSettings.action.sendInvite", userDialogBean.getUserEmail());
+        }
     }
 
 }
