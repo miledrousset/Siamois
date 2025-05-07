@@ -45,5 +45,4 @@ public class PersonDetailsService implements UserDetailsService {
         return personRepository.findByMailIgnoreCase(email).orElseThrow(() -> new UsernameNotFoundException("Person with email " + email + " not found"));
     }
 
-
 }

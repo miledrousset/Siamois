@@ -23,7 +23,41 @@
             </p:breadCrumb>
         </form:csrfform>
         <main>
+            <settings:datatable
+                    createButtonLabel="#{langBean.msg('common.action.create')}"
+                    searchInputTextValue="#{teamMembersBean.searchInput}"
+                    filterAction="#{teamMembersBean.filter()}"
+                    formId="teamMembersForm"
+                    addAction="#{teamMembersBean.add()}"
+                    title="#{langBean.msg('groupSettings.members')}"
+                    renderCreateButton="true"
+            >
 
+                <p:dataTable
+                        id="managerDatatable"
+                        value="#{teamMembersBean.filteredMembers}"
+                        var="teamPerson"
+                        sortMode="single"
+                        widgetVar="institutionManagerDatatable"
+                        rowKey="#{teamPerson.id}"
+                >
+
+                    <p:column headerText="#{langBean.msg('common.label.user')}">
+                        <div style="display: flex; flex-direction: column">
+                            <strong>#{teamPerson.person.displayName()}</strong>
+                            <p>#{teamPerson.person.mail}</p>
+                        </div>
+                    </p:column>
+                    <p:column headerText="#{langBean.msg('common.label.role')}">
+                        <p:outputLabel value="#{teamMembersBean.roleOf(teamPerson.person)}"/>
+                    </p:column>
+                    <p:column headerText="#{langBean.msg('organisationSettings.managers.adddate')}">
+                        <p:outputLabel value="#{teamMembersBean.formatDate(teamPerson.addDate)}"/>
+                    </p:column>
+                </p:dataTable>
+                <ui:include src="/dialog/institution/newManager.xhtml"/>
+
+            </settings:datatable>
         </main>
     </ui:define>
 

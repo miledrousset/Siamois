@@ -1,6 +1,7 @@
 package fr.siamois.domain.services.person;
 
 import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.team.Team;
 import fr.siamois.domain.models.auth.PendingPerson;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.*;
@@ -194,7 +195,7 @@ public class PersonService {
             PendingPerson saved = pendingPersonRepository.save(pendingPerson);
             String emailBody = """
                Bonjour,
-                Vous avez été invité à rejoindre l'application Siamois en tant que responsable de l'institution %s.
+                Vous avez été invité à rejoindre l'application Siamois en tant que responsable de l'organisation %s.
                 Cliquez sur le lien suivant pour vous inscrire : %s
                 Expiration de l'invitation le %s
                \s""";

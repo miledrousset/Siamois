@@ -46,7 +46,6 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
         this.langBean = langBean;
     }
 
-    @Override
     public void init(Institution institution) {
         this.institution = institution;
         refMembers = new HashSet<>();
