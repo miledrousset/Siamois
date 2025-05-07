@@ -62,7 +62,7 @@ public class PersonService {
 
         person = personRepository.save(person);
 
-        Optional<PendingPerson> pendingPerson = pendingPersonRepository.findByEmail((person.getMail()));
+        Optional<PendingPerson> pendingPerson = pendingPersonRepository.findByEmail((person.getEmail()));
         pendingPerson.ifPresent(pendingPersonService::delete);
 
         return person;
@@ -158,6 +158,6 @@ public class PersonService {
     }
 
     public Optional<Person> findByEmail(String email) {
-        return personRepository.findByMailIgnoreCase(email);
+        return personRepository.findByEmailIgnoreCase(email);
     }
 }

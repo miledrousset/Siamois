@@ -116,7 +116,7 @@ public class ProfileSettingsBean implements Serializable {
 
     private void initPersonSection(UserInfo info) {
         Person user = info.getUser();
-        fEmail = user.getMail();
+        fEmail = user.getEmail();
         fLastname = user.getLastname();
         fFirstname = user.getName();
         personSettings = personService.createOrGetSettingsOf(user);
@@ -125,8 +125,8 @@ public class ProfileSettingsBean implements Serializable {
     public void saveProfile() {
         boolean updated = false;
         Person user = sessionSettingsBean.getAuthenticatedUser();
-        if (fEmail != null && !fEmail.isEmpty() && !fEmail.equals(user.getMail())) {
-            user.setMail(fEmail);
+        if (fEmail != null && !fEmail.isEmpty() && !fEmail.equals(user.getEmail())) {
+            user.setEmail(fEmail);
             updated = true;
         }
 

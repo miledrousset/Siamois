@@ -170,7 +170,7 @@ class InstitutionServiceTest {
     void addToManagers_shouldCreateUserLink_whenNotExist() {
         Person person = new Person();
         person.setUsername("username");
-        person.setMail("test@example.com");
+        person.setEmail("test@example.com");
         person.setPassword("password123");
         person.setId(12L);
 
@@ -190,7 +190,7 @@ class InstitutionServiceTest {
     void addToManagers_shouldOnlySet_whenExist() {
         Person person = new Person();
         person.setUsername("username");
-        person.setMail("test@example.com");
+        person.setEmail("test@example.com");
         person.setPassword("password123");
         person.setId(12L);
 
@@ -215,7 +215,7 @@ class InstitutionServiceTest {
     void isManagerOf_whenIsOwnerOfInstitution_shouldReturnTrue() {
         Person person = new Person();
         person.setUsername("username");
-        person.setMail("test@example.com");
+        person.setEmail("test@example.com");
         person.setPassword("password123");
         person.setId(12L);
 

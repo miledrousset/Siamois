@@ -61,7 +61,7 @@ class PersonServiceTest {
         person = new Person();
         person.setId(1L);
         person.setPassword("password");
-        person.setMail("mail@localhost.com");
+        person.setEmail("mail@localhost.com");
 
         List<PersonDataVerifier> verifiers = List.of(passwordVerifier, emailVerifier);
 
@@ -159,18 +159,18 @@ class PersonServiceTest {
     @Test
     void createPerson_Success() throws Exception {
         when(personRepository.save(any(Person.class))).thenReturn(person);
-        when(pendingPersonRepository.findByEmail(person.getMail())).thenReturn(Optional.empty());
+        when(pendingPersonRepository.findByEmail(person.getEmail())).thenReturn(Optional.empty());
 
         Person result = personService.createPerson(person);
 
         assertNotNull(result);
         verify(personRepository, times(1)).save(person);
-        verify(pendingPersonRepository, times(1)).findByEmail(person.getMail());
+        verify(pendingPersonRepository, times(1)).findByEmail(person.getEmail());
     }
 
     @Test
     void createPerson_ThrowsInvalidEmailException() {
-        person.setMail("invalid-email");
+        person.setEmail("invalid-email");
         assertThrows(InvalidEmailException.class, () -> personService.createPerson(person));
     }
 
@@ -205,13 +205,13 @@ class PersonServiceTest {
 
     @Test
     void findByEmail_Success() {
-        when(personRepository.findByMailIgnoreCase("test@example.com")).thenReturn(Optional.of(person));
+        when(personRepository.findByEmailIgnoreCase("test@example.com")).thenReturn(Optional.of(person));
 
         Optional<Person> result = personService.findByEmail("test@example.com");
 
         assertTrue(result.isPresent());
         assertEquals(person, result.get());
-        verify(personRepository, times(1)).findByMailIgnoreCase("test@example.com");
+        verify(personRepository, times(1)).findByEmailIgnoreCase("test@example.com");
     }
 
     @Test

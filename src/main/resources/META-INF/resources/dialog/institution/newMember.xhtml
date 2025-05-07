@@ -23,7 +23,7 @@
                 <article class="form-group row">
                     <p:inputText styleClass="col-lg-4" value="#{userDialogBean.userEmail}" placeholder="xyz@domain.net"/>
                 </article>
-                <h:panelGroup layout="none" rendered="#{userDialogBean.shouldRenderRoleField}">
+                <h:panelGroup rendered="#{userDialogBean.shouldRenderRoleField}">
                     <article class="form-group row">
                         <h4 class="col-lg-4" >#{langBean.msg("common.label.role")}</h4>
                     </article>

@@ -2,11 +2,14 @@ package fr.siamois.ui.bean.settings.institution;
 
 import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.settings.PersonRoleInstitution;
 import fr.siamois.domain.services.InstitutionService;
+import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.ui.bean.LangBean;
+import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
 import fr.siamois.ui.bean.settings.SettingsDatatableBean;
 import lombok.Getter;
@@ -17,6 +20,9 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.util.*;
+
+import static fr.siamois.domain.utils.MessageUtils.displayInfoMessage;
+import static fr.siamois.domain.utils.MessageUtils.displayWarnMessage;
 
 @Slf4j
 @Component
@@ -29,6 +35,8 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     private final transient PersonService personService;
     private final UserDialogBean userDialogBean;
     private final LangBean langBean;
+    private final transient PendingPersonService pendingPersonService;
+    private final SessionSettingsBean sessionSettingsBean;
     private Institution institution;
     private transient Map<Person, String> roles;
 
@@ -36,11 +44,13 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     private transient Set<Person> refMembers;
     private String searchInput;
 
-    public InstitutionManagerSettingsBean(InstitutionService institutionService, PersonService personService, UserDialogBean userDialogBean, LangBean langBean) {
+    public InstitutionManagerSettingsBean(InstitutionService institutionService, PersonService personService, UserDialogBean userDialogBean, LangBean langBean, PendingPersonService pendingPersonService, SessionSettingsBean sessionSettingsBean) {
         this.institutionService = institutionService;
         this.personService = personService;
         this.userDialogBean = userDialogBean;
         this.langBean = langBean;
+        this.pendingPersonService = pendingPersonService;
+        this.sessionSettingsBean = sessionSettingsBean;
     }
 
     public void init(Institution institution) {
@@ -86,7 +96,7 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
             return DateUtils.formatOffsetDateTime(institution.getCreationDate());
         }
 
-        PersonRoleInstitution result =  institutionService.findPersonInInstitution(institution, person).orElseThrow(() ->
+        PersonRoleInstitution result = institutionService.findPersonInInstitution(institution, person).orElseThrow(() ->
                 new IllegalStateException("User should exist"));
         return DateUtils.formatOffsetDateTime(result.getAddedAt());
     }
@@ -104,7 +114,7 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
                 }
             }
             for (Person person : refMembers) {
-                if (person.getMail().toLowerCase().contains(searchInput.toLowerCase())) {
+                if (person.getEmail().toLowerCase().contains(searchInput.toLowerCase())) {
                     members.add(person);
                 }
             }
@@ -119,30 +129,24 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     }
 
     public void save() {
-//        log.trace("Attempting to add user {}", userDialogBean.getUserEmail());
-//        Optional<Person> existingsUser = personService.findByEmail(userDialogBean.getUserEmail());
-//        if (existingsUser.isPresent()) {
-//            boolean isAdded = institutionService.addToManagers(institution, existingsUser.get());
-//            if (!isAdded) {
-//                MessageUtils.displayWarnMessage(langBean, "organisationSettings.error.manager", existingsUser.get().getMail(), institution.getName());
-//                PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
-//                return;
-//            }
-//            MessageUtils.displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", existingsUser.get().getMail());
-//            PrimeFaces.current().executeScript("PF('newMemberDialog').exit();");
-//            return;
-//        }
-//
-//        PendingPerson pendingPerson = new PendingPerson();
-//        pendingPerson.setEmail(userDialogBean.getUserEmail());
-//        pendingPerson.setInstitution(institution);
-//        boolean isCreated = personService.createPendingManager(pendingPerson);
-//        if (!isCreated) {
-//            MessageUtils.displayErrorMessage(langBean, "common.error.internal");
-//            PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
-//        } else {
-//            MessageUtils.displayInfoMessage(langBean, "organisationSettings.action.sendInvite", userDialogBean.getUserEmail());
-//        } TODO: Fix this
+        Optional<Person> existingsUser = personService.findByEmail(userDialogBean.getUserEmail());
+        if (existingsUser.isPresent()) {
+            boolean isAdded = institutionService.addToManagers(institution, existingsUser.get());
+            if (!isAdded) {
+                displayWarnMessage(langBean, "organisationSettings.error.manager", existingsUser.get().getEmail(), institution.getName());
+                PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
+                return;
+            }
+            displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", existingsUser.get().getEmail());
+            PrimeFaces.current().executeScript("PF('newMemberDialog').exit();");
+            return;
+        }
+
+        PendingPerson pendingPerson = pendingPersonService.createOrGetPendingPerson(userDialogBean.getUserEmail());
+        if (pendingPersonService.pendingInstitutionInviteIsSent(pendingPerson, institution, true, sessionSettingsBean.getLanguageCode())) {
+            displayInfoMessage(langBean, "organisationSettings.action.sendInvite", pendingPerson.getEmail());
+        }
+
     }
 
 }

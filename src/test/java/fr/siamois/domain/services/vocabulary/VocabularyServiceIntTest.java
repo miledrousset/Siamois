@@ -58,7 +58,7 @@ class VocabularyServiceIntTest {
         info.getUser().setId(1L);
         info.getUser().setUsername("username");
         info.getUser().setPassword("password");
-        info.getUser().setMail("mail");
+        info.getUser().setEmail("mail");
 
         VocabularyType vocabularyType = new VocabularyType();
         vocabularyType.setId(1L);
@@ -90,7 +90,7 @@ class VocabularyServiceIntTest {
         info.getUser().setId(1L);
         info.getUser().setUsername("username");
         info.getUser().setPassword("password");
-        info.getUser().setMail("mail");
+        info.getUser().setEmail("mail");
 
         VocabularyType vocabularyType = new VocabularyType();
         vocabularyType.setId(1L);

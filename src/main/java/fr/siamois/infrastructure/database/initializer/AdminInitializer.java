@@ -67,7 +67,7 @@ public class AdminInitializer implements DatabaseInitializer {
         Person person = new Person();
         person.setUsername(adminUsername);
         person.setPassword(passwordEncoder.encode(adminPassword));
-        person.setMail(adminEmail);
+        person.setEmail(adminEmail);
         person.setName("Admin");
         person.setLastname("Admin");
         person.setSuperAdmin(true);

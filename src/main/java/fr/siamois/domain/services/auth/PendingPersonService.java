@@ -34,7 +34,12 @@ public class PendingPersonService {
     private final EmailManager emailManager;
     private final LangService langService;
 
-    public PendingPersonService(PendingPersonRepository pendingPersonRepository, HttpServletRequest httpServletRequest, PendingInstitutionInviteRepository pendingInstitutionInviteRepository, PendingTeamInviteRepository pendingTeamInviteRepository, EmailManager emailManager, LangService langService) {
+    public PendingPersonService(PendingPersonRepository pendingPersonRepository,
+                                HttpServletRequest httpServletRequest,
+                                PendingInstitutionInviteRepository pendingInstitutionInviteRepository,
+                                PendingTeamInviteRepository pendingTeamInviteRepository,
+                                EmailManager emailManager,
+                                LangService langService) {
         this.pendingPersonRepository = pendingPersonRepository;
         this.httpServletRequest = httpServletRequest;
         this.pendingInstitutionInviteRepository = pendingInstitutionInviteRepository;
@@ -86,21 +91,21 @@ public class PendingPersonService {
         }
     }
 
-    public PendingInstitutionInvite createOrGetPendingInstitutionInvite(PendingPerson pendingPerson, Institution institution, String mailLang) {
-        return createOrGetPendingInstitutionInvite(pendingPerson, institution, false, mailLang);
+    public boolean pendingInstitutionInviteIsSent(PendingPerson pendingPerson, Institution institution, String mailLang) {
+        return pendingInstitutionInviteIsSent(pendingPerson, institution, false, mailLang);
     }
 
-    public PendingInstitutionInvite createOrGetPendingInstitutionInvite(PendingPerson pendingPerson, Institution institution, boolean isManager, String mailLang) {
+    public boolean pendingInstitutionInviteIsSent(PendingPerson pendingPerson, Institution institution, boolean isManager, String mailLang) {
         Optional<PendingInstitutionInvite> pendingInstitutionInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson);
         if (pendingInstitutionInvite.isPresent()) {
-            return pendingInstitutionInvite.get();
+            return false;
         } else {
             PendingInstitutionInvite invite = new PendingInstitutionInvite();
             invite.setPendingPerson(pendingPerson);
             invite.setInstitution(institution);
             invite.setId(-1L);
             invite.setManager(isManager);
-            invite = pendingInstitutionInviteRepository.save(invite);
+            pendingInstitutionInviteRepository.save(invite);
 
             Locale locale = new Locale(mailLang);
             String institutionName = institution.getName();
@@ -108,11 +113,11 @@ public class PendingPersonService {
             String expirationDate = DateUtils.formatOffsetDateTime(pendingPerson.getPendingInvitationExpirationDate());
 
             emailManager.sendEmail(pendingPerson.getEmail(),
-                    langService.msg("mail.invitation.subject", locale, institutionName, invitationLink, expirationDate, expirationDate),
+                    langService.msg("mail.invitation.subject", locale, institutionName),
                     langService.msg("mail.invitation.body", locale, institutionName, invitationLink, expirationDate, expirationDate)
             );
 
-            return invite;
+            return true;
         }
     }
 
@@ -139,4 +144,7 @@ public class PendingPersonService {
         return pendingPersonRepository.findByRegisterToken(token);
     }
 
+    public Optional<PendingInstitutionInvite> findByInstitutionAndPendingPerson(Institution institution, PendingPerson pendingPerson) {
+        return pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson);
+    }
 }

@@ -26,6 +26,6 @@ public class PendingTeamInvite implements Serializable {
     private Team team;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fk_role_concept_id", nullable = false)
+    @JoinColumn(name = "fk_role_concept_id")
     private Concept roleInTeam;
 }

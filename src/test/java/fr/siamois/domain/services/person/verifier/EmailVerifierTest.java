@@ -13,7 +13,7 @@ class EmailVerifierTest {
     @Test
     void verify_shouldThrowInvalidEmail_whenEmailIsInvalid() {
         Person person = new Person();
-        person.setMail("invalid-email");
+        person.setEmail("invalid-email");
 
         assertThrows(InvalidEmailException.class, () -> emailVerifier.verify(person));
     }
@@ -21,7 +21,7 @@ class EmailVerifierTest {
     @Test
     void verify_shouldNotThrowException_whenEmailIsValid() throws InvalidEmailException {
         Person person = new Person();
-        person.setMail("valid.email@example.com");
+        person.setEmail("valid.email@example.com");
 
         emailVerifier.verify(person);
     }

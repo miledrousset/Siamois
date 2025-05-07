@@ -68,7 +68,7 @@ public class RegisterBean {
         }
 
         Person person = new Person();
-        person.setMail(email);
+        person.setEmail(email);
         person.setName(firstName);
         person.setLastname(lastName);
         person.setPassword(password);
