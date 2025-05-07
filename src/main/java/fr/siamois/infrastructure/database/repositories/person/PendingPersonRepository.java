@@ -1,6 +1,6 @@
 package fr.siamois.infrastructure.database.repositories.person;
 
-import fr.siamois.domain.models.auth.PendingPerson;
+import fr.siamois.domain.models.auth.pending.PendingPerson;
 import jakarta.validation.constraints.Email;
 import org.springframework.data.repository.CrudRepository;
 

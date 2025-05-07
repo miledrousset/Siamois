@@ -1,7 +1,7 @@
 package fr.siamois.ui.bean;
 
 import fr.siamois.domain.models.Institution;
-import fr.siamois.domain.models.auth.PendingPerson;
+import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.*;
 import fr.siamois.domain.services.InstitutionService;
@@ -87,10 +87,8 @@ public class RegisterBean {
 
         } catch (InvalidUserInformationException e) {
             log.trace("Person could not be created");
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, e.getMessage());
         } catch (UserAlreadyExistException e) {
             log.trace("User already exists");
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, e.getMessage());
         }
 
     }
