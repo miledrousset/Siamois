@@ -21,7 +21,7 @@ public class SpatialUnitChildrenLazyDataModel extends BaseSpatialUnitLazyDataMod
     }
 
     @Override
-    protected Page<SpatialUnit> loadSpatialUnits(String nameFilter, Long[] categoryIds, String globalFilter, Pageable pageable) {
+    protected Page<SpatialUnit> loadSpatialUnits(String nameFilter, Long[] categoryIds, Long[] personIds, String globalFilter, Pageable pageable) {
         return spatialUnitService.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
                 spatialUnit,
                 nameFilter, categoryIds, globalFilter,

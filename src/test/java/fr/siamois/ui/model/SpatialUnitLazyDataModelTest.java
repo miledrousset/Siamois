@@ -2,6 +2,7 @@ package fr.siamois.ui.model;
 
 import fr.siamois.domain.models.Institution;
 
+import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
@@ -74,6 +75,7 @@ class SpatialUnitLazyDataModelTest {
                 any(Long.class),
                 any(String.class),
                 any(Long[].class),
+                any(Long[].class),
                 any(String.class),
                 any(String.class),
                 any(org.springframework.data.domain.Pageable.class)
@@ -82,7 +84,7 @@ class SpatialUnitLazyDataModelTest {
         when(langBean.getLanguageCode()).thenReturn("en");
 
         // Act
-        Page<SpatialUnit> actualResult = lazyModel.loadSpatialUnits("null", new Long[2], "null", pageable);
+        Page<SpatialUnit> actualResult = lazyModel.loadSpatialUnits("null", new Long[2], new Long[2], "null", pageable);
 
         // Assert
         // Assert
@@ -107,16 +109,22 @@ class SpatialUnitLazyDataModelTest {
         ConceptLabel label = new ConceptLabel();
         label.setConcept(concept);
         List<ConceptLabel> categoryLabels = List.of(label);
+        Person pers = new Person();
+        pers.setId(1L);
+        List<Person> persons = List.of(pers);
 
         Map<String, FilterMeta> filters = new HashMap<>();
         FilterMeta catFilter = new FilterMeta();
+        FilterMeta authorFilter = new FilterMeta();
         FilterMeta nameFilter = new FilterMeta();
         nameFilter.setFilterValue("name");
         FilterMeta globalFilter = new FilterMeta();
         globalFilter.setFilterValue("global");
         catFilter.setFilterValue(categoryLabels);
+        authorFilter.setFilterValue(persons);
         filters.put("category", catFilter);
         filters.put("name", nameFilter);
+        filters.put("author", authorFilter);
         filters.put("globalFilter", globalFilter);
 
         // Sort setup
@@ -124,6 +132,10 @@ class SpatialUnitLazyDataModelTest {
         sortMeta.setOrder(SortOrder.ASCENDING);
         Map<String, SortMeta> sortBy = new HashMap<>();
         sortBy.put("category.label", sortMeta);
+        sortBy.put("creationTime", sortMeta);
+        SortMeta sortMeta2 = new SortMeta();
+        sortMeta2.setOrder(SortOrder.DESCENDING);
+        sortBy.put("author", sortMeta2);
 
         // Mock data
         List<SpatialUnit> spatialUnits = new ArrayList<>();
@@ -135,7 +147,9 @@ class SpatialUnitLazyDataModelTest {
         Page<SpatialUnit> page = new PageImpl<>(spatialUnits);
 
         doReturn(page).when(lazyModel).loadSpatialUnits(
-                any(), any(), any(), any(Pageable.class)
+                any(), any(), any(), any()
+
+                ,any(Pageable.class)
         );
 
         // Act
@@ -145,16 +159,19 @@ class SpatialUnitLazyDataModelTest {
         assertEquals(30, result.size());
         assertEquals("Unit 1", result.get(0).getName());
         verify(lazyModel).loadSpatialUnits(
-                eq("name"), eq(new Long[]{1L}), eq("global"), pageableCaptor.capture()
+                eq("name"), eq(new Long[]{1L}),eq(new Long[]{1L}), eq("global"), pageableCaptor.capture()
         );
 
         Pageable capturedPageable = pageableCaptor.getValue();
 
         Sort.Order order = capturedPageable.getSort().getOrderFor("c_label");
         assertNotNull(order);
+        Sort.Order order2 = capturedPageable.getSort().getOrderFor("p_lastname");
+        assertNotNull(order2);
         assertEquals(2, capturedPageable.getPageNumber());
         assertEquals(10, capturedPageable.getPageSize());
         assertEquals(Sort.Direction.ASC, order.getDirection());
+        assertEquals(Sort.Direction.DESC, order2.getDirection());
 
         // also test paginator value getters
 

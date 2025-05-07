@@ -94,6 +94,16 @@ public class PersonService {
     }
 
     /**
+     * Find all the person being an author of a spatial unit
+     *
+     * @param institution The institution
+     * @return The Person list
+     */
+    public List<Person> findAllAuthorsOfSpatialUnitByInstitution(Institution institution) {
+        return personRepository.findAllAuthorsOfSpatialUnitByInstitution(institution.getId());
+    }
+
+    /**
      * Find a person by its ID
      * @param id The ID of the person
      * @return The person having the given ID

@@ -1,5 +1,6 @@
 package fr.siamois.ui.model;
 
+import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
@@ -29,6 +30,7 @@ public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<Spa
 
         String nameFilter = null;
         Long[] categoryIds = null;
+        Long[] personIds = null;
         String globalFilter = null;
 
         if (filterBy != null) {
@@ -49,13 +51,24 @@ public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<Spa
                         .toArray(Long[]::new);
             }
 
+            FilterMeta personMeta = filterBy.get("author");
+            if (personMeta != null && personMeta.getFilterValue() != null) {
+                List<Person> selectedPerson;
+                selectedPerson = (List<Person>) personMeta.getFilterValue();
+                personIds = selectedPerson.stream()
+                        .filter(Objects::nonNull)
+                        .map(Person::getId)
+                        .filter(Objects::nonNull)
+                        .toArray(Long[]::new);
+            }
+
             FilterMeta globalMeta = filterBy.get("globalFilter");
             if (globalMeta != null && globalMeta.getFilterValue() != null) {
                 globalFilter = globalMeta.getFilterValue().toString();
             }
         }
 
-        Page<SpatialUnit> result = loadSpatialUnits(nameFilter, categoryIds, globalFilter, pageable);
+        Page<SpatialUnit> result = loadSpatialUnits(nameFilter, categoryIds, personIds, globalFilter, pageable);
         setRowCount((int) result.getTotalElements());
         return result.getContent();
     }
@@ -71,6 +84,12 @@ public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<Spa
             if(Objects.equals(field, "category.label")) {
                 field = "c_label";
             }
+            else if(Objects.equals(field, "creationTime")) {
+                field = "creation_time";
+            }
+            else if(Objects.equals(field, "author")) {
+                field = "p_lastname";
+            }
             SortMeta meta = entry.getValue();
             Sort.Order order = new Sort.Order(meta.getOrder() == SortOrder.ASCENDING ? Sort.Direction.ASC : Sort.Direction.DESC, field);
             orders.add(order);
@@ -79,6 +98,6 @@ public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<Spa
         return Sort.by(orders);
     }
 
-    protected abstract Page<SpatialUnit> loadSpatialUnits(String nameFilter, Long[] categoryIds, String globalFilter, Pageable pageable);
+    protected abstract Page<SpatialUnit> loadSpatialUnits(String nameFilter, Long[] categoryIds, Long[] personIds, String globalFilter, Pageable pageable);
 
 }

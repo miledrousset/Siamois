@@ -26,7 +26,10 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Service to manage SpatialUnit
@@ -48,7 +51,6 @@ public class SpatialUnitService implements ArkEntityService {
         this.arkService = arkService;
         this.institutionService = institutionService;
     }
-
 
 
     /**
@@ -77,11 +79,28 @@ public class SpatialUnitService implements ArkEntityService {
         spatialUnitRepository.save(spatialUnit);
     }
 
+
+    @Transactional(readOnly = true)
     public Page<SpatialUnit> findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
             Long institutionId,
-            String name, Long[] categoryIds, String global, String langCode, Pageable pageable) {
-        return spatialUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                institutionId, name, categoryIds, global, langCode, pageable);
+            String name, Long[] categoryIds, Long[] personIds, String global, String langCode, Pageable pageable) {
+
+        Page<SpatialUnit> res = spatialUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                institutionId, name, categoryIds, personIds, global, langCode, pageable);
+
+        //wireChildrenAndParents(res.getContent());  // Load and attach spatial hierarchy relationships
+
+
+        // load related actions
+        res.forEach(spatialUnit -> {
+            Hibernate.initialize(spatialUnit.getRelatedActionUnitList());
+            Hibernate.initialize(spatialUnit.getRecordingUnitList());
+            Hibernate.initialize(spatialUnit.getChildren());
+            Hibernate.initialize(spatialUnit.getParents());
+        });
+
+
+        return res;
     }
 
     public Page<SpatialUnit> findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(

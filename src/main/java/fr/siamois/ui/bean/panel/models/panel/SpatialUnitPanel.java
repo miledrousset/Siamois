@@ -153,6 +153,11 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         return "/panel/spatialUnitPanel.xhtml";
     }
 
+    @Override
+    public String displayHeader() {
+        return "/panel/header/spatialUnitPanelHeader.xhtml";
+    }
+
     public void createBarModel() {
         barModel = new BarChart()
                 .setData(new BarData()

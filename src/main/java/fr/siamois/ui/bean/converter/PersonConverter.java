@@ -1,5 +1,8 @@
 package fr.siamois.ui.bean.converter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.siamois.domain.models.Team;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.services.person.PersonService;
 import jakarta.faces.component.UIComponent;
@@ -16,28 +19,27 @@ import java.io.Serializable;
 @Slf4j
 public class PersonConverter implements Converter<Person>, Serializable {
 
-    private final transient PersonService personService;
 
-    public PersonConverter(PersonService personService) {
-        this.personService = personService;
-    }
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
 
     @Override
     public Person getAsObject(FacesContext context, UIComponent component, String value) {
-        if (value == null || value.isEmpty()) {
+
+        try {
+            return objectMapper.readValue(value, Person.class);
+        } catch (JsonProcessingException e) {
+            log.error("Error while converting string to Person object", e);
             return null;
         }
-
-        // Convert ID (String) to Person object
-        return personService.findById(Long.parseLong(value));
     }
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Person value) {
-        if (value != null) {
-            return String.valueOf(value.getId());
-        }
-        else {
+        try {
+            return objectMapper.writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            log.error("Error while converting Team object to string", e);
             return null;
         }
     }

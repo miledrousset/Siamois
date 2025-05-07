@@ -81,6 +81,8 @@ body .ui-datatable .ui-datatable-data>tr>td {
 
 .siamois-panel .ui-toolbar {
     border: none;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
     background: none;
 }
 
@@ -697,6 +699,15 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 }
 
 .recording-unit-panel .ui-commandlink:hover, .recording-unit-panel .ui-link:hover {
+    color: var(--ground-main-color);
+}
+
+
+.ui-commandlink.sia-recording-unit-command-link , .sia-recording-unit-command-link.ui-link:hover {
+    color: var(--ground-main-color);
+}
+
+.ui-commandlink.sia-recording-unit-command-link:hover , .sia-recording-unit-command-link.ui-link:hover  {
     color: var(--ground-main-color);
 }
 
