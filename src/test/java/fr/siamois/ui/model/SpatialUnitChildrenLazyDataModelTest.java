@@ -73,7 +73,7 @@ class SpatialUnitChildrenLazyDataModelTest {
         when(langBean.getLanguageCode()).thenReturn("en");
 
         // Act
-        Page<SpatialUnit> actualResult = lazyModel.loadSpatialUnits("null", new Long[2], "null", pageable);
+        Page<SpatialUnit> actualResult = lazyModel.loadSpatialUnits("null", new Long[2], new Long[2],"null", pageable);
 
         // Assert
         // Assert
