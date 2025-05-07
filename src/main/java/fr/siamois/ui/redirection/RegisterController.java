@@ -2,7 +2,6 @@ package fr.siamois.ui.redirection;
 
 import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.services.auth.PendingPersonService;
-import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.ui.bean.RegisterBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
