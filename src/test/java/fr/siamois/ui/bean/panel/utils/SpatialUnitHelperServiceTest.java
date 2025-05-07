@@ -16,12 +16,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.primefaces.PrimeFaces;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class SpatialUnitHelperServiceTest {
@@ -117,4 +117,42 @@ class SpatialUnitHelperServiceTest {
         verify(spatialUnitParentsListSetter).accept(null);
         verify(spatialUnitParentsListErrorMessageSetter).accept(null);
     }
+
+    @Test
+    void testGetFirstThreeWithLessThanThreeItems() {
+        // Arrange
+        Set<String> testSet = new HashSet<>();
+        testSet.add("Item 1");
+        testSet.add("Item 2");
+
+        // Act
+        List<String> result = spatialUnitHelperService.getFirstThree(testSet);
+
+        // Assert
+        assertEquals(2, result.size());
+        assertTrue("Result should contain Item 1", result.contains("Item 1"));
+        assertTrue("Result should contain Item 2", result.contains("Item 2"));
+    }
+
+    @Test
+    void testGetFirstThreeWithMoreThanThreeItems() {
+        // Arrange - use LinkedHashSet to guarantee insertion order for testing
+        Set<String> testSet = new LinkedHashSet<>();
+        testSet.add("Item 1");
+        testSet.add("Item 2");
+        testSet.add("Item 3");
+        testSet.add("Item 4");
+        testSet.add("Item 5");
+
+        // Act
+        List<String> result = spatialUnitHelperService.getFirstThree(testSet);
+
+        // Assert
+        assertEquals(3, result.size());
+        // Since sets don't guarantee order, we just verify that the result has 3 items from the original set
+        for (String item : result) {
+            assertTrue("Result items should be from the original set", testSet.contains(item));
+        }
+    }
+
 }

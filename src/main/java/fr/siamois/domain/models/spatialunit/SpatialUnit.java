@@ -2,13 +2,16 @@ package fr.siamois.domain.models.spatialunit;
 
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -42,12 +45,31 @@ public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
     )
     private Set<SpatialUnit> children = new HashSet<>();
 
+    @OneToMany(mappedBy="spatialUnit")
+    private Set<RecordingUnit> recordingUnitList;
+
     @ManyToMany(mappedBy = "children", fetch = FetchType.LAZY)
     private Set<SpatialUnit> parents = new HashSet<>();
+
+    @ManyToMany(mappedBy = "spatialContext")
+    private Set<ActionUnit> relatedActionUnitList = new HashSet<>();
 
     @Override
     public String toString() {
         return String.format("Spatial unit n°%s : %s", id, name);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SpatialUnit that = (SpatialUnit) o;
+        return Objects.equals(id, that.id);  // Compare based on RecordingUnit
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);  // Hash based on RecordingUnit
     }
 
 }

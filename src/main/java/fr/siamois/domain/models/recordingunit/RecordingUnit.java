@@ -8,6 +8,7 @@ import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.actionunit.NullActionUnitIdentifierException;
 import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -42,6 +43,10 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
 
     @ManyToMany(mappedBy = "children")
     private Set<RecordingUnit> parents = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name="fk_spatial_unit_id")
+    private SpatialUnit spatialUnit;
 
     @OneToOne(
             orphanRemoval=true,

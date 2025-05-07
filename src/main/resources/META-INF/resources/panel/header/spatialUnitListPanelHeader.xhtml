@@ -1,0 +1,13 @@
+
+
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             xmlns:p="http://primefaces.org/ui"
+>
+<!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel"-->
+
+<i class="#{panelModel.icon}"/>
+<span style="padding-right:0.5em;">#{langBean.msg(panelModel.title)}</span>
+<p:chip label="#{panelModel.totalNumberOfUnits}" styleClass="spatial-unit-count-chip"/>
+
+</ui:fragment>

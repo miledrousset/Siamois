@@ -6,11 +6,15 @@ import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.SpatialUnitService;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 @Slf4j
@@ -34,6 +38,17 @@ public class SpatialUnitHelperService {
         log.trace("Restore order received");
         spatialUnitService.restore(history);
         PrimeFaces.current().executeScript("PF('restored-dlg').show()");
+    }
+
+
+
+    public <T> List<T> getFirstThree(@NotNull Set<T> itemSet) {
+        if (itemSet.size() <= 3) {
+            return new ArrayList<>(itemSet);
+        } else {
+            List<T> tempList = new ArrayList<>(itemSet);
+            return tempList.subList(0, 3);
+        }
     }
 
     public List<SpatialUnitHist> findHistory(SpatialUnit spatialUnit) {

@@ -91,6 +91,7 @@ class SpatialUnitServiceTest {
                 any(Long.class),
                 any(String.class),
                 any(Long[].class),
+                any(Long[].class),
                 any(String.class),
                 any(String.class),
                 any(Pageable.class)
@@ -98,7 +99,7 @@ class SpatialUnitServiceTest {
 
         // Act
         Page<SpatialUnit> actualResult = spatialUnitService.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                1L, "null", new Long[2], "null", "fr", pageable
+                1L, "null", new Long[2], new Long[2],"null", "fr", pageable
         );
 
         // Assert
@@ -114,6 +115,7 @@ class SpatialUnitServiceTest {
                 any(Long.class),
                 any(String.class),
                 any(Long[].class),
+                any(Long[].class),
                 any(String.class),
                 any(String.class),
                 any(Pageable.class)
@@ -123,7 +125,7 @@ class SpatialUnitServiceTest {
         Exception exception = assertThrows(
                 Exception.class,
                 () -> spatialUnitService.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                        1L, "null", new Long[2], "null", "fr", pageable
+                        1L, "null", new Long[2], new Long[2], "null", "fr", pageable
                 )
         );
 
