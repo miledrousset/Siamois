@@ -161,7 +161,7 @@ public class PersonService {
     }
 
     public PersonSettings updatePersonSettings(PersonSettings personSettings) {
-        log.trace("Updating person settings {}", personSettings);
+        log.trace("Updating person settings {}", personSettings.getPerson().getUsername());
         return personSettingsRepository.save(personSettings);
     }
 

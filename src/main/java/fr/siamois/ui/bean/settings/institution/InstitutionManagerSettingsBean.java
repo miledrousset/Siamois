@@ -6,6 +6,7 @@ import fr.siamois.domain.models.settings.PersonRoleInstitution;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +31,7 @@ public class InstitutionManagerSettingsBean implements Serializable {
     private final transient InstitutionService institutionService;
     private final transient PersonService personService;
     private final UserDialogBean userDialogBean;
+    private final LangBean langBean;
     private Institution institution;
     private transient Map<Person, String> roles;
 
@@ -37,10 +39,11 @@ public class InstitutionManagerSettingsBean implements Serializable {
     private transient Set<Person> refMembers;
     private String textSearch;
 
-    public InstitutionManagerSettingsBean(InstitutionService institutionService, PersonService personService, UserDialogBean userDialogBean) {
+    public InstitutionManagerSettingsBean(InstitutionService institutionService, PersonService personService, UserDialogBean userDialogBean, LangBean langBean) {
         this.institutionService = institutionService;
         this.personService = personService;
         this.userDialogBean = userDialogBean;
+        this.langBean = langBean;
     }
 
     public void init(Institution institution) {
@@ -112,8 +115,7 @@ public class InstitutionManagerSettingsBean implements Serializable {
 
     public void createManager() {
         log.trace("Creating manager");
-        // Display create manager dialog
-        userDialogBean.init("Créer une responsable", "Créer un responsable", institution);
+        userDialogBean.init(langBean.msg("organisationSettings.managers.add"), langBean.msg("organisationSettings.managers.add"), institution);
         PrimeFaces.current().executeScript("PF('newManagerDialog').show();");
     }
 

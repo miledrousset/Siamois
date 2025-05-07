@@ -1,9 +1,16 @@
 package fr.siamois.ui.bean;
 
+import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.events.LangageChangeEvent;
+import fr.siamois.domain.models.events.LoginEvent;
+import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.services.LangService;
+import fr.siamois.domain.services.person.PersonService;
+import fr.siamois.domain.utils.AuthenticatedUserUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -17,14 +24,16 @@ import java.util.Locale;
 public class LangBean implements Serializable {
 
     private final transient LangService langService;
+    private final transient PersonService personService;
 
     @Value("${siamois.lang.default}")
     private String defaultLang;
 
     private Locale locale = new Locale("en");
 
-    public LangBean(LangService langService) {
+    public LangBean(LangService langService, PersonService personService) {
         this.langService = langService;
+        this.personService = personService;
     }
 
     @PostConstruct
@@ -70,24 +79,22 @@ public class LangBean implements Serializable {
         return locale.getLanguage();
     }
 
-    private String capitalize(String s) {
-        return s.substring(0, 1).toUpperCase() + s.substring(1);
-    }
-
-    public String getLanguageName() {
-        return capitalize(locale.getDisplayName(locale));
-    }
-
-    public String findLanguageName(String lang) {
-        Locale tmp = new Locale(lang);
-        return capitalize(tmp.getDisplayName(tmp));
-    }
-
-    public List<String> getLangs() {
+    public List<String> getLangsWithQuotes() {
         return langService.getAvailableLanguages()
                 .stream()
                 .map(lang -> "'" + lang + "'")
                 .toList();
+    }
+
+    @EventListener({LangageChangeEvent.class, LoginEvent.class})
+    public void loadUserLang() {
+        Person logged = AuthenticatedUserUtils.getAuthenticatedUser().orElseThrow(() -> new IllegalStateException("User not logged in"));
+        PersonSettings settings = personService.createOrGetSettingsOf(logged);
+        if (settings.getLangCode() != null) {
+            locale = new Locale(settings.getLangCode());
+        } else {
+            locale = new Locale(defaultLang);
+        }
     }
 
 }

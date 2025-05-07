@@ -43,43 +43,43 @@
                             <h:commandLink action="#{flowBean.addWelcomePanel}" styleClass="nav-link"
                             update="flow">
                                 <i class="bi bi-gear-fill"/>
-                                <span class="menu-text">Accueil</span>
+                                <span class="menu-text">#{langBean.msg('nav.home')}</span>
                             </h:commandLink>
                         </li>
                         <li class="nav-item">
                             <h:commandLink href="#" class="nav-link">
                                 <i class="bi bi-compass-fill"/>
-                                <span class="menu-text">BD #{navBean.selectedInstitution.name}</span>
+                                <span class="menu-text">#{langBean.msg('nav.database')} #{navBean.selectedInstitution.name}</span>
                             </h:commandLink>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="bi bi-play-circle-fill"/>
-                                <span class="menu-text">Aide</span>
+                                <span class="menu-text">#{langBean.msg('nav.help')}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="bi bi-bookmark-fill"/>
-                                <span class="menu-text">Bookmark</span>
+                                <span class="menu-text">#{langBean.msg('nav.bookmark')}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="bi bi-clock-fill"/>
-                                <span class="menu-text">Historique</span>
+                                <span class="menu-text">#{langBean.msg('nav.history')}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="bi bi-person-fill"/>
-                                <span class="menu-text">Rôle et Équipe</span>
+                                <span class="menu-text">#{langBean.msg('nav.roleTeam')}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <h:commandLink action="#{redirectBean.redirectTo('/settings')}" styleClass="nav-link">
                                 <i class="bi bi-gear-fill"/>
-                                <span class="menu-text">Paramètres</span>
+                                <span class="menu-text">#{langBean.msg('nav.settings')}</span>
                             </h:commandLink>
                         </li>
                     </ul>
@@ -94,7 +94,7 @@
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         <a onclick="logout()" class="nav-link">
                             <i class="bi bi-door-open-fill"/>
-                            <span class="menu-text">Déconnexion</span>
+                            <span class="menu-text">#{langBean.msg('nav.logout')}</span>
                         </a>
                     </form>
                 </div>
@@ -107,44 +107,44 @@
                         <li class="nav-item">
                             <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}" styleClass="nav-link">
                                 <i class="bi bi-arrow-left"/>
-                                <span class="menu-text">Retourner à l'application</span>
+                                <span class="menu-text">#{langBean.msg('nav.header')}</span>
                             </h:commandLink>
                         </li>
                     </ul>
 
                     <ul class="nav flex-column">
-                        <li class="nav-header">Profil</li>
+                        <li class="nav-header">#{langBean.msg('nav.header.profile')}</li>
                         <li class="nav-item">
                             <h:commandLink action="#{redirectBean.redirectTo('/settings/profile')}" styleClass="nav-link">
                                 <i class="bi bi-person"/>
-                                <span class="menu-text">Mon profil</span>
+                                <span class="menu-text">#{langBean.msg('nav.myProfile')}</span>
                             </h:commandLink>
                         </li>
                         <li class="nav-item">
                             <h:commandLink action="#{redirectBean.redirectTo('/settings/profile/thesaurus')}" styleClass="nav-link">
                                 <i class="bi bi-calendar"/>
-                                <span class="menu-text">Mon thesaurus</span>
+                                <span class="menu-text">#{langBean.msg('nav.myThesaurus')}</span>
                             </h:commandLink>
                         </li>
                     </ul>
 
                     <ul class="nav flex-column">
-                        <li class="nav-header">Organisations</li>
+                        <li class="nav-header">#{langBean.msg("nav.header.organisations")}</li>
                         <li class="nav-item">
                             <h:commandLink action="#{navBean.goToInstitutionManager()}" styleClass="nav-link">
                                 <i class="bi bi-house-door-fill"/>
-                                <span class="menu-text">Gestion des organisations</span>
+                                <span class="menu-text">#{langBean.msg('nav.organisationManagement')}</span>
                             </h:commandLink>
                         </li>
                     </ul>
 
                     <h:panelGroup rendered="#{navBean.userIsSuperAdmin()}">
                         <ul class="nav flex-column">
-                            <li class="nav-header">Siamois</li>
+                            <li class="nav-header">#{langBean.msg("common.label.siamois")}</li>
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="bi bi-person"/>
-                                    <span class="menu-text">Administration siamois</span>
+                                    <span class="menu-text">#{langBean.msg('nav.administration')}</span>
                                 </a>
                             </li>
                         </ul>
@@ -164,7 +164,7 @@
         <!-- Contenu principal -->
         <div class="content">
             <form:csrfform formId="templateForm">
-                <p:growl id="templateGrowl" showDetail="true">
+                <p:growl closable="true" id="templateGrowl" showDetail="true">
                     <p:autoUpdate/>
                 </p:growl>
             </form:csrfform>

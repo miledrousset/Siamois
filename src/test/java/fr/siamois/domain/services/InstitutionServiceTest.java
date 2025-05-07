@@ -7,7 +7,7 @@ import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistEx
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.settings.PersonRoleInstitution;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.infrastructure.database.repositories.InstitutionRepository;
+import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRoleInstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
@@ -177,6 +177,7 @@ class InstitutionServiceTest {
         Institution institution = new Institution();
         institution.setId(2L);
         institution.setName("institution");
+        institution.setManager(manager);
 
         when(personRoleInstitutionRepository.findByInstitutionAndPerson(any(Institution.class), any(Person.class))).thenReturn(Optional.empty());
 

@@ -1,16 +1,20 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
 
+import fr.siamois.domain.models.events.LangageChangeEvent;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 
@@ -26,22 +30,28 @@ public class WelcomePanel extends AbstractPanel {
     private final transient RecordingUnitService recordingUnitService;
     private final transient ActionUnitService actionUnitService;
     private final transient SpatialUnitService spatialUnitService;
-
-
-
+    private final LangBean langBean;
 
     // Locals
     private long nbOfSpatialUnits;
     private long nbOfActionUnits;
     private long nbOfRecordingUnits;
 
-    public WelcomePanel(SessionSettingsBean sessionSettingsBean, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SpatialUnitService spatialUnitService) {
-        super("Accueil "+sessionSettingsBean.getSelectedInstitution().getName(), "bi bi-house", "siamois-panel");
+    public WelcomePanel(SessionSettingsBean sessionSettingsBean,
+                        RecordingUnitService recordingUnitService,
+                        ActionUnitService actionUnitService,
+                        SpatialUnitService spatialUnitService,
+                        LangBean langBean
+    ) {
+        super(String.format("%s - %s",
+                langBean.msg("common.location.home"),
+                sessionSettingsBean.getSelectedInstitution().getName()), "bi bi-house", "siamois-panel");
 
         this.sessionSettingsBean = sessionSettingsBean;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.spatialUnitService = spatialUnitService;
+        this.langBean = langBean;
 
         setBreadcrumb(new PanelBreadcrumb());
         setIsBreadcrumbVisible(false);
@@ -71,4 +81,12 @@ public class WelcomePanel extends AbstractPanel {
     public String display() {
         return "/panel/homePanel.xhtml";
     }
+
+    @EventListener(LangageChangeEvent.class)
+    public void refreshName() {
+        this.title = String.format("%s - %s",
+                langBean.msg("common.location.home"),
+                sessionSettingsBean.getSelectedInstitution().getName());
+    }
+
 }

@@ -17,17 +17,15 @@
             <hr/>
             <div class="container" >
                 <article class="form-group row">
-                    <h4 class="col-lg-4" >Email</h4>
-                    <h4 class="col-lg-6 ms-auto">Rôle</h4>
+                    <h4 class="col-lg-4" >#{langBean.msg("common.label.email")}</h4>
                 </article>
                 <article class="form-group row">
-                    <p:inputText styleClass="col-lg-4" value="#{userDialogBean.userEmail}" placeholder="xyz@domaine.net"/>
-                    <p:selectOneMenu styleClass="col-lg-6 ms-auto" disabled="true"  placeholder="Responsable"/>
+                    <p:inputText styleClass="col-lg-4" value="#{userDialogBean.userEmail}" placeholder="xyz@domain.net"/>
                 </article>
             </div>
             <hr/>
             <div class="dialog-buttons">
-                <p:commandButton value="Annuler" action="#{userDialogBean.exit()}" update="@form"/>
+                <p:commandButton value="#{langBean.msg('common.action.cancel')}" action="#{userDialogBean.exit()}" update="@form"/>
                 <p:commandButton value="#{userDialogBean.buttonLabel}" action="#{userDialogBean.save()}" update="@form"/>
             </div>
         </div>

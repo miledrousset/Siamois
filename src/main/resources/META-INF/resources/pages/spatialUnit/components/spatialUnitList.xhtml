@@ -23,6 +23,7 @@
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
 
+
             <!-- datatable property partialUpdate=false because otherwise the paginator template is reset after sort or filter actions-->
             <p:dataTable paginator="true"
                          id="spatialUnitDataTable"
@@ -31,13 +32,14 @@
                          lazy="true"
                          sortMode="multiple"
                          partialUpdate="false"
-                         emptyMessage="Aucune unité spatiale trouvée avec ces critères"
+                         emptyMessage="#{langBean.msg('spatialUnitList.empty')}"
                          rows="10"
                          paginatorTemplate="Rows per page: {RowsPerPageDropdown} {RowReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                          rowsPerPageTemplate="5,10,15,20,25"
                          value="#{cc.attrs.lazyDataModel}" class="spatial-unit-datatable">
 
                 <f:facet name="{RowReport}">
+
                         <span class="ui-paginator-current">#{cc.attrs.lazyDataModel.getFirstIndexOnPage()}-#{cc.attrs.lazyDataModel.getLastIndexOnPage()}
                             of #{cc.attrs.lazyDataModel.rowCount}</span>
                 </f:facet>
@@ -50,9 +52,10 @@
                                 <!-- Global search -->
                                 <span class="filter-container ui-input-icon-left">
                                 <i class="bi bi-search"/>
-                                            <p:inputText id="globalFilter"
-                                                         onkeyup="PF('#{cc.clientId}_spatialUnitListTable').filter()"
-                                                         placeholder="#{langBean.msg('table.research')}">
+
+                                            <p:inputText id="globalFilter" onkeyup="PF('#{cc.clientId}_spatialUnitListTable').filter()"
+                                                         placeholder="#{langBean.msg('common.action.search')}">
+
 
                                             </p:inputText>
                                 </span>
@@ -127,6 +130,7 @@
                                            itemLabel="#{cat.value}"
                             />
                         </p:selectCheckboxMenu>
+
                     </f:facet>
                     <p:chip label="#{labelBean.findLabelOf(item.category)}" icon="pi pi-map-marker"
                             styleClass="mr-2 spatial-unit-type-chip"/>
@@ -159,6 +163,7 @@
                     #{item.author.displayName()}
                 </p:column>
 
+
                 <!-- Parents -->
                 <p:column responsivePriority="3">
                     <f:facet name="header">
@@ -168,6 +173,7 @@
                     <ui:repeat value="#{item.parents}" var="parent" varStatus="status">
                         <p:commandLink rendered="#{status.index lt 3}" style="display: block; padding: 2px 0;"
                                        action="#{flowBean.goToSpatialUnitByIdCurrentPanel(parent.id, cc.attrs.panelModel)}"
+
                                        oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
                                        update="flow">
                             <h:outputText value="#{parent.name}"/>
@@ -176,6 +182,7 @@
                     <h:outputText rendered="#{fn:length(item.parents) gt 3}" value="+ #{fn:length(item.parents) - 3}"
                                   style="display: block; color: gray; margin-top: 2px;"/>
                 </p:column>
+
 
                 <!-- Children -->
                 <p:column responsivePriority="3" >
@@ -242,6 +249,7 @@
                 </p:column>
 
             </p:dataTable>
+
 
 
         </h:form>

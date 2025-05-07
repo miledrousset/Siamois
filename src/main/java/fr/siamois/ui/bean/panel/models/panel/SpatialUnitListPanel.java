@@ -62,6 +62,10 @@ public class SpatialUnitListPanel extends AbstractPanel {
                                 ConceptService conceptService,
                                 SessionSettingsBean sessionSettingsBean, LangBean langBean, LabelService labelService) {
         super("panel.title.allspatialunit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-list-panel");
+
+                                SessionSettingsBean sessionSettingsBean,
+                                LangBean langBean,
+                                LabelService labelService) {
         this.spatialUnitService = spatialUnitService;
         this.personService = personService;
         this.conceptService = conceptService;
@@ -80,7 +84,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
         try {
             // Add current item to breadcrumb
             DefaultMenuItem item = DefaultMenuItem.builder()
-                    .value("Unités géographiques")
+                    .value(langBean.msg("common.entity.spatialUnits"))
                     .icon("bi bi-geo-alt")
                     .build();
             this.getBreadcrumb().getModel().getElements().add(item);

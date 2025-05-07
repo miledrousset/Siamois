@@ -1,4 +1,4 @@
-package fr.siamois.infrastructure.database.repositories;
+package fr.siamois.infrastructure.database.repositories.institution;
 
 import fr.siamois.domain.models.Institution;
 import jakarta.validation.constraints.NotNull;

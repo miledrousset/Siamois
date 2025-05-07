@@ -110,7 +110,7 @@ public class UserAddBean implements Serializable {
     }
 
     private void displayErrorMessage(String message) {
-        MessageUtils.displayMessage(FacesMessage.SEVERITY_ERROR, langBean.msg("commons.message.state.error"), message);
+        MessageUtils.displayMessage(FacesMessage.SEVERITY_ERROR, langBean.msg("common.message.state.error"), message);
     }
 
 }

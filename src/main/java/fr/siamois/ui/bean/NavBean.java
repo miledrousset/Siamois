@@ -9,7 +9,6 @@ import fr.siamois.ui.bean.settings.InstitutionListSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -39,7 +38,10 @@ public class NavBean implements Serializable {
 
     public NavBean(SessionSettingsBean sessionSettingsBean,
                    InstitutionChangeEventPublisher institutionChangeEventPublisher,
-                   InstitutionConverter converter, InstitutionService institutionService, RedirectBean redirectBean, InstitutionListSettingsBean institutionListSettingsBean) {
+                   InstitutionConverter converter,
+                   InstitutionService institutionService,
+                   RedirectBean redirectBean,
+                   InstitutionListSettingsBean institutionListSettingsBean) {
         this.sessionSettingsBean = sessionSettingsBean;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
         this.converter = converter;
@@ -55,11 +57,6 @@ public class NavBean implements Serializable {
 
     public Institution getSelectedInstitution() {
         return sessionSettingsBean.getSelectedInstitution();
-    }
-
-    public void updateInstitutions() {
-        sessionSettingsBean.setupSession();
-        PrimeFaces.current().ajax().update("institutionForm:institutionSelector");
     }
 
     public Person currentUser() {

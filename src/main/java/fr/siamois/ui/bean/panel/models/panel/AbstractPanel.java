@@ -12,12 +12,12 @@ import java.time.format.DateTimeFormatter;
 public abstract class AbstractPanel implements Serializable {
 
 
-    private String title;
-    private String panelClass;
-    private String icon;
-    private PanelBreadcrumb breadcrumb;
-    private Boolean isBreadcrumbVisible = true;
-    private Boolean collapsed = false;
+    protected String title;
+    protected String panelClass;
+    protected String icon;
+    protected PanelBreadcrumb breadcrumb;
+    protected Boolean isBreadcrumbVisible = true;
+    protected Boolean collapsed = false;
 
     protected AbstractPanel() {
     }

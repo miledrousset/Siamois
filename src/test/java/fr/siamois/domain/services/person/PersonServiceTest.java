@@ -137,6 +137,7 @@ class PersonServiceTest {
     @Test
     void updatePersonSettings() {
         PersonSettings settings = new PersonSettings();
+        settings.setPerson(person);
         when(personSettingsRepository.save(settings)).thenReturn(settings);
 
         PersonSettings result = personService.updatePersonSettings(settings);

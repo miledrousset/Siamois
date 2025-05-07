@@ -18,18 +18,18 @@
                 <p:breadCrumb homeDisplay="false">
                     <p:menuitem value="Organisations" action="#{institutionDetailsBean.goToInstitutionList()}"/>
                     <p:menuitem value="#{institutionManagerSettingsBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
-                    <p:menuitem value="Responsables d'organisation"/>
+                    <p:menuitem value="#{langBean.msg('organisationSettings.titles.managers')}"/>
                 </p:breadCrumb>
             </form:csrfform>
             <settings:datatable
-                    title="Responsables de l'organisation #{institutionInfoSettingsBean.institution.name}"
+                    title="#{langBean.msg('organisationSettings.managers.title', institutionManagerSettingsBean.institution.name)}"
                     filterAction="#{institutionManagerSettingsBean.filterValues()}"
                     formId="institutionManagerForm"
                     addAction="#{institutionManagerSettingsBean.createManager()}"
                     searchInputTextValue="#{institutionManagerSettingsBean.textSearch}"
-                    description="Les responsables de l'organisation peuvent configurer les connexions au thésaurus, ajouter d'autres utilisateurs et ont un accès complet à toute la donnée créée au sein de l'organisation."
+                    description="#{langBean.msg('organisationSettings.managers.description')}"
                     isOrganisationManager="true"
-                    createButtonLabel="Ajouter un responsable"
+                    createButtonLabel="#{langBean.msg('organisationSettings.managers.add')}"
             >
                 <p:dataTable
                         id="managerDatatable"
@@ -40,16 +40,16 @@
                         rowKey="#{member.id}"
                 >
 
-                    <p:column headerText="Utilisateur">
+                    <p:column headerText="#{langBean.msg('common.label.user')}">
                         <div style="display: flex; flex-direction: column">
                             <strong>#{member.displayName()}</strong>
                             <p>#{member.mail}</p>
                         </div>
                     </p:column>
-                    <p:column headerText="Rôle">
+                    <p:column headerText="#{langBean.msg('common.label.role')}">
                         <p:outputLabel value="#{institutionManagerSettingsBean.roles.get(member)}"/>
                     </p:column>
-                    <p:column headerText="Date d'ajout">
+                    <p:column headerText="#{langBean.msg('organisationSettings.managers.adddate')}">
                         <p:outputLabel value="#{institutionManagerSettingsBean.addDateOf(member)}"/>
                     </p:column>
                 </p:dataTable>

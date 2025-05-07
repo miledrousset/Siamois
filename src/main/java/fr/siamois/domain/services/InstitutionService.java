@@ -7,17 +7,14 @@ import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistEx
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.settings.PersonRoleInstitution;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.infrastructure.database.repositories.InstitutionRepository;
+import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRoleInstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -43,10 +40,10 @@ public class InstitutionService {
     }
 
     public List<Institution> findInstitutionsOfPerson(Person person) {
-        List<Institution> notManaged = institutionRepository.findAllOfPerson(person.getId());
-        List<Institution> managed = institutionRepository.findAllManagedBy(person.getId());
-        managed.addAll(notManaged);
-        return managed;
+        Set<Institution> institutions = new HashSet<>();
+        institutions.addAll(institutionRepository.findAllOfPerson(person.getId()));
+        institutions.addAll(institutionRepository.findAllManagedBy(person.getId()));
+        return institutions.stream().toList();
     }
 
     public List<Person> findAllManagers() {
@@ -97,9 +94,12 @@ public class InstitutionService {
         return institutionSettingsRepository.save(settings);
     }
 
-    public void addToManagers(Institution institution, Person person) {
+    public boolean addToManagers(Institution institution, Person person) {
         Optional<PersonRoleInstitution> opt = personRoleInstitutionRepository.findByInstitutionAndPerson(institution, person);
         if (opt.isEmpty()) {
+            if (institution.getManager().equals(person)) {
+                return false;
+            }
             PersonRoleInstitution personRoleInstitution = new PersonRoleInstitution();
             personRoleInstitution.setId(new PersonRoleInstitution.PersonRoleInstitutionId());
             personRoleInstitution.getId().setFkInstitutionId(institution.getId());
@@ -109,11 +109,15 @@ public class InstitutionService {
             personRoleInstitution.setRoleConcept(null);
             personRoleInstitution.setIsManager(true);
             personRoleInstitutionRepository.save(personRoleInstitution);
+            return true;
         } else {
             PersonRoleInstitution personRoleInstitution = opt.get();
             if (Boolean.FALSE.equals(personRoleInstitution.getIsManager())) {
                 personRoleInstitution.setIsManager(true);
                 personRoleInstitutionRepository.save(personRoleInstitution);
+                return true;
+            } else {
+                return false;
             }
         }
     }

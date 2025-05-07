@@ -36,7 +36,7 @@ public class NewSpatialUnitPanel extends AbstractPanel {
 
 
     public NewSpatialUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, FlowBean flowBean) {
-        super("Nouvelle unité spatiale", "bi bi-geo-alt", "siamois-panel spatial-unit-panel new-spatial-unit-panel");
+        super(langBean.msg("common.action.new.spatialUnit"), "bi bi-geo-alt", "siamois-panel spatial-unit-panel new-spatial-unit-panel");
         this.langBean = langBean;
         this.sessionSettingsBean = sessionSettingsBean;
         this.spatialUnitService = spatialUnitService;
@@ -66,7 +66,7 @@ public class NewSpatialUnitPanel extends AbstractPanel {
         try {
             SpatialUnit saved = spatialUnitService.save(sessionSettingsBean.getUserInfo(), spatialUnit.getName(), spatialUnit.getCategory(), Collections.emptyList());
 
-            MessageUtils.displayInfoMessage(langBean, "spatialunit.created", saved.getName());
+            MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.created", saved.getName());
 
             // remove last bc item before swaqping panel
             this.getBreadcrumb().getModel().getElements().remove(this.getBreadcrumb().getModel().getElements().size() - 1);
@@ -75,7 +75,7 @@ public class NewSpatialUnitPanel extends AbstractPanel {
             return true;
         } catch (SpatialUnitAlreadyExistsException e) {
             log.error(e.getMessage(), e);
-            MessageUtils.displayErrorMessage(langBean, "commons.error.spatialunit.alreadyexist", spatialUnit.getName());
+            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.alreadyexist", spatialUnit.getName());
             return false;
         }
     }
