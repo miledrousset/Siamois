@@ -1,9 +1,9 @@
 package fr.siamois.ui.bean.settings.team;
 
+import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.institution.Team;
-import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.institution.TeamPerson;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.InstitutionService;

@@ -1,8 +1,8 @@
 package fr.siamois.domain.services.person;
 
-import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.*;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.LangService;
@@ -51,6 +51,8 @@ class PersonServiceTest {
     private HttpServletRequest httpServletRequest;
     @Mock
     private PendingPersonService pendingPersonService;
+    @Mock
+    private TeamService teamService;
 
     private PersonService personService;
 
@@ -73,7 +75,8 @@ class PersonServiceTest {
                 institutionService,
                 langService,
                 pendingPersonRepository,
-                pendingPersonService
+                pendingPersonService,
+                teamService
         );
     }
 
@@ -236,7 +239,8 @@ class PersonServiceTest {
                 institutionService,
                 langService,
                 pendingPersonRepository,
-                pendingPersonService
+                pendingPersonService,
+                teamService
         );
 
         // Act

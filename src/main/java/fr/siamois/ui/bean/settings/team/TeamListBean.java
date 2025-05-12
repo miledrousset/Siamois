@@ -1,8 +1,8 @@
 package fr.siamois.ui.bean.settings.team;
 
+import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.institution.Team;
-import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;

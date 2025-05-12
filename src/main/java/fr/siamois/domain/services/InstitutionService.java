@@ -1,11 +1,11 @@
 package fr.siamois.domain.services;
 
-import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
-import fr.siamois.domain.models.settings.InstitutionSettings;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.institution.TeamPerson;
+import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
@@ -14,7 +14,10 @@ import fr.siamois.infrastructure.database.repositories.settings.InstitutionSetti
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service

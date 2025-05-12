@@ -8,11 +8,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.DefaultValue;
 import lombok.Data;
 
-import java.util.*;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity

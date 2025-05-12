@@ -1,7 +1,7 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.ConceptApi;

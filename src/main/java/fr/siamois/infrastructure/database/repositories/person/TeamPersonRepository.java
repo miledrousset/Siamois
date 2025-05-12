@@ -36,7 +36,7 @@ public interface TeamPersonRepository extends CrudRepository<TeamPerson, TeamPer
             nativeQuery = true,
             value = "SELECT tp.* FROM team_person tp " +
                     "JOIN team t ON tp.fk_team_id = t.team_id " +
-                    "WHERE t.fk_institution_id = :institutionId"
+                    "WHERE t.fk_institution_id = :institutionId AND t.is_default_team IS TRUE"
     )
     Optional<TeamPerson> findDefaultOfInstitution(Long institutionId);
 

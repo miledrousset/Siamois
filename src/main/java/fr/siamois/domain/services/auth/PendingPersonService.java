@@ -1,9 +1,9 @@
 package fr.siamois.domain.services.auth;
 
-import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.auth.pending.PendingTeamInvite;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.LangService;
@@ -20,6 +20,7 @@ import java.security.SecureRandom;
 import java.time.OffsetDateTime;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class PendingPersonService {
@@ -157,10 +158,11 @@ public class PendingPersonService {
      * @param role the role in the team
      */
     public void addTeamToInvitation(PendingInstitutionInvite institutionInvite, Team team, Concept role) {
-        Optional<PendingTeamInvite> optTeam = pendingTeamInviteRepository.findByPendingInstitutionInvite(institutionInvite);
+        Set<PendingTeamInvite> optTeam = pendingTeamInviteRepository.findByPendingInstitutionInvite(institutionInvite);
         PendingTeamInvite teamInvite;
-        if (optTeam.isPresent()) {
-            teamInvite = optTeam.get();
+        Optional<PendingTeamInvite> pendingTeamInvite = optTeam.stream().filter(t -> t.getTeam().getId().equals(team.getId())).findFirst();
+        if (pendingTeamInvite.isPresent()) {
+            teamInvite = pendingTeamInvite.get();
         } else {
             teamInvite = new PendingTeamInvite();
             teamInvite.setId(-1L);
@@ -195,5 +197,21 @@ public class PendingPersonService {
 
     public PendingInstitutionInvite createOrGetInstitutionInviteOf(PendingPerson pendingPerson, Institution institution) {
         return createOrGetInstitutionInviteOf(pendingPerson, institution, false);
+    }
+
+    public Set<PendingInstitutionInvite> findInstitutionsByPendingPerson(PendingPerson pendingPerson) {
+        return pendingInstitutionInviteRepository.findAllByPendingPerson(pendingPerson);
+    }
+
+    public Set<PendingTeamInvite> findTeamsByPendingInstitutionInvite(PendingInstitutionInvite pendingInstitutionInvite) {
+        return pendingTeamInviteRepository.findByPendingInstitutionInvite(pendingInstitutionInvite);
+    }
+
+    public void deleteTeamInvite(PendingTeamInvite pendingTeamInvite) {
+        pendingTeamInviteRepository.delete(pendingTeamInvite);
+    }
+
+    public void deleteInstitutionInvite(PendingInstitutionInvite invite) {
+        pendingInstitutionInviteRepository.delete(invite);
     }
 }

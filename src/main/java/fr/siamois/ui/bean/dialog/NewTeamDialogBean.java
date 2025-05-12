@@ -1,10 +1,10 @@
 package fr.siamois.ui.bean.dialog;
 
-import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
-import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.exceptions.TeamAlreadyExistException;
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;

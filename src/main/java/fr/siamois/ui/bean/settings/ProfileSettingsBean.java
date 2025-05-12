@@ -1,6 +1,5 @@
 package fr.siamois.ui.bean.settings;
 
-import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
@@ -10,6 +9,7 @@ import fr.siamois.domain.models.exceptions.auth.InvalidNameException;
 import fr.siamois.domain.models.exceptions.auth.InvalidUserInformationException;
 import fr.siamois.domain.models.exceptions.auth.UserAlreadyExistException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;

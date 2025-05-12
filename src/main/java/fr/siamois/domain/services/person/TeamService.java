@@ -1,9 +1,9 @@
 package fr.siamois.domain.services.person;
 
-import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.TeamAlreadyExistException;
+import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.institution.TeamPerson;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.database.repositories.person.TeamPersonRepository;

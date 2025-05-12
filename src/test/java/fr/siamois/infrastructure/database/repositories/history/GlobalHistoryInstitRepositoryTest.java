@@ -1,12 +1,12 @@
 package fr.siamois.infrastructure.database.repositories.history;
 
 import com.zaxxer.hikari.HikariDataSource;
-import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.history.GlobalHistoryEntry;
 import fr.siamois.domain.models.history.HistoryUpdateType;
+import fr.siamois.domain.models.institution.Institution;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

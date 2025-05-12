@@ -63,4 +63,8 @@ public class MessageUtils {
     public static void displayNoThesaurusConfiguredMessage(LangBean langBean) {
         displayErrorMessage(langBean, "common.error.thesaurusConfig.notfound");
     }
+
+    public static void displayInternalError(LangBean langBean) {
+        displayErrorMessage(langBean, "common.error.internal");
+    }
 }

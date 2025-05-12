@@ -1,7 +1,7 @@
 package fr.siamois.ui.bean.settings.team;
 
-import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.exceptions.TeamAlreadyExistException;
+import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.ui.bean.LangBean;
 import lombok.Getter;

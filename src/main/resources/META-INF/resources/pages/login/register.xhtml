@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <HTML xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
+      xmlns:p="http://primefaces.org/ui" xmlns:ui="http://java.sun.com/jsf/facelets"
       xml:lang="#{langBean.languageCode}"
       xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form"
 >
@@ -49,6 +49,16 @@
             <h:outputLabel for="password-confirm" value="Confirmation du mot de passe"/>
             <h:inputSecret id="password-confirm" value="#{registerBean.confirmPassword}" required="true"/>
             <h:message for="password-confirm"/>
+        </h:panelGroup>
+
+        <h:panelGroup>
+            <ul>
+                <ui:repeat value="#{registerBean.institutionTeams.keySet()}" var="institution">
+                    <li>
+                        Vous avez été invité à rejoindre #{institution.name} dans les groupes #{registerBean.getTeamsName(institution)}
+                    </li>
+                </ui:repeat>
+            </ul>
         </h:panelGroup>
 
         <h:commandButton value="S'inscrire" action="#{registerBean.register}"/>

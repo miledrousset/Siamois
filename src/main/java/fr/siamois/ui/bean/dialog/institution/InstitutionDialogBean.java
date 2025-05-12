@@ -1,12 +1,12 @@
 package fr.siamois.ui.bean.dialog.institution;
 
-import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.person.TeamService;
-import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.ActionFromBean;
+import fr.siamois.ui.bean.SessionSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
