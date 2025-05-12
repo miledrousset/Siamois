@@ -48,6 +48,10 @@ public class PendingPersonService {
         this.langService = langService;
     }
 
+    /**
+     * Generate a random token for the pending person.
+      * @return a random token
+     */
     String generateToken() {
         String allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder token;
@@ -69,12 +73,22 @@ public class PendingPersonService {
         return token.toString();
     }
 
+    /**
+     * Generate the invitation link for the pending person.
+     * @param pendingPerson the pending person
+     * @return the invitation link
+     */
     String invitationLink(PendingPerson pendingPerson) {
         String domain = httpServletRequest.getScheme() + "://" + httpServletRequest.getServerName() +
                 (httpServletRequest.getServerPort() != 80 && httpServletRequest.getServerPort() != 443 ? ":" + httpServletRequest.getServerPort() : "");
         return String.format("%s%s/register/%s", domain, httpServletRequest.getContextPath(), pendingPerson.getRegisterToken());
     }
 
+    /**
+     * Create or get a pending person by email.
+     * @param email the email of the pending person
+     * @return the pending person
+     */
     public PendingPerson createOrGetPendingPerson(@Email String email) {
         Optional<PendingPerson> pendingPerson = pendingPersonRepository.findByEmail(email);
         if (pendingPerson.isPresent()) {
@@ -91,11 +105,26 @@ public class PendingPersonService {
         }
     }
 
-    public boolean pendingInstitutionInviteIsSent(PendingPerson pendingPerson, Institution institution, String mailLang) {
-        return pendingInstitutionInviteIsSent(pendingPerson, institution, false, mailLang);
+    /**
+     * Send an invitation email to the pending person.
+     * @param pendingPerson the pending person
+     * @param institution the institution
+     * @param mailLang the language of the email
+     * @return true if the email was sent, false if the invitation already exists
+     */
+    public boolean sendPendingInstitutionInvite(PendingPerson pendingPerson, Institution institution, String mailLang) {
+        return sendPendingInstitutionInvite(pendingPerson, institution, false, mailLang);
     }
 
-    public boolean pendingInstitutionInviteIsSent(PendingPerson pendingPerson, Institution institution, boolean isManager, String mailLang) {
+    /**
+     * Send an invitation email to the pending person with the option to set them as a manager.
+     * @param pendingPerson the pending person
+     * @param institution the institution
+     * @param isManager true if the pending person should be a manager, false otherwise
+     * @param mailLang the language of the email
+     * @return true if the email was sent, false if the invitation already exists
+     */
+    public boolean sendPendingInstitutionInvite(PendingPerson pendingPerson, Institution institution, boolean isManager, String mailLang) {
         Optional<PendingInstitutionInvite> pendingInstitutionInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson);
         if (pendingInstitutionInvite.isPresent()) {
             return false;
@@ -121,6 +150,12 @@ public class PendingPersonService {
         }
     }
 
+    /**
+     * Add a team to the pending institution invitation.
+     * @param institutionInvite the pending institution invite
+     * @param team the team to add
+     * @param role the role in the team
+     */
     public void addTeamToInvitation(PendingInstitutionInvite institutionInvite, Team team, Concept role) {
         Optional<PendingTeamInvite> optTeam = pendingTeamInviteRepository.findByPendingInstitutionInvite(institutionInvite);
         PendingTeamInvite teamInvite;
@@ -144,7 +179,21 @@ public class PendingPersonService {
         return pendingPersonRepository.findByRegisterToken(token);
     }
 
-    public Optional<PendingInstitutionInvite> findByInstitutionAndPendingPerson(Institution institution, PendingPerson pendingPerson) {
-        return pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson);
+    public PendingInstitutionInvite createOrGetInstitutionInviteOf(PendingPerson pendingPerson, Institution institution, boolean isManager) {
+        Optional<PendingInstitutionInvite> pendingInstitutionInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson);
+        if (pendingInstitutionInvite.isPresent()) {
+            return pendingInstitutionInvite.get();
+        } else {
+            PendingInstitutionInvite invite = new PendingInstitutionInvite();
+            invite.setPendingPerson(pendingPerson);
+            invite.setInstitution(institution);
+            invite.setId(-1L);
+            invite.setManager(isManager);
+            return pendingInstitutionInviteRepository.save(invite);
+        }
+    }
+
+    public PendingInstitutionInvite createOrGetInstitutionInviteOf(PendingPerson pendingPerson, Institution institution) {
+        return createOrGetInstitutionInviteOf(pendingPerson, institution, false);
     }
 }
