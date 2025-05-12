@@ -1,6 +1,6 @@
 package fr.siamois.domain.services.ark;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.ark.Ark;
 import fr.siamois.domain.models.exceptions.ark.NoArkConfigException;
 import fr.siamois.domain.models.exceptions.ark.TooManyGenerationsException;

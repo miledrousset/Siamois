@@ -1,6 +1,6 @@
 package fr.siamois.domain.services.person;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.*;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service to manage Person
@@ -148,8 +149,8 @@ public class PersonService {
     }
 
     private Institution findDefaultInstitution(Person person) {
-        List<Institution> institutions = institutionService.findInstitutionsOfPerson(person);
-        return institutions.isEmpty() ? null : institutions.get(0);
+        Set<Institution> institutions = institutionService.findInstitutionsOfPerson(person);
+        return institutions.isEmpty() ? null : institutions.stream().findFirst().orElseThrow(IllegalStateException::new);
     }
 
     public PersonSettings updatePersonSettings(PersonSettings personSettings) {

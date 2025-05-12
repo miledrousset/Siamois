@@ -1,6 +1,6 @@
 package fr.siamois.ui.bean.settings.team;
 
-import fr.siamois.domain.models.team.Team;
+import fr.siamois.domain.models.institution.Team;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.settings.components.OptionElement;
 import lombok.Getter;

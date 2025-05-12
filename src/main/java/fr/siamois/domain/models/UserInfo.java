@@ -1,6 +1,7 @@
 package fr.siamois.domain.models;
 
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.institution.Institution;
 import lombok.Getter;
 
 @Getter

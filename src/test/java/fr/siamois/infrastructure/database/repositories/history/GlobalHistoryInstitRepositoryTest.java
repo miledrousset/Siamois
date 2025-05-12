@@ -1,7 +1,7 @@
 package fr.siamois.infrastructure.database.repositories.history;
 
 import com.zaxxer.hikari.HikariDataSource;
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;

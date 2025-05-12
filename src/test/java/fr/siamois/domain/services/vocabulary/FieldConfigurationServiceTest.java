@@ -1,6 +1,6 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;

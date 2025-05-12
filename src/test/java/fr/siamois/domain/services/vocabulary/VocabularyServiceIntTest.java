@@ -1,6 +1,6 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
@@ -52,7 +52,7 @@ class VocabularyServiceIntTest {
 
         UserInfo info = new UserInfo(new Institution(), new Person(), "fr");
         info.getInstitution().setId(1L);
-        info.getInstitution().setManager(info.getUser());
+        info.getInstitution().getManagers().add(info.getUser());
         info.getInstitution().setName("SiaDev");
 
         info.getUser().setId(1L);
@@ -84,7 +84,7 @@ class VocabularyServiceIntTest {
 
         UserInfo info = new UserInfo(new Institution(), new Person(), "fr");
         info.getInstitution().setId(1L);
-        info.getInstitution().setManager(info.getUser());
+        info.getInstitution().getManagers().add(info.getUser());
         info.getInstitution().setName("SiaDev");
 
         info.getUser().setId(1L);

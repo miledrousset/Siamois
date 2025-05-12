@@ -1,6 +1,6 @@
 package fr.siamois.domain.models.auth.pending;
 
-import fr.siamois.domain.models.team.Team;
+import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;

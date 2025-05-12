@@ -1,8 +1,9 @@
 package fr.siamois.infrastructure.database.initializer;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
+import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import lombok.Getter;
@@ -14,10 +15,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -30,6 +32,7 @@ public class AdminInitializer implements DatabaseInitializer {
     private final PersonRepository personRepository;
     private final InstitutionRepository institutionRepository;
     private final ApplicationContext applicationContext;
+    private final TeamService teamService;
 
     @Value("${siamois.admin.username:admin}")
     private String adminUsername;
@@ -41,24 +44,28 @@ public class AdminInitializer implements DatabaseInitializer {
     private String adminEmail;
 
     private Person createdAdmin;
+    private Institution createdInstitution;
 
     public AdminInitializer(BCryptPasswordEncoder passwordEncoder,
                             PersonRepository personRepository,
                             InstitutionRepository institutionRepository,
-                            ApplicationContext applicationContext) {
+                            ApplicationContext applicationContext, TeamService teamService) {
         this.passwordEncoder = passwordEncoder;
         this.personRepository = personRepository;
         this.institutionRepository = institutionRepository;
         this.applicationContext = applicationContext;
+        this.teamService = teamService;
     }
 
     /**
      * Marks all previous person with super admin flag as FALSE if username is different then adminUsername.
      */
     @Override
+    @Transactional
     public void initialize() throws DatabaseDataInitException {
         initializeAdmin();
         initializeAdminOrganization();
+        teamService.addPersonToInstitutionIfNotExist(createdAdmin, createdInstitution);
     }
 
     void initializeAdmin() throws DatabaseDataInitException {
@@ -120,31 +127,34 @@ public class AdminInitializer implements DatabaseInitializer {
         Institution institution = new Institution();
         institution.setName("Siamois Administration");
         institution.setDescription("Institution par défaut pour administrer Siamois");
-        institution.setManager(createdAdmin);
+        institution.getManagers().add(createdAdmin);
         institution.setIdentifier("SIAMOIS");
 
-        institutionRepository.save(institution);
+        createdInstitution = institutionRepository.save(institution);
 
         log.info("Created institution {}", institution.getIdentifier());
     }
 
-    private boolean processExistingInstitution() {
+    protected boolean processExistingInstitution() {
         Institution institution;
         Optional<Institution> optInstitution = institutionRepository.findInstitutionByIdentifier("SIAMOIS");
         if (optInstitution.isPresent()) {
             institution = optInstitution.get();
-            if (createdAdminIsNotOwnerOf(institution)) {
-                institution.setManager(createdAdmin);
+            if (createdAdminIsNotOwnerOf(institution.getManagers())) {
+                institution.getManagers().add(createdAdmin);
                 institutionRepository.save(institution);
             }
             log.debug("Institution already exists: {}", institution.getName());
+            createdInstitution = institution;
             return true;
         }
         return false;
     }
 
-    private boolean createdAdminIsNotOwnerOf(Institution institution) {
-        return !Objects.equals(institution.getManager().getId(), createdAdmin.getId());
+    private boolean createdAdminIsNotOwnerOf(Set<Person> managers) {
+        return managers
+                .stream()
+                .noneMatch(admin -> admin.getId().equals(createdAdmin.getId()));
     }
 
 }

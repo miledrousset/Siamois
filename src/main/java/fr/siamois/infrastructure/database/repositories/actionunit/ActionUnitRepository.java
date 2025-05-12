@@ -1,6 +1,6 @@
 package fr.siamois.infrastructure.database.repositories.actionunit;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
 import jakarta.validation.constraints.NotNull;

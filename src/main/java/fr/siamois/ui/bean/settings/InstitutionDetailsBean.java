@@ -1,6 +1,6 @@
 package fr.siamois.ui.bean.settings;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.settings.components.OptionElement;
 import fr.siamois.ui.bean.settings.team.TeamListBean;

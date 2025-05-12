@@ -1,6 +1,6 @@
 package fr.siamois.ui.bean.settings.team;
 
-import fr.siamois.domain.models.team.Team;
+import fr.siamois.domain.models.institution.Team;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;

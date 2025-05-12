@@ -1,6 +1,6 @@
 package fr.siamois.ui.bean;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.settings.InstitutionSettings;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -66,14 +66,14 @@ public class SessionSettingsBean implements Serializable {
         if (personSettings.getDefaultInstitution() != null) {
             selectedInstitution = personSettings.getDefaultInstitution();
         } else {
-            List<Institution> allInstitutions = findReferencedInstitutions();
-            selectedInstitution = allInstitutions.get(0);
+            Set<Institution> allInstitutions = findReferencedInstitutions();
+            selectedInstitution = allInstitutions.stream().findFirst().orElse(null);
         }
         assert selectedInstitution != null;
         institutionSettings = institutionService.createOrGetSettingsOf(selectedInstitution);
     }
 
-    private List<Institution> findReferencedInstitutions() {
+    private Set<Institution> findReferencedInstitutions() {
         Person person = getAuthenticatedUser();
         if (person.isSuperAdmin()) {
             return institutionService.findAll();

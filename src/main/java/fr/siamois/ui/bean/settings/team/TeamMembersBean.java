@@ -2,9 +2,9 @@ package fr.siamois.ui.bean.settings.team;
 
 import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
-import fr.siamois.domain.models.team.Team;
+import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.team.TeamPerson;
+import fr.siamois.domain.models.institution.TeamPerson;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.auth.PendingPersonService;
@@ -82,16 +82,15 @@ public class TeamMembersBean implements SettingsDatatableBean {
 
         if (existing.isPresent()) {
             Person person = existing.get();
-            teamService.addPersonToTeam(person, team, role);
+            teamService.addPersonToTeamIfNotAdded(person, team, role);
             displayInfoMessage(langBean, "groupManagement.join.success", person.getEmail(), team.getName());
         } else {
             PendingPerson pendingPerson = pendingPersonService.createOrGetPendingPerson(userDialogBean.getUserEmail());
-            boolean mailSent = pendingPersonService.pendingInstitutionInviteIsSent(pendingPerson,
+            boolean mailSent = pendingPersonService.sendPendingInstitutionInvite(pendingPerson,
                     team.getInstitution(),
                     sessionSettingsBean.getLanguageCode());
 
-            PendingInstitutionInvite pendingInstit = pendingPersonService.findByInstitutionAndPendingPerson(team.getInstitution(), pendingPerson)
-                    .orElseThrow(() -> new IllegalStateException("Pending institution invite should exist"));
+            PendingInstitutionInvite pendingInstit = pendingPersonService.createOrGetInstitutionInviteOf(pendingPerson, team.getInstitution());
             pendingPersonService.addTeamToInvitation(pendingInstit, team, role);
 
             if (mailSent) {
@@ -126,9 +125,9 @@ public class TeamMembersBean implements SettingsDatatableBean {
     public String roleOf(TeamPerson member) {
         if (userIsSuperAdmin(member.getPerson())) {
             if (member.getRoleInTeam() == null ){
-                return "Administrateur";
+                return "Admin";
             } else {
-                return String.format("%s (Administrateur)", labelBean.findLabelOf(member.getRoleInTeam()));
+                return String.format("%s (Admin)", labelBean.findLabelOf(member.getRoleInTeam()));
             }
         } else {
             return labelBean.findLabelOf(member.getRoleInTeam());

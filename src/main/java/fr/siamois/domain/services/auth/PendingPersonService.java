@@ -1,10 +1,10 @@
 package fr.siamois.domain.services.auth;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.auth.pending.PendingTeamInvite;
-import fr.siamois.domain.models.team.Team;
+import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.utils.DateUtils;

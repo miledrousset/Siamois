@@ -1,6 +1,6 @@
 package fr.siamois.infrastructure.database.repositories;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.document.Document;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;

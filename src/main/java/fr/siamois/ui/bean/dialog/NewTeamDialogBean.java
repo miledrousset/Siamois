@@ -1,9 +1,9 @@
 package fr.siamois.ui.bean.dialog;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
-import fr.siamois.domain.models.team.Team;
+import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.exceptions.TeamAlreadyExistException;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.person.TeamService;
@@ -72,7 +72,7 @@ public class NewTeamDialogBean implements Serializable {
         team.setDefaultTeam(false);
         try {
             Team saved = teamService.create(team);
-            teamService.addPersonToTeam(sessionSettingsBean.getAuthenticatedUser(), team, role);
+            teamService.addPersonToTeamIfNotAdded(sessionSettingsBean.getAuthenticatedUser(), team, role);
             MessageUtils.displayInfoMessage(langBean, "groupManagement.success", saved.getName());
             return saved;
         } catch (TeamAlreadyExistException e) {

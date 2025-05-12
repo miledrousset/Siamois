@@ -1,7 +1,5 @@
-package fr.siamois.domain.models.team;
+package fr.siamois.domain.models.institution;
 
-import fr.siamois.domain.models.Institution;
-import fr.siamois.domain.models.auth.Person;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.DefaultValue;
@@ -9,8 +7,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @Entity

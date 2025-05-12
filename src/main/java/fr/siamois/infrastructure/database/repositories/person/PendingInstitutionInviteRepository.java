@@ -1,6 +1,6 @@
 package fr.siamois.infrastructure.database.repositories.person;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
 import org.springframework.data.repository.CrudRepository;

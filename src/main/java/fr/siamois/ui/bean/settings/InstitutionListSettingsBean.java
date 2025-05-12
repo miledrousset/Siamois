@@ -1,6 +1,6 @@
 package fr.siamois.ui.bean.settings;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
@@ -24,10 +24,7 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Getter
@@ -44,7 +41,7 @@ public class InstitutionListSettingsBean implements Serializable {
     private final InstitutionDetailsBean institutionDetailsBean;
     private final LangBean langBean;
     private final RedirectBean redirectBean;
-    private List<Institution> institutions = null;
+    private Set<Institution> institutions = null;
     private List<Institution> filteredInstitutions = null;
     private List<SortMeta> sortBy;
     private Map<Long, Boolean> toggleSwitchState = new HashMap<>();

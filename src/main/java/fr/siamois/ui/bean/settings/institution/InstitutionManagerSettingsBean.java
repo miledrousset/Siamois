@@ -1,12 +1,12 @@
 package fr.siamois.ui.bean.settings.institution;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
-import fr.siamois.domain.models.settings.PersonRoleInstitution;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.PersonService;
+import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
@@ -19,6 +19,7 @@ import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 import static fr.siamois.domain.utils.MessageUtils.displayInfoMessage;
@@ -37,6 +38,7 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     private final LangBean langBean;
     private final transient PendingPersonService pendingPersonService;
     private final SessionSettingsBean sessionSettingsBean;
+    private final transient TeamService teamService;
     private Institution institution;
     private transient Map<Person, String> roles;
 
@@ -44,13 +46,14 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     private transient Set<Person> refMembers;
     private String searchInput;
 
-    public InstitutionManagerSettingsBean(InstitutionService institutionService, PersonService personService, UserDialogBean userDialogBean, LangBean langBean, PendingPersonService pendingPersonService, SessionSettingsBean sessionSettingsBean) {
+    public InstitutionManagerSettingsBean(InstitutionService institutionService, PersonService personService, UserDialogBean userDialogBean, LangBean langBean, PendingPersonService pendingPersonService, SessionSettingsBean sessionSettingsBean, TeamService teamService) {
         this.institutionService = institutionService;
         this.personService = personService;
         this.userDialogBean = userDialogBean;
         this.langBean = langBean;
         this.pendingPersonService = pendingPersonService;
         this.sessionSettingsBean = sessionSettingsBean;
+        this.teamService = teamService;
     }
 
     public void init(Institution institution) {
@@ -71,10 +74,6 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
         return institutionService.isManagerOf(institution, p);
     }
 
-    private static boolean userIsOwnerOf(Institution institution, Person p) {
-        return p.getId().equals(institution.getManager().getId());
-    }
-
     private static boolean userIsSuperAdmin(Person p) {
         return p.isSuperAdmin();
     }
@@ -82,8 +81,6 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     public String strRoleOf(Person person) {
         if (userIsSuperAdmin(person)) {
             return "Administrateur";
-        } else if (userIsOwnerOf(institution, person)) {
-            return "Propriétaire";
         } else if (userIsManagerOf(institution, person)) {
             return "Responsable";
         } else {
@@ -92,13 +89,11 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     }
 
     public String addDateOf(Person person) {
-        if (userIsOwnerOf(institution, person) || userIsSuperAdmin(person)) {
+        if (userIsSuperAdmin(person)) {
             return DateUtils.formatOffsetDateTime(institution.getCreationDate());
         }
-
-        PersonRoleInstitution result = institutionService.findPersonInInstitution(institution, person).orElseThrow(() ->
-                new IllegalStateException("User should exist"));
-        return DateUtils.formatOffsetDateTime(result.getAddedAt());
+        OffsetDateTime addDate = teamService.findEarliestAddDateInInstitution(institution, person);
+        return DateUtils.formatOffsetDateTime(addDate);
     }
 
     @Override
@@ -143,9 +138,12 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
         }
 
         PendingPerson pendingPerson = pendingPersonService.createOrGetPendingPerson(userDialogBean.getUserEmail());
-        if (pendingPersonService.pendingInstitutionInviteIsSent(pendingPerson, institution, true, sessionSettingsBean.getLanguageCode())) {
+        if (pendingPersonService.sendPendingInstitutionInvite(pendingPerson, institution, true, sessionSettingsBean.getLanguageCode())) {
             displayInfoMessage(langBean, "organisationSettings.action.sendInvite", pendingPerson.getEmail());
+        } else {
+            displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", pendingPerson.getEmail());
         }
+        PrimeFaces.current().executeScript("PF('newMemberDialog').exit();");
 
     }
 

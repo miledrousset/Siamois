@@ -1,6 +1,6 @@
 package fr.siamois.ui.bean.settings;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
@@ -35,6 +35,7 @@ import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 @Slf4j
 @Getter
@@ -52,7 +53,7 @@ public class ProfileSettingsBean implements Serializable {
     private final LangBean langBean;
     private final transient LangageChangeEventPublisher langageChangeEventPublisher;
 
-    private List<Institution> refInstitutions;
+    private Set<Institution> refInstitutions;
     private PersonSettings personSettings;
     private Concept refConfigConcept;
 

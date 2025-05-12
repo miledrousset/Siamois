@@ -1,4 +1,4 @@
-package fr.siamois.domain.models.team;
+package fr.siamois.domain.models.institution;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.vocabulary.Concept;

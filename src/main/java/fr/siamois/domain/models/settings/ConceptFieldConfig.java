@@ -1,6 +1,6 @@
 package fr.siamois.domain.models.settings;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
