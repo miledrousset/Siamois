@@ -4,6 +4,9 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
+import jakarta.faces.context.FacesContext;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
@@ -12,21 +15,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<SpatialUnit> {
 
-
     public List<SpatialUnit> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
-        this.first = first;
-        this.pageSize = pageSize;
 
-        int pageNumber = first / pageSize;
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, buildSort(sortBy));
+        this.first = first;
+        this.pageSizeState = pageSize;
+        this.sortBy = new HashSet<>(sortBy.values());
+        this.filterBy = filterBy;
+
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        int pageNumber = first / pageSizeState;
+        Pageable pageable = PageRequest.of(pageNumber, pageSizeState, buildSort(sortBy));
 
         String nameFilter = null;
         Long[] categoryIds = null;

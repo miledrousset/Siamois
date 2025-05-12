@@ -48,10 +48,11 @@ public class SpatialUnitListPanel extends AbstractPanel {
     private String spatialUnitListErrorMessage;
     private List<Concept> selectedCategories;
     private List<Person> selectedAuthors;
-    private LazyDataModel<SpatialUnit> lazyDataModel ;
+    private SpatialUnitLazyDataModel lazyDataModel ;
     private long totalNumberOfUnits ;
 
     private Set<SortMeta> sortBy = new HashSet<>();
+    private Map<String, SortMeta> sortBy2 = new HashMap<>();
 
 
     public void onToggle(ColumnToggleEvent e) {
@@ -107,6 +108,10 @@ public class SpatialUnitListPanel extends AbstractPanel {
             sortMeta.setOrder(SortOrder.ASCENDING);
 
             sortBy.add(SortMeta.builder().field("category.label").order(SortOrder.ASCENDING).build());
+            sortBy.add(SortMeta.builder().field("author").order(SortOrder.ASCENDING).build());
+            lazyDataModel.setSortBy(sortBy);
+            lazyDataModel.setFirst(5);
+            lazyDataModel.setPageSizeState(5);
 
 
         } catch (RuntimeException e) {
