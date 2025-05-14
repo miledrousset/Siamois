@@ -129,9 +129,7 @@ class TeamServiceTest {
         when(teamRepository.findTeamByNameInInstitution(institution.getId(), team.getName()))
                 .thenReturn(Optional.of(team));
 
-        assertThrows(TeamAlreadyExistException.class, () -> {
-            teamService.create(team);
-        });
+        assertThrows(TeamAlreadyExistException.class, () -> teamService.create(team));
     }
 
     @Test
@@ -157,9 +155,7 @@ class TeamServiceTest {
         when(teamRepository.findTeamByNameInInstitution(institution.getId(), team.getName()))
                 .thenReturn(Optional.of(existingTeam));
 
-        assertThrows(TeamAlreadyExistException.class, () -> {
-            teamService.update(team);
-        });
+        assertThrows(TeamAlreadyExistException.class, () -> teamService.update(team));
 
     }
 
