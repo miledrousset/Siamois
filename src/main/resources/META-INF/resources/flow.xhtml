@@ -22,6 +22,16 @@
                 //     setTimeout(() => el.classList.remove("panel-highlight"), 1500);
                 // }
             }
+
+            function handleScrollToTop() {
+
+                const container = document.getElementById("flow");
+                console.log(container)
+                if (container) {
+                    container.firstElementChild.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+            }
         </script>
 
     </ui:define>
