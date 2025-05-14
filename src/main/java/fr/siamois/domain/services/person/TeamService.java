@@ -42,8 +42,8 @@ public class TeamService {
         addPersonToTeamIfNotAdded(person, team, null);
     }
 
-    public List<Team> findTeamsOfInstitution(Person currentUser, Institution institution) {
-        List<Team> teams = teamRepository.findTeamsByInstitution(institution);
+    public Set<Team> findTeamsOfInstitution(Person currentUser, Institution institution) {
+        Set<Team> teams = new HashSet<>(teamRepository.findTeamsByInstitution(institution));
         boolean defaultIsPresent = teams.stream().anyMatch(Team::isDefaultTeam);
         if (!defaultIsPresent) {
             Team savedDefaultTeam = createDefaultTeamOf(institution);

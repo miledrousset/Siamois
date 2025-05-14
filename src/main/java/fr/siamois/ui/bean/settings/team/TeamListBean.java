@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -31,7 +32,7 @@ public class TeamListBean implements SettingsDatatableBean {
     private final TeamDetailsBean teamDetailsBean;
     private Institution institution;
 
-    private List<Team> teams;
+    private Set<Team> teams;
     private List<Team> filteredTeams;
 
     private String searchInput;
