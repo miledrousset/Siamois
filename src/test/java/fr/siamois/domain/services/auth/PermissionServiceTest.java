@@ -129,6 +129,8 @@ class PermissionServiceTest {
 
         when(permissionRepository.findPermissionsOfRecordingUnitById(recordingUnit.getId()))
                 .thenReturn(List.of(permission));
+        when(permission.getTeam()).thenReturn(team);
+        when(permission.hasPermission(EntityPermission.PermissionType.READ)).thenReturn(Boolean.TRUE);
 
         boolean result = permissionService.hasPermission(user, recordingUnit, EntityPermission.PermissionType.READ);
 
