@@ -6,12 +6,13 @@ import fr.siamois.domain.services.vocabulary.LabelService;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
+import java.io.Serializable;
 
 @Component
 @SessionScoped
-public class LabelBean {
+public class LabelBean implements Serializable {
 
-    private final LabelService labelService;
+    private final transient LabelService labelService;
     private final SessionSettingsBean sessionSettingsBean;
 
     public LabelBean(LabelService labelService, SessionSettingsBean sessionSettingsBean) {

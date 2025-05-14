@@ -2,9 +2,7 @@ package fr.siamois.ui.bean.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.siamois.domain.models.Team;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.services.person.PersonService;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.convert.Converter;

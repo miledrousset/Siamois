@@ -23,12 +23,12 @@
             </form:csrfform>
             <settings:datatable
                     title="#{langBean.msg('organisationSettings.managers.title', institutionManagerSettingsBean.institution.name)}"
-                    filterAction="#{institutionManagerSettingsBean.filterValues()}"
+                    filterAction="#{institutionManagerSettingsBean.filter()}"
                     formId="institutionManagerForm"
-                    addAction="#{institutionManagerSettingsBean.createManager()}"
-                    searchInputTextValue="#{institutionManagerSettingsBean.textSearch}"
+                    addAction="#{institutionManagerSettingsBean.add()}"
+                    searchInputTextValue="#{institutionManagerSettingsBean.searchInput}"
                     description="#{langBean.msg('organisationSettings.managers.description')}"
-                    isOrganisationManager="true"
+                    renderCreateButton="true"
                     createButtonLabel="#{langBean.msg('organisationSettings.managers.add')}"
             >
                 <p:dataTable
@@ -43,7 +43,7 @@
                     <p:column headerText="#{langBean.msg('common.label.user')}">
                         <div style="display: flex; flex-direction: column">
                             <strong>#{member.displayName()}</strong>
-                            <p>#{member.mail}</p>
+                            <p>#{member.email}</p>
                         </div>
                     </p:column>
                     <p:column headerText="#{langBean.msg('common.label.role')}">
@@ -53,7 +53,7 @@
                         <p:outputLabel value="#{institutionManagerSettingsBean.addDateOf(member)}"/>
                     </p:column>
                 </p:dataTable>
-                <ui:include src="/dialog/institution/newManager.xhtml"/>
+                <ui:include src="/dialog/institution/newMember.xhtml"/>
             </settings:datatable>
         </main>
     </ui:define>

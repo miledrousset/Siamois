@@ -1,11 +1,12 @@
 package fr.siamois.ui.bean.dialog.institution;
 
-import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.services.InstitutionService;
-import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.ui.bean.ActionFromBean;
+import fr.siamois.ui.bean.SessionSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +23,9 @@ import java.io.Serializable;
 @Setter
 public class InstitutionDialogBean implements Serializable {
 
-    private String title = "Créer une organisation";
-    private String buttonLabel = "Créer l'organisation";
+    private final transient TeamService teamService;
+    private String title;
+    private String buttonLabel;
 
     private final transient InstitutionService institutionService;
     private final SessionSettingsBean sessionSettingsBean;
@@ -32,9 +34,10 @@ public class InstitutionDialogBean implements Serializable {
     private String identifier;
     private String description;
 
-    public InstitutionDialogBean(InstitutionService institutionService, SessionSettingsBean sessionSettingsBean) {
+    public InstitutionDialogBean(InstitutionService institutionService, SessionSettingsBean sessionSettingsBean, TeamService teamService) {
         this.institutionService = institutionService;
         this.sessionSettingsBean = sessionSettingsBean;
+        this.teamService = teamService;
     }
 
     public void reset() {
@@ -52,9 +55,11 @@ public class InstitutionDialogBean implements Serializable {
         institution.setName(institutionName);
         institution.setIdentifier(identifier);
         institution.setId(-1L);
-        institution.setManager(sessionSettingsBean.getAuthenticatedUser());
+        institution.getManagers().add(sessionSettingsBean.getAuthenticatedUser());
         institution.setDescription(description);
-        return institutionService.createInstitution(institution);
+        Institution created = institutionService.createInstitution(institution);
+        teamService.addPersonToInstitutionIfNotExist(sessionSettingsBean.getAuthenticatedUser(), created);
+        return created;
     }
 
     public void save() {

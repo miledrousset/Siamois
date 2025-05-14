@@ -1,12 +1,13 @@
 <ui:fragment xmlns="http://www.w3.org/1999/xhtml"
              xmlns:ui="http://java.sun.com/jsf/facelets"
              xmlns:p="http://primefaces.org/ui"
-
+             xmlns:h="http://java.sun.com/jsf/html"
+             xmlns:input="http://java.sun.com/jsf/composite/pages/shared/input"
 >
 
     <p:dialog
-            widgetVar="newManagerDialog"
-            id="newManagerDialog"
+            widgetVar="newMemberDialog"
+            id="newMemberDialog"
             width="40vw"
             showEffect="fade"
             appendToBody="true"
@@ -22,11 +23,19 @@
                 <article class="form-group row">
                     <p:inputText styleClass="col-lg-4" value="#{userDialogBean.userEmail}" placeholder="xyz@domain.net"/>
                 </article>
+                <h:panelGroup rendered="#{userDialogBean.shouldRenderRoleField}">
+                    <article class="form-group row">
+                        <h4 class="col-lg-4" >#{langBean.msg("common.label.role")}</h4>
+                    </article>
+                    <article class="form-group row">
+                        <input:conceptAutocomplete completeMethod="#{userDialogBean.autocompleteConcept}" editConceptUrl="#{userDialogBean.parentConceptUrl()}" selectedConcept="#{userDialogBean.role}"/>
+                    </article>
+                </h:panelGroup>
             </div>
             <hr/>
             <div class="dialog-buttons">
                 <p:commandButton value="#{langBean.msg('common.action.cancel')}" action="#{userDialogBean.exit()}" update="@form"/>
-                <p:commandButton value="#{userDialogBean.buttonLabel}" action="#{userDialogBean.save()}" update="@form"/>
+                <p:commandButton value="#{userDialogBean.buttonLabel}" action="#{userDialogBean.actionFromBean.apply()}" update="@form"/>
             </div>
         </div>
     </p:dialog>

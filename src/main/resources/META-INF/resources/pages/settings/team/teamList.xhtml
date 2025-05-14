@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:comp="http://java.sun.com/jsf/composite/pages/settings/components"
+                xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form"
+                xmlns:p="http://primefaces.org/ui">
+    >
+
+    <ui:define name="head">
+        <link rel="stylesheet" href="#{redirectBean.redirectUrlToResource('settings.css', 'css')}"/>
+    </ui:define>
+
+    <ui:define name="content">
+        <form:csrfform formId="breadCrumbForm" styleClass="breadCrumpForm">
+            <p:breadCrumb homeDisplay="false">
+                <p:menuitem value="Organisations" action="#{institutionDetailsBean.goToInstitutionList()}"/>
+                <p:menuitem value="#{teamListBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
+                <p:menuitem value="#{langBean.msg('groupManagement.title')}"/>
+            </p:breadCrumb>
+        </form:csrfform>
+        <main>
+            <comp:datatable
+                    formId="groupForm"
+                    searchInputTextValue="#{teamListBean.searchInput}"
+                    addAction="#{teamListBean.add()}"
+                    renderCreateButton="true"
+                    createButtonLabel="#{langBean.msg('groupManagement.add')}"
+                    filterAction="#{teamListBean.filter()}"
+                    title="#{langBean.msg('organisationSettings.titles.teams')} - #{teamListBean.institution.name}"
+                    description="#{langBean.msg('groupManagement.description')}"
+            >
+                <p:dataTable
+                        id="groupDatatable"
+                        value="#{teamListBean.filteredTeams}"
+                        var="team"
+                        sortMode="single"
+                        widgetVar="groupDatatable"
+                        rowKey="#{team.id}"
+                >
+                    <p:autoUpdate/>
+                    <p:column headerText="#{langBean.msg('groupManagement.header.name')}">
+                        <p:outputLabel value="#{teamListBean.nameOf(team)}"/>
+                    </p:column>
+
+                    <p:column headerText="#{langBean.msg('groupManagement.header.number')}">
+                        <p:outputLabel value="#{teamListBean.memberCount(team)}"/>
+                    </p:column>
+
+                    <p:column headerText="#{langBean.msg('groupManagement.header.addDate')}">
+                        <p:outputLabel value="#{teamListBean.formatCreationDate(team)}"/>
+                    </p:column>
+
+                    <p:column>
+                        <p:commandButton
+                                icon="bi bi-three-dots"
+                                action="#{teamListBean.redirectToTeam(team)}"
+                        />
+                    </p:column>
+                </p:dataTable>
+            </comp:datatable>
+            <form:csrfform formId="newTeamForm">
+                <ui:include src="/dialog/team/newTeamDialog.xhtml"/>
+            </form:csrfform>
+        </main>
+    </ui:define>
+
+</ui:composition>

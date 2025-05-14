@@ -1,16 +1,16 @@
-package fr.siamois.domain.models.auth;
+package fr.siamois.domain.models.auth.pending;
 
-import fr.siamois.domain.models.Institution;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "pending_person")
 @Data
-public class PendingPerson {
+public class PendingPerson implements Serializable {
 
     @Id
     @Column(name = "pending_person_id")
@@ -20,10 +20,6 @@ public class PendingPerson {
     @Email
     @Column(name = "email", nullable = false, unique = true)
     private String email;
-
-    @ManyToOne
-    @JoinColumn(name = "fk_institution_id", nullable = false)
-    private Institution institution;
 
     @Column(name = "register_token")
     private String registerToken;

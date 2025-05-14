@@ -1,20 +1,23 @@
 package fr.siamois.domain.services;
 
-import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
+import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.domain.models.institution.TeamPerson;
 import fr.siamois.domain.models.settings.InstitutionSettings;
-import fr.siamois.domain.models.settings.PersonRoleInstitution;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
-import fr.siamois.infrastructure.database.repositories.person.PersonRoleInstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -23,27 +26,30 @@ public class InstitutionService {
     private final InstitutionRepository institutionRepository;
     private final InstitutionSettingsRepository institutionSettingsRepository;
     private final PersonRepository personRepository;
-    private final PersonRoleInstitutionRepository personRoleInstitutionRepository;
+    private final TeamService teamService;
 
-    public InstitutionService(InstitutionRepository institutionRepository, PersonRepository personRepository, InstitutionSettingsRepository institutionSettingsRepository, PersonRoleInstitutionRepository personRoleInstitutionRepository) {
+    public InstitutionService(InstitutionRepository institutionRepository,
+                              PersonRepository personRepository,
+                              InstitutionSettingsRepository institutionSettingsRepository,
+                              TeamService teamService) {
         this.institutionRepository = institutionRepository;
         this.personRepository = personRepository;
         this.institutionSettingsRepository = institutionSettingsRepository;
-        this.personRoleInstitutionRepository = personRoleInstitutionRepository;
+        this.teamService = teamService;
     }
 
-    public List<Institution> findAll() {
-        List<Institution> result = new ArrayList<>();
+    public Set<Institution> findAll() {
+        Set<Institution> result = new HashSet<>();
         for (Institution institution : institutionRepository.findAll())
             result.add(institution);
         return result;
     }
 
-    public List<Institution> findInstitutionsOfPerson(Person person) {
+    public Set<Institution> findInstitutionsOfPerson(Person person) {
         Set<Institution> institutions = new HashSet<>();
         institutions.addAll(institutionRepository.findAllOfPerson(person.getId()));
-        institutions.addAll(institutionRepository.findAllManagedBy(person.getId()));
-        return institutions.stream().toList();
+        institutions.addAll(institutionRepository.findAllManagedByPerson(person.getId()));
+        return institutions;
     }
 
     public List<Person> findAllManagers() {
@@ -61,15 +67,10 @@ public class InstitutionService {
         }
     }
 
-    public List<Person> findMembersOf(Institution institution) {
-        List<Person> members = personRepository.findMembersOfInstitution(institution.getId());
-        boolean managerIsPresent = members.stream()
-                .anyMatch(member -> Objects.equals(member.getId(), institution.getManager().getId()));
-
-        if (!managerIsPresent) {
-            members.add(institution.getManager());
-        }
-
+    public Set<Person> findMembersOf(Institution institution) {
+        List<TeamPerson> teamMembers = teamService.findMembersOf(institution);
+        Set<Person> members = new HashSet<>(teamMembers.stream().map(TeamPerson::getPerson).toList());
+        members.addAll(institution.getManagers());
         return members;
     }
 
@@ -95,37 +96,13 @@ public class InstitutionService {
     }
 
     public boolean addToManagers(Institution institution, Person person) {
-        Optional<PersonRoleInstitution> opt = personRoleInstitutionRepository.findByInstitutionAndPerson(institution, person);
-        if (opt.isEmpty()) {
-            if (institution.getManager().equals(person)) {
-                return false;
-            }
-            PersonRoleInstitution personRoleInstitution = new PersonRoleInstitution();
-            personRoleInstitution.setId(new PersonRoleInstitution.PersonRoleInstitutionId());
-            personRoleInstitution.getId().setFkInstitutionId(institution.getId());
-            personRoleInstitution.getId().setFkPersonId(person.getId());
-            personRoleInstitution.setPerson(person);
-            personRoleInstitution.setInstitution(institution);
-            personRoleInstitution.setRoleConcept(null);
-            personRoleInstitution.setIsManager(true);
-            personRoleInstitutionRepository.save(personRoleInstitution);
-            return true;
-        } else {
-            PersonRoleInstitution personRoleInstitution = opt.get();
-            if (Boolean.FALSE.equals(personRoleInstitution.getIsManager())) {
-                personRoleInstitution.setIsManager(true);
-                personRoleInstitutionRepository.save(personRoleInstitution);
-                return true;
-            } else {
-                return false;
-            }
-        }
+        boolean result = institution.getManagers().add(person);
+        institutionRepository.save(institution);
+        return result;
     }
 
     public boolean isManagerOf(Institution institution, Person person) {
-        if (Objects.equals(institution.getManager(), person))
-            return true;
-        return personRoleInstitutionRepository.personExistInInstitution(institution.getId(), person.getId(), true);
+        return institution.getManagers().contains(person);
     }
 
     public Institution update(Institution institution) {
@@ -134,10 +111,6 @@ public class InstitutionService {
 
     public long countMembersInInstitution(Institution institution) {
         return findMembersOf(institution).size();
-    }
-
-    public Optional<PersonRoleInstitution> findPersonInInstitution(Institution institution, Person person) {
-        return personRoleInstitutionRepository.findByInstitutionAndPerson(institution, person);
     }
 
 }

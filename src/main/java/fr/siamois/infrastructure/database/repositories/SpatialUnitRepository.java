@@ -1,7 +1,7 @@
 package fr.siamois.infrastructure.database.repositories;
 
-import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.ark.Ark;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;

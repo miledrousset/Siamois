@@ -30,7 +30,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSuccessHandler loginSuccessHandler) throws Exception {
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/", "/index.xhtml").permitAll()
-                .requestMatchers(LOGIN, "/pages/login/login.xhtml").permitAll()
+                .requestMatchers(LOGIN, "/pages/login/login.xhtml", "/pages/login/register.xhtml").permitAll()
                 .requestMatchers("/static/**").permitAll()
                 .requestMatchers("/robots.txt").permitAll()
                 .requestMatchers("/jakarta.faces.resource/**").permitAll()

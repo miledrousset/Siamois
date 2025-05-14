@@ -1,8 +1,9 @@
 package fr.siamois.infrastructure.database.initializer;
 
-import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
+import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,9 +14,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -34,12 +37,19 @@ class AdminInitializerTest {
     @Mock
     private ApplicationContext applicationContext;
 
+    @Mock
+    private TeamService teamService;
+
     private AdminInitializer adminInitializer;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        adminInitializer = new AdminInitializer(passwordEncoder, personRepository, institutionRepository, applicationContext);
+        adminInitializer = new AdminInitializer(passwordEncoder,
+                personRepository,
+                institutionRepository,
+                applicationContext,
+                teamService);
         adminInitializer.setAdminUsername("admin");
         adminInitializer.setAdminPassword("admin");
         adminInitializer.setAdminEmail("admin@example.com");
@@ -94,7 +104,7 @@ class AdminInitializerTest {
         oldAdmin.setId(12L);
 
         Institution existingInstitution = new Institution();
-        existingInstitution.setManager(oldAdmin);
+        existingInstitution.getManagers().add(oldAdmin);
         when(institutionRepository.findInstitutionByIdentifier("SIAMOIS")).thenReturn(Optional.of(existingInstitution));
 
         adminInitializer.setCreatedAdmin(oldAdmin);
@@ -104,20 +114,24 @@ class AdminInitializerTest {
     }
 
     @Test
-    void initializeAdminOrganization_shouldUpdateManagerWhenInstitutionExistsWithDifferentManager() {
-        Person oldAdmin = new Person();
-        oldAdmin.setId(12L);
+    void initializeAdminOrganization_shouldAddSuperAdminAsManager_whenCreatedAdminIsNotManagerAndInitializationExist() {
+        Person otherAdmin = new Person();
+        otherAdmin.setId(12L);
+
+        Person createdAdmin = new Person();
+        createdAdmin.setId(13L);
 
         Institution existingInstitution = new Institution();
-        existingInstitution.setManager(oldAdmin);
+        existingInstitution.setId(14L);
+        existingInstitution.setManagers(new HashSet<>());
+        existingInstitution.getManagers().add(otherAdmin);
+
         when(institutionRepository.findInstitutionByIdentifier("SIAMOIS")).thenReturn(Optional.of(existingInstitution));
 
-        Person newAdmin = new Person();
-        newAdmin.setId(5L);
-        adminInitializer.setCreatedAdmin(newAdmin);
+        adminInitializer.setCreatedAdmin(createdAdmin);
         adminInitializer.initializeAdminOrganization();
 
-        assertEquals(newAdmin, existingInstitution.getManager());
-        verify(institutionRepository, times(1)).save(existingInstitution);
+        assertThat(existingInstitution.getManagers()).contains(createdAdmin);
+        verify(institutionRepository, times(1)).save(any(Institution.class));
     }
 }

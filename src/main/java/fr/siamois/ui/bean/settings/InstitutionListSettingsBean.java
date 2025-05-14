@@ -1,18 +1,18 @@
 package fr.siamois.ui.bean.settings;
 
-import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
+import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.institution.InstitutionDialogBean;
-import jakarta.faces.application.FacesMessage;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +24,7 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Getter
@@ -43,7 +40,8 @@ public class InstitutionListSettingsBean implements Serializable {
     private final transient RecordingUnitService recordingUnitService;
     private final InstitutionDetailsBean institutionDetailsBean;
     private final LangBean langBean;
-    private List<Institution> institutions = null;
+    private final RedirectBean redirectBean;
+    private Set<Institution> institutions = null;
     private List<Institution> filteredInstitutions = null;
     private List<SortMeta> sortBy;
     private Map<Long, Boolean> toggleSwitchState = new HashMap<>();
@@ -53,7 +51,7 @@ public class InstitutionListSettingsBean implements Serializable {
     public InstitutionListSettingsBean(InstitutionService institutionService,
                                        SessionSettingsBean sessionSettingsBean,
                                        InstitutionChangeEventPublisher institutionChangeEventPublisher,
-                                       InstitutionDialogBean institutionDialogBean, RecordingUnitService recordingUnitService, InstitutionDetailsBean institutionDetailsBean, LangBean langBean) {
+                                       InstitutionDialogBean institutionDialogBean, RecordingUnitService recordingUnitService, InstitutionDetailsBean institutionDetailsBean, LangBean langBean, RedirectBean redirectBean) {
         this.institutionService = institutionService;
         this.sessionSettingsBean = sessionSettingsBean;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
@@ -61,10 +59,10 @@ public class InstitutionListSettingsBean implements Serializable {
         this.recordingUnitService = recordingUnitService;
         this.institutionDetailsBean = institutionDetailsBean;
         this.langBean = langBean;
+        this.redirectBean = redirectBean;
     }
 
     public void init() {
-
             UserInfo info = sessionSettingsBean.getUserInfo();
             institutions = institutionService.findInstitutionsOfPerson(info.getUser());
             onFilterType();
@@ -75,7 +73,6 @@ public class InstitutionListSettingsBean implements Serializable {
                     .order(SortOrder.ASCENDING)
                     .priority(1)
                     .build());
-
     }
 
     public String displayDate(OffsetDateTime date) {
@@ -112,6 +109,11 @@ public class InstitutionListSettingsBean implements Serializable {
     }
 
     public boolean hasMoreThenOneInstitution() {
+        if (institutions == null) {
+            UserInfo info = sessionSettingsBean.getUserInfo();
+            institutions = institutionService.findInstitutionsOfPerson(info.getUser());
+            return false;
+        }
         return institutions.size() > 1;
     }
 
@@ -130,14 +132,14 @@ public class InstitutionListSettingsBean implements Serializable {
 
         try {
             institution = institutionDialogBean.createInstitution();
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_INFO, "L'institution %s a bien été crée", institution.getName());
+            MessageUtils.displayInfoMessage(langBean, "common.entity.institution.created", institution.getName());
         } catch (InstitutionAlreadyExistException e) {
             log.error("Institution already exists");
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Une institution avec ce nom ou cet identifiant existe déjà.");
+            MessageUtils.displayErrorMessage(langBean, "common.entity.institution.error.alreadyExist");
             return;
         } catch (FailedInstitutionSaveException e) {
             log.error("Failed to create institution", e);
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Erreur interne lors de la création de l'institution.");
+            MessageUtils.displayErrorMessage(langBean, "common.error.internal");
             return;
         }
 

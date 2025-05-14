@@ -1,6 +1,6 @@
 package fr.siamois.domain.services.specimen;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.specimen.SpecimenStudy;
 import fr.siamois.infrastructure.database.repositories.specimen.SpecimenStudyRepository;
 import org.junit.jupiter.api.BeforeEach;

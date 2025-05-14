@@ -14,9 +14,9 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.domain.utils.MessageUtils;
+import fr.siamois.ui.bean.ActionFromBean;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.bean.ActionFromBean;
 import jakarta.faces.application.FacesMessage;
 import jakarta.servlet.ServletContext;
 import lombok.Getter;
@@ -92,7 +92,7 @@ public class DocumentCreationBean implements Serializable {
             parentType = fieldConfigurationService.findConfigurationForFieldCode(info, Document.FORMAT_FIELD_CODE);
         } catch (NoConfigForFieldException e) {
             log.error("No configuration found", e);
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "No configuration found");
+            MessageUtils.displayNoThesaurusConfiguredMessage(langBean);
         }
     }
 
@@ -124,7 +124,7 @@ public class DocumentCreationBean implements Serializable {
 
     public Document createDocument() {
         if (docFile == null) {
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "No file set");
+            MessageUtils.displayErrorMessage(langBean, "documents.nofileset");
             return null;
         }
 
@@ -142,13 +142,13 @@ public class DocumentCreationBean implements Serializable {
             return document;
         } catch (InvalidFileTypeException e) {
             log.error("Invalid file type {}", e.getMessage());
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "This type of file is not supported");
+            MessageUtils.displayErrorMessage(langBean, "documents.unsupportedtype");
         } catch (InvalidFileSizeException e) {
             log.error("Invalid file size {}", e.getMessage());
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "The file is too large");
+            MessageUtils.displayErrorMessage(langBean, "documents.toolarge");
         } catch (IOException e) {
             log.error("IO Exception {}", e.getMessage());
-            MessageUtils.displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, "Internal error");
+            MessageUtils.displayInternalError(langBean);
         }
 
         return null;

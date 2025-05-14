@@ -1,6 +1,6 @@
 package fr.siamois.ui.bean.settings.institution;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.domain.utils.MessageUtils;

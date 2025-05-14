@@ -16,7 +16,7 @@ public class AuthenticatedUserUtils {
     private AuthenticatedUserUtils() {}
 
     /**
-     * Retrieve the authenticated Person from the SecurityContextHolder
+     * Retrieve the authenticated Person from the {@link SecurityContextHolder}
      * @return Optional contains Person if user is authenticated and empty if no user is authenticated
      */
     public static Optional<Person> getAuthenticatedUser() {

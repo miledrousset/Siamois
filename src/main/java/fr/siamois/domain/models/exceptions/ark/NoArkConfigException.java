@@ -1,6 +1,6 @@
 package fr.siamois.domain.models.exceptions.ark;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 
 public class NoArkConfigException extends RuntimeException {
 

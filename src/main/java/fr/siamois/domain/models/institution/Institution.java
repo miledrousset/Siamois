@@ -1,4 +1,4 @@
-package fr.siamois.domain.models;
+package fr.siamois.domain.models.institution;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,6 +12,8 @@ import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -30,11 +32,6 @@ public class Institution implements Serializable {
     private String description;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "fk_manager_id", nullable = false)
-    private Person manager;
-
-    @NotNull
     @Column(name = "identifier", nullable = false, length = Integer.MAX_VALUE)
     private String identifier;
 
@@ -42,6 +39,12 @@ public class Institution implements Serializable {
     @Column(name = "creation_date", nullable = false)
     @JsonIgnore
     private OffsetDateTime creationDate = OffsetDateTime.now();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "institution_manager",
+            joinColumns = @JoinColumn(name = "fk_institution_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_person_id"))
+    private Set<Person> managers = new HashSet<>();
 
     @JsonProperty("creationDate")
     private String creationDateString() {

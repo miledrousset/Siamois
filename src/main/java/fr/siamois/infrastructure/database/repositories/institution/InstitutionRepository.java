@@ -1,6 +1,6 @@
 package fr.siamois.infrastructure.database.repositories.institution;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -14,16 +14,19 @@ public interface InstitutionRepository extends CrudRepository<Institution, Long>
 
     @Query(
             nativeQuery = true,
-            value = "SELECT i.* FROM institution i WHERE i.fk_manager_id = :personId"
+            value = "SELECT DISTINCT i.* FROM institution i " +
+                    "JOIN team t ON t.fk_institution_id = i.institution_id " +
+                    "JOIN team_person tp ON tp.fk_team_id = t.team_id " +
+                    "WHERE tp.fk_person_id = :personId"
     )
-    List<Institution> findAllManagedBy(Long personId);
+    List<Institution> findAllOfPerson(Long personId);
 
     @Query(
             nativeQuery = true,
-            value = "SELECT i.* FROM institution i " +
-                    "JOIN person_role_institution pri ON i.institution_id = pri.fk_institution_id " +
-                    "WHERE pri.fk_person_id = :personId"
+            value = "SELECT DISTINCT i.* FROM institution i " +
+                    "JOIN institution_manager im ON im.fk_institution_id = i.institution_id " +
+                    "WHERE im.fk_person_id = :personId"
     )
-    List<Institution> findAllOfPerson(Long personId);
+    List<Institution> findAllManagedByPerson(Long personId);
 
 }

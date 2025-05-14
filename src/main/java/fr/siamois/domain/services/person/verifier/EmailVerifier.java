@@ -15,7 +15,7 @@ public class EmailVerifier implements PersonDataVerifier {
 
     @Override
     public void verify(Person person) throws InvalidEmailException {
-        String email = person.getMail();
+        String email = person.getEmail();
 
         emailUsesValidChars(email);
         checkMailLength(email);

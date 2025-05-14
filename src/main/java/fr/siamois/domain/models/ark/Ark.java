@@ -1,6 +1,6 @@
 package fr.siamois.domain.models.ark;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import jakarta.persistence.*;
 import lombok.Data;
 

@@ -60,7 +60,7 @@ public class Person implements UserDetails {
 
     @NotNull
     @Column(name = "mail", nullable = false, length = MAIL_MAX_LENGTH, unique = true)
-    private String mail;
+    private String email;
 
     @ColumnDefault("false")
     @Column(name = "pass_to_modify")
@@ -162,7 +162,7 @@ public class Person implements UserDetails {
                 && Objects.equals(getLastname(), person.getLastname())
                 && Objects.equals(getUsername(), person.getUsername())
                 && Objects.equals(getPassword(), person.getPassword())
-                && Objects.equals(getMail(), person.getMail())
+                && Objects.equals(getEmail(), person.getEmail())
                 && Objects.equals(passToModify, person.passToModify)
                 && Objects.equals(alertMail, person.alertMail)
                 && Objects.equals(isSuperAdmin, person.isSuperAdmin)
@@ -177,7 +177,7 @@ public class Person implements UserDetails {
     public int hashCode() {
         return Objects.hash(getId(), getName(),
                 getLastname(), getUsername(),
-                getPassword(), getMail(),
+                getPassword(), getEmail(),
                 passToModify,  alertMail,
                 isSuperAdmin, getApiKey(),
                 keyNeverExpire, getKeyExpiresAt(),
