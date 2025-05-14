@@ -170,4 +170,88 @@ class PendingPersonServiceTest {
         assertTrue(result.isPresent());
         assertEquals(pendingPerson, result.get());
     }
+
+    @Test
+    void testCreateOrGetInstitutionInviteOf_ExistingInvite() {
+        PendingInstitutionInvite existingInvite = new PendingInstitutionInvite();
+        when(pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson))
+                .thenReturn(Optional.of(existingInvite));
+
+        PendingInstitutionInvite result = pendingPersonService.createOrGetInstitutionInviteOf(pendingPerson, institution, true);
+
+        assertEquals(existingInvite, result);
+        verify(pendingInstitutionInviteRepository, never()).save(any());
+    }
+
+    @Test
+    void testCreateOrGetInstitutionInviteOf_NewInvite() {
+        when(pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson))
+                .thenReturn(Optional.empty());
+        when(pendingInstitutionInviteRepository.save(any(PendingInstitutionInvite.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        PendingInstitutionInvite result = pendingPersonService.createOrGetInstitutionInviteOf(pendingPerson, institution, true);
+
+        assertNotNull(result);
+        assertEquals(pendingPerson, result.getPendingPerson());
+        assertEquals(institution, result.getInstitution());
+        assertTrue(result.isManager());
+        verify(pendingInstitutionInviteRepository).save(any(PendingInstitutionInvite.class));
+    }
+
+    @Test
+    void testCreateOrGetInstitutionInviteOf_DefaultManagerFalse() {
+        when(pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson))
+                .thenReturn(Optional.empty());
+        when(pendingInstitutionInviteRepository.save(any(PendingInstitutionInvite.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        PendingInstitutionInvite result = pendingPersonService.createOrGetInstitutionInviteOf(pendingPerson, institution);
+
+        assertNotNull(result);
+        assertFalse(result.isManager());
+        verify(pendingInstitutionInviteRepository).save(any(PendingInstitutionInvite.class));
+    }
+
+    @Test
+    void testFindInstitutionsByPendingPerson() {
+        Set<PendingInstitutionInvite> invites = Set.of(new PendingInstitutionInvite());
+        when(pendingInstitutionInviteRepository.findAllByPendingPerson(pendingPerson)).thenReturn(invites);
+
+        Set<PendingInstitutionInvite> result = pendingPersonService.findInstitutionsByPendingPerson(pendingPerson);
+
+        assertEquals(invites, result);
+        verify(pendingInstitutionInviteRepository).findAllByPendingPerson(pendingPerson);
+    }
+
+    @Test
+    void testFindTeamsByPendingInstitutionInvite() {
+        PendingInstitutionInvite invite = new PendingInstitutionInvite();
+        Set<PendingTeamInvite> teamInvites = Set.of(new PendingTeamInvite());
+        when(pendingTeamInviteRepository.findByPendingInstitutionInvite(invite)).thenReturn(teamInvites);
+
+        Set<PendingTeamInvite> result = pendingPersonService.findTeamsByPendingInstitutionInvite(invite);
+
+        assertEquals(teamInvites, result);
+        verify(pendingTeamInviteRepository).findByPendingInstitutionInvite(invite);
+    }
+
+    @Test
+    void testDeleteTeamInvite() {
+        PendingTeamInvite teamInvite = new PendingTeamInvite();
+
+        pendingPersonService.deleteTeamInvite(teamInvite);
+
+        verify(pendingTeamInviteRepository).delete(teamInvite);
+    }
+
+    @Test
+    void testDeleteInstitutionInvite() {
+        PendingInstitutionInvite invite = new PendingInstitutionInvite();
+
+        pendingPersonService.deleteInstitutionInvite(invite);
+
+        verify(pendingInstitutionInviteRepository).delete(invite);
+    }
+
 }
