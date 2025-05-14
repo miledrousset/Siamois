@@ -90,8 +90,8 @@ public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<Spa
 
         // Update cache
         this.queryResult = result.getContent();
-        this.cachedFilterBy = filterBy;
-        this.cachedSortBy = sortBy;
+        this.cachedFilterBy = BaseLazyDataModel.deepCopyFilterMetaMap(filterBy);
+        this.cachedSortBy = new HashMap<>(sortBy);
         this.cachedFirst = first;
         this.cachedPageSize = pageSize;
         this.cachedRowCount = (int) result.getTotalElements();

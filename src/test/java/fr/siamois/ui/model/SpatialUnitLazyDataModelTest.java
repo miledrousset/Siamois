@@ -147,14 +147,15 @@ class SpatialUnitLazyDataModelTest {
         List<Person> persons = List.of(pers);
 
         Map<String, FilterMeta> filters = new HashMap<>();
-        FilterMeta catFilter = new FilterMeta();
-        FilterMeta authorFilter = new FilterMeta();
-        FilterMeta nameFilter = new FilterMeta();
-        nameFilter.setFilterValue("name");
-        FilterMeta globalFilter = new FilterMeta();
-        globalFilter.setFilterValue("global");
-        catFilter.setFilterValue(categoryLabels);
-        authorFilter.setFilterValue(persons);
+
+
+        FilterMeta globalFilter = FilterMeta.builder().field("global").filterValue("global").build();
+
+        FilterMeta catFilter = FilterMeta.builder().field("category").filterValue(categoryLabels).build();
+        FilterMeta authorFilter = FilterMeta.builder().field("author").filterValue(persons).build();
+        FilterMeta nameFilter = FilterMeta.builder().field("name").filterValue("name").build();
+
+
         filters.put("category", catFilter);
         filters.put("name", nameFilter);
         filters.put("author", authorFilter);

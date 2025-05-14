@@ -54,7 +54,8 @@ public class SpatialUnitListPanel extends AbstractPanel {
     // Filters
     private transient List<ConceptLabel> selectedTypes = new ArrayList<>();
     private transient List<ConceptLabel> selectedAuthors = new ArrayList<>();
-
+    private String nameFilter;
+    private String globalFilter;
 
     public void onToggle(ColumnToggleEvent e) {
         Integer index = (Integer) e.getData();
@@ -100,6 +101,8 @@ public class SpatialUnitListPanel extends AbstractPanel {
             // Init filters
             selectedAuthors = new ArrayList<>();
             selectedTypes = new ArrayList<>();
+            nameFilter = "";
+            globalFilter = "";
 
             totalNumberOfUnits = spatialUnitService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
 

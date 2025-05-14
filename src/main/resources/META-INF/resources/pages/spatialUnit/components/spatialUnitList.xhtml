@@ -58,6 +58,7 @@
                                 <i class="bi bi-search"/>
 
                                             <p:inputText id="globalFilter"
+                                                         value="#{cc.attrs.panelModel.globalFilter}"
                                                          onkeyup="PF('#{cc.clientId}_spatialUnitListTable').filter()"
                                                          placeholder="#{langBean.msg('common.action.search')}">
 
@@ -105,6 +106,7 @@
                 <p:column toggleable="false" responsivePriority="1"
                           headerText="#{langBean.msg('table.spatialunit.column.name')}"
                           sortable="true"
+                          filterValue="#{cc.attrs.panelModel.nameFilter}"
                           filterable="true"
                           field="name"
                           id="nameCol">
@@ -112,6 +114,7 @@
                     <p:commandLink
                             action="#{flowBean.goToSpatialUnitByIdNewPanel(item.id,cc.attrs.panelModel)}"
                             oncomplete="handleScrollToTop();"
+                            process="@form"
                             update="flow"
                     >
                         <h:outputText value="#{item.name}"/>

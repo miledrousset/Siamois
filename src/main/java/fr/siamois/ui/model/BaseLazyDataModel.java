@@ -33,6 +33,23 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
     protected transient List<T> queryResult ; // cache for the result of the query
     protected int cachedRowCount;
 
+    public static Map<String, FilterMeta> deepCopyFilterMetaMap(Map<String, FilterMeta> originalMap) {
+        Map<String, FilterMeta> copiedMap = new HashMap<>();
+        for (Map.Entry<String, FilterMeta> entry : originalMap.entrySet()) {
+            String key = entry.getKey();
+            FilterMeta originalMeta = entry.getValue();
+
+            FilterMeta copiedMeta = FilterMeta.builder()
+                    .field(originalMeta.getField())
+                    .filterValue(originalMeta.getFilterValue())
+                    .matchMode(originalMeta.getMatchMode())
+                    .build();
+
+            copiedMap.put(key, copiedMeta);
+        }
+        return copiedMap;
+    }
+
     // Deep comparison method for sort criteria
     public boolean isSortCriteriaSame(Map<String, SortMeta> existingSorts, Map<String, SortMeta> newSorts) {
 
@@ -50,7 +67,7 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
             if (newSortMeta == null) return false;
 
             // Compare filter metadata details
-            if (!areSortMetaEqual(existingEntry.getValue(), newSortMeta)) {
+            if (!areSortMetaOrderEqual(existingEntry.getValue(), newSortMeta)) {
                 return false;
             }
         }
@@ -69,7 +86,7 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
             if (newFilterMeta == null) return false;
 
             // Compare filter metadata details
-            if (!areFilterMetaEqual(existingEntry.getValue(), newFilterMeta)) {
+            if (!areFilterMetaValueEqual(existingEntry.getValue(), newFilterMeta)) {
                 return false;
             }
         }
@@ -77,14 +94,25 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
     }
 
     // Helper method to compare SortMeta objects
-    private boolean areSortMetaEqual(SortMeta sort1, SortMeta sort2) {
-        return (sort1.equals(sort2) && (sort1.getOrder() == sort2.getOrder()));
+    private boolean areSortMetaOrderEqual(SortMeta sort1, SortMeta sort2) {
+        return (sort1.getOrder() == sort2.getOrder());
     }
 
     // Helper method to compare FilterMeta objects
-    private boolean areFilterMetaEqual(FilterMeta filter1, FilterMeta filter2) {
+    private boolean areFilterMetaValueEqual(FilterMeta filter1, FilterMeta filter2) {
+        Object value1 = filter1.getFilterValue();
+        Object value2 = filter2.getFilterValue();
 
-        return (filter1.equals(filter2) && (filter1.getFilterValue() == filter2.getFilterValue()));
+        if (value1 instanceof Collection && value2 instanceof Collection) {
+            Collection<?> col1 = (Collection<?>) value1;
+            Collection<?> col2 = (Collection<?>) value2;
+
+            // Compare as sets to ignore order and duplicates
+            return new HashSet<>(col1).equals(new HashSet<>(col2));
+        }
+
+        // Fallback to standard equality
+        return Objects.equals(value1, value2);
     }
 
 
