@@ -31,25 +31,6 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
     )
     List<SpatialUnit> countAllParentsOfSpatialUnit(@Param("spatialUnitId") Long spatialUnitId);
 
-    @Query(value = """
-    SELECT su.* FROM spatial_unit su
-    JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id
-    WHERE sh.fk_parent_id IN (:ids)
-    """, nativeQuery = true)
-    List<SpatialUnit> findChildrenByParentIds(@Param("ids") List<Long> parentIds);
-
-    @Query(value = """
-    SELECT su.* FROM spatial_unit su
-    JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_parent_id
-    WHERE sh.fk_child_id IN (:ids)
-    """, nativeQuery = true)
-    List<SpatialUnit> findParentsByChildIds(@Param("ids") List<Long> childIds);
-
-    @Query(value = "SELECT fk_parent_id, fk_child_id FROM spatial_hierarchy WHERE fk_parent_id IN (:ids)", nativeQuery = true)
-    List<Object[]> findChildLinks(@Param("ids") List<Long> parentIds);
-
-    @Query(value = "SELECT fk_child_id, fk_parent_id FROM spatial_hierarchy WHERE fk_child_id IN (:ids)", nativeQuery = true)
-    List<Object[]> findParentLinks(@Param("ids") List<Long> childIds);
 
 
 
@@ -87,7 +68,7 @@ public interface SpatialUnitRepository extends CrudRepository<SpatialUnit, Long>
                     "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%'))  " +
                     "                                     OR LOWER(rl.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%'))" +
                     "                                     OR LOWER(p.lastname) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%'))" +
-                    "                                     OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
+                    "                                     OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%'))) ",
             countQuery = "WITH ranked_labels AS ( " +
                     "    SELECT " +
                     "        l.fk_concept_id, " +

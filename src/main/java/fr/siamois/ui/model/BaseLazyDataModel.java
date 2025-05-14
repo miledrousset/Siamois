@@ -1,18 +1,18 @@
 package fr.siamois.ui.model;
 
 
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.Struct;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
-@Getter
+@EqualsAndHashCode(callSuper = true)
+@Data
 public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
 
     @Override
@@ -20,14 +20,19 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
         return 0;
     }
 
-    @Setter
-    protected Integer first ;
-    @Setter
-    protected Integer pageSizeState;
-    @Setter
-    protected transient Set<SortMeta> sortBy ;
-    @Setter
-    protected transient Map<String, FilterMeta> filterBy ;
+    // Page, Sort and Filter state
+    protected int first = 0;
+    protected int pageSizeState = 10;
+    protected transient Set<SortMeta> sortBy = new HashSet<>();
+
+    // Cache
+    protected transient Map<String, FilterMeta> cachedFilterBy = new HashMap<>() ;
+    protected int cachedFirst ;
+    protected int cachedPageSize ;
+    protected transient Map<String, SortMeta> cachedSortBy = new HashMap<>() ;
+    protected transient List<T> queryResult ; // cache for the result of the query
+    protected int cachedRowCount;
+
 
     public int getFirstIndexOnPage() {
         return first + 1; // Adding 1 because indexes are zero-based
