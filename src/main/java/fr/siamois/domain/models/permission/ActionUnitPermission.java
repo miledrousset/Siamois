@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
+@DiscriminatorValue("ACTION_UNIT")
 public class ActionUnitPermission extends EntityPermission {
 
     @JoinColumn(name = "fk_action_unit_id")

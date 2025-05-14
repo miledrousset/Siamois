@@ -25,4 +25,11 @@ public interface TeamRepository extends CrudRepository<Team, Long> {
             value = "SELECT t.* FROM team t WHERE t.fk_institution_id = :institutionId AND UPPER(t.name) = UPPER(:teamName)"
     )
     Optional<Team> findTeamByNameInInstitution(Long institutionId, @NotNull String teamName);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT t.* FROM team t " +
+                    "WHERE t.fk_institution_id = :institutionId AND t.is_default_team IS TRUE"
+    )
+    Optional<Team> findDefaultOf(Long institutionId);
 }

@@ -1,13 +1,11 @@
 package fr.siamois.infrastructure.database.repositories;
 
-import fr.siamois.domain.models.permission.ActionUnitPermission;
 import fr.siamois.domain.models.permission.EntityPermission;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface PermissionRepository extends CrudRepository<EntityPermission, Long> {
@@ -27,5 +25,5 @@ public interface PermissionRepository extends CrudRepository<EntityPermission, L
             nativeQuery = true,
             name = "SELECT ep.* FROM entity_permission ep WHERE ep.fk_recording_unit_id = :recordingUnitId"
     )
-    List<EntityPermission> findPermissionsOfRecordingUnit(Long recordingUnitId);
+    List<EntityPermission> findPermissionsOfRecordingUnitById(Long recordingUnitId);
 }

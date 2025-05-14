@@ -1,6 +1,5 @@
 package fr.siamois.domain.services.person;
 
-import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.TeamAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
@@ -38,13 +37,8 @@ public class TeamService {
     }
 
     public void addPersonToInstitutionIfNotExist(Person person, Institution institution) {
-        Optional<TeamPerson> optTp = teamPersonRepository.findDefaultOfInstitution(institution.getId());
-        Team team;
-        if (optTp.isEmpty()) {
-            team = createDefaultTeamOf(institution);
-        } else {
-            team = optTp.get().getTeam();
-        }
+        Optional<Team> opTeam = teamRepository.findDefaultOf(institution.getId());
+        Team team = opTeam.orElseGet(() -> createDefaultTeamOf(institution));
         addPersonToTeamIfNotAdded(person, team, null);
     }
 
@@ -114,12 +108,11 @@ public class TeamService {
         return teamPersonRepository.findEarliestAddDateInInstitution(institution.getId(), person.getId());
     }
 
-    public SortedSet<Team> findTeamsOfPersonInInstitution(UserInfo user) {
-        List<TeamPerson> teams = teamPersonRepository.findAllOfInstitution(user.getInstitution().getId());
-        Person currentUser = user.getUser();
+    public SortedSet<Team> findTeamsOfPersonInInstitution(Person user, Institution institution) {
+        List<TeamPerson> teams = teamPersonRepository.findAllOfInstitution(institution.getId());
         SortedSet<Team> teamSet = new TreeSet<>();
         for (TeamPerson teamPerson : teams) {
-            if (teamPerson.getPerson().getId().equals(currentUser.getId())) {
+            if (teamPerson.getPerson().getId().equals(user.getId())) {
                 teamSet.add(teamPerson.getTeam());
             }
         }
