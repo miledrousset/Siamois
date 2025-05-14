@@ -11,7 +11,7 @@ import java.time.OffsetDateTime;
 @Data
 @Entity
 @Table(name = "team", schema = "public")
-public class Team implements Serializable {
+public class Team implements Serializable, Comparable<Team> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,4 +37,8 @@ public class Team implements Serializable {
     @Column(name = "creation_date", nullable = false)
     private OffsetDateTime creationDate = OffsetDateTime.now();
 
+    @Override
+    public int compareTo(Team o) {
+        return this.getId().compareTo(o.getId());
+    }
 }

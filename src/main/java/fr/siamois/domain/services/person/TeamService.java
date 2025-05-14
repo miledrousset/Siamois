@@ -1,5 +1,6 @@
 package fr.siamois.domain.services.person;
 
+import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.TeamAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
@@ -11,8 +12,7 @@ import fr.siamois.infrastructure.database.repositories.person.TeamRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TeamService {
@@ -112,5 +112,17 @@ public class TeamService {
 
     public OffsetDateTime findEarliestAddDateInInstitution(Institution institution, Person person) {
         return teamPersonRepository.findEarliestAddDateInInstitution(institution.getId(), person.getId());
+    }
+
+    public SortedSet<Team> findTeamsOfPersonInInstitution(UserInfo user) {
+        List<TeamPerson> teams = teamPersonRepository.findAllOfInstitution(user.getInstitution().getId());
+        Person currentUser = user.getUser();
+        SortedSet<Team> teamSet = new TreeSet<>();
+        for (TeamPerson teamPerson : teams) {
+            if (teamPerson.getPerson().getId().equals(currentUser.getId())) {
+                teamSet.add(teamPerson.getTeam());
+            }
+        }
+        return teamSet;
     }
 }
