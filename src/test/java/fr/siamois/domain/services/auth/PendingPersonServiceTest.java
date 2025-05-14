@@ -75,9 +75,7 @@ class PendingPersonServiceTest {
     void testGenerateToken_MaxAttemptsReached() {
         when(pendingPersonRepository.existsByRegisterToken(anyString())).thenReturn(true);
 
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-            pendingPersonService.generateToken();
-        });
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> pendingPersonService.generateToken());
 
         assertEquals("Unable to generate a unique token after 1000 attempts", exception.getMessage());
     }
