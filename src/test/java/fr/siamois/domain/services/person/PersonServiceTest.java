@@ -162,13 +162,11 @@ class PersonServiceTest {
     @Test
     void createPerson_Success() throws Exception {
         when(personRepository.save(any(Person.class))).thenReturn(person);
-        when(pendingPersonRepository.findByEmail(person.getEmail())).thenReturn(Optional.empty());
 
         Person result = personService.createPerson(person);
 
         assertNotNull(result);
         verify(personRepository, times(1)).save(person);
-        verify(pendingPersonRepository, times(1)).findByEmail(person.getEmail());
     }
 
     @Test
