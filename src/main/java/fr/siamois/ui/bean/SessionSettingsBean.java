@@ -1,12 +1,15 @@
 package fr.siamois.ui.bean;
 
-import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.UserInfoWithTeams;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.person.PersonService;
+import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.domain.utils.AuthenticatedUserUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +18,8 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 
 @Setter
 @Getter
@@ -27,6 +31,7 @@ public class SessionSettingsBean implements Serializable {
     private final LangBean langBean;
     private final transient RedirectBean redirectBean;
     private final transient PersonService personService;
+    private final transient TeamService teamService;
     private Institution selectedInstitution;
     private InstitutionSettings institutionSettings;
     private PersonSettings personSettings;
@@ -34,11 +39,12 @@ public class SessionSettingsBean implements Serializable {
     public SessionSettingsBean(InstitutionService institutionService,
                                LangBean langBean,
                                RedirectBean redirectBean,
-                               PersonService personService) {
+                               PersonService personService, TeamService teamService) {
         this.institutionService = institutionService;
         this.langBean = langBean;
         this.redirectBean = redirectBean;
         this.personService = personService;
+        this.teamService = teamService;
     }
 
     public Person getAuthenticatedUser() {
@@ -66,14 +72,14 @@ public class SessionSettingsBean implements Serializable {
         if (personSettings.getDefaultInstitution() != null) {
             selectedInstitution = personSettings.getDefaultInstitution();
         } else {
-            List<Institution> allInstitutions = findReferencedInstitutions();
-            selectedInstitution = allInstitutions.get(0);
+            Set<Institution> allInstitutions = findReferencedInstitutions();
+            selectedInstitution = allInstitutions.stream().findFirst().orElse(null);
         }
         assert selectedInstitution != null;
         institutionSettings = institutionService.createOrGetSettingsOf(selectedInstitution);
     }
 
-    private List<Institution> findReferencedInstitutions() {
+    private Set<Institution> findReferencedInstitutions() {
         Person person = getAuthenticatedUser();
         if (person.isSuperAdmin()) {
             return institutionService.findAll();
@@ -93,9 +99,10 @@ public class SessionSettingsBean implements Serializable {
         return new UserInfo(selectedInstitution, getAuthenticatedUser(), getLanguageCode());
     }
 
-    // TODO : figure out what to do with this after atelier utilisateur
-//    public InstitutionSettings getInstitutionSettings() {
-//        return getUserInfo().getInstitution().getSettings();
-//    }
+    public UserInfoWithTeams getUserInfoWithTeamsLoaded() {
+        UserInfo info = getUserInfo();
+        SortedSet<Team> teams = teamService.findTeamsOfPersonInInstitution(info.getUser(), info.getInstitution());
+        return new UserInfoWithTeams(info, teams);
+    }
 
 }

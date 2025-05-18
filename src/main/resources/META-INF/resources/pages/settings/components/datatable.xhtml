@@ -12,12 +12,12 @@
         <cc:attribute name="addAction" method-signature="java.lang.Void f()" required="true"/>
         <cc:attribute name="searchInputTextValue" required="true"/>
         <cc:attribute name="searchInputPlaceholder" type="java.lang.String" default=""/>
-        <cc:attribute name="isOrganisationManager" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="renderCreateButton" type="java.lang.Boolean" default="false"/>
         <cc:attribute name="createButtonLabel" type="java.lang.String" required="true"/>
     </cc:interface>
 
     <cc:implementation>
-        <form:csrfform formId="#{cc.attrs.formId}" style="width: 100%" onkeypress="if (event.keyCode === 13) { return false; }">
+        <form:csrfform formId="#{cc.attrs.formId}" style="width: 100%" onkeypress="if (event.keyCode === ENTER) { return false; }">
             <div class="datatable-settings">
                 <div class="datatable-info">
                     <h2 class="dt-title">#{cc.attrs.title}</h2>
@@ -30,7 +30,7 @@
                                     listener="#{cc.attrs.filterAction}"/>
                         </p:inputText>
                     </span>
-                    <h:panelGroup rendered="#{cc.attrs.isOrganisationManager}">
+                    <h:panelGroup rendered="#{cc.attrs.renderCreateButton}">
                         <span class="ui-button-text-icon-left addButton">
                             <i class="bi bi-plus-circle"/>
                             <p:commandButton action="#{cc.attrs.addAction}" value="#{cc.attrs.createButtonLabel}" update="@form"/>

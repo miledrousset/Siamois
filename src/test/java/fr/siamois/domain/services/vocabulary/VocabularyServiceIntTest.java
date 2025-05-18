@@ -1,9 +1,9 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
 import fr.siamois.infrastructure.api.RequestFactory;
@@ -52,13 +52,13 @@ class VocabularyServiceIntTest {
 
         UserInfo info = new UserInfo(new Institution(), new Person(), "fr");
         info.getInstitution().setId(1L);
-        info.getInstitution().setManager(info.getUser());
+        info.getInstitution().getManagers().add(info.getUser());
         info.getInstitution().setName("SiaDev");
 
         info.getUser().setId(1L);
         info.getUser().setUsername("username");
         info.getUser().setPassword("password");
-        info.getUser().setMail("mail");
+        info.getUser().setEmail("mail");
 
         VocabularyType vocabularyType = new VocabularyType();
         vocabularyType.setId(1L);
@@ -84,13 +84,13 @@ class VocabularyServiceIntTest {
 
         UserInfo info = new UserInfo(new Institution(), new Person(), "fr");
         info.getInstitution().setId(1L);
-        info.getInstitution().setManager(info.getUser());
+        info.getInstitution().getManagers().add(info.getUser());
         info.getInstitution().setName("SiaDev");
 
         info.getUser().setId(1L);
         info.getUser().setUsername("username");
         info.getUser().setPassword("password");
-        info.getUser().setMail("mail");
+        info.getUser().setEmail("mail");
 
         VocabularyType vocabularyType = new VocabularyType();
         vocabularyType.setId(1L);

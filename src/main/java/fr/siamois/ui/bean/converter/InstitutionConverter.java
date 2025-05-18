@@ -1,7 +1,7 @@
 package fr.siamois.ui.bean.converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.convert.Converter;

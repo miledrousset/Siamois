@@ -1,6 +1,6 @@
 package fr.siamois.domain.models.settings;
 
-import fr.siamois.domain.models.Institution;
+import fr.siamois.domain.models.institution.Institution;
 import jakarta.persistence.*;
 import jakarta.ws.rs.DefaultValue;
 import lombok.Data;

@@ -90,7 +90,7 @@
                     <hr class="sidebar-divider"/>
                     <a class="nav-link">
                         <i class="bi bi-file-earmark-person-fill"/>
-                        <span class="menu-text">#{navBean.currentUser().mail}</span>
+                        <span class="menu-text">#{navBean.currentUser().email}</span>
                     </a>
                     <form id="logout-form" method="post" action="#{redirectBean.redirectUrl('/logout')}">
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -156,7 +156,7 @@
                         <hr class="sidebar-divider"/>
                         <a class="nav-link">
                             <i class="bi bi-file-earmark-person-fill"/>
-                            <span class="menu-text">#{navBean.currentUser().mail}</span>
+                            <span class="menu-text">#{navBean.currentUser().email}</span>
                         </a>
                     </div>
                 </form:csrfform>
@@ -166,7 +166,7 @@
         <!-- Contenu principal -->
         <div class="content">
             <form:csrfform formId="templateForm">
-                <p:growl closable="true" id="templateGrowl" showDetail="true">
+                <p:growl closable="true" id="templateGrowl" showDetail="true" showSummary="true">
                     <p:autoUpdate/>
                 </p:growl>
             </form:csrfform>

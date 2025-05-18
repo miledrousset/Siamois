@@ -1,6 +1,5 @@
 package fr.siamois.ui.bean.settings;
 
-import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
@@ -10,6 +9,7 @@ import fr.siamois.domain.models.exceptions.auth.InvalidNameException;
 import fr.siamois.domain.models.exceptions.auth.InvalidUserInformationException;
 import fr.siamois.domain.models.exceptions.auth.UserAlreadyExistException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
@@ -35,6 +35,7 @@ import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 @Slf4j
 @Getter
@@ -52,7 +53,7 @@ public class ProfileSettingsBean implements Serializable {
     private final LangBean langBean;
     private final transient LangageChangeEventPublisher langageChangeEventPublisher;
 
-    private List<Institution> refInstitutions;
+    private Set<Institution> refInstitutions;
     private PersonSettings personSettings;
     private Concept refConfigConcept;
 
@@ -116,7 +117,7 @@ public class ProfileSettingsBean implements Serializable {
 
     private void initPersonSection(UserInfo info) {
         Person user = info.getUser();
-        fEmail = user.getMail();
+        fEmail = user.getEmail();
         fLastname = user.getLastname();
         fFirstname = user.getName();
         personSettings = personService.createOrGetSettingsOf(user);
@@ -125,8 +126,8 @@ public class ProfileSettingsBean implements Serializable {
     public void saveProfile() {
         boolean updated = false;
         Person user = sessionSettingsBean.getAuthenticatedUser();
-        if (fEmail != null && !fEmail.isEmpty() && !fEmail.equals(user.getMail())) {
-            user.setMail(fEmail);
+        if (fEmail != null && !fEmail.isEmpty() && !fEmail.equals(user.getEmail())) {
+            user.setEmail(fEmail);
             updated = true;
         }
 

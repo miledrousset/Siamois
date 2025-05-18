@@ -1,7 +1,7 @@
 package fr.siamois.domain.services.vocabulary;
 
-import fr.siamois.domain.models.Institution;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.ConceptApi;
@@ -61,7 +61,7 @@ class ConceptServiceIntTest {
         Institution institution = new Institution();
         institution.setId(1L);
         institution.setName("SIADev");
-        institution.setManager(person);
+        institution.getManagers().add(person);
 
         when(conceptRepository.findConceptByExternalIdIgnoreCase(anyString(), anyString())).thenReturn(Optional.empty());
         when(conceptRepository.save(any(Concept.class))).then(invocationOnMock -> invocationOnMock.getArgument(0));
@@ -95,7 +95,7 @@ class ConceptServiceIntTest {
         Institution institution = new Institution();
         institution.setId(1L);
         institution.setName("SIADev");
-        institution.setManager(person);
+        institution.getManagers().add(person);
 
         List<String> unwantedId = List.of("4283550", "4283545", "4283546");
 

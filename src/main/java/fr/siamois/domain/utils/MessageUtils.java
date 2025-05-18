@@ -31,7 +31,7 @@ public class MessageUtils {
     }
 
     /**
-     * @deprecated Should be removed because it does not use translations
+     * @deprecated Should be removed because it does not use translations. You should use displayMessage with a messageCode instead.
      */
     @Deprecated(forRemoval = true)
     public static void displayPlainMessage(LangBean langBean, FacesMessage.Severity severity, String plainMessage, Object... args) {
@@ -58,5 +58,13 @@ public class MessageUtils {
 
     public static void displayWarnMessage(LangBean langBean, String msgCode, Object... args) {
         displayMessage(langBean, FacesMessage.SEVERITY_WARN, msgCode, args);
+    }
+
+    public static void displayNoThesaurusConfiguredMessage(LangBean langBean) {
+        displayErrorMessage(langBean, "common.error.thesaurusConfig.notfound");
+    }
+
+    public static void displayInternalError(LangBean langBean) {
+        displayErrorMessage(langBean, "common.error.internal");
     }
 }

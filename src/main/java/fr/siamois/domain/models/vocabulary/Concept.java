@@ -3,6 +3,7 @@ package fr.siamois.domain.models.vocabulary;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -10,6 +11,7 @@ import java.util.Objects;
 @Data
 @Entity
 @Table(name = "concept")
+@NoArgsConstructor
 public class Concept implements Serializable {
 
     // Copy constructor
@@ -17,10 +19,6 @@ public class Concept implements Serializable {
         this.id = concept.getId();
         this.vocabulary = concept.getVocabulary();
         this.externalId = concept.getExternalId();
-    }
-
-    public Concept() {
-
     }
 
     @Id
