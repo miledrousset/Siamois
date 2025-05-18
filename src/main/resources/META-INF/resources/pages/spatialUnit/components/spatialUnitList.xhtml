@@ -31,6 +31,7 @@
                          paginatorPosition="bottom" var="item"
                          widgetVar="#{cc.clientId}_spatialUnitListTable"
                          lazy="true"
+                         globalFilter="#{cc.attrs.panelModel.globalFilter}"
                          allowUnsorting="true"
                          sortBy="#{cc.attrs.lazyDataModel.sortBy}"
                          rows="#{cc.attrs.lazyDataModel.pageSizeState}"
