@@ -73,7 +73,7 @@
                                                  icon="pi pi-align-justify"/>
                                 <p:columnToggler datasource=":#{cc.clientId}:actionUnitListForm:actionUnitDataTable"
                                                  trigger=":#{cc.clientId}:actionUnitListForm:actionUnitDataTable:toggler">
-                                    <p:ajax event="toggle" listener="#{cc.attrs.panelModel.onToggle}"/>
+
                                 </p:columnToggler>
 
 
@@ -105,8 +105,7 @@
                           id="nameCol">
 
                     <p:commandLink
-                            action="#{flowBean.goToSpatialUnitByIdNewPanel(item.id,cc.attrs.panelModel)}"
-                            disabled="true"
+                            action="#{flowBean.goToActionUnitByIdNewPanel(item.id,cc.attrs.panelIndex)}"
                             oncomplete="handleScrollToTop();"
                             process="@form"
                             update="flow"
@@ -117,7 +116,7 @@
 
                 </p:column>
 
-                <!-- Spatial unit type column -->
+                <!-- Action unit type column -->
                 <p:column responsivePriority="1" headerText="#{langBean.msg('table.spatialunit.column.type')}"
                           sortable="true"
                           filterable="true"
@@ -189,7 +188,7 @@
                 <!-- Parents -->
                 <p:column responsivePriority="3">
                     <f:facet name="header">
-                        <cellheader:withIcon icon="bi bi-geo-alt"
+                        <cellheader:withIcon icon="bi bi-arrow-down-square"
                                              text="#{langBean.msg('table.spatialunit.column.parents')}"/>
                     </f:facet>
                     <cellbody:cellBodyThreeItems set="#{item.parents}"/>
@@ -199,7 +198,7 @@
                 <!-- Children -->
                 <p:column responsivePriority="3">
                     <f:facet name="header">
-                        <cellheader:withIcon icon="bi bi-geo-alt"
+                        <cellheader:withIcon icon="bi bi-arrow-down-square"
                                              text="#{langBean.msg('table.spatialunit.column.children')}"/>
                     </f:facet>
                     <cellbody:cellBodyThreeItems set="#{item.children}"/>
@@ -215,15 +214,15 @@
                 </p:column>
 
                 <!-- Enregistrements -->
-<!--                <p:column responsivePriority="3">-->
-<!--                    <f:facet name="header">-->
-<!--                        <cellheader:withIcon icon="bi bi-pencil-square"-->
-<!--                                             text="#{langBean.msg('table.spatialunit.column.recordings')}"/>-->
-<!--                    </f:facet>-->
-<!--                    <cellbody:cellBodyThreeItems set="#{item.recordingUnitList}" displayAttribute="fullIdentifier"-->
-<!--                                                 commandLinkStyleClass="sia-recording-unit-command-link"/>-->
+                <p:column responsivePriority="3">
+                    <f:facet name="header">
+                        <cellheader:withIcon icon="bi bi-pencil-square"
+                                             text="#{langBean.msg('table.spatialunit.column.recordings')}"/>
+                    </f:facet>
+                    <cellbody:cellBodyThreeItems set="#{item.recordingUnitList}" displayAttribute="fullIdentifier"
+                                                 commandLinkStyleClass="sia-recording-unit-command-link"/>
 
-<!--                </p:column>-->
+                </p:column>
 
                 <!-- Action toolbar-->
                 <p:column responsivePriority="1" exportable="false" toggleable="false">

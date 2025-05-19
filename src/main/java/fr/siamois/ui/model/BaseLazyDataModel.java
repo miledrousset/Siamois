@@ -2,6 +2,7 @@ package fr.siamois.ui.model;
 
 
 
+import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.model.FilterMeta;
@@ -32,6 +33,9 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
     protected transient Map<String, SortMeta> cachedSortBy = new HashMap<>() ;
     protected transient List<T> queryResult ; // cache for the result of the query
     protected int cachedRowCount;
+
+    // Filters
+    private String globalFilter;
 
     public static Map<String, FilterMeta> deepCopyFilterMetaMap(Map<String, FilterMeta> originalMap) {
         Map<String, FilterMeta> copiedMap = new HashMap<>();

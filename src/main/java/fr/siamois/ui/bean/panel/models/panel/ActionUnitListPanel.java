@@ -92,9 +92,7 @@ public class ActionUnitListPanel extends AbstractPanel {
 
             // Init filters
 //            selectedAuthors = new ArrayList<>();
-            selectedTypes = new ArrayList<>();
-            nameFilter = "";
-            globalFilter = "";
+
 
             totalNumberOfUnits = spatialUnitService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
 
@@ -107,6 +105,10 @@ public class ActionUnitListPanel extends AbstractPanel {
             lazyDataModel.setSortBy(sortBy);
             lazyDataModel.setFirst(0);
             lazyDataModel.setPageSizeState(5);
+            lazyDataModel.setSelectedAuthors(new ArrayList<>());
+            lazyDataModel.setSelectedTypes(new ArrayList<>());
+            lazyDataModel.setNameFilter("");
+            lazyDataModel.setGlobalFilter("");
 
 
 

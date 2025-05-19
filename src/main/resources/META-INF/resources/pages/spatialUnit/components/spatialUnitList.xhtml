@@ -31,7 +31,7 @@
                          paginatorPosition="bottom" var="item"
                          widgetVar="#{cc.clientId}_spatialUnitListTable"
                          lazy="true"
-                         globalFilter="#{cc.attrs.panelModel.globalFilter}"
+                         globalFilter="#{cc.attrs.lazyDataModel.globalFilter}"
                          allowUnsorting="true"
                          sortBy="#{cc.attrs.lazyDataModel.sortBy}"
                          rows="#{cc.attrs.lazyDataModel.pageSizeState}"
@@ -59,7 +59,7 @@
                                 <i class="bi bi-search"/>
 
                                             <p:inputText id="globalFilter"
-                                                         value="#{cc.attrs.panelModel.globalFilter}"
+                                                         value="#{cc.attrs.lazyDataModel.globalFilter}"
                                                          onkeyup="PF('#{cc.clientId}_spatialUnitListTable').filter()"
                                                          placeholder="#{langBean.msg('common.action.search')}">
 
@@ -95,19 +95,19 @@
 
                 </f:facet>
 
-                <p:column responsivePriority="1" exportable="false" toggleable="false">
-                    <p:toolbar>
-                        <p:toolbarGroup>
-                            <p:commandButton icon="bi bi-pin" disabled="true" styleClass="sia-icon-btn"/>
-                        </p:toolbarGroup>
-                    </p:toolbar>
-                </p:column>
+<!--                <p:column responsivePriority="1" exportable="false" toggleable="false">-->
+<!--                    <p:toolbar>-->
+<!--                        <p:toolbarGroup>-->
+<!--                            <p:commandButton icon="bi bi-pin" disabled="true" styleClass="sia-icon-btn"/>-->
+<!--                        </p:toolbarGroup>-->
+<!--                    </p:toolbar>-->
+<!--                </p:column>-->
 
 
                 <p:column toggleable="false" responsivePriority="1"
                           headerText="#{langBean.msg('table.spatialunit.column.name')}"
                           sortable="true"
-                          filterValue="#{cc.attrs.panelModel.nameFilter}"
+                          filterValue="#{cc.attrs.lazyDataModel.nameFilter}"
                           filterable="true"
                           field="name"
                           id="nameCol">
@@ -137,7 +137,7 @@
 
                                 label="#{langBean.msg('table.spatialunit.column.type.filter')}"
                                 filter="true"
-                                value="#{cc.attrs.panelModel.selectedTypes}"
+                                value="#{cc.attrs.lazyDataModel.selectedTypes}"
                                 updateLabel="true"
                                 filterMatchMode="contains"
                                 onchange="PF('#{cc.clientId}_spatialUnitListTable').filter()"
@@ -178,7 +178,7 @@
                                 label="#{langBean.msg('table.spatialunit.column.author.filter')}"
                                 filter="true"
                                 updateLabel="true"
-                                value="#{cc.attrs.panelModel.selectedAuthors}"
+                                value="#{cc.attrs.lazyDataModel.selectedAuthors}"
                                 filterMatchMode="contains"
                                 onchange="PF('#{cc.clientId}_spatialUnitListTable').filter()"
                                 converter="#{personConverter}">

@@ -5,6 +5,8 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
@@ -15,8 +17,14 @@ import org.springframework.data.domain.Sort;
 
 import java.util.*;
 
-
+@Getter
+@Setter
 public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<SpatialUnit> {
+
+    // Filters
+    private transient List<ConceptLabel> selectedTypes = new ArrayList<>();
+    private transient List<ConceptLabel> selectedAuthors = new ArrayList<>();
+    private String nameFilter;
 
     public List<SpatialUnit> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
 

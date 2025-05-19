@@ -52,11 +52,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
     private Set<SortMeta> sortBy = new HashSet<>();
 
-    // Filters
-    private transient List<ConceptLabel> selectedTypes = new ArrayList<>();
-    private transient List<ConceptLabel> selectedAuthors = new ArrayList<>();
-    private String nameFilter;
-    private String globalFilter;
+
 
     public void onToggle(ColumnToggleEvent e) {
         Integer index = (Integer) e.getData();
@@ -99,11 +95,6 @@ public class SpatialUnitListPanel extends AbstractPanel {
                     .build();
             this.getBreadcrumb().getModel().getElements().add(item);
 
-            // Init filters
-            selectedAuthors = new ArrayList<>();
-            selectedTypes = new ArrayList<>();
-            nameFilter = "";
-            globalFilter = "";
 
             totalNumberOfUnits = spatialUnitService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
 
@@ -117,8 +108,10 @@ public class SpatialUnitListPanel extends AbstractPanel {
             lazyDataModel.setSortBy(sortBy);
             lazyDataModel.setFirst(0);
             lazyDataModel.setPageSizeState(5);
-
-
+            lazyDataModel.setSelectedAuthors(new ArrayList<>());
+            lazyDataModel.setSelectedTypes(new ArrayList<>());
+            lazyDataModel.setNameFilter("");
+            lazyDataModel.setGlobalFilter("");
 
         } catch (RuntimeException e) {
             spatialUnitListErrorMessage = "Failed to load spatial units: " + e.getMessage();

@@ -23,11 +23,14 @@ public class ActionUnitLazyDataModel extends BaseActionUnitLazyDataModel {
     }
 
     @Override
-    protected Page<ActionUnit> loadActionUnits(Pageable pageable) {
-        return actionUnitService.findAllByInstitution(
+    protected Page<ActionUnit> loadActionUnits(String nameFilter, Long[] categoryIds, Long[] personIds, String globalFilter, Pageable pageable) {
+        return actionUnitService.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
                 sessionSettings.getSelectedInstitution().getId(),
+                nameFilter, categoryIds, personIds, globalFilter,
+                langBean.getLanguageCode(),
                 pageable);
     }
+
 
 
 }

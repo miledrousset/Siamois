@@ -5,6 +5,8 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
+import lombok.Getter;
+import lombok.Setter;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
@@ -16,8 +18,14 @@ import org.springframework.data.domain.Sort;
 import javax.swing.*;
 import java.util.*;
 
-
+@Getter
+@Setter
 public abstract class BaseActionUnitLazyDataModel extends BaseLazyDataModel<ActionUnit> {
+
+    // Filters
+    protected transient List<ConceptLabel> selectedTypes = new ArrayList<>();
+    protected transient List<ConceptLabel> selectedAuthors = new ArrayList<>();
+    protected String nameFilter;
 
     public List<ActionUnit> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
 
@@ -84,7 +92,7 @@ public abstract class BaseActionUnitLazyDataModel extends BaseLazyDataModel<Acti
         }
 
         // Perform query to DB
-        Page<ActionUnit> result = loadActionUnits(pageable);
+        Page<ActionUnit> result = loadActionUnits(nameFilter, categoryIds, personIds, globalFilter, pageable);
         setRowCount((int) result.getTotalElements());
 
         // Update cache
@@ -128,6 +136,8 @@ public abstract class BaseActionUnitLazyDataModel extends BaseLazyDataModel<Acti
         return Sort.by(orders);
     }
 
-    protected abstract Page<ActionUnit> loadActionUnits(Pageable pageable);
+    protected abstract Page<ActionUnit> loadActionUnits(
+            String nameFilter, Long[] categoryIds, Long[] personIds,
+            String globalFilter, Pageable pageable);
 
 }

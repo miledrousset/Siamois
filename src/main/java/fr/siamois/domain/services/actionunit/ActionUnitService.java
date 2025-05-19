@@ -48,11 +48,12 @@ public class ActionUnitService implements ArkEntityService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ActionUnit> findAllByInstitution(
+    public Page<ActionUnit> findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
             Long institutionId,
-            Pageable pageable) {
+            String name, Long[] categoryIds, Long[] personIds, String global, String langCode, Pageable pageable) {
 
-        Page<ActionUnit> res = actionUnitRepository.findAllByInstitution(institutionId, pageable);
+        Page<ActionUnit> res = actionUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                institutionId, name, categoryIds, personIds, global, langCode, pageable);
 
         //wireChildrenAndParents(res.getContent());  // Load and attach spatial hierarchy relationships
 
@@ -60,7 +61,7 @@ public class ActionUnitService implements ArkEntityService {
         // load related actions
         res.forEach(actionUnit -> {
             Hibernate.initialize(actionUnit.getSpatialContext());
-//            Hibernate.initialize(actionUnit.getRecordingUnitList());
+            Hibernate.initialize(actionUnit.getRecordingUnitList());
             Hibernate.initialize(actionUnit.getParents());
             Hibernate.initialize(actionUnit.getChildren());
 
