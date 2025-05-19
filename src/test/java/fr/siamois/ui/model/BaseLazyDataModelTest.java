@@ -1,5 +1,6 @@
 package fr.siamois.ui.model;
 
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
@@ -9,7 +10,9 @@ import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -163,12 +166,60 @@ class BaseLazyDataModelTest {
     }
 
     @Test
-    void isFilterCriteriaSame_fieldNotEqual() {
+    void isFilterCriteriaSame_fieldNotEqual_String() {
 
         filterBy2 = new HashMap<>();
         filterBy = new HashMap<>();
         filterBy2.put("f1", FilterMeta.builder().field("f1").filterValue("test").build());
         filterBy.put("f1", FilterMeta.builder().field("f1").filterValue("test2").build());
+
+        BaseLazyDataModel lazyModel = Mockito.mock(BaseLazyDataModel.class, Answers.CALLS_REAL_METHODS);
+
+        // act
+        Boolean res = lazyModel.isFilterCriteriaSame(filterBy, filterBy2);
+        assertFalse(res);
+    }
+
+    @Test
+    void isFilterCriteriaSame_fieldNotEqual_Object() {
+
+        filterBy2 = new HashMap<>();
+        filterBy = new HashMap<>();
+        RecordingUnit r = new RecordingUnit();
+        RecordingUnit r2 = new RecordingUnit();
+        r.setFullIdentifier("f1");
+        r2.setFullIdentifier("f2");
+        filterBy2.put("f1", FilterMeta.builder().field("f1").filterValue(r).build());
+        filterBy.put("f1", FilterMeta.builder().field("f1").filterValue(r2).build());
+
+        BaseLazyDataModel lazyModel = Mockito.mock(BaseLazyDataModel.class, Answers.CALLS_REAL_METHODS);
+
+        // act
+        Boolean res = lazyModel.isFilterCriteriaSame(filterBy, filterBy2);
+        assertFalse(res);
+    }
+
+    @Test
+    void isFilterCriteriaSame_fieldNotEqual_Collection() {
+
+        filterBy2 = new HashMap<>();
+        filterBy = new HashMap<>();
+        RecordingUnit r = new RecordingUnit();
+        RecordingUnit r2 = new RecordingUnit();
+        RecordingUnit r3 = new RecordingUnit();
+        RecordingUnit r4 = new RecordingUnit();
+        r.setFullIdentifier("f1");
+        r2.setFullIdentifier("f2");
+        r3.setFullIdentifier("f1");
+        r4.setFullIdentifier("f3");
+        List<RecordingUnit> l1 = new ArrayList<>();
+        l1.add(r);
+        l1.add(r2);
+        List<RecordingUnit> l2 = new ArrayList<>();
+        l2.add(r3);
+        l2.add(r4);
+        filterBy2.put("f1", FilterMeta.builder().field("f1").filterValue(l1).build());
+        filterBy.put("f1", FilterMeta.builder().field("f1").filterValue(l2).build());
 
         BaseLazyDataModel lazyModel = Mockito.mock(BaseLazyDataModel.class, Answers.CALLS_REAL_METHODS);
 
@@ -184,6 +235,54 @@ class BaseLazyDataModelTest {
         filterBy = new HashMap<>();
         filterBy2.put("f1", FilterMeta.builder().field("f1").filterValue("test").build());
         filterBy.put("f1", FilterMeta.builder().field("f1").filterValue("test").build());
+
+        BaseLazyDataModel lazyModel = Mockito.mock(BaseLazyDataModel.class, Answers.CALLS_REAL_METHODS);
+
+        // act
+        Boolean res = lazyModel.isFilterCriteriaSame(filterBy, filterBy2);
+        assertTrue(res);
+    }
+
+    @Test
+    void isFilterCriteriaSame_fieldEqual_Object() {
+
+        filterBy2 = new HashMap<>();
+        filterBy = new HashMap<>();
+        RecordingUnit r = new RecordingUnit();
+        RecordingUnit r2 = new RecordingUnit();
+        r.setFullIdentifier("f1");
+        r2.setFullIdentifier("f1");
+        filterBy2.put("f1", FilterMeta.builder().field("f1").filterValue(r).build());
+        filterBy.put("f1", FilterMeta.builder().field("f1").filterValue(r2).build());
+
+        BaseLazyDataModel lazyModel = Mockito.mock(BaseLazyDataModel.class, Answers.CALLS_REAL_METHODS);
+
+        // act
+        Boolean res = lazyModel.isFilterCriteriaSame(filterBy, filterBy2);
+        assertTrue(res);
+    }
+
+    @Test
+    void isFilterCriteriaSame_fieldEqual_Collection() {
+
+        filterBy2 = new HashMap<>();
+        filterBy = new HashMap<>();
+        RecordingUnit r = new RecordingUnit();
+        RecordingUnit r2 = new RecordingUnit();
+        RecordingUnit r3 = new RecordingUnit();
+        RecordingUnit r4 = new RecordingUnit();
+        r.setFullIdentifier("f1");
+        r2.setFullIdentifier("f2");
+        r3.setFullIdentifier("f2");
+        r4.setFullIdentifier("f1");
+        List<RecordingUnit> l1 = new ArrayList<>();
+        l1.add(r);
+        l1.add(r2);
+        List<RecordingUnit> l2 = new ArrayList<>();
+        l2.add(r3);
+        l2.add(r4);
+        filterBy2.put("f1", FilterMeta.builder().field("f1").filterValue(l1).build());
+        filterBy.put("f1", FilterMeta.builder().field("f1").filterValue(l2).build());
 
         BaseLazyDataModel lazyModel = Mockito.mock(BaseLazyDataModel.class, Answers.CALLS_REAL_METHODS);
 
