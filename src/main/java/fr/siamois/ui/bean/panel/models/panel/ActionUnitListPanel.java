@@ -1,42 +1,42 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.auth.Person;
-
 import fr.siamois.domain.models.vocabulary.Concept;
-
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.SpatialUnitService;
+import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
+import fr.siamois.ui.model.ActionUnitLazyDataModel;
 import fr.siamois.ui.model.SpatialUnitLazyDataModel;
-
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.event.ColumnToggleEvent;
-import org.primefaces.model.*;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.Visibility;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
-import java.util.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class SpatialUnitListPanel extends AbstractPanel {
+public class ActionUnitListPanel extends AbstractPanel {
 
     private final transient SpatialUnitService spatialUnitService;
     private final transient PersonService personService;
@@ -44,10 +44,11 @@ public class SpatialUnitListPanel extends AbstractPanel {
     private final SessionSettingsBean sessionSettingsBean;
     private final LangBean langBean;
     private final transient LabelService labelService;
+    private final transient ActionUnitService actionUnitService;
 
     // locals
-    private String spatialUnitListErrorMessage;
-    private SpatialUnitLazyDataModel lazyDataModel ;
+    private String actionUnitListErrorMessage;
+    private ActionUnitLazyDataModel lazyDataModel ;
     private long totalNumberOfUnits ;
 
     private Set<SortMeta> sortBy = new HashSet<>();
@@ -58,21 +59,13 @@ public class SpatialUnitListPanel extends AbstractPanel {
     private String nameFilter;
     private String globalFilter;
 
-    public void onToggle(ColumnToggleEvent e) {
-        Integer index = (Integer) e.getData();
-        UIColumn column = e.getColumn();
-        Visibility visibility = e.getVisibility();
-        String header = column.getAriaHeaderText() != null ? column.getAriaHeaderText() : column.getHeaderText();
-        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Column " + index + " toggled: " + header + " " + visibility, null);
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
 
-    public SpatialUnitListPanel(SpatialUnitService spatialUnitService, PersonService personService,
-                                ConceptService conceptService,
-                                SessionSettingsBean sessionSettingsBean, LangBean langBean, LabelService labelService) {
+    public ActionUnitListPanel(SpatialUnitService spatialUnitService, PersonService personService,
+                               ConceptService conceptService,
+                               SessionSettingsBean sessionSettingsBean, LangBean langBean, LabelService labelService, ActionUnitService actionUnitService) {
 
 
-        super("panel.title.allspatialunit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-list-panel");
+        super("panel.title.allactionunit", "bi bi-arrow-down-square", "siamois-panel action-unit-panel action-unit-list-panel");
 
         this.spatialUnitService = spatialUnitService;
         this.personService = personService;
@@ -80,37 +73,34 @@ public class SpatialUnitListPanel extends AbstractPanel {
         this.sessionSettingsBean = sessionSettingsBean;
         this.langBean = langBean;
         this.labelService = labelService;
+        this.actionUnitService = actionUnitService;
     }
 
     @Override
     public String displayHeader() {
-        return "/panel/header/spatialUnitListPanelHeader.xhtml";
+        return "/panel/header/actionUnitListPanelHeader.xhtml";
     }
-
-
-
 
     public void init()  {
         try {
             // Add current item to breadcrumb
             DefaultMenuItem item = DefaultMenuItem.builder()
-                    .value(langBean.msg("common.entity.spatialUnits"))
-                    .icon("bi bi-geo-alt")
+                    .value(langBean.msg("common.entity.actionUnits"))
+                    .icon("bi bi-arrow-down-square")
                     .build();
             this.getBreadcrumb().getModel().getElements().add(item);
 
             // Init filters
-            selectedAuthors = new ArrayList<>();
+//            selectedAuthors = new ArrayList<>();
             selectedTypes = new ArrayList<>();
             nameFilter = "";
             globalFilter = "";
 
             totalNumberOfUnits = spatialUnitService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
 
-
             // init lazy model
-            lazyDataModel = new SpatialUnitLazyDataModel(
-                    spatialUnitService,
+            lazyDataModel = new ActionUnitLazyDataModel(
+                    actionUnitService,
                     sessionSettingsBean,
                     langBean
             );
@@ -121,7 +111,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
 
         } catch (RuntimeException e) {
-            spatialUnitListErrorMessage = "Failed to load spatial units: " + e.getMessage();
+            actionUnitListErrorMessage = "Failed to load action units: " + e.getMessage();
         }
     }
 
@@ -146,26 +136,26 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
     @Override
     public String display() {
-        return "/panel/spatialUnitListPanel.xhtml";
+        return "/panel/actionUnitListPanel.xhtml";
     }
 
-    public static class SpatialUnitListPanelBuilder {
+    public static class ActionUnitListPanelBuilder {
 
-        private final SpatialUnitListPanel spatialUnitListPanel;
+        private final ActionUnitListPanel actionUnitListPanel;
 
-        public SpatialUnitListPanelBuilder(ObjectProvider<SpatialUnitListPanel> spatialUnitListPanelProvider) {
-            this.spatialUnitListPanel = spatialUnitListPanelProvider.getObject();
+        public ActionUnitListPanelBuilder(ObjectProvider<ActionUnitListPanel> actionUnitListPanelProvider) {
+            this.actionUnitListPanel = actionUnitListPanelProvider.getObject();
         }
 
-        public SpatialUnitListPanel.SpatialUnitListPanelBuilder breadcrumb(PanelBreadcrumb breadcrumb) {
-            spatialUnitListPanel.setBreadcrumb(breadcrumb);
+        public ActionUnitListPanel.ActionUnitListPanelBuilder breadcrumb(PanelBreadcrumb breadcrumb) {
+            actionUnitListPanel.setBreadcrumb(breadcrumb);
 
             return this;
         }
 
-        public SpatialUnitListPanel build() {
-            spatialUnitListPanel.init();
-            return spatialUnitListPanel;
+        public ActionUnitListPanel build() {
+            actionUnitListPanel.init();
+            return actionUnitListPanel;
         }
     }
 

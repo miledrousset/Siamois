@@ -22,9 +22,7 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
     @Query(
             nativeQuery = true,
             value = "SELECT ru.* FROM recording_unit ru " +
-                    "JOIN action_unit au ON ru.fk_action_unit_id = au.action_unit_id " +
-                    "JOIN spatial_unit su ON au.fk_spatial_unit_id = su.spatial_unit_id " +
-                    "WHERE su.spatial_unit_id = :spatialUnitId"
+                    "WHERE ru.fk_spatial_unit_id = :spatialUnitId"
     )
     List<RecordingUnit> findAllBySpatialUnitId(Long spatialUnitId);
 

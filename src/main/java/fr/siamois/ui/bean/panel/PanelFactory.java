@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class PanelFactory {
 
     private final ObjectProvider<SpatialUnitListPanel> spatialUnitListPanelProvider;
+    private final ObjectProvider<ActionUnitListPanel> actionUnitListPanelProvider;
     private final ObjectProvider<SpatialUnitPanel> spatialUnitPanelProvider;
     private final ObjectProvider<NewSpatialUnitPanel> newSpatialUnitPanelProvider;
     private final ObjectProvider<NewActionUnitPanel> newActionUnitPanelProvider;
@@ -24,6 +25,7 @@ public class PanelFactory {
 
     public PanelFactory(
             ObjectProvider<SpatialUnitListPanel> spatialUnitListPanelProvider,
+            ObjectProvider<ActionUnitListPanel> actionUnitListPanelProvider,
             ObjectProvider<SpatialUnitPanel> spatialUnitPanelProvider,
             ObjectProvider<NewSpatialUnitPanel> newSpatialUnitPanelProvider,
             ObjectProvider<NewActionUnitPanel> newActionUnitPanelProvider,
@@ -33,6 +35,7 @@ public class PanelFactory {
             ObjectProvider<WelcomePanel> welcomePanelProvider) {
 
         this.spatialUnitListPanelProvider = spatialUnitListPanelProvider;
+        this.actionUnitListPanelProvider = actionUnitListPanelProvider;
         this.spatialUnitPanelProvider = spatialUnitPanelProvider;
         this.newSpatialUnitPanelProvider = newSpatialUnitPanelProvider;
         this.newActionUnitPanelProvider = newActionUnitPanelProvider;
@@ -154,6 +157,12 @@ public class PanelFactory {
 
     public SpatialUnitListPanel createSpatialUnitListPanel(PanelBreadcrumb currentBreadcrumb) {
         return new SpatialUnitListPanel.SpatialUnitListPanelBuilder(spatialUnitListPanelProvider)
+                .breadcrumb(currentBreadcrumb)
+                .build();
+    }
+
+    public ActionUnitListPanel createActionUnitListPanel(PanelBreadcrumb currentBreadcrumb) {
+        return new ActionUnitListPanel.ActionUnitListPanelBuilder(actionUnitListPanelProvider)
                 .breadcrumb(currentBreadcrumb)
                 .build();
     }

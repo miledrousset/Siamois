@@ -17,7 +17,6 @@ public interface CustomFieldRepository extends CrudRepository<CustomField, Long>
             SELECT DISTINCT cfield.*
             FROM recording_unit ru
             JOIN action_unit au ON ru.fk_action_unit_id = au.action_unit_id
-            JOIN spatial_unit su ON au.fk_spatial_unit_id = su.spatial_unit_id
             JOIN custom_form_response cfr ON ru.fk_custom_form_response = cfr.custom_form_response_id
             JOIN custom_form cf ON cfr.fk_custom_form_id = cf.form_id
             JOIN LATERAL jsonb_array_elements(cf.layout) AS layout_item ON TRUE
