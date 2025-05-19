@@ -4,6 +4,7 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
+
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
@@ -12,21 +13,34 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<SpatialUnit> {
 
-
     public List<SpatialUnit> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
-        this.first = first;
-        this.pageSize = pageSize;
 
+        // Deep comparison of sort criteria
+        boolean isSortSame = isSortCriteriaSame(this.cachedSortBy, sortBy);
+
+        // Deep comparison of filter criteria
+        boolean isFilterSame = isFilterCriteriaSame(this.cachedFilterBy, filterBy);
+
+        // Check if current parameters match saved ones and queryResult is not null
+        if (this.cachedFirst == first &&
+                this.cachedPageSize == pageSize &&
+                isSortSame &&
+                isFilterSame &&
+                this.queryResult != null) {
+            setRowCount(this.cachedRowCount);
+            return this.queryResult; // Return cached result
+        }
+
+        // Update for paginator
+        this.first = first;
+        this.pageSizeState = pageSize;
         int pageNumber = first / pageSize;
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, buildSort(sortBy));
+        Pageable pageable = PageRequest.of(pageNumber, pageSizeState, buildSort(sortBy, "spatial_unit_id"));
 
         String nameFilter = null;
         Long[] categoryIds = null;
@@ -41,7 +55,7 @@ public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<Spa
 
             FilterMeta categoryMeta = filterBy.get("category");
             if (categoryMeta != null && categoryMeta.getFilterValue() != null) {
-                List<ConceptLabel> selectedCategoryLabels = (List<ConceptLabel>) categoryMeta.getFilterValue();
+                List<ConceptLabel> selectedCategoryLabels = (List<ConceptLabel>)  categoryMeta.getFilterValue();
                 List<Concept> selectedCategories;
                 selectedCategories = selectedCategoryLabels.stream().map(ConceptLabel::getConcept).toList();
                 categoryIds = selectedCategories.stream()
@@ -68,32 +82,47 @@ public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<Spa
             }
         }
 
+        // Perform query to DB
         Page<SpatialUnit> result = loadSpatialUnits(nameFilter, categoryIds, personIds, globalFilter, pageable);
         setRowCount((int) result.getTotalElements());
+
+        // Update cache
+        this.queryResult = result.getContent();
+        this.cachedFilterBy = BaseLazyDataModel.deepCopyFilterMetaMap(filterBy);
+        this.cachedSortBy = new HashMap<>(sortBy);
+        this.cachedFirst = first;
+        this.cachedPageSize = pageSize;
+        this.cachedRowCount = (int) result.getTotalElements();
+
+        // Sync sortBy
+        this.sortBy = new HashSet<>(sortBy.values());
+
         return result.getContent();
     }
 
-    private Sort buildSort(Map<String, SortMeta> sortBy) {
+    private Sort buildSort(Map<String, SortMeta> sortBy, String tieBreaker) {
         if (sortBy == null || sortBy.isEmpty()) {
             return Sort.unsorted();
         }
 
         List<Sort.Order> orders = new ArrayList<>();
         for (Map.Entry<String, SortMeta> entry : sortBy.entrySet()) {
+            // These lines of code could be replaced with a map
             String field = entry.getKey();
-            if(Objects.equals(field, "category.label")) {
+            if (Objects.equals(field, "category")) {
                 field = "c_label";
-            }
-            else if(Objects.equals(field, "creationTime")) {
+            } else if (Objects.equals(field, "creationTime")) {
                 field = "creation_time";
-            }
-            else if(Objects.equals(field, "author")) {
+            } else if (Objects.equals(field, "author")) {
                 field = "p_lastname";
             }
             SortMeta meta = entry.getValue();
             Sort.Order order = new Sort.Order(meta.getOrder() == SortOrder.ASCENDING ? Sort.Direction.ASC : Sort.Direction.DESC, field);
             orders.add(order);
         }
+
+        // Add tie breaker to make it deterministic
+        orders.add(new Sort.Order(Sort.Direction.ASC, tieBreaker));
 
         return Sort.by(orders);
     }

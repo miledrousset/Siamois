@@ -7,6 +7,7 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+
 public class SpatialUnitLazyDataModel extends BaseSpatialUnitLazyDataModel {
 
     private final transient SpatialUnitService spatialUnitService;
@@ -27,4 +28,6 @@ public class SpatialUnitLazyDataModel extends BaseSpatialUnitLazyDataModel {
                 langBean.getLanguageCode(),
                 pageable);
     }
+
+
 }

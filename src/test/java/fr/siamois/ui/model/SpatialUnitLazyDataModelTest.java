@@ -92,11 +92,44 @@ class SpatialUnitLazyDataModelTest {
     }
 
     @Test
+    void load_FromCacheSuccess() {
+
+        lazyModel = Mockito.spy(new SpatialUnitLazyDataModel(spatialUnitService,sessionSettingsBean,langBean));
+        lazyModel.cachedFirst = 0;
+        lazyModel.cachedPageSize = 10;
+        Map<String, SortMeta> sortBy = new HashMap<>();
+        Map<String, FilterMeta> filters = new HashMap<>();
+        lazyModel.queryResult = p.getContent();
+
+        // Arrange
+        when(lazyModel.isFilterCriteriaSame(
+                any(Map.class),
+                any(Map.class)
+        )).thenReturn(true);
+
+        when(lazyModel.isSortCriteriaSame(
+                any(Map.class),
+                any(Map.class)
+        )).thenReturn(true);
+
+        // Act
+        List<SpatialUnit> result = lazyModel.load(0, 10, sortBy, filters);
+
+        // Assert loadSpatialUnit has not been called
+        verify(lazyModel, never()).loadSpatialUnits(any(String.class),
+                any(Long[].class),
+                any(Long[].class),
+                any(String.class),
+                any(org.springframework.data.domain.Pageable.class));
+        // Assert
+        assertEquals(spatialUnit1, result.get(0));
+        assertEquals(spatialUnit2, result.get(1));
+    }
+
+    @Test
     void testLoad_withCategoryFilterAndAscSort() {
 
         lazyModel = Mockito.spy(new SpatialUnitLazyDataModel(spatialUnitService,sessionSettingsBean,langBean));
-
-
 
         // Arrange
         int first = 20;
@@ -113,14 +146,15 @@ class SpatialUnitLazyDataModelTest {
         List<Person> persons = List.of(pers);
 
         Map<String, FilterMeta> filters = new HashMap<>();
-        FilterMeta catFilter = new FilterMeta();
-        FilterMeta authorFilter = new FilterMeta();
-        FilterMeta nameFilter = new FilterMeta();
-        nameFilter.setFilterValue("name");
-        FilterMeta globalFilter = new FilterMeta();
-        globalFilter.setFilterValue("global");
-        catFilter.setFilterValue(categoryLabels);
-        authorFilter.setFilterValue(persons);
+
+
+        FilterMeta globalFilter = FilterMeta.builder().field("global").filterValue("global").build();
+
+        FilterMeta catFilter = FilterMeta.builder().field("category").filterValue(categoryLabels).build();
+        FilterMeta authorFilter = FilterMeta.builder().field("author").filterValue(persons).build();
+        FilterMeta nameFilter = FilterMeta.builder().field("name").filterValue("name").build();
+
+
         filters.put("category", catFilter);
         filters.put("name", nameFilter);
         filters.put("author", authorFilter);
@@ -130,7 +164,7 @@ class SpatialUnitLazyDataModelTest {
         SortMeta sortMeta = new SortMeta();
         sortMeta.setOrder(SortOrder.ASCENDING);
         Map<String, SortMeta> sortBy = new HashMap<>();
-        sortBy.put("category.label", sortMeta);
+        sortBy.put("category", sortMeta);
         sortBy.put("creationTime", sortMeta);
         SortMeta sortMeta2 = new SortMeta();
         sortMeta2.setOrder(SortOrder.DESCENDING);

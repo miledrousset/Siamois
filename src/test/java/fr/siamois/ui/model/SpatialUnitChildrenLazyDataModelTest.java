@@ -42,7 +42,6 @@ class SpatialUnitChildrenLazyDataModelTest {
     SpatialUnit spatialUnit3;
     Institution institution;
 
-
     @BeforeEach
     void setUp() {
         spatialUnit1 = new SpatialUnit();

@@ -1,8 +1,9 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
+
 import fr.siamois.domain.models.vocabulary.Concept;
+
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.person.PersonService;
@@ -12,20 +13,22 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.model.SpatialUnitLazyDataModel;
+
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.event.ColumnToggleEvent;
-import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.Visibility;
+import org.primefaces.model.*;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+
+import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,10 +47,16 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
     // locals
     private String spatialUnitListErrorMessage;
-    private List<Concept> selectedCategories;
-    private List<Person> selectedAuthors;
-    private LazyDataModel<SpatialUnit> lazyDataModel ;
+    private SpatialUnitLazyDataModel lazyDataModel ;
     private long totalNumberOfUnits ;
+
+    private Set<SortMeta> sortBy = new HashSet<>();
+
+    // Filters
+    private transient List<ConceptLabel> selectedTypes = new ArrayList<>();
+    private transient List<ConceptLabel> selectedAuthors = new ArrayList<>();
+    private String nameFilter;
+    private String globalFilter;
 
     public void onToggle(ColumnToggleEvent e) {
         Integer index = (Integer) e.getData();
@@ -89,15 +98,27 @@ public class SpatialUnitListPanel extends AbstractPanel {
                     .icon("bi bi-geo-alt")
                     .build();
             this.getBreadcrumb().getModel().getElements().add(item);
-            // Get all the spatial unit within the institution
-            selectedCategories = new ArrayList<>();
+
+            // Init filters
             selectedAuthors = new ArrayList<>();
+            selectedTypes = new ArrayList<>();
+            nameFilter = "";
+            globalFilter = "";
+
             totalNumberOfUnits = spatialUnitService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
+
+
+            // init lazy model
             lazyDataModel = new SpatialUnitLazyDataModel(
                     spatialUnitService,
                     sessionSettingsBean,
                     langBean
             );
+            lazyDataModel.setSortBy(sortBy);
+            lazyDataModel.setFirst(5);
+            lazyDataModel.setPageSizeState(5);
+
+
 
         } catch (RuntimeException e) {
             spatialUnitListErrorMessage = "Failed to load spatial units: " + e.getMessage();

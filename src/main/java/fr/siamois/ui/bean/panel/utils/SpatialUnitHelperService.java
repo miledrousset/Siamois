@@ -41,8 +41,11 @@ public class SpatialUnitHelperService {
 
 
 
-    public <T> List<T> getFirstThree(@NotNull Set<T> itemSet) {
-        if (itemSet.size() <= 3) {
+    public <T> List<T> getFirstThree(Set<T> itemSet) {
+        if(itemSet == null) {
+            return new ArrayList<>();
+        }
+        else if (itemSet.size() <= 3) {
             return new ArrayList<>(itemSet);
         } else {
             List<T> tempList = new ArrayList<>(itemSet);

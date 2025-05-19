@@ -119,6 +119,16 @@ class SpatialUnitHelperServiceTest {
     }
 
     @Test
+    void testGetFirstThreeNull() {
+
+        // Act
+        List<String> result = spatialUnitHelperService.getFirstThree(null);
+
+        // Assert
+        assertEquals(0, result.size());
+    }
+
+    @Test
     void testGetFirstThreeWithLessThanThreeItems() {
         // Arrange
         Set<String> testSet = new HashSet<>();

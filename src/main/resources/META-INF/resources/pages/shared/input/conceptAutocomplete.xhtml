@@ -28,7 +28,6 @@
                         itemValue="#{field}"
                         disabled="#{cc.attrs.disabled}"
                         required="true"
-                        immediate="true"
                         converter="#{conceptConverter}"
                         forceSelection="true"
                         scrollHeight="300"
@@ -43,7 +42,7 @@
                     listener="#{cc.attrs.itemSelectListener}"
                     disabled="#{empty cc.attrs.itemSelectListener}"
                     update="#{cc.attrs.ajaxUpdateTargets}"
-                    immediate="false"
+                    immediate="true"
                     process="#{cc.attrs.ajaxProcessTargets}"/>
 
             <p:column>
