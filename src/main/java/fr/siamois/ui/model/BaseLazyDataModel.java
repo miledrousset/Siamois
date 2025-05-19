@@ -1,9 +1,9 @@
 package fr.siamois.ui.model;
 
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
@@ -11,8 +11,8 @@ import org.primefaces.model.SortMeta;
 import java.util.*;
 
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
 
     @Override

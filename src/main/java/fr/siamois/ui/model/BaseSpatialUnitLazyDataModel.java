@@ -18,8 +18,6 @@ import java.util.*;
 
 public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<SpatialUnit> {
 
-
-
     public List<SpatialUnit> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
 
         // Deep comparison of sort criteria

@@ -4,11 +4,9 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
-import org.primefaces.model.SortMeta;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Map;
 
 public class SpatialUnitLazyDataModel extends BaseSpatialUnitLazyDataModel {
 
