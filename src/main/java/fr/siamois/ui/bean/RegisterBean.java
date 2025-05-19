@@ -68,7 +68,7 @@ public class RegisterBean {
         this.email = pendingPerson.getEmail();
         Set<PendingInstitutionInvite> institutions = pendingPersonService.findInstitutionsByPendingPerson(pendingPerson);
         for (PendingInstitutionInvite invite : institutions) {
-            institutionTeams.put(invite.getInstitution(), new HashSet<>());
+            institutionTeams.putIfAbsent(invite.getInstitution(), new HashSet<>());
             Set<PendingTeamInvite> teamInvites = pendingPersonService.findTeamsByPendingInstitutionInvite(invite);
             teamInvites.forEach(teamInvite ->
                     institutionTeams.get(teamInvite.getPendingInstitutionInvite().getInstitution()).add(teamInvite.getTeam()));
@@ -115,7 +115,6 @@ public class RegisterBean {
                 .filter(t -> !t.isDefaultTeam())
                 .map(Team::getName)
                 .collect(Collectors.toSet());
-
         return "[" + String.join(", ", teamsName) + "]";
     }
 

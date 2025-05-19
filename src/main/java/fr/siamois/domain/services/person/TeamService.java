@@ -53,6 +53,9 @@ public class TeamService {
         return teams;
     }
 
+    public Team createOrGetDefaultOf(Institution institution) {
+        return teamRepository.findDefaultOf(institution.getId()).orElseGet(() -> createDefaultTeamOf(institution));
+    }
 
     private Team createDefaultTeamOf(Institution institution) {
         Team defaultTeam = new Team();

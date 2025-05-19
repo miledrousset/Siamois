@@ -104,14 +104,10 @@ public class Person implements UserDetails {
     @Column(name = "is_enabled")
     private boolean isEnabled = true;
 
-    public boolean isSuperAdmin() {
-        return isSuperAdmin;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SystemRole> roles = new ArrayList<>();
-        if (Boolean.FALSE.equals(this.isSuperAdmin))
+        if (!this.isSuperAdmin)
             roles.add(new SystemRole("SUPER_ADMIN"));
         return roles;
     }
