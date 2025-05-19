@@ -133,6 +133,9 @@ public class PendingPersonService {
     public boolean sendPendingInstitutionInvite(PendingPerson pendingPerson, Institution institution, boolean isManager, String mailLang) {
         Optional<PendingInstitutionInvite> pendingInstitutionInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson);
         if (pendingInstitutionInvite.isPresent()) {
+            PendingInstitutionInvite invite = pendingInstitutionInvite.get();
+            invite.setManager(isManager);
+            pendingInstitutionInviteRepository.save(invite);
             return false;
         } else {
             PendingInstitutionInvite invite = new PendingInstitutionInvite();

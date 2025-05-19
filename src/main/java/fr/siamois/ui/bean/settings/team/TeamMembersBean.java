@@ -73,7 +73,7 @@ public class TeamMembersBean implements SettingsDatatableBean {
         PrimeFaces.current().executeScript("PF('newMemberDialog').show();");
     }
 
-    private void save() {
+    public void save() {
         for (UserDialogBean.UserMailRole mailRole : userDialogBean.getInputUserMailRoles()) {
             if (!mailRole.isEmpty()) {
                 saveUser(mailRole);

@@ -23,23 +23,31 @@ import java.util.Set;
 @Transactional
 public class FieldService {
 
-    public List<String> searchAllFieldCodes() {
+    private static final List<String> FIELD_CODES;
+
+    static {
+        FIELD_CODES = new ArrayList<>();
+        loadFieldCodes();
+    }
+
+    private static void loadFieldCodes() {
         Reflections reflections = new Reflections("fr.siamois.domain.models", Scanners.FieldsAnnotated);
         Set<Field> fieldsWithFieldCode = reflections.getFieldsAnnotatedWith(FieldCode.class);
-        List<String> fieldCodes = new ArrayList<>();
 
         for (Field field : fieldsWithFieldCode) {
             if (isValidFieldCode(field)) {
                 try {
                     String fieldCode = (String) field.get(null);
-                    fieldCodes.add(fieldCode.toUpperCase());
+                    FIELD_CODES.add(fieldCode.toUpperCase());
                 } catch (IllegalAccessException e) {
                     log.error("Error while searching for field code {}", field.getName());
                 }
             }
         }
+    }
 
-        return fieldCodes;
+    public List<String> searchAllFieldCodes() {
+        return new ArrayList<>(FIELD_CODES);
     }
 
     private static boolean isValidFieldCode(Field field) {

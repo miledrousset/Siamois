@@ -29,7 +29,7 @@
                                 <p:column headerText="Adresse email">
                                     <p:inputText value="#{user.email}" placeholder="john.doe@mail.com"/>
                                 </p:column>
-                                <p:column headerText="Rôle">
+                                <p:column headerText="Rôle" rendered="#{userDialogBean.shouldRenderRoleField}">
                                     <input:conceptAutocomplete
                                             selectedConcept="#{user.role}"
                                             editConceptUrl="#{userDialogBean.parentConceptUrl()}"

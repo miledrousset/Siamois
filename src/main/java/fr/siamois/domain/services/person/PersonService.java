@@ -65,6 +65,9 @@ public class PersonService {
             Institution institution = invite.getInstitution();
             teamService.addPersonToInstitutionIfNotExist(person, institution);
             addToPendingTeam(invite, person);
+            if (invite.isManager()) {
+                institutionService.addToManagers(institution, person);
+            }
             pendingPersonService.deleteInstitutionInvite(invite);
         }
     }

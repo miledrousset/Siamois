@@ -126,6 +126,7 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     public void add() {
         log.trace("Creating manager");
         userDialogBean.init(langBean.msg("organisationSettings.managers.add"), langBean.msg("organisationSettings.managers.add"), institution, this::save);
+        PrimeFaces.current().ajax().update("newMemberDialog");
         PrimeFaces.current().executeScript("PF('newMemberDialog').show();");
     }
 
@@ -154,10 +155,11 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     public void save() {
         for (UserDialogBean.UserMailRole userMailRole : userDialogBean.getInputUserMailRoles()) {
             if (!userMailRole.isEmpty()) {
+                log.trace("Attempting to add user: {}", userMailRole.getEmail());
                 saveUser(userMailRole);
             }
         }
-        PrimeFaces.current().executeScript("PF('newMemberDialog').exit();");
+        userDialogBean.exit();
     }
 
 }

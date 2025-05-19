@@ -131,7 +131,7 @@ public class UserDialogBean implements Serializable {
         private Concept role;
 
         public boolean isEmpty() {
-            return role == null || email == null || email.isEmpty();
+            return email == null || email.isEmpty();
         }
     }
 
