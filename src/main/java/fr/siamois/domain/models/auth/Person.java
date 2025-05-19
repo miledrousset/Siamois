@@ -72,7 +72,6 @@ public class Person implements UserDetails {
 
     @ColumnDefault("false")
     @Column(name = "is_super_admin")
-    @Getter(AccessLevel.NONE)
     private boolean isSuperAdmin = false;
 
     @Column(name = "api_key", length = Integer.MAX_VALUE)

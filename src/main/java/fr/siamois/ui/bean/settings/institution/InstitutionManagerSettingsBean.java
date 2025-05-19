@@ -46,7 +46,13 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     private transient Set<Person> refMembers;
     private String searchInput;
 
-    public InstitutionManagerSettingsBean(InstitutionService institutionService, PersonService personService, UserDialogBean userDialogBean, LangBean langBean, PendingPersonService pendingPersonService, SessionSettingsBean sessionSettingsBean, TeamService teamService) {
+    public InstitutionManagerSettingsBean(InstitutionService institutionService,
+                                          PersonService personService,
+                                          UserDialogBean userDialogBean,
+                                          LangBean langBean,
+                                          PendingPersonService pendingPersonService,
+                                          SessionSettingsBean sessionSettingsBean,
+                                          TeamService teamService) {
         this.institutionService = institutionService;
         this.personService = personService;
         this.userDialogBean = userDialogBean;
@@ -123,8 +129,8 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
         PrimeFaces.current().executeScript("PF('newMemberDialog').show();");
     }
 
-    public void save() {
-        Optional<Person> existingsUser = personService.findByEmail(userDialogBean.getUserEmail());
+    private void saveUser(UserDialogBean.UserMailRole userMailRole) {
+        Optional<Person> existingsUser = personService.findByEmail(userMailRole.getEmail());
         if (existingsUser.isPresent()) {
             boolean isAdded = institutionService.addToManagers(institution, existingsUser.get());
             if (!isAdded) {
@@ -133,18 +139,25 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
                 return;
             }
             displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", existingsUser.get().getEmail());
-            PrimeFaces.current().executeScript("PF('newMemberDialog').exit();");
             return;
         }
 
-        PendingPerson pendingPerson = pendingPersonService.createOrGetPendingPerson(userDialogBean.getUserEmail());
+        PendingPerson pendingPerson = pendingPersonService.createOrGetPendingPerson(userMailRole.getEmail());
         if (pendingPersonService.sendPendingInstitutionInvite(pendingPerson, institution, true, sessionSettingsBean.getLanguageCode())) {
             displayInfoMessage(langBean, "organisationSettings.action.sendInvite", pendingPerson.getEmail());
         } else {
             displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", pendingPerson.getEmail());
         }
-        PrimeFaces.current().executeScript("PF('newMemberDialog').exit();");
 
+    }
+
+    public void save() {
+        for (UserDialogBean.UserMailRole userMailRole : userDialogBean.getInputUserMailRoles()) {
+            if (!userMailRole.isEmpty()) {
+                saveUser(userMailRole);
+            }
+        }
+        PrimeFaces.current().executeScript("PF('newMemberDialog').exit();");
     }
 
 }

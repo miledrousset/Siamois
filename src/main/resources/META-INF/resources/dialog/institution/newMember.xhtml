@@ -3,6 +3,8 @@
              xmlns:p="http://primefaces.org/ui"
              xmlns:h="http://java.sun.com/jsf/html"
              xmlns:input="http://java.sun.com/jsf/composite/pages/shared/input"
+             xmlns:f="http://java.sun.com/jsf/core"
+             xmlns:form="http://xmlns.jcp.org/jsf/composite/pages/shared/form"
 >
 
     <p:dialog
@@ -12,31 +14,49 @@
             showEffect="fade"
             appendToBody="true"
             closable="false"
+            showHeader="false"
+            styleClass="newMemberDialog"
     >
         <div class="dialog-new-manager">
-            <h3>#{userDialogBean.title}</h3>
-            <hr/>
-            <div class="container" >
-                <article class="form-group row">
-                    <h4 class="col-lg-4" >#{langBean.msg("common.label.email")}</h4>
-                </article>
-                <article class="form-group row">
-                    <p:inputText styleClass="col-lg-4" value="#{userDialogBean.userEmail}" placeholder="xyz@domain.net"/>
-                </article>
-                <h:panelGroup rendered="#{userDialogBean.shouldRenderRoleField}">
-                    <article class="form-group row">
-                        <h4 class="col-lg-4" >#{langBean.msg("common.label.role")}</h4>
-                    </article>
-                    <article class="form-group row">
-                        <input:conceptAutocomplete completeMethod="#{userDialogBean.autocompleteConcept}" editConceptUrl="#{userDialogBean.parentConceptUrl()}" selectedConcept="#{userDialogBean.role}"/>
-                    </article>
-                </h:panelGroup>
-            </div>
-            <hr/>
-            <div class="dialog-buttons">
-                <p:commandButton value="#{langBean.msg('common.action.cancel')}" action="#{userDialogBean.exit()}" update="@form"/>
-                <p:commandButton value="#{userDialogBean.buttonLabel}" action="#{userDialogBean.actionFromBean.apply()}" update="@form"/>
-            </div>
+            <section>
+                <h3>#{userDialogBean.title}</h3>
+            </section>
+            <form:csrfform formId="userDialogBeanForm">
+                <section>
+                    <p:tabView>
+                        <p:tab title="Inviter des utilisateurs individuellement">
+                            <p:dataTable id="userTable" var="user" value="#{userDialogBean.inputUserMailRoles}" editable="true" style="width: 100%">
+                                <p:column headerText="Adresse email">
+                                    <p:inputText value="#{user.email}" placeholder="john.doe@mail.com"/>
+                                </p:column>
+                                <p:column headerText="Rôle">
+                                    <input:conceptAutocomplete
+                                            selectedConcept="#{user.role}"
+                                            editConceptUrl="#{userDialogBean.parentConceptUrl()}"
+                                            completeMethod="#{userDialogBean.autocompleteConcept}"
+                                            required="false"
+                                    />
+                                </p:column>
+                                <p:column rendered="#{userDialogBean.inputUserMailRoles.size() > 1}">
+                                    <p:commandButton value="-" action="#{userDialogBean.removeRow(user)}" update="@form"/>
+                                </p:column>
+                            </p:dataTable>
+                            <p:commandButton value="+ Ajouter d'autres utilisateurs" action="#{userDialogBean.addRow()}" update="@form"/>
+                        </p:tab>
+                        <p:tab title="Importer un groupe d'utilisateur" disabled="true">
+
+                        </p:tab>
+                    </p:tabView>
+                </section>
+                <hr/>
+                <div class="dialog-buttons">
+                    <p:commandButton value="#{langBean.msg('common.action.cancel')}"
+                                     action="#{userDialogBean.exit()}"
+                                     update="@form"/>
+                    <p:commandButton value="#{userDialogBean.buttonLabel}" action="#{userDialogBean.actionFromBean.apply()}"
+                                     update="@form"/>
+                </div>
+            </form:csrfform>
         </div>
     </p:dialog>
 
