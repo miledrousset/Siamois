@@ -96,15 +96,37 @@ public class TeamService {
         return !oldTeam.getName().equalsIgnoreCase(newTeam.getName());
     }
 
-    public List<TeamPerson> findMembersOf(Institution institution) {
+    public Set<TeamPerson> findMembersOf(Institution institution) {
         return teamPersonRepository.findAllOfInstitution(institution.getId());
     }
 
     public List<TeamPerson> findTeamPersonByTeam(Team team) {
+        List<TeamPerson> persons;
         if (team.isDefaultTeam()) {
-            return findMembersOf(team.getInstitution());
+            persons = List.copyOf(findMembersOf(team.getInstitution()));
+        } else {
+            persons = teamPersonRepository.findByTeam(team);
         }
-        return teamPersonRepository.findByTeam(team);
+
+        Map<Person, List<TeamPerson>> groupedByPerson = new HashMap<>();
+        for (TeamPerson teamPerson : persons) {
+            groupedByPerson.computeIfAbsent(teamPerson.getPerson(), k -> new ArrayList<>()).add(teamPerson);
+        }
+
+        List<TeamPerson> result = new ArrayList<>();
+        for (List<TeamPerson> teamPersons : groupedByPerson.values()) {
+            if (teamPersons.size() > 1) {
+                result.add(teamPersons.stream()
+                        .filter(tp -> tp.getRoleInTeam() != null)
+                        .findFirst()
+                        .orElse(teamPersons.get(0)));
+            } else {
+                result.add(teamPersons.get(0));
+            }
+        }
+
+        return result;
+
     }
 
     public OffsetDateTime findEarliestAddDateInInstitution(Institution institution, Person person) {
@@ -112,7 +134,7 @@ public class TeamService {
     }
 
     public SortedSet<Team> findTeamsOfPersonInInstitution(Person user, Institution institution) {
-        List<TeamPerson> teams = teamPersonRepository.findAllOfInstitution(institution.getId());
+        Set<TeamPerson> teams = teamPersonRepository.findAllOfInstitution(institution.getId());
         SortedSet<Team> teamSet = new TreeSet<>();
         for (TeamPerson teamPerson : teams) {
             if (teamPerson.getPerson().getId().equals(user.getId())) {
