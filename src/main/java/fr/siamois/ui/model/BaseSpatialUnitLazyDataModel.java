@@ -50,7 +50,7 @@ public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<Spa
         int pageNumber = first / pageSize;
         Pageable pageable = PageRequest.of(pageNumber, pageSizeState, buildSort(sortBy, "spatial_unit_id"));
 
-        String nameFilter = null;
+        String localNameFilter = null;
         Long[] categoryIds = null;
         Long[] personIds = null;
         String globalFilter = null;
@@ -58,7 +58,7 @@ public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<Spa
         if (filterBy != null) {
             FilterMeta nameMeta = filterBy.get("name");
             if (nameMeta != null && nameMeta.getFilterValue() != null) {
-                nameFilter = nameMeta.getFilterValue().toString();
+                localNameFilter = nameMeta.getFilterValue().toString();
             }
 
             FilterMeta categoryMeta = filterBy.get("category");
@@ -91,16 +91,11 @@ public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<Spa
         }
 
         // Perform query to DB
-        Page<SpatialUnit> result = loadSpatialUnits(nameFilter, categoryIds, personIds, globalFilter, pageable);
+        Page<SpatialUnit> result = loadSpatialUnits(localNameFilter, categoryIds, personIds, globalFilter, pageable);
         setRowCount((int) result.getTotalElements());
 
         // Update cache
-        this.queryResult = result.getContent();
-        this.cachedFilterBy = BaseLazyDataModel.deepCopyFilterMetaMap(filterBy);
-        this.cachedSortBy = new HashMap<>(sortBy);
-        this.cachedFirst = first;
-        this.cachedPageSize = pageSize;
-        this.cachedRowCount = (int) result.getTotalElements();
+        updateCache(result, filterBy, sortBy, first, pageSize);
 
         // Sync sortBy
         this.sortBy = new HashSet<>(sortBy.values());

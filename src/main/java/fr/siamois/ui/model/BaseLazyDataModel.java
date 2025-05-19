@@ -2,12 +2,12 @@ package fr.siamois.ui.model;
 
 
 
-import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
+import org.springframework.data.domain.Page;
 
 import java.util.*;
 
@@ -47,6 +47,32 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
                     .field(originalMeta.getField())
                     .filterValue(originalMeta.getFilterValue())
                     .matchMode(originalMeta.getMatchMode())
+                    .build();
+
+            copiedMap.put(key, copiedMeta);
+        }
+        return copiedMap;
+    }
+
+    protected void updateCache(Page<T> result, Map<String, FilterMeta> filterBy, Map<String, SortMeta> sortBy, int first, int pageSize) {
+        // Update cache
+        this.queryResult = result.getContent();
+        this.cachedFilterBy = BaseLazyDataModel.deepCopyFilterMetaMap(filterBy);
+        this.cachedSortBy = BaseLazyDataModel.deepCopySortMetaMap(sortBy);
+        this.cachedFirst = first;
+        this.cachedPageSize = pageSize;
+        this.cachedRowCount = (int) result.getTotalElements();
+    }
+
+    public static Map<String, SortMeta> deepCopySortMetaMap(Map<String, SortMeta> originalMap) {
+        Map<String, SortMeta> copiedMap = new HashMap<>();
+        for (Map.Entry<String, SortMeta> entry : originalMap.entrySet()) {
+            String key = entry.getKey();
+            SortMeta originalMeta = entry.getValue();
+
+            SortMeta copiedMeta = SortMeta.builder()
+                    .field(originalMeta.getField())
+                    .order(originalMeta.getOrder())
                     .build();
 
             copiedMap.put(key, copiedMeta);

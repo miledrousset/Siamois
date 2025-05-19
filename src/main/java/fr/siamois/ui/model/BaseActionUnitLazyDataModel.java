@@ -2,7 +2,6 @@ package fr.siamois.ui.model;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import lombok.Getter;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import javax.swing.*;
 import java.util.*;
 
 @Getter
@@ -49,9 +47,9 @@ public abstract class BaseActionUnitLazyDataModel extends BaseLazyDataModel<Acti
         this.first = first;
         this.pageSizeState = pageSize;
         int pageNumber = first / pageSize;
-        Pageable pageable = PageRequest.of(pageNumber, pageSizeState, buildSort(sortBy, "spatial_unit_id"));
+        Pageable pageable = PageRequest.of(pageNumber, pageSizeState, buildSort(sortBy, "action_unit_id"));
 
-        String nameFilter = null;
+        String localNameFilter = null;
         Long[] categoryIds = null;
         Long[] personIds = null;
         String globalFilter = null;
@@ -59,7 +57,7 @@ public abstract class BaseActionUnitLazyDataModel extends BaseLazyDataModel<Acti
         if (filterBy != null) {
             FilterMeta nameMeta = filterBy.get("name");
             if (nameMeta != null && nameMeta.getFilterValue() != null) {
-                nameFilter = nameMeta.getFilterValue().toString();
+                localNameFilter = nameMeta.getFilterValue().toString();
             }
 
             FilterMeta categoryMeta = filterBy.get("category");
@@ -92,22 +90,18 @@ public abstract class BaseActionUnitLazyDataModel extends BaseLazyDataModel<Acti
         }
 
         // Perform query to DB
-        Page<ActionUnit> result = loadActionUnits(nameFilter, categoryIds, personIds, globalFilter, pageable);
+        Page<ActionUnit> result = loadActionUnits(localNameFilter, categoryIds, personIds, globalFilter, pageable);
         setRowCount((int) result.getTotalElements());
 
-        // Update cache
-        this.queryResult = result.getContent();
-        this.cachedFilterBy = BaseLazyDataModel.deepCopyFilterMetaMap(filterBy);
-        this.cachedSortBy = new HashMap<>(sortBy);
-        this.cachedFirst = first;
-        this.cachedPageSize = pageSize;
-        this.cachedRowCount = (int) result.getTotalElements();
+        updateCache(result, filterBy, sortBy, first, pageSize);
 
         // Sync sortBy
         this.sortBy = new HashSet<>(sortBy.values());
 
         return result.getContent();
     }
+
+
 
     private Sort buildSort(Map<String, SortMeta> sortBy, String tieBreaker) {
         if (sortBy == null || sortBy.isEmpty()) {

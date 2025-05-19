@@ -32,6 +32,15 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
     )
     List<Person> findAllAuthorsOfSpatialUnitByInstitution(Long institutionId);
 
+    @Query(
+            nativeQuery = true,
+            value = "SELECT DISTINCT p.* " +
+                    "FROM person p " +
+                    "JOIN action_unit au ON au.fk_author_id = p.person_id " +
+                    "WHERE au.fk_institution_id = :institutionId"
+    )
+    List<Person> findAllAuthorsOfActionUnitByInstitution(Long institutionId);
+
     Optional<Person> findById(long id);
 
     @Query(

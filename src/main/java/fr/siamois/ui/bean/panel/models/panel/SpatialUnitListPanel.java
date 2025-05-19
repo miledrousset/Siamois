@@ -6,6 +6,7 @@ import fr.siamois.domain.models.vocabulary.Concept;
 
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.SpatialUnitService;
+import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
@@ -44,6 +45,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
     private final SessionSettingsBean sessionSettingsBean;
     private final LangBean langBean;
     private final transient LabelService labelService;
+    private final transient ActionUnitService actionUnitService;
 
     // locals
     private String spatialUnitListErrorMessage;
@@ -65,7 +67,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
 
     public SpatialUnitListPanel(SpatialUnitService spatialUnitService, PersonService personService,
                                 ConceptService conceptService,
-                                SessionSettingsBean sessionSettingsBean, LangBean langBean, LabelService labelService) {
+                                SessionSettingsBean sessionSettingsBean, LangBean langBean, LabelService labelService, ActionUnitService actionUnitService) {
 
 
         super("panel.title.allspatialunit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-list-panel");
@@ -76,6 +78,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
         this.sessionSettingsBean = sessionSettingsBean;
         this.langBean = langBean;
         this.labelService = labelService;
+        this.actionUnitService = actionUnitService;
     }
 
     @Override
@@ -119,7 +122,7 @@ public class SpatialUnitListPanel extends AbstractPanel {
     }
 
     public List<ConceptLabel> categoriesAvailable() {
-        List<Concept> cList = conceptService.findAllConceptsByInstitution(sessionSettingsBean.getSelectedInstitution());
+        List<Concept> cList = conceptService.findAllBySpatialUnitOfInstitution(sessionSettingsBean.getSelectedInstitution());
 
         return cList.stream()
                 .map(concept -> labelService.findLabelOf(

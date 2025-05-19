@@ -9,7 +9,7 @@
 >
     <cc:interface>
         <!-- Attributes to pass the bean's list and optional additional parameters -->
-        <cc:attribute name="lazyDataModel" required="true" type="fr.siamois.ui.model.BaseLazyDataModel"/>
+        <cc:attribute name="lazyDataModel" required="true" type="fr.siamois.ui.model.BaseActionUnitLazyDataModel"/>
         <cc:attribute name="panelModel" required="true" type="fr.siamois.ui.bean.panel.models.panel.AbstractPanel"/>
         <cc:attribute name="panelIndex" required="true" type="java.lang.Integer"/>
         <cc:attribute name="selectedCategories" required="true"/>
@@ -18,7 +18,7 @@
     </cc:interface>
     <cc:implementation>
 
-        <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel"-->
+        <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.ActionUnitListPanel"-->
         <h:form id="actionUnitListForm"
 
         >
@@ -31,7 +31,7 @@
                          paginatorPosition="bottom" var="item"
                          widgetVar="#{cc.clientId}_actionUnitListTable"
                          lazy="true"
-                         globalFilter="#{cc.attrs.panelModel.globalFilter}"
+                         globalFilter="#{cc.attrs.lazyDataModel.globalFilter}"
                          allowUnsorting="true"
                          sortBy="#{cc.attrs.lazyDataModel.sortBy}"
                          rows="#{cc.attrs.lazyDataModel.pageSizeState}"
@@ -59,7 +59,7 @@
                                 <i class="bi bi-search"/>
 
                                             <p:inputText id="globalFilter"
-                                                         value="#{cc.attrs.panelModel.globalFilter}"
+                                                         value="#{cc.attrs.lazyDataModel.globalFilter}"
                                                          onkeyup="PF('#{cc.clientId}_actionUnitListTable').filter()"
                                                          placeholder="#{langBean.msg('common.action.search')}">
 
@@ -99,7 +99,7 @@
                 <p:column toggleable="false" responsivePriority="1"
                           headerText="#{langBean.msg('table.spatialunit.column.name')}"
                           sortable="true"
-                          filterValue="#{cc.attrs.panelModel.nameFilter}"
+                          filterValue="#{cc.attrs.lazyDataModel.nameFilter}"
                           filterable="true"
                           field="name"
                           id="nameCol">
@@ -129,10 +129,10 @@
 
                                 label="#{langBean.msg('table.spatialunit.column.type.filter')}"
                                 filter="true"
-                                value="#{cc.attrs.panelModel.selectedTypes}"
+                                value="#{cc.attrs.lazyDataModel.selectedTypes}"
                                 updateLabel="true"
                                 filterMatchMode="contains"
-                                onchange="PF('#{cc.clientId}_spatialUnitListTable').filter()"
+                                onchange="PF('#{cc.clientId}_actionUnitListTable').filter()"
                                 converter="#{conceptLabelConverter}">
 
                             <f:selectItems value="#{cc.attrs.panelModel.categoriesAvailable()}"
@@ -170,9 +170,9 @@
                                 label="#{langBean.msg('table.spatialunit.column.author.filter')}"
                                 filter="true"
                                 updateLabel="true"
-                                value="#{cc.attrs.panelModel.selectedAuthors}"
+                                value="#{cc.attrs.lazyDataModel.selectedAuthors}"
                                 filterMatchMode="contains"
-                                onchange="PF('#{cc.clientId}_spatialUnitListTable').filter()"
+                                onchange="PF('#{cc.clientId}_actionUnitListTable').filter()"
                                 converter="#{personConverter}">
                             <f:selectItems value="#{cc.attrs.panelModel.authorsAvailable()}"
                                            var="person"

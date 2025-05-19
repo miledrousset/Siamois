@@ -125,6 +125,16 @@ public class PersonService {
     }
 
     /**
+     * Find all the person being an author of a action unit
+     *
+     * @param institution The institution
+     * @return The Person list
+     */
+    public List<Person> findAllAuthorsOfActionUnitByInstitution(Institution institution) {
+        return personRepository.findAllAuthorsOfActionUnitByInstitution(institution.getId());
+    }
+
+    /**
      * Find a person by its ID
      * @param id The ID of the person
      * @return The person having the given ID

@@ -35,8 +35,12 @@ public class ConceptService {
     }
 
 
-    public List<Concept> findAllConceptsByInstitution(Institution institution) {
+    public List<Concept> findAllBySpatialUnitOfInstitution(Institution institution) {
         return conceptRepository.findAllBySpatialUnitOfInstitution(institution.getId());
+    }
+
+    public List<Concept> findAllByActionUnitOfInstitution(Institution institution) {
+        return conceptRepository.findAllByActionUnitOfInstitution(institution.getId());
     }
 
     public Concept saveOrGetConceptFromFullDTO(Vocabulary vocabulary, FullInfoDTO conceptDTO) {
