@@ -37,16 +37,8 @@ import java.util.List;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ActionUnitListPanel extends AbstractListPanel<ActionUnit> {
 
-
     // locals
     private String actionUnitListErrorMessage;
-
-    // Filters
-    private transient List<ConceptLabel> selectedTypes = new ArrayList<>();
-    private transient List<ConceptLabel> selectedAuthors = new ArrayList<>();
-    private String nameFilter;
-    private String globalFilter;
-
 
     @Override
     protected long countUnitsByInstitution() {
