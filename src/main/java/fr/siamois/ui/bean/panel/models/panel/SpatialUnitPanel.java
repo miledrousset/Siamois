@@ -133,7 +133,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
 
     public List<ConceptLabel> categoriesAvailable() {
-        List<Concept> cList = conceptService.findAllConceptsByInstitution(sessionSettings.getSelectedInstitution());
+        List<Concept> cList = conceptService.findAllBySpatialUnitOfInstitution(sessionSettings.getSelectedInstitution());
         return cList.stream()
                 .map(concept -> labelService.findLabelOf(
                         concept, langBean.getLanguageCode()

@@ -1,14 +1,16 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
-@Data
+@Getter
+@Setter
 public abstract class AbstractPanel implements Serializable {
 
 

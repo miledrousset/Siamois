@@ -124,6 +124,10 @@ public class FlowBean implements Serializable {
         lastUpdatedPanelIndex = 0;
     }
 
+    public void addActionUnitListPanel(PanelBreadcrumb bc) {
+        panels.add(0, panelFactory.createActionUnitListPanel(bc));
+        lastUpdatedPanelIndex = 0;
+    }
 
     public void addWelcomePanel() {
         // We find the index of the welcome panel in the flow, if it does not exist we add it,

@@ -38,10 +38,7 @@
 
     <ui:define name="content">
 
-        <!-- Remote command to scroll after update -->
-        <p:remoteCommand name="scrollToLastPanel"
-                         autoRun="false"
-                         onstart="setTimeout(() => scrollToPanel(#{flowBean.lastUpdatedPanelIndex}), 200);"/>
+
 
         <div id="search-bar">
             <form:csrfform formId="searchBarForm">

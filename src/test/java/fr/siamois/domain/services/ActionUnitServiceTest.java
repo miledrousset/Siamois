@@ -18,6 +18,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +29,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,6 +57,9 @@ class ActionUnitServiceTest {
 
     UserInfo info;
 
+    Page<ActionUnit> page ;
+    Pageable pageable;
+
     @BeforeEach
     void setUp() {
         spatialUnit1 = new SpatialUnit();
@@ -59,7 +67,9 @@ class ActionUnitServiceTest {
         actionUnit2 = new ActionUnit();
         spatialUnit1.setId(1L);
         actionUnit1.setId(1L);
+        actionUnit1.setIdentifier("1");
         actionUnit2.setId(2L);
+        actionUnit2.setIdentifier("2");
 
         Person p =new Person();
         Institution i = new Institution();
@@ -94,6 +104,10 @@ class ActionUnitServiceTest {
         failedCode = new ActionCode();
         failedCode.setType(c2);
         failedCode.setCode("primary");
+
+        page = new PageImpl<>(List.of(actionUnit1, actionUnit2));
+        pageable = PageRequest.of(0, 10);
+
 
 
 
@@ -212,6 +226,29 @@ class ActionUnitServiceTest {
         );
 
         assertEquals("Database error", exception.getMessage());
+    }
+
+    @Test
+    void testFindAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining_Success() {
+
+        when(actionUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                any(Long.class),
+                any(String.class),
+                any(Long[].class),
+                any(Long[].class),
+                any(String.class),
+                any(String.class),
+                any(Pageable.class)
+        )).thenReturn(page);
+
+        // Act
+        Page<ActionUnit> actualResult = actionUnitService.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                1L, "null", new Long[2], new Long[2],"null", "fr", pageable
+        );
+
+        // Assert
+        assertEquals(actionUnit1, actualResult.getContent().get(0));
+        assertEquals(actionUnit2, actualResult.getContent().get(1));
     }
 
 

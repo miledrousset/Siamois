@@ -4,6 +4,7 @@ import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -53,6 +54,9 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
 
     @ManyToMany(mappedBy = "children")
     private Set<ActionUnit> parents = new HashSet<>();
+
+    @OneToMany(mappedBy="actionUnit")
+    private Set<RecordingUnit> recordingUnitList;
 
     @ManyToMany
     @JoinTable(

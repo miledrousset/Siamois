@@ -9,7 +9,7 @@
 >
     <cc:interface>
         <!-- Attributes to pass the bean's list and optional additional parameters -->
-        <cc:attribute name="lazyDataModel" required="true" type="fr.siamois.ui.model.BaseSpatialUnitLazyDataModel"/>
+        <cc:attribute name="lazyDataModel" required="true" type="fr.siamois.ui.model.BaseActionUnitLazyDataModel"/>
         <cc:attribute name="panelModel" required="true" type="fr.siamois.ui.bean.panel.models.panel.AbstractPanel"/>
         <cc:attribute name="panelIndex" required="true" type="java.lang.Integer"/>
         <cc:attribute name="selectedCategories" required="true"/>
@@ -18,8 +18,8 @@
     </cc:interface>
     <cc:implementation>
 
-        <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel"-->
-        <h:form id="spatialUnitListForm"
+        <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.ActionUnitListPanel"-->
+        <h:form id="actionUnitListForm"
 
         >
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -27,9 +27,9 @@
 
             <!-- datatable property partialUpdate=false because otherwise the paginator template is reset after sort or filter actions-->
             <p:dataTable paginator="true"
-                         id="spatialUnitDataTable"
+                         id="actionUnitDataTable"
                          paginatorPosition="bottom" var="item"
-                         widgetVar="#{cc.clientId}_spatialUnitListTable"
+                         widgetVar="#{cc.clientId}_actionUnitListTable"
                          lazy="true"
                          globalFilter="#{cc.attrs.lazyDataModel.globalFilter}"
                          allowUnsorting="true"
@@ -41,7 +41,7 @@
                          emptyMessage="#{langBean.msg('spatialUnitList.empty')}"
                          paginatorTemplate="Rows per page: {RowsPerPageDropdown} {RowReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                          rowsPerPageTemplate="5,10,15,20,25"
-                         value="#{cc.attrs.lazyDataModel}" class="spatial-unit-datatable">
+                         value="#{cc.attrs.lazyDataModel}" class="action-unit-datatable">
 
                 <f:facet name="{RowReport}">
 
@@ -60,7 +60,7 @@
 
                                             <p:inputText id="globalFilter"
                                                          value="#{cc.attrs.lazyDataModel.globalFilter}"
-                                                         onkeyup="PF('#{cc.clientId}_spatialUnitListTable').filter()"
+                                                         onkeyup="PF('#{cc.clientId}_actionUnitListTable').filter()"
                                                          placeholder="#{langBean.msg('common.action.search')}">
 
 
@@ -71,9 +71,9 @@
                                 <p:commandButton style="margin-left: 1em;" id="toggler" type="button"
                                                  value="#{langBean.msg('table.columnvisibility')}"
                                                  icon="pi pi-align-justify"/>
-                                <p:columnToggler datasource=":#{cc.clientId}:spatialUnitListForm:spatialUnitDataTable"
-                                                 trigger=":#{cc.clientId}:spatialUnitListForm:spatialUnitDataTable:toggler">
-                                    <p:ajax event="toggle" listener="#{cc.attrs.panelModel.onToggle}"/>
+                                <p:columnToggler datasource=":#{cc.clientId}:actionUnitListForm:actionUnitDataTable"
+                                                 trigger=":#{cc.clientId}:actionUnitListForm:actionUnitDataTable:toggler">
+
                                 </p:columnToggler>
 
 
@@ -85,7 +85,7 @@
 
                         <p:toolbarGroup align="right">
                             <p:commandButton value="#{langBean.msg('table.add')}" icon="bi bi-plus-square"
-                                             disabled="#{cc.attrs.disableAddBtn}"
+                                             disabled="true"
                                              action="#{flowBean.addNewSpatialUnitPanel(cc.attrs.panelModel)}"
                                              update="flow"
                                              style="margin-right: .5rem">
@@ -94,7 +94,6 @@
                     </p:toolbar>
 
                 </f:facet>
-
 
 
                 <p:column toggleable="false" responsivePriority="1"
@@ -106,7 +105,7 @@
                           id="nameCol">
 
                     <p:commandLink
-                            action="#{flowBean.goToSpatialUnitByIdNewPanel(item.id,cc.attrs.panelModel)}"
+                            action="#{flowBean.goToActionUnitByIdNewPanel(item.id,cc.attrs.panelIndex)}"
                             oncomplete="handleScrollToTop();"
                             process="@form"
                             update="flow"
@@ -117,7 +116,7 @@
 
                 </p:column>
 
-                <!-- Spatial unit type column -->
+                <!-- Action unit type column -->
                 <p:column responsivePriority="1" headerText="#{langBean.msg('table.spatialunit.column.type')}"
                           sortable="true"
                           filterable="true"
@@ -133,7 +132,7 @@
                                 value="#{cc.attrs.lazyDataModel.selectedTypes}"
                                 updateLabel="true"
                                 filterMatchMode="contains"
-                                onchange="PF('#{cc.clientId}_spatialUnitListTable').filter()"
+                                onchange="PF('#{cc.clientId}_actionUnitListTable').filter()"
                                 converter="#{conceptLabelConverter}">
 
                             <f:selectItems value="#{cc.attrs.panelModel.categoriesAvailable()}"
@@ -144,8 +143,8 @@
                         </p:selectCheckboxMenu>
 
                     </f:facet>
-                    <p:chip label="#{labelBean.findLabelOf(item.category)}" icon="pi pi-map-marker"
-                            styleClass="mr-2 spatial-unit-type-chip"/>
+                    <p:chip label="#{labelBean.findLabelOf(item.type)}" icon="bi bi-arrow-down-square"
+                            styleClass="mr-2 action-unit-type-chip"/>
                 </p:column>
 
                 <!-- Creation time -->
@@ -173,7 +172,7 @@
                                 updateLabel="true"
                                 value="#{cc.attrs.lazyDataModel.selectedAuthors}"
                                 filterMatchMode="contains"
-                                onchange="PF('#{cc.clientId}_spatialUnitListTable').filter()"
+                                onchange="PF('#{cc.clientId}_actionUnitListTable').filter()"
                                 converter="#{personConverter}">
                             <f:selectItems value="#{cc.attrs.panelModel.authorsAvailable()}"
                                            var="person"
@@ -189,7 +188,7 @@
                 <!-- Parents -->
                 <p:column responsivePriority="3">
                     <f:facet name="header">
-                        <cellheader:withIcon icon="bi bi-geo-alt"
+                        <cellheader:withIcon icon="bi bi-arrow-down-square"
                                              text="#{langBean.msg('table.spatialunit.column.parents')}"/>
                     </f:facet>
                     <cellbody:cellBodyThreeItems set="#{item.parents}"/>
@@ -199,19 +198,19 @@
                 <!-- Children -->
                 <p:column responsivePriority="3">
                     <f:facet name="header">
-                        <cellheader:withIcon icon="bi bi-geo-alt"
+                        <cellheader:withIcon icon="bi bi-arrow-down-square"
                                              text="#{langBean.msg('table.spatialunit.column.children')}"/>
                     </f:facet>
                     <cellbody:cellBodyThreeItems set="#{item.children}"/>
                 </p:column>
 
-                <!-- Actions -->
+                <!-- Spatial Context -->
                 <p:column responsivePriority="3">
                     <f:facet name="header">
-                        <cellheader:withIcon icon="bi bi-arrow-down-square"
-                                             text="#{langBean.msg('table.spatialunit.column.actions')}"/>
+                        <cellheader:withIcon icon="bi bi-geo-alt"
+                                             text="#{langBean.msg('table.spatialunit.column.spatialunits')}"/>
                     </f:facet>
-                    <cellbody:cellBodyThreeItems set="#{item.relatedActionUnitList}"/>
+                    <cellbody:cellBodyThreeItems set="#{item.spatialContext}"/>
                 </p:column>
 
                 <!-- Enregistrements -->

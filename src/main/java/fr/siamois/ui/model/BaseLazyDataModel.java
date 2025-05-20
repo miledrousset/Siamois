@@ -2,11 +2,19 @@ package fr.siamois.ui.model;
 
 
 
+import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.*;
 
@@ -14,6 +22,8 @@ import java.util.*;
 @Getter
 @Setter
 public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
+
+
 
     @Override
     public int count(Map<String, FilterMeta> map) {
@@ -33,6 +43,49 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
     protected transient List<T> queryResult ; // cache for the result of the query
     protected int cachedRowCount;
 
+    protected abstract String getDefaultSortField();
+
+    protected abstract Page<T> loadData(String name, Long[] categoryIds, Long[] personIds, String globalFilter, Pageable pageable);
+
+
+
+    // Filters
+    private String globalFilter;
+    // Filters
+    protected transient List<ConceptLabel> selectedTypes = new ArrayList<>();
+    protected transient List<ConceptLabel> selectedAuthors = new ArrayList<>();
+    protected String nameFilter;
+
+    // Base implementation returns empty; override in child class
+    protected Map<String, String> getFieldMapping() {
+        return Collections.emptyMap();
+    }
+
+    protected Sort buildSort(Map<String, SortMeta> sortBy, String tieBreaker) {
+
+        if (sortBy == null || sortBy.isEmpty()) {
+            return Sort.unsorted();
+        }
+
+        Map<String, String> fieldMapping = getFieldMapping();
+        List<Sort.Order> orders = new ArrayList<>();
+
+        for (Map.Entry<String, SortMeta> entry : sortBy.entrySet()) {
+            String field = fieldMapping.getOrDefault(entry.getKey(), entry.getKey());
+            SortMeta meta = entry.getValue();
+            Sort.Order order = new Sort.Order(
+                    meta.getOrder() == SortOrder.ASCENDING ? Sort.Direction.ASC : Sort.Direction.DESC,
+                    field
+            );
+            orders.add(order);
+        }
+
+        // Add tie breaker to make it deterministic
+        orders.add(new Sort.Order(Sort.Direction.ASC, tieBreaker));
+
+        return Sort.by(orders);
+    }
+
     public static Map<String, FilterMeta> deepCopyFilterMetaMap(Map<String, FilterMeta> originalMap) {
         Map<String, FilterMeta> copiedMap = new HashMap<>();
         for (Map.Entry<String, FilterMeta> entry : originalMap.entrySet()) {
@@ -43,6 +96,32 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
                     .field(originalMeta.getField())
                     .filterValue(originalMeta.getFilterValue())
                     .matchMode(originalMeta.getMatchMode())
+                    .build();
+
+            copiedMap.put(key, copiedMeta);
+        }
+        return copiedMap;
+    }
+
+    protected void updateCache(Page<T> result, Map<String, FilterMeta> filterBy, Map<String, SortMeta> sortBy, int first, int pageSize) {
+        // Update cache
+        this.queryResult = result.getContent();
+        this.cachedFilterBy = BaseLazyDataModel.deepCopyFilterMetaMap(filterBy);
+        this.cachedSortBy = BaseLazyDataModel.deepCopySortMetaMap(sortBy);
+        this.cachedFirst = first;
+        this.cachedPageSize = pageSize;
+        this.cachedRowCount = (int) result.getTotalElements();
+    }
+
+    public static Map<String, SortMeta> deepCopySortMetaMap(Map<String, SortMeta> originalMap) {
+        Map<String, SortMeta> copiedMap = new HashMap<>();
+        for (Map.Entry<String, SortMeta> entry : originalMap.entrySet()) {
+            String key = entry.getKey();
+            SortMeta originalMeta = entry.getValue();
+
+            SortMeta copiedMeta = SortMeta.builder()
+                    .field(originalMeta.getField())
+                    .order(originalMeta.getOrder())
                     .build();
 
             copiedMap.put(key, copiedMeta);
@@ -115,6 +194,72 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
         return Objects.equals(value1, value2);
     }
 
+    public List<T> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
+        boolean isSortSame = isSortCriteriaSame(this.cachedSortBy, sortBy);
+        boolean isFilterSame = isFilterCriteriaSame(this.cachedFilterBy, filterBy);
+
+        if (this.cachedFirst == first &&
+                this.cachedPageSize == pageSize &&
+                isSortSame &&
+                isFilterSame &&
+                this.queryResult != null) {
+            setRowCount(this.cachedRowCount);
+            return this.queryResult;
+        }
+
+        this.first = first;
+        this.pageSizeState = pageSize;
+        int pageNumber = first / pageSize;
+        Pageable pageable = PageRequest.of(pageNumber, pageSizeState, buildSort(sortBy, getDefaultSortField()));
+
+        // Filter extraction
+        String localNameFilter = null;
+        Long[] categoryIds = null;
+        Long[] personIds = null;
+        String localGlobalFilter = null;
+
+        if (filterBy != null) {
+            FilterMeta nameMeta = filterBy.get("name");
+            if (nameMeta != null && nameMeta.getFilterValue() != null) {
+                localNameFilter = nameMeta.getFilterValue().toString();
+            }
+
+            FilterMeta categoryMeta = filterBy.get("category");
+            if (categoryMeta != null && categoryMeta.getFilterValue() != null) {
+                List<ConceptLabel> selectedCategoryLabels = (List<ConceptLabel>) categoryMeta.getFilterValue();
+                List<Concept> selectedCategories = selectedCategoryLabels.stream()
+                        .map(ConceptLabel::getConcept)
+                        .toList();
+                categoryIds = selectedCategories.stream()
+                        .filter(Objects::nonNull)
+                        .map(Concept::getId)
+                        .filter(Objects::nonNull)
+                        .toArray(Long[]::new);
+            }
+
+            FilterMeta personMeta = filterBy.get("author");
+            if (personMeta != null && personMeta.getFilterValue() != null) {
+                List<Person> selectedPerson = (List<Person>) personMeta.getFilterValue();
+                personIds = selectedPerson.stream()
+                        .filter(Objects::nonNull)
+                        .map(Person::getId)
+                        .filter(Objects::nonNull)
+                        .toArray(Long[]::new);
+            }
+
+            FilterMeta globalMeta = filterBy.get("globalFilter");
+            if (globalMeta != null && globalMeta.getFilterValue() != null) {
+                localGlobalFilter = globalMeta.getFilterValue().toString();
+            }
+        }
+
+        Page<T> result = loadData(localNameFilter, categoryIds, personIds, localGlobalFilter, pageable);
+        setRowCount((int) result.getTotalElements());
+        updateCache(result, filterBy, sortBy, first, pageSize);
+        this.sortBy = new HashSet<>(sortBy.values());
+
+        return result.getContent();
+    }
 
     public int getFirstIndexOnPage() {
         return first + 1; // Adding 1 because indexes are zero-based

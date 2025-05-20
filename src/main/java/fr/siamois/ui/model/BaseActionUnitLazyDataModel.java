@@ -1,8 +1,6 @@
 package fr.siamois.ui.model;
 
-
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
-
+import fr.siamois.domain.models.actionunit.ActionUnit;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +13,7 @@ import java.util.*;
 
 @Getter
 @Setter
-public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<SpatialUnit> {
+public abstract class BaseActionUnitLazyDataModel extends BaseLazyDataModel<ActionUnit> {
 
     private static final Map<String, String> FIELD_MAPPING;
 
@@ -28,20 +26,22 @@ public abstract class BaseSpatialUnitLazyDataModel extends BaseLazyDataModel<Spa
     }
 
     @Override
-    protected Map<String, String> getFieldMapping() {
-        return FIELD_MAPPING;
+    protected Page<ActionUnit> loadData(String name, Long[] categoryIds, Long[] personIds, String globalFilter, Pageable pageable) {
+        return loadActionUnits(name, categoryIds, personIds, globalFilter, pageable);
     }
+
+    protected abstract Page<ActionUnit> loadActionUnits(
+            String nameFilter, Long[] categoryIds, Long[] personIds,
+            String globalFilter, Pageable pageable);
 
     @Override
     protected String getDefaultSortField() {
-        return "spatial_unit_id";
+        return "action_unit_id";
     }
 
     @Override
-    protected Page<SpatialUnit> loadData(String name, Long[] categoryIds, Long[] personIds, String globalFilter, Pageable pageable) {
-        return loadSpatialUnits(name, categoryIds, personIds, globalFilter, pageable);
+    protected Map<String, String> getFieldMapping() {
+        return FIELD_MAPPING;
     }
-
-    protected abstract Page<SpatialUnit> loadSpatialUnits(String nameFilter, Long[] categoryIds, Long[] personIds, String globalFilter, Pageable pageable);
 
 }

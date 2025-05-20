@@ -266,4 +266,23 @@ class PersonServiceTest {
 
     }
 
+    @Test
+    void findAllAuthorsOfActionUnitByInstitution_Success() {
+
+        Person p = new Person();
+        Institution i = new Institution(); i.setId(1L);
+
+        when(personRepository.findAllAuthorsOfActionUnitByInstitution(1L)).thenReturn(
+                List.of(p));
+
+        // Act
+        List<Person> res = personService.findAllAuthorsOfActionUnitByInstitution(i);
+
+        // Assert
+        assertEquals(1, res.size());
+        assertEquals(p, res.get(0));
+
+
+    }
+
 }

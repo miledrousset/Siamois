@@ -17,6 +17,9 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +45,30 @@ public class ActionUnitService implements ArkEntityService {
 
     public List<ActionUnit> findAllBySpatialUnitId(SpatialUnit spatialUnit)   {
         return actionUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ActionUnit> findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
+            Long institutionId,
+            String name, Long[] categoryIds, Long[] personIds, String global, String langCode, Pageable pageable) {
+
+        Page<ActionUnit> res = actionUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                institutionId, name, categoryIds, personIds, global, langCode, pageable);
+
+        //wireChildrenAndParents(res.getContent());  // Load and attach spatial hierarchy relationships
+
+
+        // load related actions
+        res.forEach(actionUnit -> {
+            Hibernate.initialize(actionUnit.getSpatialContext());
+            Hibernate.initialize(actionUnit.getRecordingUnitList());
+            Hibernate.initialize(actionUnit.getParents());
+            Hibernate.initialize(actionUnit.getChildren());
+
+        });
+
+
+        return res;
     }
 
     /**

@@ -51,6 +51,15 @@ public interface ConceptRepository extends CrudRepository<Concept, Long> {
 
     @Query(
             nativeQuery = true,
+            value = "SELECT DISTINCT c.* "+
+                    "FROM action_unit su "+
+                    "LEFT JOIN concept c ON su.fk_type = c.concept_id "+
+                    "WHERE su.fk_institution_id = :institutionId"
+    )
+    List<Concept> findAllByActionUnitOfInstitution(@Param("institutionId") Long institutionId);
+
+    @Query(
+            nativeQuery = true,
             value = "SELECT c.* FROM concept c " +
                     "JOIN concept_field_config cfc ON cfc.fk_concept_id = c.concept_id " +
                     "WHERE cfc.fk_institution_id = :institutionId " +
