@@ -563,9 +563,6 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     color: var(--context-main-color);
 }
 
-.action-unit-panel .ui-datatable thead th {
-    background: var(--context-light-color-100);
-}
 
 .action-unit-panel .ui-button {
     background: var(--context-main-color);
