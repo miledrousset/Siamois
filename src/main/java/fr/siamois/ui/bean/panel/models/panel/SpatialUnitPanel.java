@@ -82,6 +82,11 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
     // Locals
     private transient SpatialUnit spatialUnit;
+    private Boolean isEdited ; // Did we modify the spatial unit?
+    private int activeTabIndex = 1; // Keeping state of active tab
+
+
+
     private String spatialUnitErrorMessage;
     private transient List<SpatialUnit> spatialUnitList;
     private transient List<SpatialUnit> spatialUnitParentsList;
@@ -198,10 +203,12 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         }
 
         try {
+
             this.spatialUnit = spatialUnitService.findById(idunit);
 
+
             // Fields for recording unit table
-            availableFields = customFieldService.findAllFieldsBySpatialUnitId(idunit);
+            //availableFields = customFieldService.findAllFieldsBySpatialUnitId(idunit);
             selectedFields = new ArrayList<>();
 
             // Get all the CHILDREN of the spatial unit

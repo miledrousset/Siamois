@@ -2,6 +2,8 @@
              xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
              xmlns:p="http://primefaces.org/ui"
              xmlns:h="http://xmlns.jcp.org/jsf/html"
+             xmlns:f="http://xmlns.jcp.org/jsf/core"
+             xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
 >
 
     <!--@elvariable id="panelIndex" type="Integer"-->
@@ -32,15 +34,98 @@
         </h:form>
 
 
-        <p:tabView id="spatialUnitTabs">
+        <p:tabView id="spatialUnitTabs" activeIndex="#{panelModel.activeTabIndex}">
             <p:tab title="Aperçu">
+                <!-- overrides title on tab-->
+                <f:facet name="title">
+                    <div style="display:flex; gap:0.2em;">
+                        <i class="bi bi-eye"></i>
+                        <h:outputText value="Aperçu"/>
+                    </div>
+                </f:facet>
+            </p:tab>
+            <p:tab title="Statistique">
+                <!-- overrides title on tab-->
+                <f:facet name="title">
+                    <div style="display:flex; gap:0.2em;">
+                        <i class="bi bi-bar-chart-line"></i>
+                        <h:outputText value="Statistiques"/>
+                    </div>
+                </f:facet>
+
                 <p:chart value="#{panelModel.barModel}" style="width: 100%; height: 500px;">
 
                 </p:chart>
             </p:tab>
             <p:tab title="Détails">
+                <!-- Common fields -->
+                <f:facet name="title">
+                    <div style="display:flex; gap:0.2em;">
+                        <i class="bi bi-info-circle"></i>
+                        <h:outputText value="Détails"/>
+                    </div>
+                </f:facet>
+
+                <p:panel id="generalInfoPanel" class="sia-form-panel" header="Informations générales" toggleable="true"
+                         collapsed="false">
+
+
+                    <p:panelGrid id="generalInfoPanelGrid"
+                                 layout="grid"
+                    >
+                        <p:row>
+
+                            <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                                <sharedInput:panelField title="Name">
+                                    <p:inplace editor="true">
+                                        <f:facet name="output">
+                                            <span>#{panelModel.spatialUnit.name}</span>
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <p:inputText value="#{panelModel.spatialUnit.name}" required="true"
+                                                         label="text"/>
+                                        </f:facet>
+                                    </p:inplace>
+                                </sharedInput:panelField>
+
+                            </p:column>
+
+                            <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                                <sharedInput:panelField title="Type" isTheso="true" id="typeField">
+                                    <p:inplace editor="true">
+                                        <f:facet name="output">
+                                            <span>#{panelModel.spatialUnit.category}</span>
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <sharedInput:conceptAutocomplete id="typeComponent"
+                                                                             panelStyleClass="spatial-unit-autocomplete"
+                                                                             selectedConcept="#{panelModel.spatialUnit.category}"
+                                                                             completeMethod="#{spatialUnitFieldBean.completeCategory}"
+                                                                             editConceptUrl="#{spatialUnitFieldBean.getUrlForSpatialUnitTypeFieldCode()}"/>
+                                        </f:facet>
+                                    </p:inplace>
+
+                                </sharedInput:panelField>
+
+
+                            </p:column>
+
+                        </p:row>
+
+
+                    </p:panelGrid>
+
+
+                </p:panel>
             </p:tab>
             <p:tab title="Hierarchie" id="hierarchy">
+                <f:facet name="title">
+                    <div style="display:flex; gap:0.2em;">
+                        <i class="bi bi-bar-chart-line"></i>
+                        <h:outputText value="Hierarchie"/>
+                    </div>
+                </f:facet>
+
                 <!-- TODO : fix counts in headers -->
                 <p:panel id="childrenPanel" class="sia-form-panel" header="Contient (#{panelModel.totalChildrenCount})"
                          toggleable="true"
@@ -54,6 +139,14 @@
                 </p:panel>
             </p:tab>
             <p:tab title="Actions">
+
+                <f:facet name="title">
+                    <div style="display:flex; gap:0.2em;">
+                        <i class="bi bi-arrow-down-square"/>
+                        <h:outputText value="Actions"/>
+                    </div>
+                </f:facet>
+
                 <div class="row siamois-rows">
                     <div class="col-md-12">
                         <p:staticMessage severity="error" summary="Error" closable="false"
@@ -83,7 +176,8 @@
 
                                     </p:column>
                                     <p:column headerText="Type">
-                                        <p:chip label="#{labelBean.findLabelOf(item.type)}" icon="bi bi-arrow-down-square" styleClass="mr-2 action-unit-type-chip"/>
+                                        <p:chip label="#{labelBean.findLabelOf(item.type)}"
+                                                icon="bi bi-arrow-down-square" styleClass="mr-2 action-unit-type-chip"/>
                                     </p:column>
                                 </p:dataTable>
                             </div>
@@ -93,6 +187,13 @@
                 </div>
             </p:tab>
             <p:tab title="Enregistrements (1)">
+                <f:facet name="title">
+                    <div style="display:flex; gap:0.2em;">
+                        <i class="bi bi-pencil-square"></i>
+                        <h:outputText value="Enregistrements (1)"/>
+                    </div>
+                </f:facet>
+
                 <div class="row siamois-row recording-unit-tab">
                     <div class="col-md-12">
 
@@ -120,32 +221,43 @@
                                     </p:column>
                                     <p:column headerText="Statut">
 
-                                                <p:chip label="Enregistrement fermé"
-                                                        styleClass="mr-2 valid-type-chip"/>
-                                            </p:column>
-                                            <p:column headerText="Type">
-                                                <p:chip label="#{labelBean.findLabelOf(item.type)}" icon="bi bi-pencil-square"
-                                                        styleClass="mr-2 recording-unit-type-chip"/>
-                                            </p:column>
-                                            <p:column headerText="Auteur">
-                                                <h:outputText value="#{item.author.name} #{item.author.lastname}"/>
-                                            </p:column>
-                                            <p:column headerText="Fouilleur">
-                                                <h:outputText
-                                                        value="#{item.excavator.name} #{item.excavator.lastname}"/>
-                                            </p:column>
-                                        </p:dataTable>
-                                    </div>
-                                </p:outputPanel>
+                                        <p:chip label="Enregistrement fermé"
+                                                styleClass="mr-2 valid-type-chip"/>
+                                    </p:column>
+                                    <p:column headerText="Type">
+                                        <p:chip label="#{labelBean.findLabelOf(item.type)}" icon="bi bi-pencil-square"
+                                                styleClass="mr-2 recording-unit-type-chip"/>
+                                    </p:column>
+                                    <p:column headerText="Auteur">
+                                        <h:outputText value="#{item.author.name} #{item.author.lastname}"/>
+                                    </p:column>
+                                    <p:column headerText="Fouilleur">
+                                        <h:outputText
+                                                value="#{item.excavator.name} #{item.excavator.lastname}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </p:outputPanel>
 
                     </div>
                     <!-- Table des unités action -->
                 </div>
             </p:tab>
             <p:tab title="Prelevements">
+                <f:facet name="title">
+                    <div style="display:flex; gap:0.2em;">
+                        <i class="bi bi-box2"></i>
+                        <h:outputText value="Prelevements"/>
+                    </div>
+                </f:facet>
             </p:tab>
             <p:tab title="Versions">
-
+                <f:facet name="title">
+                    <div style="display:flex; gap:0.2em;">
+                        <i class="bi bi-clock-history"></i>
+                        <h:outputText value="Versions"/>
+                    </div>
+                </f:facet>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <p:dataTable var="version" value="#{panelModel.historyVersion}" rows="5" paginator="true">
                     <p:column headerText="Date de la version">
@@ -172,6 +284,12 @@
 
             </p:tab>
             <p:tab title="Documents">
+                <f:facet name="title">
+                    <div style="display:flex; gap:0.2em;">
+                        <i class="bi bi-paperclip"></i>
+                        <h:outputText value="Documents"/>
+                    </div>
+                </f:facet>
                 <p:commandButton
                         value="Ajouter un document"
                         action="#{panelModel.initDialog()}"
@@ -188,17 +306,17 @@
                             <h:outputText value="#{siamoisDocument.title}"/>
                         </p:column>
 
-                            <p:column headerText="Nature">
-                                <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.nature)}"/>
-                            </p:column>
+                        <p:column headerText="Nature">
+                            <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.nature)}"/>
+                        </p:column>
 
-                            <p:column headerText="Grandeur">
-                                <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.scale)}"/>
-                            </p:column>
+                        <p:column headerText="Grandeur">
+                            <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.scale)}"/>
+                        </p:column>
 
-                            <p:column headerText="Type de document">
-                                <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.format)}"/>
-                            </p:column>
+                        <p:column headerText="Type de document">
+                            <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.format)}"/>
+                        </p:column>
 
                         <p:column headerText="Auteur">
                             <h:outputText value="#{siamoisDocument.author.displayName()}"/>
@@ -225,6 +343,22 @@
                 </h:panelGroup>
             </p:tab>
         </p:tabView>
+
+        <p:toolbar class="panel-footer">
+            <p:toolbarGroup align="right">
+                <p:commandButton value='#{langBean.msg("common.action.cancelModifications")}'
+                                 update="flow"
+                                 disabled="true"
+                                 styleClass="ui-button-danger"
+                                 style="margin-right: .5rem">
+                </p:commandButton>
+                <p:commandButton value='#{langBean.msg("common.action.save")}'
+                                 update="flow"
+                                 disabled="true"
+                                 style="margin-right: .5rem">
+                </p:commandButton>
+            </p:toolbarGroup>
+        </p:toolbar>
 
     </h:panelGroup>
     <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true">
