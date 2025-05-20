@@ -268,7 +268,7 @@ class ConceptServiceTest {
     }
 
     @Test
-    void findAllConceptsByInstitution_Success() {
+    void findAllBySpatialUnitConceptsByInstitution_Success() {
 
         // Given
         Concept concept1 = new Concept();
@@ -289,7 +289,7 @@ class ConceptServiceTest {
 
         when(conceptRepository.findAllBySpatialUnitOfInstitution(any(Long.class))).thenReturn(expectedConcepts);
 
-        List<Concept> result = conceptService.findAllConceptsByInstitution(i);
+        List<Concept> result = conceptService.findAllBySpatialUnitOfInstitution(i);
 
         // Then
         assertNotNull(result);

@@ -161,13 +161,12 @@ class SpatialUnitLazyDataModelTest {
         filters.put("globalFilter", globalFilter);
 
         // Sort setup
-        SortMeta sortMeta = new SortMeta();
-        sortMeta.setOrder(SortOrder.ASCENDING);
+        SortMeta sortMeta =  SortMeta.builder().field("cat").order(SortOrder.ASCENDING).build();
         Map<String, SortMeta> sortBy = new HashMap<>();
         sortBy.put("category", sortMeta);
         sortBy.put("creationTime", sortMeta);
-        SortMeta sortMeta2 = new SortMeta();
-        sortMeta2.setOrder(SortOrder.DESCENDING);
+        SortMeta sortMeta2 = SortMeta.builder().field("author").order(SortOrder.DESCENDING).build();
+
         sortBy.put("author", sortMeta2);
 
         // Mock data
