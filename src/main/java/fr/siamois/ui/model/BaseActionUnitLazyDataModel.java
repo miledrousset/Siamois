@@ -15,8 +15,6 @@ import java.util.*;
 @Setter
 public abstract class BaseActionUnitLazyDataModel extends BaseLazyDataModel<ActionUnit> {
 
-
-
     private static final Map<String, String> FIELD_MAPPING;
 
     static {
@@ -28,16 +26,6 @@ public abstract class BaseActionUnitLazyDataModel extends BaseLazyDataModel<Acti
     }
 
     @Override
-    protected Map<String, String> getFieldMapping() {
-        return FIELD_MAPPING;
-    }
-
-    @Override
-    protected String getDefaultSortField() {
-        return "action_unit_id";
-    }
-
-    @Override
     protected Page<ActionUnit> loadData(String name, Long[] categoryIds, Long[] personIds, String globalFilter, Pageable pageable) {
         return loadActionUnits(name, categoryIds, personIds, globalFilter, pageable);
     }
@@ -45,5 +33,15 @@ public abstract class BaseActionUnitLazyDataModel extends BaseLazyDataModel<Acti
     protected abstract Page<ActionUnit> loadActionUnits(
             String nameFilter, Long[] categoryIds, Long[] personIds,
             String globalFilter, Pageable pageable);
+
+    @Override
+    protected String getDefaultSortField() {
+        return "action_unit_id";
+    }
+
+    @Override
+    protected Map<String, String> getFieldMapping() {
+        return FIELD_MAPPING;
+    }
 
 }
