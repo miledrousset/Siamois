@@ -2,6 +2,7 @@ package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.auth.Person;
 
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
@@ -13,6 +14,7 @@ import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
+import fr.siamois.ui.model.BaseLazyDataModel;
 import fr.siamois.ui.model.SpatialUnitLazyDataModel;
 
 import jakarta.faces.application.FacesMessage;
@@ -22,38 +24,25 @@ import lombok.EqualsAndHashCode;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.event.ColumnToggleEvent;
 import org.primefaces.model.*;
-import org.primefaces.model.menu.DefaultMenuItem;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 
-import java.util.*;
-import java.util.ArrayList;
+
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class SpatialUnitListPanel extends AbstractPanel {
+public class SpatialUnitListPanel extends AbstractListPanel<SpatialUnit> {
 
-    private final transient SpatialUnitService spatialUnitService;
-    private final transient PersonService personService;
-    private final transient ConceptService conceptService;
-    private final SessionSettingsBean sessionSettingsBean;
-    private final LangBean langBean;
-    private final transient LabelService labelService;
-    private final transient ActionUnitService actionUnitService;
 
     // locals
     private String spatialUnitListErrorMessage;
-    private SpatialUnitLazyDataModel lazyDataModel ;
-    private long totalNumberOfUnits ;
-
-    private Set<SortMeta> sortBy = new HashSet<>();
-
 
 
     public void onToggle(ColumnToggleEvent e) {
@@ -70,16 +59,29 @@ public class SpatialUnitListPanel extends AbstractPanel {
                                 SessionSettingsBean sessionSettingsBean, LangBean langBean, LabelService labelService, ActionUnitService actionUnitService) {
 
 
-        super("panel.title.allspatialunit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-list-panel");
+        super("panel.title.allspatialunit",
+                "bi bi-geo-alt",
+                "siamois-panel spatial-unit-panel spatial-unit-list-panel",
+                spatialUnitService,
+                personService,
+                conceptService,
+                sessionSettingsBean,
+                langBean,
+                labelService,
+                actionUnitService);
 
-        this.spatialUnitService = spatialUnitService;
-        this.personService = personService;
-        this.conceptService = conceptService;
-        this.sessionSettingsBean = sessionSettingsBean;
-        this.langBean = langBean;
-        this.labelService = labelService;
-        this.actionUnitService = actionUnitService;
     }
+
+    @Override
+    protected String getBreadcrumbKey() {
+        return "common.entity.spatialUnits";
+    }
+
+    @Override
+    protected String getBreadcrumbIcon() {
+        return "bi bi-geo-alt";
+    }
+
 
     @Override
     public String displayHeader() {
@@ -87,38 +89,19 @@ public class SpatialUnitListPanel extends AbstractPanel {
     }
 
 
+    @Override
+    protected long countUnitsByInstitution() {
+        return spatialUnitService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
+    }
 
+    @Override
+    protected BaseLazyDataModel<SpatialUnit> createLazyDataModel() {
+        return new SpatialUnitLazyDataModel(spatialUnitService, sessionSettingsBean, langBean);
+    }
 
-    public void init()  {
-        try {
-            // Add current item to breadcrumb
-            DefaultMenuItem item = DefaultMenuItem.builder()
-                    .value(langBean.msg("common.entity.spatialUnits"))
-                    .icon("bi bi-geo-alt")
-                    .build();
-            this.getBreadcrumb().getModel().getElements().add(item);
-
-
-            totalNumberOfUnits = spatialUnitService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
-
-
-            // init lazy model
-            lazyDataModel = new SpatialUnitLazyDataModel(
-                    spatialUnitService,
-                    sessionSettingsBean,
-                    langBean
-            );
-            lazyDataModel.setSortBy(sortBy);
-            lazyDataModel.setFirst(0);
-            lazyDataModel.setPageSizeState(5);
-            lazyDataModel.setSelectedAuthors(new ArrayList<>());
-            lazyDataModel.setSelectedTypes(new ArrayList<>());
-            lazyDataModel.setNameFilter("");
-            lazyDataModel.setGlobalFilter("");
-
-        } catch (RuntimeException e) {
-            spatialUnitListErrorMessage = "Failed to load spatial units: " + e.getMessage();
-        }
+    @Override
+    protected void setErrorMessage(String msg) {
+        this.spatialUnitListErrorMessage = msg;
     }
 
     public List<ConceptLabel> categoriesAvailable() {

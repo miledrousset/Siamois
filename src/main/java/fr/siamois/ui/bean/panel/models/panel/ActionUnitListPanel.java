@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
@@ -13,42 +14,32 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.model.ActionUnitLazyDataModel;
 
-import lombok.Data;
+import fr.siamois.ui.model.BaseLazyDataModel;
+
 import lombok.EqualsAndHashCode;
 
-import org.primefaces.model.SortMeta;
+import lombok.Getter;
+import lombok.Setter;
 
-import org.primefaces.model.menu.DefaultMenuItem;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+
 import java.util.List;
-import java.util.Set;
+
 
 @EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class ActionUnitListPanel extends AbstractPanel {
+public class ActionUnitListPanel extends AbstractListPanel<ActionUnit> {
 
-    private final transient SpatialUnitService spatialUnitService;
-    private final transient PersonService personService;
-    private final transient ConceptService conceptService;
-    private final SessionSettingsBean sessionSettingsBean;
-    private final LangBean langBean;
-    private final transient LabelService labelService;
-    private final transient ActionUnitService actionUnitService;
 
     // locals
     private String actionUnitListErrorMessage;
-    private ActionUnitLazyDataModel lazyDataModel ;
-    private long totalNumberOfUnits ;
-
-    private Set<SortMeta> sortBy = new HashSet<>();
 
     // Filters
     private transient List<ConceptLabel> selectedTypes = new ArrayList<>();
@@ -57,20 +48,36 @@ public class ActionUnitListPanel extends AbstractPanel {
     private String globalFilter;
 
 
+    @Override
+    protected long countUnitsByInstitution() {
+        return actionUnitService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
+    }
+
+    @Override
+    protected BaseLazyDataModel<ActionUnit> createLazyDataModel() {
+        return new ActionUnitLazyDataModel(actionUnitService, sessionSettingsBean, langBean);
+    }
+
+    @Override
+    protected void setErrorMessage(String msg) {
+        this.actionUnitListErrorMessage = msg;
+    }
+
+
     public ActionUnitListPanel(SpatialUnitService spatialUnitService, PersonService personService,
                                ConceptService conceptService,
-                               SessionSettingsBean sessionSettingsBean, LangBean langBean, LabelService labelService, ActionUnitService actionUnitService) {
+                               SessionSettingsBean sessionSettingsBean,
+                               LangBean langBean,
+                               LabelService labelService,
+                               ActionUnitService actionUnitService) {
 
 
-        super("panel.title.allactionunit", "bi bi-arrow-down-square", "siamois-panel action-unit-panel action-unit-list-panel");
 
-        this.spatialUnitService = spatialUnitService;
-        this.personService = personService;
-        this.conceptService = conceptService;
-        this.sessionSettingsBean = sessionSettingsBean;
-        this.langBean = langBean;
-        this.labelService = labelService;
-        this.actionUnitService = actionUnitService;
+        super("panel.title.allactionunit",
+                "bi bi-arrow-down-square",
+                "siamois-panel action-unit-panel action-unit-list-panel",
+                spatialUnitService, personService, conceptService, sessionSettingsBean, langBean, labelService, actionUnitService);
+
     }
 
     @Override
@@ -78,38 +85,15 @@ public class ActionUnitListPanel extends AbstractPanel {
         return "/panel/header/actionUnitListPanelHeader.xhtml";
     }
 
-    public void init()  {
-        try {
-            // Add current item to breadcrumb
-            DefaultMenuItem item = DefaultMenuItem.builder()
-                    .value(langBean.msg("common.entity.actionUnits"))
-                    .icon("bi bi-arrow-down-square")
-                    .build();
-            this.getBreadcrumb().getModel().getElements().add(item);
 
+    @Override
+    protected String getBreadcrumbKey() {
+        return "common.entity.actionUnits";
+    }
 
-
-            totalNumberOfUnits = actionUnitService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
-
-            // init lazy model
-            lazyDataModel = new ActionUnitLazyDataModel(
-                    actionUnitService,
-                    sessionSettingsBean,
-                    langBean
-            );
-            lazyDataModel.setSortBy(sortBy);
-            lazyDataModel.setFirst(0);
-            lazyDataModel.setPageSizeState(5);
-            lazyDataModel.setSelectedAuthors(new ArrayList<>());
-            lazyDataModel.setSelectedTypes(new ArrayList<>());
-            lazyDataModel.setNameFilter("");
-            lazyDataModel.setGlobalFilter("");
-
-
-
-        } catch (RuntimeException e) {
-            actionUnitListErrorMessage = "Failed to load action units: " + e.getMessage();
-        }
+    @Override
+    protected String getBreadcrumbIcon() {
+        return "bi bi-arrow-down-square";
     }
 
     public List<ConceptLabel> categoriesAvailable() {
