@@ -48,15 +48,15 @@ public class FlowBean implements Serializable {
     private final transient RecordingUnitService recordingUnitService;
     private final transient ActionUnitService actionUnitService;
     private final transient HistoryService historyService;
-    private final transient SessionSettingsBean sessionSettings;
-    private final transient LangBean langBean;
+    private final SessionSettingsBean sessionSettings;
+    private final LangBean langBean;
     private final transient FieldConfigurationService fieldConfigurationService;
     private final transient FieldService fieldService;
     private final transient PanelFactory panelFactory;
     private final transient PersonService personService;
     private final transient ConceptService conceptService;
     private final transient StratigraphicRelationshipService stratigraphicRelationshipService;
-    private final transient BreadcrumbBean breadcrumbBean;
+    private final BreadcrumbBean breadcrumbBean;
 
     // locals
     private transient DashboardModel responsiveModel;
