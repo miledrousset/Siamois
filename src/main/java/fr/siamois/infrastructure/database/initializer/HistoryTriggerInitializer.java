@@ -23,8 +23,6 @@ import java.util.List;
 public class HistoryTriggerInitializer implements DatabaseInitializer {
 
     private final HikariDataSource dataSource;
-    @Getter
-    private final ApplicationContext applicationContext;
 
     public static final List<String> TABLES_TO_STORE = List.of(
             "action_unit",
@@ -35,9 +33,8 @@ public class HistoryTriggerInitializer implements DatabaseInitializer {
             "specimen",
             "specimen_study");
 
-    public HistoryTriggerInitializer(HikariDataSource dataSource, ApplicationContext applicationContext) {
+    public HistoryTriggerInitializer(HikariDataSource dataSource) {
         this.dataSource = dataSource;
-        this.applicationContext = applicationContext;
     }
 
     /**
