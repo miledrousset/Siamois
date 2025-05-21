@@ -7,6 +7,7 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.LangService;
+import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingTeamInviteRepository;
@@ -42,6 +43,8 @@ class PendingPersonServiceTest {
     private EmailManager emailManager;
     @Mock
     private LangService langService;
+    @Mock
+    private TeamService teamService;
 
     @InjectMocks
     private PendingPersonService pendingPersonService;
@@ -77,7 +80,7 @@ class PendingPersonServiceTest {
 
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> pendingPersonService.generateToken());
 
-        assertEquals("Unable to generate a unique token after 1000 attempts", exception.getMessage());
+        assertEquals("Unable to generate a unique pending person token after 1000 attempts", exception.getMessage());
     }
 
     @Test

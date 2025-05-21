@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.siamois.domain.models.FieldCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -72,7 +70,6 @@ public class Person implements UserDetails {
 
     @ColumnDefault("false")
     @Column(name = "is_super_admin")
-    @Getter(AccessLevel.NONE)
     private boolean isSuperAdmin = false;
 
     @Column(name = "api_key", length = Integer.MAX_VALUE)
@@ -104,14 +101,10 @@ public class Person implements UserDetails {
     @Column(name = "is_enabled")
     private boolean isEnabled = true;
 
-    public boolean isSuperAdmin() {
-        return isSuperAdmin;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SystemRole> roles = new ArrayList<>();
-        if (Boolean.FALSE.equals(this.isSuperAdmin))
+        if (!this.isSuperAdmin)
             roles.add(new SystemRole("SUPER_ADMIN"));
         return roles;
     }

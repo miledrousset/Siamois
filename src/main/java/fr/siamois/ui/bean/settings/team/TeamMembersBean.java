@@ -68,14 +68,23 @@ public class TeamMembersBean implements SettingsDatatableBean {
 
     @Override
     public void add() {
-        userDialogBean.init("Ajouter un membre", "Ajouter", team.getInstitution(), true, this::save);
+        userDialogBean.init("Ajouter des utilisateurs", "Ajouter des utilisateurs", team.getInstitution(), true, this::save);
         PrimeFaces.current().ajax().update("newMemberDialog");
         PrimeFaces.current().executeScript("PF('newMemberDialog').show();");
     }
 
-    private void save() {
-        Optional<Person> existing = personService.findByEmail(userDialogBean.getUserEmail());
-        Concept role = userDialogBean.getRole();
+    public void save() {
+        for (UserDialogBean.UserMailRole mailRole : userDialogBean.getInputUserMailRoles()) {
+            if (!mailRole.isEmpty()) {
+                saveUser(mailRole);
+            }
+        }
+        userDialogBean.exit();
+    }
+
+    private void saveUser(UserDialogBean.UserMailRole mailRole) {
+        Optional<Person> existing = personService.findByEmail(mailRole.getEmail());
+        Concept role = mailRole.getRole();
         if (team.isDefaultTeam()) {
             role = null;
         }
@@ -85,7 +94,7 @@ public class TeamMembersBean implements SettingsDatatableBean {
             teamService.addPersonToTeamIfNotAdded(person, team, role);
             displayInfoMessage(langBean, "groupManagement.join.success", person.getEmail(), team.getName());
         } else {
-            PendingPerson pendingPerson = pendingPersonService.createOrGetPendingPerson(userDialogBean.getUserEmail());
+            PendingPerson pendingPerson = pendingPersonService.createOrGetPendingPerson(mailRole.getEmail());
             boolean mailSent = pendingPersonService.sendPendingInstitutionInvite(pendingPerson,
                     team.getInstitution(),
                     sessionSettingsBean.getLanguageCode());
