@@ -13,8 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
-import static fr.siamois.domain.utils.MessageUtils.displayMessage;
-import static fr.siamois.domain.utils.MessageUtils.displayPlainMessage;
+import static fr.siamois.domain.utils.MessageUtils.*;
 
 public class FieldConfigUtils {
 
@@ -40,26 +39,25 @@ public class FieldConfigUtils {
             }
 
             if (wrongConfig.isEmpty()) {
-                displayMessage(FacesMessage.SEVERITY_INFO, "Info", "Configuration saved");
+                displayMessage(langBean, FacesMessage.SEVERITY_INFO, "myProfile.message.success");
                 return;
             }
 
             if (!wrongConfig.get().missingFieldCode().isEmpty())
                 missingFieldCodes(langBean, wrongConfig.get());
-            displayErrorMessage(langBean, "Error in thesaurus config");
+            displayErrorMessage(langBean, "common.error.thesaurusConfig.notfound");
 
 
         } catch (NotSiamoisThesaurusException | InvalidEndpointException e) {
-            displayErrorMessage(langBean, "Thesaurus is not valid");
+            displayMessage(langBean, FacesMessage.SEVERITY_ERROR, "common.error.thesaurusConfig.wrong");
         }
     }
 
     private static void missingFieldCodes(LangBean langBean, GlobalFieldConfig wrongConfig) {
-        displayErrorMessage(langBean, String.format("The codes %s are not in the thesaurus", wrongConfig.missingFieldCode()));
-    }
-
-    private static void displayErrorMessage(LangBean langBean, String message) {
-        displayPlainMessage(langBean, FacesMessage.SEVERITY_ERROR, message);
+        displayMessage(langBean,
+                FacesMessage.SEVERITY_ERROR,
+                "common.error.thesaurusConfig.missingCodes",
+                wrongConfig.missingFieldCode());
     }
 
 }

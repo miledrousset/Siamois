@@ -30,19 +30,6 @@ public class MessageUtils {
             throw new IllegalArgumentException("Unknown severity: " + severity + ". Replaced by messageCode");
     }
 
-    /**
-     * @deprecated Should be removed because it does not use translations. You should use {@link MessageUtils#displayMessage(LangBean, FacesMessage.Severity, String, Object...)} with a messageCode instead.
-     */
-    @Deprecated(forRemoval = true)
-    public static void displayPlainMessage(LangBean langBean, FacesMessage.Severity severity, String plainMessage, Object... args) {
-        String title = plainMessage;
-        if (titlesCodes.containsKey(severity))
-            title = langBean.msg(titlesCodes.get(severity));
-
-        displayMessage(severity, title, String.format(plainMessage, args));
-
-    }
-
     public static void displayMessage(FacesMessage.Severity severity, String title, String msgContent) {
         FacesMessage facesMessage = new FacesMessage(severity, title, msgContent);
         FacesContext.getCurrentInstance().addMessage("templateForm:templateGrowl", facesMessage);
