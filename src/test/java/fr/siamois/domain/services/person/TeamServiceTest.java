@@ -18,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.OffsetDateTime;
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -174,19 +173,19 @@ class TeamServiceTest {
     @Test
     void testFindMembersOf() {
         TeamPerson teamPerson = new TeamPerson(team, person, null);
-        when(teamPersonRepository.findAllOfInstitution(institution.getId())).thenReturn(Set.of(teamPerson));
+        when(teamPersonRepository.findAllOfInstitution(institution.getId())).thenReturn(List.of(teamPerson));
 
-        Set<TeamPerson> result = teamService.findMembersOf(institution);
+        List<TeamPerson> result = teamService.findMembersOf(institution);
 
         assertEquals(1, result.size());
-        assertThat(result).containsExactlyInAnyOrder(teamPerson);
+        assertEquals(teamPerson, result.get(0));
     }
 
     @Test
     void testFindTeamPersonByTeam_DefaultTeam() {
         team.setDefaultTeam(true);
         TeamPerson teamPerson = new TeamPerson(team, person, null);
-        when(teamPersonRepository.findAllOfInstitution(institution.getId())).thenReturn(Set.of(teamPerson));
+        when(teamPersonRepository.findAllOfInstitution(institution.getId())).thenReturn(List.of(teamPerson));
 
         List<TeamPerson> result = teamService.findTeamPersonByTeam(team);
 
@@ -220,7 +219,7 @@ class TeamServiceTest {
     @Test
     void testFindTeamsOfPersonInInstitution() {
         TeamPerson teamPerson = new TeamPerson(team, person, null);
-        when(teamPersonRepository.findAllOfInstitution(institution.getId())).thenReturn(Set.of(teamPerson));
+        when(teamPersonRepository.findAllOfInstitution(institution.getId())).thenReturn(List.of(teamPerson));
 
         SortedSet<Team> result = teamService.findTeamsOfPersonInInstitution(person, institution);
 

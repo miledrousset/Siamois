@@ -68,7 +68,7 @@ public class InstitutionService {
     }
 
     public Set<Person> findMembersOf(Institution institution) {
-        Set<TeamPerson> teamMembers = teamService.findMembersOf(institution);
+        List<TeamPerson> teamMembers = teamService.findMembersOf(institution);
         Set<Person> members = new HashSet<>(teamMembers.stream().map(TeamPerson::getPerson).toList());
         members.addAll(institution.getManagers());
         return members;

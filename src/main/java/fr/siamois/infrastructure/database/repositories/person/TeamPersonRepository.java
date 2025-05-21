@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
 public interface TeamPersonRepository extends CrudRepository<TeamPerson, TeamPerson.TeamPersonId> {
@@ -23,7 +22,7 @@ public interface TeamPersonRepository extends CrudRepository<TeamPerson, TeamPer
                     "JOIN institution i ON t.fk_institution_id = i.institution_id " +
                     "WHERE i.institution_id = :institutionId"
     )
-    Set<TeamPerson> findAllOfInstitution(Long institutionId);
+    List<TeamPerson> findAllOfInstitution(Long institutionId);
 
     @Query(
             nativeQuery = true,

@@ -31,7 +31,7 @@ public class MessageUtils {
     }
 
     /**
-     * @deprecated Should be removed because it does not use translations. You should use {@link MessageUtils#displayMessage(LangBean, FacesMessage.Severity, String, Object...)} with a messageCode instead.
+     * @deprecated Should be removed because it does not use translations. You should use displayMessage with a messageCode instead.
      */
     @Deprecated(forRemoval = true)
     public static void displayPlainMessage(LangBean langBean, FacesMessage.Severity severity, String plainMessage, Object... args) {

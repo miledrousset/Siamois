@@ -204,7 +204,7 @@ class InstitutionServiceTest {
         TeamPerson teamPerson = new TeamPerson();
         teamPerson.setPerson(member);
 
-        when(teamService.findMembersOf(institution)).thenReturn(Set.of(teamPerson));
+        when(teamService.findMembersOf(institution)).thenReturn(List.of(teamPerson));
 
         long result = institutionService.countMembersInInstitution(institution);
 

@@ -15,7 +15,6 @@
         <cc:attribute name="ajaxUpdateTargets" required="false"/>
         <cc:attribute name="ajaxProcessTargets" required="false"/>
         <cc:attribute name="panelStyleClass" required="false" default="sia-autocomplete-panel"/>
-        <cc:attribute name="required" default="true" type="boolean"/>
 
 
     </cc:interface>
@@ -28,7 +27,7 @@
                         panelStyleClass="#{cc.attrs.panelStyleClass}"
                         itemValue="#{field}"
                         disabled="#{cc.attrs.disabled}"
-                        required="#{cc.attrs.required}"
+                        required="true"
                         converter="#{conceptConverter}"
                         forceSelection="true"
                         scrollHeight="300"

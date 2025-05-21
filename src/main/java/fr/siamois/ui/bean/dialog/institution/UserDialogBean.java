@@ -14,7 +14,6 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.email.EmailManager;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -46,9 +44,10 @@ public class UserDialogBean implements Serializable {
     private String buttonLabel;
 
     private Concept roleParentConcept;
-    private boolean shouldRenderRoleField = false;
+    private String userEmail;
+    private Concept role;
 
-    private List<UserMailRole> inputUserMailRoles;
+    private boolean shouldRenderRoleField = false;
 
     public UserDialogBean(EmailManager emailManager, PersonService personService, InstitutionService institutionService, LangBean langBean, FieldConfigurationService fieldConfigurationService, SessionSettingsBean sessionSettingsBean) {
         this.emailManager = emailManager;
@@ -81,17 +80,15 @@ public class UserDialogBean implements Serializable {
         this.institution = null;
         this.title = null;
         this.buttonLabel = null;
+        this.userEmail = null;
+        this.role = null;
         this.shouldRenderRoleField = false;
         this.actionFromBean = null;
-        inputUserMailRoles = new ArrayList<>();
-        inputUserMailRoles.add(new UserMailRole());
-        inputUserMailRoles.add(new UserMailRole());
-        inputUserMailRoles.add(new UserMailRole());
     }
 
     public void exit() {
         reset();
-        PrimeFaces.current().executeScript("PF('newMemberDialog').hide();");
+        PrimeFaces.current().executeScript("PF('newMemberDialog').exit();");
     }
 
     public String parentConceptUrl() {
@@ -112,28 +109,5 @@ public class UserDialogBean implements Serializable {
 
         return fieldConfigurationService.fetchConceptChildrenAutocomplete(info, roleParentConcept, input);
     }
-
-    public void removeRow(UserMailRole userMailRole) {
-        if (inputUserMailRoles.size() > 1) {
-            inputUserMailRoles.remove(userMailRole);
-        }
-    }
-
-    public void addRow() {
-        inputUserMailRoles.add(new UserMailRole());
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    public static class UserMailRole implements Serializable {
-        private String email;
-        private Concept role;
-
-        public boolean isEmpty() {
-            return email == null || email.isEmpty();
-        }
-    }
-
 
 }
