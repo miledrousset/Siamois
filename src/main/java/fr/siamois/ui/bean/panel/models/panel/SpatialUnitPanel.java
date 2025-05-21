@@ -30,6 +30,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.tabview.Tab;
+import org.primefaces.component.tabview.TabView;
+import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.ObjectProvider;
@@ -83,7 +86,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     // Locals
     private transient SpatialUnit spatialUnit;
     private Boolean isEdited ; // Did we modify the spatial unit?
-    private int activeTabIndex = 1; // Keeping state of active tab
+    private int activeTabIndex ; // Keeping state of active tab
 
 
 
@@ -147,6 +150,27 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
     }
 
+    public void onTabChange(TabChangeEvent event) {
+        // update tab inddex
+        TabView tabView = (TabView) event.getComponent(); // Get the TabView
+        Tab activeTab = event.getTab(); // Get the selected tab
+
+        int index = activeTabIndex;
+        List<Tab> tabs = tabView.getChildren().stream()
+                .filter(child -> child instanceof Tab)
+                .map(child -> (Tab) child)
+                .toList();
+
+        for (int i = 0; i < tabs.size(); i++) {
+            if (tabs.get(i).equals(activeTab)) {
+                index = i;
+                break;
+            }
+        }
+
+        activeTabIndex = index;
+    }
+
     @Override
     public String display() {
         return "/panel/spatialUnitPanel.xhtml";
@@ -183,6 +207,8 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     public void init() {
 
         createBarModel();
+
+        activeTabIndex = 1;
 
         spatialUnitHelperService.reinitialize(
                 unit -> this.spatialUnit = unit,

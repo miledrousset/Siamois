@@ -35,6 +35,7 @@
 
 
         <p:tabView id="spatialUnitTabs" activeIndex="#{panelModel.activeTabIndex}">
+            <p:ajax event="tabChange" listener="#{panelModel.onTabChange}" />
             <p:tab title="Aperçu">
                 <!-- overrides title on tab-->
                 <f:facet name="title">
@@ -120,9 +121,11 @@
             </p:tab>
             <p:tab title="Hierarchie" id="hierarchy">
                 <f:facet name="title">
-                    <div style="display:flex; gap:0.2em;">
-                        <i class="bi bi-bar-chart-line"></i>
+                    <div style="display:flex; align-items: center; gap:0.2em;">
+                        <i class="bi bi-geo-alt"></i>
                         <h:outputText value="Hierarchie"/>
+                        <p:chip icon="bi bi-arrow-down" styleClass="spatial-unit-count-chip-alt" label="3" />
+                        <p:chip icon="bi bi-arrow-up" styleClass="spatial-unit-count-chip-alt" label="4" />
                     </div>
                 </f:facet>
 
@@ -141,9 +144,10 @@
             <p:tab title="Actions">
 
                 <f:facet name="title">
-                    <div style="display:flex; gap:0.2em;">
+                    <div style="display:flex; align-items: center; gap:0.2em;">
                         <i class="bi bi-arrow-down-square"/>
                         <h:outputText value="Actions"/>
+                        <p:chip styleClass="spatial-unit-count-chip-alt" label="4" />
                     </div>
                 </f:facet>
 
@@ -188,9 +192,10 @@
             </p:tab>
             <p:tab title="Enregistrements (1)">
                 <f:facet name="title">
-                    <div style="display:flex; gap:0.2em;">
+                    <div style="display:flex; align-items: center; gap:0.2em;">
                         <i class="bi bi-pencil-square"></i>
-                        <h:outputText value="Enregistrements (1)"/>
+                        <h:outputText value="Enregistrements"/>
+                        <p:chip styleClass="recording-unit-count-chip-alt" label="4" />
                     </div>
                 </f:facet>
 
@@ -245,17 +250,19 @@
             </p:tab>
             <p:tab title="Prelevements">
                 <f:facet name="title">
-                    <div style="display:flex; gap:0.2em;">
+                    <div style="display:flex; align-items: center; gap:0.2em;">
                         <i class="bi bi-box2"></i>
                         <h:outputText value="Prelevements"/>
+                        <p:chip styleClass="recording-unit-count-chip-alt" label="4" />
                     </div>
                 </f:facet>
             </p:tab>
             <p:tab title="Versions">
                 <f:facet name="title">
-                    <div style="display:flex; gap:0.2em;">
+                    <div style="display:flex; gap:0.2em; align-items: center;">
                         <i class="bi bi-clock-history"></i>
                         <h:outputText value="Versions"/>
+                        <p:chip styleClass="spatial-unit-count-chip-alt" label="4" />
                     </div>
                 </f:facet>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -285,9 +292,10 @@
             </p:tab>
             <p:tab title="Documents">
                 <f:facet name="title">
-                    <div style="display:flex; gap:0.2em;">
+                    <div style="display:flex; gap:0.2em;align-items: center;">
                         <i class="bi bi-paperclip"></i>
                         <h:outputText value="Documents"/>
+                        <p:chip styleClass="spatial-unit-count-chip-alt" label="4" />
                     </div>
                 </f:facet>
                 <p:commandButton

@@ -99,10 +99,13 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     }
 
 
-
-
     @Override
     public String getTableName() {
         return "RECORDING_UNIT";
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Recording Unit %s", displayFullIdentifier());
     }
 }
