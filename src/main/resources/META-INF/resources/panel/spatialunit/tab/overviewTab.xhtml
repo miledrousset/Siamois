@@ -1,0 +1,35 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form" xmlns:f="http://java.sun.com/jsf/core"
+             xmlns:h="http://java.sun.com/jsf/html"
+             xmlns:siaInplace="http://xmlns.jcp.org/jsf/composite/pages/shared/inplace"
+
+>
+
+    <!--@elvariable id="spatialUnit" type="fr.siamois.domain.models.spatialunit.SpatialUnit"-->
+
+
+        <p:panelGrid id="overviewPanelGrid"
+                     layout="grid"
+        >
+            <p:row>
+
+                <!-- Spatial Unit Type -->
+                <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                    <sharedInput:panelField title="Type" isTheso="true" id="overviewTypeField">
+                        <siaInplace:concept selectedConcept="#{spatialUnit.category}"/>
+                    </sharedInput:panelField>
+                </p:column>
+
+            </p:row>
+
+
+        </p:panelGrid>
+
+
+
+
+
+</ui:fragment>

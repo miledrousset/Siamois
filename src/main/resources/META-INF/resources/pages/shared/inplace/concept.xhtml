@@ -1,0 +1,29 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:cc="http://java.sun.com/jsf/composite"
+        xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
+        xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+>
+
+   <cc:interface>
+      <cc:attribute name="selectedConcept" type="fr.siamois.domain.models.vocabulary.Concept" required="true"/>
+   </cc:interface>
+
+   <cc:implementation>
+      <p:inplace editor="true">
+         <f:facet name="output">
+            <h:outputText value="#{labelBean.findLabelOf(cc.attrs.selectedConcept)}"/>
+         </f:facet>
+         <f:facet name="input">
+            <sharedInput:conceptAutocomplete id="typeComponent"
+                                             panelStyleClass="spatial-unit-autocomplete"
+                                             selectedConcept="#{cc.attrs.selectedConcept}"
+                                             completeMethod="#{spatialUnitFieldBean.completeCategory}"
+                                             editConceptUrl="#{spatialUnitFieldBean.getUrlForSpatialUnitTypeFieldCode()}"/>
+         </f:facet>
+      </p:inplace>
+
+   </cc:implementation>
+
+</ui:composition>

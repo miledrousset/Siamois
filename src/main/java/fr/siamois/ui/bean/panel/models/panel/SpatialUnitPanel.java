@@ -26,6 +26,7 @@ import fr.siamois.ui.bean.panel.utils.SpatialUnitHelperService;
 import fr.siamois.ui.model.SpatialUnitChildrenLazyDataModel;
 import fr.siamois.ui.model.SpatialUnitParentsLazyDataModel;
 import jakarta.annotation.PostConstruct;
+import jakarta.el.MethodExpression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -360,6 +361,11 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         documentCreationBean.init();
         documentCreationBean.setActionOnSave(this::saveDocument);
         PrimeFaces.current().executeScript("PF('newDocumentDiag').show()");
+    }
+
+    public void save() {
+        log.trace("initDialog");
+        spatialUnit.setName("Saved");
     }
 
     public static class SpatialUnitPanelBuilder {

@@ -1,0 +1,65 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form" xmlns:f="http://java.sun.com/jsf/core"
+             xmlns:h="http://java.sun.com/jsf/html"
+
+>
+
+
+
+
+            <p:commandButton
+                    value="Ajouter un document"
+                    action="#{panelModel.initDialog()}"
+            />
+            <h:panelGroup id="suDocumentsTab">
+                <p:dataTable
+                        value="#{panelModel.documents}"
+                        var="siamoisDocument"
+                >
+                    <p:autoUpdate/>
+
+                    <p:column headerText="Titre">
+                        <h:outputText value="#{siamoisDocument.title}"/>
+                    </p:column>
+
+                    <p:column headerText="Nature">
+                        <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.nature)}"/>
+                    </p:column>
+
+                    <p:column headerText="Grandeur">
+                        <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.scale)}"/>
+                    </p:column>
+
+                    <p:column headerText="Type de document">
+                        <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.format)}"/>
+                    </p:column>
+
+                    <p:column headerText="Auteur">
+                        <h:outputText value="#{siamoisDocument.author.displayName()}"/>
+                    </p:column>
+
+                    <p:column>
+                        <h:panelGroup rendered="#{panelModel.contentIsImage(siamoisDocument.mimeType)}">
+                            <p:button
+                                    value="Visualiser"
+                                    onclick="window.open('#{siamoisDocument.url}');return false"/>
+                        </h:panelGroup>
+                    </p:column>
+
+                    <p:column>
+                        <p:commandButton
+                                value="Télécharger"
+                                ajax="true"
+                                styleClass="mr-2">
+                            <p:fileDownload value="#{panelModel.streamOf(siamoisDocument)}"/>
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+            </h:panelGroup>
+
+
+</ui:fragment>
