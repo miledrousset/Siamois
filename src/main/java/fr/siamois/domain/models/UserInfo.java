@@ -4,9 +4,11 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.institution.Institution;
 import lombok.Getter;
 
+import java.io.Serializable;
+
 
 @Getter
-public class UserInfo {
+public class UserInfo implements Serializable {
 
     protected final Institution institution;
     protected final Person user;
