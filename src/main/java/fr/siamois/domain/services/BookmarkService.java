@@ -33,4 +33,21 @@ public class BookmarkService {
 
     }
 
+    public List<AbstractPanel> addPanelFor(UserInfo userInfo, AbstractPanel panel) {
+        Person person = userInfo.getUser();
+        Institution institution = userInfo.getInstitution();
+
+        Optional<Bookmark> optBookmark = bookmarkRepository.findByPersonAndInstitution(person, institution);
+        Bookmark bookmark;
+        if (optBookmark.isPresent()) {
+            bookmark = optBookmark.get();
+            bookmark.getSavedPanels().add(panel);
+        } else {
+            bookmark = new Bookmark(userInfo.getUser(), userInfo.getInstitution());
+            bookmark.setPerson(person);
+            bookmark.setInstitution(institution);
+            bookmark.setSavedPanels(List.of(panel));
+        }
+        return bookmarkRepository.save(bookmark).getSavedPanels();
+    }
 }

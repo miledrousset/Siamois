@@ -15,6 +15,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "bookmark", schema = "public")
+@NoArgsConstructor
 public class Bookmark {
 
     @EmbeddedId
@@ -29,8 +30,14 @@ public class Bookmark {
     private Institution institution;
 
     @Convert(converter = PanelAttributeConverter.class)
-    @Column(name = "json_panels", columnDefinition = "jsonb", length = Integer.MAX_VALUE)
+    @Column(name = "json_panels", length = Integer.MAX_VALUE)
     private List<AbstractPanel> savedPanels;
+
+    public Bookmark(Person person, Institution institution) {
+        this.id = new BookmarkId(person, institution);
+        this.person = person;
+        this.institution = institution;
+    }
 
     @Embeddable
     @Getter
@@ -39,6 +46,12 @@ public class Bookmark {
     public static class BookmarkId {
         private Long userId;
         private Long institutionId;
+
+        public BookmarkId(Person person, Institution institution) {
+            this.userId = person.getId();
+            this.institutionId = institution.getId();
+        }
+
     }
 
 }

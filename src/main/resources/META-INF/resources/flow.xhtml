@@ -152,6 +152,10 @@
                         </ui:include>
                         <f:facet name="actions">
                             <form:csrfform formId="actionsFormId">
+                                <p:commandLink action="#{navBean.addToBookmarkedPanels(panel)}"
+                                               styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
+                                    <h:outputText styleClass="ui-icon bi bi-bookmark"/>
+                                </p:commandLink>
                                 <p:commandLink rendered="#{flowBean.fullscreenPanelIndex ==-1}"
                                                action="#{flowBean.fullScreen(panel)}"
                                                update="flow"

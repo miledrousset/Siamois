@@ -98,6 +98,10 @@ public class NavBean implements Serializable {
         flowBean.addPanel(panel);
     }
 
+    public void addToBookmarkedPanels(AbstractPanel panel) {
+        bookmarkedPanels = bookmarkService.addPanelFor(sessionSettingsBean.getUserInfo(), panel);
+    }
+
     public enum ApplicationMode {
         SIAMOIS,
         SETTINGS
