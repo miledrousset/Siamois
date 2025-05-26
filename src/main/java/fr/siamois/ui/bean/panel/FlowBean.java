@@ -261,4 +261,5 @@ public class FlowBean implements Serializable {
     public void closePanelAtIndex(int idx) {
         panels.remove(idx);
     }
+
 }

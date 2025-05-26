@@ -71,6 +71,30 @@ public class ActionUnitService implements ArkEntityService {
         return res;
     }
 
+    @Transactional(readOnly = true)
+    public Page<ActionUnit> findAllByInstitutionAndBySpatialUnitAndByNameContainingAndByCategoriesAndByGlobalContaining(
+            Long institutionId, Long spatialUnitId,
+            String name, Long[] categoryIds, Long[] personIds, String global, String langCode, Pageable pageable) {
+
+        Page<ActionUnit> res = actionUnitRepository.findAllByInstitutionAndBySpatialUnitAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                institutionId, spatialUnitId, name, categoryIds, personIds, global, langCode, pageable);
+
+        //wireChildrenAndParents(res.getContent());  // Load and attach spatial hierarchy relationships
+
+
+        // load related actions
+        res.forEach(actionUnit -> {
+            Hibernate.initialize(actionUnit.getSpatialContext());
+            Hibernate.initialize(actionUnit.getRecordingUnitList());
+            Hibernate.initialize(actionUnit.getParents());
+            Hibernate.initialize(actionUnit.getChildren());
+
+        });
+
+
+        return res;
+    }
+
     /**
      * Find an action unit by its ID
      *

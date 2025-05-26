@@ -14,8 +14,8 @@ import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
-import fr.siamois.ui.model.BaseLazyDataModel;
-import fr.siamois.ui.model.SpatialUnitLazyDataModel;
+import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
+import fr.siamois.ui.lazydatamodel.SpatialUnitLazyDataModel;
 
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;

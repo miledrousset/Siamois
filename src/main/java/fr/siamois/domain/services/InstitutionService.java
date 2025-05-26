@@ -7,10 +7,15 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.institution.TeamPerson;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.person.TeamService;
+import fr.siamois.domain.services.vocabulary.ConceptService;
+import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
+import fr.siamois.ui.bean.LangBean;
+import fr.siamois.ui.bean.SessionSettingsBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +33,7 @@ public class InstitutionService {
     private final PersonRepository personRepository;
     private final TeamService teamService;
 
+
     public InstitutionService(InstitutionRepository institutionRepository,
                               PersonRepository personRepository,
                               InstitutionSettingsRepository institutionSettingsRepository,
@@ -36,6 +42,7 @@ public class InstitutionService {
         this.personRepository = personRepository;
         this.institutionSettingsRepository = institutionSettingsRepository;
         this.teamService = teamService;
+
     }
 
     public Set<Institution> findAll() {
@@ -112,5 +119,7 @@ public class InstitutionService {
     public long countMembersInInstitution(Institution institution) {
         return findMembersOf(institution).size();
     }
+
+
 
 }

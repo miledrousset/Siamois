@@ -25,10 +25,10 @@ import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.utils.DataLoaderUtils;
 import fr.siamois.ui.bean.panel.utils.SpatialUnitHelperService;
-import fr.siamois.ui.model.SpatialUnitChildrenLazyDataModel;
-import fr.siamois.ui.model.SpatialUnitParentsLazyDataModel;
+import fr.siamois.ui.lazydatamodel.ActionUnitInSpatialUnitLazyDataModel;
+import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
+import fr.siamois.ui.lazydatamodel.SpatialUnitParentsLazyDataModel;
 import jakarta.annotation.PostConstruct;
-import jakarta.el.MethodExpression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,6 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
-import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,6 +118,9 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private Integer totalParentsCount = 0;
     private List<Concept> selectedCategoriesParents;
     private SpatialUnitParentsLazyDataModel lazyDataModelParents ;
+    // Lazy model for actions in the spatial unit
+    private ActionUnitInSpatialUnitLazyDataModel actionLazyDataModel;
+
 
     private String barModel;
 
@@ -265,6 +267,14 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
                     spatialUnit
             );
             totalParentsCount = lazyDataModelParents.getRowCount();
+
+            // Action in spatial unit lazy model
+            actionLazyDataModel = new ActionUnitInSpatialUnitLazyDataModel(
+                    actionUnitService,
+                    sessionSettings,
+                    langBean,
+                    spatialUnit
+            );
 
             this.setTitle(spatialUnit.getName()); // Set panel title
             // add to BC

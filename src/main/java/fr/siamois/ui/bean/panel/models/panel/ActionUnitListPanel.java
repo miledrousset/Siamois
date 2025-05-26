@@ -2,8 +2,6 @@ package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.person.PersonService;
@@ -12,9 +10,9 @@ import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
-import fr.siamois.ui.model.ActionUnitLazyDataModel;
+import fr.siamois.ui.lazydatamodel.ActionUnitLazyDataModel;
 
-import fr.siamois.ui.model.BaseLazyDataModel;
+import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 
 import lombok.EqualsAndHashCode;
 
@@ -88,16 +86,7 @@ public class ActionUnitListPanel extends AbstractListPanel<ActionUnit> {
         return "bi bi-arrow-down-square";
     }
 
-    public List<ConceptLabel> categoriesAvailable() {
-        List<Concept> cList = conceptService.findAllByActionUnitOfInstitution(sessionSettingsBean.getSelectedInstitution());
 
-        return cList.stream()
-                .map(concept -> labelService.findLabelOf(
-                        concept, langBean.getLanguageCode()
-                ))
-                .toList();
-
-    }
 
     public List<Person> authorsAvailable() {
 

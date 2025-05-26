@@ -17,6 +17,7 @@ import java.time.OffsetDateTime;
 public class SpatialUnitHist extends SpatialUnitParent implements HistoryEntry<SpatialUnit> {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "history_id")
     private Long id;
 
