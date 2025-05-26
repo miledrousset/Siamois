@@ -13,7 +13,9 @@
    <cc:implementation>
       <p:inplace editor="true">
          <f:facet name="output">
-            <h:outputText value="#{labelBean.findLabelOf(cc.attrs.selectedConcept)}"/>
+            <p:chip label="#{labelBean.findLabelOf(cc.attrs.selectedConcept)}"
+                    icon="pi pi-map-marker"
+                    styleClass="mr-2 spatial-unit-type-chip"/>
          </f:facet>
          <f:facet name="input">
             <sharedInput:conceptAutocomplete id="typeComponent"

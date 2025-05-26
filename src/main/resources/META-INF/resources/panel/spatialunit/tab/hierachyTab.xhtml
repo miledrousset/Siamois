@@ -1,0 +1,45 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components"
+             xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form" xmlns:f="http://java.sun.com/jsf/core"
+             xmlns:h="http://java.sun.com/jsf/html"
+             xmlns:siaInplace="http://xmlns.jcp.org/jsf/composite/pages/shared/inplace"
+
+>
+
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel"-->
+    <!--@elvariable id="panelIndex" type="java.lang.Integer"-->
+
+
+    <p:panel id="childrenPanel" class="sia-form-panel" header="Contient"
+             toggleable="true"
+             collapsed="false">
+        <spatialUnit:spatialUnitList
+                lazyDataModel="#{panelModel.lazyDataModelChildren}"
+                panelModel="#{panelModel}"
+                panelIndex="#{panelIndex}"
+                id="spatialUnitChildrenList"
+                selectedCategories="#{panelModel.selectedCategoriesChildren}"
+        />
+
+    </p:panel>
+    <p:panel id="parentsPanel" class="sia-form-panel"
+             header="Fait partie de" toggleable="true"
+             collapsed="false">
+        <spatialUnit:spatialUnitList
+                lazyDataModel="#{panelModel.lazyDataModelParents}"
+                panelModel="#{panelModel}"
+                panelIndex="#{panelIndex}"
+                id="spatialUnitParentsList"
+                selectedCategories="#{panelModel.selectedCategoriesParents}"
+        />
+
+    </p:panel>
+
+
+
+
+
+</ui:fragment>

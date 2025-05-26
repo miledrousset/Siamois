@@ -24,7 +24,7 @@ public class SpatialUnitParentsLazyDataModel extends BaseSpatialUnitLazyDataMode
     protected Page<SpatialUnit> loadSpatialUnits(String nameFilter, Long[] categoryIds, Long[] personIds, String globalFilter, Pageable pageable) {
         return spatialUnitService.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
                 spatialUnit,
-                nameFilter, categoryIds, globalFilter,
+                nameFilter, categoryIds, personIds, globalFilter,
                 langBean.getLanguageCode(),
                 pageable);
     }

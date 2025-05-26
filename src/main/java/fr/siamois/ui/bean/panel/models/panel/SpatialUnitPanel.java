@@ -1,6 +1,7 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.history.SpatialUnitHist;
@@ -12,6 +13,7 @@ import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.form.CustomFieldService;
+import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
@@ -83,6 +85,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private final transient ConceptService conceptService;
     private final transient LabelService labelService;
     private final transient LangBean langBean;
+    private final transient PersonService personService;
 
     // Locals
     private transient SpatialUnit spatialUnit;
@@ -111,11 +114,11 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     // lazy model for children
     private Integer totalChildrenCount = 0;
     private List<Concept> selectedCategoriesChildren;
-    private LazyDataModel<SpatialUnit> lazyDataModelChildren ;
+    private SpatialUnitChildrenLazyDataModel lazyDataModelChildren ;
     // lazy model for parents
     private Integer totalParentsCount = 0;
     private List<Concept> selectedCategoriesParents;
-    private LazyDataModel<SpatialUnit> lazyDataModelParents ;
+    private SpatialUnitParentsLazyDataModel lazyDataModelParents ;
 
     private String barModel;
 
@@ -125,7 +128,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
     @Autowired
     private SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService, DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
-                             ConceptService conceptService, LabelService labelService, LangBean langBean) {
+                             ConceptService conceptService, LabelService labelService, LangBean langBean, PersonService personService) {
         super("Unité spatiale", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-single-panel");
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
@@ -138,6 +141,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         this.labelService = labelService;
         this.conceptService = conceptService;
         this.langBean = langBean;
+        this.personService = personService;
     }
 
 
@@ -202,6 +206,12 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
                                 )
                         )
                 ).toJson();
+    }
+
+    public List<Person> authorsAvailable() {
+
+        return personService.findAllAuthorsOfSpatialUnitByInstitution(sessionSettings.getSelectedInstitution());
+
     }
 
     @PostConstruct

@@ -74,6 +74,17 @@ public class SpatialUnitService implements ArkEntityService {
         spatialUnitRepository.save(spatialUnit);
     }
 
+    private Page<SpatialUnit> initializeSpatialUnitLazyAttributes(Page<SpatialUnit> list) {
+        list.forEach(spatialUnit -> {
+            Hibernate.initialize(spatialUnit.getRelatedActionUnitList());
+            Hibernate.initialize(spatialUnit.getRecordingUnitList());
+            Hibernate.initialize(spatialUnit.getChildren());
+            Hibernate.initialize(spatialUnit.getParents());
+        });
+
+        return list;
+    }
+
 
     @Transactional(readOnly = true)
     public Page<SpatialUnit> findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
@@ -83,33 +94,27 @@ public class SpatialUnitService implements ArkEntityService {
         Page<SpatialUnit> res = spatialUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
                 institutionId, name, categoryIds, personIds, global, langCode, pageable);
 
-        //wireChildrenAndParents(res.getContent());  // Load and attach spatial hierarchy relationships
-
-
-        // load related actions
-        res.forEach(spatialUnit -> {
-            Hibernate.initialize(spatialUnit.getRelatedActionUnitList());
-            Hibernate.initialize(spatialUnit.getRecordingUnitList());
-            Hibernate.initialize(spatialUnit.getChildren());
-            Hibernate.initialize(spatialUnit.getParents());
-        });
-
-
-        return res;
+        return initializeSpatialUnitLazyAttributes(res);
     }
 
+    @Transactional(readOnly = true)
     public Page<SpatialUnit> findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
             SpatialUnit parent,
-            String name, Long[] categoryIds, String global, String langCode, Pageable pageable) {
-        return spatialUnitRepository.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                parent.getId(), name, categoryIds, global, langCode, pageable);
+            String name, Long[] categoryIds, Long[] personIds, String global, String langCode, Pageable pageable) {
+        Page<SpatialUnit> res = spatialUnitRepository.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                parent.getId(), name, categoryIds, personIds, global, langCode, pageable);
+
+        return initializeSpatialUnitLazyAttributes(res);
     }
 
+    @Transactional(readOnly = true)
     public Page<SpatialUnit> findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
             SpatialUnit child,
-            String name, Long[] categoryIds, String global, String langCode, Pageable pageable) {
-        return spatialUnitRepository.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                child.getId(), name, categoryIds, global, langCode, pageable);
+            String name, Long[] categoryIds, Long[] personIds, String global, String langCode, Pageable pageable) {
+        Page<SpatialUnit> res = spatialUnitRepository.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                child.getId(), name, categoryIds, personIds, global, langCode, pageable);
+
+        return initializeSpatialUnitLazyAttributes(res);
     }
 
     public List<SpatialUnit> findAllOfInstitution(Institution institution) {

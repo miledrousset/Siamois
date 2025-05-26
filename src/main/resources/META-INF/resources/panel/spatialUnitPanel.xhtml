@@ -91,17 +91,10 @@
                         </div>
                     </f:facet>
 
-                    <!-- TODO : fix counts in headers -->
-                    <!--                <p:panel id="childrenPanel" class="sia-form-panel" header="Contient (#{panelModel.totalChildrenCount})"-->
-                    <!--                         toggleable="true"-->
-                    <!--                         collapsed="false">-->
-
-                    <!--                </p:panel>-->
-                    <!--                <p:panel id="parentsPanel" class="sia-form-panel"-->
-                    <!--                         header="Fait partie de (#{panelModel.totalParentsCount})" toggleable="true"-->
-                    <!--                         collapsed="false">-->
-
-                    <!--                </p:panel>-->
+                    <ui:include src="/panel/spatialunit/tab/hierachyTab.xhtml">
+                        <ui:param name="panelModel" value="#{panelModel}"/>
+                        <ui:param name="panelIndex" value="#{panelIndex}"/>
+                    </ui:include>
                 </p:tab>
                 <p:tab title="Actions">
 
@@ -123,6 +116,8 @@
                             <p:chip styleClass="recording-unit-count-chip-alt" label="4"/>
                         </div>
                     </f:facet>
+
+
 
 
                 </p:tab>
