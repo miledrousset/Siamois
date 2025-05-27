@@ -11,7 +11,7 @@
    </cc:interface>
 
    <cc:implementation>
-      <p:inplace editor="true">
+      <p:inplace mode="#{flowBean.getInPlaceFieldMode()}" toggleable="false">
          <f:facet name="output">
             <p:chip label="#{labelBean.findLabelOf(cc.attrs.selectedConcept)}"
                     icon="pi pi-map-marker"

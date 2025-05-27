@@ -62,6 +62,7 @@ public class FlowBean implements Serializable {
     private transient DashboardModel responsiveModel;
     private static final String RESPONSIVE_CLASS = "col-12 lg:col-6 xl:col-6";
     private Integer lastUpdatedPanelIndex = 0;
+    private String readWriteMode = "READ";
 
     // Search bar
     private List<SpatialUnit> fSpatialUnits = List.of();
@@ -262,4 +263,14 @@ public class FlowBean implements Serializable {
         panels.remove(idx);
     }
 
+    public void changeReadWriteMode() {
+        // Empty method updating read/write.
+    }
+
+    public String getInPlaceFieldMode() {
+        if (readWriteMode.equals("WRITE")) {
+            return "input";
+        }
+        return "output";
+    }
 }

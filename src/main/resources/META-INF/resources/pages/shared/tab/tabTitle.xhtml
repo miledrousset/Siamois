@@ -9,14 +9,16 @@
 
    <!--@elvariable id="title" type="String"-->
    <!--@elvariable id="icon" type="String"-->
-   <!--@elvariable id="count" type="Integer"-->
-   <!--@elvariable id="countStyle" type="Style"-->
+   <!--@elvariable id="emptyTab" type="Boolean"-->
+   <!--@elvariable id="validated" type="Boolean"-->
 
 
       <div style="display:flex; gap:0.2em;align-items: center;">
          <i class="#{icon}"/>
          <h:outputText value="#{title}"/>
-         <p:chip rendered="#{count != null}" styleClass="#{countStyle}" label="#{count}"/>
+         <p:outputPanel rendered="#{emptyTab}">
+            <span><i class="bi bi-slash-circle-fill"/></span>
+         </p:outputPanel>
       </div>
 
 

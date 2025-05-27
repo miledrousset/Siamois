@@ -2,9 +2,29 @@
     background: var(--siamois-green-unknown);
 }
 
+.siamois-panel .ui-widget {
+    font-family: 'Inter', sans-serif;
+}
+
+body .ui-selectbooleanbutton.ui-state-active, body .ui-selectonebutton > .ui-button.ui-state-active, body .ui-selectmanybutton > .ui-button.ui-state-active {
+    background: var(--siamois-green);
+    border-color: var(--siamois-green);
+}
+
 .panel-highlight {
     outline: 3px solid var(--siamois-green-light-350);
     transition: outline 0.5s ease-in-out;
+}
+
+.sia-flow-panel-title {
+    font-size: 20px;
+}
+
+.ui-chip.draft-chip {
+    background-color: white;
+    border: 1px solid var(--text-light);
+    color: var(--text-light);
+    font-size: 12px;
 }
 
 .siamois-panel {
@@ -56,9 +76,6 @@ body .ui-datatable .ui-datatable-data>tr>td {
     color: var(--text-light)
 }
 
-.siamois-panel .ui-widget {
-    font-family: 'Inter', sans-serif;
-}
 
 .siamois-panel .panel-top-section {
     padding: 1em;

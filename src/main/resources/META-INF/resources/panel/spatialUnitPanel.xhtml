@@ -16,22 +16,6 @@
     <h:panelGroup id="contentPanel" rendered="#{panelModel.spatialUnit != null}">
 
 
-        <h:form>
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <p:outputPanel>
-                <div class="siamois-toolbar">
-                    <p:toolbar>
-                        <p:toolbarGroup>
-                            <p:commandButton value='Nouvelle action' icon="pi pi-plus"
-                                             update="flow"
-                                             action="#{flowBean.addNewActionUnitPanel(panelModel.spatialUnit.id, panelIndex)}"
-                                             style="margin-right: .5rem">
-                            </p:commandButton>
-                        </p:toolbarGroup>
-                    </p:toolbar>
-                </div>
-            </p:outputPanel>
-        </h:form>
 
         <h:form id="spatialUnitForm">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -54,19 +38,7 @@
                     </ui:include>
 
                 </p:tab>
-                <p:tab title="Statistique">
-                    <!-- overrides title on tab-->
-                    <f:facet name="title">
-                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value="Statistiques"/>
-                            <ui:param name="icon" value="bi bi-bar-chart-line"/>
-                        </ui:include>
-                    </f:facet>
-                    🚧 En cours
-                    <p:chart value="#{panelModel.barModel}" style="width: 100%; height: 500px;">
 
-                    </p:chart>
-                </p:tab>
                 <p:tab title="Détails" id="detailsTab">
                     <!-- Common fields -->
                     <f:facet name="title">
@@ -83,12 +55,12 @@
                 </p:tab>
                 <p:tab title="Hierarchie" id="hierarchy">
                     <f:facet name="title">
-                        <div style="display:flex; align-items: center; gap:0.2em;">
-                            <i class="bi bi-geo-alt"></i>
-                            <h:outputText value="Hierarchie"/>
-                            <p:chip icon="bi bi-arrow-down" styleClass="spatial-unit-count-chip-alt" label="3"/>
-                            <p:chip icon="bi bi-arrow-up" styleClass="spatial-unit-count-chip-alt" label="4"/>
-                        </div>
+                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
+                            <ui:param name="title" value="Hierarchie"/>
+                            <ui:param name="icon" value="bi bi-geo-alt"/>
+                            <ui:param name="emptyTab" value="true"/>
+                        </ui:include>
+
                     </f:facet>
 
                     <ui:include src="/panel/spatialunit/tab/hierachyTab.xhtml">
@@ -99,11 +71,11 @@
                 <p:tab title="Actions">
 
                     <f:facet name="title">
-                        <div style="display:flex; align-items: center; gap:0.2em;">
-                            <i class="bi bi-arrow-down-square"/>
-                            <h:outputText value="Actions"/>
-                            <p:chip styleClass="spatial-unit-count-chip-alt" label="4"/>
-                        </div>
+                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
+                            <ui:param name="title" value="Actions"/>
+                            <ui:param name="icon" value="bi bi-arrow-down-square"/>
+                            <ui:param name="validated" value="true"/>
+                        </ui:include>
                     </f:facet>
 
                     <ui:include src="/panel/spatialunit/tab/actionTab.xhtml">
@@ -114,11 +86,11 @@
                 </p:tab>
                 <p:tab title="Enregistrements (1)">
                     <f:facet name="title">
-                        <div style="display:flex; align-items: center; gap:0.2em;">
-                            <i class="bi bi-pencil-square"></i>
-                            <h:outputText value="Enregistrements"/>
-                            <p:chip styleClass="recording-unit-count-chip-alt" label="4"/>
-                        </div>
+                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
+                            <ui:param name="title" value="Enregistrements"/>
+                            <ui:param name="icon" value="bi bi-pencil-square"/>
+                            <ui:param name="validated" value="true"/>
+                        </ui:include>
                     </f:facet>
 
                     🚧 En cours
@@ -127,23 +99,40 @@
                 </p:tab>
                 <p:tab title="Prelevements">
                     <f:facet name="title">
-                        <div style="display:flex; align-items: center; gap:0.2em;">
-                            <i class="bi bi-box2"></i>
-                            <h:outputText value="Prelevements"/>
-                            <p:chip styleClass="recording-unit-count-chip-alt" label="4"/>
-                        </div>
+                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
+                            <ui:param name="title" value="Prelevements"/>
+                            <ui:param name="icon" value="bi bi-box2"/>
+                            <ui:param name="validated" value="true"/>
+                        </ui:include>
                     </f:facet>
 
                     🚧 En cours
 
                 </p:tab>
+
+
+                <p:tab title="Documents">
+
+                    <f:facet name="title">
+                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
+                            <ui:param name="title" value="Documents"/>
+                            <ui:param name="icon" value="bi bi-paperclip"/>
+                            <ui:param name="emptyTab" value="true"/>
+                        </ui:include>
+                    </f:facet>
+
+                    <ui:include src="/panel/spatialunit/tab/documentsTab.xhtml">
+                        <ui:param name="count" value="4"/>
+                    </ui:include>
+
+                </p:tab>
+
                 <p:tab title="Versions">
                     <f:facet name="title">
-                        <div style="display:flex; gap:0.2em; align-items: center;">
-                            <i class="bi bi-clock-history"></i>
-                            <h:outputText value="Versions"/>
-                            <p:chip styleClass="spatial-unit-count-chip-alt" label="4"/>
-                        </div>
+                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
+                            <ui:param name="title" value="Versions"/>
+                            <ui:param name="icon" value="bi bi-clock-history"/>
+                        </ui:include>
                     </f:facet>
 
                     🚧 En cours
@@ -156,36 +145,23 @@
 
                 </p:tab>
 
-                <p:tab title="Documents">
-
-                    <f:facet name="title">
-                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value="Documents"/>
-                            <ui:param name="icon" value="bi bi-paperclip"/>
-                            <ui:param name="count" value="4"/>
-                            <ui:param name="countStyle" value="spatial-unit-count-chip-alt"/>
-                        </ui:include>
-                    </f:facet>
-
-                    <ui:include src="/panel/spatialunit/tab/documentsTab.xhtml">
-                        <ui:param name="count" value="4"/>
-                    </ui:include>
-
-                </p:tab>
-
 
             </p:tabView>
 
             <!-- Save/Cancel Toolbar -->
             <p:toolbar class="panel-footer">
                 <p:toolbarGroup align="right">
-                    <p:commandButton value='#{langBean.msg("common.action.cancelModifications")}'
+                    <p:commandLink value='#{langBean.msg("common.action.cancel")}'
                                      update="flow"
                                      disabled="true"
-                                     styleClass="ui-button-danger"
-                                     style="margin-right: .5rem">
+                                     style="margin-right: 1rem">
+                    </p:commandLink>
+                    <p:commandButton id="saveButton" value='#{langBean.msg("common.action.saveAsDraft")}'
+                                     update="panel-#{panelIndex}"
+                                     action="#{panelModel.save()}"
+                                     style="margin-right: 1rem">
                     </p:commandButton>
-                    <p:commandButton id="saveButton" value='#{langBean.msg("common.action.save")}'
+                    <p:commandButton id="saveAndValidateButton" value='#{langBean.msg("common.action.saveAndValidate")}'
                                      update="panel-#{panelIndex}"
                                      action="#{panelModel.save()}"
                                      style="margin-right: .5rem">
