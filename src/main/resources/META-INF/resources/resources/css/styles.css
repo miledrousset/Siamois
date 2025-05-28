@@ -32,6 +32,9 @@
     --ground-light-color-200: #D8B9B9;
     --ground-light-color-50: #ECE4E4;
     --ground-dark-color: #581011;
+
+
+    --error-main: #D32F2F;
 }
 
 /* in order to align boostrap icons */

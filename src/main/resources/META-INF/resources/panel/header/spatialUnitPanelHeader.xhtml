@@ -10,8 +10,10 @@
             icon="pi pi-map-marker"
             styleClass="mr-2 spatial-unit-type-chip"/>
     <p:chip rendered="#{not panelModel.spatialUnit.validated}" label="Non validé"
-            icon="bi bi-x-circle-fill"
-            styleClass="mr-2 draft-chip"
+            styleClass="mr-2 error-chip"
             />
+    <p:chip rendered="#{not panelModel.spatialUnit.validated}" label="Non enregistré"
+            styleClass="mr-2 error-chip"
+    />
 
 </ui:fragment>

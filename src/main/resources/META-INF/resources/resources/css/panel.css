@@ -11,6 +11,20 @@ body .ui-selectbooleanbutton.ui-state-active, body .ui-selectonebutton > .ui-but
     border-color: var(--siamois-green);
 }
 
+body .ui-selectbooleanbutton.ui-state-active.ui-state-hover, body .ui-selectonebutton > .ui-button.ui-state-active.ui-state-hover, body .ui-selectmanybutton > .ui-button.ui-state-active.ui-state-hover {
+     background: var(--siamois-green);
+     border-color: var(--siamois-green);
+}
+
+body .ui-button.ui-state-focus {
+    box-shadow: var(--siamois-green-light-200)
+}
+
+body .ui-selectbooleanbutton.ui-state-active:not(.ui-state-disabled):hover,body .ui-selectonebutton>.ui-button.ui-state-active:not(.ui-state-disabled):hover,body .ui-selectmanybutton>.ui-button.ui-state-active:not(.ui-state-disabled):hover {
+    background: var(--siamois-green);
+    border-color: var(--siamois-green);
+}
+
 .panel-highlight {
     outline: 3px solid var(--siamois-green-light-350);
     transition: outline 0.5s ease-in-out;
@@ -20,11 +34,15 @@ body .ui-selectbooleanbutton.ui-state-active, body .ui-selectonebutton > .ui-but
     font-size: 20px;
 }
 
-.ui-chip.draft-chip {
-    background-color: white;
-    border: 1px solid var(--text-light);
-    color: var(--text-light);
-    font-size: 12px;
+.ui-chip {
+    font-size: 16px;
+}
+
+.ui-chip.error-chip {
+    background-color: var(--error-main);
+    border: none;
+    color: white;
+    font-size: 16px;
 }
 
 .siamois-panel {
@@ -393,32 +411,32 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     background-color: white;
     border: 1px solid var(--context-main-color);
     color: var(--context-main-color);
-    font-size: 12px;
+    font-size: 16px;
 }
 
 .ui-chip.spatial-unit-count-chip-alt {
     background-color: var(--context-main-color);
     border: 1px solid var(--context-main-color);
     color: white;
-    font-size: 12px;
+    font-size: 16px;
 }
 
 .ui-chip.spatial-unit-type-chip {
     background-color: var(--context-main-color);
     color: white;
-    font-size: 12px;
+    font-size: 16px;
 }
 
 .ui-chip.recording-unit-type-chip {
     background-color: var(--ground-main-color);
     color: white;
-    font-size: 12px;
+    font-size: 16px;
 }
 
 .ui-chip.valid-type-chip {
     background-color: var(--green-valid);
     color: white;
-    font-size: 12px;
+    font-size: 16px;
 }
 
 .ui-panel.spatial-unit-single-panel .ui-panel-content {
@@ -621,21 +639,21 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     background-color: white;
     border: 1px solid var(--context-main-color);
     color: var(--context-main-color);
-    font-size: 12px;
+    font-size: 16px;
 }
 
 .ui-chip.action-unit-count-chip-alt {
     background-color: var(--context-main-color);
     border: 1px solid var(--context-main-color);
     color: white;
-    font-size: 12px;
+    font-size: 16px;
 }
 
 
 .ui-chip.action-unit-type-chip {
     background-color: var(--context-main-color);
     color: white;
-    font-size: 12px;
+    font-size: 16px;
 }
 
 .ui-panel.action-unit-single-panel .ui-panel-content {
@@ -760,14 +778,14 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     background-color: white;
     border: 1px solid var(--ground-main-color);
     color: var(--ground-main-color);
-    font-size: 12px;
+    font-size: 16px;
 }
 
 .ui-chip.recording-unit-count-chip-alt {
     background-color: var(--ground-main-color);
     border: 1px solid var(--ground-main-color);
     color: white;
-    font-size: 12px;
+    font-size: 16px;
 }
 
 

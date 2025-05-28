@@ -3,6 +3,7 @@ package fr.siamois.ui.bean.panel.models.panel;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
@@ -19,6 +20,7 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.domain.utils.DocumentUtils;
+import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
@@ -216,13 +218,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
     }
 
-    @PostConstruct
-    public void init() {
-
-        createBarModel();
-
-        activeTabIndex = 1;
-
+    public void refreshUnit() {
         spatialUnitHelperService.reinitialize(
                 unit -> this.spatialUnit = unit,
                 msg -> this.spatialUnitErrorMessage = msg,
@@ -235,11 +231,6 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
                 list -> this.spatialUnitParentsList = list,
                 msg -> this.spatialUnitParentsListErrorMessage = msg
         );
-
-        if (idunit == null) {
-            this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
-            return;
-        }
 
         try {
 
@@ -283,13 +274,6 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
             this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
         }
 
-        if (this.spatialUnit == null) {
-            this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
-            return;
-        }
-
-
-
         DataLoaderUtils.loadData(
                 () -> recordingUnitService.findAllBySpatialUnit(spatialUnit),
                 list -> this.recordingUnitList = list,
@@ -306,6 +290,32 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
         historyVersion = spatialUnitHelperService.findHistory(spatialUnit);
         documents = documentService.findForSpatialUnit(spatialUnit);
+    }
+
+
+    public void init() {
+
+        createBarModel();
+
+        activeTabIndex = 1;
+
+
+
+        if (idunit == null) {
+            this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
+            return;
+        }
+
+        refreshUnit();
+
+        if (this.spatialUnit == null) {
+            this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
+            return;
+        }
+
+
+
+
     }
 
     public void visualise(SpatialUnitHist history) {
@@ -383,9 +393,18 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         PrimeFaces.current().executeScript("PF('newDocumentDiag').show()");
     }
 
-    public void save() {
-        log.trace("initDialog");
-        spatialUnit.setName("Saved");
+    public void save(Boolean validated) {
+        spatialUnit.setValidated(validated);
+        try {
+            spatialUnitService.save(spatialUnit);
+        }
+        catch(FailedRecordingUnitSaveException e) {
+            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", spatialUnit.getName());
+        }
+
+
+        refreshUnit();
+        MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updated", spatialUnit.getName());
     }
 
     public static class SpatialUnitPanelBuilder {

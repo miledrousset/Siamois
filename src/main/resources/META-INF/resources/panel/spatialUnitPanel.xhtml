@@ -50,6 +50,7 @@
 
                     <ui:include src="/panel/spatialunit/tab/detailsTab.xhtml">
                         <ui:param name="spatialUnit" value="#{panelModel.spatialUnit}"/>
+                        <ui:param name="panelModel" value="#{panelModel}"/>
                     </ui:include>
 
                 </p:tab>
@@ -59,6 +60,7 @@
                             <ui:param name="title" value="Hierarchie"/>
                             <ui:param name="icon" value="bi bi-geo-alt"/>
                             <ui:param name="emptyTab" value="true"/>
+                            <ui:param name="validated" value="#{panelModel.spatialUnit.validated}"/>
                         </ui:include>
 
                     </f:facet>
@@ -118,6 +120,7 @@
                             <ui:param name="title" value="Documents"/>
                             <ui:param name="icon" value="bi bi-paperclip"/>
                             <ui:param name="emptyTab" value="true"/>
+                            <ui:param name="validated" value="#{panelModel.spatialUnit.validated}"/>
                         </ui:include>
                     </f:facet>
 
@@ -149,7 +152,7 @@
             </p:tabView>
 
             <!-- Save/Cancel Toolbar -->
-            <p:toolbar class="panel-footer">
+            <p:toolbar class="panel-footer" rendered="#{flowBean.readWriteMode == 'WRITE'}">
                 <p:toolbarGroup align="right">
                     <p:commandLink value='#{langBean.msg("common.action.cancel")}'
                                      update="flow"
@@ -158,12 +161,12 @@
                     </p:commandLink>
                     <p:commandButton id="saveButton" value='#{langBean.msg("common.action.saveAsDraft")}'
                                      update="panel-#{panelIndex}"
-                                     action="#{panelModel.save()}"
+                                     action="#{panelModel.save(false)}"
                                      style="margin-right: 1rem">
                     </p:commandButton>
                     <p:commandButton id="saveAndValidateButton" value='#{langBean.msg("common.action.saveAndValidate")}'
                                      update="panel-#{panelIndex}"
-                                     action="#{panelModel.save()}"
+                                     action="#{panelModel.save(true)}"
                                      style="margin-right: .5rem">
                     </p:commandButton>
                 </p:toolbarGroup>

@@ -25,14 +25,19 @@
 
             function handleScrollToTop() {
 
-                const container = document.getElementById("flow");
+                const container = document.getElementById("content");
                 console.log(container)
                 if (container) {
                     container.firstElementChild.scrollIntoView({behavior: 'smooth', block: 'start'});
                 }
 
             }
+
+            function markPanelAsModified(panel) {
+                console.log(panel)
+            }
         </script>
+
 
     </ui:define>
 

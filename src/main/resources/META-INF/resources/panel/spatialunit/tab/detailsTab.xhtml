@@ -26,15 +26,7 @@
 
                     <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
                         <sharedInput:panelField title="Name">
-                            <p:inplace editor="true">
-                                <f:facet name="output">
-                                    <h:outputText value="#{spatialUnit.name}"/>
-                                </f:facet>
-                                <f:facet name="input">
-                                    <p:inputText value="#{spatialUnit.name}" required="true"
-                                                 label="text"/>
-                                </f:facet>
-                            </p:inplace>
+                            <siaInplace:text panelModel="#{panelModel}" value="#{spatialUnit.name}"/>
                         </sharedInput:panelField>
 
                     </p:column>
@@ -43,8 +35,6 @@
                         <sharedInput:panelField title="Type" isTheso="true" id="typeField">
                             <siaInplace:concept selectedConcept="#{spatialUnit.category}"/>
                         </sharedInput:panelField>
-
-
                     </p:column>
 
                 </p:row>
