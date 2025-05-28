@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean;
 
+import fr.siamois.domain.models.Bookmark;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.services.BookmarkService;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -43,8 +45,7 @@ public class NavBean implements Serializable {
 
     private ApplicationMode applicationMode = ApplicationMode.SIAMOIS;
 
-    @Getter(AccessLevel.NONE)
-    private List<AbstractPanel> bookmarkedPanels = null;
+    private List<Bookmark> bookmarkedPanels = null;
 
     public NavBean(SessionSettingsBean sessionSettingsBean,
                    InstitutionChangeEventPublisher institutionChangeEventPublisher,
@@ -62,9 +63,9 @@ public class NavBean implements Serializable {
         this.flowBean = flowBean;
     }
 
-    public List<AbstractPanel> getBookmarkedPanels() {
+    public List<Bookmark> getBookmarkedPanels() {
         if (bookmarkedPanels == null) {
-            bookmarkedPanels = bookmarkService.findPanelsOf(sessionSettingsBean.getUserInfo());
+            bookmarkedPanels = new ArrayList<>(bookmarkService.findAll(sessionSettingsBean.getUserInfo()));
         }
         return bookmarkedPanels;
     }
@@ -94,12 +95,8 @@ public class NavBean implements Serializable {
         redirectBean.redirectTo("/settings/organisation");
     }
 
-    public void addPanelToFlow(AbstractPanel panel) {
-        flowBean.addPanel(panel);
-    }
-
     public void addToBookmarkedPanels(AbstractPanel panel) {
-        bookmarkedPanels = bookmarkService.addPanelFor(sessionSettingsBean.getUserInfo(), panel);
+        bookmarkedPanels.add(bookmarkService.save(sessionSettingsBean.getUserInfo(), panel));
     }
 
     public enum ApplicationMode {

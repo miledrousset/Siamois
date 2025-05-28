@@ -13,9 +13,9 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    public static final String REDIRECT_ERROR_500 = "redirect:/pages/error/error-500.xhtml";
-    public static final String REDIRECT_ERROR_404 = "redirect:/pages/error/error-404.xhtml";
-    public static final String REDIRECT_ERROR_403 = "redirect:/pages/error/error-403.xhtml";
+    public static final String REDIRECT_ERROR_500 = "redirect:/error/500";
+    public static final String REDIRECT_ERROR_404 = "redirect:/error/404";
+    public static final String REDIRECT_ERROR_403 = "redirect:/error/403";
     public static final String ERROR_MESSAGE = "errorMessage";
 
     @ExceptionHandler(ForbiddenException.class)

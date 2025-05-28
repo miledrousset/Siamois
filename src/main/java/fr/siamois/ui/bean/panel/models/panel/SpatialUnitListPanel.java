@@ -128,6 +128,11 @@ public class SpatialUnitListPanel extends AbstractListPanel<SpatialUnit> {
         return "/panel/spatialUnitListPanel.xhtml";
     }
 
+    @Override
+    public String ressourceUri() {
+        return "/spatialunit";
+    }
+
     public static class SpatialUnitListPanelBuilder {
 
         private final SpatialUnitListPanel spatialUnitListPanel;

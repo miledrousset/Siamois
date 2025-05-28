@@ -148,6 +148,11 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     }
 
     @Override
+    public String ressourceUri() {
+        return "/spatialunit/" + idunit;
+    }
+
+    @Override
     public String displayHeader() {
         return "/panel/header/spatialUnitPanelHeader.xhtml";
     }

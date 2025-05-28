@@ -112,6 +112,11 @@ public class ActionUnitListPanel extends AbstractListPanel<ActionUnit> {
         return "/panel/actionUnitListPanel.xhtml";
     }
 
+    @Override
+    public String ressourceUri() {
+        return "/actionunit";
+    }
+
     public static class ActionUnitListPanelBuilder {
 
         private final ActionUnitListPanel actionUnitListPanel;

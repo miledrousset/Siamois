@@ -85,6 +85,11 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
         return "/panel/actionUnitPanel.xhtml";
     }
 
+    @Override
+    public String ressourceUri() {
+        return String.format("/actionunit/%s", actionUnit.getId());
+    }
+
     public void init() {
 
             // reinit

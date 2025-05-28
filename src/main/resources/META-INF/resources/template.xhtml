@@ -91,9 +91,9 @@
                             <ui:repeat value="#{navBean.bookmarkedPanels}" var="bookmark">
                                 <p:autoUpdate/>
                                 <li class="nav-item">
-                                    <h:commandLink action="#{navBean.addPanelToFlow(bookmark)}" styleClass="nav-link">
+                                    <h:commandLink action="#{bookmark.resourceUri}" styleClass="nav-link">
                                         <i class="bi bi-bookmark-fill"/>
-                                        <span class="menu-text">#{bookmark.title}</span>
+                                        <span class="menu-text">#{bookmark.resourceUri}</span>
                                     </h:commandLink>
                                 </li>
                             </ui:repeat>

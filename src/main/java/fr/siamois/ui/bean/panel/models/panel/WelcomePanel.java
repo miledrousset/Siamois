@@ -81,6 +81,11 @@ public class WelcomePanel extends AbstractPanel {
         return "/panel/homePanel.xhtml";
     }
 
+    @Override
+    public String ressourceUri() {
+        return "/welcome";
+    }
+
     @EventListener(LangageChangeEvent.class)
     public void refreshName() {
         this.title = String.format("%s - %s",
