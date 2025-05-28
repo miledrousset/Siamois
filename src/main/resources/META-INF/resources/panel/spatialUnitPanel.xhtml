@@ -16,9 +16,10 @@
     <h:panelGroup id="contentPanel" rendered="#{panelModel.spatialUnit != null}">
 
 
-
         <h:form id="spatialUnitForm">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <!-- Champ caché pour tracker les modifications -->
+            <h:inputHidden id="hasUnsavedModifications" value="#{panelModel.hasUnsavedModifications}"/>
             <!-- Tabs -->
             <p:tabView id="spatialUnitTabs" activeIndex="#{panelModel.activeTabIndex}">
                 <p:ajax event="tabChange" listener="#{panelModel.onTabChange}"/>
@@ -155,18 +156,22 @@
             <p:toolbar class="panel-footer" rendered="#{flowBean.readWriteMode == 'WRITE'}">
                 <p:toolbarGroup align="right">
                     <p:commandLink value='#{langBean.msg("common.action.cancel")}'
-                                     update="flow"
-                                     disabled="true"
-                                     style="margin-right: 1rem">
+                                   update="panel-#{panelIndex}"
+                                   id="cancelButton"
+                                   action="#{panelModel.cancelChanges()}"
+
+                                   style="margin-right: 1rem">
                     </p:commandLink>
                     <p:commandButton id="saveButton" value='#{langBean.msg("common.action.saveAsDraft")}'
                                      update="panel-#{panelIndex}"
+
                                      action="#{panelModel.save(false)}"
                                      style="margin-right: 1rem">
                     </p:commandButton>
                     <p:commandButton id="saveAndValidateButton" value='#{langBean.msg("common.action.saveAndValidate")}'
                                      update="panel-#{panelIndex}"
                                      action="#{panelModel.save(true)}"
+
                                      style="margin-right: .5rem">
                     </p:commandButton>
                 </p:toolbarGroup>

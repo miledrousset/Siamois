@@ -23,6 +23,7 @@ import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.clone.SpatialUnitClone;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.utils.DataLoaderUtils;
@@ -90,10 +91,9 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
     // Locals
     private transient SpatialUnit spatialUnit;
-    private Boolean isEdited ; // Did we modify the spatial unit?
+    private Boolean hasUnsavedModifications ; // Did we modify the spatial unit?
     private int activeTabIndex ; // Keeping state of active tab
-
-
+    private SpatialUnitClone backupClone;
 
     private String spatialUnitErrorMessage;
     private transient List<SpatialUnit> spatialUnitList;
@@ -219,6 +219,9 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     }
 
     public void refreshUnit() {
+
+        hasUnsavedModifications = false;
+        spatialUnit = null;
         spatialUnitHelperService.reinitialize(
                 unit -> this.spatialUnit = unit,
                 msg -> this.spatialUnitErrorMessage = msg,
@@ -236,6 +239,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
             this.spatialUnit = spatialUnitService.findById(idunit);
 
+            backupClone = new SpatialUnitClone(spatialUnit);
 
             // Fields for recording unit table
             //availableFields = customFieldService.findAllFieldsBySpatialUnitId(idunit);
@@ -267,9 +271,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
                     spatialUnit
             );
 
-            this.setTitle(spatialUnit.getName()); // Set panel title
-            // add to BC
-            this.getBreadcrumb().addSpatialUnit(spatialUnit);
+
         } catch (RuntimeException e) {
             this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
         }
@@ -292,12 +294,22 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         documents = documentService.findForSpatialUnit(spatialUnit);
     }
 
+    public void cancelChanges() {
+        spatialUnit.setGeom(backupClone.getGeom());
+        spatialUnit.setName(backupClone.getName());
+        spatialUnit.setValidated(backupClone.getValidated());
+        spatialUnit.setArk(backupClone.getArk());
+        spatialUnit.setCategory(backupClone.getCategory());
+        hasUnsavedModifications = false;
+    }
+
 
     public void init() {
 
         createBarModel();
 
         activeTabIndex = 1;
+
 
 
 
@@ -313,7 +325,9 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
             return;
         }
 
-
+        this.setTitle(spatialUnit.getName()); // Set panel title
+        // add to BC
+        this.getBreadcrumb().addSpatialUnit(spatialUnit);
 
 
     }
@@ -394,17 +408,18 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     }
 
     public void save(Boolean validated) {
+
         spatialUnit.setValidated(validated);
         try {
             spatialUnitService.save(spatialUnit);
         }
         catch(FailedRecordingUnitSaveException e) {
             MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", spatialUnit.getName());
+            return ;
         }
 
-
         refreshUnit();
-        MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updated", spatialUnit.getName());
+        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", spatialUnit.getName());
     }
 
     public static class SpatialUnitPanelBuilder {

@@ -18,8 +18,7 @@
             </f:facet>
             <f:facet name="input">
                 <p:inputText value="#{cc.attrs.value}" styleClass="track-change" required="true"
-                             label="text">
-                    <p:ajax event="change" oncomplete="markPanelAsModified(#{cc.attrs.panelModel})" />
+                             label="text" onchange="setFormHasBeenModified(this)">
                 </p:inputText>
             </f:facet>
         </p:inplace>

@@ -191,6 +191,7 @@ body .ui-datatable .ui-paginator.ui-paginator-bottom {
 
 body .ui-datatable thead th {
     background: var(--siamois-green-light-100);
+    align-content: start;
 }
 
 body .ui-datatable thead th.ui-state-active {
@@ -239,6 +240,10 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 
 .spatial-unit-panel .ui-datatable thead th {
     background: var(--context-light-color-100);
+}
+
+.spatial-unit-panel .sia-modified-field {
+    border-color: var(--context-main-color);
 }
 
 .spatial-unit-panel .ui-datatable thead th.ui-state-active {

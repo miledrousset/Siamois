@@ -27,6 +27,7 @@
                         panelStyleClass="#{cc.attrs.panelStyleClass}"
                         itemValue="#{field}"
                         disabled="#{cc.attrs.disabled}"
+                        onchange="setFormHasBeenModified(this)"
                         required="true"
                         converter="#{conceptConverter}"
                         forceSelection="true"
