@@ -62,11 +62,14 @@ public class PanelFactory {
         bc.getModel().getElements().clear();
         bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
 
-        return new SpatialUnitPanel.SpatialUnitPanelBuilder(spatialUnitPanelProvider)
+        SpatialUnitPanel panel = new SpatialUnitPanel.SpatialUnitPanelBuilder(spatialUnitPanelProvider)
                 .id(spatialUnitId)
                 .breadcrumb(bc)
                 .build();
 
+        panel.init();
+
+        return panel;
     }
 
     public ActionUnitPanel createActionUnitPanel(Long actionUnitId, PanelBreadcrumb currentBreadcrumb) {

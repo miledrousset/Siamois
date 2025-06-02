@@ -86,7 +86,7 @@ public class WelcomePanel extends AbstractPanel {
 
     @EventListener(LangageChangeEvent.class)
     public void refreshName() {
-        this.titleCode = String.format("%s - %s",
+        this.titleCodeOrTitle = String.format("%s - %s",
                 langBean.msg("common.location.home"),
                 sessionSettingsBean.getSelectedInstitution().getName());
     }

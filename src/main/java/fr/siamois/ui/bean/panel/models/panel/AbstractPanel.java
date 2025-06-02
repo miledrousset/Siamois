@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 public abstract class AbstractPanel implements Serializable {
 
 
-    protected String titleCode;
+    protected String titleCodeOrTitle;
     protected String panelClass;
     protected String icon;
     protected PanelBreadcrumb breadcrumb;
@@ -42,8 +42,8 @@ public abstract class AbstractPanel implements Serializable {
         return formatter.format(dateTime);
     }
 
-    protected AbstractPanel(String titleCode, String icon, String panelClass) {
-        this.titleCode = titleCode;
+    protected AbstractPanel(String titleCodeOrTitle, String icon, String panelClass) {
+        this.titleCodeOrTitle = titleCodeOrTitle;
         this.icon = icon;
         this.panelClass = panelClass;
     }

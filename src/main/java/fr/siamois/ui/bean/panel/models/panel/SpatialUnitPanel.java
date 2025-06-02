@@ -117,7 +117,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     @Autowired
     private SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService, DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
                              ConceptService conceptService, LabelService labelService, LangBean langBean) {
-        super("Unité spatiale", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-single-panel");
+        super("common.entity.spatialUnit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-single-panel");
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
@@ -204,6 +204,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
         try {
             this.spatialUnit = spatialUnitService.findById(idunit);
+            this.setTitleCodeOrTitle(spatialUnit.getName()); // Set panel title
 
             // Fields for recording unit table
             availableFields = customFieldService.findAllFieldsBySpatialUnitId(idunit);
@@ -227,7 +228,6 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
             );
             totalParentsCount = lazyDataModelParents.getRowCount();
 
-            this.setTitleCode(spatialUnit.getName()); // Set panel title
             // add to BC
             this.getBreadcrumb().addSpatialUnit(spatialUnit);
         } catch (RuntimeException e) {
