@@ -10,10 +10,10 @@ import fr.siamois.ui.bean.converter.InstitutionConverter;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
 import fr.siamois.ui.bean.settings.InstitutionListSettingsBean;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -42,17 +42,18 @@ public class NavBean implements Serializable {
     private final InstitutionListSettingsBean institutionListSettingsBean;
     private final transient BookmarkService bookmarkService;
     private final FlowBean flowBean;
+    private final LangBean langBean;
 
     private ApplicationMode applicationMode = ApplicationMode.SIAMOIS;
 
-    private List<Bookmark> bookmarkedPanels = null;
+    private transient List<Bookmark> bookmarkedPanels = null;
 
     public NavBean(SessionSettingsBean sessionSettingsBean,
                    InstitutionChangeEventPublisher institutionChangeEventPublisher,
                    InstitutionConverter converter,
                    InstitutionService institutionService,
                    RedirectBean redirectBean,
-                   InstitutionListSettingsBean institutionListSettingsBean, BookmarkService bookmarkService, FlowBean flowBean) {
+                   InstitutionListSettingsBean institutionListSettingsBean, BookmarkService bookmarkService, FlowBean flowBean, LangBean langBean) {
         this.sessionSettingsBean = sessionSettingsBean;
         this.institutionChangeEventPublisher = institutionChangeEventPublisher;
         this.converter = converter;
@@ -61,6 +62,7 @@ public class NavBean implements Serializable {
         this.institutionListSettingsBean = institutionListSettingsBean;
         this.bookmarkService = bookmarkService;
         this.flowBean = flowBean;
+        this.langBean = langBean;
     }
 
     public List<Bookmark> getBookmarkedPanels() {
@@ -97,6 +99,14 @@ public class NavBean implements Serializable {
 
     public void addToBookmarkedPanels(AbstractPanel panel) {
         bookmarkedPanels.add(bookmarkService.save(sessionSettingsBean.getUserInfo(), panel));
+    }
+
+    public String bookmarkTitle(Bookmark bookmark) {
+        try {
+            return langBean.msg(bookmark.getTitle());
+        } catch (NoSuchMessageException e) {
+            return bookmark.getTitle();
+        }
     }
 
     public enum ApplicationMode {

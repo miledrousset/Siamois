@@ -26,8 +26,12 @@ public class Bookmark {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "resource_uri", nullable = false)
+    @Column(name = "resource_uri", nullable = false, length = 2000)
     private String resourceUri;
 
+    @Override
+    public String toString() {
+        return String.format("Bookmark n°%s to %s", id, resourceUri);
+    }
 
 }
