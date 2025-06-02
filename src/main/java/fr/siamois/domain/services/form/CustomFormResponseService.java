@@ -143,12 +143,13 @@ public class CustomFormResponseService {
         toBeDeleted = new HashMap<>(managedFormResponse.getAnswers());
 
         // Iterate over the form fields and look for answers to fields that are in the form
-        managedForm.getLayout().stream()
-                .flatMap(section -> section.getFields().stream()) // Get the fields for each section
-                .forEach(field -> saveAnswer(field, 
-                        customFormResponse, 
-                        managedFormResponse, 
-                        toBeDeleted)); // Process each field
+        // todo: fix
+//        managedForm.getLayout().stream()
+//                .flatMap(section -> section.getFields().stream()) // Get the fields for each section
+//                .forEach(field -> saveAnswer(field,
+//                        customFormResponse,
+//                        managedFormResponse,
+//                        toBeDeleted)); // Process each field
 
         // Delete the answer to be deleted
         for (CustomFieldAnswer managedAnswerToDelete : toBeDeleted.values()) {

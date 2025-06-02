@@ -147,10 +147,10 @@ public abstract class RecordingUnitPanelBase extends AbstractPanel{
     public void initFormResponseAnswers() {
 
         if (recordingUnit.getFormResponse().getForm() != null) {
-
-            recordingUnit.getFormResponse().getForm().getLayout().stream()
-                    .flatMap(section -> section.getFields().stream()) // Flatten the nested lists
-                    .forEach(this::initializeAnswer); // Process each field
+    // todo; fix;
+//            recordingUnit.getFormResponse().getForm().getLayout().stream()
+//                    .flatMap(section -> section.getFields().stream()) // Flatten the nested lists
+//                    .forEach(this::initializeAnswer); // Process each field
         }
 
 

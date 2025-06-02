@@ -200,7 +200,7 @@
                         <p:ajax event="toggle" listener="#{flowBean.handleToggleOfPanelAtIndex(status.index)}"/>
 
                         <f:facet name="header">
-                            <span class="sia-flow-panel-title">
+                            <span class="sia-flow-panel-title" id="panel-${status.index}-header">
                                 <p:outputPanel rendered="#{panel.displayHeader() == null}">
                                 <i class="#{panel.icon}"/> #{panel.title}
                             </p:outputPanel>

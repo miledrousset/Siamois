@@ -12,6 +12,8 @@ import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -123,7 +125,11 @@ public class SpatialUnitFieldBean implements Serializable {
     }
 
     public String getUrlForSpatialUnitTypeFieldCode() {
-        return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE);
+        return getUrlForFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
+    }
+
+    public String getUrlForFieldCode(String fieldCode) {
+        return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), fieldCode);
     }
 
 
@@ -136,6 +142,23 @@ public class SpatialUnitFieldBean implements Serializable {
     public List<Concept> completeCategory(String input) {
         try {
             return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE, input);
+        } catch (NoConfigForFieldException e) {
+            log.error(e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Fetch the autocomplete results on API for the selected field and add them to the list of concepts.
+     *
+     * @param input the input of the user
+     * @return the list of concepts that match the input to display in the autocomplete
+     */
+    public List<Concept> completeWithFieldCode(String input) {
+        try {
+            FacesContext context = FacesContext.getCurrentInstance();
+            String fieldCode = (String) UIComponent.getCurrentComponent(context).getAttributes().get("fieldCode");
+            return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), fieldCode, input);
         } catch (NoConfigForFieldException e) {
             log.error(e.getMessage());
             return new ArrayList<>();

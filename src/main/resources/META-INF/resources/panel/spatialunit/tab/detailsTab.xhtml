@@ -4,49 +4,21 @@
              xmlns:p="http://primefaces.org/ui"
              xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form" xmlns:f="http://java.sun.com/jsf/core"
              xmlns:h="http://java.sun.com/jsf/html"
-             xmlns:siaInplace="http://xmlns.jcp.org/jsf/composite/pages/shared/inplace"
+
 
 >
 
-    <!--@elvariable id="spatialUnit" type="fr.siamois.domain.models.spatialunit.SpatialUnit"-->
     <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel"-->
+    <!--@elvariable id="panelIndex" type="Integer"-->
 
-    🚧 En cours
+    <ui:include src="/pages/shared/form/customForm.xhtml">
+        <ui:param name="panelModel" value="#{panelModel}"/>
+        <ui:param name="layout" value="#{panelModel.layout}"/>
+        <ui:param name="readOnly" value="false"/>
+        <ui:param name="prefix" value="details"/>
+        <ui:param name="panelId" value="panel-#{panelIndex}"/>
+    </ui:include>
 
-        <ui:repeat value="#{panelModel.layout}"
-                   var="customFormPanel">
-            <p:panel header="#{customFormPanel.name}" id="customFormPanel"
-                     class="sia-form-panel"
-                     toggleable="true">
-
-                <p:panelGrid id="customFormPanelGrid"
-                             layout="grid"
-                >
-                    <p:row>
-                        <ui:repeat value="#{customFormPanel.fields}"
-                                   var="field">
-
-
-                            <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
-                                <sharedInput:panelField title="#{field.label}"
-                                                        rendered="#{field['class'].simpleName eq 'CustomFieldText'}">
-                                    <siaInplace:text
-                                            panelModel="#{panelModel}"
-                                            hasBeenModified="#{panelModel.formResponse.answers.get(field).hasBeenModified}"
-                                            value="#{panelModel.formResponse.answers.get(field).value}">
-
-                                    </siaInplace:text>
-                                </sharedInput:panelField>
-                            </p:column>
-
-
-                        </ui:repeat>
-                    </p:row>
-                </p:panelGrid>
-
-
-            </p:panel>
-        </ui:repeat>
 
 
 

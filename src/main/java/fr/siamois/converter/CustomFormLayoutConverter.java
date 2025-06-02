@@ -50,12 +50,13 @@ public class CustomFormLayoutConverter implements AttributeConverter<List<Custom
                         map.put("name", panel.getName());
 
                         // Store the IDs of all fields
-                        if (panel.getFields() != null) {
-                            List<Long> fieldIds = panel.getFields().stream()
-                                    .map(CustomField::getId)
-                                    .toList();
-                            map.put(FIELDSKEY, fieldIds);
-                        }
+                        // todo: fix
+//                        if (panel.getFields() != null) {
+//                            List<Long> fieldIds = panel.getFields().stream()
+//                                    .map(CustomField::getId)
+//                                    .toList();
+//                            map.put(FIELDSKEY, fieldIds);
+//                        }
                         return map;
                     })
                     .toList();
@@ -90,7 +91,8 @@ public class CustomFormLayoutConverter implements AttributeConverter<List<Custom
                                                 .orElse(null))
                                         .filter(Objects::nonNull)
                                         .toList();
-                                panel.setFields(fields);
+                                //todo : fix
+                                //panel.setFields(fields);
                             }
                         }
 

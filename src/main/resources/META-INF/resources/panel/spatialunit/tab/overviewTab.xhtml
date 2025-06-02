@@ -4,29 +4,20 @@
              xmlns:p="http://primefaces.org/ui"
              xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form" xmlns:f="http://java.sun.com/jsf/core"
              xmlns:h="http://java.sun.com/jsf/html"
-             xmlns:siaInplace="http://xmlns.jcp.org/jsf/composite/pages/shared/inplace"
+
 
 >
 
     <!--@elvariable id="spatialUnit" type="fr.siamois.domain.models.spatialunit.SpatialUnit"-->
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel"-->
     🚧 En cours
 
-        <p:panelGrid id="overviewPanelGrid"
-                     layout="grid"
-        >
-            <p:row>
-
-                <!-- Spatial Unit Type -->
-                <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
-                    <sharedInput:panelField title="Type" isTheso="true" id="overviewTypeField">
-                        <siaInplace:concept selectedConcept="#{spatialUnit.category}"/>
-                    </sharedInput:panelField>
-                </p:column>
-
-            </p:row>
-
-
-        </p:panelGrid>
+    <ui:include src="/pages/shared/form/customForm.xhtml">
+        <ui:param name="panelModel" value="#{panelModel}"/>
+        <ui:param name="layout" value="#{panelModel.overviewLayout}"/>
+        <ui:param name="readOnly" value="true"/>
+        <ui:param name="prefix" value="overview"/>
+    </ui:include>
 
 
 

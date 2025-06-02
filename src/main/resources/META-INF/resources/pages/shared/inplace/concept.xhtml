@@ -6,27 +6,34 @@
         xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
 >
 
-   <cc:interface>
-      <cc:attribute name="selectedConcept" type="fr.siamois.domain.models.vocabulary.Concept" required="true"/>
-   </cc:interface>
+    <cc:interface>
+        <cc:attribute name="selectedConcept" type="fr.siamois.domain.models.vocabulary.Concept" required="true"/>
+        <cc:attribute name="panelModel" type="fr.siamois.ui.bean.panel.models.panel.AbstractPanel" required="true"/>
+        <cc:attribute name="hasBeenModified" type="Boolean" required="false" default="false"/>
+        <cc:attribute name="field" type="fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode"
+                      required="true"/>
+        <cc:attribute name="mode" type="String" required="false" default="READ"/>
+        <cc:attribute name="updateTargetsOnBlur" type="String" required="false" default="@this"/>
+    </cc:interface>
 
-   <cc:implementation>
-      <p:inplace mode="#{flowBean.getInPlaceFieldMode()}" toggleable="false">
-         <f:facet name="output">
-            <p:chip label="#{labelBean.findLabelOf(cc.attrs.selectedConcept)}"
-                    icon="pi pi-map-marker"
-                    styleClass="mr-2 spatial-unit-type-chip"/>
-         </f:facet>
-         <f:facet name="input">
-            <sharedInput:conceptAutocomplete id="typeComponent"
+    <cc:implementation>
+        <p:inplace mode="#{flowBean.getInPlaceFieldMode()}" toggleable="false">
+            <f:facet name="output">
+                <p:chip label="#{labelBean.findLabelOf(cc.attrs.selectedConcept)}"
+                        icon="pi pi-map-marker"
+                        styleClass="mr-2 spatial-unit-type-chip"/>
+            </f:facet>
+            <f:facet name="input">
+                <sharedInput:conceptAutocompleteFieldCode id="typeComponent"
+                                                          panelStyleClass="spatial-unit-autocomplete"
+                                                          selectedConcept="#{cc.attrs.selectedConcept}"
+                                                          ajaxUpdateTargets="#{cc.attrs.updateTargetsOnBlur}"
+                                                          field="#{cc.attrs.field}"
+                                                          itemSelectListener="#{cc.attrs.panelModel.setFieldConceptAnswerHasBeenModified}"
+                                                          editConceptUrl="#{spatialUnitFieldBean.getUrlForFieldCode(cc.attrs.fieldCode)}"/>
+            </f:facet>
+        </p:inplace>
 
-                                             panelStyleClass="spatial-unit-autocomplete"
-                                             selectedConcept="#{cc.attrs.selectedConcept}"
-                                             completeMethod="#{spatialUnitFieldBean.completeCategory}"
-                                             editConceptUrl="#{spatialUnitFieldBean.getUrlForSpatialUnitTypeFieldCode()}"/>
-         </f:facet>
-      </p:inplace>
-
-   </cc:implementation>
+    </cc:implementation>
 
 </ui:composition>

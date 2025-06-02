@@ -18,8 +18,7 @@
 
         <h:form id="spatialUnitForm">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <!-- Champ caché pour tracker les modifications -->
-            <h:inputHidden id="hasUnsavedModifications" value="#{panelModel.hasUnsavedModifications}"/>
+
             <!-- Tabs -->
             <p:tabView id="spatialUnitTabs" activeIndex="#{panelModel.activeTabIndex}">
                 <p:ajax event="tabChange" listener="#{panelModel.onTabChange}"/>
@@ -35,7 +34,7 @@
                     </f:facet>
 
                     <ui:include src="/panel/spatialunit/tab/overviewTab.xhtml">
-                        <ui:param name="spatialUnit" value="#{panelModel.spatialUnit}"/>
+                        <ui:param name="panelModel" value="#{panelModel}"/>
                     </ui:include>
 
                 </p:tab>
@@ -52,6 +51,7 @@
                     <ui:include src="/panel/spatialunit/tab/detailsTab.xhtml">
                         <ui:param name="spatialUnit" value="#{panelModel.spatialUnit}"/>
                         <ui:param name="panelModel" value="#{panelModel}"/>
+                        <ui:param name="panelIndex" value="#{panelIndex}"/>
                     </ui:include>
 
                 </p:tab>

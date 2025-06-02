@@ -7,14 +7,14 @@
 
     <cc:interface>
 
-        <cc:attribute name="completeMethod" required="true" method-signature="java.util.List &lt;java.lang.String&gt;(java.lang.String)" />
-        <cc:attribute name="itemSelectListener" required="false" method-signature="void &lt;java.lang.String&gt;()" />
+        <cc:attribute name="itemSelectListener" required="false" method-signature="void &lt;java.lang.String&gt;(java.lang.Object)" />
         <cc:attribute name="selectedConcept" type="fr.siamois.domain.models.vocabulary.Concept" required="true"/>
         <cc:attribute name="editConceptUrl" required="true"/>
         <cc:attribute name="disabled" required="false" default="false"/>
         <cc:attribute name="ajaxUpdateTargets" required="false"/>
         <cc:attribute name="ajaxProcessTargets" required="false"/>
         <cc:attribute name="panelStyleClass" required="false" default="sia-autocomplete-panel"/>
+        <cc:attribute name="field" required="true"/>
 
 
     </cc:interface>
@@ -22,7 +22,7 @@
     <cc:implementation>
         <p:autoComplete value="#{cc.attrs.selectedConcept}"
                         id="conceptAutocomplete"
-                        completeMethod="#{cc.attrs.completeMethod}"
+                        completeMethod="#{spatialUnitFieldBean.completeWithFieldCode}"
                         var="field"
                         panelStyleClass="#{cc.attrs.panelStyleClass}"
                         itemValue="#{field}"
@@ -36,7 +36,8 @@
                         placeholder="#{langBean.msg('common.action.chooseConcept')}"
                         showEmptyMessage="false"
         >
-            <f:attribute name="filter" value="#{filter}" />
+            <f:attribute name="fieldCode" value="#{cc.attrs.field.fieldCode}" />
+            <f:attribute name="field" value="#{cc.attrs.field}" />
 
             <!-- If defined, we need to update on select to synchronise secondary type choices -->
             <p:ajax

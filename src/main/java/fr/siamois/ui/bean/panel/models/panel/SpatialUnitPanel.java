@@ -10,7 +10,9 @@ import fr.siamois.domain.models.form.customfield.CustomFieldText;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectOneFromFieldCode;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerText;
+import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
+import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
@@ -40,6 +42,8 @@ import fr.siamois.ui.lazydatamodel.ActionUnitInSpatialUnitLazyDataModel;
 import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
 import fr.siamois.ui.lazydatamodel.SpatialUnitParentsLazyDataModel;
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -141,10 +145,11 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private List<Document> documents;
 
     // Gestion du formulaire via form layout
-    private List<CustomFormPanel> layout ;
+    private List<CustomFormPanel> layout ; // details tab form
+    private List<CustomFormPanel> overviewLayout ; // overview tab form
     private CustomFieldText nameField;
     private CustomFieldSelectOneFromFieldCode typeField;
-    private CustomFormResponse formResponse ;
+    private CustomFormResponse formResponse ; // answers to all the fields from overview and details
     private Vocabulary systemTheso ;
     private Concept nameConcept ;
     private Concept spatialUnitTypeConcept;
@@ -217,7 +222,17 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     public void setFieldAnswerHasBeenModified(CustomField field) {
 
         formResponse.getAnswers().get(field).setHasBeenModified(true);
+        hasUnsavedModifications = true;
 
+    }
+
+    public void setFieldConceptAnswerHasBeenModified(AjaxBehaviorEvent event) {
+        UIComponent component = event.getComponent();
+        CustomField field = (CustomField) component.getAttributes().get("field");
+        spatialUnit.setName("updated");
+
+        formResponse.getAnswers().get(field).setHasBeenModified(true);
+        hasUnsavedModifications = true;
     }
 
     public void createBarModel() {
@@ -273,16 +288,40 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
             layout = new ArrayList<>();
             CustomFormPanel mainPanel = new CustomFormPanel();
             mainPanel.setName("Informations générales");
+            // One row
+            CustomRow row1 = new CustomRow();
+            // Two cols
+
+            CustomCol col1 = new CustomCol();
             nameField = new CustomFieldText();
             nameField.setLabel("Nom");
+            col1.setField(nameField);
+            col1.setClassName("ui-g-12 ui-md-6 ui-lg-4");
+
+            CustomCol col2 = new CustomCol();
             typeField = new CustomFieldSelectOneFromFieldCode();
             typeField.setLabel("Type");
             typeField.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
-            List<CustomField> fields = new ArrayList<>();
-            fields.add(nameField);
-            fields.add(typeField);
-            mainPanel.setFields(fields);
+            col2.setField(typeField);
+            col2.setClassName("ui-g-12 ui-md-6 ui-lg-4");
+
+            row1.setColumns(List.of(col1, col2));
+            mainPanel.setRows(List.of(row1));
             layout.add(mainPanel);
+
+            // init overveiw tab form
+            overviewLayout = new ArrayList<>();
+            CustomFormPanel mainOverviewPanel = new CustomFormPanel();
+            mainOverviewPanel.setName("Informations générales");
+            // One row
+            CustomRow row2 = new CustomRow();
+            // one cols
+            CustomCol col3 = new CustomCol();
+            col3.setField(typeField);
+            col3.setClassName("ui-g-12 ui-md-6 ui-lg-4");
+            row2.setColumns(List.of(col3));
+            mainOverviewPanel.setRows(List.of(row2));
+            overviewLayout.add(mainOverviewPanel);
 
             // Init form answers
             formResponse = new CustomFormResponse();
@@ -290,8 +329,10 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
             CustomFieldAnswerText nameAnswer = new CustomFieldAnswerText();
             CustomFieldAnswerSelectOneFromFieldCode typeAnswer = new CustomFieldAnswerSelectOneFromFieldCode();
             nameAnswer.setValue(spatialUnit.getName());
+            nameAnswer.setHasBeenModified(false);
             answers.put(nameField, nameAnswer);
             typeAnswer.setValue(spatialUnit.getCategory());
+            typeAnswer.setHasBeenModified(false);
             answers.put(typeField, typeAnswer);
             formResponse.setAnswers(answers);
 
@@ -357,6 +398,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         spatialUnit.setArk(backupClone.getArk());
         spatialUnit.setCategory(backupClone.getCategory());
         hasUnsavedModifications = false;
+        // todo: reinit form
     }
 
 
