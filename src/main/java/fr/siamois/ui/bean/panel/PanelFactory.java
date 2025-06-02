@@ -62,11 +62,14 @@ public class PanelFactory {
         bc.getModel().getElements().clear();
         bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
 
-        return new SpatialUnitPanel.SpatialUnitPanelBuilder(spatialUnitPanelProvider)
+        SpatialUnitPanel panel = new SpatialUnitPanel.SpatialUnitPanelBuilder(spatialUnitPanelProvider)
                 .id(spatialUnitId)
                 .breadcrumb(bc)
                 .build();
 
+        panel.init();
+
+        return panel;
     }
 
     public ActionUnitPanel createActionUnitPanel(Long actionUnitId, PanelBreadcrumb currentBreadcrumb) {
@@ -95,9 +98,13 @@ public class PanelFactory {
 
     public NewSpatialUnitPanel createNewSpatialUnitPanel(PanelBreadcrumb currentBreadcrumb) {
 
-        PanelBreadcrumb bc = new PanelBreadcrumb();
-        bc.getModel().getElements().clear();
-        bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+        PanelBreadcrumb bc = null;
+
+        if (currentBreadcrumb != null) {
+            bc = new PanelBreadcrumb();
+            bc.getModel().getElements().clear();
+            bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+        }
 
         return new NewSpatialUnitPanel.NewSpatialUnitPanelBuilder(newSpatialUnitPanelProvider)
                 .breadcrumb(bc)
@@ -131,9 +138,13 @@ public class PanelFactory {
 
     public NewRecordingUnitPanel createNewRecordingUnitPanel(Long actionUnitId, PanelBreadcrumb currentBreadcrumb) {
 
-        PanelBreadcrumb bc = new PanelBreadcrumb();
-        bc.getModel().getElements().clear();
-        bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+        PanelBreadcrumb bc = null;
+
+        if (currentBreadcrumb != null) {
+            bc = new PanelBreadcrumb();
+            bc.getModel().getElements().clear();
+            bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+        }
 
         return new NewRecordingUnitPanel.NewRecordingUnitPanelBuilder(newRecordingUnitPanelProvider)
                 .breadcrumb(bc)
@@ -143,10 +154,12 @@ public class PanelFactory {
     }
 
     public NewActionUnitPanel createNewActionUnitPanel(Long spatialUnitId, PanelBreadcrumb currentBreadcrumb) {
-
-        PanelBreadcrumb bc = new PanelBreadcrumb();
-        bc.getModel().getElements().clear();
-        bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+        PanelBreadcrumb bc = null;
+        if (currentBreadcrumb != null) {
+            bc = new PanelBreadcrumb();
+            bc.getModel().getElements().clear();
+            bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+        }
 
         return new NewActionUnitPanel.NewActionUnitPanelBuilder(newActionUnitPanelProvider)
                 .breadcrumb(bc)

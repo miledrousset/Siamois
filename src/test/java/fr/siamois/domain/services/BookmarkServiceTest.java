@@ -1,0 +1,97 @@
+package fr.siamois.domain.services;
+
+import fr.siamois.domain.models.Bookmark;
+import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.infrastructure.database.repositories.BookmarkRepository;
+import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class BookmarkServiceTest {
+
+    @Mock
+    private BookmarkRepository bookmarkRepository;
+
+    @InjectMocks
+    private BookmarkService bookmarkService;
+
+    private UserInfo userInfo;
+    private Person person;
+    private Institution institution;
+
+    @BeforeEach
+    void setUp() {
+        person = new Person();
+        person.setUsername("user1");
+        person.setId(1L);
+
+        institution = new Institution();
+        institution.setName("institution1");
+        institution.setId(1L);
+
+        userInfo = new UserInfo(institution, person, "fr");
+    }
+
+    @Test
+    void testFindAllReturnsBookmarks() {
+
+        Bookmark bookmark = new Bookmark();
+        when(bookmarkRepository.findByPersonAndInstitution(person, institution)).thenReturn(List.of(bookmark));
+
+        List<Bookmark> result = bookmarkService.findAll(userInfo);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(bookmark, result.get(0));
+        verify(bookmarkRepository, times(1))
+                .findByPersonAndInstitution(person, institution);
+    }
+
+    @Test
+    void testFindAllReturnsEmptyList() {
+
+        when(bookmarkRepository.findByPersonAndInstitution(person, institution))
+                .thenReturn(Collections.emptyList());
+
+        List<Bookmark> result = bookmarkService.findAll(userInfo);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(bookmarkRepository, times(1))
+                .findByPersonAndInstitution(person, institution);
+    }
+
+    @Test
+    void testSaveCreatesBookmark() {
+
+        AbstractPanel panel = mock(AbstractPanel.class);
+        Bookmark savedBookmark = new Bookmark();
+
+        when(panel.ressourceUri()).thenReturn("resourceUri");
+        when(panel.getTitleCodeOrTitle()).thenReturn("titleCode");
+        when(bookmarkRepository.save(any(Bookmark.class))).thenReturn(savedBookmark);
+
+        Bookmark result = bookmarkService.save(userInfo, panel);
+
+        assertNotNull(result);
+        assertEquals(savedBookmark, result);
+        verify(panel, times(1)).ressourceUri();
+        verify(panel, times(1)).getTitleCodeOrTitle();
+        verify(bookmarkRepository, times(1)).save(any(Bookmark.class));
+    }
+
+}

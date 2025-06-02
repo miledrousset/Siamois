@@ -67,6 +67,11 @@ public class NewActionUnitPanel extends AbstractPanel {
         return "/panel/newActionUnitPanel.xhtml";
     }
 
+    @Override
+    public String ressourceUri() {
+        return String.format("/actionunit/%s/new", spatialUnitId);
+    }
+
     void init() {
         actionUnit = new ActionUnit();
         actionUnit.setSpatialUnit(spatialUnitService.findById(spatialUnitId));

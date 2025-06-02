@@ -3,6 +3,8 @@ package fr.siamois.ui.bean;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.UserInfoWithTeams;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.events.InstitutionChangeEvent;
+import fr.siamois.domain.models.events.LangageChangeEvent;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.settings.InstitutionSettings;
@@ -11,9 +13,11 @@ import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.domain.utils.AuthenticatedUserUtils;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -35,6 +39,10 @@ public class SessionSettingsBean implements Serializable {
     private Institution selectedInstitution;
     private InstitutionSettings institutionSettings;
     private PersonSettings personSettings;
+
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private UserInfo userInfo;
 
     public SessionSettingsBean(InstitutionService institutionService,
                                LangBean langBean,
@@ -59,6 +67,7 @@ public class SessionSettingsBean implements Serializable {
         personSettings = personService.createOrGetSettingsOf(getAuthenticatedUser());
         loadLanguageSettings();
         loadInstitutionsSettings();
+        userInfo = null;
     }
 
     private void loadLanguageSettings() {
@@ -95,14 +104,23 @@ public class SessionSettingsBean implements Serializable {
     public UserInfo getUserInfo() {
         if (selectedInstitution == null || getAuthenticatedUser() == null) {
             redirectBean.redirectTo("/login");
+            return null;
         }
-        return new UserInfo(selectedInstitution, getAuthenticatedUser(), getLanguageCode());
+        if (userInfo == null) {
+            userInfo = new UserInfo(selectedInstitution, getAuthenticatedUser(), getLanguageCode());
+        }
+        return userInfo;
     }
 
     public UserInfoWithTeams getUserInfoWithTeamsLoaded() {
         UserInfo info = getUserInfo();
         SortedSet<Team> teams = teamService.findTeamsOfPersonInInstitution(info.getUser(), info.getInstitution());
         return new UserInfoWithTeams(info, teams);
+    }
+
+    @EventListener({InstitutionChangeEvent.class, LangageChangeEvent.class})
+    public void markUserInfoAsChanged() {
+        userInfo = null;
     }
 
 }

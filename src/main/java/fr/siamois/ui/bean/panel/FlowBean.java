@@ -23,6 +23,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.model.dashboard.DashboardModel;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -42,7 +43,6 @@ import java.util.List;
 @SessionScoped
 @Data
 public class FlowBean implements Serializable {
-
 
     private final transient SpatialUnitService spatialUnitService;
     private final transient RecordingUnitService recordingUnitService;
@@ -120,12 +120,16 @@ public class FlowBean implements Serializable {
     }
 
     public void addSpatialUnitListPanel(PanelBreadcrumb bc) {
-        panels.add(0, panelFactory.createSpatialUnitListPanel(bc));
-        lastUpdatedPanelIndex = 0;
+        addPanel(panelFactory.createSpatialUnitListPanel(bc));
     }
 
     public void addActionUnitListPanel(PanelBreadcrumb bc) {
-        panels.add(0, panelFactory.createActionUnitListPanel(bc));
+        addPanel(panelFactory.createActionUnitListPanel(bc));
+    }
+
+
+    public void addPanel(AbstractPanel panel) {
+        panels.add(0, panel);
         lastUpdatedPanelIndex = 0;
     }
 
@@ -151,34 +155,40 @@ public class FlowBean implements Serializable {
         }
 
         // Add a new instance to refresh the panel
-        panels.add(0, panelFactory.createWelcomePanel());
-        lastUpdatedPanelIndex = 0;
+        addPanel(panelFactory.createWelcomePanel());
 
     }
 
     public void addNewSpatialUnitPanel(AbstractPanel currentPanel) {
-        panels.add(0, panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb()));
-        lastUpdatedPanelIndex = 0;
+        addPanel(panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb()));
+    }
+
+    public void addNewSpatialUnitPanel() {
+        addPanel(panelFactory.createNewSpatialUnitPanel(null));
     }
 
     public void addNewActionUnitPanel(Long spatialUnitId, Integer sourcePanelIndex) {
-        panels.add(0, panelFactory.createNewActionUnitPanel(spatialUnitId, panels.get(sourcePanelIndex).getBreadcrumb()));
-        lastUpdatedPanelIndex = 0;
+        addPanel(panelFactory.createNewActionUnitPanel(spatialUnitId, panels.get(sourcePanelIndex).getBreadcrumb()));
+    }
+
+    public void addNewActionUnitPanel(Long spatialUnitId) {
+        addPanel(panelFactory.createNewActionUnitPanel(spatialUnitId, null));
     }
 
     public void addActionUnitPanel(Long actionUnitId) {
-        panels.add(0, panelFactory.createActionUnitPanel(actionUnitId));
-        lastUpdatedPanelIndex = 0;
+        addPanel(panelFactory.createActionUnitPanel(actionUnitId));
     }
 
     public void addRecordingUnitPanel(Long recordingUnitId) {
-        panels.add(0, panelFactory.createRecordingUnitPanel(recordingUnitId));
-        lastUpdatedPanelIndex = 0;
+        addPanel(panelFactory.createRecordingUnitPanel(recordingUnitId));
     }
 
     public void addNewRecordingUnitPanel(Long actionUnitId, Integer sourcePanelIndex) {
-        panels.add(0, panelFactory.createNewRecordingUnitPanel(actionUnitId, panels.get(sourcePanelIndex).getBreadcrumb()));
-        lastUpdatedPanelIndex = 0;
+        addPanel(panelFactory.createNewRecordingUnitPanel(actionUnitId, panels.get(sourcePanelIndex).getBreadcrumb()));
+    }
+
+    public void addNewRecordingUnitPanel(Long actionUnitId) {
+        addPanel(panelFactory.createNewRecordingUnitPanel(actionUnitId, null));
     }
 
 
@@ -186,8 +196,7 @@ public class FlowBean implements Serializable {
     public void goToSpatialUnitByIdNewPanel(Long id, AbstractPanel currentPanel) {
         // Create new panel type and add items to its breadcrumb
         SpatialUnitPanel newPanel = panelFactory.createSpatialUnitPanel(id, currentPanel.getBreadcrumb());
-        lastUpdatedPanelIndex = 0;
-        panels.add(0, newPanel);
+        addPanel(newPanel);
     }
 
     public void  goToRecordingUnitByIdCurrentPanel(Long id, Integer currentPanelIndex) {
@@ -201,16 +210,14 @@ public class FlowBean implements Serializable {
     public void  goToRecordingUnitByIdNewPanel(Long id, Integer currentPanelIndex) {
 
         RecordingUnitPanel newPanel = panelFactory.createRecordingUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
-        lastUpdatedPanelIndex = 0;
-        panels.set(0, newPanel);
+        addPanel(newPanel);
 
     }
 
     public void goToActionUnitByIdNewPanel(Long id, Integer currentPanelIndex) {
         // Create new panel type and add items to its breadcrumb
         ActionUnitPanel newPanel = panelFactory.createActionUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
-        lastUpdatedPanelIndex = 0;
-        panels.add(0, newPanel);
+        addPanel(newPanel);
     }
 
     public void goToSpatialUnitByIdCurrentPanel(Long id, AbstractPanel currentPanel) {
@@ -248,8 +255,7 @@ public class FlowBean implements Serializable {
 
 
     public void addSpatialUnitPanel(Long id) {
-        panels.add(0, panelFactory.createSpatialUnitPanel(id));
-        lastUpdatedPanelIndex = 0;
+        addPanel(panelFactory.createSpatialUnitPanel(id));
     }
 
     public void handleToggleOfPanelAtIndex(int idx)
@@ -260,5 +266,13 @@ public class FlowBean implements Serializable {
 
     public void closePanelAtIndex(int idx) {
         panels.remove(idx);
+    }
+
+    public String headerName(AbstractPanel panel) {
+        try {
+            return langBean.msg(panel.getTitleCodeOrTitle());
+        } catch (NoSuchMessageException e) {
+            return panel.getTitleCodeOrTitle();
+        }
     }
 }

@@ -26,7 +26,7 @@ import java.time.ZoneId;
 public abstract class TraceableEntity implements Serializable {
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_author_id", nullable = false)
     protected Person author;
 

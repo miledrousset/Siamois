@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
       xml:lang="#{langBean.languageCode}"
       xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form"
       xmlns:p="http://primefaces.org/ui"
@@ -84,6 +85,20 @@
                                 <span class="menu-text">#{langBean.msg('nav.settings')}</span>
                             </h:commandLink>
                         </li>
+                        <h:panelGroup id="bookmarkGroup" layout="none" rendered="#{navBean.bookmarkedPanels.size() > 0}">
+                            <li class="nav-header">
+                                #{langBean.msg('nav.header.bookmark')}
+                            </li>
+                            <ui:repeat value="#{navBean.bookmarkedPanels}" var="bookmark">
+                                <p:autoUpdate/>
+                                <li class="nav-item">
+                                    <h:commandLink action="#{redirectBean.redirectTo(bookmark.getResourceUri())}" styleClass="nav-link">
+                                        <i class="bi bi-bookmark-fill"/>
+                                        <span class="menu-text">#{navBean.bookmarkTitle(bookmark)}</span>
+                                    </h:commandLink>
+                                </li>
+                            </ui:repeat>
+                        </h:panelGroup>
                     </ul>
                 </form:csrfform>
                 <div class="sidebar-footer">

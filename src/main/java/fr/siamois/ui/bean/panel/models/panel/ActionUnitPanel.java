@@ -85,6 +85,11 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
         return "/panel/actionUnitPanel.xhtml";
     }
 
+    @Override
+    public String ressourceUri() {
+        return String.format("/actionunit/%s", actionUnit.getId());
+    }
+
     public void init() {
 
             // reinit
@@ -96,6 +101,7 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
             try {
                 if (id != null) {
                     actionUnit = actionUnitService.findById(id);
+                    this.titleCodeOrTitle = actionUnit.getName();
                     secondaryActionCodes = new ArrayList<>(actionUnit.getSecondaryActionCodes());
                     fType = this.actionUnit.getType();
                     DefaultMenuItem item = DefaultMenuItem.builder()
