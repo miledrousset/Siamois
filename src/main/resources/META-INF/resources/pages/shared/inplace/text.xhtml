@@ -9,6 +9,7 @@
     <cc:interface>
         <cc:attribute name="value" type="String" required="true"/>
         <cc:attribute name="panelModel" type="fr.siamois.ui.bean.panel.models.panel.AbstractPanel" required="true"/>
+        <cc:attribute name="hasBeenModified" type="Boolean" required="false" default="false"/>
     </cc:interface>
 
     <cc:implementation>
@@ -17,12 +18,12 @@
                 <h:outputText value="#{cc.attrs.value}"/>
             </f:facet>
             <f:facet name="input">
-                <p:inputText value="#{cc.attrs.value}" styleClass="track-change" required="true"
-                             label="text" onchange="setFormHasBeenModified(this)">
+                <p:inputText value="#{cc.attrs.value}" styleClass="#{cc.attrs.hasBeenModified ? 'track-change' : 'track-change sia-modified-field'}"  required="true"
+                             label="text">
+                    <p:ajax event="blur" listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(field)}" />
                 </p:inputText>
             </f:facet>
         </p:inplace>
-
     </cc:implementation>
 
 </ui:composition>

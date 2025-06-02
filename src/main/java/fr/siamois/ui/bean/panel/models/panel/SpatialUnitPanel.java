@@ -5,10 +5,18 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
+import fr.siamois.domain.models.form.customfield.CustomFieldText;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectOneFromFieldCode;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerText;
+import fr.siamois.domain.models.form.customform.CustomFormPanel;
+import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -60,7 +68,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -130,6 +140,20 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
     private List<Document> documents;
 
+    // Gestion du formulaire via form layout
+    private List<CustomFormPanel> layout ;
+    private CustomFieldText nameField;
+    private CustomFieldSelectOneFromFieldCode typeField;
+    private CustomFormResponse formResponse ;
+    private Vocabulary systemTheso ;
+    private Concept nameConcept ;
+    private Concept spatialUnitTypeConcept;
+
+
+
+
+
+
     @Autowired
     private SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService, DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
                              ConceptService conceptService, LabelService labelService, LangBean langBean, PersonService personService) {
@@ -190,6 +214,12 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         return "/panel/header/spatialUnitPanelHeader.xhtml";
     }
 
+    public void setFieldAnswerHasBeenModified(CustomField field) {
+
+        formResponse.getAnswers().get(field).setHasBeenModified(true);
+
+    }
+
     public void createBarModel() {
         barModel = new BarChart()
                 .setData(new BarData()
@@ -238,6 +268,32 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         try {
 
             this.spatialUnit = spatialUnitService.findById(idunit);
+
+            // Init details tab form
+            layout = new ArrayList<>();
+            CustomFormPanel mainPanel = new CustomFormPanel();
+            mainPanel.setName("Informations générales");
+            nameField = new CustomFieldText();
+            nameField.setLabel("Nom");
+            typeField = new CustomFieldSelectOneFromFieldCode();
+            typeField.setLabel("Type");
+            typeField.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
+            List<CustomField> fields = new ArrayList<>();
+            fields.add(nameField);
+            fields.add(typeField);
+            mainPanel.setFields(fields);
+            layout.add(mainPanel);
+
+            // Init form answers
+            formResponse = new CustomFormResponse();
+            Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
+            CustomFieldAnswerText nameAnswer = new CustomFieldAnswerText();
+            CustomFieldAnswerSelectOneFromFieldCode typeAnswer = new CustomFieldAnswerSelectOneFromFieldCode();
+            nameAnswer.setValue(spatialUnit.getName());
+            answers.put(nameField, nameAnswer);
+            typeAnswer.setValue(spatialUnit.getCategory());
+            answers.put(typeField, typeAnswer);
+            formResponse.setAnswers(answers);
 
             backupClone = new SpatialUnitClone(spatialUnit);
 
@@ -310,7 +366,12 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
         activeTabIndex = 1;
 
-
+        systemTheso = new Vocabulary();
+        systemTheso.setBaseUri("https://siamois.fr");
+        systemTheso.setExternalVocabularyId("SYSTEM");
+        nameConcept = new Concept();
+        nameConcept.setExternalId("SYSTEM_NAME");
+        nameConcept.setVocabulary(systemTheso);
 
 
         if (idunit == null) {
@@ -319,6 +380,8 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         }
 
         refreshUnit();
+
+
 
         if (this.spatialUnit == null) {
             this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
@@ -408,6 +471,14 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     }
 
     public void save(Boolean validated) {
+
+        // Recupération des champs systeme
+
+        // Name
+        CustomFieldAnswerText nameAnswer = (CustomFieldAnswerText) formResponse.getAnswers().get(nameField);
+        CustomFieldAnswerSelectOneFromFieldCode typeAnswer = (CustomFieldAnswerSelectOneFromFieldCode) formResponse.getAnswers().get(typeField);
+        spatialUnit.setName(nameAnswer.getValue());
+        spatialUnit.setCategory(typeAnswer.getValue());
 
         spatialUnit.setValidated(validated);
         try {
