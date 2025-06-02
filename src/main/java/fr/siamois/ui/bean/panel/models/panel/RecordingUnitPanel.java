@@ -66,19 +66,14 @@ public class RecordingUnitPanel extends RecordingUnitPanelBase {
     void init() {
 
         try {
-
-
                 this.recordingUnit = this.recordingUnitService.findById(recordingUnitId);
+                this.titleCodeOrTitle = recordingUnit.getFullIdentifier();
                 if (this.recordingUnit.getStartDate() != null) {
                     this.startDate = offsetDateTimeToLocalDate(this.recordingUnit.getStartDate());
                 }
                 if (this.recordingUnit.getEndDate() != null) {
                     this.endDate = offsetDateTimeToLocalDate(this.recordingUnit.getEndDate());
                 }
-
-
-
-
         } catch (RecordingUnitNotFoundException e) {
             recordingUnitErrorMessage = "Unable to get recording unit";
             log.error("Recording unit with ID {} not found", recordingUnitId);

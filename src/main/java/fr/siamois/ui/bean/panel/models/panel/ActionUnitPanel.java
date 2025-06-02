@@ -101,6 +101,7 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
             try {
                 if (id != null) {
                     actionUnit = actionUnitService.findById(id);
+                    this.titleCodeOrTitle = actionUnit.getName();
                     secondaryActionCodes = new ArrayList<>(actionUnit.getSecondaryActionCodes());
                     fType = this.actionUnit.getType();
                     DefaultMenuItem item = DefaultMenuItem.builder()

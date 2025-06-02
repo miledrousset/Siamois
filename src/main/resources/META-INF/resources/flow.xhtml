@@ -139,7 +139,7 @@
 
                         <f:facet name="header">
                             <p:outputPanel rendered="#{panel.displayHeader() == null}">
-                                <i class="#{panel.icon}"/> #{langBean.msg(panel.titleCodeOrTitle)}
+                                <i class="#{panel.icon}"/> #{flowBean.headerName(panel)}
                             </p:outputPanel>
                             <ui:include rendered="#{panel.displayHeader() != null}" src="#{panel.displayHeader()}">
                                 <ui:param name="panelModel" value="#{panel}"/>

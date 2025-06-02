@@ -23,6 +23,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.model.dashboard.DashboardModel;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -265,5 +266,13 @@ public class FlowBean implements Serializable {
 
     public void closePanelAtIndex(int idx) {
         panels.remove(idx);
+    }
+
+    public String headerName(AbstractPanel panel) {
+        try {
+            return langBean.msg(panel.getTitleCodeOrTitle());
+        } catch (NoSuchMessageException e) {
+            return panel.getTitleCodeOrTitle();
+        }
     }
 }
