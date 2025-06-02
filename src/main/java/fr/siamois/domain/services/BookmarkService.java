@@ -26,7 +26,7 @@ public class BookmarkService {
         bookmark.setPerson(userInfo.getUser());
         bookmark.setInstitution(userInfo.getInstitution());
         bookmark.setResourceUri(panel.ressourceUri());
-        bookmark.setTitle(panel.getTitle());
+        bookmark.setTitleCode(panel.getTitleCode());
         return bookmarkRepository.save(bookmark);
     }
 }

@@ -227,7 +227,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
             );
             totalParentsCount = lazyDataModelParents.getRowCount();
 
-            this.setTitle(spatialUnit.getName()); // Set panel title
+            this.setTitleCode(spatialUnit.getName()); // Set panel title
             // add to BC
             this.getBreadcrumb().addSpatialUnit(spatialUnit);
         } catch (RuntimeException e) {

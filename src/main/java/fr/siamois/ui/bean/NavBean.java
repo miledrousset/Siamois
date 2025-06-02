@@ -65,11 +65,12 @@ public class NavBean implements Serializable {
         this.langBean = langBean;
     }
 
-    public List<Bookmark> getBookmarkedPanels() {
-        if (bookmarkedPanels == null) {
-            bookmarkedPanels = new ArrayList<>(bookmarkService.findAll(sessionSettingsBean.getUserInfo()));
+    public void init() {
+        if (sessionSettingsBean.isNotInitialized() && sessionSettingsBean.shouldRedirectToLogin()) {
+            redirectBean.redirectTo("/login");
+            return;
         }
-        return bookmarkedPanels;
+        bookmarkedPanels = new ArrayList<>(bookmarkService.findAll(sessionSettingsBean.getUserInfo()));
     }
 
     public boolean userIsSuperAdmin() {
@@ -103,9 +104,9 @@ public class NavBean implements Serializable {
 
     public String bookmarkTitle(Bookmark bookmark) {
         try {
-            return langBean.msg(bookmark.getTitle());
+            return langBean.msg(bookmark.getTitleCode());
         } catch (NoSuchMessageException e) {
-            return bookmark.getTitle();
+            return bookmark.getTitleCode();
         }
     }
 

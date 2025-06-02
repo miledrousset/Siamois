@@ -40,10 +40,8 @@ import java.util.List;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SpatialUnitListPanel extends AbstractListPanel<SpatialUnit> {
 
-
     // locals
     private String spatialUnitListErrorMessage;
-
 
     public void onToggle(ColumnToggleEvent e) {
         Integer index = (Integer) e.getData();
@@ -54,11 +52,13 @@ public class SpatialUnitListPanel extends AbstractListPanel<SpatialUnit> {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
-    public SpatialUnitListPanel(SpatialUnitService spatialUnitService, PersonService personService,
+    public SpatialUnitListPanel(SpatialUnitService spatialUnitService,
+                                PersonService personService,
                                 ConceptService conceptService,
-                                SessionSettingsBean sessionSettingsBean, LangBean langBean, LabelService labelService, ActionUnitService actionUnitService) {
-
-
+                                SessionSettingsBean sessionSettingsBean,
+                                LangBean langBean,
+                                LabelService labelService,
+                                ActionUnitService actionUnitService) {
         super("panel.title.allspatialunit",
                 "bi bi-geo-alt",
                 "siamois-panel spatial-unit-panel spatial-unit-list-panel",
@@ -69,7 +69,6 @@ public class SpatialUnitListPanel extends AbstractListPanel<SpatialUnit> {
                 langBean,
                 labelService,
                 actionUnitService);
-
     }
 
     @Override
@@ -116,9 +115,7 @@ public class SpatialUnitListPanel extends AbstractListPanel<SpatialUnit> {
     }
 
     public List<Person> authorsAvailable() {
-
         return personService.findAllAuthorsOfSpatialUnitByInstitution(sessionSettingsBean.getSelectedInstitution());
-
     }
 
 

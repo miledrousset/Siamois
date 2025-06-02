@@ -23,8 +23,8 @@ public class Bookmark {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Institution institution;
 
-    @Column(name = "title", nullable = false)
-    private String title;
+    @Column(name = "title_code", nullable = false)
+    private String titleCode;
 
     @Column(name = "resource_uri", nullable = false, length = 2000)
     private String resourceUri;
