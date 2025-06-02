@@ -13,19 +13,14 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.model.ActionUnitLazyDataModel;
-
 import fr.siamois.ui.model.BaseLazyDataModel;
-
 import lombok.EqualsAndHashCode;
-
 import lombok.Getter;
 import lombok.Setter;
-
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 
 import java.util.List;
 

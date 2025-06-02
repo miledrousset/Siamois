@@ -3,9 +3,7 @@ package fr.siamois.infrastructure.database.initializer;
 import com.zaxxer.hikari.HikariDataSource;
 import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
 import fr.siamois.domain.models.exceptions.database.WrongTableNameException;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 

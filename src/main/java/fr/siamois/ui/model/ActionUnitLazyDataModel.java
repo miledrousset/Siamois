@@ -1,7 +1,6 @@
 package fr.siamois.ui.model;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
-
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
