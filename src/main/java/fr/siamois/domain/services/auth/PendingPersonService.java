@@ -2,16 +2,12 @@ package fr.siamois.domain.services.auth;
 
 import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
-import fr.siamois.domain.models.auth.pending.PendingTeamInvite;
 import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.LangService;
-import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
-import fr.siamois.infrastructure.database.repositories.person.PendingTeamInviteRepository;
 import fr.siamois.ui.email.EmailManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Email;
@@ -35,24 +31,19 @@ public class PendingPersonService {
 
     private final HttpServletRequest httpServletRequest;
     private final PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
-    private final PendingTeamInviteRepository pendingTeamInviteRepository;
     private final EmailManager emailManager;
     private final LangService langService;
-    private final TeamService teamService;
 
     public PendingPersonService(PendingPersonRepository pendingPersonRepository,
                                 HttpServletRequest httpServletRequest,
                                 PendingInstitutionInviteRepository pendingInstitutionInviteRepository,
-                                PendingTeamInviteRepository pendingTeamInviteRepository,
                                 EmailManager emailManager,
-                                LangService langService, TeamService teamService) {
+                                LangService langService) {
         this.pendingPersonRepository = pendingPersonRepository;
         this.httpServletRequest = httpServletRequest;
         this.pendingInstitutionInviteRepository = pendingInstitutionInviteRepository;
-        this.pendingTeamInviteRepository = pendingTeamInviteRepository;
         this.emailManager = emailManager;
         this.langService = langService;
-        this.teamService = teamService;
     }
 
     /**
@@ -150,10 +141,6 @@ public class PendingPersonService {
             String invitationLink = invitationLink(pendingPerson);
             String expirationDate = DateUtils.formatOffsetDateTime(pendingPerson.getPendingInvitationExpirationDate());
 
-            Team defaultTeam = teamService.createOrGetDefaultOf(institution);
-
-            addTeamToInvitation(invite, defaultTeam, null);
-
             emailManager.sendEmail(pendingPerson.getEmail(),
                     langService.msg("mail.invitation.subject", locale, institutionName),
                     langService.msg("mail.invitation.body", locale, institutionName, invitationLink, expirationDate, expirationDate)
@@ -161,28 +148,6 @@ public class PendingPersonService {
 
             return true;
         }
-    }
-
-    /**
-     * Add a team to the pending institution invitation.
-     * @param institutionInvite the pending institution invite
-     * @param team the team to add
-     * @param role the role in the team
-     */
-    public void addTeamToInvitation(PendingInstitutionInvite institutionInvite, Team team, Concept role) {
-        Set<PendingTeamInvite> optTeam = pendingTeamInviteRepository.findByPendingInstitutionInvite(institutionInvite);
-        PendingTeamInvite teamInvite;
-        Optional<PendingTeamInvite> pendingTeamInvite = optTeam.stream().filter(t -> t.getTeam().getId().equals(team.getId())).findFirst();
-        if (pendingTeamInvite.isPresent()) {
-            teamInvite = pendingTeamInvite.get();
-        } else {
-            teamInvite = new PendingTeamInvite();
-            teamInvite.setId(-1L);
-            teamInvite.setPendingInstitutionInvite(institutionInvite);
-        }
-        teamInvite.setTeam(team);
-        teamInvite.setRoleInTeam(role);
-        pendingTeamInviteRepository.save(teamInvite);
     }
 
     public void delete(PendingPerson pendingPerson) {
@@ -213,14 +178,6 @@ public class PendingPersonService {
 
     public Set<PendingInstitutionInvite> findInstitutionsByPendingPerson(PendingPerson pendingPerson) {
         return pendingInstitutionInviteRepository.findAllByPendingPerson(pendingPerson);
-    }
-
-    public Set<PendingTeamInvite> findTeamsByPendingInstitutionInvite(PendingInstitutionInvite pendingInstitutionInvite) {
-        return pendingTeamInviteRepository.findByPendingInstitutionInvite(pendingInstitutionInvite);
-    }
-
-    public void deleteTeamInvite(PendingTeamInvite pendingTeamInvite) {
-        pendingTeamInviteRepository.delete(pendingTeamInvite);
     }
 
     public void deleteInstitutionInvite(PendingInstitutionInvite invite) {

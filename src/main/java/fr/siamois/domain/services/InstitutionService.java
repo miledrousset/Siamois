@@ -4,13 +4,8 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.models.institution.TeamPerson;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
-import fr.siamois.domain.services.person.TeamService;
-import fr.siamois.domain.services.vocabulary.ConceptService;
-import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
@@ -31,18 +26,14 @@ public class InstitutionService {
     private final InstitutionRepository institutionRepository;
     private final InstitutionSettingsRepository institutionSettingsRepository;
     private final PersonRepository personRepository;
-    private final TeamService teamService;
 
 
     public InstitutionService(InstitutionRepository institutionRepository,
                               PersonRepository personRepository,
-                              InstitutionSettingsRepository institutionSettingsRepository,
-                              TeamService teamService) {
+                              InstitutionSettingsRepository institutionSettingsRepository) {
         this.institutionRepository = institutionRepository;
         this.personRepository = personRepository;
         this.institutionSettingsRepository = institutionSettingsRepository;
-        this.teamService = teamService;
-
     }
 
     public Set<Institution> findAll() {
@@ -75,10 +66,8 @@ public class InstitutionService {
     }
 
     public Set<Person> findMembersOf(Institution institution) {
-        Set<TeamPerson> teamMembers = teamService.findMembersOf(institution);
-        Set<Person> members = new HashSet<>(teamMembers.stream().map(TeamPerson::getPerson).toList());
-        members.addAll(institution.getManagers());
-        return members;
+        // TODO: Find a way to retreive members of an institution
+        return Set.of();
     }
 
     public void addUserToInstitution(Person person, Institution institution, Concept roleConcept) throws FailedInstitutionSaveException {

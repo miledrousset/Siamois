@@ -50,8 +50,6 @@ class PersonServiceTest {
     private HttpServletRequest httpServletRequest;
     @Mock
     private PendingPersonService pendingPersonService;
-    @Mock
-    private TeamService teamService;
 
     private PersonService personService;
 
@@ -74,8 +72,7 @@ class PersonServiceTest {
                 institutionService,
                 langService,
                 pendingPersonRepository,
-                pendingPersonService,
-                teamService
+                pendingPersonService
         );
     }
 
@@ -236,9 +233,7 @@ class PersonServiceTest {
                 institutionService,
                 langService,
                 pendingPersonRepository,
-                pendingPersonService,
-                teamService
-        );
+                pendingPersonService);
 
         // Act
         Optional<PasswordVerifier> verifier = personService.findPasswordVerifier();

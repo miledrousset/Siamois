@@ -51,15 +51,6 @@
             <h:message for="password-confirm"/>
         </h:panelGroup>
 
-        <h:panelGroup>
-            <ul>
-                <ui:repeat value="#{registerBean.institutionTeams.keySet()}" var="institution">
-                    <li>
-                        Vous avez été invité à rejoindre #{institution.name} dans les groupes #{registerBean.getTeamsName(institution)}
-                    </li>
-                </ui:repeat>
-            </ul>
-        </h:panelGroup>
 
         <h:commandButton value="S'inscrire" action="#{registerBean.register}"/>
     </form:csrfform>

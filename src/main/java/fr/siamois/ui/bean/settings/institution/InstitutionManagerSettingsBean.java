@@ -6,7 +6,6 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.PersonService;
-import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
@@ -38,7 +37,6 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     private final LangBean langBean;
     private final transient PendingPersonService pendingPersonService;
     private final SessionSettingsBean sessionSettingsBean;
-    private final transient TeamService teamService;
     private Institution institution;
     private transient Map<Person, String> roles;
 
@@ -51,15 +49,13 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
                                           UserDialogBean userDialogBean,
                                           LangBean langBean,
                                           PendingPersonService pendingPersonService,
-                                          SessionSettingsBean sessionSettingsBean,
-                                          TeamService teamService) {
+                                          SessionSettingsBean sessionSettingsBean) {
         this.institutionService = institutionService;
         this.personService = personService;
         this.userDialogBean = userDialogBean;
         this.langBean = langBean;
         this.pendingPersonService = pendingPersonService;
         this.sessionSettingsBean = sessionSettingsBean;
-        this.teamService = teamService;
     }
 
     public void init(Institution institution) {
@@ -98,8 +94,8 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
         if (userIsSuperAdmin(person)) {
             return DateUtils.formatOffsetDateTime(institution.getCreationDate());
         }
-        OffsetDateTime addDate = teamService.findEarliestAddDateInInstitution(institution, person);
-        return DateUtils.formatOffsetDateTime(addDate);
+        // TODO: Implement a way to get the date when a person was added as a manager
+        return "";
     }
 
     @Override

@@ -4,10 +4,8 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.models.institution.TeamPerson;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
@@ -31,7 +29,6 @@ class InstitutionServiceTest {
     @Mock private InstitutionRepository institutionRepository;
     @Mock private PersonRepository personRepository;
     @Mock private InstitutionSettingsRepository institutionSettingsRepository;
-    @Mock private TeamService teamService;
 
     private InstitutionService institutionService;
 
@@ -40,7 +37,7 @@ class InstitutionServiceTest {
 
     @BeforeEach
     void setUp() {
-        institutionService = new InstitutionService(institutionRepository, personRepository, institutionSettingsRepository, teamService);
+        institutionService = new InstitutionService(institutionRepository, personRepository, institutionSettingsRepository);
 
         manager = new Person();
         manager.setId(1L);
@@ -187,28 +184,6 @@ class InstitutionServiceTest {
 
         assertThat(result).isEqualTo(institution);
         verify(institutionRepository, times(1)).save(institution);
-    }
-
-    @Test
-    void countMembersInInstitution_withManagerAndMembers() {
-        Institution institution = new Institution();
-        institution.setId(1L);
-        institution.getManagers().add(manager);
-
-        Person member = new Person();
-        member.setId(2L);
-
-        Person superAdmin = new Person();
-        superAdmin.setId(3L);
-
-        TeamPerson teamPerson = new TeamPerson();
-        teamPerson.setPerson(member);
-
-        when(teamService.findMembersOf(institution)).thenReturn(Set.of(teamPerson));
-
-        long result = institutionService.countMembersInInstitution(institution);
-
-        assertThat(result).isEqualTo(2);
     }
 
 }

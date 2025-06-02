@@ -3,7 +3,6 @@ package fr.siamois.infrastructure.database.initializer;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
 import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import lombok.Getter;
@@ -32,7 +31,6 @@ public class AdminInitializer implements DatabaseInitializer {
     private final PersonRepository personRepository;
     private final InstitutionRepository institutionRepository;
     private final ApplicationContext applicationContext;
-    private final TeamService teamService;
 
     @Value("${siamois.admin.username:admin}")
     private String adminUsername;
@@ -49,12 +47,11 @@ public class AdminInitializer implements DatabaseInitializer {
     public AdminInitializer(BCryptPasswordEncoder passwordEncoder,
                             PersonRepository personRepository,
                             InstitutionRepository institutionRepository,
-                            ApplicationContext applicationContext, TeamService teamService) {
+                            ApplicationContext applicationContext) {
         this.passwordEncoder = passwordEncoder;
         this.personRepository = personRepository;
         this.institutionRepository = institutionRepository;
         this.applicationContext = applicationContext;
-        this.teamService = teamService;
     }
 
     /**
@@ -65,7 +62,6 @@ public class AdminInitializer implements DatabaseInitializer {
     public void initialize() throws DatabaseDataInitException {
         initializeAdmin();
         initializeAdminOrganization();
-        teamService.addPersonToInstitutionIfNotExist(createdAdmin, createdInstitution);
     }
 
     void initializeAdmin() throws DatabaseDataInitException {
