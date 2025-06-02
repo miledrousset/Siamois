@@ -10,6 +10,7 @@ import fr.siamois.ui.bean.converter.InstitutionConverter;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
 import fr.siamois.ui.bean.settings.InstitutionListSettingsBean;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -46,6 +46,7 @@ public class NavBean implements Serializable {
 
     private ApplicationMode applicationMode = ApplicationMode.SIAMOIS;
 
+    @Getter(AccessLevel.NONE)
     private transient List<Bookmark> bookmarkedPanels = null;
 
     public NavBean(SessionSettingsBean sessionSettingsBean,
@@ -63,14 +64,6 @@ public class NavBean implements Serializable {
         this.bookmarkService = bookmarkService;
         this.flowBean = flowBean;
         this.langBean = langBean;
-    }
-
-    public void init() {
-        if (sessionSettingsBean.isNotInitialized() && sessionSettingsBean.shouldRedirectToLogin()) {
-            redirectBean.redirectTo("/login");
-            return;
-        }
-        bookmarkedPanels = new ArrayList<>(bookmarkService.findAll(sessionSettingsBean.getUserInfo()));
     }
 
     public boolean userIsSuperAdmin() {
@@ -100,6 +93,13 @@ public class NavBean implements Serializable {
 
     public void addToBookmarkedPanels(AbstractPanel panel) {
         bookmarkedPanels.add(bookmarkService.save(sessionSettingsBean.getUserInfo(), panel));
+    }
+
+    public List<Bookmark> getBookmarkedPanels() {
+        if (bookmarkedPanels == null) {
+            bookmarkedPanels = bookmarkService.findAll(sessionSettingsBean.getUserInfo());
+        }
+        return bookmarkedPanels;
     }
 
     public String bookmarkTitle(Bookmark bookmark) {
