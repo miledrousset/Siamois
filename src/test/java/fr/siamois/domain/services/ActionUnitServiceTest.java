@@ -251,5 +251,29 @@ class ActionUnitServiceTest {
         assertEquals(actionUnit2, actualResult.getContent().get(1));
     }
 
+    @Test
+    void findAllByInstitutionAndBySpatialUnitAndByNameContainingAndByCategoriesAndByGlobalContaining_Success() {
+
+        when(actionUnitRepository.findAllByInstitutionAndBySpatialUnitAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                any(Long.class),
+                any(Long.class),
+                any(String.class),
+                any(Long[].class),
+                any(Long[].class),
+                any(String.class),
+                any(String.class),
+                any(Pageable.class)
+        )).thenReturn(page);
+
+        // Act
+        Page<ActionUnit> actualResult = actionUnitService.findAllByInstitutionAndBySpatialUnitAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                1L,1L, "null", new Long[2], new Long[2],"null", "fr", pageable
+        );
+
+        // Assert
+        assertEquals(actionUnit1, actualResult.getContent().get(0));
+        assertEquals(actionUnit2, actualResult.getContent().get(1));
+    }
+
 
 }

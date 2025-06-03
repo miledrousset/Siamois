@@ -2,6 +2,8 @@ package fr.siamois.ui.bean.field;
 
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
@@ -12,6 +14,8 @@ import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -123,7 +127,11 @@ public class SpatialUnitFieldBean implements Serializable {
     }
 
     public String getUrlForSpatialUnitTypeFieldCode() {
-        return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE);
+        return getUrlForFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
+    }
+
+    public String getUrlForFieldCode(String fieldCode) {
+        return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), fieldCode);
     }
 
 
@@ -142,5 +150,35 @@ public class SpatialUnitFieldBean implements Serializable {
         }
     }
 
+    /**
+     * Fetch the autocomplete results on API for the selected field and add them to the list of concepts.
+     *
+     * @param input the input of the user
+     * @return the list of concepts that match the input to display in the autocomplete
+     */
+    public List<Concept> completeWithFieldCode(String input) {
+        try {
+            FacesContext context = FacesContext.getCurrentInstance();
+            String fieldCode = (String) UIComponent.getCurrentComponent(context).getAttributes().get("fieldCode");
+            return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), fieldCode, input);
+        } catch (NoConfigForFieldException e) {
+            log.error(e.getMessage());
+            return new ArrayList<>();
+        }
+    }
 
+    public String resolveCustomFieldLabel(CustomField f) {
+        if(Boolean.TRUE.equals(f.getIsSystemField())) {
+            return langBean.msg(f.getLabel());
+        }
+        return f.getLabel();
+    }
+
+
+    public String resolvePanelLabel(CustomFormPanel p) {
+        if(Boolean.TRUE.equals(p.getIsSystemPanel())) {
+            return langBean.msg(p.getName());
+        }
+        return p.getName();
+    }
 }

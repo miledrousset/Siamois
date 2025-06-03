@@ -7,7 +7,7 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.model.BaseLazyDataModel;
+import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.model.menu.DefaultMenuItem;

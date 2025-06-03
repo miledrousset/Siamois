@@ -1,4 +1,4 @@
-package fr.siamois.ui.model;
+package fr.siamois.ui.lazydatamodel;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import lombok.Getter;
@@ -42,5 +42,7 @@ public abstract class BaseActionUnitLazyDataModel extends BaseLazyDataModel<Acti
     protected Map<String, String> getFieldMapping() {
         return FIELD_MAPPING;
     }
+
+
 
 }

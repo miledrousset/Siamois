@@ -1,4 +1,5 @@
 package fr.siamois.domain.models.spatialunit;
+import org.locationtech.jts.geom.MultiPolygon;
 
 import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.actionunit.ActionUnit;
@@ -29,13 +30,15 @@ public abstract class SpatialUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_concept_category_id")
     protected Concept category;
 
+    @Column(name="geom",columnDefinition = "geometry")
+    protected MultiPolygon geom;
+
     @ManyToOne
     @JoinColumn(name = "fk_parent_action_unit_id")
     protected ActionUnit parentActionUnit;
 
-
-
-
-
+    @NotNull
+    @Column(name = "validated", nullable = false)
+    protected Boolean validated = false;
 
 }

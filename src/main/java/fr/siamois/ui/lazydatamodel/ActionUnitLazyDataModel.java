@@ -1,4 +1,4 @@
-package fr.siamois.ui.model;
+package fr.siamois.ui.lazydatamodel;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.services.actionunit.ActionUnitService;

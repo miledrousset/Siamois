@@ -7,6 +7,7 @@ import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerId;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerInteger;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectMultiple;
+import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
@@ -143,12 +144,15 @@ public class CustomFormResponseService {
         toBeDeleted = new HashMap<>(managedFormResponse.getAnswers());
 
         // Iterate over the form fields and look for answers to fields that are in the form
+
         managedForm.getLayout().stream()
-                .flatMap(section -> section.getFields().stream()) // Get the fields for each section
-                .forEach(field -> saveAnswer(field, 
-                        customFormResponse, 
-                        managedFormResponse, 
-                        toBeDeleted)); // Process each field
+                .flatMap(section -> section.getRows().stream()) // Stream rows in each section
+                .flatMap(row -> row.getColumns().stream())      // Stream columns in each row
+                .map(CustomCol::getField)               // Extract the field from each column
+                .forEach(field -> saveAnswer(field,
+                        customFormResponse,
+                        managedFormResponse,
+                        toBeDeleted));     // Process each field
 
         // Delete the answer to be deleted
         for (CustomFieldAnswer managedAnswerToDelete : toBeDeleted.values()) {

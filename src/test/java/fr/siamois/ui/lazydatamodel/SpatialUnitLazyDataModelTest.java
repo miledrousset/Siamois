@@ -1,4 +1,4 @@
-package fr.siamois.ui.model;
+package fr.siamois.ui.lazydatamodel;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.institution.Institution;

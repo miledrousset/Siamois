@@ -1,0 +1,25 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form" xmlns:f="http://java.sun.com/jsf/core"
+             xmlns:h="http://java.sun.com/jsf/html"
+
+
+>
+
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel"-->
+    <!--@elvariable id="panelIndex" type="Integer"-->
+
+    <ui:include src="/pages/shared/form/customForm.xhtml">
+        <ui:param name="panelModel" value="#{panelModel}"/>
+        <ui:param name="layout" value="#{panelModel.layout}"/>
+        <ui:param name="readOnly" value="false"/>
+        <ui:param name="prefix" value="details"/>
+        <ui:param name="panelId" value="panel-#{panelIndex}"/>
+    </ui:include>
+
+
+
+
+</ui:fragment>

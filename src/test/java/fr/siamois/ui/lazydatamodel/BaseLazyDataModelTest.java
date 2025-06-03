@@ -1,4 +1,4 @@
-package fr.siamois.ui.model;
+package fr.siamois.ui.lazydatamodel;
 
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import org.junit.jupiter.api.Test;

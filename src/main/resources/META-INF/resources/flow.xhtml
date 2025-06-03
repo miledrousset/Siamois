@@ -25,102 +25,164 @@
 
             function handleScrollToTop() {
 
-                const container = document.getElementById("flow");
-                console.log(container)
+                const container = document.getElementById("content");
                 if (container) {
-                    container.firstElementChild.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    container.firstElementChild.scrollIntoView({behavior: 'smooth', block: 'start'});
                 }
 
             }
+
+            function setFormHasBeenModified(element) {
+                // Mark the form as modified and activate buttons
+                console.log(element)
+
+                element = (typeof element.closest === 'function') ? element : document.getElementById(element.id);
+
+                let inputEl = null;
+                // If not input, find first input to add border
+                if (element.tagName !== 'INPUT') {
+                    inputEl = element.querySelector('input');
+
+                } else{
+                    inputEl = element;
+                }
+
+                if(inputEl) {
+                    $(inputEl).addClass('sia-modified-field');
+                }
+
+                const form = element.closest('form');
+                const parent = form.parentElement;
+                const hiddenField = form.querySelector('input[id$="spatialUnitForm:hasUnsavedModifications"]')
+                if (hiddenField) {
+                    hiddenField.value = 'true';
+                    form.classList.add('form-modified'); // Feedback visuel optionnel
+                }
+
+                // if(parent) {
+                //     const saveAsDraftButton = parent.querySelector('button[id$="spatialUnitForm:saveButton"], input[id$="spatialUnitForm:saveButton"]');
+                //     const saveAndValidateButton = parent.querySelector('button[id$="spatialUnitForm:saveAndValidateButton"], input[id$="spatialUnitForm:saveAndValidateButton"]');
+                //     const cancelModificationsButton = parent.querySelector('[id$="spatialUnitForm\\:cancelButton"]');
+                //
+                //     // Activate buttons
+                //     if (saveAsDraftButton) {
+                //         $(saveAsDraftButton).removeAttr("disabled");
+                //         $(saveAsDraftButton).removeClass('ui-state-disabled');
+                //     }
+                //     if (saveAndValidateButton) {
+                //         $(saveAndValidateButton).removeAttr("disabled");
+                //         $(saveAndValidateButton).removeClass('ui-state-disabled');
+                //     }
+                //     if (cancelModificationsButton) {
+                //         $(cancelModificationsButton).removeClass('ui-state-disabled');
+                //     }
+                //
+                // }
+
+
+            }
         </script>
+
 
     </ui:define>
 
     <ui:define name="content">
 
+        <div style="display: flex; flex-direction: row">
+            <div id="search-bar" style="flex:4">
+                <form:csrfform formId="searchBarForm">
+                    <article>
+                        <h:panelGroup styleClass="ui-inputgroup">
+                            <h:panelGroup id="iconSU" styleClass="ui-inputgroup-addon">
+                                <i class="bi bi-geo-alt"/>
+                            </h:panelGroup>
+                            <p:selectOneMenu
+                                    id="selectOneMenuIconSU"
+                                    value="#{flowBean.FSelectedSpatialUnit}"
+                                    filter="true"
+                                    filterMatchMode="startsWith"
+                                    filterNormalize="true"
+                                    var="su"
+                            >
+                                <f:selectItems value="#{flowBean.FSpatialUnits}"
+                                               var="item"
+                                               itemValue="#{item}"
+                                               itemLabel="#{item.name}"
+                                />
 
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="ID"/>
+                                    </f:facet>
+                                    <h:outputText value="#{su.id}"/>
+                                </p:column>
 
-        <div id="search-bar">
-            <form:csrfform formId="searchBarForm">
-                <article>
-                    <h:panelGroup styleClass="ui-inputgroup">
-                        <h:panelGroup id="iconSU" styleClass="ui-inputgroup-addon">
-                            <i class="bi bi-geo-alt"/>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Name"/>
+                                    </f:facet>
+                                    <h:outputText value="#{su.name}"/>
+                                </p:column>
+
+                            </p:selectOneMenu>
                         </h:panelGroup>
-                        <p:selectOneMenu
-                                id="selectOneMenuIconSU"
-                                value="#{flowBean.FSelectedSpatialUnit}"
-                                filter="true"
-                                filterMatchMode="startsWith"
-                                filterNormalize="true"
-                                var="su"
-                        >
-                            <f:selectItems value="#{flowBean.FSpatialUnits}"
-                                           var="item"
-                                           itemValue="#{item}"
-                                           itemLabel="#{item.name}"
-                            />
+                        <h:panelGroup styleClass="ui-inputgroup">
+                            <h:panelGroup id="iconAU" styleClass="ui-inputgroup-addon">
+                                <i class="bi bi-arrow-down-right-square"/>
+                            </h:panelGroup>
+                            <p:selectOneMenu
+                                    id="selectOneMenuIconAU"
+                                    value="#{flowBean.FSelectedActionUnit}"
+                                    filter="true"
+                                    filterMatchMode="startsWitch"
+                                    filterNormalize="true"
+                                    var="au"
+                            >
+                                <f:selectItems value="#{flowBean.FActionUnits}"
+                                               var="item"
+                                               itemValue="#{item}"
+                                               itemLabel="#{item.name}"
+                                />
 
-                            <p:column>
-                                <f:facet name="header">
-                                    <h:outputText value="ID"/>
-                                </f:facet>
-                                <h:outputText value="#{su.id}"/>
-                            </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="ID"/>
+                                    </f:facet>
+                                    <h:outputText value="#{au.id}"/>
+                                </p:column>
 
-                            <p:column>
-                                <f:facet name="header">
-                                    <h:outputText value="Name"/>
-                                </f:facet>
-                                <h:outputText value="#{su.name}"/>
-                            </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Name"/>
+                                    </f:facet>
+                                    <h:outputText value="#{au.name}"/>
+                                </p:column>
 
-                        </p:selectOneMenu>
-                    </h:panelGroup>
-                    <h:panelGroup styleClass="ui-inputgroup">
-                        <h:panelGroup id="iconAU" styleClass="ui-inputgroup-addon">
-                            <i class="bi bi-arrow-down-right-square"/>
+                            </p:selectOneMenu>
                         </h:panelGroup>
-                        <p:selectOneMenu
-                                id="selectOneMenuIconAU"
-                                value="#{flowBean.FSelectedActionUnit}"
-                                filter="true"
-                                filterMatchMode="startsWitch"
-                                filterNormalize="true"
-                                var="au"
-                        >
-                            <f:selectItems value="#{flowBean.FActionUnits}"
-                                           var="item"
-                                           itemValue="#{item}"
-                                           itemLabel="#{item.name}"
-                            />
-
-                            <p:column>
-                                <f:facet name="header">
-                                    <h:outputText value="ID"/>
-                                </f:facet>
-                                <h:outputText value="#{au.id}"/>
-                            </p:column>
-
-                            <p:column>
-                                <f:facet name="header">
-                                    <h:outputText value="Name"/>
-                                </f:facet>
-                                <h:outputText value="#{au.name}"/>
-                            </p:column>
-
-                        </p:selectOneMenu>
-                    </h:panelGroup>
-                    <p:button value="+"/>
-                </article>
-                <article>
+                        <p:button value="+"/>
+                    </article>
+                    <article>
                     <span class="ui-input-icon-right">
                         <p:inputText styleClass="searchInput" placeholder=""/>
                         <i class="bi bi-play-circle"/>
                     </span>
-                </article>
-            </form:csrfform>
+                    </article>
+                </form:csrfform>
+            </div>
+            <div id="read-write-switch" style="align-content: center; flex:1;
+            text-align:center; background: var(--siamois-green-light-100);padding: 0.5em}">
+                <form:csrfform formId="readWriteSwitchForm">
+                    <p:selectOneButton value="#{flowBean.readWriteMode}" var="ic">
+                        <f:selectItem icon="" itemLabel="Lecture" itemValue="READ"/>
+                        <f:selectItem itemLabel="Edition" itemValue="WRITE"/>
+
+                        <p:ajax event="change" listener="#{flowBean.changeReadWriteMode()}" update="flow" />
+                    </p:selectOneButton>
+                </form:csrfform>
+            </div>
         </div>
+
 
         <p:outputPanel id="flow">
 
@@ -138,12 +200,14 @@
                         <p:ajax event="toggle" listener="#{flowBean.handleToggleOfPanelAtIndex(status.index)}"/>
 
                         <f:facet name="header">
+                            <span class="sia-flow-panel-title" id="panel-${status.index}-header">
                             <p:outputPanel rendered="#{panel.displayHeader() == null}">
                                 <i class="#{panel.icon}"/> #{flowBean.headerName(panel)}
                             </p:outputPanel>
                             <ui:include rendered="#{panel.displayHeader() != null}" src="#{panel.displayHeader()}">
                                 <ui:param name="panelModel" value="#{panel}"/>
                             </ui:include>
+                            </span>
                         </f:facet>
                         <p:breadCrumb model="#{panel.breadcrumb.model}" rendered="#{panel.isBreadcrumbVisible()}"/>
                         <ui:include src="#{panel.display()}" id="panel-body">

@@ -81,4 +81,9 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
         }
     }
 
+    @Override
+    public String toString() {
+        return String.format("Action Unit %s", displayFullIdentifier());
+    }
+
 }

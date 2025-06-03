@@ -20,17 +20,16 @@ import java.util.Optional;
 public interface SpatialUnitRepository extends JpaRepository<SpatialUnit, Long> {
 
     @Query(
-            nativeQuery = true,
-            value = "SELECT su.* FROM spatial_unit su JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_child_id WHERE suh.fk_parent_id = :spatialUnitId"
+            value = "SELECT COUNT(*) FROM spatial_hierarchy WHERE fk_parent_id = :parentId",
+            nativeQuery = true
     )
-    List<SpatialUnit> countAllChildOfSpatialUnit(@Param("spatialUnitId") Long spatialUnitId);
+    long countChildrenByParentId(@Param("parentId") Long parentId);
 
     @Query(
-            nativeQuery = true,
-            value = "SELECT su.* FROM spatial_unit su JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_parent_id WHERE suh.fk_child_id = :spatialUnitId"
+            value = "SELECT COUNT(*) FROM spatial_hierarchy WHERE fk_child_id = :childId",
+            nativeQuery = true
     )
-    List<SpatialUnit> countAllParentsOfSpatialUnit(@Param("spatialUnitId") Long spatialUnitId);
-
+    long countParentsByChildId(@Param("childId") Long childId);
 
 
 
@@ -127,13 +126,17 @@ public interface SpatialUnitRepository extends JpaRepository<SpatialUnit, Long> 
                     ") " +
                     "SELECT " +
                     "    su.*, " +
+                    "    p.name as p_name, " +
+                    "    p.lastname as p_lastname, " +
                     "    rl.label_value AS c_label " +
                     "FROM spatial_unit su " +
+                    "         LEFT JOIN person p ON su.fk_author_id = p.person_id " +
                     "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_child_id " +
                     "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
                     "         LEFT JOIN ranked_labels rl ON c.concept_id = rl.fk_concept_id AND rl.rank = 1 " +
                     "WHERE sh.fk_parent_id = :parentId " +
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
+                    "  AND (CAST(:personIds AS BIGINT[]) IS NULL OR su.fk_author_id IN (:personIds)) " +
                     "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
                     "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(rl.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
             countQuery = "WITH ranked_labels AS ( " +
@@ -160,12 +163,14 @@ public interface SpatialUnitRepository extends JpaRepository<SpatialUnit, Long> 
                     "         LEFT JOIN ranked_labels rl ON c.concept_id = rl.fk_concept_id AND rl.rank = 1 " +
                     "WHERE sh.fk_parent_id = :parentId " +
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
+                    "  AND (CAST(:personIds AS BIGINT[]) IS NULL OR su.fk_author_id IN (:personIds)) " +
                     "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
                     "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(rl.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
     )
     Page<SpatialUnit> findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(@Param("parentId") Long parentId,
                                                                                              @Param("name") String name,
                                                                                              @Param("categoryIds") Long[] categoryIds,
+                                                                                             @Param("personIds") Long[] personIds,
                                                                                              @Param("global") String global,
                                                                                              @Param("langCode") String langCode,
                                                                                              Pageable pageable);
@@ -190,13 +195,17 @@ public interface SpatialUnitRepository extends JpaRepository<SpatialUnit, Long> 
                     ") " +
                     "SELECT " +
                     "    su.*, " +
+                    "    p.name as p_name, " +
+                    "    p.lastname as p_lastname, " +
                     "    rl.label_value AS c_label " +
                     "FROM spatial_unit su " +
+                    "         LEFT JOIN person p ON su.fk_author_id = p.person_id " +
                     "         LEFT JOIN spatial_hierarchy sh ON su.spatial_unit_id = sh.fk_parent_id " +
                     "         LEFT JOIN concept c ON su.fk_concept_category_id = c.concept_id " +
                     "         LEFT JOIN ranked_labels rl ON c.concept_id = rl.fk_concept_id AND rl.rank = 1 " +
                     "WHERE sh.fk_child_id = :childId " +
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
+                    "  AND (CAST(:personIds AS BIGINT[]) IS NULL OR su.fk_author_id IN (:personIds)) " +
                     "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
                     "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(rl.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))",
             countQuery = "WITH ranked_labels AS ( " +
@@ -223,12 +232,14 @@ public interface SpatialUnitRepository extends JpaRepository<SpatialUnit, Long> 
                     "         LEFT JOIN ranked_labels rl ON c.concept_id = rl.fk_concept_id AND rl.rank = 1 " +
                     "WHERE sh.fk_child_id = :parentId " +
                     "  AND (CAST(:name AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:name AS TEXT), '%'))) " +
+                    "  AND (CAST(:personIds AS BIGINT[]) IS NULL OR su.fk_author_id IN (:personIds)) " +
                     "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR su.fk_concept_category_id IN (:categoryIds)) " +
                     "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(su.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')) OR LOWER(rl.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%')))"
     )
     Page<SpatialUnit> findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(@Param("childId") Long childId,
                                                                                             @Param("name") String name,
                                                                                             @Param("categoryIds") Long[] categoryIds,
+                                                                                            @Param("personIds") Long[] personIds,
                                                                                             @Param("global") String global,
                                                                                             @Param("langCode") String langCode,
                                                                                             Pageable pageable);

@@ -16,6 +16,9 @@ public abstract class CustomFieldAnswer implements Serializable {
     @EmbeddedId
     private CustomFieldAnswerId pk;
 
+    // Not persisted, used in UI
+    private Boolean hasBeenModified ;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

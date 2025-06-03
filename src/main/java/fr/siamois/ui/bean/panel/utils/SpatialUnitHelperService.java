@@ -6,6 +6,8 @@ import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.SpatialUnitService;
+import fr.siamois.domain.utils.MessageUtils;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Service;
@@ -35,7 +37,7 @@ public class SpatialUnitHelperService {
     public void restore(SpatialUnitHist history) {
         log.trace("Restore order received");
         spatialUnitService.restore(history);
-        PrimeFaces.current().executeScript("PF('restored-dlg').show()");
+
     }
 
 

@@ -9,10 +9,9 @@
 >
     <cc:interface>
         <!-- Attributes to pass the bean's list and optional additional parameters -->
-        <cc:attribute name="lazyDataModel" required="true" type="fr.siamois.ui.model.BaseSpatialUnitLazyDataModel"/>
-        <cc:attribute name="panelModel" required="true" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitListPanel"/>
+        <cc:attribute name="lazyDataModel" required="true" type="fr.siamois.ui.lazydatamodel.BaseSpatialUnitLazyDataModel"/>
+        <cc:attribute name="panelModel" required="true" type="fr.siamois.ui.bean.panel.models.panel.AbstractPanel"/>
         <cc:attribute name="panelIndex" required="true" type="java.lang.Integer"/>
-        <cc:attribute name="selectedCategories" required="true"/>
         <cc:attribute name="disableAddBtn" required="false" default="false" type="java.lang.Boolean"/>
 
     </cc:interface>

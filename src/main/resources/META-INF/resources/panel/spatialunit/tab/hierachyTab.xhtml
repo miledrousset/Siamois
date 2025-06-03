@@ -1,0 +1,41 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:spatialUnit="http://xmlns.jcp.org/jsf/composite/pages/spatialUnit/components"
+
+>
+
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel"-->
+    <!--@elvariable id="panelIndex" type="java.lang.Integer"-->
+    🚧 En cours (manque bouteau nouveau enfant et parent from existing ou nouveau). Lien dans les tables à réparer
+
+    <p:panel id="childrenPanel" class="sia-form-panel" header="Contient"
+             toggleable="true"
+             collapsed="false">
+        <spatialUnit:spatialUnitList
+                disableAddBtn="true"
+                lazyDataModel="#{panelModel.lazyDataModelChildren}"
+                panelModel="#{panelModel}"
+                panelIndex="#{panelIndex}"
+                id="spatialUnitChildrenList"
+        />
+
+    </p:panel>
+    <p:panel id="parentsPanel" class="sia-form-panel"
+             header="Fait partie de" toggleable="true"
+             collapsed="false">
+        <spatialUnit:spatialUnitList
+                disableAddBtn="true"
+                lazyDataModel="#{panelModel.lazyDataModelParents}"
+                panelModel="#{panelModel}"
+                panelIndex="#{panelIndex}"
+                id="spatialUnitParentsList"
+        />
+
+    </p:panel>
+
+
+
+
+
+</ui:fragment>

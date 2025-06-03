@@ -1,10 +1,9 @@
-package fr.siamois.ui.model;
+package fr.siamois.ui.lazydatamodel;
 
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.ui.bean.LangBean;
-import fr.siamois.ui.bean.SessionSettingsBean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,17 +22,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class SpatialUnitChildrenLazyDataModelTest {
+class SpatialUnitParentsLazyDataModelTest {
 
     @Mock
     private SpatialUnitService spatialUnitService;
-    @Mock
-    private SessionSettingsBean sessionSettingsBean;
+
     @Mock
     private LangBean langBean;
 
     @InjectMocks
-    private SpatialUnitChildrenLazyDataModel lazyModel;
+    private SpatialUnitParentsLazyDataModel lazyModel;
 
     Page<SpatialUnit> p ;
     Pageable pageable;
@@ -41,6 +39,7 @@ class SpatialUnitChildrenLazyDataModelTest {
     SpatialUnit spatialUnit2;
     SpatialUnit spatialUnit3;
     Institution institution;
+
 
     @BeforeEach
     void setUp() {
@@ -58,12 +57,13 @@ class SpatialUnitChildrenLazyDataModelTest {
     @Test
     void loadSpatialUnits() {
 
-        lazyModel = new SpatialUnitChildrenLazyDataModel(spatialUnitService,langBean, spatialUnit3);
+        lazyModel = new SpatialUnitParentsLazyDataModel(spatialUnitService,langBean, spatialUnit3);
 
         // Arrange
-        when(spatialUnitService.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
+        when(spatialUnitService.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
                 ArgumentMatchers.any(SpatialUnit.class),
                 ArgumentMatchers.any(String.class),
+                ArgumentMatchers.any(Long[].class),
                 ArgumentMatchers.any(Long[].class),
                 ArgumentMatchers.any(String.class),
                 ArgumentMatchers.any(String.class),
@@ -72,7 +72,7 @@ class SpatialUnitChildrenLazyDataModelTest {
         when(langBean.getLanguageCode()).thenReturn("en");
 
         // Act
-        Page<SpatialUnit> actualResult = lazyModel.loadSpatialUnits("null", new Long[2], new Long[2],"null", pageable);
+        Page<SpatialUnit> actualResult = lazyModel.loadSpatialUnits("null", new Long[2],new Long[2], "null", pageable);
 
         // Assert
         // Assert

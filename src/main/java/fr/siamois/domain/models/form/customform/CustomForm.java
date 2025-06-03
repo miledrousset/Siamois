@@ -23,7 +23,6 @@ public class CustomForm implements Serializable {
     @Column(name = "name")
     private String name;
 
-
     @Column(name = "layout", columnDefinition = "jsonb")
     @Convert(converter = CustomFormLayoutConverter.class)
     private List<CustomFormPanel> layout;

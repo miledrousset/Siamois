@@ -24,7 +24,11 @@ public abstract class CustomField implements Serializable {
     private Long id;
 
     @Column(name = "label")
-    private String label;
+    private String label; // label or label code if system field
+
+    // System or custom field
+    @Column(name = "is_system_field")
+    private Boolean isSystemField;
 
     @Column(name = "hint")
     private String hint;

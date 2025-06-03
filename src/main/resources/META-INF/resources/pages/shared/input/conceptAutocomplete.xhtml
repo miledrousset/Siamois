@@ -37,6 +37,7 @@
                         placeholder="#{langBean.msg('common.action.chooseConcept')}"
                         showEmptyMessage="false"
         >
+            <f:attribute name="filter" value="#{filter}" />
 
             <!-- If defined, we need to update on select to synchronise secondary type choices -->
             <p:ajax

@@ -13,6 +13,7 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
+import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
@@ -54,6 +55,30 @@ public class ActionUnitService implements ArkEntityService {
 
         Page<ActionUnit> res = actionUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
                 institutionId, name, categoryIds, personIds, global, langCode, pageable);
+
+        //wireChildrenAndParents(res.getContent());  // Load and attach spatial hierarchy relationships
+
+
+        // load related actions
+        res.forEach(actionUnit -> {
+            Hibernate.initialize(actionUnit.getSpatialContext());
+            Hibernate.initialize(actionUnit.getRecordingUnitList());
+            Hibernate.initialize(actionUnit.getParents());
+            Hibernate.initialize(actionUnit.getChildren());
+
+        });
+
+
+        return res;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ActionUnit> findAllByInstitutionAndBySpatialUnitAndByNameContainingAndByCategoriesAndByGlobalContaining(
+            Long institutionId, Long spatialUnitId,
+            String name, Long[] categoryIds, Long[] personIds, String global, String langCode, Pageable pageable) {
+
+        Page<ActionUnit> res = actionUnitRepository.findAllByInstitutionAndBySpatialUnitAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                institutionId, spatialUnitId, name, categoryIds, personIds, global, langCode, pageable);
 
         //wireChildrenAndParents(res.getContent());  // Load and attach spatial hierarchy relationships
 
@@ -207,5 +232,9 @@ public class ActionUnitService implements ArkEntityService {
 
     public long countByInstitution(Institution institution) {
         return actionUnitRepository.countByCreatedByInstitution(institution);
+    }
+
+    public long countBySpatialContext(SpatialUnit spatialUnit) {
+        return actionUnitRepository.countBySpatialContext(spatialUnit.getId());
     }
 }

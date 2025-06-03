@@ -3,14 +3,18 @@ package fr.siamois.domain.services;
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.ark.Ark;
+import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitNotFoundException;
+import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ark.ArkService;
+import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.SpatialUnitRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +49,7 @@ public class SpatialUnitService implements ArkEntityService {
         this.conceptService = conceptService;
         this.arkService = arkService;
         this.institutionService = institutionService;
+
     }
 
 
@@ -74,6 +79,17 @@ public class SpatialUnitService implements ArkEntityService {
         spatialUnitRepository.save(spatialUnit);
     }
 
+    private Page<SpatialUnit> initializeSpatialUnitLazyAttributes(Page<SpatialUnit> list) {
+        list.forEach(spatialUnit -> {
+            Hibernate.initialize(spatialUnit.getRelatedActionUnitList());
+            Hibernate.initialize(spatialUnit.getRecordingUnitList());
+            Hibernate.initialize(spatialUnit.getChildren());
+            Hibernate.initialize(spatialUnit.getParents());
+        });
+
+        return list;
+    }
+
 
     @Transactional(readOnly = true)
     public Page<SpatialUnit> findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
@@ -83,33 +99,27 @@ public class SpatialUnitService implements ArkEntityService {
         Page<SpatialUnit> res = spatialUnitRepository.findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
                 institutionId, name, categoryIds, personIds, global, langCode, pageable);
 
-        //wireChildrenAndParents(res.getContent());  // Load and attach spatial hierarchy relationships
-
-
-        // load related actions
-        res.forEach(spatialUnit -> {
-            Hibernate.initialize(spatialUnit.getRelatedActionUnitList());
-            Hibernate.initialize(spatialUnit.getRecordingUnitList());
-            Hibernate.initialize(spatialUnit.getChildren());
-            Hibernate.initialize(spatialUnit.getParents());
-        });
-
-
-        return res;
+        return initializeSpatialUnitLazyAttributes(res);
     }
 
+    @Transactional(readOnly = true)
     public Page<SpatialUnit> findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
             SpatialUnit parent,
-            String name, Long[] categoryIds, String global, String langCode, Pageable pageable) {
-        return spatialUnitRepository.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                parent.getId(), name, categoryIds, global, langCode, pageable);
+            String name, Long[] categoryIds, Long[] personIds, String global, String langCode, Pageable pageable) {
+        Page<SpatialUnit> res = spatialUnitRepository.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                parent.getId(), name, categoryIds, personIds, global, langCode, pageable);
+
+        return initializeSpatialUnitLazyAttributes(res);
     }
 
+    @Transactional(readOnly = true)
     public Page<SpatialUnit> findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
             SpatialUnit child,
-            String name, Long[] categoryIds, String global, String langCode, Pageable pageable) {
-        return spatialUnitRepository.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                child.getId(), name, categoryIds, global, langCode, pageable);
+            String name, Long[] categoryIds, Long[] personIds, String global, String langCode, Pageable pageable) {
+        Page<SpatialUnit> res = spatialUnitRepository.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
+                child.getId(), name, categoryIds, personIds, global, langCode, pageable);
+
+        return initializeSpatialUnitLazyAttributes(res);
     }
 
     public List<SpatialUnit> findAllOfInstitution(Institution institution) {
@@ -157,9 +167,39 @@ public class SpatialUnitService implements ArkEntityService {
     }
 
     @Override
+    @Transactional
     public ArkEntity save(ArkEntity toSave) {
-        return spatialUnitRepository.save((SpatialUnit) toSave);
+
+        try {
+
+            SpatialUnit managedSpatialUnit ;
+            SpatialUnit spatialUnit = (SpatialUnit) toSave;
+
+            if(spatialUnit.getId() != null) {
+                Optional<SpatialUnit> optUnit = spatialUnitRepository.findById(spatialUnit.getId());
+                managedSpatialUnit = optUnit.orElseGet(SpatialUnit::new);
+            }
+            else {
+                managedSpatialUnit = new SpatialUnit();
+            }
+
+            managedSpatialUnit.setName(spatialUnit.getName());
+            managedSpatialUnit.setValidated(spatialUnit.getValidated());
+            managedSpatialUnit.setArk(spatialUnit.getArk());
+            managedSpatialUnit.setAuthor(spatialUnit.getAuthor());
+            managedSpatialUnit.setGeom(spatialUnit.getGeom());
+            managedSpatialUnit.setCreatedByInstitution(spatialUnit.getCreatedByInstitution());
+            // Add concept
+            Concept type = conceptService.saveOrGetConcept(spatialUnit.getCategory());
+            managedSpatialUnit.setCategory(type);
+
+            return spatialUnitRepository.save(managedSpatialUnit);
+
+        } catch (RuntimeException e) {
+            throw new FailedRecordingUnitSaveException(e.getMessage());
+        }
     }
+
 
     public long countByInstitution(Institution institution) {
         return spatialUnitRepository.countByCreatedByInstitution(institution);
@@ -171,5 +211,13 @@ public class SpatialUnitService implements ArkEntityService {
             result.add(spatialUnit);
         }
         return result;
+    }
+
+    public long countChildrenByParentId(Long id) {
+        return spatialUnitRepository.countChildrenByParentId(id);
+    }
+
+    public long countParentsByChildId(Long id) {
+        return spatialUnitRepository.countParentsByChildId(id);
     }
 }

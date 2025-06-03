@@ -7,8 +7,10 @@ import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerId;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerInteger;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectMultiple;
+import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
+import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.database.repositories.form.CustomFormRepository;
@@ -19,10 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -117,13 +116,23 @@ class CustomFormResponseServiceTest {
 
         // ------------ Define the form
         CustomFormPanel customFormPanel = new CustomFormPanel();
-        customFormPanel.setFields(new ArrayList<>());
-        customFormPanel.getFields().add(field1Integer);
-        customFormPanel.getFields().add(field2Integer);
-        customFormPanel.getFields().add(field3Integer);
-        customFormPanel.getFields().add(field1SelectMultiple);
-        customFormPanel.getFields().add(field2SelectMultiple);
-        customFormPanel.getFields().add(field3SelectMultiple);
+        CustomRow customRow = new CustomRow();
+        customFormPanel.setRows(List.of(customRow));
+        customRow.setColumns(new ArrayList<>());
+        customRow.getColumns().add(new CustomCol());
+        customRow.getColumns().get(0).setField(field1Integer);
+        customRow.getColumns().add(new CustomCol());
+        customRow.getColumns().get(1).setField(field2Integer);
+        customRow.getColumns().add(new CustomCol());
+        customRow.getColumns().get(2).setField(field3Integer);
+        customRow.getColumns().add(new CustomCol());
+        customRow.getColumns().get(3).setField(field1SelectMultiple);
+        customRow.getColumns().add(new CustomCol());
+        customRow.getColumns().get(4).setField(field2SelectMultiple);
+        customRow.getColumns().add(new CustomCol());
+        customRow.getColumns().get(5).setField(field3SelectMultiple);
+
+
         // we don't add the form 7 to the field bc we want to remove it
         form = new CustomForm();
         form.setLayout(new ArrayList<>());
