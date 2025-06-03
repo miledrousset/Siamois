@@ -15,15 +15,12 @@ import fr.siamois.ui.lazydatamodel.ActionUnitLazyDataModel;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 
 import lombok.EqualsAndHashCode;
-
 import lombok.Getter;
 import lombok.Setter;
-
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 
 import java.util.List;
 
@@ -99,6 +96,11 @@ public class ActionUnitListPanel extends AbstractListPanel<ActionUnit> {
     @Override
     public String display() {
         return "/panel/actionUnitListPanel.xhtml";
+    }
+
+    @Override
+    public String ressourceUri() {
+        return "/actionunit";
     }
 
     public static class ActionUnitListPanelBuilder {

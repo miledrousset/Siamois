@@ -164,7 +164,8 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     @Autowired
     private SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService, DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
                              ConceptService conceptService, LabelService labelService, LangBean langBean, PersonService personService) {
-        super("Unité spatiale", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-single-panel");
+
+        super("common.entity.spatialUnit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-single-panel");
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
@@ -214,6 +215,11 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     @Override
     public String display() {
         return "/panel/spatialUnitPanel.xhtml";
+    }
+
+    @Override
+    public String ressourceUri() {
+        return "/spatialunit/" + idunit;
     }
 
     @Override
@@ -345,6 +351,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         try {
 
             this.spatialUnit = spatialUnitService.findById(idunit);
+            this.setTitleCodeOrTitle(spatialUnit.getName()); // Set panel title
 
             backupClone = new SpatialUnitClone(spatialUnit);
 
@@ -383,6 +390,8 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
             );
             totalActionUnitCount = actionUnitService.countBySpatialContext(spatialUnit);
 
+            // add to BC
+            this.getBreadcrumb().addSpatialUnit(spatialUnit);
 
         } catch (RuntimeException e) {
             this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();

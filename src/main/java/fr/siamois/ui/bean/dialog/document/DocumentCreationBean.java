@@ -17,7 +17,6 @@ import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.ActionFromBean;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
-import jakarta.faces.application.FacesMessage;
 import jakarta.servlet.ServletContext;
 import lombok.Getter;
 import lombok.Setter;

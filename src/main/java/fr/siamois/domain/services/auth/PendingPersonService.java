@@ -7,6 +7,7 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.LangService;
+import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
@@ -29,24 +30,29 @@ public class PendingPersonService {
     private final SecureRandom random = new SecureRandom();
 
     public static final int MAX_GENERATION = 1000;
+    public static final int TOKEN_LENGTH = 20;
+    private static final String ALLOWED_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
     private final HttpServletRequest httpServletRequest;
     private final PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
     private final PendingTeamInviteRepository pendingTeamInviteRepository;
     private final EmailManager emailManager;
     private final LangService langService;
+    private final TeamService teamService;
 
     public PendingPersonService(PendingPersonRepository pendingPersonRepository,
                                 HttpServletRequest httpServletRequest,
                                 PendingInstitutionInviteRepository pendingInstitutionInviteRepository,
                                 PendingTeamInviteRepository pendingTeamInviteRepository,
                                 EmailManager emailManager,
-                                LangService langService) {
+                                LangService langService, TeamService teamService) {
         this.pendingPersonRepository = pendingPersonRepository;
         this.httpServletRequest = httpServletRequest;
         this.pendingInstitutionInviteRepository = pendingInstitutionInviteRepository;
         this.pendingTeamInviteRepository = pendingTeamInviteRepository;
         this.emailManager = emailManager;
         this.langService = langService;
+        this.teamService = teamService;
     }
 
     /**
@@ -54,21 +60,20 @@ public class PendingPersonService {
       * @return a random token
      */
     String generateToken() {
-        String allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder token;
         int attempts = 0;
 
         do {
             attempts++;
             token = new StringBuilder();
-            for (int i = 0; i < 20; i++) {
-                int randomIndex = random.nextInt(allowedChars.length());
-                token.append(allowedChars.charAt(randomIndex));
+            for (int i = 0; i < TOKEN_LENGTH; i++) {
+                int randomIndex = random.nextInt(ALLOWED_CHARS.length());
+                token.append(ALLOWED_CHARS.charAt(randomIndex));
             }
         } while (attempts < MAX_GENERATION && pendingPersonRepository.existsByRegisterToken(token.toString()));
 
         if (attempts == MAX_GENERATION) {
-            throw new IllegalStateException("Unable to generate a unique token after " + MAX_GENERATION + " attempts");
+            throw new IllegalStateException("Unable to generate a unique pending person token after " + MAX_GENERATION + " attempts");
         }
 
         return token.toString();
@@ -128,6 +133,9 @@ public class PendingPersonService {
     public boolean sendPendingInstitutionInvite(PendingPerson pendingPerson, Institution institution, boolean isManager, String mailLang) {
         Optional<PendingInstitutionInvite> pendingInstitutionInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson);
         if (pendingInstitutionInvite.isPresent()) {
+            PendingInstitutionInvite invite = pendingInstitutionInvite.get();
+            invite.setManager(isManager);
+            pendingInstitutionInviteRepository.save(invite);
             return false;
         } else {
             PendingInstitutionInvite invite = new PendingInstitutionInvite();
@@ -135,12 +143,16 @@ public class PendingPersonService {
             invite.setInstitution(institution);
             invite.setId(-1L);
             invite.setManager(isManager);
-            pendingInstitutionInviteRepository.save(invite);
+            invite = pendingInstitutionInviteRepository.save(invite);
 
             Locale locale = new Locale(mailLang);
             String institutionName = institution.getName();
             String invitationLink = invitationLink(pendingPerson);
             String expirationDate = DateUtils.formatOffsetDateTime(pendingPerson.getPendingInvitationExpirationDate());
+
+            Team defaultTeam = teamService.createOrGetDefaultOf(institution);
+
+            addTeamToInvitation(invite, defaultTeam, null);
 
             emailManager.sendEmail(pendingPerson.getEmail(),
                     langService.msg("mail.invitation.subject", locale, institutionName),

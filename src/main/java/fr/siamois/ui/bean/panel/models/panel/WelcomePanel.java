@@ -42,9 +42,7 @@ public class WelcomePanel extends AbstractPanel {
                         SpatialUnitService spatialUnitService,
                         LangBean langBean
     ) {
-        super(String.format("%s - %s",
-                langBean.msg("common.location.home"),
-                sessionSettingsBean.getSelectedInstitution().getName()), "bi bi-house", "siamois-panel");
+        super("common.location.home", "bi bi-house", "siamois-panel");
 
         this.sessionSettingsBean = sessionSettingsBean;
         this.recordingUnitService = recordingUnitService;
@@ -81,9 +79,14 @@ public class WelcomePanel extends AbstractPanel {
         return "/panel/homePanel.xhtml";
     }
 
+    @Override
+    public String ressourceUri() {
+        return "/welcome";
+    }
+
     @EventListener(LangageChangeEvent.class)
     public void refreshName() {
-        this.title = String.format("%s - %s",
+        this.titleCodeOrTitle = String.format("%s - %s",
                 langBean.msg("common.location.home"),
                 sessionSettingsBean.getSelectedInstitution().getName());
     }

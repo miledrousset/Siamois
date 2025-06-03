@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.web.reactive.context.AnnotationConfigReactiveWebApplicationContext;
 
 import java.sql.*;
 
@@ -50,7 +49,7 @@ class HistoryTriggerInitializerDiffblueTest {
         HikariDataSource dataSource = mock(HikariDataSource.class);
         when(dataSource.getConnection()).thenReturn(connection);
 
-        HistoryTriggerInitializer initializer = new HistoryTriggerInitializer(dataSource, new AnnotationConfigReactiveWebApplicationContext());
+        HistoryTriggerInitializer initializer = new HistoryTriggerInitializer(dataSource);
 
         // Act and Assert
         assertThrows(DatabaseDataInitException.class, initializer::initialize);
@@ -96,7 +95,7 @@ class HistoryTriggerInitializerDiffblueTest {
         HikariDataSource dataSource = mock(HikariDataSource.class);
         when(dataSource.getConnection()).thenReturn(connection);
 
-        HistoryTriggerInitializer initializer = new HistoryTriggerInitializer(dataSource, new AnnotationConfigReactiveWebApplicationContext());
+        HistoryTriggerInitializer initializer = new HistoryTriggerInitializer(dataSource);
 
         // Act and Assert
         assertThrows(DatabaseDataInitException.class, initializer::initialize);
@@ -125,8 +124,7 @@ class HistoryTriggerInitializerDiffblueTest {
     void testCreateSQLHistTrigger_thenCallsCreateStatement() throws SQLException {
         // Arrange
         HikariDataSource dataSource = mock(HikariDataSource.class);
-        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource,
-                new AnnotationConfigReactiveWebApplicationContext());
+        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource);
         ResultSet resultSet = mock(ResultSet.class);
         when(resultSet.getString(anyString())).thenReturn("String");
         when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
@@ -172,8 +170,7 @@ class HistoryTriggerInitializerDiffblueTest {
     void testCreateSQLHistTrigger_thenThrowSQLException() throws SQLException {
         // Arrange
         HikariDataSource dataSource = mock(HikariDataSource.class);
-        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource,
-                new AnnotationConfigReactiveWebApplicationContext());
+        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource);
         ResultSet resultSet = mock(ResultSet.class);
         when(resultSet.getString(anyString())).thenThrow(new SQLException());
         when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
@@ -211,8 +208,7 @@ class HistoryTriggerInitializerDiffblueTest {
     void testCreateSQLHistTrigger_thenThrowWrongTableNameException() throws SQLException {
         // Arrange
         HikariDataSource dataSource = mock(HikariDataSource.class);
-        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource,
-                new AnnotationConfigReactiveWebApplicationContext());
+        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource);
         ResultSet resultSet = mock(ResultSet.class);
         when(resultSet.next()).thenReturn(false).thenReturn(true).thenReturn(false);
         doNothing().when(resultSet).close();
@@ -249,8 +245,7 @@ class HistoryTriggerInitializerDiffblueTest {
     void testCreateHistoryTrigger_givenStatementExecuteReturnTrue_thenCallsClose() throws SQLException {
         // Arrange
         HikariDataSource dataSource = mock(HikariDataSource.class);
-        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource,
-                new AnnotationConfigReactiveWebApplicationContext());
+        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource);
         Statement statement = mock(Statement.class);
         when(statement.execute(anyString())).thenReturn(true);
         doNothing().when(statement).close();
@@ -280,8 +275,7 @@ class HistoryTriggerInitializerDiffblueTest {
     void testCreateHistoryTrigger_thenThrowWrongTableNameException() throws SQLException {
         // Arrange
         HikariDataSource dataSource = mock(HikariDataSource.class);
-        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource,
-                new AnnotationConfigReactiveWebApplicationContext());
+        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource);
         Statement statement = mock(Statement.class);
         when(statement.execute(anyString())).thenThrow(new WrongTableNameException("An error occurred"));
         Connection connection = mock(Connection.class);
@@ -309,8 +303,7 @@ class HistoryTriggerInitializerDiffblueTest {
     void testCreateHistoryFunction_givenStatementExecuteReturnTrue_thenCallsClose() throws SQLException {
         // Arrange
         HikariDataSource dataSource = mock(HikariDataSource.class);
-        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource,
-                new AnnotationConfigReactiveWebApplicationContext());
+        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource);
         Statement statement = mock(Statement.class);
         when(statement.execute(anyString())).thenReturn(true);
         doNothing().when(statement).close();
@@ -342,8 +335,7 @@ class HistoryTriggerInitializerDiffblueTest {
     void testCreateHistoryFunction_thenThrowWrongTableNameException() throws SQLException {
         // Arrange
         HikariDataSource dataSource = mock(HikariDataSource.class);
-        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource,
-                new AnnotationConfigReactiveWebApplicationContext());
+        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource);
         Statement statement = mock(Statement.class);
         when(statement.execute(anyString())).thenThrow(new WrongTableNameException("An error occurred"));
         Connection connection = mock(Connection.class);
@@ -371,8 +363,7 @@ class HistoryTriggerInitializerDiffblueTest {
     void testAddColumnNamesToLists_thenStringBuilderWithFooToStringIsFooStringString() throws SQLException {
         // Arrange
         HikariDataSource dataSource = mock(HikariDataSource.class);
-        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource,
-                new AnnotationConfigReactiveWebApplicationContext());
+        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource);
         ResultSet resultSet = mock(ResultSet.class);
         when(resultSet.getString(anyString())).thenReturn("String");
         when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
@@ -413,8 +404,7 @@ class HistoryTriggerInitializerDiffblueTest {
     void testAddColumnNamesToLists_thenThrowSQLException() throws SQLException {
         // Arrange
         HikariDataSource dataSource = mock(HikariDataSource.class);
-        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource,
-                new AnnotationConfigReactiveWebApplicationContext());
+        HistoryTriggerInitializer historyTriggerInitializer = new HistoryTriggerInitializer(dataSource);
         ResultSet resultSet = mock(ResultSet.class);
         when(resultSet.getString(anyString())).thenThrow(new SQLException());
         when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);

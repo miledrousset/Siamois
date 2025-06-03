@@ -100,7 +100,10 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
                 .value(langBean.msg(getBreadcrumbKey()))
                 .icon(getBreadcrumbIcon())
                 .build();
-        this.getBreadcrumb().getModel().getElements().add(item);
+
+        if (isBreadcrumbVisible()) {
+            this.getBreadcrumb().getModel().getElements().add(item);
+        }
 
         totalNumberOfUnits = countUnitsByInstitution();
         lazyDataModel = createLazyDataModel();

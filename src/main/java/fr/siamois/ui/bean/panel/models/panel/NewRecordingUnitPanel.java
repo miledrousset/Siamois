@@ -77,6 +77,10 @@ public class NewRecordingUnitPanel extends RecordingUnitPanelBase {
         return "/panel/newRecordingUnitPanel.xhtml";
     }
 
+    @Override
+    public String ressourceUri() {
+        return String.format( "/actionunit/%s/recordingunit/new", actionUnitId);
+    }
 
 
     void init() {

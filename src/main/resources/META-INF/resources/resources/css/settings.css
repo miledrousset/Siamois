@@ -210,3 +210,27 @@ a:hover {
 }
 
 
+.dialog-new-manager {
+    flex-direction: column;
+}
+
+.dialog-new-manager section:first-child {
+    background-color: var(--siamois-green-light-100);
+    padding: 3vh;
+}
+
+.newMemberDialog .ui-dialog-content {
+    padding: 0 !important;
+}
+
+.dialog-new-manager form {
+    display: flex;
+    flex-direction: column;
+}
+
+.dialog-new-manager .dialog-buttons {
+    display: flex;
+    justify-content: end;
+    gap: 1vw;
+    padding: 20px;
+}

@@ -53,6 +53,11 @@ public class NewSpatialUnitPanel extends AbstractPanel {
         return "/panel/newSpatialUnitPanel.xhtml";
     }
 
+    @Override
+    public String ressourceUri() {
+        return "/spatialunit/new";
+    }
+
     void init() {
         spatialUnit = new SpatialUnit();
     }

@@ -59,14 +59,14 @@ public class ArkRedirectionService {
         Optional<SpatialUnit> optSU = spatialUnitService.findByArk(ark);
 
         if (optSU.isPresent()){
-            currentBuilder.path("/spatial-unit")
+            currentBuilder.path("/spatialunit")
                     .queryParam("id", optSU.get().getId());
             return Optional.of(currentBuilder.build().toUri());
         }
 
         Optional<ActionUnit> optAU = actionUnitService.findByArk(ark);
         if (optAU.isPresent()){
-            currentBuilder.path("/action-unit")
+            currentBuilder.path("/actionunit")
                     .queryParam("id", optAU.get().getId());
             return Optional.of(currentBuilder.build().toUri());
         }

@@ -72,7 +72,7 @@ class ArkRedirectionServiceTest {
 
         assertThat(result).isPresent();
 
-        verify(builder2).path("/spatial-unit");
+        verify(builder2).path("/spatialunit");
         verify(builder2).queryParam("id", 1L);
     }
 
@@ -106,7 +106,7 @@ class ArkRedirectionServiceTest {
 
         assertThat(result).isPresent();
 
-        verify(builder2).path("/action-unit");
+        verify(builder2).path("/actionunit");
         verify(builder2).queryParam("id", 12L);
     }
 

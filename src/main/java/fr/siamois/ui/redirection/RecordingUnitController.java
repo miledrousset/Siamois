@@ -19,9 +19,15 @@ public class RecordingUnitController {
         this.flowBean = flowBean;
     }
 
-    @GetMapping("/recording-unit/{id}")
+    @GetMapping("/recordingunit/{id}")
     public String toRecordingUnit(@PathVariable Long id, Model model) {
         flowBean.addRecordingUnitPanel(id);
+        return "forward:/flow.xhtml";
+    }
+
+    @GetMapping("/actionunit/{id}/recordingunit/new")
+    public String newRecordingUnit(@PathVariable Long id) {
+        flowBean.addNewRecordingUnitPanel(id, 0);
         return "forward:/flow.xhtml";
     }
 

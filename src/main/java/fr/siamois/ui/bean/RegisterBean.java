@@ -17,7 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -68,7 +71,7 @@ public class RegisterBean {
         this.email = pendingPerson.getEmail();
         Set<PendingInstitutionInvite> institutions = pendingPersonService.findInstitutionsByPendingPerson(pendingPerson);
         for (PendingInstitutionInvite invite : institutions) {
-            institutionTeams.put(invite.getInstitution(), new HashSet<>());
+            institutionTeams.putIfAbsent(invite.getInstitution(), new HashSet<>());
             Set<PendingTeamInvite> teamInvites = pendingPersonService.findTeamsByPendingInstitutionInvite(invite);
             teamInvites.forEach(teamInvite ->
                     institutionTeams.get(teamInvite.getPendingInstitutionInvite().getInstitution()).add(teamInvite.getTeam()));
@@ -115,7 +118,6 @@ public class RegisterBean {
                 .filter(t -> !t.isDefaultTeam())
                 .map(Team::getName)
                 .collect(Collectors.toSet());
-
         return "[" + String.join(", ", teamsName) + "]";
     }
 

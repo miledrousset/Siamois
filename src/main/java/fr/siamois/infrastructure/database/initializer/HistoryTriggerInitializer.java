@@ -3,9 +3,7 @@ package fr.siamois.infrastructure.database.initializer;
 import com.zaxxer.hikari.HikariDataSource;
 import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
 import fr.siamois.domain.models.exceptions.database.WrongTableNameException;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -23,8 +21,6 @@ import java.util.List;
 public class HistoryTriggerInitializer implements DatabaseInitializer {
 
     private final HikariDataSource dataSource;
-    @Getter
-    private final ApplicationContext applicationContext;
 
     public static final List<String> TABLES_TO_STORE = List.of(
             "action_unit",
@@ -35,9 +31,8 @@ public class HistoryTriggerInitializer implements DatabaseInitializer {
             "specimen",
             "specimen_study");
 
-    public HistoryTriggerInitializer(HikariDataSource dataSource, ApplicationContext applicationContext) {
+    public HistoryTriggerInitializer(HikariDataSource dataSource) {
         this.dataSource = dataSource;
-        this.applicationContext = applicationContext;
     }
 
     /**
