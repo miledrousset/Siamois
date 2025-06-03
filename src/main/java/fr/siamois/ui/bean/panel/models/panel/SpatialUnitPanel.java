@@ -33,7 +33,6 @@ import fr.siamois.domain.utils.DocumentUtils;
 import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.bean.clone.SpatialUnitClone;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.utils.DataLoaderUtils;
@@ -41,7 +40,6 @@ import fr.siamois.ui.bean.panel.utils.SpatialUnitHelperService;
 import fr.siamois.ui.lazydatamodel.ActionUnitInSpatialUnitLazyDataModel;
 import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
 import fr.siamois.ui.lazydatamodel.SpatialUnitParentsLazyDataModel;
-import jakarta.annotation.PostConstruct;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Data;
@@ -107,7 +105,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private transient SpatialUnit spatialUnit;
     private Boolean hasUnsavedModifications ; // Did we modify the spatial unit?
     private int activeTabIndex ; // Keeping state of active tab
-    private SpatialUnitClone backupClone;
+    private SpatialUnit backupClone;
 
 
     private String spatialUnitErrorMessage;
@@ -156,6 +154,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private Concept nameConcept ;
     private Concept spatialUnitTypeConcept;
 
+    private static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-4";
 
 
 
@@ -288,7 +287,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         nameField.setIsSystemField(true);
         nameField.setLabel("spatialunit.field.name");
         col1.setField(nameField);
-        col1.setClassName("ui-g-12 ui-md-6 ui-lg-4");
+        col1.setClassName(COLUMN_CLASS_NAME);
 
         CustomCol col2 = new CustomCol();
         typeField = new CustomFieldSelectOneFromFieldCode();
@@ -296,7 +295,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         typeField.setIsSystemField(true);
         typeField.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
         col2.setField(typeField);
-        col2.setClassName("ui-g-12 ui-md-6 ui-lg-4");
+        col2.setClassName(COLUMN_CLASS_NAME);
 
         row1.setColumns(List.of(col1, col2));
         mainPanel.setRows(List.of(row1));
@@ -312,7 +311,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         // one cols
         CustomCol col3 = new CustomCol();
         col3.setField(typeField);
-        col3.setClassName("ui-g-12 ui-md-6 ui-lg-4");
+        col3.setClassName(COLUMN_CLASS_NAME);
         row2.setColumns(List.of(col3));
         mainOverviewPanel.setRows(List.of(row2));
         overviewLayout.add(mainOverviewPanel);
@@ -353,14 +352,13 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
             this.spatialUnit = spatialUnitService.findById(idunit);
             this.setTitleCodeOrTitle(spatialUnit.getName()); // Set panel title
 
-            backupClone = new SpatialUnitClone(spatialUnit);
+            backupClone = new SpatialUnit(spatialUnit);
 
             initForms();
 
             // Get direct parents and children counts
 
             // Fields for recording unit table
-            //availableFields = customFieldService.findAllFieldsBySpatialUnitId(idunit);
             selectedFields = new ArrayList<>();
 
             // Get all the CHILDREN of the spatial unit

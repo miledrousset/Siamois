@@ -21,6 +21,14 @@ import java.util.Set;
 @SQLRestriction("fk_parent_action_unit_id IS NULL")
 public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
 
+    public SpatialUnit (SpatialUnit spatialUnit) {
+        name = spatialUnit.getName();
+        ark = spatialUnit.getArk();
+        category = spatialUnit.getCategory();
+        geom = spatialUnit.getGeom();
+        validated = spatialUnit.getValidated();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "spatial_unit_id", nullable = false)
@@ -53,6 +61,10 @@ public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
 
     @ManyToMany(mappedBy = "spatialContext")
     private Set<ActionUnit> relatedActionUnitList = new HashSet<>();
+
+    public SpatialUnit() {
+
+    }
 
     @Override
     public String toString() {
