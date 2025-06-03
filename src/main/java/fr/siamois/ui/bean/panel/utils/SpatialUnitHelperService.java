@@ -38,7 +38,6 @@ public class SpatialUnitHelperService {
         log.trace("Restore order received");
         spatialUnitService.restore(history);
 
-        //PrimeFaces.current().executeScript("PF('restored-dlg').show()");
     }
 
 

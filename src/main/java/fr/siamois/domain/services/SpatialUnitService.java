@@ -44,7 +44,7 @@ public class SpatialUnitService implements ArkEntityService {
     private final ArkService arkService;
     private final InstitutionService institutionService;
 
-    public SpatialUnitService(SpatialUnitRepository spatialUnitRepository, ConceptService conceptService, ArkService arkService, InstitutionService institutionService, PersonService personService) {
+    public SpatialUnitService(SpatialUnitRepository spatialUnitRepository, ConceptService conceptService, ArkService arkService, InstitutionService institutionService) {
         this.spatialUnitRepository = spatialUnitRepository;
         this.conceptService = conceptService;
         this.arkService = arkService;
