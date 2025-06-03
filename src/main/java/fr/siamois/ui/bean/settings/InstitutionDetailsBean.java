@@ -4,7 +4,7 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.settings.components.OptionElement;
 import fr.siamois.ui.bean.settings.institution.InstitutionInfoSettingsBean;
-import fr.siamois.ui.bean.settings.institution.InstitutionManagerSettingsBean;
+import fr.siamois.ui.bean.settings.institution.InstitutionManagerListBean;
 import fr.siamois.ui.bean.settings.institution.InstitutionThesaurusSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,38 +24,52 @@ import java.util.List;
 public class InstitutionDetailsBean implements Serializable {
 
     private final InstitutionInfoSettingsBean institutionInfoSettingsBean;
-    private final InstitutionManagerSettingsBean institutionManagerSettingsBean;
+    private final InstitutionManagerListBean institutionManagerListBean;
     private final InstitutionThesaurusSettingsBean institutionThesaurusSettingsBean;
     private final LangBean langBean;
+    private final InstitutionActionManagerListBean institutionActionManagerListBean;
     private Institution institution;
     private transient List<OptionElement> elements;
 
     public InstitutionDetailsBean(InstitutionInfoSettingsBean institutionInfoSettingsBean,
-                                  InstitutionManagerSettingsBean institutionManagerSettingsBean,
+                                  InstitutionManagerListBean institutionManagerListBean,
                                   InstitutionThesaurusSettingsBean institutionThesaurusSettingsBean,
-                                  LangBean langBean) {
+                                  LangBean langBean, InstitutionActionManagerListBean institutionActionManagerListBean) {
         this.institutionInfoSettingsBean = institutionInfoSettingsBean;
-        this.institutionManagerSettingsBean = institutionManagerSettingsBean;
+        this.institutionManagerListBean = institutionManagerListBean;
         this.institutionThesaurusSettingsBean = institutionThesaurusSettingsBean;
         this.langBean = langBean;
+        this.institutionActionManagerListBean = institutionActionManagerListBean;
     }
 
     public void addInstitutionManagementElements() {
         elements = new ArrayList<>();
+
         elements.add(new OptionElement("bi bi-building", langBean.msg("organisationSettings.titles.settings"),
                 langBean.msg("organisationSettings.descriptions.settings"), () -> {
             institutionInfoSettingsBean.init(institution);
             return "/pages/settings/institution/institutionInfoSettings.xhtml?faces-redirect=true";
         }));
+
         elements.add(new OptionElement("bi bi-person-circle", langBean.msg("organisationSettings.titles.managers"),
                 langBean.msg("organisationSettings.descriptions.managers", institution.getName()), () -> {
-            institutionManagerSettingsBean.init(institution);
+            institutionManagerListBean.init(institution);
             return "/pages/settings/institution/institutionManagerSettings.xhtml?faces-redirect=true";
         }));
+
+        // TODO: Add lang support for "Gestionnaires d'actions"
+        elements.add(new OptionElement("bi bi-person-circle",
+                langBean.msg("organisationSettings.titles.actionManagers"),
+                "Gérer les gestionnaires d'actions", () -> {
+            institutionActionManagerListBean.init(institution);
+            return "/pages/settings/institution/institutionActionManagerSettings.xhtml?faces-redirect=true";
+        }));
+
         elements.add(new OptionElement("bi bi-people", langBean.msg("organisationSettings.titles.teams"),
                 langBean.msg("organisationSettings.descriptions.teams", institution.getName()), () -> {
             return "";
         }));
+
         elements.add(new OptionElement("bi bi-table", langBean.msg("common.label.thesaurus"),
                 langBean.msg("organisationSettings.descriptions.thesaurus"), () -> {
             institutionThesaurusSettingsBean.init(institution);

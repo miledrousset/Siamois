@@ -18,7 +18,6 @@ import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
-import java.time.OffsetDateTime;
 import java.util.*;
 
 import static fr.siamois.domain.utils.MessageUtils.displayInfoMessage;
@@ -29,7 +28,7 @@ import static fr.siamois.domain.utils.MessageUtils.displayWarnMessage;
 @SessionScoped
 @Getter
 @Setter
-public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
+public class InstitutionManagerListBean implements SettingsDatatableBean {
 
     private final transient InstitutionService institutionService;
     private final transient PersonService personService;
@@ -44,12 +43,12 @@ public class InstitutionManagerSettingsBean implements SettingsDatatableBean {
     private transient Set<Person> refMembers;
     private String searchInput;
 
-    public InstitutionManagerSettingsBean(InstitutionService institutionService,
-                                          PersonService personService,
-                                          UserDialogBean userDialogBean,
-                                          LangBean langBean,
-                                          PendingPersonService pendingPersonService,
-                                          SessionSettingsBean sessionSettingsBean) {
+    public InstitutionManagerListBean(InstitutionService institutionService,
+                                      PersonService personService,
+                                      UserDialogBean userDialogBean,
+                                      LangBean langBean,
+                                      PendingPersonService pendingPersonService,
+                                      SessionSettingsBean sessionSettingsBean) {
         this.institutionService = institutionService;
         this.personService = personService;
         this.userDialogBean = userDialogBean;

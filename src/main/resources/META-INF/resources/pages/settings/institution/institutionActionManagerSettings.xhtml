@@ -7,7 +7,6 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form"
 >
-
     <ui:define name="head">
         <h:outputStylesheet library="css" name="settings.css"/>
     </ui:define>
@@ -17,16 +16,16 @@
             <form:csrfform formId="breadCrumbForm" styleClass="breadCrumpForm">
                 <p:breadCrumb homeDisplay="false">
                     <p:menuitem value="Organisations" action="#{institutionDetailsBean.goToInstitutionList()}"/>
-                    <p:menuitem value="#{institutionManagerListBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
-                    <p:menuitem value="#{langBean.msg('organisationSettings.titles.managers')}"/>
+                    <p:menuitem value="#{institutionActionManagerListBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
+                    <p:menuitem value="#{langBean.msg('organisationSettings.titles.actionManagers')}"/>
                 </p:breadCrumb>
             </form:csrfform>
             <settings:datatable
-                    title="#{langBean.msg('organisationSettings.managers.title', institutionManagerListBean.institution.name)}"
-                    filterAction="#{institutionManagerListBean.filter()}"
+                    title="#{langBean.msg('organisationSettings.managers.title', institutionActionManagerListBean.institution.name)}"
+                    filterAction="#{institutionActionManagerListBean.filter()}"
                     formId="institutionManagerForm"
-                    addAction="#{institutionManagerListBean.add()}"
-                    searchInputTextValue="#{institutionManagerListBean.searchInput}"
+                    addAction="#{institutionActionManagerListBean.add()}"
+                    searchInputTextValue="#{institutionActionManagerListBean.searchInput}"
                     description="#{langBean.msg('organisationSettings.managers.description')}"
                     renderCreateButton="true"
                     createButtonLabel="#{langBean.msg('organisationSettings.managers.add')}"
@@ -45,9 +44,6 @@
                             <strong>#{member.displayName()}</strong>
                             <p>#{member.email}</p>
                         </div>
-                    </p:column>
-                    <p:column headerText="#{langBean.msg('common.label.role')}">
-                        <p:outputLabel value="#{institutionManagerListBean.roles.get(member)}"/>
                     </p:column>
                     <p:column headerText="#{langBean.msg('organisationSettings.managers.adddate')}">
                         <p:outputLabel value="#{institutionManagerListBean.addDateOf(member)}"/>
