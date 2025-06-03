@@ -6,6 +6,7 @@ import fr.siamois.domain.models.form.customfield.CustomFieldInteger;
 import fr.siamois.domain.models.form.customfield.CustomFieldSelectMultiple;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerInteger;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectMultiple;
+import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
@@ -146,11 +147,14 @@ public abstract class RecordingUnitPanelBase extends AbstractPanel{
 
     public void initFormResponseAnswers() {
 
+
+
         if (recordingUnit.getFormResponse().getForm() != null) {
-    // todo; fix;
-//            recordingUnit.getFormResponse().getForm().getLayout().stream()
-//                    .flatMap(section -> section.getFields().stream()) // Flatten the nested lists
-//                    .forEach(this::initializeAnswer); // Process each field
+            recordingUnit.getFormResponse().getForm().getLayout().stream()
+                    .flatMap(section -> section.getRows().stream())      // Stream rows in each section
+                    .flatMap(row -> row.getColumns().stream())           // Stream columns in each row
+                    .map(CustomCol::getField)                    // Extract the field from each column
+                    .forEach(this::initializeAnswer);                    // Process each field
         }
 
 

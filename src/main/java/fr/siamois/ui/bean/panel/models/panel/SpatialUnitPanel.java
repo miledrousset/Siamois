@@ -197,8 +197,8 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
         int index = activeTabIndex;
         List<Tab> tabs = tabView.getChildren().stream()
-                .filter(child -> child instanceof Tab)
-                .map(child -> (Tab) child)
+                .filter(Tab.class::isInstance)
+                .map(Tab.class::cast)
                 .toList();
 
         for (int i = 0; i < tabs.size(); i++) {
