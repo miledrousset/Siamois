@@ -29,4 +29,8 @@ public class PendingInstitutionInvite implements Serializable {
     @Column(name = "is_manager")
     private boolean manager = false;
 
+    @DefaultValue("false")
+    @Column(name = "is_action_manager")
+    private boolean actionManager = false;
+
 }

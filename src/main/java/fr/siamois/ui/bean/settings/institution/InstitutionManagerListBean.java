@@ -139,7 +139,7 @@ public class InstitutionManagerListBean implements SettingsDatatableBean {
         }
 
         PendingPerson pendingPerson = pendingPersonService.createOrGetPendingPerson(userMailRole.getEmail());
-        if (pendingPersonService.sendPendingInstitutionInvite(pendingPerson, institution, true, sessionSettingsBean.getLanguageCode())) {
+        if (pendingPersonService.sendPendingManagerInstitutionInvite(pendingPerson, institution, true, sessionSettingsBean.getLanguageCode())) {
             displayInfoMessage(langBean, "organisationSettings.action.sendInvite", pendingPerson.getEmail());
         } else {
             displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", pendingPerson.getEmail());

@@ -3,7 +3,6 @@ package fr.siamois.domain.services.auth;
 import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository;
@@ -103,17 +102,6 @@ public class PendingPersonService {
     }
 
     /**
-     * Send an invitation email to the pending person.
-     * @param pendingPerson the pending person
-     * @param institution the institution
-     * @param mailLang the language of the email
-     * @return true if the email was sent, false if the invitation already exists
-     */
-    public boolean sendPendingInstitutionInvite(PendingPerson pendingPerson, Institution institution, String mailLang) {
-        return sendPendingInstitutionInvite(pendingPerson, institution, false, mailLang);
-    }
-
-    /**
      * Send an invitation email to the pending person with the option to set them as a manager.
      * @param pendingPerson the pending person
      * @param institution the institution
@@ -121,35 +109,59 @@ public class PendingPersonService {
      * @param mailLang the language of the email
      * @return true if the email was sent, false if the invitation already exists
      */
-    public boolean sendPendingInstitutionInvite(PendingPerson pendingPerson, Institution institution, boolean isManager, String mailLang) {
+    public boolean sendPendingManagerInstitutionInvite(PendingPerson pendingPerson, Institution institution, boolean isManager, String mailLang) {
         Optional<PendingInstitutionInvite> pendingInstitutionInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson);
         if (pendingInstitutionInvite.isPresent()) {
             PendingInstitutionInvite invite = pendingInstitutionInvite.get();
             invite.setManager(isManager);
             pendingInstitutionInviteRepository.save(invite);
             return false;
-        } else {
-            PendingInstitutionInvite invite = new PendingInstitutionInvite();
-            invite.setPendingPerson(pendingPerson);
-            invite.setInstitution(institution);
-            invite.setId(-1L);
-            invite.setManager(isManager);
-            invite = pendingInstitutionInviteRepository.save(invite);
-
-            Locale locale = new Locale(mailLang);
-            String institutionName = institution.getName();
-            String invitationLink = invitationLink(pendingPerson);
-            String expirationDate = DateUtils.formatOffsetDateTime(pendingPerson.getPendingInvitationExpirationDate());
-
-            emailManager.sendEmail(pendingPerson.getEmail(),
-                    langService.msg("mail.invitation.subject", locale, institutionName),
-                    langService.msg("mail.invitation.body", locale, institutionName, invitationLink, expirationDate, expirationDate)
-            );
-
-            return true;
         }
+        sendEmail(pendingPerson, institution, mailLang, isManager, false);
+        return true;
     }
 
+    /**
+     * Send an action manager invitation email to the pending person.
+     * @param pendingPerson the pending person
+     * @param institution the institution
+     * @param mailLang the language of the email
+     * @return true if the email was sent, false if the invitation already exists
+     */
+    public boolean sendPendingActionManagerInstitutionInvite(PendingPerson pendingPerson, Institution institution, String mailLang) {
+        Optional<PendingInstitutionInvite> optInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson);
+        if (optInvite.isPresent()) {
+            return false;
+        }
+        sendEmail(pendingPerson, institution, mailLang, false, true);
+        return true;
+    }
+
+    private void sendEmail(PendingPerson pendingPerson, Institution institution, String mailLang, boolean isManager, boolean isActionManager) {
+        PendingInstitutionInvite invite = new PendingInstitutionInvite();
+        invite.setPendingPerson(pendingPerson);
+        invite.setInstitution(institution);
+        invite.setId(-1L);
+        invite.setManager(isManager);
+        invite.setActionManager(isActionManager);
+        pendingInstitutionInviteRepository.save(invite);
+
+        Locale locale = new Locale(mailLang);
+        String institutionName = institution.getName();
+        String invitationLink = invitationLink(pendingPerson);
+        String expirationDate = DateUtils.formatOffsetDateTime(pendingPerson.getPendingInvitationExpirationDate());
+
+        emailManager.sendEmail(pendingPerson.getEmail(),
+                langService.msg("mail.invitation.subject", locale, institutionName),
+                langService.msg("mail.invitation.body", locale, institutionName, invitationLink, expirationDate, expirationDate)
+        );
+    }
+
+
+    /**
+     * Delete a pending person from the database.
+     * @param pendingPerson the pending person to delete
+     */
     public void delete(PendingPerson pendingPerson) {
         pendingPersonRepository.delete(pendingPerson);
     }
@@ -158,29 +170,8 @@ public class PendingPersonService {
         return pendingPersonRepository.findByRegisterToken(token);
     }
 
-    public PendingInstitutionInvite createOrGetInstitutionInviteOf(PendingPerson pendingPerson, Institution institution, boolean isManager) {
-        Optional<PendingInstitutionInvite> pendingInstitutionInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson);
-        if (pendingInstitutionInvite.isPresent()) {
-            return pendingInstitutionInvite.get();
-        } else {
-            PendingInstitutionInvite invite = new PendingInstitutionInvite();
-            invite.setPendingPerson(pendingPerson);
-            invite.setInstitution(institution);
-            invite.setId(-1L);
-            invite.setManager(isManager);
-            return pendingInstitutionInviteRepository.save(invite);
-        }
-    }
-
-    public PendingInstitutionInvite createOrGetInstitutionInviteOf(PendingPerson pendingPerson, Institution institution) {
-        return createOrGetInstitutionInviteOf(pendingPerson, institution, false);
-    }
-
     public Set<PendingInstitutionInvite> findInstitutionsByPendingPerson(PendingPerson pendingPerson) {
         return pendingInstitutionInviteRepository.findAllByPendingPerson(pendingPerson);
     }
 
-    public void deleteInstitutionInvite(PendingInstitutionInvite invite) {
-        pendingInstitutionInviteRepository.delete(invite);
-    }
 }

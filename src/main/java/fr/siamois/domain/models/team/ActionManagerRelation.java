@@ -3,12 +3,14 @@ package fr.siamois.domain.models.team;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.institution.Institution;
 import jakarta.persistence.*;
+import jakarta.ws.rs.DefaultValue;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "action_manager")
@@ -28,6 +30,10 @@ public class ActionManagerRelation {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_person_id", nullable = false)
     private Person person;
+
+    @DefaultValue("NOW()")
+    @Column(name = "added_at", nullable = false, updatable = false)
+    private OffsetDateTime addedAt = OffsetDateTime.now();
 
     public ActionManagerRelation(Institution institution, Person person) {
         this.id = new ActionManagerId(institution, person);
