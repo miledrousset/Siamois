@@ -20,17 +20,16 @@ import java.util.Optional;
 public interface SpatialUnitRepository extends JpaRepository<SpatialUnit, Long> {
 
     @Query(
-            nativeQuery = true,
-            value = "SELECT su.* FROM spatial_unit su JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_child_id WHERE suh.fk_parent_id = :spatialUnitId"
+            value = "SELECT COUNT(*) FROM spatial_hierarchy WHERE fk_parent_id = :parentId",
+            nativeQuery = true
     )
-    List<SpatialUnit> countAllChildOfSpatialUnit(@Param("spatialUnitId") Long spatialUnitId);
+    long countChildrenByParentId(@Param("parentId") Long parentId);
 
     @Query(
-            nativeQuery = true,
-            value = "SELECT su.* FROM spatial_unit su JOIN spatial_hierarchy suh ON su.spatial_unit_id = suh.fk_parent_id WHERE suh.fk_child_id = :spatialUnitId"
+            value = "SELECT COUNT(*) FROM spatial_hierarchy WHERE fk_child_id = :childId",
+            nativeQuery = true
     )
-    List<SpatialUnit> countAllParentsOfSpatialUnit(@Param("spatialUnitId") Long spatialUnitId);
-
+    long countParentsByChildId(@Param("childId") Long childId);
 
 
 

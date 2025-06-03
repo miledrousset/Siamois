@@ -28,7 +28,7 @@
                     value="Restaurer"
                     immediate="true"
                     action="#{panelModel.restore(version)}"
-                    oncomplete="PF('restored-dlg').show()"/>
+                    update="panel-#{panelIndex}"/>
         </p:column>
     </p:dataTable>
 

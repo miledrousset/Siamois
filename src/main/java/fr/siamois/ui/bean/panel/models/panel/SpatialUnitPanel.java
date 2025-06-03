@@ -109,6 +109,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private int activeTabIndex ; // Keeping state of active tab
     private SpatialUnitClone backupClone;
 
+
     private String spatialUnitErrorMessage;
     private transient List<SpatialUnit> spatialUnitList;
     private transient List<SpatialUnit> spatialUnitParentsList;
@@ -127,15 +128,16 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private transient List<CustomField> selectedFields;
 
     // lazy model for children
-    private Integer totalChildrenCount = 0;
+    private long totalChildrenCount = 0;
     private List<Concept> selectedCategoriesChildren;
     private SpatialUnitChildrenLazyDataModel lazyDataModelChildren ;
     // lazy model for parents
-    private Integer totalParentsCount = 0;
+    private long totalParentsCount = 0;
     private List<Concept> selectedCategoriesParents;
     private SpatialUnitParentsLazyDataModel lazyDataModelParents ;
     // Lazy model for actions in the spatial unit
     private ActionUnitInSpatialUnitLazyDataModel actionLazyDataModel;
+    private long totalActionUnitCount;
 
 
     private String barModel;
@@ -229,7 +231,6 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     public void setFieldConceptAnswerHasBeenModified(AjaxBehaviorEvent event) {
         UIComponent component = event.getComponent();
         CustomField field = (CustomField) component.getAttributes().get("field");
-        spatialUnit.setName("updated");
 
         formResponse.getAnswers().get(field).setHasBeenModified(true);
         hasUnsavedModifications = true;
@@ -263,6 +264,67 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
     }
 
+    public void initForms() {
+
+        // Get from from DB in futur iteration
+
+        // Init details tab form
+        layout = new ArrayList<>();
+        CustomFormPanel mainPanel = new CustomFormPanel();
+        mainPanel.setIsSystemPanel(true);
+        mainPanel.setName("common.header.general");
+        // One row
+        CustomRow row1 = new CustomRow();
+        // Two cols
+
+        CustomCol col1 = new CustomCol();
+        nameField = new CustomFieldText();
+        nameField.setIsSystemField(true);
+        nameField.setLabel("spatialunit.field.name");
+        col1.setField(nameField);
+        col1.setClassName("ui-g-12 ui-md-6 ui-lg-4");
+
+        CustomCol col2 = new CustomCol();
+        typeField = new CustomFieldSelectOneFromFieldCode();
+        typeField.setLabel("spatialunit.field.type");
+        typeField.setIsSystemField(true);
+        typeField.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
+        col2.setField(typeField);
+        col2.setClassName("ui-g-12 ui-md-6 ui-lg-4");
+
+        row1.setColumns(List.of(col1, col2));
+        mainPanel.setRows(List.of(row1));
+        layout.add(mainPanel);
+
+        // init overveiw tab form
+        overviewLayout = new ArrayList<>();
+        CustomFormPanel mainOverviewPanel = new CustomFormPanel();
+        mainOverviewPanel.setIsSystemPanel(true);
+        mainOverviewPanel.setName("common.header.general");
+        // One row
+        CustomRow row2 = new CustomRow();
+        // one cols
+        CustomCol col3 = new CustomCol();
+        col3.setField(typeField);
+        col3.setClassName("ui-g-12 ui-md-6 ui-lg-4");
+        row2.setColumns(List.of(col3));
+        mainOverviewPanel.setRows(List.of(row2));
+        overviewLayout.add(mainOverviewPanel);
+
+        // Init form answers
+        formResponse = new CustomFormResponse();
+        Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
+        CustomFieldAnswerText nameAnswer = new CustomFieldAnswerText();
+        CustomFieldAnswerSelectOneFromFieldCode typeAnswer = new CustomFieldAnswerSelectOneFromFieldCode();
+        nameAnswer.setValue(spatialUnit.getName());
+        nameAnswer.setHasBeenModified(false);
+        answers.put(nameField, nameAnswer);
+        typeAnswer.setValue(spatialUnit.getCategory());
+        typeAnswer.setHasBeenModified(false);
+        answers.put(typeField, typeAnswer);
+        formResponse.setAnswers(answers);
+    }
+
     public void refreshUnit() {
 
         hasUnsavedModifications = false;
@@ -284,59 +346,11 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
             this.spatialUnit = spatialUnitService.findById(idunit);
 
-            // Init details tab form
-            layout = new ArrayList<>();
-            CustomFormPanel mainPanel = new CustomFormPanel();
-            mainPanel.setName("Informations générales");
-            // One row
-            CustomRow row1 = new CustomRow();
-            // Two cols
-
-            CustomCol col1 = new CustomCol();
-            nameField = new CustomFieldText();
-            nameField.setLabel("Nom");
-            col1.setField(nameField);
-            col1.setClassName("ui-g-12 ui-md-6 ui-lg-4");
-
-            CustomCol col2 = new CustomCol();
-            typeField = new CustomFieldSelectOneFromFieldCode();
-            typeField.setLabel("Type");
-            typeField.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
-            col2.setField(typeField);
-            col2.setClassName("ui-g-12 ui-md-6 ui-lg-4");
-
-            row1.setColumns(List.of(col1, col2));
-            mainPanel.setRows(List.of(row1));
-            layout.add(mainPanel);
-
-            // init overveiw tab form
-            overviewLayout = new ArrayList<>();
-            CustomFormPanel mainOverviewPanel = new CustomFormPanel();
-            mainOverviewPanel.setName("Informations générales");
-            // One row
-            CustomRow row2 = new CustomRow();
-            // one cols
-            CustomCol col3 = new CustomCol();
-            col3.setField(typeField);
-            col3.setClassName("ui-g-12 ui-md-6 ui-lg-4");
-            row2.setColumns(List.of(col3));
-            mainOverviewPanel.setRows(List.of(row2));
-            overviewLayout.add(mainOverviewPanel);
-
-            // Init form answers
-            formResponse = new CustomFormResponse();
-            Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
-            CustomFieldAnswerText nameAnswer = new CustomFieldAnswerText();
-            CustomFieldAnswerSelectOneFromFieldCode typeAnswer = new CustomFieldAnswerSelectOneFromFieldCode();
-            nameAnswer.setValue(spatialUnit.getName());
-            nameAnswer.setHasBeenModified(false);
-            answers.put(nameField, nameAnswer);
-            typeAnswer.setValue(spatialUnit.getCategory());
-            typeAnswer.setHasBeenModified(false);
-            answers.put(typeField, typeAnswer);
-            formResponse.setAnswers(answers);
-
             backupClone = new SpatialUnitClone(spatialUnit);
+
+            initForms();
+
+            // Get direct parents and children counts
 
             // Fields for recording unit table
             //availableFields = customFieldService.findAllFieldsBySpatialUnitId(idunit);
@@ -349,7 +363,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
                     langBean,
                     spatialUnit
             );
-            totalChildrenCount = lazyDataModelChildren.getRowCount();
+            totalChildrenCount = spatialUnitService.countChildrenByParentId(spatialUnit.getId());
 
             // Get all the Parents of the spatial unit
             selectedCategoriesParents = new ArrayList<>();
@@ -358,7 +372,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
                     langBean,
                     spatialUnit
             );
-            totalParentsCount = lazyDataModelParents.getRowCount();
+            totalParentsCount = spatialUnitService.countParentsByChildId(spatialUnit.getId());
 
             // Action in spatial unit lazy model
             actionLazyDataModel = new ActionUnitInSpatialUnitLazyDataModel(
@@ -367,6 +381,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
                     langBean,
                     spatialUnit
             );
+            totalActionUnitCount = actionUnitService.countBySpatialContext(spatialUnit);
 
 
         } catch (RuntimeException e) {
@@ -398,7 +413,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         spatialUnit.setArk(backupClone.getArk());
         spatialUnit.setCategory(backupClone.getCategory());
         hasUnsavedModifications = false;
-        // todo: reinit form
+        initForms();
     }
 
 
@@ -406,7 +421,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
         createBarModel();
 
-        activeTabIndex = 1;
+        activeTabIndex = 0;
 
         systemTheso = new Vocabulary();
         systemTheso.setBaseUri("https://siamois.fr");
@@ -443,6 +458,9 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
     public void restore(SpatialUnitHist history) {
         spatialUnitHelperService.restore(history);
+        // refresh panel
+        init();
+        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", history.getName());
     }
 
     public String formatDate(OffsetDateTime offsetDateTime) {
@@ -497,7 +515,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
         documents.add(created);
         PrimeFaces.current().executeScript("PF('newDocumentDiag').hide()");
-        PrimeFaces.current().ajax().update("spatialUnitFormTabs:suDocumentsTab");
+        PrimeFaces.current().ajax().update("spatialUnitForm");
     }
 
     public boolean contentIsImage(String mimeType) {
@@ -509,7 +527,12 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         log.trace("initDialog");
         documentCreationBean.init();
         documentCreationBean.setActionOnSave(this::saveDocument);
+
         PrimeFaces.current().executeScript("PF('newDocumentDiag').show()");
+    }
+
+    public Boolean isHierarchyTabEmpty () {
+        return (totalChildrenCount + totalParentsCount) == 0;
     }
 
     public void save(Boolean validated) {

@@ -2,6 +2,8 @@ package fr.siamois.ui.bean.field;
 
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
@@ -165,5 +167,18 @@ public class SpatialUnitFieldBean implements Serializable {
         }
     }
 
+    public String resolveCustomFieldLabel(CustomField f) {
+        if(Boolean.TRUE.equals(f.getIsSystemField())) {
+            return langBean.msg(f.getLabel());
+        }
+        return f.getLabel();
+    }
 
+
+    public String resolvePanelLabel(CustomFormPanel p) {
+        if(Boolean.TRUE.equals(p.getIsSystemPanel())) {
+            return langBean.msg(p.getName());
+        }
+        return p.getName();
+    }
 }

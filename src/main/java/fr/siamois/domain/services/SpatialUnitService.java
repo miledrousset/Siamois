@@ -212,4 +212,12 @@ public class SpatialUnitService implements ArkEntityService {
         }
         return result;
     }
+
+    public long countChildrenByParentId(Long id) {
+        return spatialUnitRepository.countChildrenByParentId(id);
+    }
+
+    public long countParentsByChildId(Long id) {
+        return spatialUnitRepository.countParentsByChildId(id);
+    }
 }

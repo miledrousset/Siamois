@@ -13,7 +13,7 @@
     <!--@elvariable id="panelId" type="String" -->
 
     <c:forEach items="#{layout}" var="customFormPanel" varStatus="status">
-        <p:panel header="#{customFormPanel.name}" id="customFormPanel-#{prefix}-#{status.index}"
+        <p:panel header="#{spatialUnitFieldBean.resolvePanelLabel(customFormPanel)}" id="customFormPanel-#{prefix}-#{status.index}"
                  class="sia-form-panel"
                  toggleable="true">
 
@@ -28,14 +28,14 @@
 
                             <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
                                 <!-- Text -->
-                                <sharedInput:panelField title="#{col.field.label}"
+                                <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
                                                         rendered="#{col.field['class'].simpleName eq 'CustomFieldText'}">
 
                                     <siaInplace:text
                                             panelModel="#{panelModel}"
                                             field="#{col.field}"
                                             hasBeenModified="#{panelModel.formResponse.answers.get(col.field).hasBeenModified}"
-                                            value="#{panelModel.formResponse.answers.get(col.field).value}"
+                                            answer="#{panelModel.formResponse.answers.get(col.field)}"
                                             mode="#{readOnly ? 'READ' : flowBean.getInPlaceFieldMode()}"
                                             updateTargetsOnBlur="#{panelId}"
                                     >
@@ -44,7 +44,7 @@
                                 </sharedInput:panelField>
 
                                 <!-- Select one from field code -->
-                                <sharedInput:panelField title="Type" isTheso="true"
+                                <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}" isTheso="true"
                                                         rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneFromFieldCode'}">
                                     <siaInplace:concept
                                             hasBeenModified="#{panelModel.formResponse.answers.get(col.field).hasBeenModified}"
@@ -52,7 +52,7 @@
                                             mode="#{readOnly ? 'READ' : flowBean.getInPlaceFieldMode()}"
                                             panelModel="#{panelModel}"
                                             updateTargetsOnBlur="#{panelId}"
-                                            selectedConcept="#{panelModel.formResponse.answers.get(col.field).value}"/>
+                                            answer="#{panelModel.formResponse.answers.get(col.field)}"/>
                                 </sharedInput:panelField>
 
                             </p:column>

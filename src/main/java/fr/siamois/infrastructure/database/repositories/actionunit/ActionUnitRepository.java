@@ -23,6 +23,12 @@ public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long> {
 
     List<ActionUnit> findAllByArkIsNullAndCreatedByInstitution(@NotNull Institution createdByInstitution);
 
+    @Query(
+            value = "SELECT COUNT(*) FROM action_unit_spatial_context WHERE fk_spatial_unit_id = :spatialUnitId",
+            nativeQuery = true
+    )
+    long countBySpatialContext(@Param("spatialUnitId") Long spatialUnitId);
+
     long countByCreatedByInstitution(Institution institution);
 
     @Query(

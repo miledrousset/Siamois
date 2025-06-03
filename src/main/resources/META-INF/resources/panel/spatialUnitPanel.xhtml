@@ -24,26 +24,27 @@
                 <p:ajax event="tabChange" listener="#{panelModel.onTabChange}"/>
 
                 <!-- Overview tab -->
-                <p:tab title="Aperçu">
+                <p:tab id="overviewTab">
 
                     <f:facet name="title">
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value="Aperçu"/>
+                            <ui:param name="title" value='#{langBean.msg("panel.tab.overview")}'/>
                             <ui:param name="icon" value="bi bi-eye"/>
                         </ui:include>
                     </f:facet>
 
                     <ui:include src="/panel/spatialunit/tab/overviewTab.xhtml">
                         <ui:param name="panelModel" value="#{panelModel}"/>
+                        <ui:param name="panelIndex" value="#{panelIndex}"/>
                     </ui:include>
 
                 </p:tab>
 
-                <p:tab title="Détails" id="detailsTab">
+                <p:tab id="detailsTab">
                     <!-- Common fields -->
                     <f:facet name="title">
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value="Details"/>
+                            <ui:param name="title" value='#{langBean.msg("panel.tab.details")}'/>
                             <ui:param name="icon" value="bi bi-info-circle"/>
                         </ui:include>
                     </f:facet>
@@ -60,7 +61,8 @@
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
                             <ui:param name="title" value="Hierarchie"/>
                             <ui:param name="icon" value="bi bi-geo-alt"/>
-                            <ui:param name="emptyTab" value="true"/>
+
+                            <ui:param name="emptyTab" value="#{panelModel.isHierarchyTabEmpty()}"/>
                             <ui:param name="validated" value="#{panelModel.spatialUnit.validated}"/>
                         </ui:include>
 
@@ -77,7 +79,8 @@
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
                             <ui:param name="title" value="Actions"/>
                             <ui:param name="icon" value="bi bi-arrow-down-square"/>
-                            <ui:param name="validated" value="true"/>
+                            <ui:param name="emptyTab" value="#{panelModel.totalActionUnitCount == 0}"/>
+                            <ui:param name="validated" value="#{panelModel.spatialUnit.validated}"/>
                         </ui:include>
                     </f:facet>
 
@@ -92,7 +95,8 @@
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
                             <ui:param name="title" value="Enregistrements"/>
                             <ui:param name="icon" value="bi bi-pencil-square"/>
-                            <ui:param name="validated" value="true"/>
+                            <ui:param name="emptyTab" value="true"/>
+                            <ui:param name="validated" value="#{panelModel.spatialUnit.validated}"/>
                         </ui:include>
                     </f:facet>
 
@@ -105,7 +109,8 @@
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
                             <ui:param name="title" value="Prelevements"/>
                             <ui:param name="icon" value="bi bi-box2"/>
-                            <ui:param name="validated" value="true"/>
+                            <ui:param name="emptyTab" value="true"/>
+                            <ui:param name="validated" value="#{panelModel.spatialUnit.validated}"/>
                         </ui:include>
                     </f:facet>
 
@@ -114,13 +119,13 @@
                 </p:tab>
 
 
-                <p:tab title="Documents">
+                <p:tab title="Documents" id="documentTab">
 
                     <f:facet name="title">
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
                             <ui:param name="title" value="Documents"/>
                             <ui:param name="icon" value="bi bi-paperclip"/>
-                            <ui:param name="emptyTab" value="true"/>
+                            <ui:param name="emptyTab" value="#{panelModel.documents.size() == 0}"/>
                             <ui:param name="validated" value="#{panelModel.spatialUnit.validated}"/>
                         </ui:include>
                     </f:facet>
@@ -139,13 +144,9 @@
                         </ui:include>
                     </f:facet>
 
-                    🚧 En cours
-
-
                     <ui:include src="/panel/spatialunit/tab/versionTab.xhtml">
                         <ui:param name="panelModel" value="#{panelModel}"/>
                     </ui:include>
-
 
                 </p:tab>
 

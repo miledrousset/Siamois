@@ -58,6 +58,7 @@ public class DocumentCreationBean implements Serializable {
     private Concept parentScale = null;
     private Concept parentType = null;
     private transient UploadedFile docFile;
+    private String panelIdToUpdate ;
 
     public DocumentCreationBean(SessionSettingsBean sessionSettingsBean, DocumentService documentService, FieldConfigurationService fieldConfigurationService, LangBean langBean, ServletContext servletContext, ConceptService conceptService, ArkService arkService) {
         this.sessionSettingsBean = sessionSettingsBean;
