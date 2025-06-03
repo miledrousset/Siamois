@@ -12,6 +12,7 @@ import fr.siamois.infrastructure.database.repositories.settings.InstitutionSetti
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -30,6 +31,7 @@ class InstitutionServiceTest {
     @Mock private PersonRepository personRepository;
     @Mock private InstitutionSettingsRepository institutionSettingsRepository;
 
+    @InjectMocks
     private InstitutionService institutionService;
 
     private Institution institution1, institution2;
@@ -37,8 +39,6 @@ class InstitutionServiceTest {
 
     @BeforeEach
     void setUp() {
-        institutionService = new InstitutionService(institutionRepository, personRepository, institutionSettingsRepository);
-
         manager = new Person();
         manager.setId(1L);
         manager.setUsername("Username");
