@@ -69,6 +69,7 @@ class SpatialUnitServiceTest {
                 any(Long.class),
                 any(String.class),
                 any(Long[].class),
+                any(Long[].class),
                 any(String.class),
                 any(String.class),
                 any(Pageable.class)
@@ -76,6 +77,7 @@ class SpatialUnitServiceTest {
         lenient().when(spatialUnitRepository.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
                 any(Long.class),
                 any(String.class),
+                any(Long[].class),
                 any(Long[].class),
                 any(String.class),
                 any(String.class),
@@ -140,6 +142,7 @@ class SpatialUnitServiceTest {
                 any(Long.class),
                 any(String.class),
                 any(Long[].class),
+                any(Long[].class),
                 any(String.class),
                 any(String.class),
                 any(Pageable.class)
@@ -147,7 +150,7 @@ class SpatialUnitServiceTest {
 
         // Act
         Page<SpatialUnit> actualResult = spatialUnitService.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                spatialUnit1, "null", new Long[2], "null", "fr", pageable);
+                spatialUnit1, "null", new Long[2], new Long[2],"null", "fr", pageable);
 
 
         // Assert
@@ -165,6 +168,7 @@ class SpatialUnitServiceTest {
                 any(Long.class),
                 any(String.class),
                 any(Long[].class),
+                any(Long[].class),
                 any(String.class),
                 any(String.class),
                 any(Pageable.class)
@@ -174,7 +178,7 @@ class SpatialUnitServiceTest {
         Exception exception = assertThrows(
                 Exception.class,
                 () -> spatialUnitService.findAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                        spatialUnit1, "null", new Long[2], "null", "fr", pageable)
+                        spatialUnit1, "null", new Long[2],new Long[2], "null", "fr", pageable)
         );
 
         assertEquals("Database error", exception.getMessage());
@@ -234,6 +238,7 @@ class SpatialUnitServiceTest {
                 any(Long.class),
                 any(String.class),
                 any(Long[].class),
+                any(Long[].class),
                 any(String.class),
                 any(String.class),
                 any(Pageable.class)
@@ -241,7 +246,7 @@ class SpatialUnitServiceTest {
 
         // Act
         Page<SpatialUnit> actualResult = spatialUnitService.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                spatialUnit1, "null", new Long[2], "null", "fr", pageable);
+                spatialUnit1, "null", new Long[2], new Long[2], "null", "fr", pageable);
 
         // Assert
         assertEquals(spatialUnit1, actualResult.getContent().get(0));
@@ -256,6 +261,7 @@ class SpatialUnitServiceTest {
                 any(Long.class),
                 any(String.class),
                 any(Long[].class),
+                any(Long[].class),
                 any(String.class),
                 any(String.class),
                 any(Pageable.class)
@@ -265,7 +271,7 @@ class SpatialUnitServiceTest {
         Exception exception = assertThrows(
                 Exception.class,
                 () -> spatialUnitService.findAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining(
-                        spatialUnit1, "null", new Long[2], "null", "fr", pageable)
+                        spatialUnit1, "null", new Long[2], new Long[2], "null", "fr", pageable)
         );
 
         assertEquals("Database error", exception.getMessage());

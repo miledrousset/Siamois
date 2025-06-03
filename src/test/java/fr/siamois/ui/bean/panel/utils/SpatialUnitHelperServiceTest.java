@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.primefaces.PrimeFaces;
 
@@ -63,8 +62,6 @@ class SpatialUnitHelperServiceTest {
 
     @Test
     void testRestore() {
-        // mock
-        Mockito.doNothing().when(mockPrimeFaces).executeScript("PF('restored-dlg').show()");
 
         spatialUnitHelperService.restore(spatialUnitHist);
         verify(spatialUnitService, times(1)).restore(spatialUnitHist);

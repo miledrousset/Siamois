@@ -64,6 +64,7 @@ class SpatialUnitParentsLazyDataModelTest {
                 ArgumentMatchers.any(SpatialUnit.class),
                 ArgumentMatchers.any(String.class),
                 ArgumentMatchers.any(Long[].class),
+                ArgumentMatchers.any(Long[].class),
                 ArgumentMatchers.any(String.class),
                 ArgumentMatchers.any(String.class),
                 ArgumentMatchers.any(org.springframework.data.domain.Pageable.class)
