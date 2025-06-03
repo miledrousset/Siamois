@@ -103,7 +103,7 @@ class InstitutionServiceTest {
     void findMembersOf() {
         ActionManagerRelation actionManagerRelation = new ActionManagerRelation(institution1, manager);
 
-        when(actionManagerRepository.findAllByInstitution(any(Institution.class))).thenReturn(List.of(actionManagerRelation));
+        when(actionManagerRepository.findAllByInstitution(any(Institution.class))).thenReturn(Set.of(actionManagerRelation));
         when(teamMemberRepository.findAllByInstitution(institution1.getId())).thenReturn(Set.of());
 
         Set<Person> result = institutionService.findMembersOf(institution1);

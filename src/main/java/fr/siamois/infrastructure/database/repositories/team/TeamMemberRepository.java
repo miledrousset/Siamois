@@ -1,5 +1,6 @@
 package fr.siamois.infrastructure.database.repositories.team;
 
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.team.TeamMemberRelation;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,15 @@ public interface TeamMemberRepository extends CrudRepository<TeamMemberRelation,
                     "WHERE au.fk_institution_id = :institutionId"
     )
     Set<Person> findAllByInstitution(Long institutionId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT COUNT(*) >= 1 " +
+                    "FROM team_member tm " +
+                    "JOIN action_unit au ON tm.fk_action_unit_id = au.action_unit_id " +
+                    "WHERE au.fk_institution_id = :institutionId AND tm.fk_person_id = :personId"
+    )
+    boolean personIsInInstitution(Long personId, Long institutionId);
+
+    boolean existsByActionUnitAndPerson(ActionUnit actionUnit, Person person);
 }

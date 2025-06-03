@@ -121,6 +121,25 @@ public class InstitutionService {
         return findMembersOf(institution).size();
     }
 
+    public boolean personIsInInstitution(Person person, Institution institution) {
+        Optional<ActionManagerRelation> optManager = actionManagerRepository.findByPersonAndInstitution(person, institution);
+        if (optManager.isPresent()) {
+            return true;
+        }
 
+        return teamMemberRepository.personIsInInstitution(person.getId(), institution.getId());
+    }
+
+    public boolean personIsInstitutionManager(Person person, Institution institution) {
+        return institutionRepository.personIsInstitutionManager(institution.getId(), person.getId());
+    }
+
+    public boolean personIsActionManager(Person person, Institution institution) {
+        return actionManagerRepository.findByPersonAndInstitution(person, institution).isPresent();
+    }
+
+    public boolean personIsInstitutionManagerOrActionManager(Person person, Institution institution) {
+        return personIsInstitutionManager(person, institution) || personIsActionManager(person, institution);
+    }
 
 }
