@@ -32,21 +32,21 @@
             >
                 <p:dataTable
                         id="managerDatatable"
-                        value="#{institutionManagerListBean.members}"
-                        var="member"
+                        value="#{institutionActionManagerListBean.filteredActionManagers}"
+                        var="relation"
                         sortMode="single"
                         widgetVar="institutionManagerDatatable"
-                        rowKey="#{member.id}"
+                        rowKey="#{relation.id}"
                 >
 
                     <p:column headerText="#{langBean.msg('common.label.user')}">
                         <div style="display: flex; flex-direction: column">
-                            <strong>#{member.displayName()}</strong>
-                            <p>#{member.email}</p>
+                            <strong>#{relation.person.displayName()}</strong>
+                            <p>#{relation.person.email}</p>
                         </div>
                     </p:column>
                     <p:column headerText="#{langBean.msg('organisationSettings.managers.adddate')}">
-                        <p:outputLabel value="#{institutionManagerListBean.addDateOf(member)}"/>
+                        <p:outputLabel value="#{institutionActionManagerListBean.formatDate(relation)}"/>
                     </p:column>
                 </p:dataTable>
             </settings:datatable>

@@ -22,7 +22,7 @@ public class ActionManagerRelation {
     private ActionManagerId id;
 
     @MapsId("institutionId")
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_institution_id", nullable = false)
     private Institution institution;
 

@@ -11,6 +11,7 @@ import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
+import fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
@@ -37,6 +38,7 @@ public class PersonService {
     private final LangService langService;
     private final PendingPersonRepository pendingPersonRepository;
     private final PendingPersonService pendingPersonService;
+    private final PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
 
     public PersonService(PersonRepository personRepository,
                          BCryptPasswordEncoder passwordEncoder,
@@ -45,7 +47,7 @@ public class PersonService {
                          InstitutionService institutionService,
                          LangService langService,
                          PendingPersonRepository pendingPersonRepository,
-                         PendingPersonService pendingPersonService) {
+                         PendingPersonService pendingPersonService, PendingInstitutionInviteRepository pendingInstitutionInviteRepository) {
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
         this.verifiers = verifiers;
@@ -54,10 +56,21 @@ public class PersonService {
         this.langService = langService;
         this.pendingPersonRepository = pendingPersonRepository;
         this.pendingPersonService = pendingPersonService;
+        this.pendingInstitutionInviteRepository = pendingInstitutionInviteRepository;
     }
 
     private void createAndDeletePendingRelations(PendingPerson pendingPerson, Person person) {
-        // TODO: Create pending relations for the person and delete the pendings
+        Set<PendingInstitutionInvite> institutionInvites = pendingInstitutionInviteRepository.findAllByPendingPerson(pendingPerson);
+        for (PendingInstitutionInvite invite : institutionInvites) {
+            Institution institution = invite.getInstitution();
+            if (invite.isManager()) {
+                institutionService.addToManagers(institution, person);
+            }
+            if (invite.isActionManager()) {
+                institutionService.addPersonToActionManager(institution, person);
+            }
+            pendingInstitutionInviteRepository.delete(invite);
+        }
     }
 
     private void managePendingInvites(Person savedPerson) {

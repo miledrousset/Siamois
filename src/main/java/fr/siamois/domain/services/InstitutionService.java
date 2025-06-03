@@ -1,6 +1,5 @@
 package fr.siamois.domain.services;
 
-import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
@@ -51,8 +50,9 @@ public class InstitutionService {
 
     public Set<Institution> findInstitutionsOfPerson(Person person) {
         Set<Institution> institutions = new HashSet<>();
-        institutions.addAll(institutionRepository.findAllOfPerson(person.getId()));
-        institutions.addAll(institutionRepository.findAllManagedByPerson(person.getId()));
+        institutions.addAll(institutionRepository.findAllAsMember(person.getId()));
+        institutions.addAll(institutionRepository.findAllAsActionManager(person.getId()));
+        institutions.addAll(institutionRepository.findAllAsInstitutionManager(person.getId()));
         return institutions;
     }
 
@@ -147,12 +147,12 @@ public class InstitutionService {
         return personIsInstitutionManager(person, institution) || personIsActionManager(person, institution);
     }
 
-    public boolean addPersonToActionManager(UserInfo userInfo) {
-        Optional<ActionManagerRelation> optRelation =  actionManagerRepository.findByPersonAndInstitution(userInfo.getUser(), userInfo.getInstitution());
+    public boolean addPersonToActionManager(Institution institution, Person person) {
+        Optional<ActionManagerRelation> optRelation =  actionManagerRepository.findByPersonAndInstitution(person, institution);
         if (optRelation.isPresent())
             return false;
 
-        ActionManagerRelation relation = new ActionManagerRelation(userInfo.getInstitution(), userInfo.getUser());
+        ActionManagerRelation relation = new ActionManagerRelation(institution, person);
         actionManagerRepository.save(relation);
 
         return true;

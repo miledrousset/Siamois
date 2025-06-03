@@ -7,6 +7,7 @@ import fr.siamois.domain.models.team.ActionManagerRelation;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.PersonService;
+import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
@@ -99,7 +100,7 @@ public class InstitutionActionManagerListBean implements SettingsDatatableBean {
     private void saveUser(UserDialogBean.UserMailRole userMailRole) {
         Optional<Person> existingsUser = personService.findByEmail(userMailRole.getEmail());
         if (existingsUser.isPresent()) {
-            boolean isAdded = institutionService.addPersonToActionManager(sessionSettingsBean.getUserInfo());
+            boolean isAdded = institutionService.addPersonToActionManager(institution, existingsUser.get());
             if (!isAdded) {
                 displayWarnMessage(langBean, "organisationSettings.error.manager", existingsUser.get().getEmail(), institution.getName());
                 PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
@@ -125,6 +126,10 @@ public class InstitutionActionManagerListBean implements SettingsDatatableBean {
             }
         }
         userDialogBean.exit();
+    }
+
+    public String formatDate(ActionManagerRelation relation) {
+        return DateUtils.formatOffsetDateTime(relation.getAddedAt());
     }
 
 }

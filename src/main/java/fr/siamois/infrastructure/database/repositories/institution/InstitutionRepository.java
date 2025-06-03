@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface InstitutionRepository extends CrudRepository<Institution, Long> {
 
@@ -15,11 +15,11 @@ public interface InstitutionRepository extends CrudRepository<Institution, Long>
     @Query(
             nativeQuery = true,
             value = "SELECT DISTINCT i.* FROM institution i " +
-                    "JOIN team t ON t.fk_institution_id = i.institution_id " +
-                    "JOIN team_person tp ON tp.fk_team_id = t.team_id " +
-                    "WHERE tp.fk_person_id = :personId"
+                    "JOIN action_unit au ON i.institution_id = au.fk_institution_id " +
+                    "JOIN team_member tm ON tm.fk_action_unit_id = au.action_unit_id " +
+                    "WHERE tm.fk_person_id = :personId"
     )
-    List<Institution> findAllOfPerson(Long personId);
+    Set<Institution> findAllAsMember(Long personId);
 
     @Query(
             nativeQuery = true,
@@ -27,7 +27,15 @@ public interface InstitutionRepository extends CrudRepository<Institution, Long>
                     "JOIN institution_manager im ON im.fk_institution_id = i.institution_id " +
                     "WHERE im.fk_person_id = :personId"
     )
-    List<Institution> findAllManagedByPerson(Long personId);
+    Set<Institution> findAllAsInstitutionManager(Long personId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT DISTINCT i.* FROM institution i " +
+                    "JOIN action_manager am ON i.institution_id = am.fk_institution_id " +
+                    "WHERE am.fk_person_id = :personId"
+    )
+    Set<Institution> findAllAsActionManager(Long personId);
 
     @Query(
             nativeQuery = true,
