@@ -454,7 +454,6 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
             return;
         }
 
-        this.setTitle(spatialUnit.getName()); // Set panel title
         // add to BC
         this.getBreadcrumb().addSpatialUnit(spatialUnit);
 
