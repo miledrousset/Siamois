@@ -134,7 +134,7 @@
                                 onchange="PF('#{cc.clientId}_actionUnitListTable').filter()"
                                 converter="#{conceptLabelConverter}">
 
-                            <f:selectItems value="#{cc.attrs.panelModel.categoriesAvailable()}"
+                            <f:selectItems value="#{institutionBean.actionUnitTypeUsedInInstitution()}"
                                            var="cat"
                                            itemValue="#{cat}"
                                            itemLabel="#{cat.value}"
