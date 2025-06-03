@@ -5,10 +5,13 @@ import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveExce
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.settings.InstitutionSettings;
+import fr.siamois.domain.models.team.ActionManagerRelation;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
+import fr.siamois.infrastructure.database.repositories.team.ActionManagerRepository;
+import fr.siamois.infrastructure.database.repositories.team.TeamMemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +33,8 @@ class InstitutionServiceTest {
     @Mock private InstitutionRepository institutionRepository;
     @Mock private PersonRepository personRepository;
     @Mock private InstitutionSettingsRepository institutionSettingsRepository;
+    @Mock private ActionManagerRepository actionManagerRepository;
+    @Mock private TeamMemberRepository teamMemberRepository;
 
     @InjectMocks
     private InstitutionService institutionService;
@@ -96,6 +101,11 @@ class InstitutionServiceTest {
 
     @Test
     void findMembersOf() {
+        ActionManagerRelation actionManagerRelation = new ActionManagerRelation(institution1, manager);
+
+        when(actionManagerRepository.findAllByInstitution(any(Institution.class))).thenReturn(List.of(actionManagerRelation));
+        when(teamMemberRepository.findAllByInstitution(institution1.getId())).thenReturn(Set.of());
+
         Set<Person> result = institutionService.findMembersOf(institution1);
 
         assertThat(result).containsExactlyInAnyOrder(manager);

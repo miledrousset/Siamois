@@ -5,12 +5,13 @@ import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveExce
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.settings.InstitutionSettings;
+import fr.siamois.domain.models.team.ActionManagerRelation;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
-import fr.siamois.ui.bean.LangBean;
-import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.infrastructure.database.repositories.team.ActionManagerRepository;
+import fr.siamois.infrastructure.database.repositories.team.TeamMemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -26,14 +27,18 @@ public class InstitutionService {
     private final InstitutionRepository institutionRepository;
     private final InstitutionSettingsRepository institutionSettingsRepository;
     private final PersonRepository personRepository;
+    private final TeamMemberRepository teamMemberRepository;
+    private final ActionManagerRepository actionManagerRepository;
 
 
     public InstitutionService(InstitutionRepository institutionRepository,
                               PersonRepository personRepository,
-                              InstitutionSettingsRepository institutionSettingsRepository) {
+                              InstitutionSettingsRepository institutionSettingsRepository, TeamMemberRepository teamMemberRepository, ActionManagerRepository actionManagerRepository) {
         this.institutionRepository = institutionRepository;
         this.personRepository = personRepository;
         this.institutionSettingsRepository = institutionSettingsRepository;
+        this.teamMemberRepository = teamMemberRepository;
+        this.actionManagerRepository = actionManagerRepository;
     }
 
     public Set<Institution> findAll() {
@@ -66,8 +71,15 @@ public class InstitutionService {
     }
 
     public Set<Person> findMembersOf(Institution institution) {
-        // TODO: Find a way to retreive members of an institution
-        return Set.of();
+        Set<Person> result = new HashSet<>(teamMemberRepository.findAllByInstitution(institution.getId()));
+
+        List<Person> actionManagers = actionManagerRepository.findAllByInstitution(institution).stream()
+                .map(ActionManagerRelation::getPerson)
+                .toList();
+
+        result.addAll(actionManagers);
+
+        return result;
     }
 
     public void addUserToInstitution(Person person, Institution institution, Concept roleConcept) throws FailedInstitutionSaveException {
