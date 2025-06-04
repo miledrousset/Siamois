@@ -101,7 +101,7 @@
                         <p:toolbarGroup align="right">
                             <p:commandButton value="#{langBean.msg('table.add')}" icon="bi bi-plus-square"
                                              disabled="#{cc.attrs.disableAddBtn}"
-
+                                             rendered="#{flowBean.readWriteMode == 'WRITE'}"
                                              update="flow"
                                              style="margin-right: .5rem">
                             </p:commandButton>
