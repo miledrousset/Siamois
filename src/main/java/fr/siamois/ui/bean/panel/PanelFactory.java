@@ -20,6 +20,7 @@ public class PanelFactory {
     private final ObjectProvider<ActionUnitPanel> actionUnitPanelProvider;
     private final ObjectProvider<NewRecordingUnitPanel> newRecordingUnitPanelProvider;
     private final ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider;
+    private final ObjectProvider<RecordingUnitListPanel> recordingUnitListPanelProvider;
     private final ObjectProvider<WelcomePanel> welcomePanelProvider;
 
 
@@ -32,6 +33,7 @@ public class PanelFactory {
             ObjectProvider<ActionUnitPanel> actionUnitPanelProvider,
             ObjectProvider<NewRecordingUnitPanel> newRecordingUnitPanelProvider,
             ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider,
+            ObjectProvider<RecordingUnitListPanel> recordingUnitListPanelProvider,
             ObjectProvider<WelcomePanel> welcomePanelProvider) {
 
         this.spatialUnitListPanelProvider = spatialUnitListPanelProvider;
@@ -42,6 +44,7 @@ public class PanelFactory {
         this.actionUnitPanelProvider = actionUnitPanelProvider;
         this.newRecordingUnitPanelProvider = newRecordingUnitPanelProvider;
         this.recordingUnitPanelProvider = recordingUnitPanelProvider;
+        this.recordingUnitListPanelProvider = recordingUnitListPanelProvider;
         this.welcomePanelProvider = welcomePanelProvider;
     }
 
@@ -176,6 +179,12 @@ public class PanelFactory {
 
     public ActionUnitListPanel createActionUnitListPanel(PanelBreadcrumb currentBreadcrumb) {
         return new ActionUnitListPanel.ActionUnitListPanelBuilder(actionUnitListPanelProvider)
+                .breadcrumb(currentBreadcrumb)
+                .build();
+    }
+
+    public RecordingUnitListPanel createRecordingUnitListPanel(PanelBreadcrumb currentBreadcrumb) {
+        return new RecordingUnitListPanel.RecordingUnitListPanelBuilder(recordingUnitListPanelProvider)
                 .breadcrumb(currentBreadcrumb)
                 .build();
     }

@@ -8,8 +8,13 @@ import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
+import org.primefaces.component.api.UIColumn;
+import org.primefaces.event.ColumnToggleEvent;
+import org.primefaces.model.Visibility;
 import org.primefaces.model.menu.DefaultMenuItem;
 
 import java.util.ArrayList;
@@ -31,6 +36,7 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
     // local
     protected BaseLazyDataModel<T> lazyDataModel;
     protected long totalNumberOfUnits;
+    protected String errorMessage;
 
     protected AbstractListPanel() {
 
@@ -52,6 +58,15 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
         this.langBean = langBean;
         this.labelService = labelService;
         this.actionUnitService = actionUnitService;
+    }
+
+    public void onToggle(ColumnToggleEvent e) {
+        Integer index = (Integer) e.getData();
+        UIColumn column = e.getColumn();
+        Visibility visibility = e.getVisibility();
+        String header = column.getAriaHeaderText() != null ? column.getAriaHeaderText() : column.getHeaderText();
+        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Column " + index + " toggled: " + header + " " + visibility, null);
+        FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
     protected AbstractListPanel(
