@@ -191,6 +191,18 @@ public class RecordingUnitListPanel extends AbstractListPanel<RecordingUnit> {
         MessageUtils.displayInfoMessage(langBean, "common.entity.recordingUnits.bulkUpdated", updateCount);
     }
 
+    public void duplicateRow(int index) {
+        List<RecordingUnit> modifiableCopy = new ArrayList<>(lazyDataModel.getWrappedData());
+        RecordingUnit newRec = new RecordingUnit();
+        newRec.setId(9999L);
+        newRec.setIdentifier(99);
+        lazyDataModel.setWrappedData(modifiableCopy);
+        lazyDataModel.setQueryResult(modifiableCopy);
+        lazyDataModel.setRowCount(lazyDataModel.getRowCount()+1);
+        modifiableCopy.add(0,newRec); // TODO : make a copy, that's for testing
+        modifiableCopy.remove(modifiableCopy.size() - 1);
+    }
+
 
     public static class RecordingUnitListPanelBuilder {
 

@@ -31,6 +31,7 @@
                          editable="true"
                          cellNavigation="true"
                          id="recordingUnitDataTable"
+                         varStatus="status"
                          paginatorPosition="bottom" var="item"
                          selectionMode="multiple"
                          selection="#{panelModel.selectedUnits}"
@@ -90,7 +91,7 @@
                                             <p:ajax event="toggle" listener="#{cc.attrs.panelModel.onToggle}"/>
                                         </p:columnToggler>
                                     </div>
-                                    <p:outputPanel id="bulkEditPanel" rendered="#{panelModel.selectedUnits.size() >0}" style="display:flex; flex-direction: row; gap:0.5em;">
+                                    <p:outputPanel id="bulkEditPanel" rendered="#{panelModel.selectedUnits.size() >0 and flowBean.readWriteMode == 'WRITE'}" style="display:flex; flex-direction: row; gap:0.5em;">
                                         <span>Edition du type en lot (les autres colonnes viendront plus tard) :</span>
                                         <sharedInput:conceptAutocompleteFieldCode id="bulkTypeComponent"
                                                                                   panelStyleClass="recording-unit-autocomplete"
@@ -253,7 +254,10 @@
                             'bi bi-bookmark-x-fill' : 'bi bi-bookmark-plus' }" styleClass="sia-icon-btn"
                             action="#{panelModel.toggleBookmark(item.fullIdentifier)}"
                             update="bookmarkToggleButton navBarCsrfForm:siamoisNavForm:bookmarkGroup"/>
-                            <p:commandButton rendered="#{flowBean.readWriteMode == 'WRITE'}" icon="bi bi-copy" disabled="true" styleClass="sia-icon-btn"/>
+                            <p:commandButton rendered="#{flowBean.readWriteMode == 'WRITE'}" icon="bi bi-copy"
+                                             action="#{panelModel.duplicateRow(status.index)}"
+                                             update=":#{cc.clientId}:recordingUnitListForm:recordingUnitDataTable"
+                                             styleClass="sia-icon-btn"/>
                         </p:toolbarGroup>
                     </p:toolbar>
                 </p:column>
