@@ -4,7 +4,7 @@ import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.publisher.InstitutionChangeEventPublisher;
-import fr.siamois.domain.utils.MessageUtils;
+import fr.siamois.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import jakarta.faces.application.FacesMessage;
 import lombok.Getter;

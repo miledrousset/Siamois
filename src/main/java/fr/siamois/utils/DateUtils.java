@@ -1,4 +1,4 @@
-package fr.siamois.domain.utils;
+package fr.siamois.utils;
 
 import lombok.extern.slf4j.Slf4j;
 

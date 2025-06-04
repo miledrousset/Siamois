@@ -1,4 +1,4 @@
-package fr.siamois.domain.utils.builder;
+package fr.siamois.utils.builder;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -78,7 +78,7 @@ public class AutocompletionRequestBuilder {
         }
 
         if (isFull) {
-            paramCharSet = setParamFirstChar(paramCharSet, sb);
+            setParamFirstChar(paramCharSet, sb);
             sb.append("full=true");
         }
 

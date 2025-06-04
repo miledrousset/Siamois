@@ -8,7 +8,7 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
-import fr.siamois.domain.utils.MessageUtils;
+import fr.siamois.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import lombok.Getter;

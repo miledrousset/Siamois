@@ -9,7 +9,7 @@ import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.domain.services.vocabulary.LabelService;
-import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.utils.DateUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:comp="http://java.sun.com/jsf/composite/pages/settings/components"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form"
+>
+
+    <ui:define name="head">
+        <link rel="stylesheet" href="#{redirectBean.redirectUrlToResource('settings.css', 'css')}"/>
+    </ui:define>
+
+    <ui:define name="content">
+        <main>
+            <form:csrfform formId="breadCrumbForm" styleClass="breadCrumpForm">
+                <p:breadCrumb homeDisplay="false">
+                    <p:menuitem value="Organisations" action="#{institutionDetailsBean.goToInstitutionList()}"/>
+                    <p:menuitem value="#{teamListBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
+                    <p:menuitem value="Équipes des unités d'actions" action="#{teamListBean.backToTeamList()}"/>
+                    <p:menuitem value="Membres de #{teamMembersBean.actionUnit.name}"/>
+                </p:breadCrumb>
+            </form:csrfform>
+
+            <comp:datatable
+                    createButtonLabel="Ajouter des membres"
+                    formId="actionUnitForm"
+                    title="Membres de #{teamMembersBean.actionUnit.name}"
+                    description="Gestion des membres de l'unité d'action"
+                    filterAction="#{teamMembersBean.filter()}"
+                    searchInputTextValue="#{teamMembersBean.searchInput}"
+                    addAction="#{teamMembersBean.add()}"
+                    renderCreateButton="true"
+            >
+                <p:dataTable
+                        id="actionUnitMemberDatatable"
+                        value="#{teamMembersBean.filteredMemberRelations}"
+                        var="relation"
+                        sortMode="single"
+                        widgetVar="actionUnitMemberDatatable"
+                        rowKey="#{relation.id}"
+                >
+
+                    <p:column headerText="#{langBean.msg('common.label.user')}">
+                        <div style="display: flex; flex-direction: column">
+                            <strong>#{relation.person.displayName()}</strong>
+                            <p>#{relation.person.email}</p>
+                        </div>
+                    </p:column>
+                    <p:column headerText="#{langBean.msg('common.label.role')}">
+                        <p:outputLabel value="#{teamMembersBean.formatRole(relation)}"/>
+                    </p:column>
+                    <p:column headerText="#{langBean.msg('organisationSettings.managers.adddate')}">
+                        <p:outputLabel value="#{teamMembersBean.formatDate(relation)}"/>
+                    </p:column>
+                </p:dataTable>
+            </comp:datatable>
+            <ui:include src="/dialog/institution/newMember.xhtml"/>
+        </main>
+    </ui:define>
+
+</ui:composition>

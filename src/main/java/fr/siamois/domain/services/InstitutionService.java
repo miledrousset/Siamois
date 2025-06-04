@@ -1,11 +1,13 @@
 package fr.siamois.domain.services;
 
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.team.ActionManagerRelation;
+import fr.siamois.domain.models.team.TeamMemberRelation;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
@@ -19,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -81,6 +84,19 @@ public class InstitutionService {
         result.addAll(actionManagers);
 
         return result;
+    }
+
+    public Set<TeamMemberRelation> findRelationsOf(ActionUnit actionUnit) {
+        Set<TeamMemberRelation> result = teamMemberRepository.findAllByActionUnit(actionUnit);
+        result.add(new TeamMemberRelation(actionUnit, actionUnit.getAuthor()));
+        return result;
+    }
+
+    public Set<Person> findMembersOf(ActionUnit actionUnit) {
+        return findRelationsOf(actionUnit)
+                .stream()
+                .map(TeamMemberRelation::getPerson)
+                .collect(Collectors.toSet());
     }
 
     public void addUserToInstitution(Person person, Institution institution, Concept roleConcept) throws FailedInstitutionSaveException {
@@ -158,4 +174,17 @@ public class InstitutionService {
         return true;
     }
 
+    public boolean addPersonToActionUnit(ActionUnit actionUnit, Person person, Concept role) {
+        Optional<TeamMemberRelation> optRelation = teamMemberRepository.findByActionUnitAndPerson(actionUnit, person);
+        if (optRelation.isPresent()) {
+            log.warn("Person {} is already a member of action unit {}", person.getId(), actionUnit.getId());
+            return false;
+        }
+        TeamMemberRelation relation = new TeamMemberRelation(actionUnit, person);
+        relation.setRole(role);
+
+        teamMemberRepository.save(relation);
+
+        return true;
+    }
 }

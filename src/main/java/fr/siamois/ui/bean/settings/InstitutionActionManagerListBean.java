@@ -8,7 +8,7 @@ import fr.siamois.domain.models.team.ActionManagerRelation;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.PersonService;
-import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.utils.DateUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static fr.siamois.domain.utils.MessageUtils.displayInfoMessage;
-import static fr.siamois.domain.utils.MessageUtils.displayWarnMessage;
+import static fr.siamois.utils.MessageUtils.displayInfoMessage;
+import static fr.siamois.utils.MessageUtils.displayWarnMessage;
 
 @Slf4j
 @Getter

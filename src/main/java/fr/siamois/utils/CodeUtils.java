@@ -1,4 +1,4 @@
-package fr.siamois.domain.utils;
+package fr.siamois.utils;
 
 import java.security.SecureRandom;
 import java.util.Random;

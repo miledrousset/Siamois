@@ -1,4 +1,4 @@
-package fr.siamois.domain.utils;
+package fr.siamois.utils;
 
 import fr.siamois.ui.bean.LangBean;
 import jakarta.faces.application.FacesMessage;

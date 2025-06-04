@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long> {
@@ -184,4 +185,6 @@ public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long> {
             @Param("global") String global,
             @Param("langCode") String langCode,
             Pageable pageable);
+
+    Set<ActionUnit> findByCreatedByInstitution(Institution createdByInstitution);
 }

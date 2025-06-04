@@ -1,4 +1,4 @@
-package fr.siamois.domain.utils;
+package fr.siamois.utils;
 
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.services.document.DocumentService;

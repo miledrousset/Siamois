@@ -1,7 +1,7 @@
 package fr.siamois.ui.bean;
 
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.utils.AuthenticatedUserUtils;
+import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.faces.context.FacesContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

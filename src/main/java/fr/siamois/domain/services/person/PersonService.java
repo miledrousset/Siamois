@@ -1,6 +1,7 @@
 package fr.siamois.domain.services.person;
 
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.auth.pending.PendingActionUnitAttribution;
 import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.exceptions.auth.*;
@@ -68,7 +69,14 @@ public class PersonService {
             if (invite.isActionManager()) {
                 institutionService.addPersonToActionManager(institution, person);
             }
-            pendingInstitutionInviteRepository.delete(invite);
+
+            Set<PendingActionUnitAttribution> attributions = pendingPersonService.findActionAttributionsByPendingInvite(invite);
+            for (PendingActionUnitAttribution attribution : attributions) {
+                institutionService.addPersonToActionUnit(attribution.getActionUnit(), person, attribution.getRole());
+                pendingPersonService.delete(attribution);
+            }
+
+            pendingPersonService.delete(invite);
         }
     }
 

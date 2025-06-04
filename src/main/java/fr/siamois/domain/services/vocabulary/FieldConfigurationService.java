@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static fr.siamois.domain.utils.FullInfoDTOUtils.getPrefLabelOfLang;
+import static fr.siamois.utils.FullInfoDTOUtils.getPrefLabelOfLang;
 
 @Service
 public class FieldConfigurationService {

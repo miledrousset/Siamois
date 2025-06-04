@@ -237,4 +237,8 @@ public class ActionUnitService implements ArkEntityService {
     public long countBySpatialContext(SpatialUnit spatialUnit) {
         return actionUnitRepository.countBySpatialContext(spatialUnit.getId());
     }
+
+    public Set<ActionUnit> findAllByInstitution(Institution institution) {
+        return actionUnitRepository.findByCreatedByInstitution(institution);
+    }
 }

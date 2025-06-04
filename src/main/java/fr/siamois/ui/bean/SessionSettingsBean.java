@@ -9,7 +9,7 @@ import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.person.PersonService;
-import fr.siamois.domain.utils.AuthenticatedUserUtils;
+import fr.siamois.utils.AuthenticatedUserUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

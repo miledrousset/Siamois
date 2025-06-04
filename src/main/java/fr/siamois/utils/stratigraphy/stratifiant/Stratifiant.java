@@ -1,4 +1,4 @@
-package fr.siamois.domain.utils.stratigraphy.stratifiant;
+package fr.siamois.utils.stratigraphy.stratifiant;
 
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.recordingunit.StratigraphicRelationship;

@@ -1,4 +1,4 @@
-package fr.siamois.domain.utils;
+package fr.siamois.utils;
 
 import org.springframework.beans.BeanUtils;
 

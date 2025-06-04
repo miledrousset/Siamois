@@ -7,7 +7,7 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.PersonService;
-import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.utils.DateUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
@@ -22,8 +22,8 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.util.*;
 
-import static fr.siamois.domain.utils.MessageUtils.displayInfoMessage;
-import static fr.siamois.domain.utils.MessageUtils.displayWarnMessage;
+import static fr.siamois.utils.MessageUtils.displayInfoMessage;
+import static fr.siamois.utils.MessageUtils.displayWarnMessage;
 
 @Slf4j
 @Component

@@ -6,7 +6,7 @@ import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.services.person.PersonService;
-import fr.siamois.domain.utils.AuthenticatedUserUtils;
+import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

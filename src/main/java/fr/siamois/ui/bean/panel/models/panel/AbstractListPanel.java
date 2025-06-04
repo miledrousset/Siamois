@@ -32,28 +32,6 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
     protected BaseLazyDataModel<T> lazyDataModel;
     protected long totalNumberOfUnits;
 
-    protected AbstractListPanel() {
-
-        conceptService = null;
-        langBean = null;
-        spatialUnitService = null;
-        personService = null;
-        labelService = null;
-        actionUnitService = null;
-        sessionSettingsBean = null;
-    }
-
-    protected AbstractListPanel(SpatialUnitService spatialUnitService, PersonService personService, ConceptService conceptService, SessionSettingsBean sessionSettingsBean, LangBean langBean, LabelService labelService, ActionUnitService actionUnitService) {
-
-        this.spatialUnitService = spatialUnitService;
-        this.personService = personService;
-        this.conceptService = conceptService;
-        this.sessionSettingsBean = sessionSettingsBean;
-        this.langBean = langBean;
-        this.labelService = labelService;
-        this.actionUnitService = actionUnitService;
-    }
-
     protected AbstractListPanel(
             String titleKey,
             String icon,

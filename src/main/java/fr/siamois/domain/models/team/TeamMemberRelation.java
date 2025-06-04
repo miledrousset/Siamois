@@ -4,15 +4,17 @@ import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
+import jakarta.ws.rs.DefaultValue;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "team_member")
 @Data
 @NoArgsConstructor
-public class TeamMemberRelation {
+public class TeamMemberRelation implements Serializable{
 
     @EmbeddedId
     private TeamMemberId id;
@@ -30,6 +32,10 @@ public class TeamMemberRelation {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_role_id")
     private Concept role = null;
+
+    @DefaultValue("NOW()")
+    @Column(name = "added_at", nullable = false, updatable = false)
+    private OffsetDateTime addedAt = OffsetDateTime.now();
 
     public TeamMemberRelation(ActionUnit actionUnit, Person person) {
         this.id = new TeamMemberId(actionUnit.getId(), person.getId());

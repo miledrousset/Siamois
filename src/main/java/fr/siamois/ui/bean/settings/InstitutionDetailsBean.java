@@ -9,6 +9,7 @@ import fr.siamois.ui.bean.settings.components.OptionElement;
 import fr.siamois.ui.bean.settings.institution.InstitutionInfoSettingsBean;
 import fr.siamois.ui.bean.settings.institution.InstitutionManagerListBean;
 import fr.siamois.ui.bean.settings.institution.InstitutionThesaurusSettingsBean;
+import fr.siamois.ui.bean.settings.team.TeamListBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ public class InstitutionDetailsBean implements Serializable {
     private final InstitutionActionManagerListBean institutionActionManagerListBean;
     private final transient PermissionService permissionService;
     private final SessionSettingsBean sessionSettingsBean;
+    private final TeamListBean teamListBean;
     private Institution institution;
     private transient List<OptionElement> elements;
 
@@ -43,7 +45,7 @@ public class InstitutionDetailsBean implements Serializable {
                                   LangBean langBean,
                                   InstitutionActionManagerListBean institutionActionManagerListBean,
                                   PermissionService permissionService,
-                                  SessionSettingsBean sessionSettingsBean) {
+                                  SessionSettingsBean sessionSettingsBean, TeamListBean teamListBean) {
 
         this.institutionInfoSettingsBean = institutionInfoSettingsBean;
         this.institutionManagerListBean = institutionManagerListBean;
@@ -52,6 +54,7 @@ public class InstitutionDetailsBean implements Serializable {
         this.institutionActionManagerListBean = institutionActionManagerListBean;
         this.permissionService = permissionService;
         this.sessionSettingsBean = sessionSettingsBean;
+        this.teamListBean = teamListBean;
     }
 
     public void addInstitutionManagementElements() {
@@ -81,7 +84,8 @@ public class InstitutionDetailsBean implements Serializable {
 
         elements.add(new OptionElement("bi bi-people", langBean.msg("organisationSettings.titles.teams"),
                 langBean.msg("organisationSettings.descriptions.teams", institution.getName()), () -> {
-            return "";
+            teamListBean.init(institution);
+            return "/pages/settings/team/teamList.xhtml?faces-redirect=true";
         }));
 
         elements.add(new OptionElement("bi bi-table", langBean.msg("common.label.thesaurus"),

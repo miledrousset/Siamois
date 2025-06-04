@@ -1,4 +1,4 @@
-package fr.siamois.domain.utils;
+package fr.siamois.utils;
 
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;

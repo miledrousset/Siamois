@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -31,4 +32,8 @@ public interface TeamMemberRepository extends CrudRepository<TeamMemberRelation,
     boolean personIsInInstitution(Long personId, Long institutionId);
 
     boolean existsByActionUnitAndPerson(ActionUnit actionUnit, Person person);
+
+    Set<TeamMemberRelation> findAllByActionUnit(ActionUnit actionUnit);
+
+    Optional<TeamMemberRelation> findByActionUnitAndPerson(ActionUnit actionUnit, Person person);
 }

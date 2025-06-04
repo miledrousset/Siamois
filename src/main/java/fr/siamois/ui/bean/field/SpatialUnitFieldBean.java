@@ -11,7 +11,7 @@ import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
-import fr.siamois.domain.utils.MessageUtils;
+import fr.siamois.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;

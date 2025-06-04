@@ -8,4 +8,4 @@
  *
  * @author Julien Linget
  */
-package fr.siamois.domain.utils;
+package fr.siamois.utils;

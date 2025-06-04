@@ -1,4 +1,4 @@
-package fr.siamois.domain.utils.stratigraphy;
+package fr.siamois.utils.stratigraphy;
 
 import fr.siamois.domain.models.exceptions.stratigraphy.StratigraphicUnitNotFoundInAnyGroup;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;

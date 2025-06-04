@@ -9,7 +9,7 @@ import fr.siamois.domain.models.exceptions.InvalidFileTypeException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.document.compressor.FileCompressor;
-import fr.siamois.domain.utils.DocumentUtils;
+import fr.siamois.utils.DocumentUtils;
 import fr.siamois.infrastructure.database.repositories.DocumentRepository;
 import fr.siamois.infrastructure.files.DocumentStorage;
 import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;

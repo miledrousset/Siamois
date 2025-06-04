@@ -3,7 +3,7 @@ package fr.siamois.ui.bean.panel.models.panel;
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.SpatialUnitService;
-import fr.siamois.domain.utils.MessageUtils;
+import fr.siamois.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;

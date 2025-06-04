@@ -30,6 +30,12 @@ public class PendingActionUnitAttribution implements Serializable {
     @JoinColumn(name = "fk_role_id")
     private Concept role = null;
 
+    public PendingActionUnitAttribution(PendingInstitutionInvite invite, ActionUnit actionUnit) {
+        this.id = new PendingActionUnitId(invite, actionUnit);
+        this.institutionInvite = invite;
+        this.actionUnit = actionUnit;
+    }
+
     @Embeddable
     @Getter
     @Setter
@@ -38,6 +44,11 @@ public class PendingActionUnitAttribution implements Serializable {
     public static class PendingActionUnitId implements Serializable {
         private Long pendingInstitutionInviteId;
         private Long actionUnitId;
+
+        public PendingActionUnitId(PendingInstitutionInvite invite, ActionUnit actionUnit) {
+            this.pendingInstitutionInviteId = invite.getId();
+            this.actionUnitId = actionUnit.getId();
+        }
     }
 
 }

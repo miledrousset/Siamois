@@ -1,10 +1,14 @@
 package fr.siamois.domain.services.auth;
 
+import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.auth.pending.PendingActionUnitAttribution;
 import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.LangService;
-import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.utils.DateUtils;
+import fr.siamois.infrastructure.database.repositories.person.PendingActionUnitRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
 import fr.siamois.ui.email.EmailManager;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,17 +35,19 @@ public class PendingPersonService {
     private final fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
     private final EmailManager emailManager;
     private final LangService langService;
+    private final PendingActionUnitRepository pendingActionUnitRepository;
 
     public PendingPersonService(PendingPersonRepository pendingPersonRepository,
                                 HttpServletRequest httpServletRequest,
                                 fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository pendingInstitutionInviteRepository,
                                 EmailManager emailManager,
-                                LangService langService) {
+                                LangService langService, PendingActionUnitRepository pendingActionUnitRepository) {
         this.pendingPersonRepository = pendingPersonRepository;
         this.httpServletRequest = httpServletRequest;
         this.pendingInstitutionInviteRepository = pendingInstitutionInviteRepository;
         this.emailManager = emailManager;
         this.langService = langService;
+        this.pendingActionUnitRepository = pendingActionUnitRepository;
     }
 
     /**
@@ -136,6 +142,35 @@ public class PendingPersonService {
         return true;
     }
 
+    public boolean sendPendingActionMemberInvite(PendingPerson pendingPerson, ActionUnit actionUnit, Concept role, String mailLang) {
+        Optional<PendingInstitutionInvite> optInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(actionUnit.getCreatedByInstitution(), pendingPerson);
+        if (optInvite.isPresent()) {
+            PendingInstitutionInvite invite = optInvite.get();
+            createIfNotExistAttribution(actionUnit, role, invite);
+            return false;
+        }
+
+        PendingInstitutionInvite invite = new PendingInstitutionInvite();
+        invite.setPendingPerson(pendingPerson);
+        invite.setInstitution(actionUnit.getCreatedByInstitution());
+        invite.setManager(false);
+
+        invite = pendingInstitutionInviteRepository.save(invite);
+        createIfNotExistAttribution(actionUnit, role, invite);
+        sendEmail(pendingPerson, actionUnit.getCreatedByInstitution(), mailLang, false, false);
+        return true;
+    }
+
+    private void createIfNotExistAttribution(ActionUnit actionUnit, Concept role, PendingInstitutionInvite invite) {
+        Optional<PendingActionUnitAttribution> optAction = pendingActionUnitRepository.findByActionUnitAndInstitutionInvite(actionUnit, invite);
+        if (optAction.isPresent())
+            return;
+        PendingActionUnitAttribution actionAttribution = new PendingActionUnitAttribution(invite, actionUnit);
+        actionAttribution.setRole(role);
+
+        pendingActionUnitRepository.save(actionAttribution);
+    }
+
     private void sendEmail(PendingPerson pendingPerson, Institution institution, String mailLang, boolean isManager, boolean isActionManager) {
         PendingInstitutionInvite invite = new PendingInstitutionInvite();
         invite.setPendingPerson(pendingPerson);
@@ -165,6 +200,14 @@ public class PendingPersonService {
         pendingPersonRepository.delete(pendingPerson);
     }
 
+    public void delete(PendingInstitutionInvite pendingInstitutionInvite) {
+        pendingInstitutionInviteRepository.delete(pendingInstitutionInvite);
+    }
+
+    public void delete(PendingActionUnitAttribution pendingActionUnitAttribution) {
+        pendingActionUnitRepository.delete(pendingActionUnitAttribution);
+    }
+
     public Optional<PendingPerson> findByToken(String token) {
         return pendingPersonRepository.findByRegisterToken(token);
     }
@@ -173,4 +216,7 @@ public class PendingPersonService {
         return pendingInstitutionInviteRepository.findAllByPendingPerson(pendingPerson);
     }
 
+    public Set<PendingActionUnitAttribution> findActionAttributionsByPendingInvite(PendingInstitutionInvite invite) {
+        return pendingActionUnitRepository.findByInstitutionInvite(invite);
+    }
 }

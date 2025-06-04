@@ -1,4 +1,4 @@
-package fr.siamois.domain.utils;
+package fr.siamois.utils;
 
 import fr.siamois.domain.models.auth.Person;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
