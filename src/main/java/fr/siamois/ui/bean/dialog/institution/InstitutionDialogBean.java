@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean.dialog.institution;
 
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -38,6 +40,7 @@ public class InstitutionDialogBean implements Serializable {
         this.sessionSettingsBean = sessionSettingsBean;
     }
 
+    @EventListener(LoginEvent.class)
     public void reset() {
         log.trace("Reset called");
         actionFromBean = null;

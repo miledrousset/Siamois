@@ -4,10 +4,7 @@ import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -44,6 +41,7 @@ public class TeamMemberRelation {
     @Getter
     @Setter
     @NoArgsConstructor
+    @EqualsAndHashCode
     public static class TeamMemberId implements Serializable {
         private Long actionUnitId;
         private Long personId;

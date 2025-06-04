@@ -4,10 +4,7 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.institution.Institution;
 import jakarta.persistence.*;
 import jakarta.ws.rs.DefaultValue;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -45,6 +42,7 @@ public class ActionManagerRelation {
     @Getter
     @Setter
     @NoArgsConstructor
+    @EqualsAndHashCode
     public static class ActionManagerId implements Serializable {
         private Long institutionId;
         private Long personId;

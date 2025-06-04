@@ -1,6 +1,7 @@
 package fr.siamois.domain.services.person;
 
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.exceptions.auth.*;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.settings.PersonSettings;
@@ -10,6 +11,7 @@ import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.verifier.EmailVerifier;
 import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
+import fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
@@ -51,6 +53,9 @@ class PersonServiceTest {
     @Mock
     private PendingPersonService pendingPersonService;
 
+    @Mock
+    private PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
+
     private PersonService personService;
 
     Person person;
@@ -72,7 +77,8 @@ class PersonServiceTest {
                 institutionService,
                 langService,
                 pendingPersonRepository,
-                pendingPersonService
+                pendingPersonService,
+                pendingInstitutionInviteRepository
         );
     }
 
@@ -233,7 +239,9 @@ class PersonServiceTest {
                 institutionService,
                 langService,
                 pendingPersonRepository,
-                pendingPersonService);
+                pendingPersonService,
+                pendingInstitutionInviteRepository
+        );
 
         // Act
         Optional<PasswordVerifier> verifier = personService.findPasswordVerifier();

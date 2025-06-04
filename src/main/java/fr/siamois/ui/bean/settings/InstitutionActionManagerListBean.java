@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -33,15 +34,15 @@ import static fr.siamois.domain.utils.MessageUtils.displayWarnMessage;
 @SessionScoped
 public class InstitutionActionManagerListBean implements SettingsDatatableBean {
 
-    private final InstitutionService institutionService;
+    private final transient InstitutionService institutionService;
     private final UserDialogBean userDialogBean;
     private final LangBean langBean;
-    private final PersonService personService;
-    private final PendingPersonService pendingPersonService;
+    private final transient PersonService personService;
+    private final transient PendingPersonService pendingPersonService;
     private final SessionSettingsBean sessionSettingsBean;
     private Institution institution;
-    private Set<ActionManagerRelation> refActionManagers;
-    private List<ActionManagerRelation> filteredActionManagers;
+    private transient Set<ActionManagerRelation> refActionManagers;
+    private transient List<ActionManagerRelation> filteredActionManagers;
 
     private String searchInput;
 
@@ -54,6 +55,7 @@ public class InstitutionActionManagerListBean implements SettingsDatatableBean {
         this.sessionSettingsBean = sessionSettingsBean;
     }
 
+    @EventListener(LoginEvent.class)
     public void reset() {
         this.institution = null;
         this.refActionManagers = null;

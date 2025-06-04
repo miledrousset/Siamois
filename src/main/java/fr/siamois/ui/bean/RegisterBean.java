@@ -15,11 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -65,7 +61,6 @@ public class RegisterBean {
     public void init(PendingPerson pendingPerson) {
         reset();
         this.email = pendingPerson.getEmail();
-        Set<PendingInstitutionInvite> institutions = pendingPersonService.findInstitutionsByPendingPerson(pendingPerson);
     }
 
     public void register() {
@@ -91,6 +86,7 @@ public class RegisterBean {
             personService.createPerson(person);
             log.trace("Person created");
 
+            reset();
             redirectBean.redirectTo("/login");
 
         } catch (InvalidUserInformationException e) {

@@ -4,6 +4,7 @@ import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.ark.Ark;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.document.DocumentParent;
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.exceptions.InvalidFileSizeException;
 import fr.siamois.domain.models.exceptions.InvalidFileTypeException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
@@ -23,6 +24,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.file.UploadedFile;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeType;
 
@@ -74,6 +76,7 @@ public class DocumentCreationBean implements Serializable {
         reset();
     }
 
+    @EventListener(LoginEvent.class)
     public void reset() {
         docTitle = null;
         docNature = null;

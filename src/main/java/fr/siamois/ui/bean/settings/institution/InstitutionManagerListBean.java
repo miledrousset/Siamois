@@ -2,6 +2,7 @@ package fr.siamois.ui.bean.settings.institution;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.auth.PendingPersonService;
@@ -15,6 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -155,6 +157,15 @@ public class InstitutionManagerListBean implements SettingsDatatableBean {
             }
         }
         userDialogBean.exit();
+    }
+
+    @EventListener(LoginEvent.class)
+    public void reset() {
+        institution = null;
+        members = null;
+        refMembers = null;
+        roles = null;
+        searchInput = null;
     }
 
 }

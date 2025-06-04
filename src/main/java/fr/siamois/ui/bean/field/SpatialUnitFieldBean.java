@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean.field;
 
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.form.customfield.CustomField;
@@ -19,6 +20,7 @@ import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -72,6 +74,14 @@ public class SpatialUnitFieldBean implements Serializable {
         this.conceptService = conceptService;
         this.fieldConfigurationService = fieldConfigurationService;
         this.redirectBean = redirectBean;
+    }
+
+    @EventListener(LoginEvent.class)
+    public void reset() {
+        fName = "";
+        selectedConcept = null;
+        fParentsSpatialUnits = new ArrayList<>();
+        fChildrenSpatialUnits = new ArrayList<>();
     }
 
     /**

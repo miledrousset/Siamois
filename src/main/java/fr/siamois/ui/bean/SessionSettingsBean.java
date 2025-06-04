@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.Set;
-import java.util.SortedSet;
 
 @Setter
 @Getter

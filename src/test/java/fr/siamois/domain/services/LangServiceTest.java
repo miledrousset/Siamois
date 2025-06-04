@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 
-import java.util.List;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,10 +54,12 @@ class LangServiceTest {
 
     @Test
     void getAvailableLanguages() {
-        List<String> languages = langService.getAvailableLanguages();
+        langService.setAvailableLanguages(new String[]{"en", "fr", "de"});
+
+        String[] languages = langService.getAvailableLanguages();
 
         assertNotNull(languages);
-        assertFalse(languages.isEmpty());
+        assertNotEquals(0, languages.length, "Available languages should not be empty");
     }
 
     @Test

@@ -8,7 +8,6 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
 import java.util.Objects;
@@ -19,7 +18,6 @@ import java.util.Objects;
  *
  * @author Julien Linget
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @MappedSuperclass
 public abstract class RecordingUnitParent extends TraceableEntity {

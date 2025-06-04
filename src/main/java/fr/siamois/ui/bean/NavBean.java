@@ -2,6 +2,7 @@ package fr.siamois.ui.bean;
 
 import fr.siamois.domain.models.Bookmark;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.services.BookmarkService;
 import fr.siamois.domain.services.InstitutionService;
@@ -15,6 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.NoSuchMessageException;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -108,6 +110,11 @@ public class NavBean implements Serializable {
         } catch (NoSuchMessageException e) {
             return bookmark.getTitleCode();
         }
+    }
+
+    @EventListener(LoginEvent.class)
+    public void reset() {
+        bookmarkedPanels = null;
     }
 
     public enum ApplicationMode {

@@ -1,6 +1,7 @@
 package fr.siamois.ui.bean.settings;
 
 import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -162,6 +164,15 @@ public class InstitutionListSettingsBean implements Serializable {
         institutionDetailsBean.setInstitution(institution);
         institutionDetailsBean.addInstitutionManagementElements();
         return "/pages/settings/institutionSettings.xhtml?faces-redirect=true";
+    }
+
+    @EventListener(LoginEvent.class)
+    public void reset() {
+        institutions = null;
+        filteredInstitutions = null;
+        sortBy = null;
+        toggleSwitchState.clear();
+        filterText = null;
     }
 
 }

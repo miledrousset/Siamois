@@ -3,10 +3,7 @@ package fr.siamois.domain.models.auth.pending;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -37,6 +34,7 @@ public class PendingActionUnitAttribution implements Serializable {
     @Getter
     @Setter
     @NoArgsConstructor
+    @EqualsAndHashCode
     public static class PendingActionUnitId implements Serializable {
         private Long pendingInstitutionInviteId;
         private Long actionUnitId;

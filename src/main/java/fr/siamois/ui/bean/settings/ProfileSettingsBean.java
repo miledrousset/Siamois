@@ -3,6 +3,7 @@ package fr.siamois.ui.bean.settings;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.exceptions.auth.InvalidNameException;
@@ -182,7 +183,7 @@ public class ProfileSettingsBean implements Serializable {
     }
 
     public List<Locale> getRefLangs() {
-        List<String> langCodes = langService.getAvailableLanguages();
+        List<String> langCodes = List.of(langService.getAvailableLanguages());
         return langCodes.stream()
                 .map(Locale::new)
                 .toList();
@@ -229,5 +230,17 @@ public class ProfileSettingsBean implements Serializable {
         return findInstitutionById(id).getName();
     }
 
+    @EventListener(LoginEvent.class)
+    public void reset() {
+        fEmail = null;
+        fLastname = null;
+        fFirstname = null;
+        fThesaurusUrl = null;
+        fSelectedLang = null;
+        fDefaultInstitutionId = null;
+        personSettings = null;
+        refConfigConcept = null;
+        refInstitutions = null;
+    }
 
 }

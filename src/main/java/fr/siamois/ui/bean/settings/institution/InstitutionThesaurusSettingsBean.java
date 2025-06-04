@@ -1,6 +1,7 @@
 package fr.siamois.ui.bean.settings.institution;
 
 import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.institution.Institution;
@@ -14,6 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -41,6 +43,7 @@ public class InstitutionThesaurusSettingsBean implements Serializable {
         this.langBean = langBean;
     }
 
+    @EventListener(LoginEvent.class)
     public void reset() {
         thesaurusUrl = null;
         institution = null;

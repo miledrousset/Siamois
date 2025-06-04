@@ -11,7 +11,6 @@ import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
-import fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
@@ -38,7 +37,7 @@ public class PersonService {
     private final LangService langService;
     private final PendingPersonRepository pendingPersonRepository;
     private final PendingPersonService pendingPersonService;
-    private final PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
+    private final fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
 
     public PersonService(PersonRepository personRepository,
                          BCryptPasswordEncoder passwordEncoder,
@@ -47,7 +46,7 @@ public class PersonService {
                          InstitutionService institutionService,
                          LangService langService,
                          PendingPersonRepository pendingPersonRepository,
-                         PendingPersonService pendingPersonService, PendingInstitutionInviteRepository pendingInstitutionInviteRepository) {
+                         PendingPersonService pendingPersonService, fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository pendingInstitutionInviteRepository) {
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
         this.verifiers = verifiers;

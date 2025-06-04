@@ -5,7 +5,6 @@ import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.utils.DateUtils;
-import fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
 import fr.siamois.ui.email.EmailManager;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,13 +28,13 @@ public class PendingPersonService {
     private static final String ALLOWED_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     private final HttpServletRequest httpServletRequest;
-    private final PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
+    private final fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
     private final EmailManager emailManager;
     private final LangService langService;
 
     public PendingPersonService(PendingPersonRepository pendingPersonRepository,
                                 HttpServletRequest httpServletRequest,
-                                PendingInstitutionInviteRepository pendingInstitutionInviteRepository,
+                                fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository pendingInstitutionInviteRepository,
                                 EmailManager emailManager,
                                 LangService langService) {
         this.pendingPersonRepository = pendingPersonRepository;

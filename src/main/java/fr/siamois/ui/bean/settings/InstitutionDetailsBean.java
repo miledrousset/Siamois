@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean.settings;
 
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.settings.components.OptionElement;
@@ -9,6 +10,7 @@ import fr.siamois.ui.bean.settings.institution.InstitutionThesaurusSettingsBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -57,7 +59,7 @@ public class InstitutionDetailsBean implements Serializable {
             return "/pages/settings/institution/institutionManagerSettings.xhtml?faces-redirect=true";
         }));
 
-        // TODO: Add lang support for "Gestionnaires d'actions"
+        // TODO: Add lang support for "Gestionnaires d'actions" descriptions
         elements.add(new OptionElement("bi bi-person-circle",
                 langBean.msg("organisationSettings.titles.actionManagers"),
                 "Gérer les gestionnaires d'actions", () -> {
@@ -85,6 +87,16 @@ public class InstitutionDetailsBean implements Serializable {
 
     public String backToInstitutionSettings() {
         return "/pages/settings/institutionSettings.xhtml?faces-redirect=true";
+    }
+
+    @EventListener(LoginEvent.class)
+    public void reset() {
+        institution = null;
+        elements = null;
+        institutionInfoSettingsBean.reset();
+        institutionManagerListBean.reset();
+        institutionThesaurusSettingsBean.reset();
+        institutionActionManagerListBean.reset();
     }
 
 }
