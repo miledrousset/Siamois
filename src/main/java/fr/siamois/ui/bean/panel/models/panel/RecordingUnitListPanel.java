@@ -4,6 +4,7 @@ package fr.siamois.ui.bean.panel.models.panel;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
+import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.BookmarkService;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -19,6 +20,7 @@ import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.ui.lazydatamodel.RecordingUnitLazyDataModel;
 
+import jakarta.el.MethodExpression;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -44,6 +47,7 @@ public class RecordingUnitListPanel extends AbstractListPanel<RecordingUnit> {
 
     // locals
     private String actionUnitListErrorMessage;
+    private Concept bulkEditTypeValue;
 
 
     @Override
@@ -175,6 +179,17 @@ public class RecordingUnitListPanel extends AbstractListPanel<RecordingUnit> {
         MessageUtils.displayInfoMessage(langBean, "common.entity.recordingUnits.updated", toSave.getFullIdentifier());
     }
 
+    public void saveFieldBulk() {
+        List<Long> ids = selectedUnits.stream()
+                .map(RecordingUnit::getId)
+                .toList();
+        int updateCount = recordingUnitService.bulkUpdateType(ids, bulkEditTypeValue);
+        // Update in-memory list (for UI sync)
+        for (RecordingUnit ru : selectedUnits) {
+            ru.setType(bulkEditTypeValue);
+        }
+        MessageUtils.displayInfoMessage(langBean, "common.entity.recordingUnits.bulkUpdated", updateCount);
+    }
 
 
     public static class RecordingUnitListPanelBuilder {

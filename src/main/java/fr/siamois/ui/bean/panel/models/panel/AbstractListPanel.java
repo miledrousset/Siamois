@@ -16,6 +16,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.event.ColumnToggleEvent;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.Visibility;
 import org.primefaces.model.menu.DefaultMenuItem;
 
@@ -41,6 +43,7 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
     protected BaseLazyDataModel<T> lazyDataModel;
     protected long totalNumberOfUnits;
     protected String errorMessage;
+    protected transient List<T> selectedUnits ;
 
     protected AbstractListPanel(BookmarkService bookmarkService) {
         this.bookmarkService = bookmarkService;
@@ -75,6 +78,16 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
+    public void handleRowSelect(SelectEvent<T> event) {
+        FacesMessage msg = new FacesMessage("Row Selected");
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+
+    public void handleRowUnselect(UnselectEvent<T> event) {
+        FacesMessage msg = new FacesMessage("Row Unselected");
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+
     protected AbstractListPanel(
             String titleKey,
             String icon,
@@ -104,7 +117,7 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
 
     protected abstract BaseLazyDataModel<T> createLazyDataModel();
 
-    protected transient List<T> selectedUnits ;
+
 
     protected void configureLazyDataModel(BaseLazyDataModel<T> model) {
         model.setSortBy(new HashSet<>());

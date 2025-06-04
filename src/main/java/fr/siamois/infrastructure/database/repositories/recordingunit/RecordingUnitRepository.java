@@ -18,6 +18,13 @@ import java.util.List;
 @Repository
 public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, Long> {
 
+    @Query(
+            value = "UPDATE recording_unit SET fk_type = :type WHERE recording_unit.recording_unit_id IN (:ids)",
+            nativeQuery = true
+    )
+    @Modifying
+    int updateTypeByIds(@Param("type") Long type, @Param("ids") List<Long> ids);
+
     /**
      * @param spatialUnitId - The ID of the spatial unit
      * @return List of recording units

@@ -50,6 +50,10 @@
 
                 <p:ajax event="rowEdit" listener="#{panelModel.handleRowEdit}"/>
                 <p:ajax event="rowEditCancel"/>
+                <p:ajax event="rowSelect" listener="#{panelModel.handleRowSelect}" immediate="true" process=""
+                        update=":#{cc.clientId}:recordingUnitListForm:recordingUnitDataTable:tableToolbar"/>
+                <p:ajax event="rowUnselect" listener="#{panelModel.handleRowUnselect}" immediate="true"
+                        update=":#{cc.clientId}:recordingUnitListForm:recordingUnitDataTable:tableToolbar"/>
 
                 <f:facet name="{RowReport}">
 
@@ -58,10 +62,10 @@
                 </f:facet>
 
                 <f:facet name="header">
-                    <p:toolbar>
+                    <p:toolbar id="tableToolbar">
                         <p:toolbarGroup>
                             <p:toolbarGroup align="left">
-                                <div>
+                                <div style="display:flex; flex-direction: column; gap:0.2em">
                                     <div>
                                         <!-- Global search -->
                                         <span class="filter-container ui-input-icon-left">
@@ -86,9 +90,19 @@
                                             <p:ajax event="toggle" listener="#{cc.attrs.panelModel.onToggle}"/>
                                         </p:columnToggler>
                                     </div>
-                                    <div>
-                                        Test
-                                    </div>
+                                    <p:outputPanel id="bulkEditPanel" rendered="#{panelModel.selectedUnits.size() >0}" style="display:flex; flex-direction: row; gap:0.5em;">
+                                        <span>Edition du type en lot (les autres colonnes viendront plus tard) :</span>
+                                        <sharedInput:conceptAutocompleteFieldCode id="bulkTypeComponent"
+                                                                                  panelStyleClass="recording-unit-autocomplete"
+                                                                                  selectedConcept="#{panelModel.bulkEditTypeValue}"
+                                                                                  field="#{cc.attrs.lazyDataModel.typeField}"
+                                                                                  editConceptUrl="#{spatialUnitFieldBean.getUrlForFieldCode('SIARU.TYPE')}"/>
+                                        <p:commandButton value="Enregistrer"
+                                                         update=":#{cc.clientId}:recordingUnitListForm:recordingUnitDataTable"
+                                                         action="#{panelModel.saveFieldBulk()}"
+                                                         />
+                                    </p:outputPanel>
+
                                 </div>
 
 

@@ -87,6 +87,11 @@ public class RecordingUnitService implements ArkEntityService {
         return (nextIdentifier);
     }
 
+    @Transactional
+    public int bulkUpdateType(List<Long> ids, Concept type) {
+        return recordingUnitRepository.updateTypeByIds(type.getId(), ids);
+    }
+
     @Transactional()
     public RecordingUnit save(RecordingUnit recordingUnit, Concept concept,
                               List<RecordingUnit> anteriorUnits,
