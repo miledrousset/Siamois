@@ -2,6 +2,9 @@ package fr.siamois.ui.bean.panel.models.panel;
 
 
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectOneFromFieldCode;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerText;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -9,19 +12,25 @@ import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
+import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.ui.lazydatamodel.RecordingUnitLazyDataModel;
+import jakarta.el.MethodExpression;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.primefaces.event.RowEditEvent;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -35,6 +44,7 @@ public class RecordingUnitListPanel extends AbstractListPanel<RecordingUnit> {
     private final transient RecordingUnitService recordingUnitService;
     // locals
     private String actionUnitListErrorMessage;
+
 
     @Override
     protected long countUnitsByInstitution() {
@@ -93,6 +103,12 @@ public class RecordingUnitListPanel extends AbstractListPanel<RecordingUnit> {
     }
 
     @Override
+    public void init() {
+        selectedUnits = new ArrayList<>();
+        super.init();
+    }
+
+    @Override
     public String display() {
         return "/panel/recordingUnitListPanel.xhtml";
     }
@@ -100,6 +116,21 @@ public class RecordingUnitListPanel extends AbstractListPanel<RecordingUnit> {
     @Override
     public String ressourceUri() {
         return "/recordingUnit";
+    }
+
+    public void handleRowEdit(RowEditEvent<RecordingUnit> event) {
+
+        RecordingUnit toSave = event.getObject();
+
+        try {
+            recordingUnitService.save(toSave, toSave.getType(), List.of(),  List.of(),  List.of());
+        }
+        catch(FailedRecordingUnitSaveException e) {
+            MessageUtils.displayErrorMessage(langBean, "common.entity.recordingUnits.updateFailed", toSave.getFullIdentifier());
+            return ;
+        }
+
+        MessageUtils.displayInfoMessage(langBean, "common.entity.recordingUnits.updated", toSave.getFullIdentifier());
     }
 
     public static class RecordingUnitListPanelBuilder {

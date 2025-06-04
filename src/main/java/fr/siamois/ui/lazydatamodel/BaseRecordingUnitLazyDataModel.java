@@ -1,6 +1,7 @@
 package fr.siamois.ui.lazydatamodel;
 
 
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -16,6 +18,13 @@ import java.util.Map;
 public abstract class BaseRecordingUnitLazyDataModel extends BaseLazyDataModel<RecordingUnit> {
 
     private static final Map<String, String> FIELD_MAPPING;
+
+    // Fields definition for cell/bulk edit
+    CustomFieldSelectOneFromFieldCode typeField = new CustomFieldSelectOneFromFieldCode();
+
+    BaseRecordingUnitLazyDataModel() {
+        typeField.setFieldCode("SIARU.TYPE");
+    }
 
     static {
         Map<String, String> map = new HashMap<>();
@@ -44,4 +53,22 @@ public abstract class BaseRecordingUnitLazyDataModel extends BaseLazyDataModel<R
         return FIELD_MAPPING;
     }
 
+    @Override
+    public String getRowKey(RecordingUnit recordingUnit) {
+        return recordingUnit != null ? Long.toString(recordingUnit.getId()) : null;
+    }
+
+    @Override
+    public RecordingUnit getRowData(String rowKey) {
+        List<RecordingUnit> units = getWrappedData();
+        Long value = Long.valueOf(rowKey);
+
+        for (RecordingUnit unit : units) {
+            if (unit.getId().equals(value)) {
+                return unit;
+            }
+        }
+
+        return null;
+    }
 }

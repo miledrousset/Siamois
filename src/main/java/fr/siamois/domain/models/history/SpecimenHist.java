@@ -18,6 +18,7 @@ public class SpecimenHist extends SpecimenParent implements HistoryEntry<Specime
 
     @Id
     @Column(name = "history_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "specimen_id", nullable = false)

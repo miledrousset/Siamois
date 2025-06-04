@@ -19,6 +19,7 @@ import org.primefaces.model.menu.DefaultMenuItem;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 @Getter
 @Setter
@@ -95,6 +96,8 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
     protected abstract long countUnitsByInstitution();
 
     protected abstract BaseLazyDataModel<T> createLazyDataModel();
+
+    protected transient List<T> selectedUnits ;
 
     protected void configureLazyDataModel(BaseLazyDataModel<T> model) {
         model.setSortBy(new HashSet<>());

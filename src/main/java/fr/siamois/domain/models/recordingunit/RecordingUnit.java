@@ -44,17 +44,10 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     @ManyToMany(mappedBy = "children")
     private Set<RecordingUnit> parents = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name="fk_spatial_unit_id")
-    private SpatialUnit spatialUnit;
 
 
-    @OneToOne(
-            orphanRemoval=true,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
-    )
-    @JoinColumn(name = "fk_custom_form_response", referencedColumnName = "custom_form_response_id")
-    private CustomFormResponse formResponse;
+
+
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(

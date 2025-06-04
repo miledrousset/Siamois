@@ -15,6 +15,7 @@ public class RecordingUnitLazyDataModel extends BaseRecordingUnitLazyDataModel {
     private final transient LangBean langBean;
 
     public RecordingUnitLazyDataModel(RecordingUnitService recordingUnitService, SessionSettingsBean sessionSettings, LangBean langBean) {
+        super();
         this.recordingUnitService = recordingUnitService;
         this.sessionSettings = sessionSettings;
         this.langBean = langBean;
