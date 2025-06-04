@@ -32,7 +32,7 @@
 
     <div class="d-flex">
         <!-- Barre latérale -->
-        <h:panelGroup rendered="#{navBean.siamoisMode}" layout="none">
+        <h:panelGroup id="navBar" rendered="#{navBean.siamoisMode}" layout="none">
             <nav id="siamoisNav" class="sidebar collapsed" aria-label="General sidebar">
                 <ul class="nav flex-column">
                     <li class="nav-item">
@@ -40,7 +40,7 @@
                     </li>
                 </ul>
                 <button id="toggle-btn" class="btn btn-outline-light">☰</button>
-                <form:csrfform formId="siamoisNavForm">
+                <form:csrfform id="navBarCsrfForm" formId="siamoisNavForm">
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <h:commandLink action="#{flowBean.addWelcomePanel}" styleClass="nav-link"
@@ -93,7 +93,7 @@
                                 <p:autoUpdate/>
                                 <li class="nav-item">
                                     <h:commandLink action="#{redirectBean.redirectTo(bookmark.getResourceUri())}" styleClass="nav-link">
-                                        <i class="bi bi-bookmark-fill"/>
+                                        <i class="bi bi-bookmark-fill" style="color: #{bookmark.getBookmarkColor()}"/>
                                         <span class="menu-text">#{navBean.bookmarkTitle(bookmark)}</span>
                                     </h:commandLink>
                                 </li>

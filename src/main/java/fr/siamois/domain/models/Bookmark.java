@@ -34,4 +34,18 @@ public class Bookmark {
         return String.format("Bookmark n°%s to %s", id, resourceUri);
     }
 
+    public String getBookmarkColor() {
+        if(resourceUri.startsWith("/spatialunit")){
+            return "var(--context-main-color)";
+        }
+        else if(resourceUri.startsWith("/actionunit")){
+            return "var(--context-main-color)";
+        }
+        else if(resourceUri.startsWith("/recording-unit")){
+            return "var(--ground-main-color)";
+        }
+        else {
+            return "var(--siamois-green)";
+        }
+    }
 }

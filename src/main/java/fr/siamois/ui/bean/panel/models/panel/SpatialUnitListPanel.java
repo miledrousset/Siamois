@@ -51,7 +51,8 @@ public class SpatialUnitListPanel extends AbstractListPanel<SpatialUnit> {
                 sessionSettingsBean,
                 langBean,
                 labelService,
-                actionUnitService);
+                actionUnitService,
+                null);
     }
 
     @Override

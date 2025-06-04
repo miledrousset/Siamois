@@ -1,10 +1,12 @@
 package fr.siamois.ui.bean.panel.models.panel;
 
+import fr.siamois.domain.services.BookmarkService;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
+import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
@@ -33,13 +35,15 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
     protected final transient LangBean langBean;
     protected final transient LabelService labelService;
     protected final transient ActionUnitService actionUnitService;
+    protected final transient BookmarkService bookmarkService;
 
     // local
     protected BaseLazyDataModel<T> lazyDataModel;
     protected long totalNumberOfUnits;
     protected String errorMessage;
 
-    protected AbstractListPanel() {
+    protected AbstractListPanel(BookmarkService bookmarkService) {
+        this.bookmarkService = bookmarkService;
 
         conceptService = null;
         langBean = null;
@@ -50,7 +54,7 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
         sessionSettingsBean = null;
     }
 
-    protected AbstractListPanel(SpatialUnitService spatialUnitService, PersonService personService, ConceptService conceptService, SessionSettingsBean sessionSettingsBean, LangBean langBean, LabelService labelService, ActionUnitService actionUnitService) {
+    protected AbstractListPanel(SpatialUnitService spatialUnitService, PersonService personService, ConceptService conceptService, SessionSettingsBean sessionSettingsBean, LangBean langBean, LabelService labelService, ActionUnitService actionUnitService, BookmarkService bookmarkService) {
 
         this.spatialUnitService = spatialUnitService;
         this.personService = personService;
@@ -59,6 +63,7 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
         this.langBean = langBean;
         this.labelService = labelService;
         this.actionUnitService = actionUnitService;
+        this.bookmarkService = bookmarkService;
     }
 
     public void onToggle(ColumnToggleEvent e) {
@@ -80,7 +85,8 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
             SessionSettingsBean sessionSettingsBean,
             LangBean langBean,
             LabelService labelService,
-            ActionUnitService actionUnitService) {
+            ActionUnitService actionUnitService,
+            BookmarkService bookmarkService) {
 
         super(titleKey, icon, cssClass);
 
@@ -91,6 +97,7 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
         this.langBean = langBean;
         this.labelService = labelService;
         this.actionUnitService = actionUnitService;
+        this.bookmarkService = bookmarkService;
     }
 
     protected abstract long countUnitsByInstitution();
@@ -107,6 +114,21 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
         model.setSelectedTypes(new ArrayList<>());
         model.setNameFilter("");
         model.setGlobalFilter("");
+    }
+
+    public void bookmarkRow(String titleOrTitleCode, String ressourceUri) {
+
+        // Maybe check that ressource exists and user has access to it?
+        bookmarkService.save(
+                sessionSettingsBean.getUserInfo(),
+                ressourceUri,
+                titleOrTitleCode
+        );
+        MessageUtils.displayInfoMessage(langBean, "common.bookmark.saved");
+    }
+
+    public Boolean isRessourceBookmarkedByUser(String ressourceUri) {
+        return bookmarkService.isRessourceBookmarkedByUser(sessionSettingsBean.getUserInfo(),ressourceUri);
     }
 
     protected abstract void setErrorMessage(String msg);
