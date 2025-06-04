@@ -239,13 +239,13 @@
                             'bi bi-bookmark-x-fill' : 'bi bi-bookmark-plus' }" styleClass="sia-icon-btn"
                             action="#{panelModel.toggleBookmark(item.fullIdentifier)}"
                             update="bookmarkToggleButton navBarCsrfForm:siamoisNavForm:bookmarkGroup"/>
-                            <p:commandButton icon="bi bi-copy" disabled="true" styleClass="sia-icon-btn"/>
+                            <p:commandButton rendered="#{flowBean.readWriteMode == 'WRITE'}" icon="bi bi-copy" disabled="true" styleClass="sia-icon-btn"/>
                         </p:toolbarGroup>
                     </p:toolbar>
                 </p:column>
 
                 <!-- Edit toolbar -->
-                <p:column responsivePriority="1" exportable="false" toggleable="false">
+                <p:column responsivePriority="1" rendered="#{flowBean.readWriteMode == 'WRITE'}" exportable="false" toggleable="false">
                     <p:rowEditor editTitle="Edit Row" cancelTitle="Cancel Edit" saveTitle="Save Row"/>
                 </p:column>
 
