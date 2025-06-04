@@ -19,6 +19,7 @@ import java.util.Set;
 @SQLRestriction("fk_parent_action_unit_id IS NULL")
 public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
 
+    @SuppressWarnings("CopyConstructorMissesField")
     public SpatialUnit (SpatialUnit spatialUnit) {
         name = spatialUnit.getName();
         ark = spatialUnit.getArk();
