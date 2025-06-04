@@ -2,6 +2,7 @@ package fr.siamois.ui.bean.settings;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.team.ActionManagerRelation;
 import fr.siamois.domain.services.InstitutionService;

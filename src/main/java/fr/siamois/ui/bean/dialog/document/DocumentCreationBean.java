@@ -72,6 +72,7 @@ public class DocumentCreationBean implements Serializable {
     }
 
     public void init() {
+        PrimeFaces.current().ajax().update("newDocumentDiag");
         prepareParentConcept();
         reset();
     }
@@ -84,7 +85,6 @@ public class DocumentCreationBean implements Serializable {
         docType = null;
         docFile = null;
         docDescription = null;
-        PrimeFaces.current().ajax().update("newDocumentDiag");
     }
 
     private void prepareParentConcept() {
