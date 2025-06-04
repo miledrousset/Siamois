@@ -162,7 +162,7 @@ public class InstitutionListSettingsBean implements Serializable {
 
     public String redirectToInstitution(Institution institution) {
         institutionDetailsBean.setInstitution(institution);
-        institutionDetailsBean.addInstitutionManagementElements();
+        institutionDetailsBean.init();
         return "/pages/settings/institutionSettings.xhtml?faces-redirect=true";
     }
 

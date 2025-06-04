@@ -57,7 +57,7 @@ public class InstitutionDetailsBean implements Serializable {
         this.teamListBean = teamListBean;
     }
 
-    public void addInstitutionManagementElements() {
+    public void init() {
         elements = new ArrayList<>();
 
         if (permissionService.isInstitutionManager(sessionSettingsBean.getUserInfo())) {
