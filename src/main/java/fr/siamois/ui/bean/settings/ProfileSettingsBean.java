@@ -112,7 +112,7 @@ public class ProfileSettingsBean implements Serializable {
             refConfigConcept = fieldConfigurationService.findConfigurationForFieldCode(info, SpatialUnit.CATEGORY_FIELD_CODE);
             fThesaurusUrl = refConfigConcept.getVocabulary().getUri();
         } catch (NoConfigForFieldException e) {
-            log.debug("User has no thesaurus configuration for fieldCode {}", SpatialUnit.CATEGORY_FIELD_CODE);
+            log.warn("User has no thesaurus configuration for fieldCode {}", SpatialUnit.CATEGORY_FIELD_CODE);
         }
     }
 

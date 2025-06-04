@@ -155,7 +155,7 @@ public class SpatialUnitFieldBean implements Serializable {
         try {
             return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE, input);
         } catch (NoConfigForFieldException e) {
-            log.error(e.getMessage());
+            log.warn(e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -172,7 +172,7 @@ public class SpatialUnitFieldBean implements Serializable {
             String fieldCode = (String) UIComponent.getCurrentComponent(context).getAttributes().get("fieldCode");
             return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), fieldCode, input);
         } catch (NoConfigForFieldException e) {
-            log.error(e.getMessage());
+            log.warn(e.getMessage());
             return new ArrayList<>();
         }
     }

@@ -138,7 +138,7 @@ public class FieldConfigurationService {
                 .findTopTermConfigForFieldCodeOfInstitution(info.getInstitution().getId(), fieldCode);
 
         if (optConcept.isEmpty())
-            throw new NoConfigForFieldException(String.format("User %s from %s has no config for fieldCode %s",
+            throw new NoConfigForFieldException(String.format("User '%s' from '%s' has no config for fieldCode '%s'",
                     info.getUser().getName(), info.getInstitution().getName(), fieldCode));
 
         return optConcept.get();

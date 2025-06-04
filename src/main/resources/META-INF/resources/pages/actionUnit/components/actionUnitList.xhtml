@@ -84,7 +84,7 @@
 
                         <p:toolbarGroup align="right">
                             <p:commandButton value="#{langBean.msg('table.add')}" icon="bi bi-plus-square"
-                                             disabled="true"
+                                             disabled="#{cc.attrs.disableAddBtn}"
                                              action="#{flowBean.addNewSpatialUnitPanel(cc.attrs.panelModel)}"
                                              update="flow"
                                              style="margin-right: .5rem">

@@ -15,6 +15,7 @@
             lazyDataModel="#{panelModel.lazyDataModel}"
             panelModel="#{panelModel}"
             panelIndex="#{panelIndex}"
+            disableAddBtn="#{not flowBean.userHasAddSpatialOrActionUnitPermission()}"
             id="actionUnitList"
     />
 
