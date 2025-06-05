@@ -193,13 +193,16 @@ public class RecordingUnitListPanel extends AbstractListPanel<RecordingUnit> {
 
     public void duplicateRow(int index) {
         List<RecordingUnit> modifiableCopy = new ArrayList<>(lazyDataModel.getWrappedData());
-        RecordingUnit newRec = new RecordingUnit();
-        newRec.setId(9999L);
-        newRec.setIdentifier(99);
+        RecordingUnit newRec = new RecordingUnit(lazyDataModel.getRowData());
+        newRec.setId(999900L); // todo; persist instead
+        newRec.setIdentifier(recordingUnitService.generateNextIdentifier(newRec));
         lazyDataModel.setWrappedData(modifiableCopy);
+        int newCount = lazyDataModel.getRowCount()+1;
+        lazyDataModel.setRowCount(newCount);
+        // Update cache as well
+        lazyDataModel.setCachedRowCount(newCount);
         lazyDataModel.setQueryResult(modifiableCopy);
-        lazyDataModel.setRowCount(lazyDataModel.getRowCount()+1);
-        modifiableCopy.add(0,newRec); // TODO : make a copy, that's for testing
+        modifiableCopy.add(0,newRec);
         modifiableCopy.remove(modifiableCopy.size() - 1);
     }
 

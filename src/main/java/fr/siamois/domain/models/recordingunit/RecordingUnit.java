@@ -22,6 +22,21 @@ import java.util.Set;
 @Table(name = "recording_unit")
 public class RecordingUnit extends RecordingUnitParent implements ArkEntity, ReferencableEntity {
 
+    public RecordingUnit() {
+
+    }
+
+    public RecordingUnit(RecordingUnit recordingUnit) {
+        setType(recordingUnit.getType());
+        setActionUnit(recordingUnit.getActionUnit());
+        setSecondaryType(recordingUnit.getSecondaryType());
+        setSize(recordingUnit.getSize());
+        setAltitude(recordingUnit.getAltitude());
+        setCreatedByInstitution(recordingUnit.getCreatedByInstitution());
+        setAuthor(recordingUnit.getAuthor());
+        setSpatialUnit(recordingUnit.getSpatialUnit());
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recording_unit_id", nullable = false)

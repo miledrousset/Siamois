@@ -48,4 +48,19 @@ public class Bookmark {
             return "var(--siamois-green)";
         }
     }
+
+    public String getBookmarkIcon() {
+        if(resourceUri.startsWith("/spatialunit")){
+            return "bi bi-geo-alt";
+        }
+        else if(resourceUri.startsWith("/actionunit")){
+            return "bi bi-arrow-down-square";
+        }
+        else if(resourceUri.startsWith("/recording-unit")){
+            return "bi bi-pencil-square";
+        }
+        else {
+            return "bi bi-bookmark-fill";
+        }
+    }
 }

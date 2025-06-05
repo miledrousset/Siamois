@@ -93,7 +93,8 @@
                                 <p:autoUpdate/>
                                 <li class="nav-item">
                                     <h:commandLink action="#{redirectBean.redirectTo(bookmark.getResourceUri())}" styleClass="nav-link">
-                                        <i class="bi bi-bookmark-fill" style="color: #{bookmark.getBookmarkColor()}"/>
+                                        <i class="#{bookmark.getBookmarkIcon()}" style="color: #{bookmark.getBookmarkColor()}"/>
+
                                         <span class="menu-text">#{navBean.bookmarkTitle(bookmark)}</span>
                                     </h:commandLink>
                                 </li>
