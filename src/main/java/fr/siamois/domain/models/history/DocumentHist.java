@@ -18,6 +18,7 @@ public class DocumentHist extends DocumentParent implements HistoryEntry<Documen
 
     @Id
     @Column(name = "history_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "document_id", nullable = false)

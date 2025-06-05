@@ -34,4 +34,33 @@ public class Bookmark {
         return String.format("Bookmark n°%s to %s", id, resourceUri);
     }
 
+    public String getBookmarkColor() {
+        if(resourceUri.startsWith("/spatialunit")){
+            return "var(--context-main-color)";
+        }
+        else if(resourceUri.startsWith("/actionunit")){
+            return "var(--context-main-color)";
+        }
+        else if(resourceUri.startsWith("/recording-unit")){
+            return "var(--ground-main-color)";
+        }
+        else {
+            return "var(--siamois-green)";
+        }
+    }
+
+    public String getBookmarkIcon() {
+        if(resourceUri.startsWith("/spatialunit")){
+            return "bi bi-geo-alt";
+        }
+        else if(resourceUri.startsWith("/actionunit")){
+            return "bi bi-arrow-down-square";
+        }
+        else if(resourceUri.startsWith("/recording-unit")){
+            return "bi bi-pencil-square";
+        }
+        else {
+            return "bi bi-bookmark-fill";
+        }
+    }
 }

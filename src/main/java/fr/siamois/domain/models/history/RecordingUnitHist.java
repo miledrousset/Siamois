@@ -18,6 +18,7 @@ public class RecordingUnitHist extends RecordingUnitParent implements HistoryEnt
 
     @Id
     @Column(name = "history_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "recording_unit_id", nullable = false)

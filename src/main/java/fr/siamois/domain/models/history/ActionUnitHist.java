@@ -18,6 +18,7 @@ public class ActionUnitHist extends ActionUnitParent implements HistoryEntry<Act
 
     @Id
     @Column(name = "history_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "action_unit_id", nullable = false)

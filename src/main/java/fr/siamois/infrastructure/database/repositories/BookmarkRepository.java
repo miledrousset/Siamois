@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface BookmarkRepository extends CrudRepository<Bookmark, Long> {
     List<Bookmark> findByPersonAndInstitution(Person person, Institution institution);
+    Long countBookmarkByPersonAndInstitutionAndResourceUri(Person person, Institution institution, String resourceUri);
+    void deleteBookmarkByPersonAndInstitutionAndResourceUri(Person person, Institution institution, String resourceUri);
 }

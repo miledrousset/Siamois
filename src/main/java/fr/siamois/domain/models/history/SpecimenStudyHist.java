@@ -18,6 +18,7 @@ public class SpecimenStudyHist extends SpecimenStudyParent implements HistoryEnt
 
     @Id
     @Column(name = "history_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "specimen_study_id", nullable = false)

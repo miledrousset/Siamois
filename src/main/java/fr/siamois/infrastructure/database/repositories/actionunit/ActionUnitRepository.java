@@ -175,6 +175,7 @@ public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long> {
                     "                                     OR LOWER(p.lastname) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%'))" +
                     "                                     OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%'))) "
     )
+
     Page<ActionUnit> findAllByInstitutionAndBySpatialUnitAndByNameContainingAndByCategoriesAndByGlobalContaining(
             @Param("institutionId") Long institutionId,
             @Param("spatialUnitId") Long spatialUnitId,
