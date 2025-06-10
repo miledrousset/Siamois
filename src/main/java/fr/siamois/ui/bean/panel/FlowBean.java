@@ -128,6 +128,10 @@ public class FlowBean implements Serializable {
         addPanel(panelFactory.createActionUnitListPanel(bc));
     }
 
+    public void addRecordingUnitListPanel(PanelBreadcrumb bc) {
+        addPanel(panelFactory.createRecordingUnitListPanel(bc));
+    }
+
 
     public void addPanel(AbstractPanel panel) {
         panels.add(0, panel);
