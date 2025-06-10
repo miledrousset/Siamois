@@ -88,7 +88,7 @@ public class NavBean implements Serializable {
         return applicationMode == ApplicationMode.SETTINGS;
     }
 
-    public void goToInstitutionManager() {
+    public void goToOrganisationSettings() {
         institutionListSettingsBean.init();
         redirectBean.redirectTo("/settings/organisation");
     }

@@ -3,6 +3,7 @@ package fr.siamois.infrastructure.database.repositories.team;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.team.TeamMemberRelation;
+import fr.siamois.ui.bean.settings.team.TeamMembersBean;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -15,12 +16,11 @@ public interface TeamMemberRepository extends CrudRepository<TeamMemberRelation,
 
     @Query(
             nativeQuery = true,
-            value = "SELECT DISTINCT p.* FROM person p " +
-                    "JOIN team_member tm ON p.person_id = tm.fk_person_id " +
+            value = "SELECT DISTINCT tm.* FROM team_member tm " +
                     "JOIN action_unit au ON tm.fk_action_unit_id = au.action_unit_id " +
                     "WHERE au.fk_institution_id = :institutionId"
     )
-    Set<Person> findAllByInstitution(Long institutionId);
+    Set<TeamMemberRelation> findAllByInstitution(Long institutionId);
 
     @Query(
             nativeQuery = true,

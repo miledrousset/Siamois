@@ -67,6 +67,7 @@ public class InstitutionListSettingsBean implements Serializable {
     public void init() {
             UserInfo info = sessionSettingsBean.getUserInfo();
             institutions = institutionService.findInstitutionsOfPerson(info.getUser());
+            filteredInstitutions = new ArrayList<>(institutions);
             onFilterType();
             updateTogglesState();
             sortBy = new ArrayList<>();

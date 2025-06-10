@@ -75,7 +75,10 @@ public class InstitutionService {
     }
 
     public Set<Person> findMembersOf(Institution institution) {
-        Set<Person> result = new HashSet<>(teamMemberRepository.findAllByInstitution(institution.getId()));
+
+        Set<Person> result = teamMemberRepository.findAllByInstitution(institution.getId())
+                .stream()
+                .map(TeamMemberRelation::getPerson).collect(Collectors.toSet());
 
         List<Person> actionManagers = actionManagerRepository.findAllByInstitution(institution).stream()
                 .map(ActionManagerRelation::getPerson)
@@ -135,7 +138,8 @@ public class InstitutionService {
     }
 
     public long countMembersInInstitution(Institution institution) {
-        return findMembersOf(institution).size();
+        Set<Person> members = findMembersOf(institution);
+        return members.size();
     }
 
     public boolean personIsInInstitution(Person person, Institution institution) {
