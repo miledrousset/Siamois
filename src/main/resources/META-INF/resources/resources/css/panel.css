@@ -694,9 +694,6 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 
 /* Recording units panels */
 
-.recording-unit-panel .ui-datatable thead th {
-    background: var(--ground-light-color-100);
-}
 
 .recording-unit-panel .sia-modified-field {
     border-color: var(--ground-main-color);

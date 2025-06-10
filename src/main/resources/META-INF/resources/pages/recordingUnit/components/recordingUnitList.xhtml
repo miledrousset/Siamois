@@ -255,7 +255,7 @@
                             action="#{panelModel.toggleBookmark(item.fullIdentifier)}"
                             update="bookmarkToggleButton navBarCsrfForm:siamoisNavForm:bookmarkGroup"/>
                             <p:commandButton rendered="#{flowBean.readWriteMode == 'WRITE'}" icon="bi bi-copy"
-                                             action="#{panelModel.duplicateRow(status.index)}"
+                                             action="#{panelModel.duplicateRow()}"
                                              update=":#{cc.clientId}:recordingUnitListForm:recordingUnitDataTable"
                                              styleClass="sia-icon-btn"/>
                         </p:toolbarGroup>

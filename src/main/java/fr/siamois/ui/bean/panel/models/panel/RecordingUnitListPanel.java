@@ -20,7 +20,7 @@ import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.ui.lazydatamodel.RecordingUnitLazyDataModel;
 
-import jakarta.el.MethodExpression;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -191,11 +191,12 @@ public class RecordingUnitListPanel extends AbstractListPanel<RecordingUnit> {
         MessageUtils.displayInfoMessage(langBean, "common.entity.recordingUnits.bulkUpdated", updateCount);
     }
 
-    public void duplicateRow(int index) {
+    public void duplicateRow() {
         List<RecordingUnit> modifiableCopy = new ArrayList<>(lazyDataModel.getWrappedData());
         RecordingUnit newRec = new RecordingUnit(lazyDataModel.getRowData());
-        newRec.setId(999900L); // todo; persist instead
         newRec.setIdentifier(recordingUnitService.generateNextIdentifier(newRec));
+        // Save the new row
+        newRec= recordingUnitService.save(newRec, newRec.getType(), List.of(),  List.of(),  List.of());
         lazyDataModel.setWrappedData(modifiableCopy);
         int newCount = lazyDataModel.getRowCount()+1;
         lazyDataModel.setRowCount(newCount);
