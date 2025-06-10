@@ -74,10 +74,9 @@ public class InstitutionDetailsBean implements Serializable {
             }));
         }
 
-        // TODO: Add lang support for "Gestionnaires d'actions" descriptions
         elements.add(new OptionElement("bi bi-person-circle",
                 langBean.msg("organisationSettings.titles.actionManagers"),
-                "Gérer les gestionnaires d'actions", () -> {
+                langBean.msg("organisationSettings.descriptions.actionManagers"), () -> {
             institutionActionManagerListBean.init(institution);
             return "/pages/settings/institution/institutionActionManagerSettings.xhtml?faces-redirect=true";
         }));

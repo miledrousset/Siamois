@@ -17,15 +17,15 @@
                 <p:breadCrumb homeDisplay="false">
                     <p:menuitem value="Organisations" action="#{institutionDetailsBean.goToInstitutionList()}"/>
                     <p:menuitem value="#{teamListBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
-                    <p:menuitem value="Équipes des unités d'actions"/>
+                    <p:menuitem value="#{langBean.msg('actionManagers.breadcrumb')}"/>
                 </p:breadCrumb>
             </form:csrfform>
 
             <comp:datatable
                     createButtonLabel="NULL"
                     formId="actionUnitForm"
-                    title="Équipes des unités d'actions"
-                    description="Gestion des équipes des unités d'actions"
+                    title="#{langBean.msg('actionManagers.breadcrumb')}"
+                    description="#{langBean.msg('actionManagers.description')}"
                     filterAction="#{teamListBean.filter()}"
                     searchInputTextValue="#{teamListBean.searchInput}"
                     addAction="#{teamListBean.filter()}"
@@ -39,13 +39,13 @@
                         widgetVar="actionUnitDatatable"
                         rowKey="#{au.id}"
                 >
-                    <p:column headerText="Nom de l'unité d'action">
+                    <p:column headerText="#{langBean.msg('actionManagers.header.name')}">
                         <p:outputLabel value="#{au.name}"/>
                     </p:column>
-                    <p:column headerText="Nombre de membres">
+                    <p:column headerText="#{langBean.msg('actionManagers.header.numberOfMembers')}">
                         <p:outputLabel value="#{teamListBean.numberOfMemberInActionUnit(au)}"/>
                     </p:column>
-                    <p:column headerText="Gestionnaire">
+                    <p:column headerText="#{langBean.msg('organisationSettings.titles.actionManager')}">
                         <p:outputLabel value="#{au.author.displayName()}"/>
                     </p:column>
                     <p:column>

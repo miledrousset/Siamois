@@ -17,16 +17,16 @@
                 <p:breadCrumb homeDisplay="false">
                     <p:menuitem value="Organisations" action="#{institutionDetailsBean.goToInstitutionList()}"/>
                     <p:menuitem value="#{teamListBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
-                    <p:menuitem value="Équipes des unités d'actions" action="#{teamListBean.backToTeamList()}"/>
-                    <p:menuitem value="Membres de #{teamMembersBean.actionUnit.name}"/>
+                    <p:menuitem value="#{langBean.msg('actionManagers.breadcrumb')}" action="#{teamListBean.backToTeamList()}"/>
+                    <p:menuitem value="#{langBean.msg('organisationManagement.orgMembers')}"/>
                 </p:breadCrumb>
             </form:csrfform>
 
             <comp:datatable
-                    createButtonLabel="Ajouter des membres"
+                    createButtonLabel="#{langBean.msg('actionMembers.add')}"
                     formId="actionUnitForm"
-                    title="Membres de #{teamMembersBean.actionUnit.name}"
-                    description="Gestion des membres de l'unité d'action"
+                    title="#{teamMembersBean.actionUnit.name}"
+                    description="#{langBean.msg('actionMembers.description')}"
                     filterAction="#{teamMembersBean.filter()}"
                     searchInputTextValue="#{teamMembersBean.searchInput}"
                     addAction="#{teamMembersBean.add()}"
