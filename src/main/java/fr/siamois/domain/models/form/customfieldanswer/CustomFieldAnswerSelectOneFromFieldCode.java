@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 import java.util.Objects;
 
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @DiscriminatorValue("SELECT_ONE_FROM_FIELD_CODE")
