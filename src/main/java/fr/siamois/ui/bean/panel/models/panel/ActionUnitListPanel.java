@@ -11,9 +11,7 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.lazydatamodel.ActionUnitLazyDataModel;
-
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

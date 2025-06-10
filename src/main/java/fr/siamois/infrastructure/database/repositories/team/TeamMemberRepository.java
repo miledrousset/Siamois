@@ -3,7 +3,6 @@ package fr.siamois.infrastructure.database.repositories.team;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.team.TeamMemberRelation;
-import fr.siamois.ui.bean.settings.team.TeamMembersBean;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

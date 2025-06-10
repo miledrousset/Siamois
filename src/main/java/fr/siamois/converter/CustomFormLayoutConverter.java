@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.siamois.domain.models.exceptions.form.CantDeserializeFormPanelException;
 import fr.siamois.domain.models.exceptions.form.CantSerializeFormPanelException;
 import fr.siamois.domain.models.form.customfield.CustomField;
-import fr.siamois.domain.models.form.customform.*;
+import fr.siamois.domain.models.form.customform.CustomCol;
+import fr.siamois.domain.models.form.customform.CustomFormPanel;
+import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.infrastructure.database.repositories.form.CustomFieldRepository;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
@@ -15,7 +17,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Converter
 @Component
