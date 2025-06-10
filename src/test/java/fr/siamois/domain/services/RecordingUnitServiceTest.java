@@ -23,6 +23,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +66,9 @@ class RecordingUnitServiceTest {
 
     RecordingUnit recordingUnitToSave;
 
+    Page<RecordingUnit> page ;
+    Pageable pageable;
+
     @BeforeEach
     void setUp() {
         spatialUnit1 = new SpatialUnit();
@@ -87,6 +94,9 @@ class RecordingUnitServiceTest {
         recordingUnitToSave.setActionUnit(actionUnit);
         recordingUnitToSave.setCreatedByInstitution(parentInstitution);
         recordingUnitToSave.setFormResponse(new CustomFormResponse());
+
+        page = new PageImpl<>(List.of(recordingUnit1, recordingUnit2));
+        pageable = PageRequest.of(0, 10);
 
 
     }
@@ -259,6 +269,28 @@ class RecordingUnitServiceTest {
         assertEquals("Max recording unit code reached; Please ask administrator to increase the range", exception.getMessage());
 
 
+    }
+
+    @Test
+    void testFindAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining_Success() {
+
+        when(recordingUnitRepository.findAllByInstitutionAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                any(Long.class),
+                any(String.class),
+                any(Long[].class),
+                any(String.class),
+                any(String.class),
+                any(Pageable.class)
+        )).thenReturn(page);
+
+        // Act
+        Page<RecordingUnit> actualResult = recordingUnitService.findAllByInstitutionAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                1L, "null", new Long[2], "null", "fr", pageable
+        );
+
+        // Assert
+        assertEquals(recordingUnit1, actualResult.getContent().get(0));
+        assertEquals(recordingUnit2, actualResult.getContent().get(1));
     }
 
 }

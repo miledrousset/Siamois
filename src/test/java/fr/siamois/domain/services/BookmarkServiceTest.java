@@ -44,6 +44,7 @@ class BookmarkServiceTest {
         institution.setId(1L);
 
         userInfo = new UserInfo(institution, person, "fr");
+
     }
 
     @Test
@@ -92,6 +93,58 @@ class BookmarkServiceTest {
         verify(panel, times(1)).ressourceUri();
         verify(panel, times(1)).getTitleCodeOrTitle();
         verify(bookmarkRepository, times(1)).save(any(Bookmark.class));
+    }
+
+    @Test
+    void testSave_Success() {
+        String uri = "resource-uri";
+        String title = "title";
+
+        Bookmark expectedBookmark = new Bookmark();
+        expectedBookmark.setResourceUri(uri);
+        expectedBookmark.setTitleCode(title);
+
+        when(bookmarkRepository.save(any(Bookmark.class))).thenReturn(expectedBookmark);
+
+        Bookmark result = bookmarkService.save(userInfo, uri, title);
+
+        assertNotNull(result);
+        assertEquals(result, expectedBookmark);
+        assertEquals(uri, result.getResourceUri());
+        assertEquals(title, result.getTitleCode());
+
+        verify(bookmarkRepository).save(any(Bookmark.class));
+    }
+
+    @Test
+    void testIsRessourceBookmarkedByUser_ReturnsTrue() {
+        when(bookmarkRepository.countBookmarkByPersonAndInstitutionAndResourceUri(
+                person, institution, "resource-uri")).thenReturn(1L);
+
+        boolean result = bookmarkService.isRessourceBookmarkedByUser(userInfo, "resource-uri");
+
+        assertTrue(result);
+    }
+
+    @Test
+    void testIsRessourceBookmarkedByUser_ReturnsFalse() {
+        when(bookmarkRepository.countBookmarkByPersonAndInstitutionAndResourceUri(
+                person, institution, "resource-uri")).thenReturn(0L);
+
+        boolean result = bookmarkService.isRessourceBookmarkedByUser(userInfo, "resource-uri");
+
+        assertFalse(result);
+    }
+
+    @Test
+    void testDeleteBookmark_ExecutesSuccessfully() {
+        doNothing().when(bookmarkRepository).deleteBookmarkByPersonAndInstitutionAndResourceUri(
+                person, institution, "resource-uri");
+
+        bookmarkService.deleteBookmark(userInfo, "resource-uri");
+
+        verify(bookmarkRepository).deleteBookmarkByPersonAndInstitutionAndResourceUri(
+                person, institution, "resource-uri");
     }
 
 }
