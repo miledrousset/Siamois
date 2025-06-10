@@ -1,7 +1,6 @@
 package fr.siamois.ui.bean;
 
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.exceptions.auth.InvalidUserInformationException;
 import fr.siamois.domain.models.exceptions.auth.UserAlreadyExistException;
@@ -15,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
-import java.util.Set;
 
 @Slf4j
 @Component
