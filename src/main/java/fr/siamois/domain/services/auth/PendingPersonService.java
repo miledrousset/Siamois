@@ -8,6 +8,7 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.LangService;
 import fr.siamois.infrastructure.database.repositories.person.PendingActionUnitRepository;
+import fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
 import fr.siamois.ui.email.EmailManager;
 import fr.siamois.utils.DateUtils;
@@ -32,14 +33,14 @@ public class PendingPersonService {
     private static final String ALLOWED_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     private final HttpServletRequest httpServletRequest;
-    private final fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
+    private final PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
     private final EmailManager emailManager;
     private final LangService langService;
     private final PendingActionUnitRepository pendingActionUnitRepository;
 
     public PendingPersonService(PendingPersonRepository pendingPersonRepository,
                                 HttpServletRequest httpServletRequest,
-                                fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository pendingInstitutionInviteRepository,
+                                PendingInstitutionInviteRepository pendingInstitutionInviteRepository,
                                 EmailManager emailManager,
                                 LangService langService, PendingActionUnitRepository pendingActionUnitRepository) {
         this.pendingPersonRepository = pendingPersonRepository;
