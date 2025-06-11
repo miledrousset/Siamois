@@ -20,6 +20,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 import static fr.siamois.utils.MessageUtils.displayInfoMessage;
@@ -89,14 +90,6 @@ public class InstitutionManagerListBean implements SettingsDatatableBean {
         } else {
             return "ERROR";
         }
-    }
-
-    public String addDateOf(Person person) {
-        if (userIsSuperAdmin(person)) {
-            return DateUtils.formatOffsetDateTime(institution.getCreationDate());
-        }
-        // TODO: Implement a way to get the date when a person was added as a manager
-        return "";
     }
 
     @Override

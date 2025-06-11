@@ -1,5 +1,6 @@
 package fr.siamois.domain.services.person;
 
+import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.auth.pending.PendingActionUnitAttribution;
 import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

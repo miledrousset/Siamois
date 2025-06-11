@@ -49,9 +49,6 @@
                     <p:column headerText="#{langBean.msg('common.label.role')}">
                         <p:outputLabel value="#{institutionManagerListBean.roles.get(member)}"/>
                     </p:column>
-                    <p:column headerText="#{langBean.msg('organisationSettings.managers.adddate')}">
-                        <p:outputLabel value="#{institutionManagerListBean.addDateOf(member)}"/>
-                    </p:column>
                 </p:dataTable>
             </settings:datatable>
             <ui:include src="/dialog/institution/newMember.xhtml"/>
