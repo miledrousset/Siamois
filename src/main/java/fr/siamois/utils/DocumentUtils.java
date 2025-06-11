@@ -1,22 +1,16 @@
 package fr.siamois.utils;
 
 import fr.siamois.domain.models.document.Document;
-import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
-import jakarta.annotation.Nullable;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 import org.springframework.util.MimeType;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,20 +91,6 @@ public class DocumentUtils {
         document.setSize(uploadedFile.getSize());
         document.setDescription(bean.getDocDescription());
         return document;
-    }
-
-    public static @Nullable StreamedContent streamOf(DocumentService documentService, Document document) {
-        Optional<InputStream> optStream = documentService.findInputStreamOfDocument(document);
-        if (optStream.isEmpty()) {
-            return null;
-        }
-
-        return DefaultStreamedContent.builder()
-                .contentType(document.getMimeType())
-                .contentLength(document.getSize())
-                .name(document.getFileName())
-                .stream(optStream::get)
-                .build();
     }
 
 }

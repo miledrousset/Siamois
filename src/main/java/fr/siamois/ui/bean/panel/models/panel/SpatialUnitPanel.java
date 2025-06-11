@@ -493,10 +493,6 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         return value.toString(); // Default case
     }
 
-    public StreamedContent streamOf(Document document) {
-        return DocumentUtils.streamOf(documentService , document);
-    }
-
     public void saveDocument() {
         try {
             BufferedInputStream currentFile = new BufferedInputStream(documentCreationBean.getDocFile().getInputStream());
