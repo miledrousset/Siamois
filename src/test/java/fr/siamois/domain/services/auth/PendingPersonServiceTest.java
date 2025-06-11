@@ -1,9 +1,11 @@
 package fr.siamois.domain.services.auth;
 
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.pending.PendingActionUnitAttribution;
 import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.LangService;
 import fr.siamois.infrastructure.database.repositories.person.PendingActionUnitRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository;
@@ -61,6 +63,7 @@ class PendingPersonServiceTest {
 
         institution = new Institution();
         institution.setName("Test Institution");
+        institution.setIdentifier("1212");
     }
 
     @Test
@@ -198,4 +201,72 @@ class PendingPersonServiceTest {
 
         assertEquals(attributions, result);
     }
+
+    @Test
+    void sendPendingActionMemberInvite_shouldReturnFalseIfInviteExists() {
+        ActionUnit actionUnit = new ActionUnit();
+        actionUnit.setId(1L);
+        actionUnit.setCreatedByInstitution(institution);
+
+        Concept role = new Concept();
+        role.setId(1L);
+
+        PendingInstitutionInvite existingInvite = new PendingInstitutionInvite();
+        existingInvite.setInstitution(institution);
+
+        when(pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson))
+                .thenReturn(Optional.of(existingInvite));
+
+        boolean result = pendingPersonService.sendPendingActionMemberInvite(pendingPerson, actionUnit, role, "en");
+
+        assertFalse(result);
+        verify(emailManager, never()).sendEmail(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    void sendPendingActionMemberInvite_shouldReturnTrueIfInviteDoesNotExist() {
+        ActionUnit actionUnit = new ActionUnit();
+        actionUnit.setId(1L);
+        actionUnit.setCreatedByInstitution(institution);
+
+        Concept role = new Concept();
+        role.setId(1L);
+
+        when(pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson))
+                .thenReturn(Optional.empty());
+        when(pendingInstitutionInviteRepository.save(any(PendingInstitutionInvite.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(langService.msg(anyString(), any(Locale.class), anyString())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(langService.msg(anyString(), any(Locale.class), anyString(), anyString(), anyString(), anyString()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        boolean result = pendingPersonService.sendPendingActionMemberInvite(pendingPerson, actionUnit, role, "en");
+
+        assertTrue(result);
+        verify(pendingActionUnitRepository, times(1)).save(any(PendingActionUnitAttribution.class));
+        verify(emailManager, times(1)).sendEmail(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    void delete_shouldRemovePendingInstitutionInvite() {
+        PendingInstitutionInvite invite = new PendingInstitutionInvite();
+        invite.setId(1L);
+
+        pendingPersonService.delete(invite);
+
+        verify(pendingInstitutionInviteRepository, times(1)).delete(invite);
+    }
+
+    @Test
+    void delete_shouldRemovePendingActionUnitAttribution() {
+        PendingActionUnitAttribution attribution = new PendingActionUnitAttribution();
+        attribution.setId(new PendingActionUnitAttribution.PendingActionUnitId());
+        attribution.getId().setActionUnitId(1L);
+        attribution.getId().setPendingInstitutionInviteId(1L);
+
+        pendingPersonService.delete(attribution);
+
+        verify(pendingActionUnitRepository, times(1)).delete(attribution);
+    }
+
 }
