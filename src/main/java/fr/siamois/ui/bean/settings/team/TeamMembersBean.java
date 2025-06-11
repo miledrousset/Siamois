@@ -8,6 +8,7 @@ import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.ui.bean.LabelBean;
+import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
 import fr.siamois.ui.bean.settings.SettingsDatatableBean;
@@ -34,9 +35,10 @@ public class TeamMembersBean implements SettingsDatatableBean {
     private final LabelBean labelBean;
     private final transient InstitutionService institutionService;
     private final UserDialogBean userDialogBean;
-    private final PersonService personService;
-    private final PendingPersonService pendingPersonService;
+    private final transient PersonService personService;
+    private final transient PendingPersonService pendingPersonService;
     private final SessionSettingsBean sessionSettingsBean;
+    private final RedirectBean redirectBean;
     private ActionUnit actionUnit;
 
     private String searchInput;
@@ -44,13 +46,14 @@ public class TeamMembersBean implements SettingsDatatableBean {
     private Set<TeamMemberRelation> memberRelations;
     private List<TeamMemberRelation> filteredMemberRelations;
 
-    public TeamMembersBean(LabelBean labelBean, InstitutionService institutionService, UserDialogBean userDialogBean, PersonService personService, PendingPersonService pendingPersonService, SessionSettingsBean sessionSettingsBean) {
+    public TeamMembersBean(LabelBean labelBean, InstitutionService institutionService, UserDialogBean userDialogBean, PersonService personService, PendingPersonService pendingPersonService, SessionSettingsBean sessionSettingsBean, RedirectBean redirectBean) {
         this.labelBean = labelBean;
         this.institutionService = institutionService;
         this.userDialogBean = userDialogBean;
         this.personService = personService;
         this.pendingPersonService = pendingPersonService;
         this.sessionSettingsBean = sessionSettingsBean;
+        this.redirectBean = redirectBean;
     }
 
     public void reset() {
@@ -124,5 +127,9 @@ public class TeamMembersBean implements SettingsDatatableBean {
 
     public String formatDate(TeamMemberRelation relation) {
         return DateUtils.formatOffsetDateTime(relation.getAddedAt());
+    }
+
+    public void redirectToActionUnit() {
+        redirectBean.redirectTo(String.format("/actionunit/%s", actionUnit.getId()));
     }
 }

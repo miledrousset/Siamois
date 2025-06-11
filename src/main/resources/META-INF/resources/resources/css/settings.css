@@ -84,6 +84,8 @@ main form:first-child .field-value-group {
 
 .dt-title {
     grid-area: title;
+    display: flex;
+    gap: 10px;
 }
 
 .dt-desc {
