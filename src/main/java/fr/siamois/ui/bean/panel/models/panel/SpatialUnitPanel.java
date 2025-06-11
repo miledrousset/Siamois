@@ -4,6 +4,7 @@ import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
 import fr.siamois.domain.models.form.customfield.CustomFieldText;
@@ -28,9 +29,6 @@ import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
-import fr.siamois.domain.utils.DateUtils;
-import fr.siamois.domain.utils.DocumentUtils;
-import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
@@ -40,6 +38,9 @@ import fr.siamois.ui.bean.panel.utils.SpatialUnitHelperService;
 import fr.siamois.ui.lazydatamodel.ActionUnitInSpatialUnitLazyDataModel;
 import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
 import fr.siamois.ui.lazydatamodel.SpatialUnitParentsLazyDataModel;
+import fr.siamois.utils.DateUtils;
+import fr.siamois.utils.DocumentUtils;
+import fr.siamois.utils.MessageUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Data;
@@ -492,10 +493,6 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         return value.toString(); // Default case
     }
 
-    public StreamedContent streamOf(Document document) {
-        return DocumentUtils.streamOf(documentService , document);
-    }
-
     public void saveDocument() {
         try {
             BufferedInputStream currentFile = new BufferedInputStream(documentCreationBean.getDocFile().getInputStream());
@@ -529,7 +526,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         return currentMimeType.getType().equals("image");
     }
 
-    public void initDialog() {
+    public void initDialog() throws NoConfigForFieldException {
         log.trace("initDialog");
         documentCreationBean.init();
         documentCreationBean.setActionOnSave(this::saveDocument);

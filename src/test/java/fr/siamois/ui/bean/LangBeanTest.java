@@ -31,7 +31,7 @@ class LangBeanTest {
 
     @Test
     void getLangs_shouldReturnAllLangsWithQuotesWithQuote() {
-        when(langService.getAvailableLanguages()).thenReturn(List.of("fr", "en", "de"));
+        when(langService.getAvailableLanguages()).thenReturn(new String[]{"fr", "en", "de"});
 
         List<String> result = langBean.getLangsWithQuotes();
 

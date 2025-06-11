@@ -10,6 +10,7 @@ import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.verifier.EmailVerifier;
 import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
+import fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
@@ -50,8 +51,9 @@ class PersonServiceTest {
     private HttpServletRequest httpServletRequest;
     @Mock
     private PendingPersonService pendingPersonService;
+
     @Mock
-    private TeamService teamService;
+    private PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
 
     private PersonService personService;
 
@@ -75,7 +77,7 @@ class PersonServiceTest {
                 langService,
                 pendingPersonRepository,
                 pendingPersonService,
-                teamService
+                pendingInstitutionInviteRepository
         );
     }
 
@@ -237,7 +239,7 @@ class PersonServiceTest {
                 langService,
                 pendingPersonRepository,
                 pendingPersonService,
-                teamService
+                pendingInstitutionInviteRepository
         );
 
         // Act
@@ -281,8 +283,8 @@ class PersonServiceTest {
         // Assert
         assertEquals(1, res.size());
         assertEquals(p, res.get(0));
-
-
     }
+
+
 
 }

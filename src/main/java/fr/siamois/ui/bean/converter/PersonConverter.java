@@ -2,6 +2,7 @@ package fr.siamois.ui.bean.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import fr.siamois.domain.models.auth.Person;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
@@ -17,13 +18,16 @@ import java.io.Serializable;
 @Slf4j
 public class PersonConverter implements Converter<Person>, Serializable {
 
+    private final ObjectMapper objectMapper;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    public PersonConverter() {
+        objectMapper = new ObjectMapper();
+        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+    }
 
 
     @Override
     public Person getAsObject(FacesContext context, UIComponent component, String value) {
-
         try {
             return objectMapper.readValue(value, Person.class);
         } catch (JsonProcessingException e) {
@@ -37,7 +41,7 @@ public class PersonConverter implements Converter<Person>, Serializable {
         try {
             return objectMapper.writeValueAsString(value);
         } catch (JsonProcessingException e) {
-            log.error("Error while converting Team object to string", e);
+            log.error("Error while converting Person object to string", e);
             return null;
         }
     }

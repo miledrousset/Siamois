@@ -4,6 +4,7 @@ import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.ark.Ark;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.document.DocumentParent;
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.exceptions.InvalidFileSizeException;
 import fr.siamois.domain.models.exceptions.InvalidFileTypeException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
@@ -12,17 +13,18 @@ import fr.siamois.domain.services.ark.ArkService;
 import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
-import fr.siamois.domain.utils.DocumentUtils;
-import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.ActionFromBean;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.utils.DocumentUtils;
+import fr.siamois.utils.MessageUtils;
 import jakarta.servlet.ServletContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.file.UploadedFile;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeType;
 
@@ -69,11 +71,13 @@ public class DocumentCreationBean implements Serializable {
         this.arkService = arkService;
     }
 
-    public void init() {
+    public void init() throws NoConfigForFieldException {
+        PrimeFaces.current().ajax().update("newDocumentDiag");
         prepareParentConcept();
         reset();
     }
 
+    @EventListener(LoginEvent.class)
     public void reset() {
         docTitle = null;
         docNature = null;
@@ -81,19 +85,13 @@ public class DocumentCreationBean implements Serializable {
         docType = null;
         docFile = null;
         docDescription = null;
-        PrimeFaces.current().ajax().update("newDocumentDiag");
     }
 
-    private void prepareParentConcept() {
+    private void prepareParentConcept() throws NoConfigForFieldException {
         UserInfo info = sessionSettingsBean.getUserInfo();
-        try {
-            parentNature = fieldConfigurationService.findConfigurationForFieldCode(info, Document.NATURE_FIELD_CODE);
-            parentScale = fieldConfigurationService.findConfigurationForFieldCode(info, Document.SCALE_FIELD_CODE);
-            parentType = fieldConfigurationService.findConfigurationForFieldCode(info, Document.FORMAT_FIELD_CODE);
-        } catch (NoConfigForFieldException e) {
-            log.error("No configuration found", e);
-            MessageUtils.displayNoThesaurusConfiguredMessage(langBean);
-        }
+        parentNature = fieldConfigurationService.findConfigurationForFieldCode(info, Document.NATURE_FIELD_CODE);
+        parentScale = fieldConfigurationService.findConfigurationForFieldCode(info, Document.SCALE_FIELD_CODE);
+        parentType = fieldConfigurationService.findConfigurationForFieldCode(info, Document.FORMAT_FIELD_CODE);
     }
 
     public String getUrlForConcept(Concept concept) {

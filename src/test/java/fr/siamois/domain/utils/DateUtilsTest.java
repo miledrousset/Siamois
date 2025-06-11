@@ -1,5 +1,6 @@
 package fr.siamois.domain.utils;
 
+import fr.siamois.utils.DateUtils;
 import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;

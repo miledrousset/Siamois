@@ -1,22 +1,27 @@
 package fr.siamois.domain.services;
 
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.models.institution.TeamPerson;
 import fr.siamois.domain.models.settings.InstitutionSettings;
+import fr.siamois.domain.models.team.ActionManagerRelation;
+import fr.siamois.domain.models.team.TeamMemberRelation;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
+import fr.siamois.infrastructure.database.repositories.team.ActionManagerRepository;
+import fr.siamois.infrastructure.database.repositories.team.TeamMemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -28,20 +33,26 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class InstitutionServiceTest {
 
-    @Mock private InstitutionRepository institutionRepository;
-    @Mock private PersonRepository personRepository;
-    @Mock private InstitutionSettingsRepository institutionSettingsRepository;
-    @Mock private TeamService teamService;
+    @Mock
+    private InstitutionRepository institutionRepository;
+    @Mock
+    private PersonRepository personRepository;
+    @Mock
+    private InstitutionSettingsRepository institutionSettingsRepository;
+    @Mock
+    private ActionManagerRepository actionManagerRepository;
+    @Mock
+    private TeamMemberRepository teamMemberRepository;
 
+    @InjectMocks
     private InstitutionService institutionService;
 
     private Institution institution1, institution2;
     private Person manager;
+    private ActionUnit actionUnit;
 
     @BeforeEach
     void setUp() {
-        institutionService = new InstitutionService(institutionRepository, personRepository, institutionSettingsRepository, teamService);
-
         manager = new Person();
         manager.setId(1L);
         manager.setUsername("Username");
@@ -56,6 +67,11 @@ class InstitutionServiceTest {
         institution2.setId(-2L);
         institution2.setName("Second name");
         institution2.setIdentifier("0987654");
+
+        actionUnit = new ActionUnit();
+        actionUnit.setId(1L);
+        actionUnit.setAuthor(manager);
+        actionUnit.setCreatedByInstitution(institution1);
     }
 
     @Test
@@ -99,6 +115,11 @@ class InstitutionServiceTest {
 
     @Test
     void findMembersOf() {
+        ActionManagerRelation actionManagerRelation = new ActionManagerRelation(institution1, manager);
+
+        when(actionManagerRepository.findAllByInstitution(any(Institution.class))).thenReturn(Set.of(actionManagerRelation));
+        when(teamMemberRepository.findAllByInstitution(institution1.getId())).thenReturn(Set.of());
+
         Set<Person> result = institutionService.findMembersOf(institution1);
 
         assertThat(result).containsExactlyInAnyOrder(manager);
@@ -190,25 +211,356 @@ class InstitutionServiceTest {
     }
 
     @Test
-    void countMembersInInstitution_withManagerAndMembers() {
+    void findInstitutionsOfPerson_shouldReturnAllInstitutions() {
+        Person person = new Person();
+        person.setId(1L);
+
+        when(institutionRepository.findAllAsMember(person.getId())).thenReturn(Set.of(institution1));
+        when(institutionRepository.findAllAsActionManager(person.getId())).thenReturn(Set.of(institution2));
+        when(institutionRepository.findAllAsInstitutionManager(person.getId())).thenReturn(Set.of(institution1, institution2));
+
+        Set<Institution> result = institutionService.findInstitutionsOfPerson(person);
+
+        assertThat(result).containsExactlyInAnyOrder(institution1, institution2);
+    }
+
+    @Test
+    void findRelationsOf_shouldReturnAllRelations() {
+        actionUnit = new ActionUnit();
+        actionUnit.setId(1L);
+        actionUnit.setAuthor(manager);
+
         Institution institution = new Institution();
         institution.setId(1L);
-        institution.getManagers().add(manager);
+        institution.setName("Updated Institution");
+        institution.setIdentifier("123456");
 
-        Person member = new Person();
-        member.setId(2L);
+        actionUnit.setCreatedByInstitution(institution);
 
-        Person superAdmin = new Person();
-        superAdmin.setId(3L);
+        TeamMemberRelation relation = new TeamMemberRelation(actionUnit, manager);
 
-        TeamPerson teamPerson = new TeamPerson();
-        teamPerson.setPerson(member);
+        when(teamMemberRepository.findAllByActionUnit(actionUnit)).thenReturn(new HashSet<>(Set.of(relation)));
 
-        when(teamService.findMembersOf(institution)).thenReturn(Set.of(teamPerson));
+        Set<TeamMemberRelation> result = institutionService.findRelationsOf(actionUnit);
+
+        assertThat(result).contains(relation);
+    }
+
+    @Test
+    void findMembersOf_shouldReturnAllMembers() {
+        actionUnit = new ActionUnit();
+        actionUnit.setId(1L);
+        actionUnit.setAuthor(manager);
+
+        Institution institution = new Institution();
+        institution.setId(1L);
+        institution.setName("Updated Institution");
+
+        actionUnit.setCreatedByInstitution(institution);
+
+        TeamMemberRelation relation = new TeamMemberRelation(actionUnit, manager);
+
+        when(teamMemberRepository.findAllByActionUnit(actionUnit)).thenReturn(new HashSet<>(Set.of(relation)));
+
+        Set<Person> result = institutionService.findMembersOf(actionUnit);
+
+        assertThat(result).containsExactlyInAnyOrder(manager);
+    }
+
+    @Test
+    void addToManagers_shouldAddManagerAndReturnTrue() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(2L);
+
+        when(institutionRepository.save(institution)).thenReturn(institution);
+
+        boolean result = institutionService.addToManagers(institution, person);
+
+        assertThat(result).isTrue();
+        assertThat(institution.getManagers()).contains(person);
+        verify(institutionRepository, times(1)).save(institution);
+    }
+
+    @Test
+    void addToManagers_shouldNotAddManagerIfAlreadyExists() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(2L);
+        institution.getManagers().add(person);
+
+        boolean result = institutionService.addToManagers(institution, person);
+
+        assertThat(result).isFalse();
+        verify(institutionRepository, times(1)).save(institution);
+    }
+
+    @Test
+    void countMembersInInstitution_shouldReturnCorrectCount() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person1 = new Person();
+        person1.setId(1L);
+
+        Person person2 = new Person();
+        person2.setId(2L);
+
+        when(teamMemberRepository.findAllByInstitution(institution.getId()))
+                .thenReturn(Set.of(new TeamMemberRelation(actionUnit, person1), new TeamMemberRelation(actionUnit, person2)));
+        when(actionManagerRepository.findAllByInstitution(institution))
+                .thenReturn(Set.of(new ActionManagerRelation(institution, person1)));
 
         long result = institutionService.countMembersInInstitution(institution);
 
         assertThat(result).isEqualTo(2);
+    }
+
+    @Test
+    void personIsInInstitution_shouldReturnTrueIfActionManager() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(1L);
+
+        when(actionManagerRepository.findByPersonAndInstitution(person, institution))
+                .thenReturn(Optional.of(new ActionManagerRelation(institution, person)));
+
+        boolean result = institutionService.personIsInInstitution(person, institution);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void personIsInInstitution_shouldReturnTrueIfTeamMember() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(1L);
+
+        when(actionManagerRepository.findByPersonAndInstitution(person, institution)).thenReturn(Optional.empty());
+        when(teamMemberRepository.personIsInInstitution(person.getId(), institution.getId())).thenReturn(true);
+
+        boolean result = institutionService.personIsInInstitution(person, institution);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void personIsInInstitution_shouldReturnFalseIfNotInInstitution() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(1L);
+
+        when(actionManagerRepository.findByPersonAndInstitution(person, institution)).thenReturn(Optional.empty());
+        when(teamMemberRepository.personIsInInstitution(person.getId(), institution.getId())).thenReturn(false);
+
+        boolean result = institutionService.personIsInInstitution(person, institution);
+
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void findAllActionManagersOf_shouldReturnAllActionManagers() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        ActionManagerRelation relation = new ActionManagerRelation(institution, manager);
+
+        when(actionManagerRepository.findAllByInstitution(institution)).thenReturn(Set.of(relation));
+
+        Set<ActionManagerRelation> result = institutionService.findAllActionManagersOf(institution);
+
+        assertThat(result).containsExactlyInAnyOrder(relation);
+    }
+
+    @Test
+    void personIsInstitutionManager_shouldReturnTrueIfManager() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(1L);
+
+        when(institutionRepository.personIsInstitutionManager(institution.getId(), person.getId())).thenReturn(true);
+
+        boolean result = institutionService.personIsInstitutionManager(person, institution);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void personIsInstitutionManager_shouldReturnFalseIfNotManager() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(1L);
+
+        when(institutionRepository.personIsInstitutionManager(institution.getId(), person.getId())).thenReturn(false);
+
+        boolean result = institutionService.personIsInstitutionManager(person, institution);
+
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void personIsActionManager_shouldReturnTrueIfActionManager() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(1L);
+
+        when(actionManagerRepository.findByPersonAndInstitution(person, institution))
+                .thenReturn(Optional.of(new ActionManagerRelation(institution, person)));
+
+        boolean result = institutionService.personIsActionManager(person, institution);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void personIsActionManager_shouldReturnFalseIfNotActionManager() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(1L);
+
+        when(actionManagerRepository.findByPersonAndInstitution(person, institution)).thenReturn(Optional.empty());
+
+        boolean result = institutionService.personIsActionManager(person, institution);
+
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void personIsInstitutionManagerOrActionManager_shouldReturnTrueIfManager() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(1L);
+
+        when(institutionRepository.personIsInstitutionManager(institution.getId(), person.getId())).thenReturn(true);
+
+        boolean result = institutionService.personIsInstitutionManagerOrActionManager(person, institution);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void personIsInstitutionManagerOrActionManager_shouldReturnTrueIfActionManager() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(1L);
+
+        when(institutionRepository.personIsInstitutionManager(institution.getId(), person.getId())).thenReturn(false);
+        when(actionManagerRepository.findByPersonAndInstitution(person, institution))
+                .thenReturn(Optional.of(new ActionManagerRelation(institution, person)));
+
+        boolean result = institutionService.personIsInstitutionManagerOrActionManager(person, institution);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void personIsInstitutionManagerOrActionManager_shouldReturnFalseIfNeither() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(1L);
+
+        when(institutionRepository.personIsInstitutionManager(institution.getId(), person.getId())).thenReturn(false);
+        when(actionManagerRepository.findByPersonAndInstitution(person, institution)).thenReturn(Optional.empty());
+
+        boolean result = institutionService.personIsInstitutionManagerOrActionManager(person, institution);
+
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void addPersonToActionManager_shouldAddManagerAndReturnTrue() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(1L);
+
+        when(actionManagerRepository.findByPersonAndInstitution(person, institution)).thenReturn(Optional.empty());
+
+        boolean result = institutionService.addPersonToActionManager(institution, person);
+
+        assertThat(result).isTrue();
+        verify(actionManagerRepository, times(1)).save(any(ActionManagerRelation.class));
+    }
+
+    @Test
+    void addPersonToActionManager_shouldNotAddManagerIfAlreadyExists() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person person = new Person();
+        person.setId(1L);
+
+        when(actionManagerRepository.findByPersonAndInstitution(person, institution))
+                .thenReturn(Optional.of(new ActionManagerRelation(institution, person)));
+
+        boolean result = institutionService.addPersonToActionManager(institution, person);
+
+        assertThat(result).isFalse();
+        verify(actionManagerRepository, never()).save(any(ActionManagerRelation.class));
+    }
+
+    @Test
+    void addPersonToActionUnit_shouldAddMemberAndReturnTrue() {
+        actionUnit = new ActionUnit();
+        actionUnit.setId(1L);
+
+        Person person = new Person();
+        person.setId(1L);
+
+        Concept role = new Concept();
+        role.setId(1L);
+
+        when(teamMemberRepository.findByActionUnitAndPerson(actionUnit, person)).thenReturn(Optional.empty());
+
+        boolean result = institutionService.addPersonToActionUnit(actionUnit, person, role);
+
+        assertThat(result).isTrue();
+        verify(teamMemberRepository, times(1)).save(any(TeamMemberRelation.class));
+    }
+
+    @Test
+    void addPersonToActionUnit_shouldNotAddMemberIfAlreadyExists() {
+        actionUnit = new ActionUnit();
+        actionUnit.setId(1L);
+
+        Person person = new Person();
+        person.setId(1L);
+
+        Concept role = new Concept();
+        role.setId(1L);
+
+        when(teamMemberRepository.findByActionUnitAndPerson(actionUnit, person))
+                .thenReturn(Optional.of(new TeamMemberRelation(actionUnit, person)));
+
+        boolean result = institutionService.addPersonToActionUnit(actionUnit, person, role);
+
+        assertThat(result).isFalse();
+        verify(teamMemberRepository, never()).save(any(TeamMemberRelation.class));
     }
 
 }

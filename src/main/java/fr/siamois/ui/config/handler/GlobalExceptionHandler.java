@@ -1,15 +1,21 @@
 package fr.siamois.ui.config.handler;
 
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.ui.bean.LangBean;
+import fr.siamois.utils.MessageUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.ForbiddenException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -17,6 +23,11 @@ public class GlobalExceptionHandler {
     public static final String REDIRECT_ERROR_404 = "redirect:/error/404";
     public static final String REDIRECT_ERROR_403 = "redirect:/error/403";
     public static final String ERROR_MESSAGE = "errorMessage";
+    private final LangBean langBean;
+
+    public GlobalExceptionHandler(LangBean langBean) {
+        this.langBean = langBean;
+    }
 
     @ExceptionHandler(ForbiddenException.class)
     public ModelAndView handleForbiddenException(HttpServletRequest request, Exception ex, Model model) {
@@ -47,6 +58,12 @@ public class GlobalExceptionHandler {
             return new ModelAndView(REDIRECT_ERROR_500);
         }
         return new ModelAndView(REDIRECT_ERROR_500);
+    }
+
+    @ExceptionHandler(NoConfigForFieldException.class)
+    public void handleNoThesaurusFound(NoConfigForFieldException ex) {
+        log.error("No configuration found", ex);
+        MessageUtils.displayNoThesaurusConfiguredMessage(langBean);
     }
 
     private HttpStatus getHttpStatus(HttpServletRequest request) {

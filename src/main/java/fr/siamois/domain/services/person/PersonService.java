@@ -1,12 +1,12 @@
 package fr.siamois.domain.services.person;
 
+import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.auth.pending.PendingActionUnitAttribution;
 import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
-import fr.siamois.domain.models.auth.pending.PendingTeamInvite;
 import fr.siamois.domain.models.exceptions.auth.*;
 import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.LangService;
@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class PersonService {
     private final LangService langService;
     private final PendingPersonRepository pendingPersonRepository;
     private final PendingPersonService pendingPersonService;
-    private final TeamService teamService;
+    private final fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
 
     public PersonService(PersonRepository personRepository,
                          BCryptPasswordEncoder passwordEncoder,
@@ -47,7 +48,8 @@ public class PersonService {
                          PersonSettingsRepository personSettingsRepository,
                          InstitutionService institutionService,
                          LangService langService,
-                         PendingPersonRepository pendingPersonRepository, PendingPersonService pendingPersonService, TeamService teamService) {
+                         PendingPersonRepository pendingPersonRepository,
+                         PendingPersonService pendingPersonService, fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository pendingInstitutionInviteRepository) {
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
         this.verifiers = verifiers;
@@ -56,28 +58,27 @@ public class PersonService {
         this.langService = langService;
         this.pendingPersonRepository = pendingPersonRepository;
         this.pendingPersonService = pendingPersonService;
-        this.teamService = teamService;
+        this.pendingInstitutionInviteRepository = pendingInstitutionInviteRepository;
     }
 
     private void createAndDeletePendingRelations(PendingPerson pendingPerson, Person person) {
-        Set<PendingInstitutionInvite> optInvites = pendingPersonService.findInstitutionsByPendingPerson(pendingPerson);
-        for (PendingInstitutionInvite invite : optInvites) {
+        Set<PendingInstitutionInvite> institutionInvites = pendingInstitutionInviteRepository.findAllByPendingPerson(pendingPerson);
+        for (PendingInstitutionInvite invite : institutionInvites) {
             Institution institution = invite.getInstitution();
-            teamService.addPersonToInstitutionIfNotExist(person, institution);
-            addToPendingTeam(invite, person);
             if (invite.isManager()) {
                 institutionService.addToManagers(institution, person);
             }
-            pendingPersonService.deleteInstitutionInvite(invite);
-        }
-    }
+            if (invite.isActionManager()) {
+                institutionService.addPersonToActionManager(institution, person);
+            }
 
-    private void addToPendingTeam(PendingInstitutionInvite institutionInvite, Person person) {
-        Set<PendingTeamInvite> pendingTeamInvites =  pendingPersonService.findTeamsByPendingInstitutionInvite(institutionInvite);
-        for (PendingTeamInvite pendingTeamInvite : pendingTeamInvites) {
-            Team team = pendingTeamInvite.getTeam();
-            teamService.addPersonToTeamIfNotAdded(person, team, pendingTeamInvite.getRoleInTeam());
-            pendingPersonService.deleteTeamInvite(pendingTeamInvite);
+            Set<PendingActionUnitAttribution> attributions = pendingPersonService.findActionAttributionsByPendingInvite(invite);
+            for (PendingActionUnitAttribution attribution : attributions) {
+                institutionService.addPersonToActionUnit(attribution.getActionUnit(), person, attribution.getRole());
+                pendingPersonService.delete(attribution);
+            }
+
+            pendingPersonService.delete(invite);
         }
     }
 

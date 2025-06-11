@@ -1,21 +1,19 @@
 package fr.siamois.domain.services;
 
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.models.institution.TeamPerson;
 import fr.siamois.domain.models.settings.InstitutionSettings;
+import fr.siamois.domain.models.team.ActionManagerRelation;
+import fr.siamois.domain.models.team.TeamMemberRelation;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
-import fr.siamois.domain.services.person.TeamService;
-import fr.siamois.domain.services.vocabulary.ConceptService;
-import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
-import fr.siamois.ui.bean.LangBean;
-import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.infrastructure.database.repositories.team.ActionManagerRepository;
+import fr.siamois.infrastructure.database.repositories.team.TeamMemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,18 +30,18 @@ public class InstitutionService {
     private final InstitutionRepository institutionRepository;
     private final InstitutionSettingsRepository institutionSettingsRepository;
     private final PersonRepository personRepository;
-    private final TeamService teamService;
+    private final TeamMemberRepository teamMemberRepository;
+    private final ActionManagerRepository actionManagerRepository;
 
 
     public InstitutionService(InstitutionRepository institutionRepository,
                               PersonRepository personRepository,
-                              InstitutionSettingsRepository institutionSettingsRepository,
-                              TeamService teamService) {
+                              InstitutionSettingsRepository institutionSettingsRepository, TeamMemberRepository teamMemberRepository, ActionManagerRepository actionManagerRepository) {
         this.institutionRepository = institutionRepository;
         this.personRepository = personRepository;
         this.institutionSettingsRepository = institutionSettingsRepository;
-        this.teamService = teamService;
-
+        this.teamMemberRepository = teamMemberRepository;
+        this.actionManagerRepository = actionManagerRepository;
     }
 
     public Set<Institution> findAll() {
@@ -54,8 +53,9 @@ public class InstitutionService {
 
     public Set<Institution> findInstitutionsOfPerson(Person person) {
         Set<Institution> institutions = new HashSet<>();
-        institutions.addAll(institutionRepository.findAllOfPerson(person.getId()));
-        institutions.addAll(institutionRepository.findAllManagedByPerson(person.getId()));
+        institutions.addAll(institutionRepository.findAllAsMember(person.getId()));
+        institutions.addAll(institutionRepository.findAllAsActionManager(person.getId()));
+        institutions.addAll(institutionRepository.findAllAsInstitutionManager(person.getId()));
         return institutions;
     }
 
@@ -75,10 +75,31 @@ public class InstitutionService {
     }
 
     public Set<Person> findMembersOf(Institution institution) {
-        Set<TeamPerson> teamMembers = teamService.findMembersOf(institution);
-        Set<Person> members = new HashSet<>(teamMembers.stream().map(TeamPerson::getPerson).toList());
-        members.addAll(institution.getManagers());
-        return members;
+
+        Set<Person> result = teamMemberRepository.findAllByInstitution(institution.getId())
+                .stream()
+                .map(TeamMemberRelation::getPerson).collect(Collectors.toSet());
+
+        List<Person> actionManagers = actionManagerRepository.findAllByInstitution(institution).stream()
+                .map(ActionManagerRelation::getPerson)
+                .toList();
+
+        result.addAll(actionManagers);
+
+        return result;
+    }
+
+    public Set<TeamMemberRelation> findRelationsOf(ActionUnit actionUnit) {
+        Set<TeamMemberRelation> result = teamMemberRepository.findAllByActionUnit(actionUnit);
+        result.add(new TeamMemberRelation(actionUnit, actionUnit.getAuthor()));
+        return result;
+    }
+
+    public Set<Person> findMembersOf(ActionUnit actionUnit) {
+        return findRelationsOf(actionUnit)
+                .stream()
+                .map(TeamMemberRelation::getPerson)
+                .collect(Collectors.toSet());
     }
 
     public void addUserToInstitution(Person person, Institution institution, Concept roleConcept) throws FailedInstitutionSaveException {
@@ -117,9 +138,57 @@ public class InstitutionService {
     }
 
     public long countMembersInInstitution(Institution institution) {
-        return findMembersOf(institution).size();
+        Set<Person> members = findMembersOf(institution);
+        return members.size();
     }
 
+    public boolean personIsInInstitution(Person person, Institution institution) {
+        Optional<ActionManagerRelation> optManager = actionManagerRepository.findByPersonAndInstitution(person, institution);
+        if (optManager.isPresent()) {
+            return true;
+        }
 
+        return teamMemberRepository.personIsInInstitution(person.getId(), institution.getId());
+    }
 
+    public Set<ActionManagerRelation> findAllActionManagersOf(Institution institution) {
+        return actionManagerRepository.findAllByInstitution(institution);
+    }
+
+    public boolean personIsInstitutionManager(Person person, Institution institution) {
+        return institutionRepository.personIsInstitutionManager(institution.getId(), person.getId());
+    }
+
+    public boolean personIsActionManager(Person person, Institution institution) {
+        return actionManagerRepository.findByPersonAndInstitution(person, institution).isPresent();
+    }
+
+    public boolean personIsInstitutionManagerOrActionManager(Person person, Institution institution) {
+        return personIsInstitutionManager(person, institution) || personIsActionManager(person, institution);
+    }
+
+    public boolean addPersonToActionManager(Institution institution, Person person) {
+        Optional<ActionManagerRelation> optRelation =  actionManagerRepository.findByPersonAndInstitution(person, institution);
+        if (optRelation.isPresent())
+            return false;
+
+        ActionManagerRelation relation = new ActionManagerRelation(institution, person);
+        actionManagerRepository.save(relation);
+
+        return true;
+    }
+
+    public boolean addPersonToActionUnit(ActionUnit actionUnit, Person person, Concept role) {
+        Optional<TeamMemberRelation> optRelation = teamMemberRepository.findByActionUnitAndPerson(actionUnit, person);
+        if (optRelation.isPresent()) {
+            log.warn("Person {} is already a member of action unit {}", person.getId(), actionUnit.getId());
+            return false;
+        }
+        TeamMemberRelation relation = new TeamMemberRelation(actionUnit, person);
+        relation.setRole(role);
+
+        teamMemberRepository.save(relation);
+
+        return true;
+    }
 }

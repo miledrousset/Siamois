@@ -1,150 +1,141 @@
 package fr.siamois.ui.bean.settings.team;
 
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
-import fr.siamois.domain.models.institution.Team;
-import fr.siamois.domain.models.institution.TeamPerson;
-import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.team.TeamMemberRelation;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.PersonService;
-import fr.siamois.domain.services.person.TeamService;
-import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.ui.bean.LabelBean;
-import fr.siamois.ui.bean.LangBean;
+import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
 import fr.siamois.ui.bean.settings.SettingsDatatableBean;
+import fr.siamois.utils.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
-import java.time.OffsetDateTime;
+import javax.faces.bean.SessionScoped;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static fr.siamois.domain.utils.MessageUtils.displayInfoMessage;
+import java.util.Set;
 
 @Slf4j
-@Setter
 @Getter
+@Setter
 @Component
+@SessionScoped
 public class TeamMembersBean implements SettingsDatatableBean {
 
+    private final LabelBean labelBean;
     private final transient InstitutionService institutionService;
-    private final transient TeamService teamService;
     private final UserDialogBean userDialogBean;
     private final transient PersonService personService;
-    private final LabelBean labelBean;
     private final transient PendingPersonService pendingPersonService;
     private final SessionSettingsBean sessionSettingsBean;
-    private final LangBean langBean;
-    private Team team;
+    private final RedirectBean redirectBean;
+    private ActionUnit actionUnit;
 
-    private transient List<TeamPerson> members;
-    private transient List<TeamPerson> filteredMembers;
     private String searchInput;
 
-    public TeamMembersBean(InstitutionService institutionService, TeamService teamService, UserDialogBean userDialogBean, PersonService personService, LabelBean labelBean, PendingPersonService pendingPersonService, SessionSettingsBean sessionSettingsBean, LangBean langBean) {
+    private Set<TeamMemberRelation> memberRelations;
+    private List<TeamMemberRelation> filteredMemberRelations;
+
+    public TeamMembersBean(LabelBean labelBean,
+                           InstitutionService institutionService,
+                           UserDialogBean userDialogBean,
+                           PersonService personService,
+                           PendingPersonService pendingPersonService,
+                           SessionSettingsBean sessionSettingsBean,
+                           RedirectBean redirectBean) {
+        this.labelBean = labelBean;
         this.institutionService = institutionService;
-        this.teamService = teamService;
         this.userDialogBean = userDialogBean;
         this.personService = personService;
-        this.labelBean = labelBean;
         this.pendingPersonService = pendingPersonService;
         this.sessionSettingsBean = sessionSettingsBean;
-        this.langBean = langBean;
+        this.redirectBean = redirectBean;
     }
 
-    public void init(Team team) {
-        this.team = team;
-        this.members = teamService.findTeamPersonByTeam(team);
-        this.filteredMembers = new ArrayList<>(members);
+    public void reset() {
+        this.actionUnit = null;
+        this.memberRelations = null;
+        this.filteredMemberRelations = null;
+    }
+
+    public void init(ActionUnit actionUnit) {
+        this.actionUnit = actionUnit;
+        this.memberRelations = institutionService.findRelationsOf(actionUnit);
+        this.filteredMemberRelations = new ArrayList<>(memberRelations);
     }
 
     @Override
     public void add() {
-        userDialogBean.init("Ajouter des utilisateurs", "Ajouter des utilisateurs", team.getInstitution(), true, this::save);
-        PrimeFaces.current().ajax().update("newMemberDialog");
+        userDialogBean.init("Ajouter des membres", "Ajouter", actionUnit.getCreatedByInstitution(), this::saveAll);
+        userDialogBean.setShouldRenderRoleField(true);
+        PrimeFaces.current().ajax().update("userDialogBeanForm:newMemberDialog");
         PrimeFaces.current().executeScript("PF('newMemberDialog').show();");
     }
 
-    public void save() {
-        for (UserDialogBean.UserMailRole mailRole : userDialogBean.getInputUserMailRoles()) {
-            if (!mailRole.isEmpty()) {
-                saveUser(mailRole);
+    private void save(UserDialogBean.UserMailRole userMailRole) {
+        if (userMailRole.getEmail() == null || userMailRole.getEmail().isEmpty()) {
+            return; // Skip saving if email is empty
+        }
+
+        Optional<Person> optPerson = personService.findByEmail(userMailRole.getEmail());
+        if (optPerson.isPresent()) {
+            Person person = optPerson.get();
+            if (institutionService.addPersonToActionUnit(actionUnit, person, userMailRole.getRole())) {
+                log.debug("Added person {} with role {} to action unit {}", person.getName(), userMailRole.getRole(), actionUnit.getName());
+            } else {
+                log.warn("Person {} is already a member of action unit {}", person.getName(), actionUnit.getName());
+            }
+        } else {
+            PendingPerson pendingPerson = pendingPersonService.createOrGetPendingPerson(userMailRole.getEmail());
+            if (pendingPersonService.sendPendingActionMemberInvite(pendingPerson, actionUnit, userMailRole.getRole(), sessionSettingsBean.getLanguageCode())) {
+                log.debug("Sent invite to pending person {} for action unit {}", pendingPerson.getEmail(), actionUnit.getName());
+            } else {
+                log.warn("Pending person {} already has an invite for action unit {}", pendingPerson.getEmail(), actionUnit.getName());
             }
         }
-        userDialogBean.exit();
+
     }
 
-    private void saveUser(UserDialogBean.UserMailRole mailRole) {
-        Optional<Person> existing = personService.findByEmail(mailRole.getEmail());
-        Concept role = mailRole.getRole();
-        if (team.isDefaultTeam()) {
-            role = null;
+    public void saveAll() {
+        for (UserDialogBean.UserMailRole userMailRole :  userDialogBean.getInputUserMailRoles()) {
+            save(userMailRole);
         }
-
-        if (existing.isPresent()) {
-            Person person = existing.get();
-            teamService.addPersonToTeamIfNotAdded(person, team, role);
-            displayInfoMessage(langBean, "groupManagement.join.success", person.getEmail(), team.getName());
-        } else {
-            PendingPerson pendingPerson = pendingPersonService.createOrGetPendingPerson(mailRole.getEmail());
-            boolean mailSent = pendingPersonService.sendPendingInstitutionInvite(pendingPerson,
-                    team.getInstitution(),
-                    sessionSettingsBean.getLanguageCode());
-
-            PendingInstitutionInvite pendingInstit = pendingPersonService.createOrGetInstitutionInviteOf(pendingPerson, team.getInstitution());
-            pendingPersonService.addTeamToInvitation(pendingInstit, team, role);
-
-            if (mailSent) {
-                displayInfoMessage(langBean, "organisationSettings.action.sendInvite", pendingPerson.getEmail());
-            } else {
-                displayInfoMessage(langBean, "groupManagement.join.success", pendingPerson.getEmail(), team.getName());
-            }
-        }
+        PrimeFaces.current().executeScript("PF('newMemberDialog').hide();");
     }
 
     @Override
     public void filter() {
-        String input = getSearchInput();
-        if (input.length() < 2) {
-            filteredMembers = new ArrayList<>(members);
-            return;
-        }
-
-        filteredMembers = new ArrayList<>();
-        for (TeamPerson teamPerson : members) {
-            Person member = teamPerson.getPerson();
-            if (member.getUsername().toLowerCase().contains(getSearchInput().toLowerCase())) {
-                filteredMembers.add(teamPerson);
-            }
-        }
-    }
-
-    private boolean userIsSuperAdmin(Person person) {
-        return person.isSuperAdmin();
-    }
-
-    public String roleOf(TeamPerson member) {
-        if (userIsSuperAdmin(member.getPerson())) {
-            if (member.getRoleInTeam() == null ){
-                return "Admin";
-            } else {
-                return String.format("%s (Admin)", labelBean.findLabelOf(member.getRoleInTeam()));
-            }
+        if (searchInput == null || searchInput.isEmpty()) {
+            filteredMemberRelations = new ArrayList<>(memberRelations);
         } else {
-            return labelBean.findLabelOf(member.getRoleInTeam());
+            filteredMemberRelations = memberRelations.stream()
+                    .filter(relation -> relation.getPerson().getName().toLowerCase().contains(searchInput.toLowerCase()))
+                    .toList();
         }
     }
 
-    public String formatDate(OffsetDateTime offsetDateTime) {
-        return DateUtils.formatOffsetDateTime(offsetDateTime);
+    public String formatRole(TeamMemberRelation relation) {
+        if (relation.getRole() == null) {
+            return "";
+        }
+        return labelBean.findLabelOf(relation.getRole());
     }
 
+    public String formatDate(TeamMemberRelation relation) {
+        return DateUtils.formatOffsetDateTime(relation.getAddedAt());
+    }
+
+    public void redirectToActionUnit() {
+        redirectBean.redirectTo(String.format("/actionunit/%s", actionUnit.getId()));
+    }
 }

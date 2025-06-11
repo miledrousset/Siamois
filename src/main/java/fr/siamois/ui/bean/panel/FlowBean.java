@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean.panel;
 
+import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
 import fr.siamois.domain.models.events.LoginEvent;
@@ -8,6 +9,7 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.authorization.PermissionService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.recordingunit.StratigraphicRelationshipService;
@@ -57,6 +59,7 @@ public class FlowBean implements Serializable {
     private final transient ConceptService conceptService;
     private final transient StratigraphicRelationshipService stratigraphicRelationshipService;
     private final BreadcrumbBean breadcrumbBean;
+    private final transient PermissionService permissionService;
 
     // locals
     private transient DashboardModel responsiveModel;
@@ -85,7 +88,7 @@ public class FlowBean implements Serializable {
                     PanelFactory panelFactory,
                     PersonService personService,
                     ConceptService conceptService,
-                    StratigraphicRelationshipService stratigraphicRelationshipService, BreadcrumbBean breadcrumbBean) {
+                    StratigraphicRelationshipService stratigraphicRelationshipService, BreadcrumbBean breadcrumbBean, PermissionService permissionService) {
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
@@ -99,6 +102,7 @@ public class FlowBean implements Serializable {
         this.conceptService = conceptService;
         this.stratigraphicRelationshipService = stratigraphicRelationshipService;
         this.breadcrumbBean = breadcrumbBean;
+        this.permissionService = permissionService;
     }
 
 
@@ -196,8 +200,6 @@ public class FlowBean implements Serializable {
         addPanel(panelFactory.createNewRecordingUnitPanel(actionUnitId, null));
     }
 
-
-
     public void goToSpatialUnitByIdNewPanel(Long id, AbstractPanel currentPanel) {
         // Create new panel type and add items to its breadcrumb
         SpatialUnitPanel newPanel = panelFactory.createSpatialUnitPanel(id, currentPanel.getBreadcrumb());
@@ -290,5 +292,10 @@ public class FlowBean implements Serializable {
         } catch (NoSuchMessageException e) {
             return panel.getTitleCodeOrTitle();
         }
+    }
+
+    public boolean userHasAddSpatialOrActionUnitPermission() {
+        UserInfo info = sessionSettings.getUserInfo();
+        return info.getUser().isSuperAdmin() || permissionService.isActionManager(info) || permissionService.isInstitutionManager(info);
     }
 }

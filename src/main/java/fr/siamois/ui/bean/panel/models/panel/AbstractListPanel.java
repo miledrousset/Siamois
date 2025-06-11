@@ -6,10 +6,10 @@ import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
-import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
+import fr.siamois.utils.MessageUtils;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Getter;
@@ -141,7 +141,7 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
     }
 
     public Boolean isRessourceBookmarkedByUser(String ressourceUri) {
-        return bookmarkService.isRessourceBookmarkedByUser(sessionSettingsBean.getUserInfo(),ressourceUri);
+        return bookmarkService.isRessourceBookmarkedByUser(sessionSettingsBean.getUserInfo(), ressourceUri);
     }
 
     protected abstract void setErrorMessage(String msg);

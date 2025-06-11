@@ -1,6 +1,6 @@
 package fr.siamois.domain.models.history;
 
-import fr.siamois.domain.utils.HistoryCopyUtils;
+import fr.siamois.utils.HistoryCopyUtils;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;

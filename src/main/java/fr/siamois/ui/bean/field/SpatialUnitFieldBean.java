@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean.field;
 
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.form.customfield.CustomField;
@@ -10,15 +11,16 @@ import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
-import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.utils.MessageUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -72,6 +74,14 @@ public class SpatialUnitFieldBean implements Serializable {
         this.conceptService = conceptService;
         this.fieldConfigurationService = fieldConfigurationService;
         this.redirectBean = redirectBean;
+    }
+
+    @EventListener(LoginEvent.class)
+    public void reset() {
+        fName = "";
+        selectedConcept = null;
+        fParentsSpatialUnits = new ArrayList<>();
+        fChildrenSpatialUnits = new ArrayList<>();
     }
 
     /**
@@ -145,7 +155,7 @@ public class SpatialUnitFieldBean implements Serializable {
         try {
             return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE, input);
         } catch (NoConfigForFieldException e) {
-            log.error(e.getMessage());
+            log.warn(e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -162,7 +172,7 @@ public class SpatialUnitFieldBean implements Serializable {
             String fieldCode = (String) UIComponent.getCurrentComponent(context).getAttributes().get("fieldCode");
             return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), fieldCode, input);
         } catch (NoConfigForFieldException e) {
-            log.error(e.getMessage());
+            log.warn(e.getMessage());
             return new ArrayList<>();
         }
     }

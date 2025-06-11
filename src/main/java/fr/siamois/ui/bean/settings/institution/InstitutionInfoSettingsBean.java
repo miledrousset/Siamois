@@ -1,13 +1,15 @@
 package fr.siamois.ui.bean.settings.institution;
 
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.publisher.InstitutionChangeEventPublisher;
-import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
+import fr.siamois.utils.MessageUtils;
 import jakarta.faces.application.FacesMessage;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -46,6 +48,12 @@ public class InstitutionInfoSettingsBean implements Serializable {
         } else {
             MessageUtils.displayMessage(langBean, FacesMessage.SEVERITY_WARN, "organisationSettings.action.unchanged");
         }
+    }
+
+    @EventListener(LoginEvent.class)
+    public void reset() {
+        institution = null;
+        fName = null;
     }
 
 }

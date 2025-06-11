@@ -226,6 +226,7 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
 
             FilterMeta categoryMeta = filterBy.get("category");
             if (categoryMeta != null && categoryMeta.getFilterValue() != null) {
+                @SuppressWarnings("unchecked")
                 List<ConceptLabel> selectedCategoryLabels = (List<ConceptLabel>) categoryMeta.getFilterValue();
                 List<Concept> selectedCategories = selectedCategoryLabels.stream()
                         .map(ConceptLabel::getConcept)
@@ -239,6 +240,7 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
 
             FilterMeta personMeta = filterBy.get("author");
             if (personMeta != null && personMeta.getFilterValue() != null) {
+                @SuppressWarnings("unchecked")
                 List<Person> selectedPerson = (List<Person>) personMeta.getFilterValue();
                 personIds = selectedPerson.stream()
                         .filter(Objects::nonNull)

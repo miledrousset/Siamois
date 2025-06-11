@@ -1,109 +1,88 @@
 package fr.siamois.ui.bean.settings.team;
 
-import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.models.institution.Team;
-import fr.siamois.domain.services.person.TeamService;
-import fr.siamois.ui.bean.LangBean;
-import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.bean.dialog.NewTeamDialogBean;
+import fr.siamois.domain.services.InstitutionService;
+import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
 import fr.siamois.ui.bean.settings.SettingsDatatableBean;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
-import java.time.format.DateTimeFormatter;
+import javax.faces.bean.SessionScoped;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@Slf4j
-@Component
 @Getter
 @Setter
+@Component
+@SessionScoped
 public class TeamListBean implements SettingsDatatableBean {
 
-    private final transient TeamService teamService;
-    private final SessionSettingsBean sessionSettingsBean;
-    private final LangBean langBean;
-    private final NewTeamDialogBean newTeamDialogBean;
-    private final TeamDetailsBean teamDetailsBean;
+    private final transient ActionUnitService actionUnitService;
+    private final TeamMembersBean teamMembersBean;
+    private final UserDialogBean userDialogBean;
     private Institution institution;
 
-    private Set<Team> teams;
-    private List<Team> filteredTeams;
-
+    private final transient InstitutionService institutionService;
     private String searchInput;
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private Set<ActionUnit> actionUnits;
+    private List<ActionUnit> filteredActionUnits;
 
-    public TeamListBean(TeamService teamService, SessionSettingsBean sessionSettingsBean, LangBean langBean, NewTeamDialogBean newTeamDialogBean, TeamDetailsBean teamDetailsBean) {
-        this.teamService = teamService;
-        this.sessionSettingsBean = sessionSettingsBean;
-        this.langBean = langBean;
-        this.newTeamDialogBean = newTeamDialogBean;
-        this.teamDetailsBean = teamDetailsBean;
-    }
-
-    public void init(Institution institution) {
-        Person person = sessionSettingsBean.getAuthenticatedUser();
-        this.institution = institution;
-        this.teams = teamService.findTeamsOfInstitution(person, institution);
-        this.filteredTeams = new ArrayList<>(teams);
+    public TeamListBean(InstitutionService institutionService, ActionUnitService actionUnitService, TeamMembersBean teamMembersBean, UserDialogBean userDialogBean) {
+        this.institutionService = institutionService;
+        this.actionUnitService = actionUnitService;
+        this.teamMembersBean = teamMembersBean;
+        this.userDialogBean = userDialogBean;
     }
 
     @Override
     public void add() {
-        newTeamDialogBean.init(institution, this::addTeam);
-        PrimeFaces.current().executeScript("PF('newTeamDialog').show();");
-    }
-
-    public void addTeam() {
-        Team team = newTeamDialogBean.createTeam();
-        if (team != null) {
-            teams.add(team);
-            filteredTeams.add(team);
-            newTeamDialogBean.exit();
-        }
+        throw new UnsupportedOperationException("Adding action units is not supported in this context.");
     }
 
     @Override
     public void filter() {
-        filteredTeams.clear();
         if (searchInput == null || searchInput.isEmpty()) {
-            filteredTeams.addAll(teams);
+            filteredActionUnits = new ArrayList<>(actionUnits);
         } else {
-            for (Team team : teams) {
-                if (team.getName().toLowerCase().contains(searchInput.toLowerCase())) {
-                    filteredTeams.add(team);
+            filteredActionUnits = new ArrayList<>();
+            for (ActionUnit actionUnit : actionUnits) {
+                if (actionUnit.getName().toLowerCase().contains(searchInput.toLowerCase())) {
+                    filteredActionUnits.add(actionUnit);
                 }
             }
         }
     }
 
-    public String formatCreationDate(Team team) {
-        return team.getCreationDate() == null ? "" : DATE_TIME_FORMATTER.format(team.getCreationDate());
+    public int numberOfMemberInActionUnit(ActionUnit actionUnit) {
+        return institutionService.findMembersOf(actionUnit).size();
     }
 
-    public long memberCount(Team team) {
-        return teamService.numberOfMembersInTeam(team);
+    public void reset() {
+        this.institution = null;
+        this.searchInput = null;
+        this.actionUnits = null;
+        this.filteredActionUnits = null;
     }
 
-    public String redirectToTeam(Team team) {
-        teamDetailsBean.init(team);
-        return "/pages/settings/team/teamDetailsSettings.xhtml?faces-redirect=true";
+    public void init(Institution institution) {
+        reset();
+        this.institution = institution;
+        this.actionUnits = actionUnitService.findAllByInstitution(institution);
+        this.filteredActionUnits = new ArrayList<>(actionUnits);
     }
 
-    public String nameOf(Team team) {
-        if (team.isDefaultTeam()) {
-            return langBean.msg("common.entity.members");
-        }
-        return team.getName();
+    public String manageTeamMember(ActionUnit actionUnit) {
+        teamMembersBean.init(actionUnit);
+        return "/pages/settings/team/manageTeamMember.xhtml?faces-redirect=true";
     }
 
-    public String goToTeamList() {
+    public String backToTeamList() {
+        teamMembersBean.reset();
         return "/pages/settings/team/teamList.xhtml?faces-redirect=true";
     }
 

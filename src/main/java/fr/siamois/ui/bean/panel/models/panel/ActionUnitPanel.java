@@ -9,11 +9,12 @@ import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.domain.services.vocabulary.LabelService;
-import fr.siamois.domain.utils.DateUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
+import fr.siamois.ui.bean.settings.team.TeamMembersBean;
+import fr.siamois.utils.DateUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +51,7 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
     private final transient FieldService fieldService;
     private final RedirectBean redirectBean;
     private final transient LabelService labelService;
-
+    private final TeamMembersBean teamMembersBean;
 
     // Local
     private ActionUnit actionUnit;
@@ -69,7 +70,7 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
     private transient List<ActionCode> secondaryActionCodes;
 
 
-    public ActionUnitPanel(ActionUnitService actionUnitService, LangBean langBean, SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService, FieldService fieldService, RedirectBean redirectBean, LabelService labelService) {
+    public ActionUnitPanel(ActionUnitService actionUnitService, LangBean langBean, SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService, FieldService fieldService, RedirectBean redirectBean, LabelService labelService, TeamMembersBean teamMembersBean) {
         super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel action-unit-single-panel");
         this.actionUnitService = actionUnitService;
         this.langBean = langBean;
@@ -78,6 +79,7 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
         this.fieldService = fieldService;
         this.redirectBean = redirectBean;
         this.labelService = labelService;
+        this.teamMembersBean = teamMembersBean;
     }
 
     @Override
@@ -246,6 +248,10 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
             actionUnitPanel.init();
             return actionUnitPanel;
         }
+    }
+
+    public void goToMemberList() {
+        redirectBean.redirectTo(String.format("/settings/organisation/actionunit/%s/members", actionUnit.getId()));
     }
 
 }

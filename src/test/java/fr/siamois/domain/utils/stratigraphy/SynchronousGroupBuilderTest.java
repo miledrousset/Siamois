@@ -3,6 +3,8 @@ package fr.siamois.domain.utils.stratigraphy;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.domain.services.recordingunit.StratigraphicRelationshipService;
+import fr.siamois.utils.stratigraphy.SynchronousGroup;
+import fr.siamois.utils.stratigraphy.SynchronousGroupBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

@@ -3,6 +3,7 @@ package fr.siamois.ui.bean.settings;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
+import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.exceptions.auth.InvalidNameException;
@@ -20,9 +21,9 @@ import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.publisher.LangageChangeEventPublisher;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
-import fr.siamois.domain.utils.MessageUtils;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.utils.MessageUtils;
 import jakarta.faces.application.FacesMessage;
 import lombok.Getter;
 import lombok.Setter;
@@ -111,7 +112,7 @@ public class ProfileSettingsBean implements Serializable {
             refConfigConcept = fieldConfigurationService.findConfigurationForFieldCode(info, SpatialUnit.CATEGORY_FIELD_CODE);
             fThesaurusUrl = refConfigConcept.getVocabulary().getUri();
         } catch (NoConfigForFieldException e) {
-            log.debug("User has no thesaurus configuration for fieldCode {}", SpatialUnit.CATEGORY_FIELD_CODE);
+            log.warn("User has no thesaurus configuration for fieldCode {}", SpatialUnit.CATEGORY_FIELD_CODE);
         }
     }
 
@@ -182,7 +183,7 @@ public class ProfileSettingsBean implements Serializable {
     }
 
     public List<Locale> getRefLangs() {
-        List<String> langCodes = langService.getAvailableLanguages();
+        List<String> langCodes = List.of(langService.getAvailableLanguages());
         return langCodes.stream()
                 .map(Locale::new)
                 .toList();
@@ -229,5 +230,17 @@ public class ProfileSettingsBean implements Serializable {
         return findInstitutionById(id).getName();
     }
 
+    @EventListener(LoginEvent.class)
+    public void reset() {
+        fEmail = null;
+        fLastname = null;
+        fFirstname = null;
+        fThesaurusUrl = null;
+        fSelectedLang = null;
+        fDefaultInstitutionId = null;
+        personSettings = null;
+        refConfigConcept = null;
+        refInstitutions = null;
+    }
 
 }

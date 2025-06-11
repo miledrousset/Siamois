@@ -17,23 +17,23 @@
             <form:csrfform formId="breadCrumbForm" styleClass="breadCrumpForm">
                 <p:breadCrumb homeDisplay="false">
                     <p:menuitem value="Organisations" action="#{institutionDetailsBean.goToInstitutionList()}"/>
-                    <p:menuitem value="#{institutionManagerSettingsBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
+                    <p:menuitem value="#{institutionManagerListBean.institution.name}" action="#{institutionDetailsBean.backToInstitutionSettings()}"/>
                     <p:menuitem value="#{langBean.msg('organisationSettings.titles.managers')}"/>
                 </p:breadCrumb>
             </form:csrfform>
             <settings:datatable
-                    title="#{langBean.msg('organisationSettings.managers.title', institutionManagerSettingsBean.institution.name)}"
-                    filterAction="#{institutionManagerSettingsBean.filter()}"
+                    title="#{langBean.msg('organisationSettings.managers.title', institutionManagerListBean.institution.name)}"
+                    filterAction="#{institutionManagerListBean.filter()}"
                     formId="institutionManagerForm"
-                    addAction="#{institutionManagerSettingsBean.add()}"
-                    searchInputTextValue="#{institutionManagerSettingsBean.searchInput}"
+                    addAction="#{institutionManagerListBean.add()}"
+                    searchInputTextValue="#{institutionManagerListBean.searchInput}"
                     description="#{langBean.msg('organisationSettings.managers.description')}"
                     renderCreateButton="true"
                     createButtonLabel="#{langBean.msg('organisationSettings.managers.add')}"
             >
                 <p:dataTable
                         id="managerDatatable"
-                        value="#{institutionManagerSettingsBean.members}"
+                        value="#{institutionManagerListBean.members}"
                         var="member"
                         sortMode="single"
                         widgetVar="institutionManagerDatatable"
@@ -47,10 +47,7 @@
                         </div>
                     </p:column>
                     <p:column headerText="#{langBean.msg('common.label.role')}">
-                        <p:outputLabel value="#{institutionManagerSettingsBean.roles.get(member)}"/>
-                    </p:column>
-                    <p:column headerText="#{langBean.msg('organisationSettings.managers.adddate')}">
-                        <p:outputLabel value="#{institutionManagerSettingsBean.addDateOf(member)}"/>
+                        <p:outputLabel value="#{institutionManagerListBean.roles.get(member)}"/>
                     </p:column>
                 </p:dataTable>
             </settings:datatable>

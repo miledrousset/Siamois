@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static fr.siamois.domain.utils.FullInfoDTOUtils.getPrefLabelOfLang;
+import static fr.siamois.utils.FullInfoDTOUtils.getPrefLabelOfLang;
 
 @Service
 public class FieldConfigurationService {
@@ -138,7 +138,7 @@ public class FieldConfigurationService {
                 .findTopTermConfigForFieldCodeOfInstitution(info.getInstitution().getId(), fieldCode);
 
         if (optConcept.isEmpty())
-            throw new NoConfigForFieldException(String.format("User %s from %s has no config for fieldCode %s",
+            throw new NoConfigForFieldException(String.format("User '%s' from '%s' has no config for fieldCode '%s'",
                     info.getUser().getName(), info.getInstitution().getName(), fieldCode));
 
         return optConcept.get();

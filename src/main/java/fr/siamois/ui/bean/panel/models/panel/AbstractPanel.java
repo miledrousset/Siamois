@@ -22,6 +22,7 @@ public abstract class AbstractPanel implements Serializable {
     protected String titleCodeOrTitle;
     protected String panelClass;
     protected String icon;
+    @Getter(AccessLevel.NONE)
     protected PanelBreadcrumb breadcrumb;
     @Getter(AccessLevel.NONE)
     protected Boolean isBreadcrumbVisible = true;
@@ -79,6 +80,11 @@ public abstract class AbstractPanel implements Serializable {
     public boolean isBreadcrumbVisible() {
         if (breadcrumb == null) return false;
         return isBreadcrumbVisible;
+    }
+
+    public PanelBreadcrumb getBreadcrumb() {
+        if (breadcrumb == null) return new PanelBreadcrumb();
+        return breadcrumb;
     }
 
 }

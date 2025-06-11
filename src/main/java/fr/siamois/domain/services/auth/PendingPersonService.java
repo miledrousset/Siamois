@@ -1,18 +1,17 @@
 package fr.siamois.domain.services.auth;
 
+import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.auth.pending.PendingActionUnitAttribution;
 import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
-import fr.siamois.domain.models.auth.pending.PendingTeamInvite;
 import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.LangService;
-import fr.siamois.domain.services.person.TeamService;
-import fr.siamois.domain.utils.DateUtils;
+import fr.siamois.infrastructure.database.repositories.person.PendingActionUnitRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
-import fr.siamois.infrastructure.database.repositories.person.PendingTeamInviteRepository;
 import fr.siamois.ui.email.EmailManager;
+import fr.siamois.utils.DateUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Email;
 import org.springframework.stereotype.Service;
@@ -35,24 +34,21 @@ public class PendingPersonService {
 
     private final HttpServletRequest httpServletRequest;
     private final PendingInstitutionInviteRepository pendingInstitutionInviteRepository;
-    private final PendingTeamInviteRepository pendingTeamInviteRepository;
     private final EmailManager emailManager;
     private final LangService langService;
-    private final TeamService teamService;
+    private final PendingActionUnitRepository pendingActionUnitRepository;
 
     public PendingPersonService(PendingPersonRepository pendingPersonRepository,
                                 HttpServletRequest httpServletRequest,
                                 PendingInstitutionInviteRepository pendingInstitutionInviteRepository,
-                                PendingTeamInviteRepository pendingTeamInviteRepository,
                                 EmailManager emailManager,
-                                LangService langService, TeamService teamService) {
+                                LangService langService, PendingActionUnitRepository pendingActionUnitRepository) {
         this.pendingPersonRepository = pendingPersonRepository;
         this.httpServletRequest = httpServletRequest;
         this.pendingInstitutionInviteRepository = pendingInstitutionInviteRepository;
-        this.pendingTeamInviteRepository = pendingTeamInviteRepository;
         this.emailManager = emailManager;
         this.langService = langService;
-        this.teamService = teamService;
+        this.pendingActionUnitRepository = pendingActionUnitRepository;
     }
 
     /**
@@ -112,17 +108,6 @@ public class PendingPersonService {
     }
 
     /**
-     * Send an invitation email to the pending person.
-     * @param pendingPerson the pending person
-     * @param institution the institution
-     * @param mailLang the language of the email
-     * @return true if the email was sent, false if the invitation already exists
-     */
-    public boolean sendPendingInstitutionInvite(PendingPerson pendingPerson, Institution institution, String mailLang) {
-        return sendPendingInstitutionInvite(pendingPerson, institution, false, mailLang);
-    }
-
-    /**
      * Send an invitation email to the pending person with the option to set them as a manager.
      * @param pendingPerson the pending person
      * @param institution the institution
@@ -130,100 +115,109 @@ public class PendingPersonService {
      * @param mailLang the language of the email
      * @return true if the email was sent, false if the invitation already exists
      */
-    public boolean sendPendingInstitutionInvite(PendingPerson pendingPerson, Institution institution, boolean isManager, String mailLang) {
+    public boolean sendPendingManagerInstitutionInvite(PendingPerson pendingPerson, Institution institution, boolean isManager, String mailLang) {
         Optional<PendingInstitutionInvite> pendingInstitutionInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson);
         if (pendingInstitutionInvite.isPresent()) {
             PendingInstitutionInvite invite = pendingInstitutionInvite.get();
             invite.setManager(isManager);
             pendingInstitutionInviteRepository.save(invite);
             return false;
-        } else {
-            PendingInstitutionInvite invite = new PendingInstitutionInvite();
-            invite.setPendingPerson(pendingPerson);
-            invite.setInstitution(institution);
-            invite.setId(-1L);
-            invite.setManager(isManager);
-            invite = pendingInstitutionInviteRepository.save(invite);
-
-            Locale locale = new Locale(mailLang);
-            String institutionName = institution.getName();
-            String invitationLink = invitationLink(pendingPerson);
-            String expirationDate = DateUtils.formatOffsetDateTime(pendingPerson.getPendingInvitationExpirationDate());
-
-            Team defaultTeam = teamService.createOrGetDefaultOf(institution);
-
-            addTeamToInvitation(invite, defaultTeam, null);
-
-            emailManager.sendEmail(pendingPerson.getEmail(),
-                    langService.msg("mail.invitation.subject", locale, institutionName),
-                    langService.msg("mail.invitation.body", locale, institutionName, invitationLink, expirationDate, expirationDate)
-            );
-
-            return true;
         }
+        sendEmail(pendingPerson, institution, mailLang, isManager, false);
+        return true;
     }
 
     /**
-     * Add a team to the pending institution invitation.
-     * @param institutionInvite the pending institution invite
-     * @param team the team to add
-     * @param role the role in the team
+     * Send an action manager invitation email to the pending person.
+     * @param pendingPerson the pending person
+     * @param institution the institution
+     * @param mailLang the language of the email
+     * @return true if the email was sent, false if the invitation already exists
      */
-    public void addTeamToInvitation(PendingInstitutionInvite institutionInvite, Team team, Concept role) {
-        Set<PendingTeamInvite> optTeam = pendingTeamInviteRepository.findByPendingInstitutionInvite(institutionInvite);
-        PendingTeamInvite teamInvite;
-        Optional<PendingTeamInvite> pendingTeamInvite = optTeam.stream().filter(t -> t.getTeam().getId().equals(team.getId())).findFirst();
-        if (pendingTeamInvite.isPresent()) {
-            teamInvite = pendingTeamInvite.get();
-        } else {
-            teamInvite = new PendingTeamInvite();
-            teamInvite.setId(-1L);
-            teamInvite.setPendingInstitutionInvite(institutionInvite);
+    public boolean sendPendingActionManagerInstitutionInvite(PendingPerson pendingPerson, Institution institution, String mailLang) {
+        Optional<PendingInstitutionInvite> optInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson);
+        if (optInvite.isPresent()) {
+            return false;
         }
-        teamInvite.setTeam(team);
-        teamInvite.setRoleInTeam(role);
-        pendingTeamInviteRepository.save(teamInvite);
+        sendEmail(pendingPerson, institution, mailLang, false, true);
+        return true;
     }
 
+    public boolean sendPendingActionMemberInvite(PendingPerson pendingPerson, ActionUnit actionUnit, Concept role, String mailLang) {
+        Optional<PendingInstitutionInvite> optInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(actionUnit.getCreatedByInstitution(), pendingPerson);
+        if (optInvite.isPresent()) {
+            PendingInstitutionInvite invite = optInvite.get();
+            createIfNotExistAttribution(actionUnit, role, invite);
+            return false;
+        }
+
+        PendingInstitutionInvite invite = new PendingInstitutionInvite();
+        invite.setPendingPerson(pendingPerson);
+        invite.setInstitution(actionUnit.getCreatedByInstitution());
+        invite.setManager(false);
+
+        invite = pendingInstitutionInviteRepository.save(invite);
+        createIfNotExistAttribution(actionUnit, role, invite);
+        sendEmail(pendingPerson, actionUnit.getCreatedByInstitution(), mailLang, false, false);
+        return true;
+    }
+
+    private void createIfNotExistAttribution(ActionUnit actionUnit, Concept role, PendingInstitutionInvite invite) {
+        Optional<PendingActionUnitAttribution> optAction = pendingActionUnitRepository.findByActionUnitAndInstitutionInvite(actionUnit, invite);
+        if (optAction.isPresent())
+            return;
+        PendingActionUnitAttribution actionAttribution = new PendingActionUnitAttribution(invite, actionUnit);
+        actionAttribution.setRole(role);
+
+        pendingActionUnitRepository.save(actionAttribution);
+    }
+
+    private void sendEmail(PendingPerson pendingPerson, Institution institution, String mailLang, boolean isManager, boolean isActionManager) {
+        PendingInstitutionInvite invite = new PendingInstitutionInvite();
+        invite.setPendingPerson(pendingPerson);
+        invite.setInstitution(institution);
+        invite.setId(-1L);
+        invite.setManager(isManager);
+        invite.setActionManager(isActionManager);
+        pendingInstitutionInviteRepository.save(invite);
+
+        Locale locale = new Locale(mailLang);
+        String institutionName = institution.getName();
+        String invitationLink = invitationLink(pendingPerson);
+        String expirationDate = DateUtils.formatOffsetDateTime(pendingPerson.getPendingInvitationExpirationDate());
+
+        emailManager.sendEmail(pendingPerson.getEmail(),
+                langService.msg("mail.invitation.subject", locale, institutionName),
+                langService.msg("mail.invitation.body", locale, institutionName, invitationLink, expirationDate, expirationDate)
+        );
+    }
+
+
+    /**
+     * Delete a pending person from the database.
+     * @param pendingPerson the pending person to delete
+     */
     public void delete(PendingPerson pendingPerson) {
         pendingPersonRepository.delete(pendingPerson);
+    }
+
+    public void delete(PendingInstitutionInvite pendingInstitutionInvite) {
+        pendingInstitutionInviteRepository.delete(pendingInstitutionInvite);
+    }
+
+    public void delete(PendingActionUnitAttribution pendingActionUnitAttribution) {
+        pendingActionUnitRepository.delete(pendingActionUnitAttribution);
     }
 
     public Optional<PendingPerson> findByToken(String token) {
         return pendingPersonRepository.findByRegisterToken(token);
     }
 
-    public PendingInstitutionInvite createOrGetInstitutionInviteOf(PendingPerson pendingPerson, Institution institution, boolean isManager) {
-        Optional<PendingInstitutionInvite> pendingInstitutionInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(institution, pendingPerson);
-        if (pendingInstitutionInvite.isPresent()) {
-            return pendingInstitutionInvite.get();
-        } else {
-            PendingInstitutionInvite invite = new PendingInstitutionInvite();
-            invite.setPendingPerson(pendingPerson);
-            invite.setInstitution(institution);
-            invite.setId(-1L);
-            invite.setManager(isManager);
-            return pendingInstitutionInviteRepository.save(invite);
-        }
-    }
-
-    public PendingInstitutionInvite createOrGetInstitutionInviteOf(PendingPerson pendingPerson, Institution institution) {
-        return createOrGetInstitutionInviteOf(pendingPerson, institution, false);
-    }
-
     public Set<PendingInstitutionInvite> findInstitutionsByPendingPerson(PendingPerson pendingPerson) {
         return pendingInstitutionInviteRepository.findAllByPendingPerson(pendingPerson);
     }
 
-    public Set<PendingTeamInvite> findTeamsByPendingInstitutionInvite(PendingInstitutionInvite pendingInstitutionInvite) {
-        return pendingTeamInviteRepository.findByPendingInstitutionInvite(pendingInstitutionInvite);
-    }
-
-    public void deleteTeamInvite(PendingTeamInvite pendingTeamInvite) {
-        pendingTeamInviteRepository.delete(pendingTeamInvite);
-    }
-
-    public void deleteInstitutionInvite(PendingInstitutionInvite invite) {
-        pendingInstitutionInviteRepository.delete(invite);
+    public Set<PendingActionUnitAttribution> findActionAttributionsByPendingInvite(PendingInstitutionInvite invite) {
+        return pendingActionUnitRepository.findByInstitutionInvite(invite);
     }
 }

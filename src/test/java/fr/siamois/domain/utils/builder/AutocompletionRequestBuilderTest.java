@@ -1,5 +1,6 @@
 package fr.siamois.domain.utils.builder;
 
+import fr.siamois.utils.builder.AutocompletionRequestBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -3,7 +3,6 @@ package fr.siamois.infrastructure.database.initializer;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
 import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.services.person.TeamService;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,8 +36,6 @@ class AdminInitializerTest {
     @Mock
     private ApplicationContext applicationContext;
 
-    @Mock
-    private TeamService teamService;
 
     private AdminInitializer adminInitializer;
 
@@ -48,8 +45,7 @@ class AdminInitializerTest {
         adminInitializer = new AdminInitializer(passwordEncoder,
                 personRepository,
                 institutionRepository,
-                applicationContext,
-                teamService);
+                applicationContext);
         adminInitializer.setAdminUsername("admin");
         adminInitializer.setAdminPassword("admin");
         adminInitializer.setAdminEmail("admin@example.com");

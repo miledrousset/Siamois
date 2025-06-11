@@ -1,5 +1,4 @@
 package fr.siamois.domain.models.spatialunit;
-import org.locationtech.jts.geom.MultiPolygon;
 
 import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.actionunit.ActionUnit;
@@ -9,6 +8,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.locationtech.jts.geom.MultiPolygon;
 
 
 

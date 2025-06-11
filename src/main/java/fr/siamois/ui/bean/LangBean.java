@@ -6,7 +6,7 @@ import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.settings.PersonSettings;
 import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.services.person.PersonService;
-import fr.siamois.domain.utils.AuthenticatedUserUtils;
+import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -80,8 +81,7 @@ public class LangBean implements Serializable {
     }
 
     public List<String> getLangsWithQuotes() {
-        return langService.getAvailableLanguages()
-                .stream()
+        return Arrays.stream(langService.getAvailableLanguages())
                 .map(lang -> "'" + lang + "'")
                 .toList();
     }

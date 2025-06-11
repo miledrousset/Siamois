@@ -13,7 +13,6 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
-import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
@@ -236,5 +235,9 @@ public class ActionUnitService implements ArkEntityService {
 
     public long countBySpatialContext(SpatialUnit spatialUnit) {
         return actionUnitRepository.countBySpatialContext(spatialUnit.getId());
+    }
+
+    public Set<ActionUnit> findAllByInstitution(Institution institution) {
+        return actionUnitRepository.findByCreatedByInstitution(institution);
     }
 }

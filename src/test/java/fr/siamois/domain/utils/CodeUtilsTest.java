@@ -1,5 +1,6 @@
 package fr.siamois.domain.utils;
 
+import fr.siamois.utils.CodeUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

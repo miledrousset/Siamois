@@ -1,13 +1,10 @@
 package fr.siamois.ui.bean;
 
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
 import fr.siamois.domain.models.auth.pending.PendingPerson;
-import fr.siamois.domain.models.auth.pending.PendingTeamInvite;
 import fr.siamois.domain.models.exceptions.auth.InvalidUserInformationException;
 import fr.siamois.domain.models.exceptions.auth.UserAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.models.institution.Team;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.PersonService;
@@ -17,11 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -42,8 +34,6 @@ public class RegisterBean {
     private String firstName;
     private String lastName;
     private String username;
-
-    private Map<Institution, Set<Team>> institutionTeams = new HashMap<>();
 
     public RegisterBean(PersonService personService,
                         InstitutionService institutionService,
@@ -69,14 +59,6 @@ public class RegisterBean {
     public void init(PendingPerson pendingPerson) {
         reset();
         this.email = pendingPerson.getEmail();
-        Set<PendingInstitutionInvite> institutions = pendingPersonService.findInstitutionsByPendingPerson(pendingPerson);
-        for (PendingInstitutionInvite invite : institutions) {
-            institutionTeams.putIfAbsent(invite.getInstitution(), new HashSet<>());
-            Set<PendingTeamInvite> teamInvites = pendingPersonService.findTeamsByPendingInstitutionInvite(invite);
-            teamInvites.forEach(teamInvite ->
-                    institutionTeams.get(teamInvite.getPendingInstitutionInvite().getInstitution()).add(teamInvite.getTeam()));
-
-        }
     }
 
     public void register() {
@@ -102,6 +84,7 @@ public class RegisterBean {
             personService.createPerson(person);
             log.trace("Person created");
 
+            reset();
             redirectBean.redirectTo("/login");
 
         } catch (InvalidUserInformationException e) {
@@ -110,15 +93,6 @@ public class RegisterBean {
             log.trace("User already exists");
         }
 
-    }
-
-    public String getTeamsName(Institution institution) {
-        Set<String> teamsName = institutionTeams.getOrDefault(institution, Set.of())
-                .stream()
-                .filter(t -> !t.isDefaultTeam())
-                .map(Team::getName)
-                .collect(Collectors.toSet());
-        return "[" + String.join(", ", teamsName) + "]";
     }
 
 }

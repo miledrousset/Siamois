@@ -7,20 +7,19 @@ import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "spatial_unit")
 @SQLRestriction("fk_parent_action_unit_id IS NULL")
 public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
 
+    @SuppressWarnings("CopyConstructorMissesField")
     public SpatialUnit (SpatialUnit spatialUnit) {
         name = spatialUnit.getName();
         ark = spatialUnit.getArk();
