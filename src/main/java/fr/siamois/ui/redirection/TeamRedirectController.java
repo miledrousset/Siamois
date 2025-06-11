@@ -15,7 +15,7 @@ import javax.faces.bean.SessionScoped;
 
 @SessionScoped
 @Controller
-public class TeamRedirect {
+public class TeamRedirectController {
 
     private final InstitutionListSettingsBean institutionListSettingsBean;
     private final ActionUnitService actionUnitService;
@@ -24,12 +24,12 @@ public class TeamRedirect {
     private final TeamListBean teamListBean;
     private final NavBean navBean;
 
-    public TeamRedirect(InstitutionListSettingsBean institutionListSettingsBean,
-                        ActionUnitService actionUnitService,
-                        TeamMembersBean teamMembersBean,
-                        InstitutionDetailsBean institutionDetailsBean,
-                        TeamListBean teamListBean,
-                        NavBean navBean) {
+    public TeamRedirectController(InstitutionListSettingsBean institutionListSettingsBean,
+                                  ActionUnitService actionUnitService,
+                                  TeamMembersBean teamMembersBean,
+                                  InstitutionDetailsBean institutionDetailsBean,
+                                  TeamListBean teamListBean,
+                                  NavBean navBean) {
         this.institutionListSettingsBean = institutionListSettingsBean;
         this.actionUnitService = actionUnitService;
         this.teamMembersBean = teamMembersBean;
