@@ -46,7 +46,13 @@ public class TeamMembersBean implements SettingsDatatableBean {
     private Set<TeamMemberRelation> memberRelations;
     private List<TeamMemberRelation> filteredMemberRelations;
 
-    public TeamMembersBean(LabelBean labelBean, InstitutionService institutionService, UserDialogBean userDialogBean, PersonService personService, PendingPersonService pendingPersonService, SessionSettingsBean sessionSettingsBean, RedirectBean redirectBean) {
+    public TeamMembersBean(LabelBean labelBean,
+                           InstitutionService institutionService,
+                           UserDialogBean userDialogBean,
+                           PersonService personService,
+                           PendingPersonService pendingPersonService,
+                           SessionSettingsBean sessionSettingsBean,
+                           RedirectBean redirectBean) {
         this.labelBean = labelBean;
         this.institutionService = institutionService;
         this.userDialogBean = userDialogBean;

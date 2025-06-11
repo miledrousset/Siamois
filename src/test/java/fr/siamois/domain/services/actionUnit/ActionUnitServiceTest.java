@@ -25,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -336,4 +337,37 @@ class ActionUnitServiceTest {
         when(actionUnitRepository.countByCreatedByInstitution(any(Institution.class))).thenReturn(3L);
         assertEquals(3,actionUnitService.countByInstitution(new Institution()));
     }
+
+    @Test
+    void countBySpatialContext_success() {
+        SpatialUnit spatialUnit = new SpatialUnit();
+        spatialUnit.setId(1L);
+
+        when(actionUnitRepository.countBySpatialContext(spatialUnit.getId())).thenReturn(5L);
+
+        long result = actionUnitService.countBySpatialContext(spatialUnit);
+
+        assertEquals(5L, result);
+    }
+
+    @Test
+    void findAllByInstitution_success() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        actionUnit1 = new ActionUnit();
+        actionUnit1.setId(1L);
+        actionUnit2 = new ActionUnit();
+        actionUnit2.setId(2L);
+
+        when(actionUnitRepository.findByCreatedByInstitution(institution)).thenReturn(new HashSet<>(List.of(actionUnit1, actionUnit2)));
+
+        Set<ActionUnit> result = actionUnitService.findAllByInstitution(institution);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(actionUnit1));
+        assertTrue(result.contains(actionUnit2));
+    }
+
 }
