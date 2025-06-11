@@ -38,6 +38,7 @@ public class TeamRedirect {
     public String redirectToTeam(@PathVariable Long actionUnitId) {
         ActionUnit actionUnit = actionUnitService.findById(actionUnitId);
         institutionListSettingsBean.init();
+        institutionDetailsBean.setInstitution(actionUnit.getCreatedByInstitution());
         institutionDetailsBean.init();
         institutionDetailsBean.setInstitution(actionUnit.getCreatedByInstitution());
         teamListBean.init(actionUnit.getCreatedByInstitution());
