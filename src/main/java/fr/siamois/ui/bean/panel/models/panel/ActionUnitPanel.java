@@ -2,8 +2,12 @@ package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.actionunit.ActionUnitNotFoundException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.history.ActionUnitHist;
+import fr.siamois.domain.models.history.SpatialUnitHist;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
@@ -14,6 +18,7 @@ import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.settings.team.TeamMembersBean;
+import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.utils.DateUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -41,7 +46,7 @@ import java.util.stream.Collectors;
 @Data
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class ActionUnitPanel extends AbstractPanel implements Serializable {
+public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, ActionUnitHist> implements Serializable {
 
     // Deps
     private final transient ActionUnitService actionUnitService;
@@ -92,6 +97,16 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
         return String.format("/actionunit/%s", actionUnit.getId());
     }
 
+    @Override
+    protected BaseLazyDataModel<ActionUnit> getLazyDataModelChildren() {
+        return null;
+    }
+
+    @Override
+    public BaseLazyDataModel<ActionUnit> getLazyDataModelParents() {
+        return null;
+    }
+
     public void init() {
 
             // reinit
@@ -125,6 +140,31 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
 
 
 
+
+    }
+
+    @Override
+    public List<Person> authorsAvailable() {
+        return List.of();
+    }
+
+    @Override
+    public void initForms() {
+
+    }
+
+    @Override
+    public void cancelChanges() {
+
+    }
+
+    @Override
+    public void saveDocument() {
+
+    }
+
+    @Override
+    public void save(Boolean validated) {
 
     }
 
@@ -223,6 +263,7 @@ public class ActionUnitPanel extends AbstractPanel implements Serializable {
 
 
 
+    public static class ActionUnitPanelBuilder {
     public static class ActionUnitPanelBuilder {
 
         private final ActionUnitPanel actionUnitPanel;

@@ -39,7 +39,6 @@ import fr.siamois.ui.lazydatamodel.ActionUnitInSpatialUnitLazyDataModel;
 import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
 import fr.siamois.ui.lazydatamodel.SpatialUnitParentsLazyDataModel;
 import fr.siamois.utils.DateUtils;
-import fr.siamois.utils.DocumentUtils;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.event.AjaxBehaviorEvent;
@@ -47,10 +46,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
-import org.primefaces.component.tabview.Tab;
-import org.primefaces.component.tabview.TabView;
-import org.primefaces.event.TabChangeEvent;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -86,7 +81,7 @@ import java.util.stream.Collectors;
 @Data
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class SpatialUnitPanel extends AbstractPanel implements Serializable {
+public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, SpatialUnitHist> implements Serializable {
 
     // Dependencies
     private final transient  SpatialUnitService spatialUnitService;
@@ -102,12 +97,6 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private final transient LangBean langBean;
     private final transient PersonService personService;
 
-    // Locals
-    private transient SpatialUnit spatialUnit;
-    private Boolean hasUnsavedModifications ; // Did we modify the spatial unit?
-    private int activeTabIndex ; // Keeping state of active tab
-    private SpatialUnit backupClone;
-
 
     private String spatialUnitErrorMessage;
     private transient List<SpatialUnit> spatialUnitList;
@@ -120,19 +109,14 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private String recordingUnitListErrorMessage;
 
 
-    private transient List<SpatialUnitHist> historyVersion;
-    private transient SpatialUnitHist revisionToDisplay = null;
+
 
     private transient List<CustomField> availableFields;
     private transient List<CustomField> selectedFields;
 
     // lazy model for children
-    private long totalChildrenCount = 0;
-    private List<Concept> selectedCategoriesChildren;
     private SpatialUnitChildrenLazyDataModel lazyDataModelChildren ;
     // lazy model for parents
-    private long totalParentsCount = 0;
-    private List<Concept> selectedCategoriesParents;
     private SpatialUnitParentsLazyDataModel lazyDataModelParents ;
     // Lazy model for actions in the spatial unit
     private ActionUnitInSpatialUnitLazyDataModel actionLazyDataModel;
@@ -140,10 +124,6 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
 
     private String barModel;
-
-    private Long idunit;  // ID of the spatial unit
-
-    private List<Document> documents;
 
     // Gestion du formulaire via form layout
     private List<CustomFormPanel> layout ; // details tab form
@@ -154,8 +134,6 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     private Vocabulary systemTheso ;
     private Concept nameConcept ;
     private Concept spatialUnitTypeConcept;
-
-    private static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-4";
 
 
 
@@ -191,26 +169,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
     }
 
-    public void onTabChange(TabChangeEvent event) {
-        // update tab inddex
-        TabView tabView = (TabView) event.getComponent(); // Get the TabView
-        Tab activeTab = event.getTab(); // Get the selected tab
 
-        int index = activeTabIndex;
-        List<Tab> tabs = tabView.getChildren().stream()
-                .filter(Tab.class::isInstance)
-                .map(Tab.class::cast)
-                .toList();
-
-        for (int i = 0; i < tabs.size(); i++) {
-            if (tabs.get(i).equals(activeTab)) {
-                index = i;
-                break;
-            }
-        }
-
-        activeTabIndex = index;
-    }
 
     @Override
     public String display() {
@@ -264,12 +223,14 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
                 ).toJson();
     }
 
+    @Override
     public List<Person> authorsAvailable() {
 
         return personService.findAllAuthorsOfSpatialUnitByInstitution(sessionSettings.getSelectedInstitution());
 
     }
 
+    @Override
     public void initForms() {
 
         // Get from from DB in futur iteration
@@ -322,10 +283,10 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
         CustomFieldAnswerText nameAnswer = new CustomFieldAnswerText();
         CustomFieldAnswerSelectOneFromFieldCode typeAnswer = new CustomFieldAnswerSelectOneFromFieldCode();
-        nameAnswer.setValue(spatialUnit.getName());
+        nameAnswer.setValue(unit.getName());
         nameAnswer.setHasBeenModified(false);
         answers.put(nameField, nameAnswer);
-        typeAnswer.setValue(spatialUnit.getCategory());
+        typeAnswer.setValue(unit.getCategory());
         typeAnswer.setHasBeenModified(false);
         answers.put(typeField, typeAnswer);
         formResponse.setAnswers(answers);
@@ -334,9 +295,9 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
     public void refreshUnit() {
 
         hasUnsavedModifications = false;
-        spatialUnit = null;
+        unit = null;
         spatialUnitHelperService.reinitialize(
-                unit -> this.spatialUnit = unit,
+                unit -> this.unit = unit,
                 msg -> this.spatialUnitErrorMessage = msg,
                 msg -> this.spatialUnitListErrorMessage = msg,
                 msg -> this.recordingUnitListErrorMessage = msg,
@@ -350,10 +311,10 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
         try {
 
-            this.spatialUnit = spatialUnitService.findById(idunit);
-            this.setTitleCodeOrTitle(spatialUnit.getName()); // Set panel title
+            this.unit = spatialUnitService.findById(idunit);
+            this.setTitleCodeOrTitle(unit.getName()); // Set panel title
 
-            backupClone = new SpatialUnit(spatialUnit);
+            backupClone = new SpatialUnit(unit);
 
             initForms();
 
@@ -367,64 +328,65 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
             lazyDataModelChildren= new SpatialUnitChildrenLazyDataModel(
                     spatialUnitService,
                     langBean,
-                    spatialUnit
+                    unit
             );
-            totalChildrenCount = spatialUnitService.countChildrenByParentId(spatialUnit.getId());
+            totalChildrenCount = spatialUnitService.countChildrenByParentId(unit.getId());
 
             // Get all the Parents of the spatial unit
             selectedCategoriesParents = new ArrayList<>();
             lazyDataModelParents = new SpatialUnitParentsLazyDataModel(
                     spatialUnitService,
                     langBean,
-                    spatialUnit
+                    unit
             );
-            totalParentsCount = spatialUnitService.countParentsByChildId(spatialUnit.getId());
+            totalParentsCount = spatialUnitService.countParentsByChildId(unit.getId());
 
             // Action in spatial unit lazy model
             actionLazyDataModel = new ActionUnitInSpatialUnitLazyDataModel(
                     actionUnitService,
                     sessionSettings,
                     langBean,
-                    spatialUnit
+                    unit
             );
-            totalActionUnitCount = actionUnitService.countBySpatialContext(spatialUnit);
+            totalActionUnitCount = actionUnitService.countBySpatialContext(unit);
 
             // add to BC
-            this.getBreadcrumb().addSpatialUnit(spatialUnit);
+            this.getBreadcrumb().addSpatialUnit(unit);
 
         } catch (RuntimeException e) {
             this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
         }
 
         DataLoaderUtils.loadData(
-                () -> recordingUnitService.findAllBySpatialUnit(spatialUnit),
+                () -> recordingUnitService.findAllBySpatialUnit(unit),
                 list -> this.recordingUnitList = list,
                 msg -> this.recordingUnitListErrorMessage = msg,
                 "Unable to load recording units: "
         );
 
         DataLoaderUtils.loadData(
-                () -> actionUnitService.findAllBySpatialUnitId(spatialUnit),
+                () -> actionUnitService.findAllBySpatialUnitId(unit),
                 list -> this.actionUnitList = list,
                 msg -> this.actionUnitListErrorMessage = msg,
                 "Unable to load action units: "
         );
 
-        historyVersion = spatialUnitHelperService.findHistory(spatialUnit);
-        documents = documentService.findForSpatialUnit(spatialUnit);
+        historyVersion = spatialUnitHelperService.findHistory(unit);
+        documents = documentService.findForSpatialUnit(unit);
     }
 
+    @Override
     public void cancelChanges() {
-        spatialUnit.setGeom(backupClone.getGeom());
-        spatialUnit.setName(backupClone.getName());
-        spatialUnit.setValidated(backupClone.getValidated());
-        spatialUnit.setArk(backupClone.getArk());
-        spatialUnit.setCategory(backupClone.getCategory());
+        unit.setGeom(backupClone.getGeom());
+        unit.setName(backupClone.getName());
+        unit.setValidated(backupClone.getValidated());
+        unit.setArk(backupClone.getArk());
+        unit.setCategory(backupClone.getCategory());
         hasUnsavedModifications = false;
         initForms();
     }
 
-
+    @Override
     public void init() {
 
         createBarModel();
@@ -448,13 +410,13 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
 
 
 
-        if (this.spatialUnit == null) {
+        if (this.unit == null) {
             this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
             return;
         }
 
         // add to BC
-        this.getBreadcrumb().addSpatialUnit(spatialUnit);
+        this.getBreadcrumb().addSpatialUnit(unit);
 
 
     }
@@ -493,12 +455,13 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         return value.toString(); // Default case
     }
 
+    @Override
     public void saveDocument() {
         try {
             BufferedInputStream currentFile = new BufferedInputStream(documentCreationBean.getDocFile().getInputStream());
             String hash = documentService.getMD5Sum(currentFile);
             currentFile.mark(Integer.MAX_VALUE);
-            if (documentService.existInSpatialUnitByHash(spatialUnit, hash)) {
+            if (documentService.existInSpatialUnitByHash(unit, hash)) {
                 log.error("Document already exists in spatial unit");
                 currentFile.reset();
                 return;
@@ -513,8 +476,8 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
             return;
 
         log.trace("Document created: {}", created);
-        documentService.addToSpatialUnit(created, spatialUnit);
-        log.trace("Document added to spatial unit: {}", spatialUnit);
+        documentService.addToSpatialUnit(created, unit);
+        log.trace("Document added to spatial unit: {}", unit);
 
         documents.add(created);
         PrimeFaces.current().executeScript("PF('newDocumentDiag').hide()");
@@ -538,6 +501,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         return (totalChildrenCount + totalParentsCount) == 0;
     }
 
+    @Override
     public void save(Boolean validated) {
 
         // Recupération des champs systeme
@@ -545,20 +509,20 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         // Name
         CustomFieldAnswerText nameAnswer = (CustomFieldAnswerText) formResponse.getAnswers().get(nameField);
         CustomFieldAnswerSelectOneFromFieldCode typeAnswer = (CustomFieldAnswerSelectOneFromFieldCode) formResponse.getAnswers().get(typeField);
-        spatialUnit.setName(nameAnswer.getValue());
-        spatialUnit.setCategory(typeAnswer.getValue());
+        unit.setName(nameAnswer.getValue());
+        unit.setCategory(typeAnswer.getValue());
 
-        spatialUnit.setValidated(validated);
+        unit.setValidated(validated);
         try {
-            spatialUnitService.save(spatialUnit);
+            spatialUnitService.save(unit);
         }
         catch(FailedRecordingUnitSaveException e) {
-            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", spatialUnit.getName());
+            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getName());
             return ;
         }
 
         refreshUnit();
-        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", spatialUnit.getName());
+        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getName());
     }
 
     public static class SpatialUnitPanelBuilder {
