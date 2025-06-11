@@ -40,7 +40,6 @@ public class TeamRedirect {
         institutionListSettingsBean.init();
         institutionDetailsBean.setInstitution(actionUnit.getCreatedByInstitution());
         institutionDetailsBean.init();
-        institutionDetailsBean.setInstitution(actionUnit.getCreatedByInstitution());
         teamListBean.init(actionUnit.getCreatedByInstitution());
         teamMembersBean.init(actionUnit);
         return "forward:/pages/settings/team/manageTeamMember.xhtml";
