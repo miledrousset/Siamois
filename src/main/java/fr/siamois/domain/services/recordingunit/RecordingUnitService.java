@@ -16,6 +16,9 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.recordingunit.RecordingUnitRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +37,6 @@ public class RecordingUnitService implements ArkEntityService {
     private final RecordingUnitRepository recordingUnitRepository;
     private final ConceptService conceptService;
     private final CustomFormResponseService customFormResponseService;
-
 
 
     public RecordingUnitService(RecordingUnitRepository recordingUnitRepository,
@@ -75,14 +77,19 @@ public class RecordingUnitService implements ArkEntityService {
         return recordingUnitRepository.findAllByActionUnit(actionUnit);
     }
 
-    public int generateNextIdentifier (RecordingUnit recordingUnit) {
+    public int generateNextIdentifier(RecordingUnit recordingUnit) {
         // Generate next identifier
         Integer currentMaxIdentifier = recordingUnitRepository.findMaxUsedIdentifierByAction(recordingUnit.getActionUnit().getId());
         int nextIdentifier = (currentMaxIdentifier == null) ? recordingUnit.getActionUnit().getMinRecordingUnitCode() : currentMaxIdentifier + 1;
         if (nextIdentifier > recordingUnit.getActionUnit().getMaxRecordingUnitCode() || nextIdentifier < 0) {
             throw new MaxRecordingUnitIdentifierReached("Max recording unit code reached; Please ask administrator to increase the range");
         }
-        return(nextIdentifier);
+        return (nextIdentifier);
+    }
+
+    @Transactional
+    public int bulkUpdateType(List<Long> ids, Concept type) {
+        return recordingUnitRepository.updateTypeByIds(type.getId(), ids);
     }
 
     @Transactional()
@@ -93,13 +100,12 @@ public class RecordingUnitService implements ArkEntityService {
 
         try {
 
-            RecordingUnit managedRecordingUnit ;
+            RecordingUnit managedRecordingUnit;
 
-            if(recordingUnit.getId() != null) {
+            if (recordingUnit.getId() != null) {
                 Optional<RecordingUnit> optRecordingUnit = recordingUnitRepository.findById(recordingUnit.getId());
                 managedRecordingUnit = optRecordingUnit.orElseGet(RecordingUnit::new);
-            }
-            else {
+            } else {
                 managedRecordingUnit = new RecordingUnit();
             }
 
@@ -135,7 +141,7 @@ public class RecordingUnitService implements ArkEntityService {
             CustomFormResponse managedFormResponse;
 
 
-            if(recordingUnit.getFormResponse() != null && recordingUnit.getFormResponse().getForm() != null) {
+            if (recordingUnit.getFormResponse() != null && recordingUnit.getFormResponse().getForm() != null) {
                 // Save the form response if there is one
 
                 // Get the existing response or create a new one
@@ -149,8 +155,7 @@ public class RecordingUnitService implements ArkEntityService {
                 // Process form response
                 customFormResponseService
                         .saveFormResponse(managedFormResponse, recordingUnit.getFormResponse());
-            }
-            else {
+            } else {
                 managedRecordingUnit.setFormResponse(null);
             }
 
@@ -191,6 +196,32 @@ public class RecordingUnitService implements ArkEntityService {
 
     public long countByInstitution(Institution institution) {
         return recordingUnitRepository.countByCreatedByInstitution(institution);
+    }
+
+    @Transactional
+    public Page<RecordingUnit> findAllByInstitutionAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+            Long institutionId,
+            String fullIdentifier,
+            Long[] categoryIds,
+            String global,
+            String langCode,
+            Pageable pageable
+    )
+
+    {
+        Page<RecordingUnit> res = recordingUnitRepository.findAllByInstitutionAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                institutionId, fullIdentifier, categoryIds, global, langCode, pageable
+        );
+
+
+        // load related entities
+        res.forEach(actionUnit -> {
+            Hibernate.initialize(actionUnit.getParents());
+            Hibernate.initialize(actionUnit.getChildren());
+
+        });
+
+        return res;
     }
 
 }

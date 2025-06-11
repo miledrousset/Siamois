@@ -104,6 +104,10 @@ public class NavBean implements Serializable {
         return bookmarkedPanels;
     }
 
+    public void reloadBookarkedPanels() {
+        bookmarkedPanels = bookmarkService.findAll(sessionSettingsBean.getUserInfo());
+    }
+
     public String bookmarkTitle(Bookmark bookmark) {
         try {
             return langBean.msg(bookmark.getTitleCode());

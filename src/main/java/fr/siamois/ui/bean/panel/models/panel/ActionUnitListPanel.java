@@ -61,7 +61,8 @@ public class ActionUnitListPanel extends AbstractListPanel<ActionUnit> {
         super("panel.title.allactionunit",
                 "bi bi-arrow-down-square",
                 "siamois-panel action-unit-panel action-unit-list-panel",
-                spatialUnitService, personService, conceptService, sessionSettingsBean, langBean, labelService, actionUnitService);
+                spatialUnitService, personService, conceptService, sessionSettingsBean, langBean, labelService,
+                actionUnitService, null);
 
     }
 
