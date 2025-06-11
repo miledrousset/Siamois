@@ -71,7 +71,7 @@ public class DocumentCreationBean implements Serializable {
         this.arkService = arkService;
     }
 
-    public void init() {
+    public void init() throws NoConfigForFieldException {
         PrimeFaces.current().ajax().update("newDocumentDiag");
         prepareParentConcept();
         reset();
@@ -87,16 +87,11 @@ public class DocumentCreationBean implements Serializable {
         docDescription = null;
     }
 
-    private void prepareParentConcept() {
+    private void prepareParentConcept() throws NoConfigForFieldException {
         UserInfo info = sessionSettingsBean.getUserInfo();
-        try {
-            parentNature = fieldConfigurationService.findConfigurationForFieldCode(info, Document.NATURE_FIELD_CODE);
-            parentScale = fieldConfigurationService.findConfigurationForFieldCode(info, Document.SCALE_FIELD_CODE);
-            parentType = fieldConfigurationService.findConfigurationForFieldCode(info, Document.FORMAT_FIELD_CODE);
-        } catch (NoConfigForFieldException e) {
-            log.error("No configuration found", e);
-            MessageUtils.displayNoThesaurusConfiguredMessage(langBean);
-        }
+        parentNature = fieldConfigurationService.findConfigurationForFieldCode(info, Document.NATURE_FIELD_CODE);
+        parentScale = fieldConfigurationService.findConfigurationForFieldCode(info, Document.SCALE_FIELD_CODE);
+        parentType = fieldConfigurationService.findConfigurationForFieldCode(info, Document.FORMAT_FIELD_CODE);
     }
 
     public String getUrlForConcept(Concept concept) {

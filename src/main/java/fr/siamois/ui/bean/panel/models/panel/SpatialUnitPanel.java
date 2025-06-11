@@ -4,6 +4,7 @@ import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
 import fr.siamois.domain.models.form.customfield.CustomFieldText;
@@ -529,7 +530,7 @@ public class SpatialUnitPanel extends AbstractPanel implements Serializable {
         return currentMimeType.getType().equals("image");
     }
 
-    public void initDialog() {
+    public void initDialog() throws NoConfigForFieldException {
         log.trace("initDialog");
         documentCreationBean.init();
         documentCreationBean.setActionOnSave(this::saveDocument);
