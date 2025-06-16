@@ -21,6 +21,7 @@ import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.publisher.LangageChangeEventPublisher;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
+import fr.siamois.models.exceptions.ErrorProcessingExpansionException;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.utils.MessageUtils;
@@ -37,6 +38,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+
+import static fr.siamois.utils.MessageUtils.displayErrorMessage;
 
 @Slf4j
 @Getter
@@ -179,6 +182,8 @@ public class ProfileSettingsBean implements Serializable {
             MessageUtils.displayMessage(langBean, FacesMessage.SEVERITY_ERROR, "myProfile.thesaurus.uri.invalid");
         } catch (NotSiamoisThesaurusException e) {
             MessageUtils.displayMessage(langBean, FacesMessage.SEVERITY_ERROR, "myProfile.thesaurus.siamois.invalid");
+        } catch (ErrorProcessingExpansionException e) {
+            displayErrorMessage(langBean, "thesaurus.error.processingExpansion");
         }
     }
 

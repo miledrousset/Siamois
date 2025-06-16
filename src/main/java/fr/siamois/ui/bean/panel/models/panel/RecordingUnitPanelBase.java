@@ -17,21 +17,25 @@ import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
+import fr.siamois.models.exceptions.ErrorProcessingExpansionException;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @NoArgsConstructor(force = true)
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -87,7 +91,13 @@ public abstract class RecordingUnitPanelBase extends AbstractPanel{
     public List<Concept> fetchChildrenOfConcept(Concept concept) {
         List<Concept> concepts ;
 
-        concepts = conceptService.findDirectSubConceptOf(concept);
+        try {
+            concepts = conceptService.findDirectSubConceptOf(concept);
+        } catch (ErrorProcessingExpansionException e) {
+            log.error(e.getMessage());
+            log.debug(e.getMessage(), e);
+            return new ArrayList<>();
+        }
 
         return concepts;
 

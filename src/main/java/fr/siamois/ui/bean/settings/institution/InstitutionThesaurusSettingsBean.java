@@ -8,6 +8,7 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
+import fr.siamois.models.exceptions.ErrorProcessingExpansionException;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.utils.MessageUtils;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.Optional;
+
+import static fr.siamois.utils.MessageUtils.displayErrorMessage;
 
 @Slf4j
 @Component
@@ -67,9 +70,11 @@ public class InstitutionThesaurusSettingsBean implements Serializable {
             fieldConfigurationService.setupFieldConfigurationForInstitution(userInfo, vocabulary);
             MessageUtils.displayInfoMessage(langBean, "myProfile.thesaurus.message.success");
         } catch (InvalidEndpointException e) {
-            MessageUtils.displayErrorMessage(langBean, "myProfile.thesaurus.uri.invalid");
+            displayErrorMessage(langBean, "myProfile.thesaurus.uri.invalid");
         } catch (NotSiamoisThesaurusException e) {
-            MessageUtils.displayErrorMessage(langBean, "myProfile.thesaurus.siamois.invalid");
+            displayErrorMessage(langBean, "myProfile.thesaurus.siamois.invalid");
+        } catch (ErrorProcessingExpansionException e) {
+            displayErrorMessage(langBean, "thesaurus.error.processingExpansion");
         }
 
 

@@ -6,6 +6,7 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.ConceptApi;
 import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
+import fr.siamois.models.exceptions.ErrorProcessingExpansionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ class ConceptServiceIntTest {
     }
 
     @Test
-    void findDirectSubConceptOf() {
+    void findDirectSubConceptOf() throws ErrorProcessingExpansionException {
         Vocabulary vocabulary = new Vocabulary();
         vocabulary.setId(1L);
         vocabulary.setExternalVocabularyId("th223");
@@ -76,7 +77,7 @@ class ConceptServiceIntTest {
     }
 
     @Test
-    void findDirectSubConceptOf_shouldOnlyReturnDirectChilds() {
+    void findDirectSubConceptOf_shouldOnlyReturnDirectChilds() throws ErrorProcessingExpansionException {
         Vocabulary vocabulary = new Vocabulary();
         vocabulary.setId(1L);
         vocabulary.setExternalVocabularyId("th223");
