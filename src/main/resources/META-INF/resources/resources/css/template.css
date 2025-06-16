@@ -165,6 +165,7 @@ hr.sidebar-divider {
 .logout-button {
     background-color: white !important;
     border-color: white !important;
+    margin-bottom: 1vh !important;
 }
 
 .logout-button span.ui-icon {

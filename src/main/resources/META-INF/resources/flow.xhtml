@@ -38,7 +38,7 @@
 
                 element = (typeof element.closest === 'function') ? element : document.getElementById(element.id);
 
-                let inputEl = null;
+                let inputEl;
                 // If not input, find first input to add border
                 if (element.tagName !== 'INPUT') {
                     inputEl = element.querySelector('input');
