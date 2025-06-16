@@ -11,6 +11,7 @@ import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
+import fr.siamois.models.exceptions.ErrorProcessingExpansionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -54,11 +55,11 @@ public class ConceptApi {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public ConceptBranchDTO fetchConceptsUnderTopTerm(Concept concept) {
+    public ConceptBranchDTO fetchConceptsUnderTopTerm(Concept concept) throws ErrorProcessingExpansionException {
         return fetchDownExpansion(concept.getVocabulary(), concept.getExternalId());
     }
 
-    public ConceptBranchDTO fetchDownExpansion(Vocabulary vocabulary, String idConcept) {
+    public ConceptBranchDTO fetchDownExpansion(Vocabulary vocabulary, String idConcept) throws ErrorProcessingExpansionException {
         URI uri = URI.create(String.format("%s/openapi/v1/concept/%s/%s/expansion?way=down", vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId(), idConcept));
 
         ResponseEntity<String> response = sendRequestAcceptJson(uri);
@@ -72,9 +73,8 @@ public class ConceptApi {
             return branch;
         } catch (JsonProcessingException e) {
             log.error("Error while processing JSON", e);
+            throw new ErrorProcessingExpansionException("Error while processing JSON for expansion");
         }
-
-        return new ConceptBranchDTO();
     }
 
     static class ConceptDTO {
@@ -124,7 +124,7 @@ public class ConceptApi {
         return Optional.empty();
     }
 
-    public ConceptBranchDTO fetchFieldsBranch(Vocabulary vocabulary) throws NotSiamoisThesaurusException {
+    public ConceptBranchDTO fetchFieldsBranch(Vocabulary vocabulary) throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
         URI uri = URI.create(vocabulary.getBaseUri() + String.format("/openapi/v1/thesaurus/%s/topconcept", vocabulary.getExternalVocabularyId()));
 
         String conceptDTO = restTemplate.getForObject(uri, String.class);
@@ -144,7 +144,7 @@ public class ConceptApi {
 
         } catch (JsonProcessingException e) {
             log.error("Error while parsing branch", e);
-            return null;
+            throw new ErrorProcessingExpansionException("Error while parsing branch");
         }
     }
 

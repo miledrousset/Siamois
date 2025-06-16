@@ -32,13 +32,13 @@ public class AdminInitializer implements DatabaseInitializer {
     private final InstitutionRepository institutionRepository;
     private final ApplicationContext applicationContext;
 
-    @Value("${siamois.admin.username:admin}")
+    @Value("${siamois.admin.username}")
     private String adminUsername;
 
-    @Value("${siamois.admin.password:admin}")
+    @Value("${siamois.admin.password}")
     private String adminPassword;
 
-    @Value("${siamois.admin.email:admin@example.com}")
+    @Value("${siamois.admin.email}")
     private String adminEmail;
 
     private Person createdAdmin;
@@ -122,7 +122,7 @@ public class AdminInitializer implements DatabaseInitializer {
 
         Institution institution = new Institution();
         institution.setName("Siamois Administration");
-        institution.setDescription("Institution par défaut pour administrer Siamois");
+        institution.setDescription("DEFAULT");
         institution.getManagers().add(createdAdmin);
         institution.setIdentifier("SIAMOIS");
 
