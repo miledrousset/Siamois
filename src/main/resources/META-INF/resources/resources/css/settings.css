@@ -236,3 +236,8 @@ a:hover {
     gap: 1vw;
     padding: 20px;
 }
+
+.config-example {
+    object-fit: contain;
+    width: 100%;
+}
