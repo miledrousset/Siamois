@@ -11,6 +11,7 @@ import fr.siamois.ui.bean.converter.InstitutionConverter;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
 import fr.siamois.ui.bean.settings.InstitutionListSettingsBean;
+import jakarta.faces.context.FacesContext;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -119,6 +120,7 @@ public class NavBean implements Serializable {
 
     public void logout() {
         SecurityContextHolder.getContext().setAuthentication(null);
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         redirectBean.redirectTo("/");
     }
 
