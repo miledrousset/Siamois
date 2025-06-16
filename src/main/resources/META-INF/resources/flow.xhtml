@@ -86,6 +86,10 @@
 
     </ui:define>
 
+    <ui:define name="metadata">
+        <f:event type="preRenderView" listener="#{presentationBean.continueIfLogged()}"/>
+    </ui:define>
+
     <ui:define name="content">
 
         <div style="display: flex; flex-direction: row">

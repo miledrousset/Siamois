@@ -108,13 +108,20 @@
                         <i class="bi bi-file-earmark-person-fill"/>
                         <span class="menu-text">#{navBean.currentUser().email}</span>
                     </a>
-                    <form id="logout-form" method="post" action="#{redirectBean.redirectUrl('/logout')}">
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                        <a onclick="logout()" class="nav-link">
-                            <i class="bi bi-door-open-fill"/>
-                            <span class="menu-text">#{langBean.msg('nav.logout')}</span>
-                        </a>
-                    </form>
+                    <form:csrfform formId="logoutForm">
+
+                        <p:commandButton action="#{navBean.logout()}"
+                                         icon="bi bi-door-open-fill"
+                                         styleClass="nav-link logout-button"
+                                         value="#{langBean.msg('nav.logout')}">
+                            <p:confirm header="#{langBean.msg('nav.logout')}" message="Message" icon="pi pi-info-circle"/>
+                        </p:commandButton>
+
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" />
+                        </p:confirmDialog>
+                    </form:csrfform>
                 </div>
             </nav>
         </h:panelGroup>
