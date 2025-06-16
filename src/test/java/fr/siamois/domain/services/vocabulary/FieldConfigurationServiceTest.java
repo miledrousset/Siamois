@@ -448,6 +448,42 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
+    void fetchConceptChildrenAutocomplete_shouldHandleErrorProcessingExpansionException() throws ErrorProcessingExpansionException {
+        // Given
+        Concept parentConcept = new Concept();
+        parentConcept.setId(1L);
+
+        when(conceptService.findDirectSubConceptOf(parentConcept))
+                .thenThrow(new ErrorProcessingExpansionException("Error fetching children concepts"));
+
+        // When
+        List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "");
+
+        // Then
+        assertThat(result).isEmpty();
+        verify(conceptService, times(1)).findDirectSubConceptOf(parentConcept);
+        verifyNoInteractions(labelService);
+    }
+
+    @Test
+    void fetchAutocomplete_shouldHandleErrorProcessingExpansionException() throws ErrorProcessingExpansionException {
+        // Given
+        Concept parentConcept = new Concept();
+        parentConcept.setId(1L);
+
+        when(conceptApi.fetchConceptsUnderTopTerm(parentConcept))
+                .thenThrow(new ErrorProcessingExpansionException("Error fetching concepts for autocomplete"));
+
+        // When
+        List<Concept> result = service.fetchAutocomplete(userInfo, parentConcept, "input");
+
+        // Then
+        assertThat(result).isEmpty();
+        verify(conceptApi, times(1)).fetchConceptsUnderTopTerm(parentConcept);
+        verifyNoInteractions(conceptService);
+    }
+
+    @Test
     void findVocabularyUrl_OfInstitution_shouldReturnEmpty_whenNoConfigForInstitution() {
         Institution institution = new Institution();
         institution.setId(1L);
