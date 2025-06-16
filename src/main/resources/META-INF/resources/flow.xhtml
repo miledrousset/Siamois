@@ -38,7 +38,7 @@
 
                 element = (typeof element.closest === 'function') ? element : document.getElementById(element.id);
 
-                let inputEl = null;
+                let inputEl;
                 // If not input, find first input to add border
                 if (element.tagName !== 'INPUT') {
                     inputEl = element.querySelector('input');
@@ -84,6 +84,10 @@
         </script>
 
 
+    </ui:define>
+
+    <ui:define name="metadata">
+        <f:event type="preRenderView" listener="#{presentationBean.continueIfLogged()}"/>
     </ui:define>
 
     <ui:define name="content">

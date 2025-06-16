@@ -22,9 +22,10 @@
     width: auto;
 }
 
-.sidebar .nav-link:hover {
+.sidebar .nav-link:hover, .logout-button {
     background: var(--siamois-green-light-50);
     border-radius: 10px;
+    border-color: var(--siamois-green-light-50);
 }
 
 .sidebar .nav-link i {
@@ -158,5 +159,29 @@ hr.sidebar-divider {
 }
 
 .sidebar.collapsed .nav-header {
+    display: none;
+}
+
+.logout-button {
+    background-color: white !important;
+    border-color: white !important;
+    margin-bottom: 1vh !important;
+    width: 100% !important;
+}
+
+.logout-button:hover {
+    background-color: var(--siamois-green-light-50) !important;
+    border-color: var(--siamois-green-light-50) !important;
+}
+
+.logout-button .ui-button-text {
+    color: black;
+}
+
+.logout-button span.ui-icon {
+    color: var(--siamois-green-light);
+}
+
+.sidebar.collapsed .logout-button .ui-button-text {
     display: none;
 }

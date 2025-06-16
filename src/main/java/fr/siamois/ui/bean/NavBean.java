@@ -17,6 +17,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
@@ -114,6 +115,11 @@ public class NavBean implements Serializable {
         } catch (NoSuchMessageException e) {
             return bookmark.getTitleCode();
         }
+    }
+
+    public void logout() {
+        SecurityContextHolder.getContext().setAuthentication(null);
+        redirectBean.redirectTo("/");
     }
 
     @EventListener(LoginEvent.class)
