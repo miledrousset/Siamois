@@ -43,9 +43,10 @@
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <h:commandLink action="#{flowBean.addWelcomePanel}" styleClass="nav-link"
-                            update="flow">
+                            update="flow" id="homeLink">
                                 <i class="bi bi-gear-fill"/>
                                 <span class="menu-text">#{langBean.msg('nav.home')}</span>
+                                <p:tooltip for="homeLink" value="#{langBean.msg('nav.home.hint')}"/>
                             </h:commandLink>
                         </li>
                         <li class="nav-item">
@@ -79,9 +80,10 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <h:commandLink action="#{redirectBean.redirectTo('/settings')}" styleClass="nav-link">
+                            <h:commandLink action="#{redirectBean.redirectTo('/settings')}" styleClass="nav-link" id="settingsLink">
                                 <i class="bi bi-gear-fill"/>
                                 <span class="menu-text">#{langBean.msg('nav.settings')}</span>
+                                <p:tooltip for="settingsLink" value="#{langBean.msg('nav.settings.hint')}"/>
                             </h:commandLink>
                         </li>
                         <h:panelGroup id="bookmarkGroup" layout="none" rendered="#{navBean.bookmarkedPanels.size() > 0}">
@@ -129,9 +131,10 @@
                 <form:csrfform formId="settingsNavForm">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}" styleClass="nav-link">
+                            <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}" styleClass="nav-link" id="backToDashboardLink">
                                 <i class="bi bi-arrow-left"/>
                                 <span class="menu-text">#{langBean.msg('nav.header')}</span>
+                                <p:tooltip for="backToDashboardLink" value="#{langBean.msg('nav.header.hint')}"/>
                             </h:commandLink>
                         </li>
                     </ul>
@@ -139,15 +142,17 @@
                     <ul class="nav flex-column">
                         <li class="nav-header">#{langBean.msg('nav.header.profile')}</li>
                         <li class="nav-item">
-                            <h:commandLink action="#{redirectBean.redirectTo('/settings/profile')}" styleClass="nav-link">
+                            <h:commandLink action="#{redirectBean.redirectTo('/settings/profile')}" styleClass="nav-link" id="myProfileLink">
                                 <i class="bi bi-person"/>
                                 <span class="menu-text">#{langBean.msg('nav.myProfile')}</span>
+                                <p:tooltip for="myProfileLink" value="#{langBean.msg('nav.myProfile.hint')}"/>
                             </h:commandLink>
                         </li>
                         <li class="nav-item">
-                            <h:commandLink action="#{redirectBean.redirectTo('/settings/profile/thesaurus')}" styleClass="nav-link">
+                            <h:commandLink action="#{redirectBean.redirectTo('/settings/profile/thesaurus')}" styleClass="nav-link" id="myThesaurusLink">
                                 <i class="bi bi-calendar"/>
                                 <span class="menu-text">#{langBean.msg('nav.myThesaurus')}</span>
+                                <p:tooltip for="myThesaurusLink" value="#{langBean.msg('nav.myThesaurus.hint')}"/>
                             </h:commandLink>
                         </li>
                     </ul>
@@ -155,9 +160,10 @@
                     <ul class="nav flex-column">
                         <li class="nav-header">#{langBean.msg("nav.header.organisations")}</li>
                         <li class="nav-item">
-                            <h:commandLink action="#{navBean.goToOrganisationSettings()}" styleClass="nav-link">
+                            <h:commandLink action="#{navBean.goToOrganisationSettings()}" styleClass="nav-link" id="organisationManagementLink">
                                 <i class="bi bi-house-door-fill"/>
                                 <span class="menu-text">#{langBean.msg('nav.organisationManagement')}</span>
+                                <p:tooltip for="organisationManagementLink" value="#{langBean.msg('nav.organisationManagement.hint')}"/>
                             </h:commandLink>
                         </li>
                     </ul>
