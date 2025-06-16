@@ -28,6 +28,15 @@
             >
                 <p:messages showDetail="true" autoUpdate="true" closable="true" id="messages"/>
 
+                <div>
+                    <p style="font-style: italic">
+                        Veuillez renseigner le lien permanent vers le thésaurus.
+                        Cette URL peut être retrouvé sur la page de présentation du thésaurus :
+                    </p>
+                    <h:graphicImage styleClass="config-example" library="img" name="opentheso_config_example.png"/>
+                </div>
+                <hr/>
+
                 <settingscomp:fieldValueRow label="#{langBean.msg('myThesaurus.url')}" inputId="profile-thesaurus" >
                     <p:inputText id="profile-thesaurus" value="#{institutionThesaurusSettingsBean.thesaurusUrl}"/>
                 </settingscomp:fieldValueRow>
