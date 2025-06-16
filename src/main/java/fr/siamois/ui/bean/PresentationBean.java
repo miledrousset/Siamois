@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean;
 
+import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.utils.AuthenticatedUserUtils;
 import jakarta.faces.context.FacesContext;
@@ -16,12 +17,31 @@ import java.util.Optional;
 @SessionScoped
 public class PresentationBean implements Serializable {
 
-    public void checkAuth() {
+    private final SessionSettingsBean sessionSettingsBean;
+
+    public PresentationBean(SessionSettingsBean sessionSettingsBean) {
+        this.sessionSettingsBean = sessionSettingsBean;
+    }
+
+    public void continueToDashboardIfLogged() {
         Optional<Person> opt = AuthenticatedUserUtils.getAuthenticatedUser();
+        UserInfo userInfo = sessionSettingsBean.getUserInfo();
         try {
-            if (opt.isPresent()) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("dashboard");
+            if (opt.isEmpty() || userInfo == null || userInfo.getInstitution() == null) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("login");
             } else {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("dashboard");
+            }
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    public void continueIfLogged() {
+        Optional<Person> opt = AuthenticatedUserUtils.getAuthenticatedUser();
+        UserInfo userInfo = sessionSettingsBean.getUserInfo();
+        try {
+            if (opt.isEmpty() || userInfo == null || userInfo.getInstitution() == null) {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("login");
             }
         } catch (IOException e) {

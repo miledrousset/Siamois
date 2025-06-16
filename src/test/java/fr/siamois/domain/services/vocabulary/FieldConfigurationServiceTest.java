@@ -16,6 +16,7 @@ import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
 import fr.siamois.infrastructure.database.repositories.FieldRepository;
 import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
+import fr.siamois.models.exceptions.ErrorProcessingExpansionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -91,7 +92,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void setupFieldConfigurationForInstitution_shouldSave_whenNoConfigExist() throws NotSiamoisThesaurusException {
+    void setupFieldConfigurationForInstitution_shouldSave_whenNoConfigExist() throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
         ConceptBranchDTO dto = conceptBranchDTO();
 
         Concept parentConcept = new Concept();
@@ -114,7 +115,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void setupFieldConfigurationForInstitution_shouldUpdate_whenConfigExist() throws NotSiamoisThesaurusException {
+    void setupFieldConfigurationForInstitution_shouldUpdate_whenConfigExist() throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
         ConceptBranchDTO dto = conceptBranchDTO();
 
         Concept parentConcept = new Concept();
@@ -137,7 +138,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void setupFieldConfigurationForInstitution_shouldReturnWrongConfig_whenMandatoryCodeIsNotSet() throws NotSiamoisThesaurusException {
+    void setupFieldConfigurationForInstitution_shouldReturnWrongConfig_whenMandatoryCodeIsNotSet() throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
         ConceptBranchDTO dto = conceptBranchDTO();
 
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST", "SIAMAND"));
@@ -151,7 +152,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void setupFieldConfigurationForUser_shouldSave_whenNoConfigExist() throws NotSiamoisThesaurusException {
+    void setupFieldConfigurationForUser_shouldSave_whenNoConfigExist() throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
         ConceptBranchDTO dto = conceptBranchDTO();
 
         Concept parentConcept = new Concept();
@@ -174,7 +175,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void setupFieldConfigurationForUser_shouldUpdate_whenConfigExist() throws NotSiamoisThesaurusException {
+    void setupFieldConfigurationForUser_shouldUpdate_whenConfigExist() throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
         ConceptBranchDTO dto = conceptBranchDTO();
 
         Concept parentConcept = new Concept();
@@ -197,7 +198,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void setupFieldConfigurationForUser_shouldReturnWrongConfig_whenMandatoryCodeIsNotSet() throws NotSiamoisThesaurusException {
+    void setupFieldConfigurationForUser_shouldReturnWrongConfig_whenMandatoryCodeIsNotSet() throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
         ConceptBranchDTO dto = conceptBranchDTO();
 
         when(fieldService.searchAllFieldCodes()).thenReturn(List.of("SIATEST", "SIAMAND"));
@@ -249,7 +250,7 @@ class FieldConfigurationServiceTest {
         assertThat(result).isEqualTo(concept);
     }
     @Test
-    void fetchAutocomplete_shouldReturnCloseTerms_whenNoExactTerms() throws NoConfigForFieldException {
+    void fetchAutocomplete_shouldReturnCloseTerms_whenNoExactTerms() throws NoConfigForFieldException, ErrorProcessingExpansionException {
         ConceptBranchDTO dto = new ConceptBranchDTO();
         dto.addConceptBranchDTO("http://localhost/th223/1213", fullConceptDTO("1213", "", "Sites"));
         dto.addConceptBranchDTO("http://localhost/th223/1213", fullConceptDTO("1214", "", "Zone"));
@@ -266,7 +267,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void fetchAllValues() {
+    void fetchAllValues() throws ErrorProcessingExpansionException {
         ConceptBranchDTO dto = new ConceptBranchDTO();
         dto.addConceptBranchDTO("http://localhost/th223/1213", fullConceptDTO("1213", "", "First value"));
         dto.addConceptBranchDTO("http://localhost/th223/1214", fullConceptDTO("1214", "", "Second value"));
@@ -351,7 +352,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void fetchConceptChildrenAutocomplete_shouldReturnAllChildren_whenInputIsEmpty() {
+    void fetchConceptChildrenAutocomplete_shouldReturnAllChildren_whenInputIsEmpty() throws ErrorProcessingExpansionException {
         // Given
         Concept parentConcept = new Concept();
         parentConcept.setId(1L);
@@ -370,7 +371,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void fetchConceptChildrenAutocomplete_shouldReturnExactMatches_whenInputMatchesLabel() {
+    void fetchConceptChildrenAutocomplete_shouldReturnExactMatches_whenInputMatchesLabel() throws ErrorProcessingExpansionException {
         // Given
         Concept parentConcept = new Concept();
         parentConcept.setId(1L);
@@ -396,7 +397,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void fetchConceptChildrenAutocomplete_shouldReturnSimilarMatches_whenNoExactMatch() {
+    void fetchConceptChildrenAutocomplete_shouldReturnSimilarMatches_whenNoExactMatch() throws ErrorProcessingExpansionException {
         // Given
         Concept parentConcept = new Concept();
         parentConcept.setId(1L);
@@ -421,7 +422,7 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void fetchConceptChildrenAutocomplete_shouldReturnEmptyList_whenNoMatchOrSimilarity() {
+    void fetchConceptChildrenAutocomplete_shouldReturnEmptyList_whenNoMatchOrSimilarity() throws ErrorProcessingExpansionException {
         // Given
         Concept parentConcept = new Concept();
         parentConcept.setId(1L);
@@ -444,6 +445,42 @@ class FieldConfigurationServiceTest {
 
         // Then
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    void fetchConceptChildrenAutocomplete_shouldHandleErrorProcessingExpansionException() throws ErrorProcessingExpansionException {
+        // Given
+        Concept parentConcept = new Concept();
+        parentConcept.setId(1L);
+
+        when(conceptService.findDirectSubConceptOf(parentConcept))
+                .thenThrow(new ErrorProcessingExpansionException("Error fetching children concepts"));
+
+        // When
+        List<Concept> result = service.fetchConceptChildrenAutocomplete(userInfo, parentConcept, "");
+
+        // Then
+        assertThat(result).isEmpty();
+        verify(conceptService, times(1)).findDirectSubConceptOf(parentConcept);
+        verifyNoInteractions(labelService);
+    }
+
+    @Test
+    void fetchAutocomplete_shouldHandleErrorProcessingExpansionException() throws ErrorProcessingExpansionException {
+        // Given
+        Concept parentConcept = new Concept();
+        parentConcept.setId(1L);
+
+        when(conceptApi.fetchConceptsUnderTopTerm(parentConcept))
+                .thenThrow(new ErrorProcessingExpansionException("Error fetching concepts for autocomplete"));
+
+        // When
+        List<Concept> result = service.fetchAutocomplete(userInfo, parentConcept, "input");
+
+        // Then
+        assertThat(result).isEmpty();
+        verify(conceptApi, times(1)).fetchConceptsUnderTopTerm(parentConcept);
+        verifyNoInteractions(conceptService);
     }
 
     @Test

@@ -15,6 +15,8 @@ import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
 import fr.siamois.infrastructure.database.repositories.FieldRepository;
 import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
+import fr.siamois.models.exceptions.ErrorProcessingExpansionException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import java.util.*;
 
 import static fr.siamois.utils.FullInfoDTOUtils.getPrefLabelOfLang;
 
+@Slf4j
 @Service
 public class FieldConfigurationService {
 
@@ -54,7 +57,7 @@ public class FieldConfigurationService {
         return conceptDTO.getFieldcode().isPresent();
     }
 
-    public Optional<GlobalFieldConfig> setupFieldConfigurationForInstitution(UserInfo info, Vocabulary vocabulary) throws NotSiamoisThesaurusException {
+    public Optional<GlobalFieldConfig> setupFieldConfigurationForInstitution(UserInfo info, Vocabulary vocabulary) throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
         ConceptBranchDTO conceptBranchDTO =  conceptApi.fetchFieldsBranch(vocabulary);
         GlobalFieldConfig config = createConfigOfThesaurus(conceptBranchDTO);
         if (config.isWrongConfig()) return Optional.of(config);
@@ -94,7 +97,7 @@ public class FieldConfigurationService {
         return new GlobalFieldConfig(missingFieldCode, validConcept);
     }
 
-    public Optional<GlobalFieldConfig> setupFieldConfigurationForUser(UserInfo info, Vocabulary vocabulary) throws NotSiamoisThesaurusException {
+    public Optional<GlobalFieldConfig> setupFieldConfigurationForUser(UserInfo info, Vocabulary vocabulary) throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
         ConceptBranchDTO conceptBranchDTO =  conceptApi.fetchFieldsBranch(vocabulary);
         GlobalFieldConfig config = createConfigOfThesaurus(conceptBranchDTO);
         if (config.isWrongConfig()) return Optional.of(config);
@@ -157,7 +160,13 @@ public class FieldConfigurationService {
     }
 
     public List<Concept> fetchConceptChildrenAutocomplete(UserInfo info, Concept concept, String input) {
-        List<Concept> candidates = conceptService.findDirectSubConceptOf(concept);
+        List<Concept> candidates;
+        try {
+            candidates = conceptService.findDirectSubConceptOf(concept);
+        } catch (ErrorProcessingExpansionException e) {
+            log.error("Error fetching children concepts for autocomplete", e);
+            return List.of();
+        }
         Map<Concept, ConceptLabel> labels = new HashMap<>();
 
         if (StringUtils.isEmpty(input)) return candidates;
@@ -190,7 +199,13 @@ public class FieldConfigurationService {
     public List<Concept> fetchAutocomplete(UserInfo info, Concept parentConcept, String input) {
         if (StringUtils.isEmpty(input)) return fetchAllValues(parentConcept);
 
-        ConceptBranchDTO terms = conceptApi.fetchConceptsUnderTopTerm(parentConcept);
+        ConceptBranchDTO terms;
+        try {
+            terms = conceptApi.fetchConceptsUnderTopTerm(parentConcept);
+        } catch (ErrorProcessingExpansionException e) {
+            log.error("Error fetching concepts for autocomplete", e);
+            return List.of();
+        }
         List<Concept> result = new ArrayList<>();
 
         input = input.toLowerCase();
@@ -241,7 +256,13 @@ public class FieldConfigurationService {
     }
 
     public List<Concept> fetchAllValues(Concept parent) {
-        ConceptBranchDTO terms = conceptApi.fetchConceptsUnderTopTerm(parent);
+        ConceptBranchDTO terms;
+        try {
+            terms = conceptApi.fetchConceptsUnderTopTerm(parent);
+        } catch (ErrorProcessingExpansionException e) {
+            log.error("Error fetching concepts under top term", e);
+            return List.of();
+        }
         List<Concept> result = new ArrayList<>();
         for (FullInfoDTO fullConcept : terms.getData().values()) {
             if (isNotParentConcept(fullConcept, parent)) {

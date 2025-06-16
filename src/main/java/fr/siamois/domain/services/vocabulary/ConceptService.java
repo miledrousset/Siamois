@@ -8,6 +8,7 @@ import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
 import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
+import fr.siamois.models.exceptions.ErrorProcessingExpansionException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class ConceptService {
         }
     }
 
-    public List<Concept> findDirectSubConceptOf(Concept concept) {
+    public List<Concept> findDirectSubConceptOf(Concept concept) throws ErrorProcessingExpansionException {
         ConceptBranchDTO branch = conceptApi.fetchDownExpansion(concept.getVocabulary(), concept.getExternalId());
         List<Concept> result = new ArrayList<>();
         if (branch.isEmpty()) {

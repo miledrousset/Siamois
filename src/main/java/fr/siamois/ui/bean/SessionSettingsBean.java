@@ -97,7 +97,6 @@ public class SessionSettingsBean implements Serializable {
 
     public UserInfo getUserInfo() {
         if (selectedInstitution == null || getAuthenticatedUser() == null) {
-            redirectBean.redirectTo("/login");
             return null;
         }
         if (userInfo == null) {

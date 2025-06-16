@@ -9,6 +9,7 @@ import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
 import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
+import fr.siamois.models.exceptions.ErrorProcessingExpansionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -186,7 +187,7 @@ class ConceptServiceTest {
     }
 
     @Test
-    void findDirectSubConceptOf_shouldReturnSubConcepts_whenSubConceptsExist() {
+    void findDirectSubConceptOf_shouldReturnSubConcepts_whenSubConceptsExist() throws ErrorProcessingExpansionException {
         // Given
         ConceptBranchDTO branch = new ConceptBranchDTO();
         FullInfoDTO parentConceptDTO = new FullInfoDTO();
@@ -225,7 +226,7 @@ class ConceptServiceTest {
     }
 
     @Test
-    void findDirectSubConceptOf_shouldReturnEmptyList_whenNoSubConceptsExist() {
+    void findDirectSubConceptOf_shouldReturnEmptyList_whenNoSubConceptsExist() throws ErrorProcessingExpansionException {
         // Given
         ConceptBranchDTO branch = new ConceptBranchDTO();
 

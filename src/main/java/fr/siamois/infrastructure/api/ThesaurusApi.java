@@ -48,8 +48,9 @@ public class ThesaurusApi {
     }
 
     public ThesaurusDTO fetchThesaurusInfo(String uri) throws InvalidEndpointException {
-        URI uriObj = URI.create(uri);
+        URI uriObj;
         try {
+            uriObj = URI.create(uri);
             uriObj = findRedirectUriIfArk(uriObj);
         } catch (IllegalArgumentException e) {
             log.error("Invalid URI: {}", uri, e);

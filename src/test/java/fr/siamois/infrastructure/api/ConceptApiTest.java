@@ -9,6 +9,7 @@ import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
+import fr.siamois.models.exceptions.ErrorProcessingExpansionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -54,7 +55,7 @@ class ConceptApiTest {
     }
 
     @Test
-    void fetchConceptsUnderTopTerm() {
+    void fetchConceptsUnderTopTerm() throws ErrorProcessingExpansionException {
         Concept concept = new Concept();
         concept.setExternalId("testId");
         vocabulary = new Vocabulary();
@@ -85,7 +86,7 @@ class ConceptApiTest {
     }
 
     @Test
-    void fetchFieldsBranch() throws NotSiamoisThesaurusException, IOException {
+    void fetchFieldsBranch() throws NotSiamoisThesaurusException, IOException, ErrorProcessingExpansionException {
         String baseInfo = Files.readString(Path.of("src/test/resources/json/topconcept_baseinfo.json"), StandardCharsets.UTF_8);
         String completeInfo = Files.readString(Path.of("src/test/resources/json/topconcept_full.json"), StandardCharsets.UTF_8);
 
@@ -115,7 +116,7 @@ class ConceptApiTest {
     }
 
     @Test
-    void fetchFieldsBranch_returnNull_whenVocabNotFound() throws NotSiamoisThesaurusException {
+    void fetchFieldsBranch_returnNull_whenVocabNotFound() throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
         when(restTemplate.getForObject(any(URI.class), eq(String.class))).thenReturn(null);
 
         ConceptBranchDTO result = conceptApi.fetchFieldsBranch(vocabulary);
@@ -145,18 +146,17 @@ class ConceptApiTest {
     }
 
     @Test
-    void fetchFieldsBranch_throws_whenJsonException() throws JsonProcessingException, NotSiamoisThesaurusException {
+    void fetchFieldsBranch_throws_whenJsonException() throws JsonProcessingException {
         conceptApi = new ConceptApi(restTemplate);
         when(restTemplate.getForObject(any(URI.class), eq(String.class))).thenReturn("NOT EMPTY");
 
         when(mapper.readValue(anyString(), eq(ConceptApi.ConceptDTO[].class))).thenThrow(JsonProcessingException.class);
 
-        ConceptBranchDTO result = conceptApi.fetchFieldsBranch(vocabulary);
-
-        assertNull(result);
+        assertThrows(ErrorProcessingExpansionException.class, () -> conceptApi.fetchFieldsBranch(vocabulary));
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void fetchDownExpansion_shouldHandleJsonProcessingException() throws JsonProcessingException {
         // Arrange
         URI uri = URI.create("http://example.com/openapi/v1/concept/th223/testId/expansion?way=down");
@@ -164,12 +164,7 @@ class ConceptApiTest {
                 .thenReturn(new ResponseEntity<>("Invalid JSON", HttpStatus.OK));
         when(mapper.readValue(anyString(), any(TypeReference.class))).thenThrow(JsonProcessingException.class);
 
-        // Act
-        ConceptBranchDTO result = conceptApi.fetchDownExpansion(vocabulary, "testId");
-
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.getData().isEmpty());
+        assertThrows(ErrorProcessingExpansionException.class, () -> conceptApi.fetchDownExpansion(vocabulary, "testId"));
     }
 
 }
