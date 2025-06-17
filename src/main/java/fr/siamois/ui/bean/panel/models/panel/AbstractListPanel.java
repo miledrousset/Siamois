@@ -43,7 +43,7 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
     protected BaseLazyDataModel<T> lazyDataModel;
     protected long totalNumberOfUnits;
     protected String errorMessage;
-    protected transient List<T> selectedUnits ;
+
 
     protected AbstractListPanel(BookmarkService bookmarkService) {
         this.bookmarkService = bookmarkService;

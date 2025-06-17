@@ -79,8 +79,8 @@
                     </f:facet>
 
 
-                </p:tab>
-                <p:tab title="Enregistrements (1)">
+                </p:tab >
+                <p:tab title="Enregistrements (1)" >
                     <f:facet name="title">
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
                             <ui:param name="title" value="Enregistrements"/>
@@ -91,6 +91,13 @@
                     </f:facet>
 
                     🚧 En cours
+
+                    <ui:include src="/panel/spatialunit/tab/recordingUnitsTab.xhtml" >
+                        <ui:param name="panelModel" value="#{panelModel}"/>
+                        <ui:param name="panelIndex" value="#{panelIndex}"/>
+                    </ui:include>
+
+
 
 
                 </p:tab>

@@ -469,17 +469,7 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     color: var(--context-main-color);
 }
 
-.recording-unit-tab .ui-datatable thead th {
-    background: var(--ground-light-color-100);
-}
 
-.recording-unit-tab .ui-commandlink, .recording-unit-tab .ui-link {
-    color: var(--ground-main-color)
-}
-
-.recording-unit-tab .ui-commandlink:hover, .recording-unit-tab:hover .ui-link {
-    color: var(--ground-main-color)
-}
 
 
 /* Action units panels */
@@ -880,15 +870,7 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     color: var(--ground-main-color);
 }
 
-.recording-unit-tab .ui-button {
-    background: var(--ground-main-color);
-    border: 1px solid var(--ground-main-color);
-}
 
-.recording-unit-tab .ui-button:hover {
-    background: var(--ground-dark-color);
-    border: 1px solid var(--ground-dark-color);
-}
 
 .recording-unit-panel .ui-commandlink, .recording-unit-panel .ui-link {
     color: var(--ground-main-color);
@@ -979,6 +961,38 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     text-align: center;
 }
 
+/* tabs */
+.recording-unit-tab .ui-datatable thead th {
+    background: var(--ground-light-color-100);
+}
+
+.recording-unit-tab .ui-commandlink, .recording-unit-tab .ui-link {
+    color: var(--ground-main-color)
+}
+
+.recording-unit-tab .ui-commandlink:hover, .recording-unit-tab:hover .ui-link {
+    color: var(--ground-main-color)
+}
+
+.recording-unit-tab .ui-button {
+    background: var(--ground-main-color);
+    border: 1px solid var(--ground-main-color);
+}
+
+.recording-unit-tab .ui-button:hover {
+    background: var(--ground-dark-color);
+    border: 1px solid var(--ground-dark-color);
+}
+
+/* dialogs */
+
+.sia-new-unit-dialog.ui-dialog .ui-dialog-titlebar {
+    padding:0;
+}
+
+.sia-new-unit-dialog.ui-dialog .ui-dialog-footer {
+    padding:0;
+}
 
 
 

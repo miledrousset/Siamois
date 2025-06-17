@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class CustomCol {
 
+    private boolean readOnly = false;
     private CustomField field;
     private String className;
 

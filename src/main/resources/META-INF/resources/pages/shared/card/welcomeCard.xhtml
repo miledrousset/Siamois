@@ -32,12 +32,14 @@
             <f:facet name="footer">
                 <div style="display: flex; flex-direction: row; gap: 1em; justify-content: center;">
                     <p:commandButton styleClass="#{cc.attrs.btnStyleClass}" value="#{cc.attrs.btnLabel}"
-                                     oncomplete="handleScrollToTop();"
+                                     id="openUnitListPanelButton"
+                                     onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock();handleScrollToTop();"
                                      action="#{cc.attrs.btnAction}" disabled="#{empty cc.attrs.btnAction}" update="flow"/>
                     <p:commandButton value='#{langBean.msg("common.action.new")}' icon="bi bi-plus-square" styleClass="#{cc.attrs.btnStyleClass}"
                                      action="#{cc.attrs.btnNewAction}"
                                      rendered="#{not empty cc.attrs.btnAction}"
                                      update="flow"
+                                     id="openNewUnitPanelButton"
                                      oncomplete="handleScrollToTop();"
                                      disabled="#{empty cc.attrs.btnNewAction}"
                                      style="margin-right: .5rem">

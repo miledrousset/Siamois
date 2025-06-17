@@ -1,0 +1,52 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://java.sun.com/jsf/facelets"
+             xmlns:h="http://xmlns.jcp.org/jsf/html"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
+             xmlns:f="http://java.sun.com/jsf/core"
+
+>
+    <h:form id="newRecordingUnitForm">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <p:dialog widgetVar="newRecordingUnitDiag" id="newRecordingUnitDiag" howEffect="fade" closeOnEscape="true"
+                  appendToBody="true" modal="true" styleClass="sia-new-unit-dialog">
+
+            <f:facet name="header">
+                <div class="ui-panel recording-unit-panel">
+                    <div class="sia-flow-panel-title ui-panel-titlebar">
+                        <i class="bi bi-pencil-square"/>
+                        <span style="padding-right:0.5em;">Nouvelle unité d'enregistrement</span>
+                    </div>
+                </div>
+            </f:facet>
+
+            <div class="ui-panel recording-unit-panel">
+
+
+                Form..
+            </div>
+
+            <!-- Save/Cancel Toolbar -->
+            <f:facet name="footer">
+                <div class="ui-panel recording-unit-panel">
+                    <p:toolbar class="panel-footer">
+                        <p:toolbarGroup align="right">
+                            <p:commandLink value='#{langBean.msg("common.action.cancel")}'
+                                           style="margin-right: 1rem">
+                            </p:commandLink>
+                            <p:commandButton id="saveButton" value='#{langBean.msg("common.action.save")}'
+                                             style="margin-right: 1rem">
+                            </p:commandButton>
+                            <p:commandButton id="saveAndViewButton"
+                                             value='#{langBean.msg("common.action.saveAndValidate")}'
+                                             style="margin-right: .5rem">
+                            </p:commandButton>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+                </div>
+            </f:facet>
+
+
+        </p:dialog>
+    </h:form>
+</ui:fragment>

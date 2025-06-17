@@ -150,8 +150,8 @@ public class RecordingUnitListPanel extends AbstractListPanel<RecordingUnit> {
 
     @Override
     public void init() {
-        selectedUnits = new ArrayList<>();
         super.init();
+        lazyDataModel.setSelectedUnits(new ArrayList<>());
     }
 
     @Override
@@ -180,12 +180,12 @@ public class RecordingUnitListPanel extends AbstractListPanel<RecordingUnit> {
     }
 
     public void saveFieldBulk() {
-        List<Long> ids = selectedUnits.stream()
+        List<Long> ids = lazyDataModel.getSelectedUnits().stream()
                 .map(RecordingUnit::getId)
                 .toList();
         int updateCount = recordingUnitService.bulkUpdateType(ids, bulkEditTypeValue);
         // Update in-memory list (for UI sync)
-        for (RecordingUnit ru : selectedUnits) {
+        for (RecordingUnit ru : lazyDataModel.getSelectedUnits()) {
             ru.setType(bulkEditTypeValue);
         }
         MessageUtils.displayInfoMessage(langBean, "common.entity.recordingUnits.bulkUpdated", updateCount);

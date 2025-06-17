@@ -191,15 +191,21 @@
             </nav>
         </h:panelGroup>
 
+
         <!-- Contenu principal -->
         <div class="content" id="content">
             <form:csrfform formId="templateForm">
+                <!-- Loading overlay -->
+
+
                 <p:growl closable="true" id="templateGrowl" showDetail="true" showSummary="true">
                     <p:autoUpdate/>
                 </p:growl>
             </form:csrfform>
             <ui:insert description="The main content" name="content"/>
         </div>
+
+
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"

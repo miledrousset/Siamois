@@ -34,7 +34,7 @@
                          varStatus="status"
                          paginatorPosition="bottom" var="item"
                          selectionMode="multiple"
-                         selection="#{panelModel.selectedUnits}"
+                         selection="#{cc.attrs.lazyDataModel.selectedUnits}"
                          widgetVar="#{cc.clientId}_recordingUnitListTable"
                          lazy="true"
                          globalFilter="#{cc.attrs.lazyDataModel.globalFilter}"
@@ -91,7 +91,7 @@
                                             <p:ajax event="toggle" listener="#{cc.attrs.panelModel.onToggle}"/>
                                         </p:columnToggler>
                                     </div>
-                                    <p:outputPanel id="bulkEditPanel" rendered="#{panelModel.selectedUnits.size() >0 and flowBean.readWriteMode == 'WRITE'}" style="display:flex; flex-direction: row; gap:0.5em;">
+                                    <p:outputPanel id="bulkEditPanel" rendered="#{cc.attrs.lazyDataModel.selectedUnits.size() >0 and flowBean.readWriteMode == 'WRITE'}" style="display:flex; flex-direction: row; gap:0.5em;">
                                         <span>Edition du type en lot (les autres colonnes viendront plus tard) :</span>
                                         <sharedInput:conceptAutocompleteFieldCode id="bulkTypeComponent"
                                                                                   panelStyleClass="recording-unit-autocomplete"
@@ -116,6 +116,7 @@
                         <p:toolbarGroup align="right">
                             <p:commandButton value="#{langBean.msg('table.add')}" icon="bi bi-plus-square"
                                              disabled="#{cc.attrs.disableAddBtn}"
+                                             onclick="PF('newRecordingUnitDiag').show()"
                                              rendered="#{flowBean.readWriteMode == 'WRITE'}"
                                              update="flow"
                                              style="margin-right: .5rem">

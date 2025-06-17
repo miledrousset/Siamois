@@ -55,6 +55,8 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
     protected transient List<ConceptLabel> selectedTypes = new ArrayList<>();
     protected transient List<ConceptLabel> selectedAuthors = new ArrayList<>();
     protected String nameFilter;
+    // selection
+    protected transient List<T> selectedUnits ;
 
     // Base implementation returns empty; override in child class
     protected Map<String, String> getFieldMapping() {

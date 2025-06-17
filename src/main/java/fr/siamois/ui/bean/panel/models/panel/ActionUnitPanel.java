@@ -24,6 +24,7 @@ import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.document.DocumentService;
+import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.domain.services.vocabulary.LabelService;
@@ -33,10 +34,7 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.utils.DataLoaderUtils;
 import fr.siamois.ui.bean.settings.team.TeamMembersBean;
-import fr.siamois.ui.lazydatamodel.ActionUnitInSpatialUnitLazyDataModel;
-import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
-import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
-import fr.siamois.ui.lazydatamodel.SpatialUnitParentsLazyDataModel;
+import fr.siamois.ui.lazydatamodel.*;
 import fr.siamois.utils.DateUtils;
 import fr.siamois.utils.MessageUtils;
 import lombok.Data;
@@ -81,7 +79,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     private final TeamMembersBean teamMembersBean;
     private final transient HistoryService historyService;
     private final transient DocumentService documentService;
-
+    private final transient RecordingUnitService recordingUnitService;
 
     // For entering new code
     private ActionCode newCode;
@@ -100,13 +98,16 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
     private transient List<ActionCode> secondaryActionCodes;
 
+    // Link recording units
+    private transient RecordingUnitInActionUnitLazyDataModel recordingUnitListLazyDataModel ;
+
 
     public ActionUnitPanel(ActionUnitService actionUnitService, LangBean langBean,
                            SessionSettingsBean sessionSettingsBean,
                            FieldConfigurationService fieldConfigurationService,
                            FieldService fieldService, RedirectBean redirectBean,
                            LabelService labelService, TeamMembersBean teamMembersBean,
-                           HistoryService historyService, DocumentService documentService) {
+                           HistoryService historyService, DocumentService documentService, RecordingUnitService recordingUnitService) {
         super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel action-unit-single-panel");
         this.actionUnitService = actionUnitService;
         this.langBean = langBean;
@@ -118,6 +119,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         this.teamMembersBean = teamMembersBean;
         this.historyService = historyService;
         this.documentService = documentService;
+        this.recordingUnitService = recordingUnitService;
     }
 
     @Override
@@ -153,9 +155,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
             unit = actionUnitService.findById(idunit);
             this.setTitleCodeOrTitle(unit.getName()); // Set panel title
-
-
-
             backupClone = new ActionUnit(unit);
             this.titleCodeOrTitle = unit.getName();
             secondaryActionCodes = new ArrayList<>(unit.getSecondaryActionCodes());
@@ -166,12 +165,9 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
             // Get all the CHILDREN of the spatial unit
             selectedCategoriesChildren = new ArrayList<>();
-
             totalChildrenCount = 0;
-
-            // Get all the Parents of the spatial unit
+            // Get all the Parentsof the spatial unit
             selectedCategoriesParents = new ArrayList<>();
-
             totalParentsCount = 0;
 
 
@@ -204,11 +200,18 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
             refreshUnit();
 
-
             if (this.unit == null) {
                 log.error("The Action Unit page should not be accessed without ID or by direct page path");
                 errorMessage = "The Action Unit page should not be accessed without ID or by direct page path";
             }
+
+            recordingUnitListLazyDataModel = new RecordingUnitInActionUnitLazyDataModel(
+                    recordingUnitService,
+                    sessionSettingsBean,
+                    langBean,
+                    unit
+            );
+            recordingUnitListLazyDataModel.setSelectedUnits(new ArrayList<>());
 
             // add to BC
             DefaultMenuItem item = DefaultMenuItem.builder()
@@ -277,6 +280,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         CustomRow row2 = new CustomRow();
         // one cols
         CustomCol col3 = new CustomCol();
+        col3.setReadOnly(true);
         col3.setField(typeField);
         col3.setClassName(COLUMN_CLASS_NAME);
         row2.setColumns(List.of(col3));

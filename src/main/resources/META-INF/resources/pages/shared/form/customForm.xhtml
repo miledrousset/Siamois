@@ -36,7 +36,7 @@
                                             field="#{col.field}"
                                             hasBeenModified="#{panelModel.formResponse.answers.get(col.field).hasBeenModified}"
                                             answer="#{panelModel.formResponse.answers.get(col.field)}"
-                                            mode="#{readOnly ? 'READ' : flowBean.getInPlaceFieldMode()}"
+                                            mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
                                             updateTargetsOnBlur="#{panelId}"
                                     >
 
@@ -49,7 +49,7 @@
                                     <siaInplace:concept
                                             hasBeenModified="#{panelModel.formResponse.answers.get(col.field).hasBeenModified}"
                                             field="#{col.field}"
-                                            mode="#{readOnly ? 'READ' : flowBean.getInPlaceFieldMode()}"
+                                            mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
                                             panelModel="#{panelModel}"
                                             updateTargetsOnBlur="#{panelId}"
                                             answer="#{panelModel.formResponse.answers.get(col.field)}"/>

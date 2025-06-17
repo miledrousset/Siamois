@@ -224,6 +224,32 @@ public class RecordingUnitService implements ArkEntityService {
         return res;
     }
 
+    @Transactional
+    public Page<RecordingUnit> findAllByInstitutionAndByActionUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+            Long institutionId,
+            Long actionId,
+            String fullIdentifier,
+            Long[] categoryIds,
+            String global,
+            String langCode,
+            Pageable pageable
+    )
+
+    {
+        Page<RecordingUnit> res = recordingUnitRepository.findAllByInstitutionAndByActionUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                institutionId, actionId, fullIdentifier, categoryIds, global, langCode, pageable
+        );
+
+
+        // load related entities
+        res.forEach(actionUnit -> {
+            Hibernate.initialize(actionUnit.getParents());
+            Hibernate.initialize(actionUnit.getChildren());
+        });
+
+        return res;
+    }
+
 }
 
 
