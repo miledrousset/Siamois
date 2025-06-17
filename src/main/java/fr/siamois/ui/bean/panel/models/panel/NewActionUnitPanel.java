@@ -74,7 +74,10 @@ public class NewActionUnitPanel extends AbstractPanel {
 
     void init() {
         actionUnit = new ActionUnit();
-        actionUnit.setSpatialUnit(spatialUnitService.findById(spatialUnitId));
+        if(spatialUnitId != null) {
+            actionUnit.getSpatialContext().add(spatialUnitService.findById(spatialUnitId));
+        }
+
         DefaultMenuItem item = DefaultMenuItem.builder()
                 .value("Nouvelle unité d'action")
                 .icon("bi bi-arrow-down-square")
@@ -110,6 +113,7 @@ public class NewActionUnitPanel extends AbstractPanel {
             actionUnit.setAuthor(author);
             actionUnit.setBeginDate(OffsetDateTime.now());
             actionUnit.setEndDate(OffsetDateTime.now());
+            actionUnit.setValidated(false);
 
             ActionUnit saved = actionUnitService.save(sessionSettingsBean.getUserInfo() ,actionUnit, actionUnit.getType());
 

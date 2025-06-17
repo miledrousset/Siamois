@@ -2,12 +2,11 @@ package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
-import fr.siamois.domain.models.history.SpatialUnitHist;
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
+import fr.siamois.domain.models.form.customform.CustomFormPanel;
+import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
-import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
-import fr.siamois.ui.lazydatamodel.SpatialUnitParentsLazyDataModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.primefaces.component.tabview.Tab;
@@ -25,18 +24,24 @@ public abstract class AbstractSingleEntityPanel<T,HType> extends AbstractPanel {
     protected Boolean hasUnsavedModifications ; // Did we modify the spatial unit?
     protected int activeTabIndex ; // Keeping state of active tab
     protected transient T backupClone;
+    protected String errorMessage;
     protected transient List<HType> historyVersion;
     protected transient HType revisionToDisplay = null;
     protected Long idunit;  // ID of the spatial unit
-    protected List<Document> documents;
+    protected transient List<Document> documents;
     // lazy model for children of entity
     protected long totalChildrenCount = 0;
-    protected List<Concept> selectedCategoriesChildren;
+    protected transient List<Concept> selectedCategoriesChildren;
     protected abstract BaseLazyDataModel<T> getLazyDataModelChildren() ;
     // lazy model for parents of entity
     protected long totalParentsCount = 0;
-    protected List<Concept> selectedCategoriesParents;
+    protected transient List<Concept> selectedCategoriesParents;
     public abstract BaseLazyDataModel<T> getLazyDataModelParents() ;
+    // Gestion du formulaire via form layout
+    protected List<CustomFormPanel> layout ; // details tab form
+    protected List<CustomFormPanel> overviewLayout ; // overview tab form
+    protected CustomFormResponse formResponse ; // answers to all the fields from overview and details
+    protected Vocabulary systemTheso ;
 
     protected static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-4";
 
@@ -59,6 +64,10 @@ public abstract class AbstractSingleEntityPanel<T,HType> extends AbstractPanel {
     public abstract void saveDocument();
 
     public abstract void save(Boolean validated);
+
+    public Boolean isHierarchyTabEmpty () {
+        return (totalChildrenCount + totalParentsCount) == 0;
+    }
 
     protected void onTabChange(TabChangeEvent event) {
         // update tab inddex

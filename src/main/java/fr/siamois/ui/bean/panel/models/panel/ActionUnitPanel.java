@@ -5,6 +5,16 @@ import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.actionunit.ActionUnitNotFoundException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
+import fr.siamois.domain.models.form.customfield.CustomFieldText;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectOneFromFieldCode;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerText;
+import fr.siamois.domain.models.form.customform.CustomCol;
+import fr.siamois.domain.models.form.customform.CustomFormPanel;
+import fr.siamois.domain.models.form.customform.CustomRow;
+import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.history.ActionUnitHist;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
@@ -33,7 +43,9 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -51,6 +63,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     // Deps
     private final transient ActionUnitService actionUnitService;
     private final LangBean langBean;
+
     private final SessionSettingsBean sessionSettingsBean;
     private final transient FieldConfigurationService fieldConfigurationService;
     private final transient FieldService fieldService;
@@ -58,10 +71,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     private final transient LabelService labelService;
     private final TeamMembersBean teamMembersBean;
 
-    // Local
-    private ActionUnit actionUnit;
-    private String actionUnitErrorMessage;
-    private Long id;  // ID of the action unit requested
 
     // For entering new code
     private ActionCode newCode;
@@ -71,6 +80,12 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     // Field related
     private Boolean editType;
     private Concept fType;
+
+    // form
+    private CustomFieldText nameField;
+    private Concept nameConcept ;
+    private CustomFieldSelectOneFromFieldCode typeField;
+    private Concept actionUnitTypeConcept;
 
     private transient List<ActionCode> secondaryActionCodes;
 
@@ -94,7 +109,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
     @Override
     public String ressourceUri() {
-        return String.format("/actionunit/%s", actionUnit.getId());
+        return String.format("/actionunit/%s", unit.getId());
     }
 
     @Override
@@ -110,19 +125,19 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     public void init() {
 
             // reinit
-            actionUnitErrorMessage = null;
-            actionUnit = null;
+            errorMessage = null;
+            unit = null;
             newCode = new ActionCode();
             secondaryActionCodes = new ArrayList<>();
             // Get the requested action from DB
             try {
-                if (id != null) {
-                    actionUnit = actionUnitService.findById(id);
-                    this.titleCodeOrTitle = actionUnit.getName();
-                    secondaryActionCodes = new ArrayList<>(actionUnit.getSecondaryActionCodes());
-                    fType = this.actionUnit.getType();
+                if (idunit != null) {
+                    unit = actionUnitService.findById(idunit);
+                    this.titleCodeOrTitle = unit.getName();
+                    secondaryActionCodes = new ArrayList<>(unit.getSecondaryActionCodes());
+                    fType = this.unit.getType();
                     DefaultMenuItem item = DefaultMenuItem.builder()
-                            .value(actionUnit.getName())
+                            .value(unit.getName())
                             .icon("bi bi-arrow-down-square")
                             .build();
                     this.getBreadcrumb().getModel().getElements().add(item);
@@ -131,10 +146,10 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
                     redirectBean.redirectTo(HttpStatus.NOT_FOUND);
                 }
             } catch (ActionUnitNotFoundException e) {
-                log.error("Action unit with id {} not found", id);
+                log.error("Action unit with id {} not found", idunit);
                 redirectBean.redirectTo(HttpStatus.NOT_FOUND);
             } catch (RuntimeException e) {
-                this.actionUnitErrorMessage = "Failed to load action unit: " + e.getMessage();
+                this.errorMessage = "Failed to load action unit: " + e.getMessage();
                 redirectBean.redirectTo(HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
@@ -151,11 +166,73 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     @Override
     public void initForms() {
 
+        // Get from from DB in futur iteration
+
+        // Init details tab form
+        layout = new ArrayList<>();
+        CustomFormPanel mainPanel = new CustomFormPanel();
+        mainPanel.setIsSystemPanel(true);
+        mainPanel.setName("common.header.general");
+        // One row
+        CustomRow row1 = new CustomRow();
+        // Two cols
+
+        CustomCol col1 = new CustomCol();
+        nameField = new CustomFieldText();
+        nameField.setIsSystemField(true);
+        nameField.setLabel("spatialunit.field.name");
+        col1.setField(nameField);
+        col1.setClassName(COLUMN_CLASS_NAME);
+
+        CustomCol col2 = new CustomCol();
+        typeField = new CustomFieldSelectOneFromFieldCode();
+        typeField.setLabel("spatialunit.field.type");
+        typeField.setIsSystemField(true);
+        typeField.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
+        col2.setField(typeField);
+        col2.setClassName(COLUMN_CLASS_NAME);
+
+        row1.setColumns(List.of(col1, col2));
+        mainPanel.setRows(List.of(row1));
+        layout.add(mainPanel);
+
+        // init overveiw tab form
+        overviewLayout = new ArrayList<>();
+        CustomFormPanel mainOverviewPanel = new CustomFormPanel();
+        mainOverviewPanel.setIsSystemPanel(true);
+        mainOverviewPanel.setName("common.header.general");
+        // One row
+        CustomRow row2 = new CustomRow();
+        // one cols
+        CustomCol col3 = new CustomCol();
+        col3.setField(typeField);
+        col3.setClassName(COLUMN_CLASS_NAME);
+        row2.setColumns(List.of(col3));
+        mainOverviewPanel.setRows(List.of(row2));
+        overviewLayout.add(mainOverviewPanel);
+
+        // Init form answers
+        formResponse = new CustomFormResponse();
+        Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
+        CustomFieldAnswerText nameAnswer = new CustomFieldAnswerText();
+        CustomFieldAnswerSelectOneFromFieldCode typeAnswer = new CustomFieldAnswerSelectOneFromFieldCode();
+        nameAnswer.setValue(unit.getName());
+        nameAnswer.setHasBeenModified(false);
+        answers.put(nameField, nameAnswer);
+        typeAnswer.setValue(unit.getType());
+        typeAnswer.setHasBeenModified(false);
+        answers.put(typeField, typeAnswer);
+        formResponse.setAnswers(answers);
+
     }
 
     @Override
     public void cancelChanges() {
-
+        unit.setName(backupClone.getName());
+        unit.setValidated(backupClone.getValidated());
+        unit.setType(backupClone.getType());
+        hasUnsavedModifications = false;
+        initForms();
     }
 
     @Override
@@ -177,9 +254,9 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         // Update the action code
         if (newCodeIndex == 0) {
             // update primary action code
-            actionUnit.setPrimaryActionCode(newCode);
+            unit.setPrimaryActionCode(newCode);
         } else if (newCodeIndex > 0) {
-            actionUnit.getSecondaryActionCodes().add(newCode);
+            unit.getSecondaryActionCodes().add(newCode);
             secondaryActionCodes.set(newCodeIndex - 1, newCode);
         }
     }
@@ -263,7 +340,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
 
 
-    public static class ActionUnitPanelBuilder {
+
     public static class ActionUnitPanelBuilder {
 
         private final ActionUnitPanel actionUnitPanel;
@@ -273,7 +350,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         }
 
         public ActionUnitPanelBuilder id(Long id) {
-            actionUnitPanel.setId(id);
+            actionUnitPanel.setIdunit(id);
             return this;
         }
 
@@ -292,7 +369,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     }
 
     public void goToMemberList() {
-        redirectBean.redirectTo(String.format("/settings/organisation/actionunit/%s/members", actionUnit.getId()));
+        redirectBean.redirectTo(String.format("/settings/organisation/actionunit/%s/members", unit.getId()));
     }
 
 }

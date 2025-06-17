@@ -125,14 +125,10 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
     private String barModel;
 
-    // Gestion du formulaire via form layout
-    private List<CustomFormPanel> layout ; // details tab form
-    private List<CustomFormPanel> overviewLayout ; // overview tab form
+    // form
     private CustomFieldText nameField;
-    private CustomFieldSelectOneFromFieldCode typeField;
-    private CustomFormResponse formResponse ; // answers to all the fields from overview and details
-    private Vocabulary systemTheso ;
     private Concept nameConcept ;
+    private CustomFieldSelectOneFromFieldCode typeField;
     private Concept spatialUnitTypeConcept;
 
 
@@ -497,9 +493,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
         PrimeFaces.current().executeScript("PF('newDocumentDiag').show()");
     }
 
-    public Boolean isHierarchyTabEmpty () {
-        return (totalChildrenCount + totalParentsCount) == 0;
-    }
+
 
     @Override
     public void save(Boolean validated) {

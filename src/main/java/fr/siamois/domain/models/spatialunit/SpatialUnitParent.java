@@ -37,8 +37,6 @@ public abstract class SpatialUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_parent_action_unit_id")
     protected ActionUnit parentActionUnit;
 
-    @NotNull
-    @Column(name = "validated", nullable = false)
-    protected Boolean validated = false;
+
 
 }

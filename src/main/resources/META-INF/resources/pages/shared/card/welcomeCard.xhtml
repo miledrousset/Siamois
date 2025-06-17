@@ -15,6 +15,7 @@
         <cc:attribute name="count" type="long" required="true" />
         <cc:attribute name="btnLabel" type="java.lang.String" required="true"/>
         <cc:attribute name="btnAction" required="false" method-signature="java.lang.Void f()"/>
+        <cc:attribute name="btnNewAction" required="false" method-signature="java.lang.Void f()"/>
         <cc:attribute name="panelModel" required="false"/>
     </cc:interface>
 
@@ -34,10 +35,11 @@
                                      oncomplete="handleScrollToTop();"
                                      action="#{cc.attrs.btnAction}" disabled="#{empty cc.attrs.btnAction}" update="flow"/>
                     <p:commandButton value='#{langBean.msg("common.action.new")}' icon="bi bi-plus-square" styleClass="#{cc.attrs.btnStyleClass}"
-                                     action="#{flowBean.addNewSpatialUnitPanel(cc.attrs.panelModel)}"
+                                     action="#{cc.attrs.btnNewAction}"
+                                     rendered="#{not empty cc.attrs.btnAction}"
                                      update="flow"
                                      oncomplete="handleScrollToTop();"
-                                     disabled="#{empty cc.attrs.btnAction}"
+                                     disabled="#{empty cc.attrs.btnNewAction}"
                                      style="margin-right: .5rem">
                     </p:commandButton>
                 </div>

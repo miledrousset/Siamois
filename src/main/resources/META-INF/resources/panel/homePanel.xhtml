@@ -40,6 +40,7 @@
                                     label="#{langBean.msg('common.entity.spatialUnits')}"
                                     count="#{panelModel.nbOfSpatialUnits}"
                                     btnAction="#{flowBean.addSpatialUnitListPanel(panelModel.breadcrumb)}"
+                                    btnNewAction="#{flowBean.addNewSpatialUnitPanel(panelModel)}"
                             />
 
 
@@ -56,6 +57,7 @@
                                     label="#{langBean.msg('common.entity.actionUnits')}"
                                     count="#{panelModel.nbOfActionUnits}"
                                     btnAction="#{flowBean.addActionUnitListPanel(panelModel.breadcrumb)}"
+                                    btnNewAction="#{flowBean.addNewActionUnitPanel(null,panelIndex)}"
                             />
 
 
@@ -72,6 +74,7 @@
                                     label="#{langBean.msg('common.entity.recordingUnits')}"
                                     count="#{panelModel.nbOfRecordingUnits}"
                                     btnAction="#{flowBean.addRecordingUnitListPanel(panelModel.breadcrumb)}"
+
                             />
 
                         </p:column>
