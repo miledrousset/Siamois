@@ -25,23 +25,7 @@
                 <section>
                     <p:tabView>
                         <p:tab title="Inviter des utilisateurs individuellement">
-                            <p:dataTable id="userTable" var="user" value="#{userDialogBean.inputUserMailRoles}" editable="true" style="width: 100%">
-                                <p:column headerText="Adresse email">
-                                    <p:inputText value="#{user.email}" placeholder="john.doe@mail.com"/>
-                                </p:column>
-                                <p:column headerText="Rôle" rendered="#{userDialogBean.shouldRenderRoleField}">
-                                    <input:conceptAutocomplete
-                                            selectedConcept="#{user.role}"
-                                            editConceptUrl="#{userDialogBean.parentConceptUrl()}"
-                                            completeMethod="#{userDialogBean.autocompleteConcept}"
-                                            required="false"
-                                    />
-                                </p:column>
-                                <p:column rendered="#{userDialogBean.inputUserMailRoles.size() > 1}">
-                                    <p:commandButton value="-" action="#{userDialogBean.removeRow(user)}" update="@form"/>
-                                </p:column>
-                            </p:dataTable>
-                            <p:commandButton value="+ Ajouter d'autres utilisateurs" action="#{userDialogBean.addRow()}" update="@form"/>
+
                         </p:tab>
                         <p:tab title="Importer un groupe d'utilisateur" disabled="true">
 

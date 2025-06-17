@@ -50,8 +50,6 @@ public class UserDialogBean implements Serializable {
     private Concept roleParentConcept;
     private boolean shouldRenderRoleField = false;
 
-    private List<UserMailRole> inputUserMailRoles;
-
     public UserDialogBean(EmailManager emailManager, PersonService personService, InstitutionService institutionService, LangBean langBean, FieldConfigurationService fieldConfigurationService, SessionSettingsBean sessionSettingsBean) {
         this.emailManager = emailManager;
         this.personService = personService;
@@ -86,10 +84,6 @@ public class UserDialogBean implements Serializable {
         this.buttonLabel = null;
         this.shouldRenderRoleField = false;
         this.actionFromBean = null;
-        inputUserMailRoles = new ArrayList<>();
-        inputUserMailRoles.add(new UserMailRole());
-        inputUserMailRoles.add(new UserMailRole());
-        inputUserMailRoles.add(new UserMailRole());
     }
 
     public void exit() {
@@ -97,46 +91,6 @@ public class UserDialogBean implements Serializable {
         PrimeFaces.current().executeScript("PF('newMemberDialog').hide();");
     }
 
-    public String parentConceptUrl() {
-        return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), Person.USER_ROLE_FIELD_CODE);
-    }
-
-    public List<Concept> autocompleteConcept(String input) {
-        UserInfo info = sessionSettingsBean.getUserInfo();
-
-        if (roleParentConcept == null) {
-            try {
-                roleParentConcept = fieldConfigurationService.findConfigurationForFieldCode(info, Person.USER_ROLE_FIELD_CODE);
-            } catch (NoConfigForFieldException e) {
-                MessageUtils.displayNoThesaurusConfiguredMessage(langBean);
-                return List.of();
-            }
-        }
-
-        return fieldConfigurationService.fetchConceptChildrenAutocomplete(info, roleParentConcept, input);
-    }
-
-    public void removeRow(UserMailRole userMailRole) {
-        if (inputUserMailRoles.size() > 1) {
-            inputUserMailRoles.remove(userMailRole);
-        }
-    }
-
-    public void addRow() {
-        inputUserMailRoles.add(new UserMailRole());
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    public static class UserMailRole implements Serializable {
-        private String email;
-        private Concept role;
-
-        public boolean isEmpty() {
-            return email == null || email.isEmpty();
-        }
-    }
 
 
 }
