@@ -27,6 +27,14 @@ public interface DocumentRepository extends CrudRepository<Document, Long> {
     )
     List<Document> findDocumentsBySpatialUnit(Long spatialUnitId);
 
+    @Query(
+            nativeQuery = true,
+            value = "SELECT d.* FROM siamois_document d " +
+                    "JOIN action_unit_document sud ON d.document_id = sud.fk_document_id " +
+                    "WHERE sud.fk_action_unit_id = :actionUnitId"
+    )
+    List<Document> findDocumentsByActionUnit(Long actionUnitId);
+
     @Transactional
     @Modifying
     @Query(

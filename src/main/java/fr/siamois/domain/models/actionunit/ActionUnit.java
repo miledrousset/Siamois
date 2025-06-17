@@ -19,6 +19,17 @@ import java.util.Set;
 @Table(name = "action_unit")
 public class ActionUnit extends ActionUnitParent implements ArkEntity {
 
+    public ActionUnit() {
+
+    }
+
+    public ActionUnit(ActionUnit unit) {
+        this.setName(unit.getName());
+        this.setValidated(false);
+        this.setType(unit.getType());
+        this.setCreatedByInstitution(unit.getCreatedByInstitution());
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "action_unit_id", nullable = false)

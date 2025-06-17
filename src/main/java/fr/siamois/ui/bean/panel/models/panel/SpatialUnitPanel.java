@@ -182,20 +182,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
         return "/panel/header/spatialUnitPanelHeader.xhtml";
     }
 
-    public void setFieldAnswerHasBeenModified(CustomField field) {
 
-        formResponse.getAnswers().get(field).setHasBeenModified(true);
-        hasUnsavedModifications = true;
-
-    }
-
-    public void setFieldConceptAnswerHasBeenModified(AjaxBehaviorEvent event) {
-        UIComponent component = event.getComponent();
-        CustomField field = (CustomField) component.getAttributes().get("field");
-
-        formResponse.getAnswers().get(field).setHasBeenModified(true);
-        hasUnsavedModifications = true;
-    }
 
     public void createBarModel() {
         barModel = new BarChart()
@@ -345,9 +332,6 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
                     unit
             );
             totalActionUnitCount = actionUnitService.countBySpatialContext(unit);
-
-            // add to BC
-            this.getBreadcrumb().addSpatialUnit(unit);
 
         } catch (RuntimeException e) {
             this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();

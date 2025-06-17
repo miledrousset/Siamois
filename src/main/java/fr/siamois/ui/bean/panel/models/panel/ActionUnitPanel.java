@@ -4,6 +4,7 @@ import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.actionunit.ActionUnitNotFoundException;
+import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
@@ -19,7 +20,10 @@ import fr.siamois.domain.models.history.ActionUnitHist;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.domain.services.vocabulary.LabelService;
@@ -27,9 +31,14 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
+import fr.siamois.ui.bean.panel.utils.DataLoaderUtils;
 import fr.siamois.ui.bean.settings.team.TeamMembersBean;
+import fr.siamois.ui.lazydatamodel.ActionUnitInSpatialUnitLazyDataModel;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
+import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
+import fr.siamois.ui.lazydatamodel.SpatialUnitParentsLazyDataModel;
 import fr.siamois.utils.DateUtils;
+import fr.siamois.utils.MessageUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -70,6 +79,8 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     private final RedirectBean redirectBean;
     private final transient LabelService labelService;
     private final TeamMembersBean teamMembersBean;
+    private final transient HistoryService historyService;
+    private final transient DocumentService documentService;
 
 
     // For entering new code
@@ -83,14 +94,19 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
     // form
     private CustomFieldText nameField;
-    private Concept nameConcept ;
+    private Concept nameConcept;
     private CustomFieldSelectOneFromFieldCode typeField;
     private Concept actionUnitTypeConcept;
 
     private transient List<ActionCode> secondaryActionCodes;
 
 
-    public ActionUnitPanel(ActionUnitService actionUnitService, LangBean langBean, SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService, FieldService fieldService, RedirectBean redirectBean, LabelService labelService, TeamMembersBean teamMembersBean) {
+    public ActionUnitPanel(ActionUnitService actionUnitService, LangBean langBean,
+                           SessionSettingsBean sessionSettingsBean,
+                           FieldConfigurationService fieldConfigurationService,
+                           FieldService fieldService, RedirectBean redirectBean,
+                           LabelService labelService, TeamMembersBean teamMembersBean,
+                           HistoryService historyService, DocumentService documentService) {
         super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel action-unit-single-panel");
         this.actionUnitService = actionUnitService;
         this.langBean = langBean;
@@ -100,6 +116,8 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         this.redirectBean = redirectBean;
         this.labelService = labelService;
         this.teamMembersBean = teamMembersBean;
+        this.historyService = historyService;
+        this.documentService = documentService;
     }
 
     @Override
@@ -122,38 +140,92 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         return null;
     }
 
-    public void init() {
+    public void refreshUnit() {
 
-            // reinit
-            errorMessage = null;
-            unit = null;
-            newCode = new ActionCode();
-            secondaryActionCodes = new ArrayList<>();
-            // Get the requested action from DB
-            try {
-                if (idunit != null) {
-                    unit = actionUnitService.findById(idunit);
-                    this.titleCodeOrTitle = unit.getName();
-                    secondaryActionCodes = new ArrayList<>(unit.getSecondaryActionCodes());
-                    fType = this.unit.getType();
-                    DefaultMenuItem item = DefaultMenuItem.builder()
-                            .value(unit.getName())
-                            .icon("bi bi-arrow-down-square")
-                            .build();
-                    this.getBreadcrumb().getModel().getElements().add(item);
-                } else {
-                    log.error("The Action Unit page should not be accessed without ID or by direct page path");
-                    redirectBean.redirectTo(HttpStatus.NOT_FOUND);
-                }
-            } catch (ActionUnitNotFoundException e) {
-                log.error("Action unit with id {} not found", idunit);
-                redirectBean.redirectTo(HttpStatus.NOT_FOUND);
-            } catch (RuntimeException e) {
-                this.errorMessage = "Failed to load action unit: " + e.getMessage();
-                redirectBean.redirectTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        // reinit
+        hasUnsavedModifications = false;
+        errorMessage = null;
+        unit = null;
+        newCode = new ActionCode();
+        secondaryActionCodes = new ArrayList<>();
+
+        try {
+
+            unit = actionUnitService.findById(idunit);
+            this.setTitleCodeOrTitle(unit.getName()); // Set panel title
+
+
+
+            backupClone = new ActionUnit(unit);
+            this.titleCodeOrTitle = unit.getName();
+            secondaryActionCodes = new ArrayList<>(unit.getSecondaryActionCodes());
+            fType = this.unit.getType();
+
+            initForms();
+
+
+            // Get all the CHILDREN of the spatial unit
+            selectedCategoriesChildren = new ArrayList<>();
+
+            totalChildrenCount = 0;
+
+            // Get all the Parents of the spatial unit
+            selectedCategoriesParents = new ArrayList<>();
+
+            totalParentsCount = 0;
+
+
+        } catch (RuntimeException e) {
+            this.errorMessage = "Failed to load spatial unit: " + e.getMessage();
+        }
+
+
+        historyVersion = historyService.findActionUnitHistory(unit);
+        documents = documentService.findForActionUnit(unit);
+    }
+
+    @Override
+    public void init() {
+        try {
+            activeTabIndex = 0;
+
+            systemTheso = new Vocabulary();
+            systemTheso.setBaseUri("https://siamois.fr");
+            systemTheso.setExternalVocabularyId("SYSTEM");
+            nameConcept = new Concept();
+            nameConcept.setExternalId("SYSTEM_NAME");
+            nameConcept.setVocabulary(systemTheso);
+
+
+            if (idunit == null) {
+                this.errorMessage = "The ID of the spatial unit must be defined";
+                return;
             }
 
+            refreshUnit();
 
+
+            if (this.unit == null) {
+                log.error("The Action Unit page should not be accessed without ID or by direct page path");
+                errorMessage = "The Action Unit page should not be accessed without ID or by direct page path";
+            }
+
+            // add to BC
+            DefaultMenuItem item = DefaultMenuItem.builder()
+                    .value(unit.getName())
+                    .icon("bi bi-arrow-down-square")
+                    .build();
+            this.getBreadcrumb().getModel().getElements().add(item);
+
+        } catch (
+                ActionUnitNotFoundException e) {
+            log.error("Action unit with id {} not found", idunit);
+            redirectBean.redirectTo(HttpStatus.NOT_FOUND);
+        } catch (
+                RuntimeException e) {
+            this.errorMessage = "Failed to load action unit: " + e.getMessage();
+            redirectBean.redirectTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
 
     }
@@ -237,12 +309,31 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
     @Override
     public void saveDocument() {
-
+        // TODO : implement
     }
 
     @Override
     public void save(Boolean validated) {
 
+        // Recupération des champs systeme
+
+        // Name
+        CustomFieldAnswerText nameAnswer = (CustomFieldAnswerText) formResponse.getAnswers().get(nameField);
+        CustomFieldAnswerSelectOneFromFieldCode typeAnswer = (CustomFieldAnswerSelectOneFromFieldCode) formResponse.getAnswers().get(typeField);
+        unit.setName(nameAnswer.getValue());
+        unit.setType(typeAnswer.getValue());
+
+        unit.setValidated(validated);
+        try {
+            actionUnitService.save(unit);
+        }
+        catch(FailedRecordingUnitSaveException e) {
+            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getName());
+            return ;
+        }
+
+        refreshUnit();
+        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getName());
     }
 
 
@@ -260,7 +351,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
             secondaryActionCodes.set(newCodeIndex - 1, newCode);
         }
     }
-
 
 
     /**
@@ -300,6 +390,11 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         // To implement
     }
 
+    @Override
+    public String displayHeader() {
+        return "/panel/header/actionUnitPanelHeader.xhtml";
+    }
+
     public void addNewSecondaryCode() {
         ActionCode code = new ActionCode();
         Concept c = new Concept();
@@ -337,10 +432,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     }
 
 
-
-
-
-
     public static class ActionUnitPanelBuilder {
 
         private final ActionUnitPanel actionUnitPanel;
@@ -359,7 +450,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
             return this;
         }
-
 
 
         public ActionUnitPanel build() {

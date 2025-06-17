@@ -2,11 +2,14 @@ package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.primefaces.component.tabview.Tab;
@@ -17,7 +20,7 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public abstract class AbstractSingleEntityPanel<T,HType> extends AbstractPanel {
+public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
 
     //--------------- Locals
     protected transient T unit;
@@ -25,8 +28,8 @@ public abstract class AbstractSingleEntityPanel<T,HType> extends AbstractPanel {
     protected int activeTabIndex ; // Keeping state of active tab
     protected transient T backupClone;
     protected String errorMessage;
-    protected transient List<HType> historyVersion;
-    protected transient HType revisionToDisplay = null;
+    protected transient List<H> historyVersion;
+    protected transient H revisionToDisplay = null;
     protected Long idunit;  // ID of the spatial unit
     protected transient List<Document> documents;
     // lazy model for children of entity
@@ -38,8 +41,8 @@ public abstract class AbstractSingleEntityPanel<T,HType> extends AbstractPanel {
     protected transient List<Concept> selectedCategoriesParents;
     public abstract BaseLazyDataModel<T> getLazyDataModelParents() ;
     // Gestion du formulaire via form layout
-    protected List<CustomFormPanel> layout ; // details tab form
-    protected List<CustomFormPanel> overviewLayout ; // overview tab form
+    protected transient List<CustomFormPanel> layout ; // details tab form
+    protected transient List<CustomFormPanel> overviewLayout ; // overview tab form
     protected CustomFormResponse formResponse ; // answers to all the fields from overview and details
     protected Vocabulary systemTheso ;
 
@@ -69,7 +72,22 @@ public abstract class AbstractSingleEntityPanel<T,HType> extends AbstractPanel {
         return (totalChildrenCount + totalParentsCount) == 0;
     }
 
-    protected void onTabChange(TabChangeEvent event) {
+    public void setFieldAnswerHasBeenModified(CustomField field) {
+
+        formResponse.getAnswers().get(field).setHasBeenModified(true);
+        hasUnsavedModifications = true;
+
+    }
+
+    public void setFieldConceptAnswerHasBeenModified(AjaxBehaviorEvent event) {
+        UIComponent component = event.getComponent();
+        CustomField field = (CustomField) component.getAttributes().get("field");
+
+        formResponse.getAnswers().get(field).setHasBeenModified(true);
+        hasUnsavedModifications = true;
+    }
+
+    public void onTabChange(TabChangeEvent event) {
         // update tab inddex
         TabView tabView = (TabView) event.getComponent(); // Get the TabView
         Tab activeTab = event.getTab(); // Get the selected tab

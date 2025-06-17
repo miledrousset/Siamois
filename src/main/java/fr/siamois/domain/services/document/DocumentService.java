@@ -2,6 +2,7 @@ package fr.siamois.domain.services.document;
 
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.document.DocumentParent;
 import fr.siamois.domain.models.exceptions.InvalidFileSizeException;
@@ -127,6 +128,10 @@ public class DocumentService implements ArkEntityService {
 
     public List<Document> findForSpatialUnit(SpatialUnit spatialUnit) {
         return documentRepository.findDocumentsBySpatialUnit(spatialUnit.getId());
+    }
+
+    public List<Document> findForActionUnit(ActionUnit actionUnit) {
+        return documentRepository.findDocumentsByActionUnit(actionUnit.getId());
     }
 
     public void addToSpatialUnit(Document document, SpatialUnit spatialUnit) {

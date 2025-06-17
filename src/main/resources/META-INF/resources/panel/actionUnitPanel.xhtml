@@ -3,7 +3,7 @@
              xmlns:f="http://xmlns.jcp.org/jsf/core"
              xmlns:p="http://primefaces.org/ui"
              xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form"
+             xmlns:form="http://java.sun.com/jsf/composite/pages/shared/form"
 >
 
     <!--@elvariable id="panelIndex" type="Integer"-->
@@ -59,9 +59,24 @@
 
                 </p:tab>
                 <p:tab title="Hierarchie" id="hierarchy">
-
+                    <f:facet name="title">
+                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
+                            <ui:param name="title" value="Hierarchie"/>
+                            <ui:param name="icon" value="bi bi-arrow-down-square"/>
+                            <ui:param name="emptyTab" value="true"/>
+                            <ui:param name="validated" value="#{panelModel.unit.validated}"/>
+                        </ui:include>
+                    </f:facet>
                 </p:tab>
-                <p:tab title="Contexte spatial">
+                <p:tab title="Emprise spatial">
+                    <f:facet name="title">
+                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
+                            <ui:param name="title" value='#{langBean.msg("panel.tab.details")}'/>
+                            <ui:param name="icon" value="i bi-geo-alt"/>
+                            <ui:param name="emptyTab" value="true"/>
+                            <ui:param name="validated" value="#{panelModel.unit.validated}"/>
+                        </ui:include>
+                    </f:facet>
 
 
                 </p:tab>
@@ -155,8 +170,6 @@
         </h:form>
 
     </h:panelGroup>
-
-
 
 
 </ui:fragment>
