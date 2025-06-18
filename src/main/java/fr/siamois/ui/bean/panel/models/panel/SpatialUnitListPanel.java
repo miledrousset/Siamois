@@ -32,8 +32,6 @@ public class SpatialUnitListPanel extends AbstractListPanel<SpatialUnit> {
     // locals
     private String spatialUnitListErrorMessage;
 
-
-
     public SpatialUnitListPanel(SpatialUnitService spatialUnitService,
                                 PersonService personService,
                                 ConceptService conceptService,
