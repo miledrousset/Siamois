@@ -21,7 +21,6 @@ import javax.faces.bean.SessionScoped;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static fr.siamois.utils.MessageUtils.displayInfoMessage;
 import static fr.siamois.utils.MessageUtils.displayWarnMessage;
