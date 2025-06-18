@@ -47,7 +47,7 @@
                                              style="margin-right: 1rem">
                             </p:commandButton>
                             <p:commandButton id="createAndViewButton"
-                                             oncomplete="PF('newRecordingUnitDiag').hide()"
+                                             oncomplete="PF('newRecordingUnitDiag').hide();handleScrollToTop();"
                                              update="flow"
                                              action="#{newRecordingUnitBean.createAndOpen()}"
                                              value='#{langBean.msg("common.action.createAndView")}'

@@ -43,11 +43,11 @@
                 if (element.tagName !== 'INPUT') {
                     inputEl = element.querySelector('input');
 
-                } else{
+                } else {
                     inputEl = element;
                 }
 
-                if(inputEl) {
+                if (inputEl) {
                     $(inputEl).addClass('sia-modified-field');
                 }
 
@@ -181,7 +181,7 @@
                         <f:selectItem icon="" itemLabel="Lecture" itemValue="READ"/>
                         <f:selectItem itemLabel="Edition" itemValue="WRITE"/>
 
-                        <p:ajax event="change" listener="#{flowBean.changeReadWriteMode()}" update="flow" />
+                        <p:ajax event="change" listener="#{flowBean.changeReadWriteMode()}" update="flow"/>
                     </p:selectOneButton>
                 </form:csrfform>
             </div>
@@ -220,9 +220,12 @@
                         </ui:include>
                         <f:facet name="actions">
                             <form:csrfform formId="actionsFormId">
-                                <p:commandLink action="#{navBean.addToBookmarkedPanels(panel)}"
-                                               styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
-                                    <h:outputText styleClass="ui-icon bi bi-bookmark"/>
+                                <p:commandLink id="bookmarkToggleButton"
+                                               styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                                               action="#{navBean.togglePanelBookmark(panel)}"
+                                               update="bookmarkToggleButton navBarCsrfForm:siamoisNavForm:bookmarkGroup">
+                                    <h:outputText styleClass="#{navBean.isPanelBookmarkedByUser(panel) ?
+                            'ui-icon bi bi-bookmark-fill' : 'ui-icon bi bi-bookmark'}"/>
                                 </p:commandLink>
                                 <p:commandLink rendered="#{flowBean.fullscreenPanelIndex ==-1}"
                                                action="#{flowBean.fullScreen(panel)}"
@@ -247,8 +250,6 @@
         <p:blockUI block="flow" widgetVar="buiContent">
             <i class="pi pi-spin pi-spinner" style="font-size: 3rem"/>
         </p:blockUI>
-
-
 
 
     </ui:define>
