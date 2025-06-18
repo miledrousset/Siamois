@@ -2,6 +2,7 @@ package fr.siamois.ui.bean.dialog.institution;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.events.LoginEvent;
+import fr.siamois.domain.models.exceptions.auth.*;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.InstitutionService;
@@ -55,6 +56,14 @@ public class UserDialogBean implements Serializable {
     private Person selectedExistingPerson;
     private List<Person> personSelectedList = new ArrayList<>();
 
+    // Create TAB
+    private String firstname;
+    private String lastname;
+    private String username;
+    private String email;
+    private String password;
+    private String confirmPassword;
+
     public UserDialogBean(EmailManager emailManager, PersonService personService, InstitutionService institutionService, LangBean langBean, FieldConfigurationService fieldConfigurationService, SessionSettingsBean sessionSettingsBean) {
         this.emailManager = emailManager;
         this.personService = personService;
@@ -94,6 +103,12 @@ public class UserDialogBean implements Serializable {
         this.selectedExistingPerson = null;
         this.personSelectedList.clear();
         this.alreadyExistingPersons.clear();
+        this.firstname = null;
+        this.lastname = null;
+        this.username = null;
+        this.email = null;
+        this.password = null;
+        this.confirmPassword = null;
     }
 
     /**
@@ -116,7 +131,37 @@ public class UserDialogBean implements Serializable {
     }
 
     public PersonRole createPerson() {
-        // TODO: Implement creation logic
+        if (firstname == null || lastname == null || username == null || email == null || password == null || confirmPassword == null) {
+            log.error("All fields must be filled out.");
+            return null;
+        }
+
+        if (!password.equals(confirmPassword)) {
+            log.error("Password and confirmation do not match.");
+            return null;
+        }
+
+        Person person = new Person();
+        person.setName(firstname);
+        person.setLastname(lastname);
+        person.setUsername(username);
+        person.setEmail(email);
+        person.setPassword(password);
+        person.setPassToModify(true);
+
+        try {
+            return new PersonRole(personService.createPerson(person), null);
+        } catch (InvalidUsernameException e) {
+            log.error("Invalid username: {}", e.getMessage());
+        } catch (InvalidEmailException e) {
+            log.error("Invalid email: {}", e.getMessage());
+        } catch (UserAlreadyExistException e) {
+            log.error("User already exists: {}", e.getMessage());
+        } catch (InvalidPasswordException e) {
+            log.error("Invalid password: {}", e.getMessage());
+        } catch (InvalidNameException e) {
+            log.error("Invalid name: {}", e.getMessage());
+        }
         return null;
     }
 
