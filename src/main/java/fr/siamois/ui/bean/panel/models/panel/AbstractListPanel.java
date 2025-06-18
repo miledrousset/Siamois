@@ -140,9 +140,7 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
         MessageUtils.displayInfoMessage(langBean, "common.bookmark.saved");
     }
 
-    public Boolean isRessourceBookmarkedByUser(String ressourceUri) {
-        return bookmarkService.isRessourceBookmarkedByUser(sessionSettingsBean.getUserInfo(), ressourceUri);
-    }
+
 
     protected abstract void setErrorMessage(String msg);
 

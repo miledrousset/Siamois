@@ -11,6 +11,7 @@ import fr.siamois.ui.bean.converter.InstitutionConverter;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
 import fr.siamois.ui.bean.settings.InstitutionListSettingsBean;
+import fr.siamois.utils.MessageUtils;
 import jakarta.faces.context.FacesContext;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -52,6 +53,8 @@ public class NavBean implements Serializable {
 
     @Getter(AccessLevel.NONE)
     private transient List<Bookmark> bookmarkedPanels = null;
+
+    private static final String RECORDING_UNIT_BASE_URI = "/recording-unit";
 
     public NavBean(SessionSettingsBean sessionSettingsBean,
                    InstitutionChangeEventPublisher institutionChangeEventPublisher,
@@ -122,6 +125,43 @@ public class NavBean implements Serializable {
         SecurityContextHolder.getContext().setAuthentication(null);
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         redirectBean.redirectTo("/");
+    }
+
+    public void bookmarkRecordingUnit(String fullIdentifier) {
+
+        // Maybe check that ressource exists and user has access to it?
+        bookmarkService.save(
+                sessionSettingsBean.getUserInfo(),
+                RECORDING_UNIT_BASE_URI+fullIdentifier,
+                fullIdentifier
+        );
+        MessageUtils.displayInfoMessage(langBean, "common.bookmark.saved");
+    }
+
+    public void unBookmarkRecordingUnit(String fullIdentifier) {
+        bookmarkService.deleteBookmark(
+                sessionSettingsBean.getUserInfo(),
+                RECORDING_UNIT_BASE_URI+fullIdentifier
+        );
+        MessageUtils.displayInfoMessage(langBean, "common.bookmark.unsaved");
+    }
+
+    public Boolean isRessourceBookmarkedByUser(String ressourceUri) {
+        return bookmarkService.isRessourceBookmarkedByUser(sessionSettingsBean.getUserInfo(), ressourceUri);
+    }
+
+    public void toggleRecordingUnitBookmark(String fullIdentifier) {
+        if(Boolean.TRUE.equals(isRessourceBookmarkedByUser(RECORDING_UNIT_BASE_URI+fullIdentifier))) {
+            unBookmarkRecordingUnit(fullIdentifier);
+        }
+        else {
+            bookmarkRecordingUnit(fullIdentifier);
+        }
+        reloadBookarkedPanels();
+    }
+
+    public Boolean isRecordingUnitBookmarkedByUser(String fullIdentifier) {
+        return isRessourceBookmarkedByUser(RECORDING_UNIT_BASE_URI+fullIdentifier);
     }
 
     @EventListener(LoginEvent.class)

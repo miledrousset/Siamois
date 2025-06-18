@@ -19,7 +19,6 @@
                     </div>
                 </div>
             </f:facet>
-
             <div class="ui-panel recording-unit-panel">
                 <ui:include src="/pages/shared/form/customFormPanelContent.xhtml">
                     <ui:param name="bean" value="#{newRecordingUnitBean}"/>
@@ -37,12 +36,20 @@
                     <p:toolbar class="panel-footer">
                         <p:toolbarGroup align="right">
                             <p:commandLink value='#{langBean.msg("common.action.cancel")}'
+                                           oncomplete="PF('newRecordingUnitDiag').hide()"
+                                           immediate="true"
                                            style="margin-right: 1rem">
                             </p:commandLink>
                             <p:commandButton id="createButton" value='#{langBean.msg("common.action.create")}'
+                                             oncomplete="PF('newRecordingUnitDiag').hide()"
+                                             action="#{newRecordingUnitBean.create()}"
+                                             update="flow"
                                              style="margin-right: 1rem">
                             </p:commandButton>
                             <p:commandButton id="createAndViewButton"
+                                             oncomplete="PF('newRecordingUnitDiag').hide()"
+                                             update="flow"
+                                             action="#{newRecordingUnitBean.createAndOpen()}"
                                              value='#{langBean.msg("common.action.createAndView")}'
                                              style="margin-right: .5rem">
                             </p:commandButton>

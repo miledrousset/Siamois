@@ -65,7 +65,7 @@ public class RecordingUnitListPanel extends AbstractListPanel<RecordingUnit> {
         this.errorMessage = msg;
     }
 
-    private static final String RECORDING_UNIT_BASE_URI = "/recording-unit";
+
 
 
     public RecordingUnitListPanel(SpatialUnitService spatialUnitService, PersonService personService,
@@ -109,38 +109,7 @@ public class RecordingUnitListPanel extends AbstractListPanel<RecordingUnit> {
         return "bi bi-pencil-square";
     }
 
-    public void bookmarkRecordingUnit(String fullIdentifier) {
 
-        // Maybe check that ressource exists and user has access to it?
-        bookmarkService.save(
-                sessionSettingsBean.getUserInfo(),
-                RECORDING_UNIT_BASE_URI+fullIdentifier,
-                fullIdentifier
-        );
-        MessageUtils.displayInfoMessage(langBean, "common.bookmark.saved");
-    }
-
-    public void unBookmarkRecordingUnit(String fullIdentifier) {
-        bookmarkService.deleteBookmark(
-                sessionSettingsBean.getUserInfo(),
-                RECORDING_UNIT_BASE_URI+fullIdentifier
-        );
-        MessageUtils.displayInfoMessage(langBean, "common.bookmark.unsaved");
-    }
-
-    public void toggleBookmark(String fullIdentifier) {
-        if(Boolean.TRUE.equals(isRessourceBookmarkedByUser(RECORDING_UNIT_BASE_URI+fullIdentifier))) {
-            unBookmarkRecordingUnit(fullIdentifier);
-        }
-        else {
-            bookmarkRecordingUnit(fullIdentifier);
-        }
-        navBean.reloadBookarkedPanels();
-    }
-
-    public Boolean isRecordingUnitBookmarkedByUser(String fullIdentifier) {
-        return isRessourceBookmarkedByUser(RECORDING_UNIT_BASE_URI+fullIdentifier);
-    }
 
     public List<Person> authorsAvailable() {
 
@@ -192,20 +161,19 @@ public class RecordingUnitListPanel extends AbstractListPanel<RecordingUnit> {
     }
 
     public void duplicateRow() {
-        List<RecordingUnit> modifiableCopy = new ArrayList<>(lazyDataModel.getWrappedData());
-        RecordingUnit newRec = new RecordingUnit(lazyDataModel.getRowData());
+        // Create a copy from selected row
+        RecordingUnit original = lazyDataModel.getRowData();
+        RecordingUnit newRec = new RecordingUnit(original);
         newRec.setIdentifier(recordingUnitService.generateNextIdentifier(newRec));
-        // Save the new row
-        newRec= recordingUnitService.save(newRec, newRec.getType(), List.of(),  List.of(),  List.of());
-        lazyDataModel.setWrappedData(modifiableCopy);
-        int newCount = lazyDataModel.getRowCount()+1;
-        lazyDataModel.setRowCount(newCount);
-        // Update cache as well
-        lazyDataModel.setCachedRowCount(newCount);
-        lazyDataModel.setQueryResult(modifiableCopy);
-        modifiableCopy.add(0,newRec);
-        modifiableCopy.remove(modifiableCopy.size() - 1);
+
+        // Save it
+        newRec = recordingUnitService.save(newRec, newRec.getType(), List.of(), List.of(), List.of());
+
+        // Add it to the model
+        lazyDataModel.addRowToModel(newRec);
     }
+
+
 
 
     public static class RecordingUnitListPanelBuilder {

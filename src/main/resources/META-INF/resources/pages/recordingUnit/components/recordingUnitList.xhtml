@@ -113,7 +113,7 @@
                             <p:commandButton value="#{langBean.msg('table.add')}" icon="bi bi-plus-square"
                                              id="newRecordingUnitButton"
                                              disabled="#{cc.attrs.disableAddBtn}"
-                                             actionListener="#{newRecordingUnitBean.init()}"
+                                             actionListener="#{newRecordingUnitBean.init(cc.attrs.lazyDataModel)}"
                                              oncomplete="PF('newRecordingUnitDiag').show()"
                                              update="newRecordingUnitForm"
                                              rendered="#{flowBean.readWriteMode == 'WRITE'}"
@@ -249,9 +249,9 @@
                 <p:column responsivePriority="1" exportable="false" toggleable="false">
                     <p:toolbar id="actionToolbar" >
                         <p:toolbarGroup>
-                            <p:commandButton id="bookmarkToggleButton" icon="#{panelModel.isRecordingUnitBookmarkedByUser(item.fullIdentifier) ?
+                            <p:commandButton id="bookmarkToggleButton" icon="#{navBean.isRecordingUnitBookmarkedByUser(item.fullIdentifier) ?
                             'bi bi-bookmark-x-fill' : 'bi bi-bookmark-plus' }" styleClass="sia-icon-btn"
-                            action="#{panelModel.toggleBookmark(item.fullIdentifier)}"
+                            action="#{navBean.toggleRecordingUnitBookmark(item.fullIdentifier)}"
                             update="bookmarkToggleButton navBarCsrfForm:siamoisNavForm:bookmarkGroup"/>
                             <p:commandButton rendered="#{flowBean.readWriteMode == 'WRITE'}" icon="bi bi-copy"
                                              action="#{panelModel.duplicateRow()}"

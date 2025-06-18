@@ -3,6 +3,7 @@ package fr.siamois.ui.lazydatamodel;
 
 
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import lombok.Getter;
@@ -273,5 +274,27 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
         int last = first + pageSizeState;
         int total = this.getRowCount();
         return Math.min(last, total); // Ensure it doesn’t exceed total records
+    }
+
+    public void addRowToModel(T newUnit) {
+        // Create modifiable copy
+        List<T> modifiableCopy = new ArrayList<>(getWrappedData());
+
+        // Insert new record at the top
+        modifiableCopy.add(0, newUnit);
+
+        // Adjust row count
+        int newCount = getRowCount() + 1;
+        setRowCount(newCount);
+        setCachedRowCount(newCount);
+
+        // Update data
+        setWrappedData(modifiableCopy);
+        setQueryResult(modifiableCopy);
+
+        // Optional: remove last item if too many (pagination bound)
+        if (modifiableCopy.size() > getPageSizeState()) {
+            modifiableCopy.remove(modifiableCopy.size() - 1);
+        }
     }
 }
