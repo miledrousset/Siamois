@@ -18,7 +18,7 @@ import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.services.person.PersonService;
-import fr.siamois.domain.services.publisher.LangageChangeEventPublisher;
+import fr.siamois.domain.events.publisher.LangageChangeEventPublisher;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
 import fr.siamois.models.exceptions.ErrorProcessingExpansionException;

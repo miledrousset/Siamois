@@ -1,6 +1,6 @@
 package fr.siamois.ui.config.handler;
 
-import fr.siamois.domain.services.publisher.LoginEventPublisher;
+import fr.siamois.domain.events.publisher.LoginEventPublisher;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
