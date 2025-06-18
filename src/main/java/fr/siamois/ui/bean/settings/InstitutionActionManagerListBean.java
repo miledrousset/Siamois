@@ -1,7 +1,5 @@
 package fr.siamois.ui.bean.settings;
 
-import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.team.ActionManagerRelation;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static fr.siamois.utils.MessageUtils.displayInfoMessage;

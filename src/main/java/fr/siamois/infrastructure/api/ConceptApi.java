@@ -11,7 +11,7 @@ import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
-import fr.siamois.models.exceptions.ErrorProcessingExpansionException;
+import fr.siamois.domain.models.exceptions.ErrorProcessingExpansionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;

@@ -3,6 +3,12 @@
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 
-    <includeAll path="changelog/versions"/>
+    <changeSet id="2025.06.18-0" author="Julien Linget" failOnError="false">
+        <sql>
+            create extension IF NOT EXISTS postgis;
+            create extension IF NOT EXISTS pg_trgm;
+            create extension IF NOT EXISTS citext;
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>

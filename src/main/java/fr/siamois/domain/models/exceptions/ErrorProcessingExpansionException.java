@@ -1,4 +1,4 @@
-package fr.siamois.models.exceptions;
+package fr.siamois.domain.models.exceptions;
 
 
 public class ErrorProcessingExpansionException extends Exception {

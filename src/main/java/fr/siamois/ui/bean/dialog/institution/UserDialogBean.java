@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -45,6 +46,8 @@ public class UserDialogBean implements Serializable {
 
     private Concept roleParentConcept;
     private boolean shouldRenderRoleField = false;
+
+    private Person selectedExistingPerson;
 
     private TabState tabState = TabState.SEARCH;
 
@@ -84,6 +87,7 @@ public class UserDialogBean implements Serializable {
         this.shouldRenderRoleField = false;
         this.actionFromBean = null;
         this.tabState = TabState.SEARCH;
+        this.selectedExistingPerson = null;
     }
 
     /**
@@ -99,8 +103,7 @@ public class UserDialogBean implements Serializable {
     }
 
     public PersonRole searchPerson() {
-        // TODO: Implement search logic
-        return null;
+        return new PersonRole(selectedExistingPerson, null);
     }
 
     public PersonRole createPerson() {
@@ -133,6 +136,10 @@ public class UserDialogBean implements Serializable {
         SEARCH,
         CREATE,
         BULK
+    }
+
+    public List<Person> searchUser(String usernameOrMailInput) {
+        return personService.findClosestByUsernameOrEmail(usernameOrMailInput);
     }
 
 }

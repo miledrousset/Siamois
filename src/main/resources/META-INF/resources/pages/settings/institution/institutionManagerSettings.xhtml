@@ -43,7 +43,8 @@
                     <p:column headerText="#{langBean.msg('common.label.user')}">
                         <div style="display: flex; flex-direction: column">
                             <strong>#{member.displayName()}</strong>
-                            <p>#{member.email}</p>
+                            <p style="margin-bottom: 0; font-style: italic">#{member.email}</p>
+                            <p>#{member.username}</p>
                         </div>
                     </p:column>
                     <p:column headerText="#{langBean.msg('common.label.role')}">

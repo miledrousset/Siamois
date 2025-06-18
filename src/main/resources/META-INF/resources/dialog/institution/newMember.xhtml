@@ -1,10 +1,8 @@
 <ui:fragment xmlns="http://www.w3.org/1999/xhtml"
              xmlns:ui="http://java.sun.com/jsf/facelets"
              xmlns:p="http://primefaces.org/ui"
+             xmlns:form="http://xmlns.jcp.org/jsf/composite/pages/shared/form" xmlns:f="http://java.sun.com/jsf/core"
              xmlns:h="http://java.sun.com/jsf/html"
-             xmlns:input="http://java.sun.com/jsf/composite/pages/shared/input"
-             xmlns:f="http://java.sun.com/jsf/core"
-             xmlns:form="http://xmlns.jcp.org/jsf/composite/pages/shared/form"
 >
 
     <p:dialog
@@ -26,7 +24,38 @@
                     <p:tabView>
                         <p:ajax event="tabChange" update="@form" listener="#{userDialogBean.tabChanged}"/>
                         <p:tab title="Ajouter un utilisateur existant" id="addExistingUser">
+                            <p:outputLabel value="Email ou nom d'utilisateur"/>
+                            <p:autoComplete id="userSelect"
+                                            value="#{userDialogBean.selectedExistingPerson}"
+                                            completeMethod="#{userDialogBean.searchUser}"
+                                            var="user"
+                                            itemLabel="#{user.displayName()}"
+                                            itemValue="#{user}"
+                                            converter="#{personConverter}">
 
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="ID"/>
+                                    </f:facet>
+                                    <h:outputText value="#{user.id}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Username"/>
+                                    </f:facet>
+                                    <h:outputText value="#{user.username}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Email"/>
+                                    </f:facet>
+                                    <h:outputText value="#{user.email}"/>
+                                </p:column>
+
+
+                            </p:autoComplete>
                         </p:tab>
                         <p:tab title="Créer un nouvel utilisateur" id="createNewUser">
                         </p:tab>
