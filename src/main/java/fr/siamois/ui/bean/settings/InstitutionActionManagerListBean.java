@@ -21,6 +21,7 @@ import javax.faces.bean.SessionScoped;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static fr.siamois.utils.MessageUtils.displayInfoMessage;
 import static fr.siamois.utils.MessageUtils.displayWarnMessage;
@@ -72,6 +73,13 @@ public class InstitutionActionManagerListBean implements SettingsDatatableBean {
                 langBean.msg("organisationSettings.managers.add"),
                 institution, this::saveUsers);
 
+        userDialogBean.getAlreadyExistingPersons().addAll(
+                refActionManagers
+                        .stream()
+                        .map(ActionManagerRelation::getPerson)
+                        .toList()
+        );
+
         PrimeFaces.current().ajax().update("newMemberDialog");
         PrimeFaces.current().executeScript("PF('newMemberDialog').show();");
     }
@@ -99,7 +107,7 @@ public class InstitutionActionManagerListBean implements SettingsDatatableBean {
 
     private void addToActionManagers(UserDialogBean.PersonRole saved) {
         if (institutionService.addPersonToActionManager(institution, saved.person())) {
-            displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", saved.person().getEmail());
+            displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", saved.person().getUsername());
         } else {
             displayWarnMessage(langBean, "organisationSettings.error.manager", saved.person().getEmail(), institution.getName());
             PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
@@ -109,6 +117,9 @@ public class InstitutionActionManagerListBean implements SettingsDatatableBean {
     public void saveUsers() {
         for (UserDialogBean.PersonRole saved : userDialogBean.createOrSearchPersons()) {
             addToActionManagers(saved);
+            ActionManagerRelation relation = new ActionManagerRelation(institution, saved.person());
+            refActionManagers.add(relation);
+            filteredActionManagers.add(relation);
         }
         userDialogBean.exit();
     }

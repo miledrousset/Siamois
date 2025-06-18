@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -30,6 +31,7 @@ import java.util.List;
 @Setter
 public class UserDialogBean implements Serializable {
 
+    // Injections
     private final transient EmailManager emailManager;
     private final transient PersonService personService;
     private final transient InstitutionService institutionService;
@@ -37,18 +39,21 @@ public class UserDialogBean implements Serializable {
     private final transient FieldConfigurationService fieldConfigurationService;
     private final SessionSettingsBean sessionSettingsBean;
 
-    private transient ActionFromBean actionFromBean;
-
+    // Data storage
     private Institution institution;
+    private transient ActionFromBean actionFromBean;
     private String title;
     private String buttonLabel;
+    private List<Person> alreadyExistingPersons = new ArrayList<>();
 
     private Concept roleParentConcept;
     private boolean shouldRenderRoleField = false;
 
-    private Person selectedExistingPerson;
-
     private TabState tabState = TabState.SEARCH;
+
+    // Search TAB
+    private Person selectedExistingPerson;
+    private List<Person> personSelectedList = new ArrayList<>();
 
     public UserDialogBean(EmailManager emailManager, PersonService personService, InstitutionService institutionService, LangBean langBean, FieldConfigurationService fieldConfigurationService, SessionSettingsBean sessionSettingsBean) {
         this.emailManager = emailManager;
@@ -87,6 +92,8 @@ public class UserDialogBean implements Serializable {
         this.actionFromBean = null;
         this.tabState = TabState.SEARCH;
         this.selectedExistingPerson = null;
+        this.personSelectedList.clear();
+        this.alreadyExistingPersons.clear();
     }
 
     /**
@@ -95,14 +102,17 @@ public class UserDialogBean implements Serializable {
      */
     public List<PersonRole> createOrSearchPersons() {
         return switch (tabState) {
-            case SEARCH -> List.of(searchPerson());
+            case SEARCH -> searchPerson();
             case CREATE -> List.of(createPerson());
             case BULK -> throw new UnsupportedOperationException("Bulk creation is not implemented yet.");
         };
     }
 
-    public PersonRole searchPerson() {
-        return new PersonRole(selectedExistingPerson, null);
+    public List<PersonRole> searchPerson() {
+        return personSelectedList
+                .stream()
+                .map(p -> new PersonRole(p, null))
+                .toList();
     }
 
     public PersonRole createPerson() {
@@ -138,7 +148,27 @@ public class UserDialogBean implements Serializable {
     }
 
     public List<Person> searchUser(String usernameOrMailInput) {
-        return personService.findClosestByUsernameOrEmail(usernameOrMailInput);
+        List<Person> result = new ArrayList<>(personService.findClosestByUsernameOrEmail(usernameOrMailInput));
+        for (Person person : alreadyExistingPersons) {
+            result.remove(person);
+        }
+
+        for (Person person : personSelectedList) {
+            result.remove(person);
+        }
+
+        return result;
+    }
+
+    public void addToList() {
+        if (selectedExistingPerson != null) {
+            personSelectedList.add(selectedExistingPerson);
+            selectedExistingPerson = null;
+        }
+    }
+
+    public void removeFromList(Person person) {
+        personSelectedList.remove(person);
     }
 
 }

@@ -23,7 +23,7 @@
                 <section>
                     <p:tabView>
                         <p:ajax event="tabChange" update="@form" listener="#{userDialogBean.tabChanged}"/>
-                        <p:tab title="Ajouter un utilisateur existant" id="addExistingUser">
+                        <p:tab title="Ajouter des utilisateurs existants" id="addExistingUser">
                             <p:outputLabel value="Email ou nom d'utilisateur"/>
                             <p:autoComplete id="userSelect"
                                             value="#{userDialogBean.selectedExistingPerson}"
@@ -56,6 +56,20 @@
 
 
                             </p:autoComplete>
+                            <p:commandButton value="Ajouter" action="#{userDialogBean.addToList()}" icon="bi bi-plus" update="@form"/>
+                            <h:panelGroup rendered="#{userDialogBean.personSelectedList.size() > 0}">
+                                <h4>Utilisateurs à ajouter</h4>
+                                <ui:repeat value="#{userDialogBean.personSelectedList}" var="user">
+                                    <article>
+                                        <p:outputLabel value="#{user.displayName()} (#{user.username})"/>
+                                        <p:commandButton icon="bi bi-trash"
+                                                         action="#{userDialogBean.removeFromList(user)}"
+                                                         update="@form"
+                                                         styleClass="btn-danger"
+                                        />
+                                    </article>
+                                </ui:repeat>
+                            </h:panelGroup>
                         </p:tab>
                         <p:tab title="Créer un nouvel utilisateur" id="createNewUser">
                         </p:tab>
