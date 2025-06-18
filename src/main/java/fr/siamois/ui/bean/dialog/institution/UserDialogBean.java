@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Component
