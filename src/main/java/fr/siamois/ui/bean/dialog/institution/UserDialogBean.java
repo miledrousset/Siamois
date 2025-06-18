@@ -1,9 +1,7 @@
 package fr.siamois.ui.bean.dialog.institution;
 
-import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.events.LoginEvent;
-import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.InstitutionService;
@@ -13,18 +11,16 @@ import fr.siamois.ui.bean.ActionFromBean;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.email.EmailManager;
-import fr.siamois.utils.MessageUtils;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.TabChangeEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -50,6 +46,8 @@ public class UserDialogBean implements Serializable {
     private Concept roleParentConcept;
     private boolean shouldRenderRoleField = false;
 
+    private TabState tabState = TabState.SEARCH;
+
     public UserDialogBean(EmailManager emailManager, PersonService personService, InstitutionService institutionService, LangBean langBean, FieldConfigurationService fieldConfigurationService, SessionSettingsBean sessionSettingsBean) {
         this.emailManager = emailManager;
         this.personService = personService;
@@ -66,6 +64,7 @@ public class UserDialogBean implements Serializable {
         this.institution = institution;
         this.shouldRenderRoleField = false;
         this.actionFromBean = actionFromBean;
+        this.tabState = TabState.SEARCH;
     }
 
     public void init(String title, String buttonLabel, Institution institution, boolean shouldRenderRole, ActionFromBean actionFromBean) {
@@ -84,6 +83,29 @@ public class UserDialogBean implements Serializable {
         this.buttonLabel = null;
         this.shouldRenderRoleField = false;
         this.actionFromBean = null;
+        this.tabState = TabState.SEARCH;
+    }
+
+    /**
+     * Creates and saves a new Person in the database.
+     * @return the list of created or found Person objects. If a single Person is created or found, it will be returned as a single-element list.
+     */
+    public List<PersonRole> createOrSearchPersons() {
+        return switch (tabState) {
+            case SEARCH -> List.of(searchPerson());
+            case CREATE -> List.of(createPerson());
+            case BULK -> throw new UnsupportedOperationException("Bulk creation is not implemented yet.");
+        };
+    }
+
+    public PersonRole searchPerson() {
+        // TODO: Implement search logic
+        return null;
+    }
+
+    public PersonRole createPerson() {
+        // TODO: Implement creation logic
+        return null;
     }
 
     public void exit() {
@@ -91,6 +113,26 @@ public class UserDialogBean implements Serializable {
         PrimeFaces.current().executeScript("PF('newMemberDialog').hide();");
     }
 
+    public void tabChanged(TabChangeEvent<Void> event) {
+        TabState oldState = tabState;
+        String tabId = event.getTab().getId();
+        switch (tabId) {
+            case "createNewUser" -> tabState = TabState.CREATE;
+            case "importUserGroup" -> tabState = TabState.BULK;
+            default -> tabState = TabState.SEARCH;
+        }
+        log.trace("Tab changed from {} to: {}", oldState, tabState);
+    }
 
+    public record PersonRole(
+            Person person,
+            Concept role
+    ) {}
+
+    public enum TabState {
+        SEARCH,
+        CREATE,
+        BULK
+    }
 
 }

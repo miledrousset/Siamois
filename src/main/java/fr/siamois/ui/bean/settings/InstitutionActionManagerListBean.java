@@ -100,33 +100,18 @@ public class InstitutionActionManagerListBean implements SettingsDatatableBean {
         }
     }
 
-    private void saveUser(UserDialogBean.UserMailRole userMailRole) {
-        Optional<Person> existingsUser = personService.findByEmail(userMailRole.getEmail());
-        if (existingsUser.isPresent()) {
-            boolean isAdded = institutionService.addPersonToActionManager(institution, existingsUser.get());
-            if (!isAdded) {
-                displayWarnMessage(langBean, "organisationSettings.error.manager", existingsUser.get().getEmail(), institution.getName());
-                PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
-                return;
-            }
-            displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", existingsUser.get().getEmail());
-            return;
-        }
-
-        PendingPerson pendingPerson = pendingPersonService.createOrGetPendingPerson(userMailRole.getEmail());
-        if (pendingPersonService.sendPendingActionManagerInstitutionInvite(pendingPerson, institution, sessionSettingsBean.getLanguageCode())) {
-            displayInfoMessage(langBean, "organisationSettings.action.sendInvite", pendingPerson.getEmail());
+    private void addToActionManagers(UserDialogBean.PersonRole saved) {
+        if (institutionService.addPersonToActionManager(institution, saved.person())) {
+            displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", saved.person().getEmail());
         } else {
-            displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", pendingPerson.getEmail());
+            displayWarnMessage(langBean, "organisationSettings.error.manager", saved.person().getEmail(), institution.getName());
+            PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
         }
     }
 
     public void saveUsers() {
-        for (UserDialogBean.UserMailRole userMailRole : userDialogBean.getInputUserMailRoles()) {
-            if (!userMailRole.isEmpty()) {
-                log.trace("Attempting to add user: {}", userMailRole.getEmail());
-                saveUser(userMailRole);
-            }
+        for (UserDialogBean.PersonRole saved : userDialogBean.createOrSearchPersons()) {
+            addToActionManagers(saved);
         }
         userDialogBean.exit();
     }

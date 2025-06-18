@@ -24,11 +24,13 @@
             <form:csrfform formId="userDialogBeanForm">
                 <section>
                     <p:tabView>
-                        <p:tab title="Inviter des utilisateurs individuellement">
+                        <p:ajax event="tabChange" update="@form" listener="#{userDialogBean.tabChanged}"/>
+                        <p:tab title="Ajouter un utilisateur existant" id="addExistingUser">
 
                         </p:tab>
-                        <p:tab title="Importer un groupe d'utilisateur" disabled="true">
-
+                        <p:tab title="Créer un nouvel utilisateur" id="createNewUser">
+                        </p:tab>
+                        <p:tab title="Importer un groupe d'utilisateur" disabled="true" id="importUserGroup">
                         </p:tab>
                     </p:tabView>
                 </section>
