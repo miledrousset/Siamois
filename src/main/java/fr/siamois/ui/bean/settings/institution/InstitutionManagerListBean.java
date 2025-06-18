@@ -59,34 +59,9 @@ public class InstitutionManagerListBean implements SettingsDatatableBean {
 
     public void init(Institution institution) {
         this.institution = institution;
-        refMembers = new HashSet<>();
+        refMembers = new HashSet<>(institutionService.findManagersOf(institution));
         roles = new HashMap<>();
-        for (Person member : institutionService.findMembersOf(institution)) {
-            String name = strRoleOf(member);
-            if (!name.equalsIgnoreCase("ERROR")) {
-                refMembers.add(member);
-                roles.put(member, name);
-            }
-        }
         members = new HashSet<>(refMembers);
-    }
-
-    private boolean userIsManagerOf(Institution institution, Person p) {
-        return institutionService.isManagerOf(institution, p);
-    }
-
-    private static boolean userIsSuperAdmin(Person p) {
-        return p.isSuperAdmin();
-    }
-
-    public String strRoleOf(Person person) {
-        if (userIsSuperAdmin(person)) {
-            return "Administrateur";
-        } else if (userIsManagerOf(institution, person)) {
-            return "Responsable";
-        } else {
-            return "ERROR";
-        }
     }
 
     @Override
@@ -119,7 +94,7 @@ public class InstitutionManagerListBean implements SettingsDatatableBean {
 
     private void addPersonToInstitution(UserDialogBean.PersonRole saved) {
         if (institutionService.addToManagers(institution, saved.person())) {
-            displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", saved.person().getEmail());
+            displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", saved.person().getUsername());
         } else {
             displayWarnMessage(langBean, "organisationSettings.error.manager", saved.person().getEmail(), institution.getName());
             PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
@@ -130,6 +105,8 @@ public class InstitutionManagerListBean implements SettingsDatatableBean {
         List<UserDialogBean.PersonRole> saved = userDialogBean.createOrSearchPersons();
         for (UserDialogBean.PersonRole personRole : saved) {
             addPersonToInstitution(personRole);
+            refMembers.add(personRole.person());
+            members.add(personRole.person());
         }
         userDialogBean.exit();
     }

@@ -16,6 +16,7 @@ import fr.siamois.infrastructure.database.repositories.team.ActionManagerReposit
 import fr.siamois.infrastructure.database.repositories.team.TeamMemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -190,5 +191,10 @@ public class InstitutionService {
         teamMemberRepository.save(relation);
 
         return true;
+    }
+
+    @Transactional(readOnly = true)
+    public Set<Person> findManagersOf(Institution institution) {
+        return institution.getManagers();
     }
 }

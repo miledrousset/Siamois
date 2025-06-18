@@ -91,6 +91,9 @@ public class TeamMembersBean implements SettingsDatatableBean {
         List<UserDialogBean.PersonRole> result = userDialogBean.createOrSearchPersons();
         for (UserDialogBean.PersonRole saved : result) {
             addPersonToActionunit(saved);
+            TeamMemberRelation relation = new TeamMemberRelation(actionUnit, saved.person());
+            memberRelations.add(relation);
+            filteredMemberRelations.add(relation);
         }
         userDialogBean.exit();
     }
