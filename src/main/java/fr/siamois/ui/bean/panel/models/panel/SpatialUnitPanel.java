@@ -40,8 +40,6 @@ import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
 import fr.siamois.ui.lazydatamodel.SpatialUnitParentsLazyDataModel;
 import fr.siamois.utils.DateUtils;
 import fr.siamois.utils.MessageUtils;
-import jakarta.faces.component.UIComponent;
-import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -90,7 +88,6 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
     private final transient SessionSettingsBean sessionSettings;
     private final transient SpatialUnitHelperService spatialUnitHelperService;
     private final transient DocumentService documentService;
-    private final transient DocumentCreationBean documentCreationBean;
     private final transient CustomFieldService customFieldService;
     private final transient ConceptService conceptService;
     private final transient LabelService labelService;
@@ -139,14 +136,14 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
     private SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService, DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
                              ConceptService conceptService, LabelService labelService, LangBean langBean, PersonService personService) {
 
-        super("common.entity.spatialUnit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-single-panel");
+        super("common.entity.spatialUnit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-single-panel",
+                documentCreationBean);
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.sessionSettings = sessionSettings;
         this.spatialUnitHelperService = spatialUnitHelperService;
         this.documentService = documentService;
-        this.documentCreationBean = documentCreationBean;
         this.customFieldService = customFieldService;
         this.labelService = labelService;
         this.conceptService = conceptService;
@@ -401,6 +398,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
     }
 
+    @Override
     public void visualise(SpatialUnitHist history) {
         spatialUnitHelperService.visualise(history, hist -> this.revisionToDisplay = hist);
     }
@@ -469,13 +467,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
         return currentMimeType.getType().equals("image");
     }
 
-    public void initDialog() throws NoConfigForFieldException {
-        log.trace("initDialog");
-        documentCreationBean.init();
-        documentCreationBean.setActionOnSave(this::saveDocument);
 
-        PrimeFaces.current().executeScript("PF('newDocumentDiag').show()");
-    }
 
 
 

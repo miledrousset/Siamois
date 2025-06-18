@@ -17,52 +17,14 @@
                  class="sia-form-panel"
                  toggleable="true">
 
-            <p:panelGrid id="customFormPanelGrid-#{prefix}-#{status.index}"
-                         layout="grid"
-            >
-                <c:forEach items="#{customFormPanel.rows}" var="row" varStatus="rowStatus">
-                    <p:row>
-
-                        <c:forEach items="#{row.columns}" var="col" varStatus="colStatus">
-
-
-                            <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
-                                <!-- Text -->
-                                <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
-                                                        rendered="#{col.field['class'].simpleName eq 'CustomFieldText'}">
-
-                                    <siaInplace:text
-                                            panelModel="#{panelModel}"
-                                            field="#{col.field}"
-                                            hasBeenModified="#{panelModel.formResponse.answers.get(col.field).hasBeenModified}"
-                                            answer="#{panelModel.formResponse.answers.get(col.field)}"
-                                            mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
-                                            updateTargetsOnBlur="#{panelId}"
-                                    >
-
-                                    </siaInplace:text>
-                                </sharedInput:panelField>
-
-                                <!-- Select one from field code -->
-                                <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}" isTheso="true"
-                                                        rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneFromFieldCode'}">
-                                    <siaInplace:concept
-                                            hasBeenModified="#{panelModel.formResponse.answers.get(col.field).hasBeenModified}"
-                                            field="#{col.field}"
-                                            mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
-                                            panelModel="#{panelModel}"
-                                            updateTargetsOnBlur="#{panelId}"
-                                            answer="#{panelModel.formResponse.answers.get(col.field)}"/>
-                                </sharedInput:panelField>
-
-                            </p:column>
-
-
-                        </c:forEach>
-                    </p:row>
-                </c:forEach>
-            </p:panelGrid>
-
+            <ui:include src="/pages/shared/form/customFormPanelContent.xhtml">
+                <ui:param name="bean" value="#{panelModel}"/>
+                <ui:param name="customFormPanel" value="#{customFormPanel}"/>
+                <ui:param name="readOnly" value="#{readOnly}"/>
+                <ui:param name="prefix" value="#{prefix}"/>
+                <ui:param name="updateTargetsOnBlur" value="#{panelId}"/>
+                <ui:param name="statusIndex" value="#{status.index}"/>
+            </ui:include>
 
         </p:panel>
     </c:forEach>

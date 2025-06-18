@@ -19,11 +19,7 @@
     </cc:interface>
     <cc:implementation>
 
-        <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.RecordingUnitListPanel"-->
-        <h:form id="recordingUnitListForm"
 
-        >
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
 
             <!-- datatable property partialUpdate=false because otherwise the paginator template is reset after sort or filter actions-->
@@ -52,9 +48,9 @@
                 <p:ajax event="rowEdit" listener="#{panelModel.handleRowEdit}"/>
                 <p:ajax event="rowEditCancel"/>
                 <p:ajax event="rowSelect" listener="#{panelModel.handleRowSelect}" immediate="true" process=""
-                        update=":#{cc.clientId}:recordingUnitListForm:recordingUnitDataTable:tableToolbar"/>
+                        update=":#{cc.clientId}:recordingUnitDataTable:tableToolbar"/>
                 <p:ajax event="rowUnselect" listener="#{panelModel.handleRowUnselect}" immediate="true"
-                        update=":#{cc.clientId}:recordingUnitListForm:recordingUnitDataTable:tableToolbar"/>
+                        update=":#{cc.clientId}:recordingUnitDataTable:tableToolbar"/>
 
                 <f:facet name="{RowReport}">
 
@@ -86,8 +82,8 @@
                                                          value="#{langBean.msg('table.columnvisibility')}"
                                                          icon="pi pi-align-justify"/>
                                         <p:columnToggler
-                                                datasource=":#{cc.clientId}:recordingUnitListForm:recordingUnitDataTable"
-                                                trigger=":#{cc.clientId}:recordingUnitListForm:recordingUnitDataTable:toggler">
+                                                datasource=":#{cc.clientId}:recordingUnitDataTable"
+                                                trigger=":#{cc.clientId}:recordingUnitDataTable:toggler">
                                             <p:ajax event="toggle" listener="#{cc.attrs.panelModel.onToggle}"/>
                                         </p:columnToggler>
                                     </div>
@@ -99,7 +95,7 @@
                                                                                   field="#{cc.attrs.lazyDataModel.typeField}"
                                                                                   editConceptUrl="#{spatialUnitFieldBean.getUrlForFieldCode('SIARU.TYPE')}"/>
                                         <p:commandButton value="Enregistrer"
-                                                         update=":#{cc.clientId}:recordingUnitListForm:recordingUnitDataTable"
+                                                         update=":#{cc.clientId}:recordingUnitDataTable"
                                                          action="#{panelModel.saveFieldBulk()}"
                                                          />
                                     </p:outputPanel>
@@ -115,10 +111,12 @@
 
                         <p:toolbarGroup align="right">
                             <p:commandButton value="#{langBean.msg('table.add')}" icon="bi bi-plus-square"
+                                             id="newRecordingUnitButton"
                                              disabled="#{cc.attrs.disableAddBtn}"
-                                             onclick="PF('newRecordingUnitDiag').show()"
+                                             actionListener="#{newRecordingUnitBean.init()}"
+                                             oncomplete="PF('newRecordingUnitDiag').show()"
+                                             update="newRecordingUnitForm"
                                              rendered="#{flowBean.readWriteMode == 'WRITE'}"
-                                             update="flow"
                                              style="margin-right: .5rem">
                             </p:commandButton>
                         </p:toolbarGroup>
@@ -257,7 +255,7 @@
                             update="bookmarkToggleButton navBarCsrfForm:siamoisNavForm:bookmarkGroup"/>
                             <p:commandButton rendered="#{flowBean.readWriteMode == 'WRITE'}" icon="bi bi-copy"
                                              action="#{panelModel.duplicateRow()}"
-                                             update=":#{cc.clientId}:recordingUnitListForm:recordingUnitDataTable"
+                                             update=":#{cc.clientId}:recordingUnitDataTable"
                                              styleClass="sia-icon-btn"/>
                         </p:toolbarGroup>
                     </p:toolbar>
@@ -271,7 +269,7 @@
             </p:dataTable>
 
 
-        </h:form>
+
     </cc:implementation>
 </ui:composition>
 

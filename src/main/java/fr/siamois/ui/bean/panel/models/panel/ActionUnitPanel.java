@@ -31,6 +31,7 @@ import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.utils.DataLoaderUtils;
 import fr.siamois.ui.bean.settings.team.TeamMembersBean;
@@ -107,8 +108,10 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
                            FieldConfigurationService fieldConfigurationService,
                            FieldService fieldService, RedirectBean redirectBean,
                            LabelService labelService, TeamMembersBean teamMembersBean,
-                           HistoryService historyService, DocumentService documentService, RecordingUnitService recordingUnitService) {
-        super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel action-unit-single-panel");
+                           HistoryService historyService, DocumentService documentService, RecordingUnitService recordingUnitService,
+                           DocumentCreationBean documentCreationBean) {
+        super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel action-unit-single-panel",
+                documentCreationBean);
         this.actionUnitService = actionUnitService;
         this.langBean = langBean;
         this.sessionSettingsBean = sessionSettingsBean;
@@ -309,6 +312,11 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         unit.setType(backupClone.getType());
         hasUnsavedModifications = false;
         initForms();
+    }
+
+    @Override
+    public void visualise(ActionUnitHist history) {
+        // TODO: implement
     }
 
     @Override

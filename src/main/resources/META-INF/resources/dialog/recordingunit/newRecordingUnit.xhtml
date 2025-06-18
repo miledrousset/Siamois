@@ -8,7 +8,7 @@
 >
     <h:form id="newRecordingUnitForm">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-        <p:dialog widgetVar="newRecordingUnitDiag" id="newRecordingUnitDiag" howEffect="fade" closeOnEscape="true"
+        <p:dialog widgetVar="newRecordingUnitDiag" id="newRecordingUnitDiag" showEffect="fade" closeOnEscape="true"
                   appendToBody="true" modal="true" styleClass="sia-new-unit-dialog">
 
             <f:facet name="header">
@@ -21,9 +21,14 @@
             </f:facet>
 
             <div class="ui-panel recording-unit-panel">
-
-
-                Form..
+                <ui:include src="/pages/shared/form/customFormPanelContent.xhtml">
+                    <ui:param name="bean" value="#{newRecordingUnitBean}"/>
+                    <ui:param name="customFormPanel" value="#{newRecordingUnitBean.mainPanel}"/>
+                    <ui:param name="readOnly" value="#{false}"/>
+                    <ui:param name="prefix" value="newRecordingUnit"/>
+                    <ui:param name="updateTargetsOnBlur" value="newRecordingUnitForm"/>
+                    <ui:param name="statusIndex" value="0"/>
+                </ui:include>
             </div>
 
             <!-- Save/Cancel Toolbar -->
@@ -34,11 +39,11 @@
                             <p:commandLink value='#{langBean.msg("common.action.cancel")}'
                                            style="margin-right: 1rem">
                             </p:commandLink>
-                            <p:commandButton id="saveButton" value='#{langBean.msg("common.action.save")}'
+                            <p:commandButton id="createButton" value='#{langBean.msg("common.action.create")}'
                                              style="margin-right: 1rem">
                             </p:commandButton>
-                            <p:commandButton id="saveAndViewButton"
-                                             value='#{langBean.msg("common.action.saveAndValidate")}'
+                            <p:commandButton id="createAndViewButton"
+                                             value='#{langBean.msg("common.action.createAndView")}'
                                              style="margin-right: .5rem">
                             </p:commandButton>
                         </p:toolbarGroup>

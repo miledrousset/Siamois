@@ -2,16 +2,21 @@ package fr.siamois.ui.bean.panel.models.panel;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
+import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
@@ -20,7 +25,11 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Slf4j
 public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
+
+    // Deps
+    protected final transient DocumentCreationBean documentCreationBean;
 
     //--------------- Locals
     protected transient T unit;
@@ -50,10 +59,17 @@ public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
 
     protected AbstractSingleEntityPanel() {
         super();
+        this.documentCreationBean = null;
     }
 
-    protected AbstractSingleEntityPanel(String titleCodeOrTitle, String icon, String panelClass) {
+    protected AbstractSingleEntityPanel(DocumentCreationBean documentCreationBean) {
+        super();
+        this.documentCreationBean = documentCreationBean;
+    }
+
+    protected AbstractSingleEntityPanel(String titleCodeOrTitle, String icon, String panelClass, DocumentCreationBean documentCreationBean) {
         super(titleCodeOrTitle, icon, panelClass);
+        this.documentCreationBean = documentCreationBean;
     }
 
     public abstract void init();
@@ -64,9 +80,19 @@ public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
 
     public abstract void cancelChanges();
 
+    public abstract void visualise(H history);
+
     public abstract void saveDocument();
 
     public abstract void save(Boolean validated);
+
+    public void initDialog() throws NoConfigForFieldException {
+        log.trace("initDialog");
+        documentCreationBean.init();
+        documentCreationBean.setActionOnSave(this::saveDocument);
+
+        PrimeFaces.current().executeScript("PF('newDocumentDiag').show()");
+    }
 
     public Boolean isHierarchyTabEmpty () {
         return (totalChildrenCount + totalParentsCount) == 0;
