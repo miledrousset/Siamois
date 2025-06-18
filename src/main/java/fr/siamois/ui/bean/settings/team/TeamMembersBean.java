@@ -6,6 +6,7 @@ import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.ui.bean.LabelBean;
+import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
@@ -36,6 +37,7 @@ public class TeamMembersBean implements SettingsDatatableBean {
     private final transient PendingPersonService pendingPersonService;
     private final SessionSettingsBean sessionSettingsBean;
     private final RedirectBean redirectBean;
+    private final LangBean langBean;
     private ActionUnit actionUnit;
 
     private String searchInput;
@@ -49,7 +51,7 @@ public class TeamMembersBean implements SettingsDatatableBean {
                            PersonService personService,
                            PendingPersonService pendingPersonService,
                            SessionSettingsBean sessionSettingsBean,
-                           RedirectBean redirectBean) {
+                           RedirectBean redirectBean, LangBean langBean) {
         this.labelBean = labelBean;
         this.institutionService = institutionService;
         this.userDialogBean = userDialogBean;
@@ -57,6 +59,7 @@ public class TeamMembersBean implements SettingsDatatableBean {
         this.pendingPersonService = pendingPersonService;
         this.sessionSettingsBean = sessionSettingsBean;
         this.redirectBean = redirectBean;
+        this.langBean = langBean;
     }
 
     public void reset() {
@@ -73,8 +76,11 @@ public class TeamMembersBean implements SettingsDatatableBean {
 
     @Override
     public void add() {
-        userDialogBean.init("Ajouter des membres", "Ajouter", actionUnit.getCreatedByInstitution(), this::save);
-        userDialogBean.setShouldRenderRoleField(true);
+        userDialogBean.init("Ajouter des membres",
+                langBean.msg("organisationSettings.managers.add"),
+                actionUnit.getCreatedByInstitution(),
+                true,
+                this::save);
         PrimeFaces.current().ajax().update("userDialogBeanForm:newMemberDialog");
         PrimeFaces.current().executeScript("PF('newMemberDialog').show();");
     }

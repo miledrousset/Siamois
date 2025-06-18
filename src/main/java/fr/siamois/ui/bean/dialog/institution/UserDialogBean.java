@@ -1,17 +1,21 @@
 package fr.siamois.ui.bean.dialog.institution;
 
+import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.exceptions.auth.*;
+import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.ActionFromBean;
+import fr.siamois.ui.bean.LabelBean;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.email.EmailManager;
+import fr.siamois.utils.MessageUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +28,8 @@ import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static fr.siamois.utils.MessageUtils.displayErrorMessage;
 
 @Slf4j
 @Component
@@ -39,6 +45,7 @@ public class UserDialogBean implements Serializable {
     private final LangBean langBean;
     private final transient FieldConfigurationService fieldConfigurationService;
     private final SessionSettingsBean sessionSettingsBean;
+    private final LabelBean labelBean;
 
     // Data storage
     private Institution institution;
@@ -46,15 +53,17 @@ public class UserDialogBean implements Serializable {
     private String title;
     private String buttonLabel;
     private List<Person> alreadyExistingPersons = new ArrayList<>();
+    private String conceptCompleteUrl;
+    private Concept parentConcept;
 
-    private Concept roleParentConcept;
     private boolean shouldRenderRoleField = false;
 
     private TabState tabState = TabState.SEARCH;
 
     // Search TAB
     private Person selectedExistingPerson;
-    private List<Person> personSelectedList = new ArrayList<>();
+    private Concept currentSelectedRole;
+    private transient List<PersonRole> personSelectedList = new ArrayList<>();
 
     // Create TAB
     private String firstname;
@@ -64,13 +73,14 @@ public class UserDialogBean implements Serializable {
     private String password;
     private String confirmPassword;
 
-    public UserDialogBean(EmailManager emailManager, PersonService personService, InstitutionService institutionService, LangBean langBean, FieldConfigurationService fieldConfigurationService, SessionSettingsBean sessionSettingsBean) {
+    public UserDialogBean(EmailManager emailManager, PersonService personService, InstitutionService institutionService, LangBean langBean, FieldConfigurationService fieldConfigurationService, SessionSettingsBean sessionSettingsBean, LabelBean labelBean) {
         this.emailManager = emailManager;
         this.personService = personService;
         this.institutionService = institutionService;
         this.langBean = langBean;
         this.fieldConfigurationService = fieldConfigurationService;
         this.sessionSettingsBean = sessionSettingsBean;
+        this.labelBean = labelBean;
     }
 
     public void init(String title, String buttonLabel, Institution institution, ActionFromBean actionFromBean) {
@@ -81,6 +91,7 @@ public class UserDialogBean implements Serializable {
         this.shouldRenderRoleField = false;
         this.actionFromBean = actionFromBean;
         this.tabState = TabState.SEARCH;
+        PrimeFaces.current().ajax().update("newMemberDialog");
     }
 
     public void init(String title, String buttonLabel, Institution institution, boolean shouldRenderRole, ActionFromBean actionFromBean) {
@@ -90,6 +101,16 @@ public class UserDialogBean implements Serializable {
         this.institution = institution;
         this.shouldRenderRoleField = shouldRenderRole;
         this.actionFromBean = actionFromBean;
+        if (shouldRenderRole) {
+            conceptCompleteUrl = fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), Person.USER_ROLE_FIELD_CODE);
+            try {
+                parentConcept = fieldConfigurationService.findConfigurationForFieldCode(sessionSettingsBean.getUserInfo(), Person.USER_ROLE_FIELD_CODE);
+            } catch (NoConfigForFieldException e) {
+                MessageUtils.displayNoThesaurusConfiguredMessage(langBean);
+            }
+        }
+        PrimeFaces.current().ajax().update("newMemberDialog");
+
     }
 
     @EventListener(LoginEvent.class)
@@ -124,10 +145,7 @@ public class UserDialogBean implements Serializable {
     }
 
     public List<PersonRole> searchPerson() {
-        return personSelectedList
-                .stream()
-                .map(p -> new PersonRole(p, null))
-                .toList();
+        return personSelectedList;
     }
 
     public PersonRole createPerson() {
@@ -198,22 +216,37 @@ public class UserDialogBean implements Serializable {
             result.remove(person);
         }
 
-        for (Person person : personSelectedList) {
-            result.remove(person);
+        for (PersonRole person : personSelectedList) {
+            result.remove(person.person);
         }
 
         return result;
     }
 
     public void addToList() {
-        if (selectedExistingPerson != null) {
-            personSelectedList.add(selectedExistingPerson);
+        if (personSelectedIsValid() && roleFieldIsValid()) {
+            personSelectedList.add(new PersonRole(selectedExistingPerson, currentSelectedRole));
             selectedExistingPerson = null;
+            currentSelectedRole = null;
+        } else {
+            displayErrorMessage(langBean, "userDialog.error.empty");
         }
     }
 
-    public void removeFromList(Person person) {
-        personSelectedList.remove(person);
+    private boolean personSelectedIsValid() {
+        return selectedExistingPerson != null;
+    }
+
+    private boolean roleFieldIsValid() {
+        return !shouldRenderRoleField || currentSelectedRole != null;
+    }
+
+    public void removeFromList(PersonRole personRole) {
+        personSelectedList.remove(personRole);
+    }
+
+    public List<Concept> completeRole(String input) {
+        return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), parentConcept, input);
     }
 
 }
