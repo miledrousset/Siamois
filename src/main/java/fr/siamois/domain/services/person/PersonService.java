@@ -167,6 +167,7 @@ public class PersonService {
         PasswordVerifier verifier = findPasswordVerifier().orElseThrow(() -> new IllegalStateException("Password verifier is not defined"));
 
         person.setPassword(newPassword);
+        person.setPassToModify(false);
 
         verifier.verify(person);
 
