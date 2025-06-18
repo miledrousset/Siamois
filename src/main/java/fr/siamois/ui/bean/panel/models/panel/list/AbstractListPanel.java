@@ -1,4 +1,4 @@
-package fr.siamois.ui.bean.panel.models.panel;
+package fr.siamois.ui.bean.panel.models.panel.list;
 
 import fr.siamois.domain.services.BookmarkService;
 import fr.siamois.domain.services.SpatialUnitService;
@@ -8,6 +8,7 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.application.FacesMessage;
@@ -23,7 +24,6 @@ import org.primefaces.model.menu.DefaultMenuItem;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 @Getter
 @Setter

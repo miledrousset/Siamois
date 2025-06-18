@@ -35,6 +35,14 @@ public interface DocumentRepository extends CrudRepository<Document, Long> {
     )
     List<Document> findDocumentsByActionUnit(Long actionUnitId);
 
+    @Query(
+            nativeQuery = true,
+            value = "SELECT d.* FROM siamois_document d " +
+                    "JOIN recording_unit_document sud ON d.document_id = sud.fk_document_id " +
+                    "WHERE sud.fk_recording_unit_id = :recordingUnitId"
+    )
+    List<Document> findDocumentsByRecordingUnit(Long recordingUnitId);
+
     @Transactional
     @Modifying
     @Query(

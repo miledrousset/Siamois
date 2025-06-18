@@ -1,4 +1,4 @@
-package fr.siamois.ui.bean.panel.models.panel;
+package fr.siamois.ui.bean.panel.models.panel.single;
 
 import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
@@ -17,7 +17,6 @@ import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.history.ActionUnitHist;
-import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
@@ -33,7 +32,6 @@ import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
-import fr.siamois.ui.bean.panel.utils.DataLoaderUtils;
 import fr.siamois.ui.bean.settings.team.TeamMembersBean;
 import fr.siamois.ui.lazydatamodel.*;
 import fr.siamois.utils.DateUtils;
@@ -99,7 +97,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
     private transient List<ActionCode> secondaryActionCodes;
 
-    // Link recording units
+    // Linked recording units
     private transient RecordingUnitInActionUnitLazyDataModel recordingUnitListLazyDataModel ;
 
 
@@ -349,9 +347,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     }
 
 
-    public String formatDate(OffsetDateTime offsetDateTime) {
-        return DateUtils.formatOffsetDateTime(offsetDateTime);
-    }
+
 
     public void saveNewActionCode() {
         // Update the action code

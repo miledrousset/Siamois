@@ -1,4 +1,4 @@
-package fr.siamois.ui.bean.panel.models.panel;
+package fr.siamois.ui.bean.panel.models.panel.list;
 
 
 import fr.siamois.domain.models.auth.Person;

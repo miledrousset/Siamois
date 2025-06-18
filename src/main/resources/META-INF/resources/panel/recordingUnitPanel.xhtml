@@ -2,61 +2,165 @@
              xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
              xmlns:p="http://primefaces.org/ui"
              xmlns:h="http://xmlns.jcp.org/jsf/html"
+             xmlns:f="http://xmlns.jcp.org/jsf/core"
+             xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
 >
 
     <!--@elvariable id="panelIndex" type="Integer"-->
-    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.RecordingUnitPanel"-->
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel"-->
 
     <!-- Content -->
-    <!-- General description of the action unit -->
     <p:staticMessage severity="error" summary="Error" closable="false"
-                     detail="#{panelModel.recordingUnitErrorMessage}"
-                     rendered="#{not empty panelModel.recordingUnitErrorMessage}"/>
-
-    <h:panelGroup rendered="#{panelModel.recordingUnit != null}">
-
-        <div class="panel-top-section">
-            <h2>
-                #{panelModel.recordingUnit.fullIdentifier}
-                <p:chip label="#{labelBean.findLabelOf(panelModel.recordingUnit.type)}" icon="bi bi-pencil-square"
-                        styleClass="mr-2 recording-unit-type-chip"/>
-
-            </h2>
-        </div>
+                     detail="#{panelModel.errorMessage}"
+                     rendered="#{not empty panelModel.errorMessage}"/>
+    <h:panelGroup id="contentPanel" rendered="#{panelModel.unit != null}">
 
 
+        <h:form id="recordingUnitForm">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
-        <p:tabView id="recordingUnitTabsId">
+            <!-- Tabs -->
+            <p:tabView id="recordingUnitTabs" activeIndex="#{panelModel.activeTabIndex}">
+                <p:ajax event="tabChange" listener="#{panelModel.onTabChange}"/>
 
-            <p:tab title="Aperçu">
+                <!-- Overview tab -->
+                <p:tab id="overviewTab">
 
-            </p:tab>
+                    <f:facet name="title">
+                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
+                            <ui:param name="title" value='#{langBean.msg("panel.tab.overview")}'/>
+                            <ui:param name="icon" value="bi bi-eye"/>
+                        </ui:include>
+                    </f:facet>
 
-            <p:tab title="Détails" id="recordingUnitDetailsTabId">
+                    <ui:include src="/panel/spatialunit/tab/overviewTab.xhtml">
+                        <ui:param name="panelModel" value="#{panelModel}"/>
+                        <ui:param name="panelIndex" value="#{panelIndex}"/>
+                    </ui:include>
+
+                </p:tab>
+
+                <p:tab id="detailsTab">
+                    <!-- Common fields -->
+                    <f:facet name="title">
+                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
+                            <ui:param name="title" value='#{langBean.msg("panel.tab.details")}'/>
+                            <ui:param name="icon" value="bi bi-info-circle"/>
+                        </ui:include>
+                    </f:facet>
+
+                    <ui:include src="/panel/spatialunit/tab/detailsTab.xhtml">
+                        <ui:param name="spatialUnit" value="#{panelModel.unit}"/>
+                        <ui:param name="panelModel" value="#{panelModel}"/>
+                        <ui:param name="panelIndex" value="#{panelIndex}"/>
+                    </ui:include>
+
+                </p:tab>
+                <p:tab title="Hierarchie" id="hierarchy">
+                    <f:facet name="title">
+                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
+                            <ui:param name="title" value="Hierarchie"/>
+                            <ui:param name="icon" value="bi bi-geo-alt"/>
+
+                            <ui:param name="emptyTab" value="#{panelModel.isHierarchyTabEmpty()}"/>
+                            <ui:param name="validated" value="#{panelModel.unit.validated}"/>
+                        </ui:include>
+
+                    </f:facet>
 
 
-            </p:tab>
+                </p:tab>
 
-            <p:tab title="Hierarchie">
+                <p:tab title="Prelevements">
+                    <f:facet name="title">
+                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
+                            <ui:param name="title" value="Prelevements"/>
+                            <ui:param name="icon" value="bi bi-box2"/>
+                            <ui:param name="emptyTab" value="true"/>
+                            <ui:param name="validated" value="#{panelModel.unit.validated}"/>
+                        </ui:include>
+                    </f:facet>
 
-            </p:tab>
+                    🚧 En cours
 
-            <p:tab title="Stratigraphie">
+                </p:tab>
 
-            </p:tab>
 
-            <p:tab title="Prelevements">
+                <p:tab title="Documents" id="documentTab">
 
-            </p:tab>
+                    <f:facet name="title">
+                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
+                            <ui:param name="title" value="Documents"/>
+                            <ui:param name="icon" value="bi bi-paperclip"/>
+                            <ui:param name="emptyTab" value="#{panelModel.documents.size() == 0}"/>
+                            <ui:param name="validated" value="#{panelModel.unit.validated}"/>
+                        </ui:include>
+                    </f:facet>
 
-            <p:tab title="Documents">
+                    <ui:include src="/panel/spatialunit/tab/documentsTab.xhtml">
+                        <ui:param name="count" value="4"/>
+                    </ui:include>
 
-            </p:tab>
+                </p:tab>
 
-        </p:tabView>
+                <p:tab title="Versions">
+                    <f:facet name="title">
+                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
+                            <ui:param name="title" value="Versions"/>
+                            <ui:param name="icon" value="bi bi-clock-history"/>
+                        </ui:include>
+                    </f:facet>
+
+                    <ui:include src="/panel/spatialunit/tab/versionTab.xhtml">
+                        <ui:param name="panelModel" value="#{panelModel}"/>
+                    </ui:include>
+
+                </p:tab>
+
+
+            </p:tabView>
+
+            <!-- Save/Cancel Toolbar -->
+            <p:toolbar class="panel-footer" rendered="#{flowBean.readWriteMode == 'WRITE'}">
+                <p:toolbarGroup align="right">
+                    <p:commandLink value='#{langBean.msg("common.action.cancel")}'
+                                   update="panel-#{panelIndex}"
+                                   id="cancelButton"
+                                   action="#{panelModel.cancelChanges()}"
+
+                                   style="margin-right: 1rem">
+                    </p:commandLink>
+                    <p:commandButton id="saveButton" value='#{langBean.msg("common.action.save")}'
+                                     update="panel-#{panelIndex}"
+
+                                     action="#{panelModel.save(false)}"
+                                     style="margin-right: 1rem">
+                    </p:commandButton>
+                    <p:commandButton id="saveAndValidateButton" value='#{langBean.msg("common.action.saveAndValidate")}'
+                                     update="panel-#{panelIndex}"
+                                     action="#{panelModel.save(true)}"
+
+                                     style="margin-right: .5rem">
+                    </p:commandButton>
+                </p:toolbarGroup>
+            </p:toolbar>
+        </h:form>
 
     </h:panelGroup>
+    <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true">
+        <h:form id="displayVersionForm">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <h:panelGroup id="versionVisualizer" rendered="#{panelModel.revisionToDisplay != null}">
+                <p>Name : #{panelModel.revisionToDisplay.name}</p>
+                <p>Category : #{labelBean.findLabelOf(panelModel.revisionToDisplay.category)}</p>
+            </h:panelGroup>
+        </h:form>
+    </p:dialog>
+    <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
+        <h:outputText value="Version restaurée"/>
+    </p:dialog>
 
+    <ui:include src="/dialog/document/newDocument.xhtml"/>
 
 
 </ui:fragment>

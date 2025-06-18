@@ -2,6 +2,12 @@ package fr.siamois.ui.bean.panel;
 
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.models.panel.*;
+import fr.siamois.ui.bean.panel.models.panel.list.ActionUnitListPanel;
+import fr.siamois.ui.bean.panel.models.panel.list.RecordingUnitListPanel;
+import fr.siamois.ui.bean.panel.models.panel.list.SpatialUnitListPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +24,6 @@ public class PanelFactory {
     private final ObjectProvider<NewSpatialUnitPanel> newSpatialUnitPanelProvider;
     private final ObjectProvider<NewActionUnitPanel> newActionUnitPanelProvider;
     private final ObjectProvider<ActionUnitPanel> actionUnitPanelProvider;
-    private final ObjectProvider<NewRecordingUnitPanel> newRecordingUnitPanelProvider;
     private final ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider;
     private final ObjectProvider<RecordingUnitListPanel> recordingUnitListPanelProvider;
     private final ObjectProvider<WelcomePanel> welcomePanelProvider;
@@ -31,7 +36,6 @@ public class PanelFactory {
             ObjectProvider<NewSpatialUnitPanel> newSpatialUnitPanelProvider,
             ObjectProvider<NewActionUnitPanel> newActionUnitPanelProvider,
             ObjectProvider<ActionUnitPanel> actionUnitPanelProvider,
-            ObjectProvider<NewRecordingUnitPanel> newRecordingUnitPanelProvider,
             ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider,
             ObjectProvider<RecordingUnitListPanel> recordingUnitListPanelProvider,
             ObjectProvider<WelcomePanel> welcomePanelProvider) {
@@ -42,7 +46,6 @@ public class PanelFactory {
         this.newSpatialUnitPanelProvider = newSpatialUnitPanelProvider;
         this.newActionUnitPanelProvider = newActionUnitPanelProvider;
         this.actionUnitPanelProvider = actionUnitPanelProvider;
-        this.newRecordingUnitPanelProvider = newRecordingUnitPanelProvider;
         this.recordingUnitPanelProvider = recordingUnitPanelProvider;
         this.recordingUnitListPanelProvider = recordingUnitListPanelProvider;
         this.welcomePanelProvider = welcomePanelProvider;
@@ -135,23 +138,6 @@ public class PanelFactory {
         return new RecordingUnitPanel.RecordingUnitPanelBuilder(recordingUnitPanelProvider)
                 .id(recordingUnitId)
                 .breadcrumb(bc)
-                .build();
-
-    }
-
-    public NewRecordingUnitPanel createNewRecordingUnitPanel(Long actionUnitId, PanelBreadcrumb currentBreadcrumb) {
-
-        PanelBreadcrumb bc = null;
-
-        if (currentBreadcrumb != null) {
-            bc = new PanelBreadcrumb();
-            bc.getModel().getElements().clear();
-            bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
-        }
-
-        return new NewRecordingUnitPanel.NewRecordingUnitPanelBuilder(newRecordingUnitPanelProvider)
-                .breadcrumb(bc)
-                .actionUnitId(actionUnitId)
                 .build();
 
     }

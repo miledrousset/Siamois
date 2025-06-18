@@ -21,6 +21,9 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.breadcrumb.BreadcrumbBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.models.panel.*;
+import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -192,13 +195,6 @@ public class FlowBean implements Serializable {
         addPanel(panelFactory.createRecordingUnitPanel(recordingUnitId));
     }
 
-    public void addNewRecordingUnitPanel(Long actionUnitId, Integer sourcePanelIndex) {
-        addPanel(panelFactory.createNewRecordingUnitPanel(actionUnitId, panels.get(sourcePanelIndex).getBreadcrumb()));
-    }
-
-    public void addNewRecordingUnitPanel(Long actionUnitId) {
-        addPanel(panelFactory.createNewRecordingUnitPanel(actionUnitId, null));
-    }
 
     public void goToSpatialUnitByIdNewPanel(Long id, AbstractPanel currentPanel) {
         // Create new panel type and add items to its breadcrumb

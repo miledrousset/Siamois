@@ -27,7 +27,7 @@ public class RecordingUnitController {
 
     @GetMapping("/actionunit/{id}/recordingunit/new")
     public String newRecordingUnit(@PathVariable Long id) {
-        flowBean.addNewRecordingUnitPanel(id, 0);
+        // todo : open dialog
         return "forward:/flow.xhtml";
     }
 

@@ -1,4 +1,4 @@
-package fr.siamois.ui.bean.panel.models.panel;
+package fr.siamois.ui.bean.panel.models.panel.single;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
@@ -6,11 +6,12 @@ import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
-import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
+import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
+import fr.siamois.utils.DateUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Data;
@@ -21,6 +22,7 @@ import org.primefaces.component.tabview.Tab;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -70,6 +72,10 @@ public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
     protected AbstractSingleEntityPanel(String titleCodeOrTitle, String icon, String panelClass, DocumentCreationBean documentCreationBean) {
         super(titleCodeOrTitle, icon, panelClass);
         this.documentCreationBean = documentCreationBean;
+    }
+
+    public String formatDate(OffsetDateTime offsetDateTime) {
+        return DateUtils.formatOffsetDateTime(offsetDateTime);
     }
 
     public abstract void init();

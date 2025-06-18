@@ -134,12 +134,14 @@
                           id="identifierCol">
 
                     <p:commandLink
-
+                            action="#{flowBean.goToRecordingUnitByIdNewPanel(item.id,cc.attrs.panelIndex)}"
+                            oncomplete="handleScrollToTop();"
                             process="@form"
                             update="flow"
                     >
                         <h:outputText value="#{item.displayFullIdentifier()}"/>
                     </p:commandLink>
+
 
 
                 </p:column>
