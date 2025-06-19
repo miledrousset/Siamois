@@ -109,7 +109,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
                            HistoryService historyService, DocumentService documentService, RecordingUnitService recordingUnitService,
                            DocumentCreationBean documentCreationBean) {
         super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel action-unit-single-panel",
-                documentCreationBean);
+                documentCreationBean, sessionSettingsBean, fieldConfigurationService);
         this.actionUnitService = actionUnitService;
         this.langBean = langBean;
         this.sessionSettingsBean = sessionSettingsBean;

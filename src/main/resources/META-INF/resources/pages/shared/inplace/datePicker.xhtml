@@ -1,0 +1,36 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:cc="http://java.sun.com/jsf/composite"
+        xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+>
+
+    <cc:interface>
+        <cc:attribute name="answer" type="fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerDateTime" required="true"/>
+        <cc:attribute name="panelModel" type="fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntityPanel" required="true"/>
+        <cc:attribute name="hasBeenModified" type="Boolean" required="false" default="false"/>
+        <cc:attribute name="field" type="fr.siamois.domain.models.form.customfield.CustomFieldDateTime"
+                      required="true"/>
+        <cc:attribute name="mode" type="String" required="false" default="READ"/>
+        <cc:attribute name="updateTargetsOnBlur" type="String" required="false" default="@this"/>
+    </cc:interface>
+
+    <cc:implementation>
+        <p:inplace mode="#{cc.attrs.mode}" toggleable="false">
+            <f:facet name="output">
+                <h:outputText value="#{cc.attrs.answer.value}"/>
+            </f:facet>
+            <f:facet name="input">
+                <p:datePicker id="datePicker"
+                              showTime="true"
+                              styleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"
+                              required="true"
+                              value="#{cc.attrs.answer.value}">
+                    <p:ajax event="blur" update="#{cc.attrs.updateTargetsOnBlur}"
+                            listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(cc.attrs.field)}" />
+                </p:datePicker>
+            </f:facet>
+        </p:inplace>
+    </cc:implementation>
+
+</ui:composition>

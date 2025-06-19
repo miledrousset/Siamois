@@ -76,7 +76,11 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
     private CustomFieldText idField;
     private Concept idConcept;
     private CustomFieldSelectOneFromFieldCode typeField;
+    private CustomFieldSelectOneConceptFromChildrenOfConcept secondaryTypeField;
+    private CustomFieldSelectOneConceptFromChildrenOfConcept thirdTypeField;
     private CustomFieldSelectMultiplePerson authorField;
+    private CustomFieldSelectMultiplePerson excavatorField;
+    private CustomFieldDateTime openingDateField;
     private Concept actionUnitTypeConcept;
 
     protected RecordingUnitPanel(LangBean langBean,
@@ -94,7 +98,7 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         super("common.entity.recordingunit",
                 "bi bi-pencil-square",
                 "siamois-panel recording-unit-panel recording-unit-single-panel",
-                documentCreationBean);
+                documentCreationBean, sessionSettingsBean, fieldConfigurationService);
         this.langBean = langBean;
         this.sessionSettingsBean = sessionSettingsBean;
         this.spatialUnitService = spatialUnitService;
@@ -314,6 +318,7 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         mainPanel.setName("common.header.general");
         // One row
         CustomRow row1 = new CustomRow();
+        CustomRow row3 = new CustomRow();
         // Two cols
 
         CustomCol col1 = new CustomCol();
@@ -341,8 +346,43 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         col4.setField(authorField);
         col4.setClassName(COLUMN_CLASS_NAME);
 
-        row1.setColumns(List.of(col1, col2, col4));
-        mainPanel.setRows(List.of(row1));
+        CustomCol col7 = new CustomCol();
+        excavatorField = new CustomFieldSelectMultiplePerson();
+        excavatorField.setLabel("recordingunit.field.excavators");
+        excavatorField.setIsSystemField(true);
+        col7.setField(excavatorField);
+        col7.setClassName(COLUMN_CLASS_NAME);
+
+        CustomCol col5 = new CustomCol();
+        secondaryTypeField = new CustomFieldSelectOneConceptFromChildrenOfConcept();
+        secondaryTypeField.setLabel("recordingunit.field.secondaryType");
+        secondaryTypeField.setIsSystemField(true);
+        secondaryTypeField.setIconClass("bi bi-pencil-square");
+        secondaryTypeField.setStyleClass("mr-2 recording-unit-type-chip");
+        secondaryTypeField.setParentField(typeField);
+        col5.setField(secondaryTypeField);
+        col5.setClassName(COLUMN_CLASS_NAME);
+
+        CustomCol col6 = new CustomCol();
+        thirdTypeField = new CustomFieldSelectOneConceptFromChildrenOfConcept();
+        thirdTypeField.setLabel("recordingunit.field.thirdType");
+        thirdTypeField.setIsSystemField(true);
+        thirdTypeField.setIconClass("bi bi-pencil-square");
+        thirdTypeField.setStyleClass("mr-2 recording-unit-type-chip");
+        thirdTypeField.setParentField(secondaryTypeField);
+        col6.setField(thirdTypeField);
+        col6.setClassName(COLUMN_CLASS_NAME);
+
+        CustomCol col8 = new CustomCol();
+        openingDateField = new CustomFieldDateTime();
+        openingDateField.setLabel("recordingunit.field.openingDate");
+        openingDateField.setIsSystemField(true);
+        col8.setField(openingDateField);
+
+
+        row1.setColumns(List.of(col1, col4, col7, col8));
+        row3.setColumns(List.of(col2, col5, col6));
+        mainPanel.setRows(List.of(row1, row3));
         layout.add(mainPanel);
 
         // init overveiw tab form
@@ -357,7 +397,15 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         col3.setReadOnly(true);
         col3.setField(typeField);
         col3.setClassName(COLUMN_CLASS_NAME);
-        row2.setColumns(List.of(col3));
+        CustomCol col10 = new CustomCol();
+        col10.setReadOnly(true);
+        col10.setField(secondaryTypeField);
+        col10.setClassName(COLUMN_CLASS_NAME);
+        CustomCol col11 = new CustomCol();
+        col11.setReadOnly(true);
+        col11.setField(thirdTypeField);
+        col11.setClassName(COLUMN_CLASS_NAME);
+        row2.setColumns(List.of(col3, col10, col11));
         mainOverviewPanel.setRows(List.of(row2));
         overviewLayout.add(mainOverviewPanel);
 
@@ -366,15 +414,33 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
         CustomFieldAnswerText nameAnswer = new CustomFieldAnswerText();
         CustomFieldAnswerSelectOneFromFieldCode typeAnswer = new CustomFieldAnswerSelectOneFromFieldCode();
+        CustomFieldAnswerSelectOneConceptFromChildrenOfConcept secondaryTypeAnswer = new CustomFieldAnswerSelectOneConceptFromChildrenOfConcept();
+        CustomFieldAnswerSelectOneConceptFromChildrenOfConcept thirdTypeAnswer = new CustomFieldAnswerSelectOneConceptFromChildrenOfConcept();
         CustomFieldAnswerSelectMultiplePerson authorsAnswers = new CustomFieldAnswerSelectMultiplePerson();
+        CustomFieldAnswerSelectMultiplePerson excavatorAnswer = new CustomFieldAnswerSelectMultiplePerson();
+        CustomFieldAnswerDateTime openingDateAnswer = new CustomFieldAnswerDateTime();
+        openingDateAnswer.setValue(unit.getStartDate());
+        openingDateAnswer.setHasBeenModified(false);
         authorsAnswers.setValue(unit.getAuthors());
+        authorsAnswers.setPk(new CustomFieldAnswerId());
+        authorsAnswers.getPk().setField(authorField);
+        excavatorAnswer.setValue(unit.getExcavators());
+        excavatorAnswer.setHasBeenModified(false);
         nameAnswer.setValue(unit.getFullIdentifier());
         nameAnswer.setHasBeenModified(false);
         answers.put(idField, nameAnswer);
         typeAnswer.setValue(unit.getType());
         typeAnswer.setHasBeenModified(false);
+        secondaryTypeAnswer.setValue(unit.getSecondaryType());
+        secondaryTypeAnswer.setHasBeenModified(false);
+        thirdTypeAnswer.setValue(unit.getThirdType());
+        thirdTypeAnswer.setHasBeenModified(false);
         answers.put(typeField, typeAnswer);
         answers.put(authorField, authorsAnswers);
+        answers.put(secondaryTypeField, secondaryTypeAnswer);
+        answers.put(thirdTypeField, thirdTypeAnswer);
+        answers.put(excavatorField, excavatorAnswer);
+        answers.put(openingDateField, openingDateAnswer);
 
         formResponse.setAnswers(answers);
 

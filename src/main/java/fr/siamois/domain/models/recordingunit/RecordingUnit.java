@@ -69,6 +69,13 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
             inverseJoinColumns = @JoinColumn(name = "fk_person_id"))
     private List<Person> authors;
 
+    @ManyToMany
+    @JoinTable(
+            name = "recording_unit_excavators",
+            joinColumns = @JoinColumn(name = "fk_recording_unit_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_person_id"))
+    private List<Person> excavators;
+
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(

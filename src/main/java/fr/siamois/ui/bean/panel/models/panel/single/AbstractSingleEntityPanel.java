@@ -1,18 +1,26 @@
 package fr.siamois.ui.bean.panel.models.panel.single;
 
+import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneConceptFromChildrenOfConcept;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectOneConceptFromChildrenOfConcept;
+import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectOneFromFieldCode;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
+import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.utils.DateUtils;
 import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,6 +31,7 @@ import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -32,6 +41,8 @@ public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
 
     // Deps
     protected final transient DocumentCreationBean documentCreationBean;
+    protected final transient SessionSettingsBean sessionSettingsBean;
+    protected final transient FieldConfigurationService fieldConfigurationService;
 
     //--------------- Locals
     protected transient T unit;
@@ -61,17 +72,24 @@ public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
 
     protected AbstractSingleEntityPanel() {
         super();
+        this.sessionSettingsBean = null;
+        this.fieldConfigurationService = null;
         this.documentCreationBean = null;
     }
 
-    protected AbstractSingleEntityPanel(DocumentCreationBean documentCreationBean) {
+    protected AbstractSingleEntityPanel(DocumentCreationBean documentCreationBean, SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService) {
         super();
         this.documentCreationBean = documentCreationBean;
+        this.sessionSettingsBean = sessionSettingsBean;
+        this.fieldConfigurationService = fieldConfigurationService;
     }
 
-    protected AbstractSingleEntityPanel(String titleCodeOrTitle, String icon, String panelClass, DocumentCreationBean documentCreationBean) {
+    protected AbstractSingleEntityPanel(String titleCodeOrTitle, String icon, String panelClass, DocumentCreationBean documentCreationBean,
+                                        SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService) {
         super(titleCodeOrTitle, icon, panelClass);
         this.documentCreationBean = documentCreationBean;
+        this.sessionSettingsBean = sessionSettingsBean;
+        this.fieldConfigurationService = fieldConfigurationService;
     }
 
     public String formatDate(OffsetDateTime offsetDateTime) {
@@ -144,6 +162,58 @@ public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
 
         activeTabIndex = index;
     }
+
+    public List<Concept> completeDependentConceptChildren(
+            String input
+    ) {
+
+        FacesContext context = FacesContext.getCurrentInstance();
+        CustomFieldSelectOneConceptFromChildrenOfConcept dependentField =
+                (CustomFieldSelectOneConceptFromChildrenOfConcept) UIComponent.getCurrentComponent(context).getAttributes().get("field");
+
+        CustomField parentField = dependentField.getParentField();
+        if (parentField == null) {
+            return Collections.emptyList();
+        }
+
+        CustomFieldAnswer answer = formResponse.getAnswers().get(parentField);
+        Concept parentConcept = null;
+
+        if (answer instanceof CustomFieldAnswerSelectOneConceptFromChildrenOfConcept a1) {
+            parentConcept = a1.getValue();
+        } else if (answer instanceof CustomFieldAnswerSelectOneFromFieldCode a2) {
+            parentConcept = a2.getValue();
+        }
+
+        if (parentConcept == null) {
+            return Collections.emptyList();
+        }
+
+        UserInfo userInfo = sessionSettingsBean.getUserInfo();
+        return fieldConfigurationService.fetchConceptChildrenAutocomplete(userInfo, parentConcept, input);
+    }
+
+    public String getUrlForDependentConcept(
+            CustomFieldSelectOneConceptFromChildrenOfConcept dependentField
+    ) {
+        if (dependentField == null || dependentField.getParentField() == null) {
+            return null;
+        }
+
+        CustomField parentField = dependentField.getParentField();
+        CustomFieldAnswer parentAnswer = formResponse.getAnswers().get(parentField);
+
+        Concept parentConcept = null;
+
+        if (parentAnswer instanceof CustomFieldAnswerSelectOneConceptFromChildrenOfConcept a1) {
+            parentConcept = a1.getValue();
+        } else if (parentAnswer instanceof CustomFieldAnswerSelectOneFromFieldCode a2) {
+            parentConcept = a2.getValue();
+        }
+
+        return parentConcept != null ? fieldConfigurationService.getUrlOfConcept(parentConcept) : null;
+    }
+
 
 
 

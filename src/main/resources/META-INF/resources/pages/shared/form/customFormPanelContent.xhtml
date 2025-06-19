@@ -52,6 +52,18 @@
                              answer="#{bean.formResponse.answers.get(col.field)}"/>
                   </sharedInput:panelField>
 
+                  <!-- Select one concept from field parent concept children -->
+                  <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}" isTheso="true"
+                                          rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneConceptFromChildrenOfConcept'}">
+                     <siaInplace:childConcept
+                             hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
+                             field="#{col.field}"
+                             mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
+                             panelModel="#{bean}"
+                             updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                             answer="#{bean.formResponse.answers.get(col.field)}"/>
+                  </sharedInput:panelField>
+
                   <!-- Select one from person -->
                   <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
                                           rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOnePerson'}">
