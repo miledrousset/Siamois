@@ -40,6 +40,22 @@
                      </siaInplace:text>
                   </sharedInput:panelField>
 
+                  <!-- DateTime -->
+                  <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
+                                          rendered="#{col.field['class'].simpleName eq 'CustomFieldDateTime'}">
+
+                     <siaInplace:datePicker
+                             panelModel="#{bean}"
+                             field="#{col.field}"
+                             hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
+                             answer="#{bean.formResponse.answers.get(col.field)}"
+                             mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
+                             updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                     >
+
+                     </siaInplace:datePicker>
+                  </sharedInput:panelField>
+
                   <!-- Select one from field code -->
                   <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}" isTheso="true"
                                           rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneFromFieldCode'}">

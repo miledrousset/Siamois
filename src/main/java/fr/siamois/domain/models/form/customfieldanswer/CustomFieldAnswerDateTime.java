@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.Objects;
@@ -19,7 +20,7 @@ import java.util.Objects;
 public class CustomFieldAnswerDateTime extends CustomFieldAnswer {
 
     @Column(name = "value_as_datetime")
-    private OffsetDateTime value;
+    private LocalDateTime value;
 
     @Override
     public boolean equals(Object o) {

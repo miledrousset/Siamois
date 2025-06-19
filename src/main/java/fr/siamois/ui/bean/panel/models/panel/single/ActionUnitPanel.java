@@ -19,7 +19,6 @@ import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.history.ActionUnitHist;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.document.DocumentService;
@@ -34,7 +33,6 @@ import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.settings.team.TeamMembersBean;
 import fr.siamois.ui.lazydatamodel.*;
-import fr.siamois.utils.DateUtils;
 import fr.siamois.utils.MessageUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -47,7 +45,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -186,12 +183,10 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         try {
             activeTabIndex = 0;
 
-            systemTheso = new Vocabulary();
-            systemTheso.setBaseUri("https://siamois.fr");
-            systemTheso.setExternalVocabularyId("SYSTEM");
+
             nameConcept = new Concept();
             nameConcept.setExternalId("SYSTEM_NAME");
-            nameConcept.setVocabulary(systemTheso);
+            nameConcept.setVocabulary(SYSTEM_THESO);
 
 
             if (idunit == null) {

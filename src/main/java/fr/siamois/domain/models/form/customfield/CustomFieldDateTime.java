@@ -16,4 +16,6 @@ import lombok.Setter;
 @Table(name = "custom_field")
 public class CustomFieldDateTime extends CustomField {
 
+    private Boolean showTime = false;
+
 }

@@ -18,7 +18,6 @@ import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -374,12 +373,9 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
         activeTabIndex = 0;
 
-        systemTheso = new Vocabulary();
-        systemTheso.setBaseUri("https://siamois.fr");
-        systemTheso.setExternalVocabularyId("SYSTEM");
         nameConcept = new Concept();
         nameConcept.setExternalId("SYSTEM_NAME");
-        nameConcept.setVocabulary(systemTheso);
+        nameConcept.setVocabulary(SYSTEM_THESO);
 
 
         if (idunit == null) {

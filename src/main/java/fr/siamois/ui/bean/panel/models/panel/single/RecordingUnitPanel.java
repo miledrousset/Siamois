@@ -81,7 +81,22 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
     private CustomFieldSelectMultiplePerson authorField;
     private CustomFieldSelectMultiplePerson excavatorField;
     private CustomFieldDateTime openingDateField;
+    private CustomFieldDateTime creationDateField;
     private Concept actionUnitTypeConcept;
+
+
+    // Concepts for system fields
+    private Concept recordingUnitIdConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286193")
+            .build();
+    private CustomFieldText recordingUnitIdField = new CustomFieldText.Builder()
+            .label("recordingunit.field.identifier")
+            .isSystemField(true)
+            .concept(recordingUnitIdConcept)
+            .build();
+
+
 
     protected RecordingUnitPanel(LangBean langBean,
                                  SessionSettingsBean sessionSettingsBean,
@@ -264,9 +279,7 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         try {
             activeTabIndex = 0;
 
-            systemTheso = new Vocabulary();
-            systemTheso.setBaseUri("https://siamois.fr");
-            systemTheso.setExternalVocabularyId("SYSTEM");
+
 
 
             if (idunit == null) {
@@ -319,6 +332,7 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         // One row
         CustomRow row1 = new CustomRow();
         CustomRow row3 = new CustomRow();
+        CustomRow row4 = new CustomRow();
         // Two cols
 
         CustomCol col1 = new CustomCol();
@@ -378,11 +392,22 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         openingDateField.setLabel("recordingunit.field.openingDate");
         openingDateField.setIsSystemField(true);
         col8.setField(openingDateField);
+        col8.setClassName(COLUMN_CLASS_NAME);
+
+        CustomCol col9 = new CustomCol();
+        creationDateField = new CustomFieldDateTime();
+        creationDateField.setLabel("recordingunit.field.creationDate");
+        creationDateField.setIsSystemField(true);
+        creationDateField.setShowTime(true);
+        col9.setField(creationDateField);
+        col9.setClassName(COLUMN_CLASS_NAME);
+        col9.setReadOnly(true);
 
 
-        row1.setColumns(List.of(col1, col4, col7, col8));
+        row1.setColumns(List.of(col1, col4, col7));
+        row4.setColumns(List.of(col9, col8));
         row3.setColumns(List.of(col2, col5, col6));
-        mainPanel.setRows(List.of(row1, row3));
+        mainPanel.setRows(List.of(row1, row4, row3));
         layout.add(mainPanel);
 
         // init overveiw tab form
@@ -419,7 +444,10 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         CustomFieldAnswerSelectMultiplePerson authorsAnswers = new CustomFieldAnswerSelectMultiplePerson();
         CustomFieldAnswerSelectMultiplePerson excavatorAnswer = new CustomFieldAnswerSelectMultiplePerson();
         CustomFieldAnswerDateTime openingDateAnswer = new CustomFieldAnswerDateTime();
-        openingDateAnswer.setValue(unit.getStartDate());
+        CustomFieldAnswerDateTime creationDateAnswer = new CustomFieldAnswerDateTime();
+        creationDateAnswer.setHasBeenModified(false);
+        creationDateAnswer.setValue((unit.getCreationTime() != null) ? unit.getCreationTime().toLocalDateTime() : null);
+        openingDateAnswer.setValue((unit.getStartDate() != null) ? unit.getStartDate().toLocalDateTime() : null);
         openingDateAnswer.setHasBeenModified(false);
         authorsAnswers.setValue(unit.getAuthors());
         authorsAnswers.setPk(new CustomFieldAnswerId());
@@ -441,6 +469,7 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         answers.put(thirdTypeField, thirdTypeAnswer);
         answers.put(excavatorField, excavatorAnswer);
         answers.put(openingDateField, openingDateAnswer);
+        answers.put(creationDateField, creationDateAnswer);
 
         formResponse.setAnswers(answers);
 

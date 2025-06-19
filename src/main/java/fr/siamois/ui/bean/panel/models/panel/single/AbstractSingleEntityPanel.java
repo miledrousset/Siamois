@@ -66,7 +66,14 @@ public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
     protected transient List<CustomFormPanel> layout ; // details tab form
     protected transient List<CustomFormPanel> overviewLayout ; // overview tab form
     protected CustomFormResponse formResponse ; // answers to all the fields from overview and details
-    protected Vocabulary systemTheso ;
+
+    public static final Vocabulary SYSTEM_THESO;
+
+    static {
+        SYSTEM_THESO = new Vocabulary();
+        SYSTEM_THESO.setBaseUri("https://thesaurus.mom.fr/");
+        SYSTEM_THESO.setExternalVocabularyId("th230");
+    }
 
     protected static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-4";
 

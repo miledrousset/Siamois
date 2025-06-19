@@ -18,15 +18,17 @@
     <cc:implementation>
         <p:inplace mode="#{cc.attrs.mode}" toggleable="false">
             <f:facet name="output">
-                <h:outputText value="#{cc.attrs.answer.value}"/>
+                <h:outputLabel value="#{cc.attrs.answer.value}">
+
+                </h:outputLabel>
             </f:facet>
             <f:facet name="input">
                 <p:datePicker id="datePicker"
-                              showTime="true"
-                              styleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"
+                              showTime="#{cc.attrs.field.showTime}"
+                              inputStyleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"
                               required="true"
                               value="#{cc.attrs.answer.value}">
-                    <p:ajax event="blur" update="#{cc.attrs.updateTargetsOnBlur}"
+                    <p:ajax  update="#{cc.attrs.updateTargetsOnBlur}"
                             listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(cc.attrs.field)}" />
                 </p:datePicker>
             </f:facet>
