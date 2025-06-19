@@ -27,12 +27,10 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
-import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.springframework.beans.factory.ObjectProvider;
@@ -55,30 +53,30 @@ import java.util.*;
 public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit, RecordingUnitHist> {
 
     // Deps
-    protected final LangBean langBean;
-    protected final SessionSettingsBean sessionSettingsBean;
+    protected final transient LangBean langBean;
+    protected final transient SessionSettingsBean sessionSettingsBean;
     protected final transient SpatialUnitService spatialUnitService;
     protected final transient ActionUnitService actionUnitService;
     protected final transient RecordingUnitService recordingUnitService;
     protected final transient PersonService personService;
-    private final RedirectBean redirectBean;
+    private final transient RedirectBean redirectBean;
     private final transient HistoryService historyService;
     private final transient DocumentService documentService;
     protected final transient ConceptService conceptService;
     protected final transient FieldConfigurationService fieldConfigurationService;
-    protected final FlowBean flowBean;
 
     // ---------- Locals
     // RU
     protected RecordingUnit recordingUnit;
 
     // Form
-    protected transient CustomForm additionalForm;
+    protected CustomForm additionalForm;
 
     // form
     private CustomFieldText idField;
     private Concept idConcept;
     private CustomFieldSelectOneFromFieldCode typeField;
+    private CustomFieldSelectMultiplePerson authorField;
     private Concept actionUnitTypeConcept;
 
     protected RecordingUnitPanel(LangBean langBean,
@@ -88,7 +86,6 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
                                  RecordingUnitService recordingUnitService,
                                  PersonService personService, ConceptService conceptService,
                                  FieldConfigurationService fieldConfigurationService,
-                                 FlowBean flowBean,
                                  DocumentCreationBean documentCreationBean,
                                  RedirectBean redirectBean,
                                  HistoryService historyService,
@@ -106,7 +103,6 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         this.personService = personService;
         this.conceptService = conceptService;
         this.fieldConfigurationService = fieldConfigurationService;
-        this.flowBean = flowBean;
         this.redirectBean = redirectBean;
         this.historyService = historyService;
         this.documentService = documentService;
@@ -332,11 +328,20 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         typeField = new CustomFieldSelectOneFromFieldCode();
         typeField.setLabel("spatialunit.field.type");
         typeField.setIsSystemField(true);
+        typeField.setIconClass("bi bi-pencil-square");
+        typeField.setStyleClass("mr-2 recording-unit-type-chip");
         typeField.setFieldCode(RecordingUnit.TYPE_FIELD_CODE);
         col2.setField(typeField);
         col2.setClassName(COLUMN_CLASS_NAME);
 
-        row1.setColumns(List.of(col1, col2));
+        CustomCol col4 = new CustomCol();
+        authorField = new CustomFieldSelectMultiplePerson();
+        authorField.setLabel("recordingunit.field.authors");
+        authorField.setIsSystemField(true);
+        col4.setField(authorField);
+        col4.setClassName(COLUMN_CLASS_NAME);
+
+        row1.setColumns(List.of(col1, col2, col4));
         mainPanel.setRows(List.of(row1));
         layout.add(mainPanel);
 
@@ -361,12 +366,16 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
         CustomFieldAnswerText nameAnswer = new CustomFieldAnswerText();
         CustomFieldAnswerSelectOneFromFieldCode typeAnswer = new CustomFieldAnswerSelectOneFromFieldCode();
+        CustomFieldAnswerSelectMultiplePerson authorsAnswers = new CustomFieldAnswerSelectMultiplePerson();
+        authorsAnswers.setValue(unit.getAuthors());
         nameAnswer.setValue(unit.getFullIdentifier());
         nameAnswer.setHasBeenModified(false);
         answers.put(idField, nameAnswer);
         typeAnswer.setValue(unit.getType());
         typeAnswer.setHasBeenModified(false);
         answers.put(typeField, typeAnswer);
+        answers.put(authorField, authorsAnswers);
+
         formResponse.setAnswers(answers);
 
     }
@@ -384,6 +393,11 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
     @Override
     public void saveDocument() {
 
+    }
+
+    @Override
+    public String getAutocompleteClass() {
+        return "recording-unit-autocomplete";
     }
 
     @Override

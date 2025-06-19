@@ -161,7 +161,10 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
     }
 
-
+    @Override
+    public String getAutocompleteClass() {
+        return "spatial-unit-autocomplete";
+    }
 
     @Override
     public String display() {

@@ -20,6 +20,9 @@ public class CustomFieldSelectOneFromFieldCode extends CustomField {
     @Column(name = "field_code")
     private String fieldCode ;
 
+    private String iconClass ;
+    private String styleClass ;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

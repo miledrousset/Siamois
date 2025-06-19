@@ -80,6 +80,11 @@ public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
 
     public abstract void init();
 
+    public String getAutocompleteClass() {
+        // Default implementation
+        return "";
+    }
+
     public abstract List<Person> authorsAvailable();
 
     public abstract void initForms();

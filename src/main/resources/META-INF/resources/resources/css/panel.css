@@ -38,12 +38,7 @@ body .ui-selectbooleanbutton.ui-state-active:not(.ui-state-disabled):hover,body 
     font-size: 16px;
 }
 
-.ui-chip.error-chip {
-    background-color: var(--error-main);
-    border: none;
-    color: white;
-    font-size: 16px;
-}
+
 
 .siamois-panel {
     border-radius: 8px;
@@ -317,6 +312,12 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 
 /* spatial input field */
 
+.spatial-unit-panel .ui-chip {
+    background-color: var(--context-main-color);
+    color: white;
+    font-size: 16px;
+}
+
 .spatial-unit-panel .ui-inputfield.ui-state-hover {
     border-color: var(--context-light-color-200);
 }
@@ -473,6 +474,12 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 
 
 /* Action units panels */
+
+.action-unit-panel .ui-chip {
+    background-color: var(--context-main-color);
+    color: white;
+    font-size: 16px;
+}
 
 /* action thead */
 
@@ -684,6 +691,16 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 
 /* Recording units panels */
 
+.recording-unit-panel .ui-autocomplete .ui-autocomplete-multiple-container .ui-autocomplete-token {
+    background-color: var(--ground-main-color);
+    color: white;
+}
+
+.recording-unit-panel .ui-chip {
+    background-color: var(--ground-main-color);
+    color: white;
+    font-size: 16px;
+}
 
 .recording-unit-panel .sia-modified-field {
     border-color: var(--ground-main-color);
@@ -994,6 +1011,12 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     padding:0;
 }
 
+.ui-chip.error-chip {
+    background-color: var(--error-main);
+    border: none;
+    color: white;
+    font-size: 16px;
+}
 
 
 

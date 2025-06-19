@@ -4,6 +4,7 @@ package fr.siamois.domain.models.recordingunit;
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.ReferencableEntity;
+import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.actionunit.NullActionUnitIdentifierException;
 import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
@@ -14,6 +15,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -60,8 +62,12 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     private Set<RecordingUnit> parents = new HashSet<>();
 
 
-
-
+    @ManyToMany
+    @JoinTable(
+            name = "recording_unit_authors",
+            joinColumns = @JoinColumn(name = "fk_recording_unit_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_person_id"))
+    private List<Person> authors;
 
 
     @OneToMany(fetch = FetchType.LAZY)

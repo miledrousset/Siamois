@@ -7,8 +7,11 @@
 >
 
     <cc:interface>
-        <cc:attribute name="answer" type="fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectOneFromFieldCode" required="true"/>
-        <cc:attribute name="panelModel" type="fr.siamois.ui.bean.panel.models.panel.AbstractPanel" required="true"/>
+        <cc:attribute name="answer"
+                      type="fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectOneFromFieldCode"
+                      required="true"/>
+        <cc:attribute name="panelModel" type="fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntityPanel"
+                      required="true"/>
         <cc:attribute name="hasBeenModified" type="Boolean" required="false" default="false"/>
         <cc:attribute name="field" type="fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode"
                       required="true"/>
@@ -20,13 +23,13 @@
         <p:inplace mode="#{cc.attrs.mode}" toggleable="false">
             <f:facet name="output">
                 <p:chip label="#{labelBean.findLabelOf(cc.attrs.answer.value)}"
-                        icon="pi pi-map-marker"
-                        styleClass="mr-2 spatial-unit-type-chip"/>
+                        icon="#{cc.attrs.field.iconClass}"
+                        styleClass="#{cc.attrs.field.styleClass}"/>
             </f:facet>
             <f:facet name="input">
                 <sharedInput:conceptAutocompleteFieldCode id="typeComponent"
                                                           inputStyleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"
-                                                          panelStyleClass="spatial-unit-autocomplete"
+                                                          panelStyleClass="#{cc.attrs.panelModel.autocompleteClass}"
                                                           selectedConcept="#{cc.attrs.answer.value}"
                                                           ajaxUpdateTargets="#{cc.attrs.updateTargetsOnBlur}"
                                                           field="#{cc.attrs.field}"

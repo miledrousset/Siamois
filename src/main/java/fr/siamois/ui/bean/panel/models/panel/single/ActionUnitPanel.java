@@ -411,6 +411,11 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         secondaryActionCodes.add(code);
     }
 
+    @Override
+    public String getAutocompleteClass() {
+        return "action-unit-autocomplete";
+    }
+
     public void initNewActionCode(int index) {
         newCodeIndex = index;
         newCode = new ActionCode();
