@@ -85,15 +85,139 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
     private Concept actionUnitTypeConcept;
 
 
-    // Concepts for system fields
+    // ----------- Concepts for system fields
+    // Recording unit identifier
     private Concept recordingUnitIdConcept = new Concept.Builder()
             .vocabulary(SYSTEM_THESO)
             .externalId("4286193")
             .build();
+    // Authors
+    private Concept authorsConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286194")
+            .build();
+    // Excavators
+    private Concept excavatorsConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286195")
+            .build();
+
+    // Recording Unit type
+    private Concept recordingUnitTypeConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4282367")
+            .build();
+    private Concept recordingUnitSecondaryTypeConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286196")
+            .build();
+    private Concept recordingUnitIdentificationConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286197")
+            .build();
+
+
+
+    // Fields
     private CustomFieldText recordingUnitIdField = new CustomFieldText.Builder()
             .label("recordingunit.field.identifier")
             .isSystemField(true)
+            .valueBinding("fullIdentifier")
             .concept(recordingUnitIdConcept)
+            .build();
+
+    private CustomFieldSelectMultiplePerson authorsField = new CustomFieldSelectMultiplePerson.Builder()
+            .label("recordingunit.field.authors")
+            .isSystemField(true)
+            .valueBinding("authors")
+            .concept(authorsConcept)
+            .build();
+
+    private CustomFieldSelectMultiplePerson excavatorsField = new CustomFieldSelectMultiplePerson.Builder()
+            .label("recordingunit.field.excavators")
+            .isSystemField(true)
+            .valueBinding("excavators")
+            .concept(excavatorsConcept)
+            .build();
+
+    private CustomFieldSelectOneFromFieldCode recordingUnitTypeField = new CustomFieldSelectOneFromFieldCode.Builder()
+            .label("spatialunit.field.type")
+            .isSystemField(true)
+            .valueBinding("type")
+            .styleClass("mr-2 recording-unit-type-chip")
+            .iconClass("bi bi-pencil-square")
+            .fieldCode(RecordingUnit.TYPE_FIELD_CODE)
+            .concept(recordingUnitTypeConcept)
+            .build();
+
+    private CustomFieldSelectOneConceptFromChildrenOfConcept recordingUnitSecondaryTypeField = new CustomFieldSelectOneConceptFromChildrenOfConcept.Builder()
+            .label("recordingunit.field.secondaryType")
+            .isSystemField(true)
+            .valueBinding("secondaryType")
+            .styleClass("mr-2 recording-unit-type-chip")
+            .iconClass("bi bi-pencil-square")
+            .parentField(recordingUnitTypeField)
+            .concept(recordingUnitSecondaryTypeConcept)
+            .build();
+
+    private CustomFieldSelectOneConceptFromChildrenOfConcept recordingUnitIdentificationField = new CustomFieldSelectOneConceptFromChildrenOfConcept.Builder()
+            .label("recordingunit.field.thirdType")
+            .isSystemField(true)
+            .valueBinding("thirdType")
+            .styleClass("mr-2 recording-unit-type-chip")
+            .iconClass("bi bi-pencil-square")
+            .parentField(recordingUnitSecondaryTypeField)
+            .concept(recordingUnitIdentificationConcept)
+            .build();
+
+
+    // Details form
+    private CustomForm detailsForm = new CustomForm.Builder()
+            .name("Details tab form")
+            .description("Contains the main form")
+            .addPanel(
+                    new CustomFormPanel.Builder()
+                            .name("common.header.general")
+                            .isSystemPanel(true)
+                            .addRow(
+                                    new CustomRow.Builder()
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(true)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(recordingUnitIdField)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(authorsField)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(excavatorsField)
+                                                    .build())
+                                            .build()
+                            ).addRow(
+                                    new CustomRow.Builder()
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(recordingUnitTypeField)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(recordingUnitSecondaryTypeField)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(recordingUnitIdentificationField)
+                                                    .build())
+                                            .build()
+                            )
+                            .build()
+            )
             .build();
 
 
@@ -319,6 +443,7 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         return List.of();
     }
 
+
     @Override
     public void initForms() {
 
@@ -335,57 +460,11 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         CustomRow row4 = new CustomRow();
         // Two cols
 
-        CustomCol col1 = new CustomCol();
-        idField = new CustomFieldText();
-        idField.setIsSystemField(true);
-        idField.setLabel("recordingunit.field.identifier");
-        col1.setField(idField);
-        col1.setReadOnly(true);
-        col1.setClassName(COLUMN_CLASS_NAME);
 
-        CustomCol col2 = new CustomCol();
-        typeField = new CustomFieldSelectOneFromFieldCode();
-        typeField.setLabel("spatialunit.field.type");
-        typeField.setIsSystemField(true);
-        typeField.setIconClass("bi bi-pencil-square");
-        typeField.setStyleClass("mr-2 recording-unit-type-chip");
-        typeField.setFieldCode(RecordingUnit.TYPE_FIELD_CODE);
-        col2.setField(typeField);
-        col2.setClassName(COLUMN_CLASS_NAME);
 
-        CustomCol col4 = new CustomCol();
-        authorField = new CustomFieldSelectMultiplePerson();
-        authorField.setLabel("recordingunit.field.authors");
-        authorField.setIsSystemField(true);
-        col4.setField(authorField);
-        col4.setClassName(COLUMN_CLASS_NAME);
 
-        CustomCol col7 = new CustomCol();
-        excavatorField = new CustomFieldSelectMultiplePerson();
-        excavatorField.setLabel("recordingunit.field.excavators");
-        excavatorField.setIsSystemField(true);
-        col7.setField(excavatorField);
-        col7.setClassName(COLUMN_CLASS_NAME);
 
-        CustomCol col5 = new CustomCol();
-        secondaryTypeField = new CustomFieldSelectOneConceptFromChildrenOfConcept();
-        secondaryTypeField.setLabel("recordingunit.field.secondaryType");
-        secondaryTypeField.setIsSystemField(true);
-        secondaryTypeField.setIconClass("bi bi-pencil-square");
-        secondaryTypeField.setStyleClass("mr-2 recording-unit-type-chip");
-        secondaryTypeField.setParentField(typeField);
-        col5.setField(secondaryTypeField);
-        col5.setClassName(COLUMN_CLASS_NAME);
 
-        CustomCol col6 = new CustomCol();
-        thirdTypeField = new CustomFieldSelectOneConceptFromChildrenOfConcept();
-        thirdTypeField.setLabel("recordingunit.field.thirdType");
-        thirdTypeField.setIsSystemField(true);
-        thirdTypeField.setIconClass("bi bi-pencil-square");
-        thirdTypeField.setStyleClass("mr-2 recording-unit-type-chip");
-        thirdTypeField.setParentField(secondaryTypeField);
-        col6.setField(thirdTypeField);
-        col6.setClassName(COLUMN_CLASS_NAME);
 
         CustomCol col8 = new CustomCol();
         openingDateField = new CustomFieldDateTime();
@@ -404,9 +483,9 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         col9.setReadOnly(true);
 
 
-        row1.setColumns(List.of(col1, col4, col7));
+        row1.setColumns(List.of());
         row4.setColumns(List.of(col9, col8));
-        row3.setColumns(List.of(col2, col5, col6));
+        row3.setColumns(List.of());
         mainPanel.setRows(List.of(row1, row4, row3));
         layout.add(mainPanel);
 
@@ -435,7 +514,8 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         overviewLayout.add(mainOverviewPanel);
 
         // Init form answers
-        formResponse = new CustomFormResponse();
+        formResponse = initializeFormResponse(detailsForm, unit);
+
         Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
         CustomFieldAnswerText nameAnswer = new CustomFieldAnswerText();
         CustomFieldAnswerSelectOneFromFieldCode typeAnswer = new CustomFieldAnswerSelectOneFromFieldCode();
@@ -471,7 +551,7 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         answers.put(openingDateField, openingDateAnswer);
         answers.put(creationDateField, creationDateAnswer);
 
-        formResponse.setAnswers(answers);
+        //formResponse.setAnswers(answers);
 
     }
 
@@ -497,6 +577,9 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
 
     @Override
     public void save(Boolean validated) {
+
+        updateJpaEntityFromFormResponse(formResponse, unit);
+        Boolean v = validated;
 
     }
 

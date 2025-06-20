@@ -1,6 +1,7 @@
 package fr.siamois.domain.models.form.customfieldanswer;
 
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.form.customfield.CustomFieldText;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -40,5 +41,7 @@ public class CustomFieldAnswerSelectMultiplePerson extends CustomFieldAnswerSele
     public int hashCode() {
         return Objects.hash(super.hashCode(), getPk());
     }
+
+
 
 }

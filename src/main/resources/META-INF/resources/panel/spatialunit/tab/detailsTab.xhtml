@@ -13,7 +13,7 @@
 
     <ui:include src="/pages/shared/form/customForm.xhtml">
         <ui:param name="panelModel" value="#{panelModel}"/>
-        <ui:param name="layout" value="#{panelModel.layout}"/>
+        <ui:param name="layout" value="#{panelModel.detailsForm.layout}"/>
         <ui:param name="readOnly" value="false"/>
         <ui:param name="prefix" value="details"/>
         <ui:param name="panelId" value="panel-#{panelIndex}"/>

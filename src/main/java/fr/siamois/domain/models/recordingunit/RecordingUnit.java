@@ -128,4 +128,9 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     public String toString() {
         return String.format("Recording Unit %s", displayFullIdentifier());
     }
+
+    @Transient
+    public List<String> getBindableFieldNames() {
+        return List.of("creationTime", "fullIdentifier", "authors", "excavators", "type", "secondaryType", "thirdType");
+    }
 }

@@ -21,25 +21,33 @@ public class CustomFieldText extends CustomField {
         private String label; // label or label code if system field
         private Boolean isSystemField;
         private Concept concept;
+        private String valueBinding ;
 
-        public CustomFieldText.Builder label(String label) {
+        public Builder label(String label) {
             this.label = label;
             return this;
         }
 
-        public CustomFieldText.Builder isSystemField(Boolean isSystemField) {
+        public Builder isSystemField(Boolean isSystemField) {
             this.isSystemField = isSystemField;
             return this;
         }
 
-        public CustomFieldText.Builder concept(Concept concept) {
+        public Builder valueBinding(String valueBinding) {
+            this.valueBinding = valueBinding;
+            return this;
+        }
+
+        public Builder concept(Concept concept) {
             this.concept = concept;
             return this;
         }
+
         public CustomFieldText build() {
             CustomFieldText field = new CustomFieldText();
             field.setIsSystemField(this.isSystemField);
             field.setLabel(this.label);
+            field.setValueBinding(this.valueBinding);
             field.setConcept(this.concept);
             return field;
         }

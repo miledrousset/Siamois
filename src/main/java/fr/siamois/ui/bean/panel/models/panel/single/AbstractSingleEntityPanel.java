@@ -4,12 +4,12 @@ import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
-import fr.siamois.domain.models.form.customfield.CustomField;
-import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneConceptFromChildrenOfConcept;
-import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
-import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectOneConceptFromChildrenOfConcept;
-import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectOneFromFieldCode;
+import fr.siamois.domain.models.form.customfield.*;
+import fr.siamois.domain.models.form.customfieldanswer.*;
+import fr.siamois.domain.models.form.customform.CustomCol;
+import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
+import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
@@ -30,14 +30,19 @@ import org.primefaces.component.tabview.Tab;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
-public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
+public abstract class AbstractSingleEntityPanel<T, H> extends AbstractPanel {
 
     // Deps
     protected final transient DocumentCreationBean documentCreationBean;
@@ -46,8 +51,8 @@ public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
 
     //--------------- Locals
     protected transient T unit;
-    protected Boolean hasUnsavedModifications ; // Did we modify the spatial unit?
-    protected int activeTabIndex ; // Keeping state of active tab
+    protected Boolean hasUnsavedModifications; // Did we modify the spatial unit?
+    protected int activeTabIndex; // Keeping state of active tab
     protected transient T backupClone;
     protected String errorMessage;
     protected transient List<H> historyVersion;
@@ -57,15 +62,19 @@ public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
     // lazy model for children of entity
     protected long totalChildrenCount = 0;
     protected transient List<Concept> selectedCategoriesChildren;
-    protected abstract BaseLazyDataModel<T> getLazyDataModelChildren() ;
+
+    protected abstract BaseLazyDataModel<T> getLazyDataModelChildren();
+
     // lazy model for parents of entity
     protected long totalParentsCount = 0;
     protected transient List<Concept> selectedCategoriesParents;
-    public abstract BaseLazyDataModel<T> getLazyDataModelParents() ;
+
+    public abstract BaseLazyDataModel<T> getLazyDataModelParents();
+
     // Gestion du formulaire via form layout
-    protected transient List<CustomFormPanel> layout ; // details tab form
-    protected transient List<CustomFormPanel> overviewLayout ; // overview tab form
-    protected CustomFormResponse formResponse ; // answers to all the fields from overview and details
+    protected transient List<CustomFormPanel> layout; // details tab form
+    protected transient List<CustomFormPanel> overviewLayout; // overview tab form
+    protected CustomFormResponse formResponse; // answers to all the fields from overview and details
 
     public static final Vocabulary SYSTEM_THESO;
 
@@ -130,7 +139,7 @@ public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
         PrimeFaces.current().executeScript("PF('newDocumentDiag').show()");
     }
 
-    public Boolean isHierarchyTabEmpty () {
+    public Boolean isHierarchyTabEmpty() {
         return (totalChildrenCount + totalParentsCount) == 0;
     }
 
@@ -221,8 +230,160 @@ public abstract class AbstractSingleEntityPanel<T,H> extends AbstractPanel {
         return parentConcept != null ? fieldConfigurationService.getUrlOfConcept(parentConcept) : null;
     }
 
+    public static CustomFormResponse initializeFormResponse(CustomForm form, Object jpaEntity) {
+        CustomFormResponse response = new CustomFormResponse();
+        Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
+
+        List<String> bindableFields = getBindableFieldNames(jpaEntity);
+
+        if (form.getLayout() == null) return response;
+
+        for (CustomFormPanel panel : form.getLayout()) {
+            if (panel.getRows() == null) continue;
+
+            for (CustomRow row : panel.getRows()) {
+                if (row.getColumns() == null) continue;
+
+                for (CustomCol col : row.getColumns()) {
+                    CustomField field = col.getField();
+                    if (field != null && !answers.containsKey(field)) {
+                        CustomFieldAnswer answer = instantiateAnswerForField(field);
+                        if (answer != null) {
+                            CustomFieldAnswerId answerId = new CustomFieldAnswerId();
+                            answerId.setField(field);
+                            answer.setPk(answerId);
+                            answer.setHasBeenModified(false);
+
+                            if (Boolean.TRUE.equals(field.getIsSystemField())
+                                    && field.getValueBinding() != null
+                                    && bindableFields.contains(field.getValueBinding())) {
+
+                                Object value = getFieldValue(jpaEntity, field.getValueBinding());
+                                if (value instanceof OffsetDateTime odt && answer instanceof CustomFieldAnswerDateTime) {
+                                    ((CustomFieldAnswerDateTime) answer).setValue(odt.toLocalDateTime());
+                                } else if (value instanceof String odt && answer instanceof CustomFieldAnswerText) {
+                                    ((CustomFieldAnswerText) answer).setValue(odt);
+                                } else if (value instanceof List<?> list && answer instanceof CustomFieldAnswerSelectMultiplePerson &&
+                                        list.stream().allMatch(p -> p instanceof Person)) {
+                                    ((CustomFieldAnswerSelectMultiplePerson) answer).setValue((List<Person>) list);
+                                } else if (value instanceof Concept c && answer instanceof CustomFieldAnswerSelectOneFromFieldCode) {
+                                    ((CustomFieldAnswerSelectOneFromFieldCode) answer).setValue(c);
+                                }else if (value instanceof Concept c && answer instanceof CustomFieldAnswerSelectOneConceptFromChildrenOfConcept) {
+                                    ((CustomFieldAnswerSelectOneConceptFromChildrenOfConcept) answer).setValue(c);
+                                }
+                            }
+
+                            answers.put(field, answer);
+                        }
+                    }
+                }
+            }
+        }
+
+        response.setAnswers(answers);
+        return response;
+    }
+
+    public static void updateJpaEntityFromFormResponse(CustomFormResponse response, Object jpaEntity) {
+        if (response == null || jpaEntity == null) return;
+
+        List<String> bindableFields = getBindableFieldNames(jpaEntity);
+
+        for (Map.Entry<CustomField, CustomFieldAnswer> entry : response.getAnswers().entrySet()) {
+            CustomField field = entry.getKey();
+            CustomFieldAnswer answer = entry.getValue();
+
+            if (field == null || answer == null) continue;
+
+            String binding = field.getValueBinding();
+            if (!Boolean.TRUE.equals(field.getIsSystemField()) || binding == null || !bindableFields.contains(binding)) {
+                continue;
+            }
+
+            Object value = null;
+
+            if (answer instanceof CustomFieldAnswerDateTime a && a.getValue() != null) {
+                value = a.getValue().atOffset(ZoneOffset.UTC);
+            } else if (answer instanceof CustomFieldAnswerText a) {
+                value = a.getValue();
+            } else if (answer instanceof CustomFieldAnswerSelectMultiplePerson a) {
+                value = a.getValue();
+            } else if (answer instanceof CustomFieldAnswerSelectOneFromFieldCode a) {
+                value = a.getValue();
+            } else if (answer instanceof CustomFieldAnswerSelectOneConceptFromChildrenOfConcept a) {
+                value = a.getValue();
+            }
+
+            if (value != null) {
+                setFieldValue(jpaEntity, binding, value);
+            }
+        }
+    }
 
 
+    private static List<String> getBindableFieldNames(Object entity) {
+        try {
+            Method method = entity.getClass().getMethod("getBindableFieldNames");
+            return (List<String>) method.invoke(entity);
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+    }
+
+    private static Object getFieldValue(Object obj, String fieldName) {
+        try {
+            Field field = obj.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(obj);
+        } catch (Exception e) {
+            try {
+                // try also in parent
+                Field field = obj.getClass().getSuperclass().getDeclaredField(fieldName);
+                field.setAccessible(true);
+                return field.get(obj);
+            } catch (Exception e2) {
+                return null;
+            }
+        }
+    }
+
+    private static Field findField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+        Class<?> current = clazz;
+        while (current != null) {
+            try {
+                return current.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                current = current.getSuperclass();
+            }
+        }
+        throw new NoSuchFieldException("Field " + fieldName + " not found in " + clazz);
+    }
+
+    private static void setFieldValue(Object obj, String fieldName, Object value) {
+        try {
+            Field field = findField(obj.getClass(), fieldName);
+            field.setAccessible(true);
+            field.set(obj, value);
+        } catch (Exception e) {
+            // Optional: log or ignore
+        }
+    }
+
+    private static CustomFieldAnswer instantiateAnswerForField(CustomField field) {
+        if (field instanceof CustomFieldText) {
+            return new CustomFieldAnswerText();
+        } else if (field instanceof CustomFieldSelectOneFromFieldCode) {
+            return new CustomFieldAnswerSelectOneFromFieldCode();
+        } else if (field instanceof CustomFieldSelectOneConceptFromChildrenOfConcept) {
+            return new CustomFieldAnswerSelectOneConceptFromChildrenOfConcept();
+        } else if (field instanceof CustomFieldSelectMultiplePerson) {
+            return new CustomFieldAnswerSelectMultiplePerson();
+        } else if (field instanceof CustomFieldDateTime) {
+            return new CustomFieldAnswerDateTime();
+        }
+
+        return null;
+    }
 
 
 }
