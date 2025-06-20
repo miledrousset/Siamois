@@ -127,6 +127,9 @@ public class RecordingUnitService implements ArkEntityService {
             Concept type = conceptService.saveOrGetConcept(concept);
             managedRecordingUnit.setType(type);
 
+            // Spatial Unit
+            managedRecordingUnit.setSpatialUnit(recordingUnit.getSpatialUnit());
+
             // Add other fields
             managedRecordingUnit.setAltitude(recordingUnit.getAltitude());
             managedRecordingUnit.setArk(recordingUnit.getArk());

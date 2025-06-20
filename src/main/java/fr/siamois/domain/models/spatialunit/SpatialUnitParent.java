@@ -1,5 +1,6 @@
 package fr.siamois.domain.models.spatialunit;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
@@ -31,10 +32,12 @@ public abstract class SpatialUnitParent extends TraceableEntity {
     protected Concept category;
 
     @Column(name="geom",columnDefinition = "geometry")
+    @JsonIgnore
     protected MultiPolygon geom;
 
     @ManyToOne
     @JoinColumn(name = "fk_parent_action_unit_id")
+    @JsonIgnore
     protected ActionUnit parentActionUnit;
 
 

@@ -1,8 +1,11 @@
 package fr.siamois.ui.bean.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.StreamReadConstraints;
+import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import jakarta.faces.component.UIComponent;
@@ -24,6 +27,8 @@ public class SpatialUnitConverter implements Converter<SpatialUnit>, Serializabl
     public SpatialUnitConverter() {
         objectMapper = new ObjectMapper();
         objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.registerModule(new JavaTimeModule());
     }
 
 
@@ -40,6 +45,9 @@ public class SpatialUnitConverter implements Converter<SpatialUnit>, Serializabl
     @Override
     public String getAsString(FacesContext context, UIComponent component, SpatialUnit value) {
         try {
+            if (value == null) {
+                return "";
+            }
             return objectMapper.writeValueAsString(value);
         } catch (JsonProcessingException e) {
             log.error("Error while converting SpatialUnit object to string", e);
