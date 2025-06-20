@@ -407,37 +407,7 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     border: none;
 }
 
-.ui-chip.spatial-unit-count-chip {
-    background-color: white;
-    border: 1px solid var(--context-main-color);
-    color: var(--context-main-color);
-    font-size: 16px;
-}
 
-.ui-chip.spatial-unit-count-chip-alt {
-    background-color: var(--context-main-color);
-    border: 1px solid var(--context-main-color);
-    color: white;
-    font-size: 16px;
-}
-
-.ui-chip.spatial-unit-type-chip {
-    background-color: var(--context-main-color);
-    color: white;
-    font-size: 16px;
-}
-
-.ui-chip.recording-unit-type-chip {
-    background-color: var(--ground-main-color);
-    color: white;
-    font-size: 16px;
-}
-
-.ui-chip.valid-type-chip {
-    background-color: var(--green-valid);
-    color: white;
-    font-size: 16px;
-}
 
 .ui-panel.spatial-unit-single-panel .ui-panel-content {
     background: var(--context-light-color-50);
@@ -623,26 +593,10 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     border: none;
 }
 
-.ui-chip.action-unit-count-chip {
-    background-color: white;
-    border: 1px solid var(--context-main-color);
-    color: var(--context-main-color);
-    font-size: 16px;
-}
-
-.ui-chip.action-unit-count-chip-alt {
-    background-color: var(--context-main-color);
-    border: 1px solid var(--context-main-color);
-    color: white;
-    font-size: 16px;
-}
 
 
-.ui-chip.action-unit-type-chip {
-    background-color: var(--context-main-color);
-    color: white;
-    font-size: 16px;
-}
+
+
 
 .ui-panel.action-unit-single-panel .ui-panel-content {
     background: var(--context-light-color-50);
@@ -1014,6 +968,61 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 .ui-chip.error-chip {
     background-color: var(--error-main);
     border: none;
+    color: white;
+    font-size: 16px;
+}
+
+
+/* chips */
+
+.ui-chip.action-unit-type-chip {
+    background-color: var(--context-main-color);
+    color: white;
+    font-size: 16px;
+}
+
+.ui-chip.spatial-unit-count-chip {
+    background-color: white;
+    border: 1px solid var(--context-main-color);
+    color: var(--context-main-color);
+    font-size: 16px;
+}
+
+.ui-chip.spatial-unit-count-chip-alt {
+    background-color: var(--context-main-color);
+    border: 1px solid var(--context-main-color);
+    color: white;
+    font-size: 16px;
+}
+
+.ui-chip.spatial-unit-type-chip {
+    background-color: var(--context-main-color);
+    color: white;
+    font-size: 16px;
+}
+
+.ui-chip.recording-unit-type-chip {
+    background-color: var(--ground-main-color);
+    color: white;
+    font-size: 16px;
+}
+
+.ui-chip.valid-type-chip {
+    background-color: var(--green-valid);
+    color: white;
+    font-size: 16px;
+}
+
+.ui-chip.action-unit-count-chip {
+    background-color: white;
+    border: 1px solid var(--context-main-color);
+    color: var(--context-main-color);
+    font-size: 16px;
+}
+
+.ui-chip.action-unit-count-chip-alt {
+    background-color: var(--context-main-color);
+    border: 1px solid var(--context-main-color);
     color: white;
     font-size: 16px;
 }

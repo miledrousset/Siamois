@@ -80,6 +80,30 @@
                              answer="#{bean.formResponse.answers.get(col.field)}"/>
                   </sharedInput:panelField>
 
+                  <!-- Select one action -->
+                  <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
+                                          rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneActionUnit'}">
+                     <siaInplace:action
+                             hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
+                             field="#{col.field}"
+                             mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
+                             panelModel="#{bean}"
+                             updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                             answer="#{bean.formResponse.answers.get(col.field)}"/>
+                  </sharedInput:panelField>
+
+                  <!-- Select one spatial -->
+                  <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
+                                          rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneSpatialUnit'}">
+                     <siaInplace:spatial
+                             hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
+                             field="#{col.field}"
+                             mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
+                             panelModel="#{bean}"
+                             updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                             answer="#{bean.formResponse.answers.get(col.field)}"/>
+                  </sharedInput:panelField>
+
                   <!-- Select one from person -->
                   <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
                                           rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOnePerson'}">

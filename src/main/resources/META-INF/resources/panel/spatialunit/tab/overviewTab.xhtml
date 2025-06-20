@@ -14,14 +14,11 @@
 
     <ui:include src="/pages/shared/form/customForm.xhtml">
         <ui:param name="panelModel" value="#{panelModel}"/>
-        <ui:param name="layout" value="#{panelModel.overviewLayout}"/>
+        <ui:param name="layout" value="#{panelModel.overviewForm.layout}"/>
         <ui:param name="readOnly" value="true"/>
         <ui:param name="prefix" value="overview"/>
         <ui:param name="panelId" value="panel-#{panelIndex}"/>
     </ui:include>
-
-
-
 
 
 </ui:fragment>

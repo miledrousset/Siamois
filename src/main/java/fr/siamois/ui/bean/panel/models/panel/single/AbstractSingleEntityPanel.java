@@ -1,6 +1,7 @@
 package fr.siamois.ui.bean.panel.models.panel.single;
 
 import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
@@ -11,6 +12,7 @@ import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
@@ -130,6 +132,11 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractPanel {
     public abstract void saveDocument();
 
     public abstract void save(Boolean validated);
+
+    public List<SpatialUnit> getSpatialUnitOptions() {
+        // Implement in child classes if necessary
+        return List.of();
+    }
 
     public void initDialog() throws NoConfigForFieldException {
         log.trace("initDialog");
@@ -270,6 +277,10 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractPanel {
                                     ((CustomFieldAnswerSelectOneFromFieldCode) answer).setValue(c);
                                 }else if (value instanceof Concept c && answer instanceof CustomFieldAnswerSelectOneConceptFromChildrenOfConcept) {
                                     ((CustomFieldAnswerSelectOneConceptFromChildrenOfConcept) answer).setValue(c);
+                                }else if (value instanceof ActionUnit a && answer instanceof CustomFieldAnswerSelectOneActionUnit) {
+                                    ((CustomFieldAnswerSelectOneActionUnit) answer).setValue(a);
+                                }else if (value instanceof SpatialUnit a && answer instanceof CustomFieldAnswerSelectOneSpatialUnit) {
+                                    ((CustomFieldAnswerSelectOneSpatialUnit) answer).setValue(a);
                                 }
                             }
 
@@ -312,6 +323,10 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractPanel {
                 value = a.getValue();
             } else if (answer instanceof CustomFieldAnswerSelectOneConceptFromChildrenOfConcept a) {
                 value = a.getValue();
+            }else if (answer instanceof CustomFieldAnswerSelectOneActionUnit a) {
+                value = a.getValue();
+            }else if (answer instanceof CustomFieldAnswerSelectOneSpatialUnit a) {
+                value = a.getValue();
             }
 
             if (value != null) {
@@ -332,18 +347,11 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractPanel {
 
     private static Object getFieldValue(Object obj, String fieldName) {
         try {
-            Field field = obj.getClass().getDeclaredField(fieldName);
+            Field field = findField(obj.getClass(), fieldName);
             field.setAccessible(true);
             return field.get(obj);
         } catch (Exception e) {
-            try {
-                // try also in parent
-                Field field = obj.getClass().getSuperclass().getDeclaredField(fieldName);
-                field.setAccessible(true);
-                return field.get(obj);
-            } catch (Exception e2) {
-                return null;
-            }
+            return null;
         }
     }
 
@@ -365,7 +373,7 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractPanel {
             field.setAccessible(true);
             field.set(obj, value);
         } catch (Exception e) {
-            // Optional: log or ignore
+
         }
     }
 
@@ -380,6 +388,10 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractPanel {
             return new CustomFieldAnswerSelectMultiplePerson();
         } else if (field instanceof CustomFieldDateTime) {
             return new CustomFieldAnswerDateTime();
+        } else if (field instanceof CustomFieldSelectOneActionUnit) {
+            return new CustomFieldAnswerSelectOneActionUnit();
+        }else if (field instanceof CustomFieldSelectOneSpatialUnit) {
+            return new CustomFieldAnswerSelectOneSpatialUnit();
         }
 
         return null;

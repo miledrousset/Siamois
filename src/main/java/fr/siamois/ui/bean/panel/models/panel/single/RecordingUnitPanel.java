@@ -3,6 +3,7 @@ package fr.siamois.ui.bean.panel.models.panel.single;
 import fr.siamois.domain.models.actionunit.ActionUnitFormMapping;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.actionunit.ActionUnitNotFoundException;
+import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.form.customfield.*;
 import fr.siamois.domain.models.form.customfieldanswer.*;
 import fr.siamois.domain.models.form.customform.CustomCol;
@@ -12,6 +13,7 @@ import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.history.RecordingUnitHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.HistoryService;
@@ -29,6 +31,7 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
+import fr.siamois.utils.MessageUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -72,18 +75,6 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
     // Form
     protected CustomForm additionalForm;
 
-    // form
-    private CustomFieldText idField;
-    private Concept idConcept;
-    private CustomFieldSelectOneFromFieldCode typeField;
-    private CustomFieldSelectOneConceptFromChildrenOfConcept secondaryTypeField;
-    private CustomFieldSelectOneConceptFromChildrenOfConcept thirdTypeField;
-    private CustomFieldSelectMultiplePerson authorField;
-    private CustomFieldSelectMultiplePerson excavatorField;
-    private CustomFieldDateTime openingDateField;
-    private CustomFieldDateTime creationDateField;
-    private Concept actionUnitTypeConcept;
-
 
     // ----------- Concepts for system fields
     // Recording unit identifier
@@ -116,7 +107,31 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
             .externalId("4286197")
             .build();
 
+    // Date
+    private Concept creationDateConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286200")
+            .build();
+    private Concept openingDateConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286198")
+            .build();
+    private Concept closingDateConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286199")
+            .build();
 
+    // Action Unit
+    private Concept actionUnitConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286244")
+            .build();
+
+    // Spatial Unit
+    private Concept spatialUnitConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286245")
+            .build();
 
     // Fields
     private CustomFieldText recordingUnitIdField = new CustomFieldText.Builder()
@@ -170,6 +185,47 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
             .concept(recordingUnitIdentificationConcept)
             .build();
 
+    private CustomFieldDateTime creationDateField = new CustomFieldDateTime.Builder()
+            .label("recordingunit.field.creationDate")
+            .isSystemField(true)
+            .showTime(true)
+            .valueBinding("creationTime")
+            .concept(creationDateConcept)
+            .build();
+
+
+
+
+    private CustomFieldDateTime openingDateField = new CustomFieldDateTime.Builder()
+            .label("recordingunit.field.openingDate")
+            .isSystemField(true)
+            .valueBinding("startDate")
+            .showTime(false)
+            .concept(openingDateConcept)
+            .build();
+
+    private CustomFieldDateTime closingDateField = new CustomFieldDateTime.Builder()
+            .label("recordingunit.field.closingDate")
+            .isSystemField(true)
+            .valueBinding("endDate")
+            .showTime(false)
+            .concept(closingDateConcept)
+            .build();
+
+    private CustomFieldSelectOneActionUnit actionUnitField = new CustomFieldSelectOneActionUnit.Builder()
+            .label("recordingunit.field.actionUnit")
+            .isSystemField(true)
+            .valueBinding("actionUnit")
+            .concept(actionUnitConcept)
+            .build();
+
+    private CustomFieldSelectOneSpatialUnit spatialUnitField = new CustomFieldSelectOneSpatialUnit.Builder()
+            .label("recordingunit.field.spatialUnit")
+            .isSystemField(true)
+            .valueBinding("spatialUnit")
+            .concept(spatialUnitConcept)
+            .build();
+
 
     // Details form
     private CustomForm detailsForm = new CustomForm.Builder()
@@ -185,6 +241,16 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
                                                     .readOnly(true)
                                                     .className(COLUMN_CLASS_NAME)
                                                     .field(recordingUnitIdField)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(true)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(actionUnitField)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(spatialUnitField)
                                                     .build())
                                             .addColumn(new CustomCol.Builder()
                                                     .readOnly(false)
@@ -215,11 +281,59 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
                                                     .field(recordingUnitIdentificationField)
                                                     .build())
                                             .build()
+                            ).addRow(
+                                    new CustomRow.Builder()
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(true)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(creationDateField)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(openingDateField)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(closingDateField)
+                                                    .build())
+                                            .build()
                             )
                             .build()
             )
             .build();
 
+    // Details form
+    private CustomForm overviewForm = new CustomForm.Builder()
+            .name("Overview tab form")
+            .description("Contains the overview")
+            .addPanel(
+                    new CustomFormPanel.Builder()
+                            .name("common.header.general")
+                            .isSystemPanel(true)
+                            .addRow(
+                                    new CustomRow.Builder()
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(true)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(recordingUnitTypeField)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(true)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(recordingUnitSecondaryTypeField)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(true)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(recordingUnitIdentificationField)
+                                                    .build())
+                                            .build()
+                            )
+                            .build()
+            )
+            .build();
 
 
     protected RecordingUnitPanel(LangBean langBean,
@@ -266,12 +380,23 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         return "/panel/header/recordingUnitPanelHeader.xhtml";
     }
 
+    @Override
+    public List<SpatialUnit> getSpatialUnitOptions() {
+
+        // Return the spatial context of the parent action
+        if(unit.getActionUnit() != null) {
+            return new ArrayList<>(unit.getActionUnit().getSpatialContext());
+        }
+
+        return List.of();
+    }
+
     public LocalDate offsetDateTimeToLocalDate(OffsetDateTime offsetDT) {
         return offsetDT.toLocalDate();
     }
 
     public List<Concept> fetchChildrenOfConcept(Concept concept) {
-        List<Concept> concepts ;
+        List<Concept> concepts;
 
         try {
             concepts = conceptService.findDirectSubConceptOf(concept);
@@ -315,7 +440,7 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
     public CustomForm getFormForRecordingUnitType(Concept type, Set<ActionUnitFormMapping> availableForms) {
         return availableForms.stream()
                 .filter(mapping -> mapping.getPk().getConcept().equals(type) // Vérifier le concept
-                        && "RECORDING_UNIT".equals(mapping.getPk().getTableName())) // Vérifier le tableName
+                        && "RECORDING_UNIT" .equals(mapping.getPk().getTableName())) // Vérifier le tableName
                 .map(mapping -> mapping.getPk().getForm())
                 .findFirst()
                 .orElse(null); // Retourner null si aucun match
@@ -334,11 +459,9 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         recordingUnit.setThirdType(null);
 
 
-
     }
 
     public void initFormResponseAnswers() {
-
 
 
         if (recordingUnit.getFormResponse().getForm() != null) {
@@ -404,8 +527,6 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
             activeTabIndex = 0;
 
 
-
-
             if (idunit == null) {
                 this.errorMessage = "The ID of the recording unit must be defined";
                 return;
@@ -447,111 +568,8 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
     @Override
     public void initForms() {
 
-        // Get from from DB in futur iteration
-
-        // Init details tab form
-        layout = new ArrayList<>();
-        CustomFormPanel mainPanel = new CustomFormPanel();
-        mainPanel.setIsSystemPanel(true);
-        mainPanel.setName("common.header.general");
-        // One row
-        CustomRow row1 = new CustomRow();
-        CustomRow row3 = new CustomRow();
-        CustomRow row4 = new CustomRow();
-        // Two cols
-
-
-
-
-
-
-
-        CustomCol col8 = new CustomCol();
-        openingDateField = new CustomFieldDateTime();
-        openingDateField.setLabel("recordingunit.field.openingDate");
-        openingDateField.setIsSystemField(true);
-        col8.setField(openingDateField);
-        col8.setClassName(COLUMN_CLASS_NAME);
-
-        CustomCol col9 = new CustomCol();
-        creationDateField = new CustomFieldDateTime();
-        creationDateField.setLabel("recordingunit.field.creationDate");
-        creationDateField.setIsSystemField(true);
-        creationDateField.setShowTime(true);
-        col9.setField(creationDateField);
-        col9.setClassName(COLUMN_CLASS_NAME);
-        col9.setReadOnly(true);
-
-
-        row1.setColumns(List.of());
-        row4.setColumns(List.of(col9, col8));
-        row3.setColumns(List.of());
-        mainPanel.setRows(List.of(row1, row4, row3));
-        layout.add(mainPanel);
-
-        // init overveiw tab form
-        overviewLayout = new ArrayList<>();
-        CustomFormPanel mainOverviewPanel = new CustomFormPanel();
-        mainOverviewPanel.setIsSystemPanel(true);
-        mainOverviewPanel.setName("common.header.general");
-        // One row
-        CustomRow row2 = new CustomRow();
-        // one cols
-        CustomCol col3 = new CustomCol();
-        col3.setReadOnly(true);
-        col3.setField(typeField);
-        col3.setClassName(COLUMN_CLASS_NAME);
-        CustomCol col10 = new CustomCol();
-        col10.setReadOnly(true);
-        col10.setField(secondaryTypeField);
-        col10.setClassName(COLUMN_CLASS_NAME);
-        CustomCol col11 = new CustomCol();
-        col11.setReadOnly(true);
-        col11.setField(thirdTypeField);
-        col11.setClassName(COLUMN_CLASS_NAME);
-        row2.setColumns(List.of(col3, col10, col11));
-        mainOverviewPanel.setRows(List.of(row2));
-        overviewLayout.add(mainOverviewPanel);
-
-        // Init form answers
+        // Init system form answers
         formResponse = initializeFormResponse(detailsForm, unit);
-
-        Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
-        CustomFieldAnswerText nameAnswer = new CustomFieldAnswerText();
-        CustomFieldAnswerSelectOneFromFieldCode typeAnswer = new CustomFieldAnswerSelectOneFromFieldCode();
-        CustomFieldAnswerSelectOneConceptFromChildrenOfConcept secondaryTypeAnswer = new CustomFieldAnswerSelectOneConceptFromChildrenOfConcept();
-        CustomFieldAnswerSelectOneConceptFromChildrenOfConcept thirdTypeAnswer = new CustomFieldAnswerSelectOneConceptFromChildrenOfConcept();
-        CustomFieldAnswerSelectMultiplePerson authorsAnswers = new CustomFieldAnswerSelectMultiplePerson();
-        CustomFieldAnswerSelectMultiplePerson excavatorAnswer = new CustomFieldAnswerSelectMultiplePerson();
-        CustomFieldAnswerDateTime openingDateAnswer = new CustomFieldAnswerDateTime();
-        CustomFieldAnswerDateTime creationDateAnswer = new CustomFieldAnswerDateTime();
-        creationDateAnswer.setHasBeenModified(false);
-        creationDateAnswer.setValue((unit.getCreationTime() != null) ? unit.getCreationTime().toLocalDateTime() : null);
-        openingDateAnswer.setValue((unit.getStartDate() != null) ? unit.getStartDate().toLocalDateTime() : null);
-        openingDateAnswer.setHasBeenModified(false);
-        authorsAnswers.setValue(unit.getAuthors());
-        authorsAnswers.setPk(new CustomFieldAnswerId());
-        authorsAnswers.getPk().setField(authorField);
-        excavatorAnswer.setValue(unit.getExcavators());
-        excavatorAnswer.setHasBeenModified(false);
-        nameAnswer.setValue(unit.getFullIdentifier());
-        nameAnswer.setHasBeenModified(false);
-        answers.put(idField, nameAnswer);
-        typeAnswer.setValue(unit.getType());
-        typeAnswer.setHasBeenModified(false);
-        secondaryTypeAnswer.setValue(unit.getSecondaryType());
-        secondaryTypeAnswer.setHasBeenModified(false);
-        thirdTypeAnswer.setValue(unit.getThirdType());
-        thirdTypeAnswer.setHasBeenModified(false);
-        answers.put(typeField, typeAnswer);
-        answers.put(authorField, authorsAnswers);
-        answers.put(secondaryTypeField, secondaryTypeAnswer);
-        answers.put(thirdTypeField, thirdTypeAnswer);
-        answers.put(excavatorField, excavatorAnswer);
-        answers.put(openingDateField, openingDateAnswer);
-        answers.put(creationDateField, creationDateAnswer);
-
-        //formResponse.setAnswers(answers);
 
     }
 
@@ -579,7 +597,16 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
     public void save(Boolean validated) {
 
         updateJpaEntityFromFormResponse(formResponse, unit);
-        Boolean v = validated;
+        unit.setValidated(validated);
+        try {
+            recordingUnitService.save(unit, unit.getType(), List.of(), List.of(), List.of());
+        } catch (FailedRecordingUnitSaveException e) {
+            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
+            return;
+        }
+
+        refreshUnit();
+        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getFullIdentifier());
 
     }
 

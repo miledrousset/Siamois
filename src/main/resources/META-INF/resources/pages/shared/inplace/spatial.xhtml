@@ -1,0 +1,72 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:cc="http://java.sun.com/jsf/composite"
+        xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
+        xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+>
+
+    <cc:interface>
+        <cc:attribute name="answer"
+                      type="fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectOneSpatialUnit"
+                      required="true"/>
+        <cc:attribute name="panelModel" type="fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntityPanel"
+                      required="true"/>
+        <cc:attribute name="hasBeenModified" type="Boolean" required="false" default="false"/>
+        <cc:attribute name="field" type="fr.siamois.domain.models.form.customfield.CustomFieldSelectOneSpatialUnit"
+                      required="true"/>
+        <cc:attribute name="mode" type="String" required="false" default="READ"/>
+        <cc:attribute name="updateTargetsOnBlur" type="String" required="false" default="@this"/>
+        <cc:attribute name="multiple" type="Boolean" required="false" default="false"/>
+    </cc:interface>
+
+    <cc:implementation>
+        <p:inplace mode="#{cc.attrs.mode}" toggleable="false">
+            <f:facet name="output">
+                <!-- Single value -->
+                <h:panelGroup rendered="#{(not cc.attrs.multiple) and (not empty cc.attrs.answer.value)}">
+                    <div style="display:flex;gap:0.5em;">
+                        <p:outputLabel value="#{cc.attrs.answer.value.name}"/>
+                        <p:chip
+                                label="#{labelBean.findLabelOf(cc.attrs.answer.value.category)}"
+                                icon="bi bi-geo-alt"
+                                styleClass="mr-2 spatial-unit-type-chip"/>
+                    </div>
+
+                </h:panelGroup>
+            </f:facet>
+            <f:facet name="input">
+                <p:selectOneMenu id="select-one-spatial-unit"
+                                 panelStyleClass="#{cc.attrs.panelModel.autocompleteClass}"
+                                 styleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"
+                                 value="#{cc.attrs.answer.value}"
+                                 scrollHeight="300"
+                                 label="#{langBean.msg('common.action.selectSpatialUnit')}"
+                                 required="false"
+                                 var="u"
+                                 converter="#{spatialUnitConverter}">
+                    <f:selectItem itemLabel="#{langBean.msg('common.action.selectSpatialUnit')}" itemValue="#{null}"
+                                  noSelectionOption="true"/>
+                    <f:selectItems
+                            var="unit"
+                            itemLabel="#{unit.name}"
+                            itemValue="#{unit}"
+                            value="#{cc.attrs.panelModel.getSpatialUnitOptions()}"/>
+                    <p:column>
+                        <div style="display:flex;gap:0.5em;">
+                            <p:outputLabel value="#{u.name}"/>
+                            <p:chip
+                                    label="#{labelBean.findLabelOf(u.category)}"
+                                    icon="bi bi-geo-alt"
+                                    styleClass="mr-2 spatial-unit-type-chip"/>
+                        </div>
+                    </p:column>
+                    <p:ajax event="valueChange" update="#{cc.attrs.updateTargetsOnBlur}"
+                            listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(cc.attrs.field)}"/>
+                </p:selectOneMenu>
+            </f:facet>
+        </p:inplace>
+
+    </cc:implementation>
+
+</ui:composition>

@@ -132,11 +132,13 @@ public class RecordingUnitService implements ArkEntityService {
             managedRecordingUnit.setArk(recordingUnit.getArk());
             managedRecordingUnit.setDescription(recordingUnit.getDescription());
             managedRecordingUnit.setAuthor(recordingUnit.getAuthor());
-            managedRecordingUnit.setExcavator(recordingUnit.getExcavator());
+            managedRecordingUnit.setAuthors(recordingUnit.getAuthors());
+            managedRecordingUnit.setExcavators(recordingUnit.getExcavators());
             managedRecordingUnit.setEndDate(recordingUnit.getEndDate());
             managedRecordingUnit.setStartDate(recordingUnit.getStartDate());
             managedRecordingUnit.setSize(recordingUnit.getSize());
             managedRecordingUnit.setSecondaryType(recordingUnit.getSecondaryType());
+            managedRecordingUnit.setThirdType(recordingUnit.getThirdType());
 
             CustomFormResponse managedFormResponse;
 
