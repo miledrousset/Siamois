@@ -55,7 +55,8 @@ public abstract class AbstractSingleEntity<T, H> extends AbstractPanel {
     protected CustomFormResponse formResponse; // answers to all the fields from overview and details
     protected Boolean hasUnsavedModifications; // Did we modify the unit?
 
-
+    //
+    protected CustomForm detailsForm;
 
     public static final Vocabulary SYSTEM_THESO;
 

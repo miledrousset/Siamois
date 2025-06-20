@@ -13,6 +13,7 @@ import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectOneFromFieldCode;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerText;
 import fr.siamois.domain.models.form.customform.CustomCol;
+import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
@@ -240,7 +241,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         // Get from from DB in futur iteration
 
         // Init details tab form
-        layout = new ArrayList<>();
+
         CustomFormPanel mainPanel = new CustomFormPanel();
         mainPanel.setIsSystemPanel(true);
         mainPanel.setName("common.header.general");
@@ -259,16 +260,16 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         typeField = new CustomFieldSelectOneFromFieldCode();
         typeField.setLabel("spatialunit.field.type");
         typeField.setIsSystemField(true);
-        typeField.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
+        typeField.setFieldCode(ActionUnit.TYPE_FIELD_CODE);
         col2.setField(typeField);
         col2.setClassName(COLUMN_CLASS_NAME);
 
         row1.setColumns(List.of(col1, col2));
         mainPanel.setRows(List.of(row1));
-        layout.add(mainPanel);
+
 
         // init overveiw tab form
-        overviewLayout = new ArrayList<>();
+
         CustomFormPanel mainOverviewPanel = new CustomFormPanel();
         mainOverviewPanel.setIsSystemPanel(true);
         mainOverviewPanel.setName("common.header.general");
@@ -281,7 +282,17 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         col3.setClassName(COLUMN_CLASS_NAME);
         row2.setColumns(List.of(col3));
         mainOverviewPanel.setRows(List.of(row2));
-        overviewLayout.add(mainOverviewPanel);
+
+        overviewForm = new CustomForm.Builder()
+                .name("Overview tab form")
+                .description("Contains the overview")
+                .addPanel(mainOverviewPanel)
+                .build();
+        detailsForm = new CustomForm.Builder()
+                .name("Overview tab form")
+                .description("Contains the overview")
+                .addPanel(mainPanel)
+                .build();
 
         // Init form answers
         formResponse = new CustomFormResponse();

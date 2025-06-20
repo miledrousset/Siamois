@@ -71,9 +71,7 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     public abstract BaseLazyDataModel<T> getLazyDataModelParents();
 
     // Gestion du formulaire via form layout
-    protected transient List<CustomFormPanel> layout; // details tab form
-    protected transient List<CustomFormPanel> overviewLayout; // overview tab form
-
+    protected CustomForm overviewForm;
 
     public static final Vocabulary SYSTEM_THESO;
 
