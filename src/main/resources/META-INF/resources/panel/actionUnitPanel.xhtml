@@ -15,7 +15,7 @@
                      detail="#{panelModel.errorMessage}"
                      rendered="#{not empty panelModel.errorMessage}"/>
 
-    <h:panelGroup id="contentPanel" rendered="#{panelModel.unit != null}">
+    <h:panelGroup id="#{cc.attrs.panelIndex + '-contentPanel'}" rendered="#{panelModel.unit != null}">
 
 
         <h:form id="actionUnitForm">

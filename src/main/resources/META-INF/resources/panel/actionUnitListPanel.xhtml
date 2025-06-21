@@ -2,6 +2,7 @@
              xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
              xmlns:p="http://primefaces.org/ui"
              xmlns:actionUnit="http://xmlns.jcp.org/jsf/composite/pages/actionUnit/components"
+             xmlns:f="http://java.sun.com/jsf/core"
 >
     <!--@elvariable id="panelIndex" type="Integer"-->
     <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.list.ActionUnitListPanel"-->
@@ -17,7 +18,18 @@
             panelIndex="#{panelIndex}"
             disableAddBtn="#{not flowBean.userHasAddSpatialOrActionUnitPermission()}"
             id="actionUnitList"
-    />
+    >
+        <f:facet name="rightToolbar">
+            <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
+                             disabled="#{cc.attrs.disableAddBtn}"
+                             action="#{flowBean.addNewActionUnitPanel(panelIndex)}"
+                             rendered="#{flowBean.readWriteMode == 'WRITE'}"
+                             oncomplete="handleScrollToTop();"
+                             update="flow"
+                             style="margin-right: .5rem">
+            </p:commandButton>
+        </f:facet>
+    </actionUnit:actionUnitList>
 
 
 </ui:fragment>
