@@ -255,23 +255,18 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
         initForms();
     }
 
-    public void create() {
+    public void createRu() {
 
         updateJpaEntityFromFormResponse(formResponse, unit);
         unit.setValidated(false);
-        try {
-            unit = recordingUnitService.save(unit, unit.getType(), List.of(), List.of(), List.of());
-        }
-        catch(FailedRecordingUnitSaveException e) {
-            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
-            return ;
-        }
+        unit = recordingUnitService.save(unit, unit.getType(), List.of(), List.of(), List.of());
+
 
         if(lazyDataModel != null) {
             lazyDataModel.addRowToModel(unit);
         }
 
-        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getFullIdentifier());
+
     }
 
     @Override
@@ -281,10 +276,32 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
 
     public void createAndOpen() {
 
-        create();
+        try {
+            createRu();
+        }
+        catch(FailedRecordingUnitSaveException e) {
+            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
+            throw e;
+        }
+
+        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getFullIdentifier());
 
         // Open new panel
         flowBean.addRecordingUnitPanel(unit.getId());
+
+    }
+
+    public void create() {
+
+        try {
+            createRu();
+        }
+        catch(FailedRecordingUnitSaveException e) {
+            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
+            throw e;
+        }
+
+        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getFullIdentifier());
 
     }
 }

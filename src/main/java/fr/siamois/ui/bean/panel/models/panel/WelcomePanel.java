@@ -62,6 +62,7 @@ public class WelcomePanel extends AbstractPanel {
         nbOfActionUnits = 0;
         nbOfSpatialUnits = 0;
         nbOfRecordingUnits = 0;
+        refreshName();
 
         try {
             nbOfRecordingUnits = recordingUnitService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
@@ -82,6 +83,11 @@ public class WelcomePanel extends AbstractPanel {
     @Override
     public String ressourceUri() {
         return "/welcome";
+    }
+
+    @Override
+    public String displayHeader() {
+        return "/panel/header/homePanelHeader.xhtml";
     }
 
     @EventListener(LangageChangeEvent.class)
