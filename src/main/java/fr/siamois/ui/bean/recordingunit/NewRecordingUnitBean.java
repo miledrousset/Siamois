@@ -18,6 +18,7 @@ import fr.siamois.domain.models.recordingunit.RecordingUnit;
 
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
@@ -40,6 +41,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +59,7 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
     private final LangBean langBean;
     private final SessionSettingsBean sessionSettingsBean;
     private final FlowBean flowBean;
+    private final ActionUnitService actionUnitService;
 
     // Locals
     private ActionUnit actionUnit ; // parent action unit for the new recording unit
@@ -138,11 +141,12 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
             .concept(spatialUnitConcept)
             .build();
 
-    public NewRecordingUnitBean(RecordingUnitService recordingUnitService, LangBean langBean, SessionSettingsBean sessionSettingsBean, FlowBean flowBean) {
+    public NewRecordingUnitBean(RecordingUnitService recordingUnitService, LangBean langBean, SessionSettingsBean sessionSettingsBean, FlowBean flowBean, ActionUnitService actionUnitService) {
         this.recordingUnitService = recordingUnitService;
         this.langBean = langBean;
         this.sessionSettingsBean = sessionSettingsBean;
         this.flowBean = flowBean;
+        this.actionUnitService = actionUnitService;
     }
 
     public void setFieldConceptAnswerHasBeenModified(AjaxBehaviorEvent event) {
@@ -210,6 +214,17 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
         return "/recording-unit/new";
     }
 
+    @Override
+    public List<SpatialUnit> getSpatialUnitOptions() {
+
+        // Return the spatial context of the parent action
+        if(actionUnit != null) {
+            return new ArrayList<>(actionUnit.getSpatialContext());
+        }
+
+        return List.of();
+    }
+
 
     private void reset() {
         unit = null;
@@ -223,7 +238,7 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
         unit = new RecordingUnit();
         // Attempt safe cast to access getActionUnit()
         if (lazyDataModel instanceof RecordingUnitInActionUnitLazyDataModel typedModel) {
-            actionUnit = typedModel.getActionUnit();
+            actionUnit = actionUnitService.findById(typedModel.getActionUnit().getId());
             unit.setCreatedByInstitution(actionUnit.getCreatedByInstitution());
             unit.setActionUnit(actionUnit);
             unit.setCreatedByInstitution(actionUnit.getCreatedByInstitution());
