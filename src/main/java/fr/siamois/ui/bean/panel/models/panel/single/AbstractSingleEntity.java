@@ -44,7 +44,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
-public abstract class AbstractSingleEntity<T, H> extends AbstractPanel {
+public abstract class AbstractSingleEntity<T> extends AbstractPanel {
 
     // Deps
     protected final transient SessionSettingsBean sessionSettingsBean;
@@ -92,14 +92,14 @@ public abstract class AbstractSingleEntity<T, H> extends AbstractPanel {
         return DateUtils.formatOffsetDateTime(offsetDateTime);
     }
 
-    public abstract void init();
+
 
     public String getAutocompleteClass() {
         // Default implementation
         return "";
     }
 
-    public abstract List<Person> authorsAvailable();
+
 
     public abstract void initForms();
 

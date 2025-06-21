@@ -2,14 +2,14 @@ package fr.siamois.ui.bean.recordingunit;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
-import fr.siamois.domain.models.form.customfield.CustomField;
-import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
+import fr.siamois.domain.models.form.customfield.*;
 
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectOneFromFieldCode;
 
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerText;
 import fr.siamois.domain.models.form.customform.CustomCol;
+import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
@@ -17,10 +17,12 @@ import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
+import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
+import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import fr.siamois.ui.lazydatamodel.BaseRecordingUnitLazyDataModel;
 import fr.siamois.ui.lazydatamodel.RecordingUnitInActionUnitLazyDataModel;
 import fr.siamois.utils.MessageUtils;
@@ -37,6 +39,7 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +50,7 @@ import java.util.Map;
 @Getter
 @Setter
 @SessionScoped
-public class NewRecordingUnitBean implements Serializable {
+public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> implements Serializable  {
 
     // Deps
     private final RecordingUnitService recordingUnitService;
@@ -56,15 +59,84 @@ public class NewRecordingUnitBean implements Serializable {
     private final FlowBean flowBean;
 
     // Locals
-    private RecordingUnit unit;
-    private CustomFormPanel mainPanel ;
-    private CustomFormResponse formResponse ;
-    private CustomFieldSelectOneFromFieldCode typeField;
     private ActionUnit actionUnit ; // parent action unit for the new recording unit
     private SpatialUnit spatialUnit ; // parent spatial unit for the new recording unit
     private BaseRecordingUnitLazyDataModel lazyDataModel; // lazy data model to update after saving
 
     private static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-6";
+
+    // ----------- Concepts for system fields
+    // Authors
+    private Concept authorsConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286194")
+            .build();
+    // Excavators
+    private Concept excavatorsConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286195")
+            .build();
+
+    // Recording Unit type
+    private Concept recordingUnitTypeConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4282367")
+            .build();
+
+    // Date
+    private Concept openingDateConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286198")
+            .build();
+
+
+    // Spatial Unit
+    private Concept spatialUnitConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286245")
+            .build();
+
+
+
+    private CustomFieldSelectMultiplePerson authorsField = new CustomFieldSelectMultiplePerson.Builder()
+            .label("recordingunit.field.authors")
+            .isSystemField(true)
+            .valueBinding("authors")
+            .concept(authorsConcept)
+            .build();
+
+    private CustomFieldSelectMultiplePerson excavatorsField = new CustomFieldSelectMultiplePerson.Builder()
+            .label("recordingunit.field.excavators")
+            .isSystemField(true)
+            .valueBinding("excavators")
+            .concept(excavatorsConcept)
+            .build();
+
+    private CustomFieldSelectOneFromFieldCode recordingUnitTypeField = new CustomFieldSelectOneFromFieldCode.Builder()
+            .label("spatialunit.field.type")
+            .isSystemField(true)
+            .valueBinding("type")
+            .styleClass("mr-2 recording-unit-type-chip")
+            .iconClass("bi bi-pencil-square")
+            .fieldCode(RecordingUnit.TYPE_FIELD_CODE)
+            .concept(recordingUnitTypeConcept)
+            .build();
+
+
+    private CustomFieldDateTime openingDateField = new CustomFieldDateTime.Builder()
+            .label("recordingunit.field.openingDate")
+            .isSystemField(true)
+            .valueBinding("startDate")
+            .showTime(false)
+            .concept(openingDateConcept)
+            .build();
+
+    private CustomFieldSelectOneSpatialUnit spatialUnitField = new CustomFieldSelectOneSpatialUnit.Builder()
+            .label("recordingunit.field.spatialUnit")
+            .isSystemField(true)
+            .valueBinding("spatialUnit")
+            .concept(spatialUnitConcept)
+            .build();
 
     public NewRecordingUnitBean(RecordingUnitService recordingUnitService, LangBean langBean, SessionSettingsBean sessionSettingsBean, FlowBean flowBean) {
         this.recordingUnitService = recordingUnitService;
@@ -80,63 +152,100 @@ public class NewRecordingUnitBean implements Serializable {
         formResponse.getAnswers().get(field).setHasBeenModified(true);
     }
 
-    public void initForm() {
+    @Override
+    public void initForms() {
 
-        mainPanel = new CustomFormPanel();
-        mainPanel.setIsSystemPanel(true);
-        mainPanel.setName("common.header.general");
-        // two rows
-        CustomRow row1 = new CustomRow();
-        CustomRow row2 = new CustomRow();
-        // First row: Type
+        // Details form
+        detailsForm = new CustomForm.Builder()
+                .name("Details tab form")
+                .description("Contains the main form")
+                .addPanel(
+                        new CustomFormPanel.Builder()
+                                .name("common.header.general")
+                                .isSystemPanel(true)
+                                .addRow(
+                                        new CustomRow.Builder()
+                                                .addColumn(new CustomCol.Builder()
+                                                        .readOnly(false)
+                                                        .className(COLUMN_CLASS_NAME)
+                                                        .field(spatialUnitField)
+                                                        .build())
+                                                .addColumn(new CustomCol.Builder()
+                                                        .readOnly(false)
+                                                        .className(COLUMN_CLASS_NAME)
+                                                        .field(authorsField)
+                                                        .build())
+                                                .addColumn(new CustomCol.Builder()
+                                                        .readOnly(false)
+                                                        .className(COLUMN_CLASS_NAME)
+                                                        .field(excavatorsField)
+                                                        .build())
+                                                .addColumn(new CustomCol.Builder()
+                                                        .readOnly(false)
+                                                        .className(COLUMN_CLASS_NAME)
+                                                        .field(recordingUnitTypeField)
+                                                        .build())
+                                                .addColumn(new CustomCol.Builder()
+                                                        .readOnly(false)
+                                                        .className(COLUMN_CLASS_NAME)
+                                                        .field(openingDateField)
+                                                        .build())
+                                                .build()
+                                ).build()
+                )
+                .build();
 
-        CustomCol col1 = new CustomCol();
-        typeField = new CustomFieldSelectOneFromFieldCode();
-        typeField.setLabel("spatialunit.field.type");
-        typeField.setIsSystemField(true);
-        typeField.setFieldCode(RecordingUnit.TYPE_FIELD_CODE);
-        col1.setField(typeField);
-        col1.setClassName(COLUMN_CLASS_NAME);
-
-        row1.setColumns(List.of(col1));
-        mainPanel.setRows(List.of(row1));
-
-
-        // Init form answers
-        formResponse = new CustomFormResponse();
-        Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
-        CustomFieldAnswerSelectOneFromFieldCode typeAnswer = new CustomFieldAnswerSelectOneFromFieldCode();
-        typeAnswer.setHasBeenModified(false);
-        answers.put(typeField, typeAnswer);
-        formResponse.setAnswers(answers);
+        // Init system form answers
+        formResponse = initializeFormResponse(detailsForm, unit);
 
     }
+
+    @Override
+    public String display() {
+        return "";
+    }
+
+    @Override
+    public String ressourceUri() {
+        return "/recording-unit/new";
+    }
+
 
     private void reset() {
         unit = null;
         actionUnit = null;
         formResponse = null;
-        mainPanel = null;
         lazyDataModel = null;
     }
 
-    public void init(RecordingUnitInActionUnitLazyDataModel lazyDataModel) {
+    public void init(BaseRecordingUnitLazyDataModel lazyDataModel) {
         reset();
         unit = new RecordingUnit();
-        actionUnit = lazyDataModel.getActionUnit();
-        unit.setCreatedByInstitution(actionUnit.getCreatedByInstitution());
+        // Attempt safe cast to access getActionUnit()
+        if (lazyDataModel instanceof RecordingUnitInActionUnitLazyDataModel typedModel) {
+            actionUnit = typedModel.getActionUnit();
+            unit.setCreatedByInstitution(actionUnit.getCreatedByInstitution());
+            unit.setActionUnit(actionUnit);
+            unit.setCreatedByInstitution(actionUnit.getCreatedByInstitution());
+        }
+        else {
+            unit.setCreatedByInstitution(sessionSettingsBean.getSelectedInstitution());
+        }
         unit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
         this.lazyDataModel = lazyDataModel;
         unit.setActionUnit(actionUnit);
-        initForm();
+        unit.setExcavators(List.of(sessionSettingsBean.getAuthenticatedUser()));
+        unit.setAuthors(List.of(sessionSettingsBean.getAuthenticatedUser()));
+        unit.setStartDate(OffsetDateTime.now());
+        initForms();
     }
 
     public void create() {
 
         // Recupération des champs systeme
         // type
-        CustomFieldAnswerSelectOneFromFieldCode typeAnswer = (CustomFieldAnswerSelectOneFromFieldCode) formResponse.getAnswers().get(typeField);
-        unit.setType(typeAnswer.getValue());
+        //CustomFieldAnswerSelectOneFromFieldCode typeAnswer = (CustomFieldAnswerSelectOneFromFieldCode) formResponse.getAnswers().get(typeField);
+        //unit.setType(typeAnswer.getValue());
         unit.setValidated(false);
         try {
             unit = recordingUnitService.save(unit, unit.getType(), List.of(), List.of(), List.of());
@@ -156,9 +265,6 @@ public class NewRecordingUnitBean implements Serializable {
     public void createAndOpen() {
 
         // Recupération des champs systeme
-        // type
-        CustomFieldAnswerSelectOneFromFieldCode typeAnswer = (CustomFieldAnswerSelectOneFromFieldCode) formResponse.getAnswers().get(typeField);
-        unit.setType(typeAnswer.getValue());
         unit.setValidated(false);
         try {
             unit = recordingUnitService.save(unit, unit.getType(), List.of(), List.of(), List.of());

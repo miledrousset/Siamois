@@ -44,7 +44,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
-public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEntity<T, H>  {
+public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEntity<T>  {
 
     // Deps
     protected final transient DocumentCreationBean documentCreationBean;
@@ -72,6 +72,10 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
 
     // Gestion du formulaire via form layout
     protected CustomForm overviewForm;
+
+    public abstract void init();
+
+    public abstract List<Person> authorsAvailable();
 
     public static final Vocabulary SYSTEM_THESO;
 

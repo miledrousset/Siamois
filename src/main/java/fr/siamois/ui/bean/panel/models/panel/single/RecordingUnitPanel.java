@@ -408,7 +408,7 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
 
 
         } catch (RuntimeException e) {
-            this.errorMessage = "Failed to load spatial unit: " + e.getMessage();
+            this.errorMessage = "Failed to load recording unit: " + e.getMessage();
         }
 
 

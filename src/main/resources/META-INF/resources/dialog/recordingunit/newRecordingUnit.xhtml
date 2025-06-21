@@ -20,13 +20,12 @@
                 </div>
             </f:facet>
             <div class="ui-panel recording-unit-panel">
-                <ui:include src="/pages/shared/form/customFormPanelContent.xhtml">
-                    <ui:param name="bean" value="#{newRecordingUnitBean}"/>
-                    <ui:param name="customFormPanel" value="#{newRecordingUnitBean.mainPanel}"/>
+                <ui:include src="/pages/shared/form/customForm.xhtml">
+                    <ui:param name="panelModel" value="#{newRecordingUnitBean}"/>
+                    <ui:param name="layout" value="#{newRecordingUnitBean.detailsForm.layout}"/>
                     <ui:param name="readOnly" value="#{false}"/>
                     <ui:param name="prefix" value="newRecordingUnit"/>
-                    <ui:param name="updateTargetsOnBlur" value="newRecordingUnitForm"/>
-                    <ui:param name="statusIndex" value="0"/>
+                    <ui:param name="panelId" value="newRecordingUnitForm:customFormPanel-newRecordingUnit-0"/>
                 </ui:include>
             </div>
 
