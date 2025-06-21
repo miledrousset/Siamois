@@ -9,6 +9,11 @@
             styleClass="mr-2 recording-unit-type-chip"/>
     <span>#{panelModel.titleCodeOrTitle}</span>
 
+    <p:chip
+            label="#{panelModel.unit.author.displayName()}"
+            icon="bi bi-person"
+            styleClass="mr-2 recording-unit-type-chip"/>
+
     <p:chip rendered="#{not panelModel.unit.validated}" label="Non validé"
             styleClass="mr-2 error-chip"
             />

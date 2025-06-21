@@ -579,7 +579,17 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
 
     @Override
     public void cancelChanges() {
-
+        unit.setSpatialUnit(backupClone.getSpatialUnit());
+        unit.setThirdType(backupClone.getThirdType());
+        unit.setSecondaryType(backupClone.getSecondaryType());
+        unit.setArk(backupClone.getArk());
+        unit.setType(backupClone.getType());
+        unit.setStartDate(backupClone.getStartDate());
+        unit.setEndDate(backupClone.getEndDate());
+        unit.setAuthors(backupClone.getAuthors());
+        unit.setExcavators(backupClone.getExcavators());
+        hasUnsavedModifications = false;
+        initForms();
     }
 
     @Override

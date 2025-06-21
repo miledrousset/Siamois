@@ -108,12 +108,12 @@ public class NavBean implements Serializable {
 
     public List<Bookmark> getBookmarkedPanels() {
         if (bookmarkedPanels == null) {
-            bookmarkedPanels = bookmarkService.findAll(sessionSettingsBean.getUserInfo());
+            reloadBookmarkedPanels();
         }
         return bookmarkedPanels;
     }
 
-    public void reloadBookarkedPanels() {
+    public void reloadBookmarkedPanels() {
         bookmarkedPanels = bookmarkService.findAll(sessionSettingsBean.getUserInfo());
     }
 
@@ -161,7 +161,7 @@ public class NavBean implements Serializable {
         else {
             bookmarkRecordingUnit(fullIdentifier);
         }
-        reloadBookarkedPanels();
+        reloadBookmarkedPanels();
     }
 
     public Boolean isRecordingUnitBookmarkedByUser(String fullIdentifier) {
@@ -179,7 +179,7 @@ public class NavBean implements Serializable {
         else {
             addToBookmarkedPanels(panel);
         }
-        reloadBookarkedPanels();
+        reloadBookmarkedPanels();
     }
 
     @EventListener(LoginEvent.class)
