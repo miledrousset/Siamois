@@ -2,6 +2,7 @@ package fr.siamois.domain.services.recordingunit;
 
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.exceptions.recordingunit.MaxRecordingUnitIdentifierReached;
 import fr.siamois.domain.models.exceptions.recordingunit.RecordingUnitNotFoundException;
@@ -13,6 +14,7 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
 import fr.siamois.domain.services.form.CustomFormResponseService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
+import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.recordingunit.RecordingUnitRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
@@ -22,8 +24,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Service to manage RecordingUnit
@@ -37,14 +41,17 @@ public class RecordingUnitService implements ArkEntityService {
     private final RecordingUnitRepository recordingUnitRepository;
     private final ConceptService conceptService;
     private final CustomFormResponseService customFormResponseService;
+    private final PersonRepository personRepository;
 
 
     public RecordingUnitService(RecordingUnitRepository recordingUnitRepository,
                                 ConceptService conceptService,
-                                CustomFormResponseService customFormResponseService) {
+                                CustomFormResponseService customFormResponseService,
+                                PersonRepository personRepository) {
         this.recordingUnitRepository = recordingUnitRepository;
         this.conceptService = conceptService;
         this.customFormResponseService = customFormResponseService;
+        this.personRepository = personRepository;
     }
 
 
@@ -130,18 +137,33 @@ public class RecordingUnitService implements ArkEntityService {
             // Spatial Unit
             managedRecordingUnit.setSpatialUnit(recordingUnit.getSpatialUnit());
 
+            // many to many (need managed instances)
+            managedRecordingUnit.setAuthors((List<Person>) personRepository.findAllById(
+                    recordingUnit.getAuthors().stream()
+                            .map(Person::getId)
+                            .toList()
+                    )
+            );
+            managedRecordingUnit.setExcavators((List<Person>) personRepository.findAllById(
+                            recordingUnit.getExcavators().stream()
+                                    .map(Person::getId)
+                                    .toList()
+                    )
+            );
+
             // Add other fields
             managedRecordingUnit.setAltitude(recordingUnit.getAltitude());
             managedRecordingUnit.setArk(recordingUnit.getArk());
             managedRecordingUnit.setDescription(recordingUnit.getDescription());
             managedRecordingUnit.setAuthor(recordingUnit.getAuthor());
-            managedRecordingUnit.setAuthors(recordingUnit.getAuthors());
-            managedRecordingUnit.setExcavators(recordingUnit.getExcavators());
             managedRecordingUnit.setEndDate(recordingUnit.getEndDate());
             managedRecordingUnit.setStartDate(recordingUnit.getStartDate());
             managedRecordingUnit.setSize(recordingUnit.getSize());
             managedRecordingUnit.setSecondaryType(recordingUnit.getSecondaryType());
             managedRecordingUnit.setThirdType(recordingUnit.getThirdType());
+            managedRecordingUnit.setValidated(recordingUnit.getValidated());
+            managedRecordingUnit.setValidatedAt(recordingUnit.getValidatedAt());
+            managedRecordingUnit.setValidatedBy(recordingUnit.getValidatedBy());
 
             CustomFormResponse managedFormResponse;
 
@@ -211,9 +233,7 @@ public class RecordingUnitService implements ArkEntityService {
             String global,
             String langCode,
             Pageable pageable
-    )
-
-    {
+    ) {
         Page<RecordingUnit> res = recordingUnitRepository.findAllByInstitutionAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
                 institutionId, fullIdentifier, categoryIds, global, langCode, pageable
         );
@@ -238,9 +258,7 @@ public class RecordingUnitService implements ArkEntityService {
             String global,
             String langCode,
             Pageable pageable
-    )
-
-    {
+    ) {
         Page<RecordingUnit> res = recordingUnitRepository.findAllByInstitutionAndByActionUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
                 institutionId, actionId, fullIdentifier, categoryIds, global, langCode, pageable
         );

@@ -257,10 +257,7 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
 
     public void create() {
 
-        // Recupération des champs systeme
-        // type
-        //CustomFieldAnswerSelectOneFromFieldCode typeAnswer = (CustomFieldAnswerSelectOneFromFieldCode) formResponse.getAnswers().get(typeField);
-        //unit.setType(typeAnswer.getValue());
+        updateJpaEntityFromFormResponse(formResponse, unit);
         unit.setValidated(false);
         try {
             unit = recordingUnitService.save(unit, unit.getType(), List.of(), List.of(), List.of());
@@ -277,25 +274,17 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
         MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getFullIdentifier());
     }
 
+    @Override
+    public String getAutocompleteClass() {
+        return "recording-unit-autocomplete";
+    }
+
     public void createAndOpen() {
 
-        // Recupération des champs systeme
-        unit.setValidated(false);
-        try {
-            unit = recordingUnitService.save(unit, unit.getType(), List.of(), List.of(), List.of());
-        }
-        catch(FailedRecordingUnitSaveException e) {
-            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
-            return ;
-        }
-
-        if(lazyDataModel != null) {
-            lazyDataModel.addRowToModel(unit);
-        }
+        create();
 
         // Open new panel
         flowBean.addRecordingUnitPanel(unit.getId());
 
-        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getFullIdentifier());
     }
 }

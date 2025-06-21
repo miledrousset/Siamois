@@ -602,6 +602,15 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
 
         updateJpaEntityFromFormResponse(formResponse, unit);
         unit.setValidated(validated);
+        if(Boolean.TRUE.equals(validated)) {
+            unit.setValidatedBy(sessionSettingsBean.getAuthenticatedUser());
+            unit.setValidatedAt(OffsetDateTime.now());
+        }
+        else {
+            unit.setValidatedBy(null);
+            unit.setValidatedAt(null);
+        }
+
         try {
             recordingUnitService.save(unit, unit.getType(), List.of(), List.of(), List.of());
         } catch (FailedRecordingUnitSaveException e) {
