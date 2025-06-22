@@ -185,9 +185,14 @@
                 <p:column responsivePriority="3">
                     <f:facet name="header">
                         <cellheader:withIcon icon="bi bi-geo-alt"
+
                                              text="#{langBean.msg('table.spatialunit.column.parents')}"/>
                     </f:facet>
-                    <cellbody:cellBodyThreeItems set="#{item.parents}"/>
+                    <cellbody:cellBodyThreeItems
+                            set="#{item.children}"
+                            panelModel="#{cc.attrs.panelModel}"
+                            onClickMethod="#{flowBean.goToSpatialUnitByIdNewPanel}"
+                    />
                 </p:column>
 
 
@@ -197,7 +202,11 @@
                         <cellheader:withIcon icon="bi bi-geo-alt"
                                              text="#{langBean.msg('table.spatialunit.column.children')}"/>
                     </f:facet>
-                    <cellbody:cellBodyThreeItems set="#{item.children}"/>
+                    <cellbody:cellBodyThreeItems
+                            set="#{item.children}"
+                            panelModel="#{cc.attrs.panelModel}"
+                            onClickMethod="#{flowBean.goToSpatialUnitByIdNewPanel}"
+                    />
                 </p:column>
 
                 <!-- Actions -->

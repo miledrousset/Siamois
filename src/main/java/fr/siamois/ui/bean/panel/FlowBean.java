@@ -26,6 +26,8 @@ import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.ui.lazydatamodel.BaseSpatialUnitLazyDataModel;
+import jakarta.el.MethodExpression;
+import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -303,5 +305,12 @@ public class FlowBean implements Serializable {
     public boolean userHasAddSpatialOrActionUnitPermission() {
         UserInfo info = sessionSettings.getUserInfo();
         return info.getUser().isSuperAdmin() || permissionService.isActionManager(info) || permissionService.isInstitutionManager(info);
+    }
+
+    public String invokeOnClick(MethodExpression method, Long id, AbstractPanel panelModel) {
+        if (method != null) {
+            method.invoke(FacesContext.getCurrentInstance().getELContext(), new Object[]{id, panelModel});
+        }
+        return null; // for commandLink action return
     }
 }

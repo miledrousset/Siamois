@@ -177,11 +177,12 @@
             <div id="read-write-switch" style="align-content: center; flex:1;
             text-align:center; background: var(--siamois-green-light-100);padding: 0.5em}">
                 <form:csrfform formId="readWriteSwitchForm">
-                    <p:selectOneButton value="#{flowBean.readWriteMode}" var="ic">
+                    <p:selectOneButton value="#{flowBean.readWriteMode}" var="ic"  >
                         <f:selectItem icon="" itemLabel="Lecture" itemValue="READ"/>
                         <f:selectItem itemLabel="Edition" itemValue="WRITE"/>
 
-                        <p:ajax event="change" listener="#{flowBean.changeReadWriteMode()}" update="flow"/>
+                        <p:ajax event="change" listener="#{flowBean.changeReadWriteMode()}" update="flow"
+                                onstart="PF('buiContent').show()" oncomplete="PF('buiContent').hide()"/>
                     </p:selectOneButton>
                 </form:csrfform>
             </div>
