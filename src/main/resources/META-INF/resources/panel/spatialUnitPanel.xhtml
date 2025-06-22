@@ -13,7 +13,7 @@
     <p:staticMessage severity="error" summary="Error" closable="false"
                      detail="#{panelModel.spatialUnitErrorMessage}"
                      rendered="#{not empty panelModel.spatialUnitErrorMessage}"/>
-    <h:panelGroup id="contentPanel" rendered="#{panelModel.unit != null}">
+    <h:panelGroup id="spatialUnitContentPanel" rendered="#{panelModel.unit != null}">
 
 
         <h:form id="spatialUnitForm">
@@ -192,8 +192,6 @@
     <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
         <h:outputText value="Version restaurée"/>
     </p:dialog>
-
-    <ui:include src="/dialog/document/newDocument.xhtml"/>
 
 
 </ui:fragment>

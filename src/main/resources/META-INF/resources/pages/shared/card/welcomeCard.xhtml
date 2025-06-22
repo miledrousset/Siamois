@@ -35,9 +35,9 @@
                                      id="openUnitListPanelButton"
                                      onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock();handleScrollToTop();"
                                      action="#{cc.attrs.btnAction}" disabled="#{empty cc.attrs.btnAction}" update="flow"/>
-                    <p:commandButton value='#{langBean.msg("common.action.new")}' icon="bi bi-plus-square" styleClass="#{cc.attrs.btnStyleClass}"
+                    <p:commandButton value='#{langBean.msg("common.action.create")}' icon="bi bi-plus-square" styleClass="#{cc.attrs.btnStyleClass}"
                                      action="#{cc.attrs.btnNewAction}"
-                                     rendered="#{not empty cc.attrs.btnAction}"
+                                     rendered="#{not empty cc.attrs.btnNewAction}"
                                      update="flow"
                                      id="openNewUnitPanelButton"
                                      oncomplete="handleScrollToTop();"

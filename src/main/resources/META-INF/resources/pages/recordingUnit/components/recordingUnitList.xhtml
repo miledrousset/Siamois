@@ -110,15 +110,7 @@
 
 
                         <p:toolbarGroup align="right">
-                            <p:commandButton value="#{langBean.msg('table.add')}" icon="bi bi-plus-square"
-                                             id="newRecordingUnitButton"
-                                             disabled="#{cc.attrs.disableAddBtn}"
-                                             actionListener="#{newRecordingUnitBean.init(cc.attrs.lazyDataModel)}"
-                                             oncomplete="PF('newRecordingUnitDiag').show()"
-                                             update="newRecordingUnitForm"
-                                             rendered="#{flowBean.readWriteMode == 'WRITE'}"
-                                             style="margin-right: .5rem">
-                            </p:commandButton>
+                            <cc:renderFacet name="rightToolbar"/>
                         </p:toolbarGroup>
                     </p:toolbar>
 

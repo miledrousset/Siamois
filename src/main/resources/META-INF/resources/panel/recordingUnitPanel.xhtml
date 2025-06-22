@@ -13,7 +13,7 @@
     <p:staticMessage severity="error" summary="Error" closable="false"
                      detail="#{panelModel.errorMessage}"
                      rendered="#{not empty panelModel.errorMessage}"/>
-    <h:panelGroup id="contentPanel" rendered="#{panelModel.unit != null}">
+    <h:panelGroup id="recordingUnitContentPanel" rendered="#{panelModel.unit != null}">
 
 
         <h:form id="recordingUnitForm">
@@ -160,7 +160,7 @@
         <h:outputText value="Version restaurée"/>
     </p:dialog>
 
-    <ui:include src="/dialog/document/newDocument.xhtml"/>
+
 
 
 </ui:fragment>
