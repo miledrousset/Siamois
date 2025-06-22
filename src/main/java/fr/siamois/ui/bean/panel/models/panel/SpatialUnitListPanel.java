@@ -14,8 +14,6 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.ui.lazydatamodel.SpatialUnitLazyDataModel;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.beans.factory.ObjectProvider;
@@ -33,8 +31,6 @@ public class SpatialUnitListPanel extends AbstractListPanel<SpatialUnit> {
 
     // locals
     private String spatialUnitListErrorMessage;
-
-
 
     public SpatialUnitListPanel(SpatialUnitService spatialUnitService,
                                 PersonService personService,

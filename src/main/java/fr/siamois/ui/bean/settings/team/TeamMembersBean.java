@@ -1,13 +1,12 @@
 package fr.siamois.ui.bean.settings.team;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
-import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.team.TeamMemberRelation;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.ui.bean.LabelBean;
+import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -39,6 +37,7 @@ public class TeamMembersBean implements SettingsDatatableBean {
     private final transient PendingPersonService pendingPersonService;
     private final SessionSettingsBean sessionSettingsBean;
     private final RedirectBean redirectBean;
+    private final LangBean langBean;
     private ActionUnit actionUnit;
 
     private String searchInput;
@@ -52,7 +51,7 @@ public class TeamMembersBean implements SettingsDatatableBean {
                            PersonService personService,
                            PendingPersonService pendingPersonService,
                            SessionSettingsBean sessionSettingsBean,
-                           RedirectBean redirectBean) {
+                           RedirectBean redirectBean, LangBean langBean) {
         this.labelBean = labelBean;
         this.institutionService = institutionService;
         this.userDialogBean = userDialogBean;
@@ -60,6 +59,7 @@ public class TeamMembersBean implements SettingsDatatableBean {
         this.pendingPersonService = pendingPersonService;
         this.sessionSettingsBean = sessionSettingsBean;
         this.redirectBean = redirectBean;
+        this.langBean = langBean;
     }
 
     public void reset() {
@@ -76,41 +76,32 @@ public class TeamMembersBean implements SettingsDatatableBean {
 
     @Override
     public void add() {
-        userDialogBean.init("Ajouter des membres", "Ajouter", actionUnit.getCreatedByInstitution(), this::saveAll);
-        userDialogBean.setShouldRenderRoleField(true);
+        userDialogBean.init("Ajouter des membres",
+                langBean.msg("organisationSettings.managers.add"),
+                actionUnit.getCreatedByInstitution(),
+                true,
+                this::save);
         PrimeFaces.current().ajax().update("userDialogBeanForm:newMemberDialog");
         PrimeFaces.current().executeScript("PF('newMemberDialog').show();");
     }
 
-    private void save(UserDialogBean.UserMailRole userMailRole) {
-        if (userMailRole.getEmail() == null || userMailRole.getEmail().isEmpty()) {
-            return; // Skip saving if email is empty
-        }
-
-        Optional<Person> optPerson = personService.findByEmail(userMailRole.getEmail());
-        if (optPerson.isPresent()) {
-            Person person = optPerson.get();
-            if (institutionService.addPersonToActionUnit(actionUnit, person, userMailRole.getRole())) {
-                log.debug("Added person {} with role {} to action unit {}", person.getName(), userMailRole.getRole(), actionUnit.getName());
-            } else {
-                log.warn("Person {} is already a member of action unit {}", person.getName(), actionUnit.getName());
-            }
+    private void addPersonToActionunit(UserDialogBean.PersonRole saved) {
+        if (institutionService.addPersonToActionUnit(actionUnit, saved.person(), saved.role())) {
+            log.debug("Added person to action unit");
         } else {
-            PendingPerson pendingPerson = pendingPersonService.createOrGetPendingPerson(userMailRole.getEmail());
-            if (pendingPersonService.sendPendingActionMemberInvite(pendingPerson, actionUnit, userMailRole.getRole(), sessionSettingsBean.getLanguageCode())) {
-                log.debug("Sent invite to pending person {} for action unit {}", pendingPerson.getEmail(), actionUnit.getName());
-            } else {
-                log.warn("Pending person {} already has an invite for action unit {}", pendingPerson.getEmail(), actionUnit.getName());
-            }
+            log.debug("Person was not added to action unit, maybe already exists");
         }
-
     }
 
-    public void saveAll() {
-        for (UserDialogBean.UserMailRole userMailRole :  userDialogBean.getInputUserMailRoles()) {
-            save(userMailRole);
+    public void save() {
+        List<UserDialogBean.PersonRole> result = userDialogBean.createOrSearchPersons();
+        for (UserDialogBean.PersonRole saved : result) {
+            addPersonToActionunit(saved);
+            TeamMemberRelation relation = new TeamMemberRelation(actionUnit, saved.person());
+            memberRelations.add(relation);
+            filteredMemberRelations.add(relation);
         }
-        PrimeFaces.current().executeScript("PF('newMemberDialog').hide();");
+        userDialogBean.exit();
     }
 
     @Override

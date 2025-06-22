@@ -53,11 +53,12 @@
                                 widgetVar="actionUnitMemberDatatable"
                                 rowKey="#{relation.id}"
                         >
-
+                            <p:autoUpdate/>
                             <p:column headerText="#{langBean.msg('common.label.user')}">
                                 <div style="display: flex; flex-direction: column">
                                     <strong>#{relation.person.displayName()}</strong>
-                                    <p>#{relation.person.email}</p>
+                                    <p style="margin-bottom: 0; font-style: italic">#{relation.person.email}</p>
+                                    <p>#{relation.person.username}</p>
                                 </div>
                             </p:column>
                             <p:column headerText="#{langBean.msg('common.label.role')}">

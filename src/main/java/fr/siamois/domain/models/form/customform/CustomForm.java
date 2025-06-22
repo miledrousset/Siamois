@@ -1,6 +1,6 @@
 package fr.siamois.domain.models.form.customform;
 
-import fr.siamois.converter.CustomFormLayoutConverter;
+import fr.siamois.domain.services.attributeconverter.CustomFormLayoutConverter;
 import jakarta.persistence.*;
 import lombok.Data;
 

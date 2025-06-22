@@ -1,4 +1,4 @@
-package fr.siamois.domain.services.publisher;
+package fr.siamois.domain.events.publisher;
 
 import fr.siamois.domain.models.events.LoginEvent;
 import org.springframework.context.ApplicationEventPublisher;

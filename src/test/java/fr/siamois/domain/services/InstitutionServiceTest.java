@@ -563,4 +563,23 @@ class InstitutionServiceTest {
         verify(teamMemberRepository, never()).save(any(TeamMemberRelation.class));
     }
 
+    @Test
+    void findManagersOf_shouldReturnAllManagers() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        Person manager1 = new Person();
+        manager1.setId(1L);
+
+        Person manager2 = new Person();
+        manager2.setId(2L);
+
+        institution.getManagers().add(manager1);
+        institution.getManagers().add(manager2);
+
+        Set<Person> result = institutionService.findManagersOf(institution);
+
+        assertThat(result).containsExactlyInAnyOrder(manager1, manager2);
+    }
+
 }

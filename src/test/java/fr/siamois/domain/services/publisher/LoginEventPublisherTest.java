@@ -1,6 +1,7 @@
 package fr.siamois.domain.services.publisher;
 
 
+import fr.siamois.domain.events.publisher.LoginEventPublisher;
 import fr.siamois.domain.models.events.LoginEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

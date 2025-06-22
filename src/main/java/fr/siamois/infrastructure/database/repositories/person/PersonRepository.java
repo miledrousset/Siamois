@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface PersonRepository extends CrudRepository<Person, Long> {
@@ -50,14 +51,6 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
     )
     List<Person> findAllInstitutionManagers();
 
-    @Query(
-            nativeQuery = true,
-            value = "SELECT p.* FROM person p " +
-                    "JOIN person_role_institution pri ON pri.fk_person_id = p.person_id " +
-                    "WHERE pri.fk_institution_id = :institutionId"
-    )
-    List<Person> findMembersOfInstitution(Long institutionId);
-
     @Modifying
     @Transactional
     @Query(
@@ -74,4 +67,22 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
     List<Person> findAllSuperAdmin();
 
     Optional<Person> findByEmailIgnoreCase(String email);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT p.* FROM person p " +
+                    "WHERE p.mail LIKE CONCAT('%', :input, '%') " +
+                    "ORDER BY similarity(p.mail, :input) DESC " +
+                    "LIMIT 10"
+    )
+    Set<Person> findClosestByEmailLimit10(String input);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT p.* FROM person p " +
+                    "WHERE p.username LIKE CONCAT('%', :input, '%') " +
+                    "ORDER BY similarity(p.username, :input) DESC " +
+                    "LIMIT 10"
+    )
+    Set<Person> findClosestByUsernameLimit10(String input);
 }

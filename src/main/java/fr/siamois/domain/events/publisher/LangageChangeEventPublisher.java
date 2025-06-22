@@ -1,20 +1,20 @@
-package fr.siamois.domain.services.publisher;
+package fr.siamois.domain.events.publisher;
 
-import fr.siamois.domain.models.events.InstitutionChangeEvent;
+import fr.siamois.domain.models.events.LangageChangeEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
-public class InstitutionChangeEventPublisher {
+public class LangageChangeEventPublisher {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public InstitutionChangeEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+    public LangageChangeEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public void publishInstitutionChangeEvent() {
-        InstitutionChangeEvent event = new InstitutionChangeEvent(this);
+        LangageChangeEvent event = new LangageChangeEvent(this);
         applicationEventPublisher.publishEvent(event);
     }
 

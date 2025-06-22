@@ -1,5 +1,6 @@
 package fr.siamois.domain.services.publisher;
 
+import fr.siamois.domain.events.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.domain.models.events.InstitutionChangeEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
