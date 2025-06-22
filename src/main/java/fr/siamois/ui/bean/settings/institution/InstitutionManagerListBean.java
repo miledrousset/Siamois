@@ -87,7 +87,7 @@ public class InstitutionManagerListBean implements SettingsDatatableBean {
     @Override
     public void add() {
         log.trace("Creating manager");
-        userDialogBean.init(langBean.msg("organisationSettings.managers.add"), langBean.msg("organisationSettings.managers.add"), institution, this::save);
+        userDialogBean.init(langBean.msg("organisationSettings.managers.dialog.label"), langBean.msg("organisationSettings.managers.add"), institution, this::save);
         PrimeFaces.current().ajax().update("newMemberDialog");
         PrimeFaces.current().executeScript("PF('newMemberDialog').show();");
     }

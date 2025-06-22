@@ -68,7 +68,7 @@ public class InstitutionActionManagerListBean implements SettingsDatatableBean {
 
     @Override
     public void add() {
-        userDialogBean.init(langBean.msg("organisationSettings.managers.add"),
+        userDialogBean.init(langBean.msg("organisationSettings.managers.dialog.label"),
                 langBean.msg("organisationSettings.managers.add"),
                 institution, this::saveUsers);
 
