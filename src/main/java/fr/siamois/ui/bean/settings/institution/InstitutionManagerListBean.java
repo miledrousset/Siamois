@@ -1,7 +1,6 @@
 package fr.siamois.ui.bean.settings.institution;
 
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.auth.pending.PendingPerson;
 import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.services.InstitutionService;
@@ -11,7 +10,6 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
 import fr.siamois.ui.bean.settings.SettingsDatatableBean;
-import fr.siamois.utils.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +18,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
-import java.time.OffsetDateTime;
 import java.util.*;
 
 import static fr.siamois.utils.MessageUtils.displayInfoMessage;
@@ -62,34 +59,9 @@ public class InstitutionManagerListBean implements SettingsDatatableBean {
 
     public void init(Institution institution) {
         this.institution = institution;
-        refMembers = new HashSet<>();
+        refMembers = new HashSet<>(institutionService.findManagersOf(institution));
         roles = new HashMap<>();
-        for (Person member : institutionService.findMembersOf(institution)) {
-            String name = strRoleOf(member);
-            if (!name.equalsIgnoreCase("ERROR")) {
-                refMembers.add(member);
-                roles.put(member, name);
-            }
-        }
         members = new HashSet<>(refMembers);
-    }
-
-    private boolean userIsManagerOf(Institution institution, Person p) {
-        return institutionService.isManagerOf(institution, p);
-    }
-
-    private static boolean userIsSuperAdmin(Person p) {
-        return p.isSuperAdmin();
-    }
-
-    public String strRoleOf(Person person) {
-        if (userIsSuperAdmin(person)) {
-            return "Administrateur";
-        } else if (userIsManagerOf(institution, person)) {
-            return "Responsable";
-        } else {
-            return "ERROR";
-        }
     }
 
     @Override
@@ -120,34 +92,21 @@ public class InstitutionManagerListBean implements SettingsDatatableBean {
         PrimeFaces.current().executeScript("PF('newMemberDialog').show();");
     }
 
-    private void saveUser(UserDialogBean.UserMailRole userMailRole) {
-        Optional<Person> existingsUser = personService.findByEmail(userMailRole.getEmail());
-        if (existingsUser.isPresent()) {
-            boolean isAdded = institutionService.addToManagers(institution, existingsUser.get());
-            if (!isAdded) {
-                displayWarnMessage(langBean, "organisationSettings.error.manager", existingsUser.get().getEmail(), institution.getName());
-                PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
-                return;
-            }
-            displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", existingsUser.get().getEmail());
-            return;
-        }
-
-        PendingPerson pendingPerson = pendingPersonService.createOrGetPendingPerson(userMailRole.getEmail());
-        if (pendingPersonService.sendPendingManagerInstitutionInvite(pendingPerson, institution, true, sessionSettingsBean.getLanguageCode())) {
-            displayInfoMessage(langBean, "organisationSettings.action.sendInvite", pendingPerson.getEmail());
+    private void addPersonToInstitution(UserDialogBean.PersonRole saved) {
+        if (institutionService.addToManagers(institution, saved.person())) {
+            displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", saved.person().getUsername());
         } else {
-            displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", pendingPerson.getEmail());
+            displayWarnMessage(langBean, "organisationSettings.error.manager", saved.person().getEmail(), institution.getName());
+            PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
         }
-
     }
 
     public void save() {
-        for (UserDialogBean.UserMailRole userMailRole : userDialogBean.getInputUserMailRoles()) {
-            if (!userMailRole.isEmpty()) {
-                log.trace("Attempting to add user: {}", userMailRole.getEmail());
-                saveUser(userMailRole);
-            }
+        List<UserDialogBean.PersonRole> saved = userDialogBean.createOrSearchPersons();
+        for (UserDialogBean.PersonRole personRole : saved) {
+            addPersonToInstitution(personRole);
+            refMembers.add(personRole.person());
+            members.add(personRole.person());
         }
         userDialogBean.exit();
     }

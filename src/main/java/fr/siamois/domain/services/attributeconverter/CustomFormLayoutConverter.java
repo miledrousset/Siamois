@@ -1,4 +1,4 @@
-package fr.siamois.converter;
+package fr.siamois.domain.services.attributeconverter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

@@ -1,6 +1,5 @@
 package fr.siamois.domain.services.person;
 
-import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.auth.pending.PendingActionUnitAttribution;
 import fr.siamois.domain.models.auth.pending.PendingInstitutionInvite;
@@ -20,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -168,6 +167,7 @@ public class PersonService {
         PasswordVerifier verifier = findPasswordVerifier().orElseThrow(() -> new IllegalStateException("Password verifier is not defined"));
 
         person.setPassword(newPassword);
+        person.setPassToModify(false);
 
         verifier.verify(person);
 
@@ -203,5 +203,17 @@ public class PersonService {
 
     public Optional<Person> findByEmail(String email) {
         return personRepository.findByEmailIgnoreCase(email);
+    }
+
+    public List<Person> findClosestByUsernameOrEmail(String usernameOrMailInput) {
+        if (usernameOrMailInput == null || usernameOrMailInput.isBlank()) {
+            return List.of();
+        }
+
+        Set<Person> result = new HashSet<>();
+        result.addAll(personRepository.findClosestByEmailLimit10(usernameOrMailInput));
+        result.addAll(personRepository.findClosestByUsernameLimit10(usernameOrMailInput));
+
+        return result.stream().toList();
     }
 }

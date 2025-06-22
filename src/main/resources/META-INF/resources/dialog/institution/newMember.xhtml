@@ -1,10 +1,10 @@
 <ui:fragment xmlns="http://www.w3.org/1999/xhtml"
              xmlns:ui="http://java.sun.com/jsf/facelets"
              xmlns:p="http://primefaces.org/ui"
-             xmlns:h="http://java.sun.com/jsf/html"
-             xmlns:input="http://java.sun.com/jsf/composite/pages/shared/input"
-             xmlns:f="http://java.sun.com/jsf/core"
              xmlns:form="http://xmlns.jcp.org/jsf/composite/pages/shared/form"
+             xmlns:f="http://java.sun.com/jsf/core"
+             xmlns:h="http://java.sun.com/jsf/html"
+             xmlns:input="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
 >
 
     <p:dialog
@@ -24,27 +24,100 @@
             <form:csrfform formId="userDialogBeanForm">
                 <section>
                     <p:tabView>
-                        <p:tab title="Inviter des utilisateurs individuellement">
-                            <p:dataTable id="userTable" var="user" value="#{userDialogBean.inputUserMailRoles}" editable="true" style="width: 100%">
-                                <p:column headerText="Adresse email">
-                                    <p:inputText value="#{user.email}" placeholder="john.doe@mail.com"/>
-                                </p:column>
-                                <p:column headerText="Rôle" rendered="#{userDialogBean.shouldRenderRoleField}">
-                                    <input:conceptAutocomplete
-                                            selectedConcept="#{user.role}"
-                                            editConceptUrl="#{userDialogBean.parentConceptUrl()}"
-                                            completeMethod="#{userDialogBean.autocompleteConcept}"
-                                            required="false"
-                                    />
-                                </p:column>
-                                <p:column rendered="#{userDialogBean.inputUserMailRoles.size() > 1}">
-                                    <p:commandButton value="-" action="#{userDialogBean.removeRow(user)}" update="@form"/>
-                                </p:column>
-                            </p:dataTable>
-                            <p:commandButton value="+ Ajouter d'autres utilisateurs" action="#{userDialogBean.addRow()}" update="@form"/>
-                        </p:tab>
-                        <p:tab title="Importer un groupe d'utilisateur" disabled="true">
+                        <p:ajax event="tabChange" update="@form" listener="#{userDialogBean.tabChanged}"/>
+                        <p:tab title="Ajouter des utilisateurs existants" id="addExistingUser">
+                            <p:outputLabel value="Email ou nom d'utilisateur"/>
+                            <p:autoComplete id="userSelect"
+                                            value="#{userDialogBean.selectedExistingPerson}"
+                                            completeMethod="#{userDialogBean.searchUser}"
+                                            var="user"
+                                            itemLabel="#{user.displayName()}"
+                                            itemValue="#{user}"
+                                            converter="#{personConverter}">
 
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="ID"/>
+                                    </f:facet>
+                                    <h:outputText value="#{user.id}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Username"/>
+                                    </f:facet>
+                                    <h:outputText value="#{user.username}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Email"/>
+                                    </f:facet>
+                                    <h:outputText value="#{user.email}"/>
+                                </p:column>
+
+
+                            </p:autoComplete>
+                            <h:panelGroup rendered="#{userDialogBean.shouldRenderRoleField}">
+                                <label class="col-lg-4 col-form-label" for="description">Votre rôle</label>
+                                <div class="col-lg-6 ms-auto">
+                                    <input:conceptAutocomplete completeMethod="#{userDialogBean.completeRole}"
+                                                               editConceptUrl="#{userDialogBean.conceptCompleteUrl}"
+                                                               selectedConcept="#{userDialogBean.currentSelectedRole}"
+                                                               required="false"
+                                    />
+                                </div>
+                            </h:panelGroup>
+                            <p:commandButton value="Ajouter" action="#{userDialogBean.addToList()}" icon="bi bi-plus" update="@form"/>
+                            <h:panelGroup rendered="#{userDialogBean.personSelectedList.size() > 0}">
+                                <h4>Utilisateurs à ajouter</h4>
+                                <ui:repeat value="#{userDialogBean.personSelectedList}" var="personRole">
+                                    <article>
+                                        <p:outputLabel value="#{personRole.person().displayName()} (#{personRole.person().username}) - #{labelBean.findLabelOf(personRole.role())}"/>
+                                        <p:commandButton icon="bi bi-trash"
+                                                         action="#{userDialogBean.removeFromList(user)}"
+                                                         update="@form"
+                                                         styleClass="btn-danger"
+                                        />
+                                    </article>
+                                </ui:repeat>
+                            </h:panelGroup>
+                        </p:tab>
+                        <p:tab title="Créer un nouvel utilisateur" id="createNewUser">
+                            <h:panelGroup layout="block" styleClass="form-container">
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label class="col-form-label" for="firstName">Prénom</label>
+                                        <p:inputText placeholder="Jean" id="firstName" value="#{userDialogBean.firstname}"/>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="col-form-label" for="lastName">Nom</label>
+                                        <p:inputText placeholder="Dupont" id="lastName" value="#{userDialogBean.lastname}"/>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label class="col-form-label" for="username">Nom d'utilisateur</label>
+                                        <p:inputText id="username" placeholder="Username" value="#{userDialogBean.username}"/>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="col-form-label" for="email">Email</label>
+                                        <p:inputText type="email" id="email" placeholder="jean.dupont@mail.com" value="#{userDialogBean.email}"/>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="password">Mot de passe temporaire</label>
+                                        <p:inputText type="password" id="password" placeholder="Mot de passe" value="#{userDialogBean.password}"/>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="confirmPassword">Confirmer le mot de passe</label>
+                                        <p:inputText type="password" id="confirmPassword" placeholder="Confirmation du mot de passe" value="#{userDialogBean.confirmPassword}"/>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+                        </p:tab>
+                        <p:tab title="Importer un groupe d'utilisateur" disabled="true" id="importUserGroup">
                         </p:tab>
                     </p:tabView>
                 </section>

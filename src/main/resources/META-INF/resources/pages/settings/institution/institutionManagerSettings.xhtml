@@ -39,15 +39,13 @@
                         widgetVar="institutionManagerDatatable"
                         rowKey="#{member.id}"
                 >
-
+                    <p:autoUpdate/>
                     <p:column headerText="#{langBean.msg('common.label.user')}">
                         <div style="display: flex; flex-direction: column">
                             <strong>#{member.displayName()}</strong>
-                            <p>#{member.email}</p>
+                            <p style="margin-bottom: 0; font-style: italic">#{member.email}</p>
+                            <p>#{member.username}</p>
                         </div>
-                    </p:column>
-                    <p:column headerText="#{langBean.msg('common.label.role')}">
-                        <p:outputLabel value="#{institutionManagerListBean.roles.get(member)}"/>
                     </p:column>
                 </p:dataTable>
             </settings:datatable>
