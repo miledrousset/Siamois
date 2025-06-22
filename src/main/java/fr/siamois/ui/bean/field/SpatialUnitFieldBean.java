@@ -112,29 +112,6 @@ public class SpatialUnitFieldBean implements Serializable {
         fChildrenSpatialUnits = children;
     }
 
-    /**
-     * Save the spatial unit in the database.
-     * Display a message if the spatial unit already exists.
-     * Display a message if the spatial unit has been created.
-     *
-     * @throws IllegalStateException if the collections are not defined
-     */
-    public boolean save() {
-
-        try {
-            SpatialUnit saved = spatialUnitService.save(sessionSettingsBean.getUserInfo(), fName, selectedConcept, fParentsSpatialUnits);
-
-            MessageUtils.displayInfoMessage(langBean, "spatialunit.created", saved.getName());
-
-            redirectBean.redirectTo("/spatialunit/" + saved.getId());
-
-            return true;
-        } catch (SpatialUnitAlreadyExistsException e) {
-            log.error(e.getMessage(), e);
-            MessageUtils.displayErrorMessage(langBean, "commons.error.spatialunit.alreadyexist", fName);
-            return false;
-        }
-    }
 
     public String getUrlForSpatialUnitTypeFieldCode() {
         return getUrlForFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);

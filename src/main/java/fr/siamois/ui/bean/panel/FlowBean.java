@@ -24,6 +24,8 @@ import fr.siamois.ui.bean.panel.models.panel.*;
 import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
+import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
+import fr.siamois.ui.lazydatamodel.BaseSpatialUnitLazyDataModel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -173,6 +175,10 @@ public class FlowBean implements Serializable {
 
     public void addNewSpatialUnitPanel(AbstractPanel currentPanel) {
         addPanel(panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb()));
+    }
+
+    public void addNewSpatialUnitPanel(AbstractPanel currentPanel, BaseSpatialUnitLazyDataModel lazyModel) {
+        addPanel(panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb(),lazyModel));
     }
 
     public void addNewSpatialUnitPanel() {

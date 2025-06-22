@@ -26,6 +26,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service to manage SpatialUnit
@@ -123,8 +124,13 @@ public class SpatialUnitService implements ArkEntityService {
         return spatialUnitRepository.findAllOfInstitution(institution.getId());
     }
 
+    @Transactional
+    public SpatialUnit save(UserInfo info, SpatialUnit su) throws SpatialUnitAlreadyExistsException {
+        String name = su.getName();
+        Concept type = su.getCategory();
+        Set<SpatialUnit> parents = su.getParents();
+        Set<SpatialUnit> children = su.getChildren();
 
-    public SpatialUnit save(UserInfo info, String name, Concept type, List<SpatialUnit> parents) throws SpatialUnitAlreadyExistsException {
         Optional<SpatialUnit> optSpatialUnit = spatialUnitRepository.findByNameAndInstitution(name, info.getInstitution().getId());
         if (optSpatialUnit.isPresent())
             throw new SpatialUnitAlreadyExistsException(
@@ -149,6 +155,10 @@ public class SpatialUnitService implements ArkEntityService {
 
         for (SpatialUnit parent : parents) {
             spatialUnitRepository.addParentToSpatialUnit(spatialUnit.getId(), parent.getId());
+        }
+
+        for (SpatialUnit child : children) {
+            spatialUnitRepository.addParentToSpatialUnit(child.getId(), spatialUnit.getId());
         }
 
         return spatialUnit;

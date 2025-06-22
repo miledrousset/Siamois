@@ -3,6 +3,7 @@ package fr.siamois.ui.lazydatamodel;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.ui.bean.LangBean;
+import lombok.Getter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -10,6 +11,7 @@ public class SpatialUnitChildrenLazyDataModel extends BaseSpatialUnitLazyDataMod
 
     private final transient SpatialUnitService spatialUnitService;
     private final transient LangBean langBean;
+    @Getter
     private final transient SpatialUnit spatialUnit;
 
     public SpatialUnitChildrenLazyDataModel(SpatialUnitService spatialUnitService

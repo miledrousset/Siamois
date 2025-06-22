@@ -259,6 +259,7 @@ public interface SpatialUnitRepository extends JpaRepository<SpatialUnit, Long> 
     )
     void addParentToSpatialUnit(Long childId, Long parentId);
 
+
     @Query(
             nativeQuery = true,
             value = "SELECT su.* FROM spatial_unit su " +

@@ -8,6 +8,7 @@ import fr.siamois.ui.bean.panel.models.panel.list.SpatialUnitListPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
+import fr.siamois.ui.lazydatamodel.BaseSpatialUnitLazyDataModel;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
@@ -114,6 +115,23 @@ public class PanelFactory {
 
         return new NewSpatialUnitPanel.NewSpatialUnitPanelBuilder(newSpatialUnitPanelProvider)
                 .breadcrumb(bc)
+                .build();
+
+    }
+
+    public NewSpatialUnitPanel createNewSpatialUnitPanel(PanelBreadcrumb currentBreadcrumb, BaseSpatialUnitLazyDataModel lazyModel) {
+
+        PanelBreadcrumb bc = null;
+
+        if (currentBreadcrumb != null) {
+            bc = new PanelBreadcrumb();
+            bc.getModel().getElements().clear();
+            bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+        }
+
+        return new NewSpatialUnitPanel.NewSpatialUnitPanelBuilder(newSpatialUnitPanelProvider)
+                .breadcrumb(bc)
+                .lazyModel(lazyModel)
                 .build();
 
     }
