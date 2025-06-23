@@ -28,7 +28,7 @@
                     searchInputTextValue="#{institutionActionManagerListBean.searchInput}"
                     description="#{langBean.msg('organisationSettings.actionManagers')}"
                     renderCreateButton="true"
-                    createButtonLabel="#{langBean.msg('organisationSettings.managers.add')}"
+                    createButtonLabel="#{langBean.msg('organisationSettings.managers.dialog.label')}"
             >
                 <p:dataTable
                         id="managerDatatable"
@@ -38,11 +38,12 @@
                         widgetVar="institutionManagerDatatable"
                         rowKey="#{relation.id}"
                 >
-
+                    <p:autoUpdate/>
                     <p:column headerText="#{langBean.msg('common.label.user')}">
                         <div style="display: flex; flex-direction: column">
                             <strong>#{relation.person.displayName()}</strong>
-                            <p>#{relation.person.email}</p>
+                            <p style="margin-bottom: 0; font-style: italic">#{relation.person.email}</p>
+                            <p style="margin-bottom: 0">#{relation.person.username}</p>
                         </div>
                     </p:column>
                     <p:column headerText="#{langBean.msg('organisationSettings.managers.adddate')}">

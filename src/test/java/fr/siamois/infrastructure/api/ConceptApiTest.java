@@ -9,7 +9,7 @@ import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.LabelDTO;
-import fr.siamois.models.exceptions.ErrorProcessingExpansionException;
+import fr.siamois.domain.models.exceptions.ErrorProcessingExpansionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

@@ -1,12 +1,12 @@
 package fr.siamois.ui.bean.settings;
 
+import fr.siamois.domain.events.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.services.InstitutionService;
-import fr.siamois.domain.services.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;

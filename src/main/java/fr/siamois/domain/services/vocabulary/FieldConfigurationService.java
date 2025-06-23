@@ -1,6 +1,7 @@
 package fr.siamois.domain.services.vocabulary;
 
 import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.exceptions.ErrorProcessingExpansionException;
 import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.institution.Institution;
@@ -15,7 +16,6 @@ import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
 import fr.siamois.infrastructure.database.repositories.FieldRepository;
 import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
-import fr.siamois.models.exceptions.ErrorProcessingExpansionException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;

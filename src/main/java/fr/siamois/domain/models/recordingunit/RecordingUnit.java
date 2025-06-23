@@ -9,7 +9,6 @@ import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.actionunit.NullActionUnitIdentifierException;
 import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -98,6 +97,7 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     public static final String STRATI_FIELD_CODE = "SIARU.STRATI";
 
     // Setters/Removers
+    @Override
     public void setFormResponse(CustomFormResponse formResponse) {
         if (formResponse != null) {
             formResponse.setRecordingUnit(this);
