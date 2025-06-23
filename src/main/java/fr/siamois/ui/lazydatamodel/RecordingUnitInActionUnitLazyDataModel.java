@@ -14,19 +14,17 @@ import org.springframework.data.domain.Pageable;
 
 public class RecordingUnitInActionUnitLazyDataModel extends BaseRecordingUnitLazyDataModel {
 
-    private final transient RecordingUnitService recordingUnitService;
+
     private final transient SessionSettingsBean sessionSettings;
-    private final transient LangBean langBean;
+
     @Getter
     private final transient ActionUnit actionUnit;
 
     public RecordingUnitInActionUnitLazyDataModel(RecordingUnitService recordingUnitService,
                                                   SessionSettingsBean sessionSettings,
                                                   LangBean langBean, ActionUnit actionUnit) {
-        super();
-        this.recordingUnitService = recordingUnitService;
+        super(recordingUnitService,langBean);
         this.sessionSettings = sessionSettings;
-        this.langBean = langBean;
         this.actionUnit = actionUnit;
     }
 

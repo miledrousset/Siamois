@@ -14,6 +14,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +37,8 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
         setAltitude(recordingUnit.getAltitude());
         setCreatedByInstitution(recordingUnit.getCreatedByInstitution());
         setAuthor(recordingUnit.getAuthor());
+        setAuthors(recordingUnit.getAuthors());
+        setExcavators(recordingUnit.getExcavators());
         setSpatialUnit(recordingUnit.getSpatialUnit());
     }
 
@@ -62,19 +65,19 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     private Set<RecordingUnit> parents = new HashSet<>();
 
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "recording_unit_authors",
             joinColumns = @JoinColumn(name = "fk_recording_unit_id"),
             inverseJoinColumns = @JoinColumn(name = "fk_person_id"))
-    private List<Person> authors;
+    private List<Person> authors = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "recording_unit_excavators",
             joinColumns = @JoinColumn(name = "fk_recording_unit_id"),
             inverseJoinColumns = @JoinColumn(name = "fk_person_id"))
-    private List<Person> excavators;
+    private List<Person> excavators = new ArrayList<>();
 
 
     @OneToMany(fetch = FetchType.LAZY)

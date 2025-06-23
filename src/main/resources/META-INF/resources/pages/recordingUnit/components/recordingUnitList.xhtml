@@ -45,11 +45,11 @@
                          rowsPerPageTemplate="5,10,15,20,25"
                          value="#{cc.attrs.lazyDataModel}" class="recording-unit-datatable">
 
-                <p:ajax event="rowEdit" listener="#{panelModel.handleRowEdit}"/>
+                <p:ajax event="rowEdit" listener="#{cc.attrs.lazyDataModel.handleRowEdit}"/>
                 <p:ajax event="rowEditCancel"/>
-                <p:ajax event="rowSelect" listener="#{panelModel.handleRowSelect}" immediate="true" process=""
+                <p:ajax event="rowSelect" listener="#{cc.attrs.lazyDataModel.handleRowSelect}" immediate="true" process=""
                         update=":#{cc.clientId}:recordingUnitDataTable:tableToolbar"/>
-                <p:ajax event="rowUnselect" listener="#{panelModel.handleRowUnselect}" immediate="true"
+                <p:ajax event="rowUnselect" listener="#{cc.attrs.lazyDataModel.handleRowUnselect}" immediate="true"
                         update=":#{cc.clientId}:recordingUnitDataTable:tableToolbar"/>
 
                 <f:facet name="{RowReport}">
@@ -91,12 +91,12 @@
                                         <span>Edition du type en lot (les autres colonnes viendront plus tard) :</span>
                                         <sharedInput:conceptAutocompleteFieldCode id="bulkTypeComponent"
                                                                                   panelStyleClass="recording-unit-autocomplete"
-                                                                                  selectedConcept="#{panelModel.bulkEditTypeValue}"
+                                                                                  selectedConcept="#{cc.attrs.lazyDataModel.bulkEditTypeValue}"
                                                                                   field="#{cc.attrs.lazyDataModel.typeField}"
                                                                                   editConceptUrl="#{spatialUnitFieldBean.getUrlForFieldCode('SIARU.TYPE')}"/>
                                         <p:commandButton value="Enregistrer"
                                                          update=":#{cc.clientId}:recordingUnitDataTable"
-                                                         action="#{panelModel.saveFieldBulk()}"
+                                                         action="#{cc.attrs.lazyDataModel.saveFieldBulk()}"
                                                          />
                                     </p:outputPanel>
 
@@ -252,7 +252,7 @@
                             action="#{navBean.toggleRecordingUnitBookmark(item.fullIdentifier)}"
                             update="bookmarkToggleButton navBarCsrfForm:siamoisNavForm:bookmarkGroup"/>
                             <p:commandButton rendered="#{flowBean.readWriteMode == 'WRITE'}" icon="bi bi-copy"
-                                             action="#{panelModel.duplicateRow()}"
+                                             action="#{cc.attrs.lazyDataModel.duplicateRow()}"
                                              update=":#{cc.clientId}:recordingUnitDataTable"
                                              styleClass="sia-icon-btn"/>
                         </p:toolbarGroup>
