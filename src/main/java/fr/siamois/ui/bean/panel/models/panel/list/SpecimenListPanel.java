@@ -133,9 +133,9 @@ public class SpecimenListPanel extends AbstractListPanel<Specimen> {
         return "/specimen";
     }
 
-    public void handleRowEdit(RowEditEvent<RecordingUnit> event) {
+    public void handleRowEdit(RowEditEvent<Specimen> event) {
 
-        RecordingUnit toSave = event.getObject();
+        Specimen toSave = event.getObject();
 
         try {
             specimenService.save(toSave);

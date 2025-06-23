@@ -139,7 +139,19 @@
 
                 </p:column>
 
-                <!-- Recording unit type column -->
+                <!-- cat column -->
+                <p:column responsivePriority="1" headerText="#{langBean.msg('table.specimen.column.category')}"
+                          sortable="false"
+                          filterable="false"
+                          id="catCol"
+                >
+
+                    <p:chip label="#{labelBean.findLabelOf(item.category)}" icon="bi bi-box2"
+                            styleClass="mr-2 recording-unit-type-chip"/>
+
+                </p:column>
+
+                <!-- type column -->
                 <p:column responsivePriority="1" headerText="#{langBean.msg('table.spatialunit.column.type')}"
                           sortable="true"
                           filterable="true"
@@ -168,7 +180,7 @@
                     </f:facet>
                     <p:cellEditor>
                         <f:facet name="output">
-                            <p:chip label="#{labelBean.findLabelOf(item.type)}" icon="pi pi-map-marker"
+                            <p:chip label="#{labelBean.findLabelOf(item.type)}" icon="bi bi-box2"
                                     styleClass="mr-2 recording-unit-type-chip"/>
                         </f:facet>
                         <f:facet name="input">
