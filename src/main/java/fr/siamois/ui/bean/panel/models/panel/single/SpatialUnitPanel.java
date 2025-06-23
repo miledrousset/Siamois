@@ -44,6 +44,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.tabview.Tab;
+import org.primefaces.component.tabview.TabView;
+import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -419,9 +422,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
         MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", history.getName());
     }
 
-    public String formatDate(OffsetDateTime offsetDateTime) {
-        return DateUtils.formatOffsetDateTime(offsetDateTime);
-    }
+
 
     public String getFormattedValue(Object value) {
         if (value == null) {

@@ -50,7 +50,7 @@ public class Person implements UserDetails {
     private String lastname;
 
     @NotNull
-    @Column(name = "username", length = USERNAME_MAX_LENGTH, unique = true)
+    @Column(name = "username", length = USERNAME_MAX_LENGTH, unique = true, columnDefinition = "citext")
     private String username;
 
     // The password length shouldn't be set in the database as we don't know their size after hash.
@@ -59,7 +59,7 @@ public class Person implements UserDetails {
     private String password;
 
     @NotNull
-    @Column(name = "mail", nullable = false, length = MAIL_MAX_LENGTH, unique = true)
+    @Column(name = "mail", nullable = false, length = MAIL_MAX_LENGTH, unique = true, columnDefinition = "citext")
     private String email;
 
     @ColumnDefault("false")
@@ -103,6 +103,7 @@ public class Person implements UserDetails {
     @Column(name = "is_enabled")
     private boolean isEnabled = true;
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SystemRole> roles = new ArrayList<>();
