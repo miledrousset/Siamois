@@ -58,7 +58,7 @@
                 <p:tab title="Hierarchie" id="hierarchy">
                     <f:facet name="title">
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value="Hierarchie"/>
+                            <ui:param name="title" value="Hierarchie 🚧"/>
                             <ui:param name="icon" value="bi bi-box2"/>
 
                             <ui:param name="emptyTab" value="#{panelModel.isHierarchyTabEmpty()}"/>
@@ -75,30 +75,25 @@
 
                     <f:facet name="title">
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value="Documents"/>
+                            <ui:param name="title" value="Documents 🚧"/>
                             <ui:param name="icon" value="bi bi-paperclip"/>
                             <ui:param name="emptyTab" value="#{panelModel.documents.size() == 0}"/>
                             <ui:param name="validated" value="#{panelModel.unit.validated}"/>
                         </ui:include>
                     </f:facet>
 
-                    <ui:include src="/panel/spatialunit/tab/documentsTab.xhtml">
-                        <ui:param name="count" value="4"/>
-                    </ui:include>
+
 
                 </p:tab>
 
                 <p:tab title="Versions">
                     <f:facet name="title">
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value="Versions"/>
+                            <ui:param name="title" value="Versions 🚧"/>
                             <ui:param name="icon" value="bi bi-clock-history"/>
                         </ui:include>
                     </f:facet>
 
-                    <ui:include src="/panel/spatialunit/tab/versionTab.xhtml">
-                        <ui:param name="panelModel" value="#{panelModel}"/>
-                    </ui:include>
 
                 </p:tab>
 
