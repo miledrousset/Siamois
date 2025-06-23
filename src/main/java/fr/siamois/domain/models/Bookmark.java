@@ -44,6 +44,9 @@ public class Bookmark {
         else if(resourceUri.startsWith("/recording-unit")){
             return "var(--ground-main-color)";
         }
+        else if(resourceUri.startsWith("/specimen")){
+            return "var(--ground-main-color)";
+        }
         else {
             return "var(--siamois-green)";
         }
@@ -58,6 +61,9 @@ public class Bookmark {
         }
         else if(resourceUri.startsWith("/recording-unit")){
             return "bi bi-pencil-square";
+        }
+        else if(resourceUri.startsWith("/specimen")){
+            return "bi bi-box2";
         }
         else {
             return "bi bi-bookmark-fill";
