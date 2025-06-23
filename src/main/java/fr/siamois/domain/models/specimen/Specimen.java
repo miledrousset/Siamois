@@ -5,6 +5,7 @@ import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,6 +19,21 @@ import java.util.Set;
 @Entity
 @Table(name = "specimen")
 public class Specimen extends SpecimenParent implements ArkEntity {
+
+    public Specimen() {
+
+    }
+
+    public Specimen(Specimen specimen) {
+        setType(specimen.getType());
+        setRecordingUnit(specimen.getRecordingUnit());
+        setCategory(specimen.getCategory());
+        setCreatedByInstitution(specimen.getCreatedByInstitution());
+        setAuthor(specimen.getAuthor());
+        setAuthors(specimen.getAuthors());
+        setCollectors(specimen.getCollectors());
+        setCollectionDate(specimen.getCollectionDate());
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +55,13 @@ public class Specimen extends SpecimenParent implements ArkEntity {
             inverseJoinColumns = @JoinColumn(name = "fk_person_id"))
     private List<Person> authors;
 
+    @ManyToMany
+    @JoinTable(
+            name = "specimen_collectors",
+            joinColumns = @JoinColumn(name = "fk_specimen_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_person_id"))
+    private List<Person> collectors;
+
     @ManyToMany(mappedBy = "specimens")
     private Set<SpecimenGroup> groups = new HashSet<>();
 
@@ -47,5 +70,11 @@ public class Specimen extends SpecimenParent implements ArkEntity {
 
     @FieldCode
     public static final String METHOD_FIELD = "SIAS.METHOD";
+
+    @Transient
+    public List<String> getBindableFieldNames() {
+        return List.of("collectionDate", "collectors", "fullIdentifier", "authors",
+                "type", "category");
+    }
 
 }

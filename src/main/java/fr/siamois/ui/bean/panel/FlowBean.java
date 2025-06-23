@@ -212,6 +212,10 @@ public class FlowBean implements Serializable {
         addPanel(panelFactory.createRecordingUnitPanel(recordingUnitId));
     }
 
+    public void addSpecimenPanel(Long specimenId) {
+        addPanel(panelFactory.createSpecimenPanel(specimenId));
+    }
+
 
     public void goToSpatialUnitByIdNewPanel(Long id, AbstractPanel currentPanel) {
         // Create new panel type and add items to its breadcrumb

@@ -8,6 +8,7 @@ import fr.siamois.ui.bean.panel.models.panel.list.SpatialUnitListPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.SpecimenPanel;
 import fr.siamois.ui.lazydatamodel.BaseSpatialUnitLazyDataModel;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,7 @@ public class PanelFactory {
     private final ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider;
     private final ObjectProvider<RecordingUnitListPanel> recordingUnitListPanelProvider;
     private final ObjectProvider<WelcomePanel> welcomePanelProvider;
+    private final ObjectProvider<SpecimenPanel> specimenPanelProvider;
 
 
     public PanelFactory(
@@ -39,7 +41,7 @@ public class PanelFactory {
             ObjectProvider<ActionUnitPanel> actionUnitPanelProvider,
             ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider,
             ObjectProvider<RecordingUnitListPanel> recordingUnitListPanelProvider,
-            ObjectProvider<WelcomePanel> welcomePanelProvider) {
+            ObjectProvider<WelcomePanel> welcomePanelProvider, ObjectProvider<SpecimenPanel> specimenPanelProvider) {
 
         this.spatialUnitListPanelProvider = spatialUnitListPanelProvider;
         this.actionUnitListPanelProvider = actionUnitListPanelProvider;
@@ -50,6 +52,7 @@ public class PanelFactory {
         this.recordingUnitPanelProvider = recordingUnitPanelProvider;
         this.recordingUnitListPanelProvider = recordingUnitListPanelProvider;
         this.welcomePanelProvider = welcomePanelProvider;
+        this.specimenPanelProvider = specimenPanelProvider;
     }
 
     public SpatialUnitPanel createSpatialUnitPanel(Long spatialUnitId) {
@@ -155,6 +158,17 @@ public class PanelFactory {
 
         return new RecordingUnitPanel.RecordingUnitPanelBuilder(recordingUnitPanelProvider)
                 .id(recordingUnitId)
+                .breadcrumb(bc)
+                .build();
+
+    }
+
+    public SpecimenPanel createSpecimenPanel(Long id) {
+
+        PanelBreadcrumb bc = new PanelBreadcrumb();
+
+        return new SpecimenPanel.Builder(specimenPanelProvider)
+                .id(id)
                 .breadcrumb(bc)
                 .build();
 

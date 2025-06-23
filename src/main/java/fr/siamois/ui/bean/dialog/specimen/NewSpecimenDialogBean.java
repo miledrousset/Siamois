@@ -17,6 +17,7 @@ import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
@@ -55,95 +56,93 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
     private final transient LangBean langBean;
     private final transient FlowBean flowBean;
     private final transient ActionUnitService actionUnitService;
+    private final transient SpecimenService specimenService;
 
     // Locals
     private RecordingUnit recordingUnit; // parent ru
 
-    private static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-6";
+    private static final String COLUMN_CLASS_NAME = "ui-g-12";
 
     // ----------- Concepts for system fields
     // Authors
     private Concept authorsConcept = new Concept.Builder()
             .vocabulary(SYSTEM_THESO)
-            .externalId("4286194")
-            .build();
-    // Excavators
-    private Concept excavatorsConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4286195")
+            .externalId("4286246")
             .build();
 
-    // Recording Unit type
-    private Concept recordingUnitTypeConcept = new Concept.Builder()
+    // Excavators
+    private Concept collectorsConcept = new Concept.Builder()
             .vocabulary(SYSTEM_THESO)
-            .externalId("4282367")
+            .externalId("4286247")
+            .build();
+
+    // Specimen type
+    private Concept specimenTypeConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4282392")
+            .build();
+
+    // Specimen category
+    private Concept specimenCategoryConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286248")
             .build();
 
     // Date
-    private Concept openingDateConcept = new Concept.Builder()
+    private Concept collectionDateConcept = new Concept.Builder()
             .vocabulary(SYSTEM_THESO)
-            .externalId("4286198")
+            .externalId("4286249")
             .build();
 
-
-    // Spatial Unit
-    private Concept spatialUnitConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4286245")
-            .build();
-
+    // --------------- Fields
 
     private CustomFieldSelectMultiplePerson authorsField = new CustomFieldSelectMultiplePerson.Builder()
-            .label("recordingunit.field.authors")
+            .label("specimen.field.authors")
             .isSystemField(true)
             .valueBinding("authors")
             .concept(authorsConcept)
             .build();
 
-    private CustomFieldSelectMultiplePerson excavatorsField = new CustomFieldSelectMultiplePerson.Builder()
-            .label("recordingunit.field.excavators")
+    private CustomFieldSelectMultiplePerson collectorsField = new CustomFieldSelectMultiplePerson.Builder()
+            .label("specimen.field.collectors")
             .isSystemField(true)
-            .valueBinding("excavators")
-            .concept(excavatorsConcept)
+            .valueBinding("collectors")
+            .concept(collectorsConcept)
             .build();
 
-    private CustomFieldSelectOneFromFieldCode recordingUnitTypeField = new CustomFieldSelectOneFromFieldCode.Builder()
-            .label("spatialunit.field.type")
+    private CustomFieldSelectOneFromFieldCode specimenTypeField = new CustomFieldSelectOneFromFieldCode.Builder()
+            .label("specimen.field.type")
             .isSystemField(true)
             .valueBinding("type")
-            .styleClass("mr-2 recording-unit-type-chip")
-            .iconClass("bi bi-pencil-square")
-            .fieldCode(RecordingUnit.TYPE_FIELD_CODE)
-            .concept(recordingUnitTypeConcept)
+            .styleClass("mr-2 specimen-type-chip")
+            .iconClass("bi bi-box-2")
+            .fieldCode(Specimen.CATEGORY_FIELD)
+            .concept(specimenTypeConcept)
             .build();
 
 
-    private CustomFieldDateTime openingDateField = new CustomFieldDateTime.Builder()
-            .label("recordingunit.field.openingDate")
+    private CustomFieldDateTime collectionDateField = new CustomFieldDateTime.Builder()
+            .label("specimen.field.collectionDate")
             .isSystemField(true)
-            .valueBinding("startDate")
+            .valueBinding("collectionDate")
             .showTime(false)
-            .concept(openingDateConcept)
+            .concept(collectionDateConcept)
             .build();
 
-    private CustomFieldSelectOneSpatialUnit spatialUnitField = new CustomFieldSelectOneSpatialUnit.Builder()
-            .label("recordingunit.field.spatialUnit")
-            .isSystemField(true)
-            .valueBinding("spatialUnit")
-            .concept(spatialUnitConcept)
-            .build();
+
 
     public NewSpecimenDialogBean(RecordingUnitService recordingUnitService,
                                  LangBean langBean,
                                  FlowBean flowBean,
                                  SessionSettingsBean sessionSettingsBean,
                                  FieldConfigurationService fieldConfigurationService,
-                                 ActionUnitService actionUnitService) {
+                                 ActionUnitService actionUnitService, SpecimenService specimenService) {
         super(sessionSettingsBean, fieldConfigurationService);
         this.recordingUnitService = recordingUnitService;
         this.langBean = langBean;
         this.flowBean = flowBean;
         this.actionUnitService = actionUnitService;
+        this.specimenService = specimenService;
     }
 
     @Override
@@ -170,27 +169,22 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
                                                 .addColumn(new CustomCol.Builder()
                                                         .readOnly(false)
                                                         .className(COLUMN_CLASS_NAME)
-                                                        .field(spatialUnitField)
-                                                        .build())
-                                                .addColumn(new CustomCol.Builder()
-                                                        .readOnly(false)
-                                                        .className(COLUMN_CLASS_NAME)
                                                         .field(authorsField)
                                                         .build())
                                                 .addColumn(new CustomCol.Builder()
                                                         .readOnly(false)
                                                         .className(COLUMN_CLASS_NAME)
-                                                        .field(excavatorsField)
+                                                        .field(collectorsField)
                                                         .build())
                                                 .addColumn(new CustomCol.Builder()
                                                         .readOnly(false)
                                                         .className(COLUMN_CLASS_NAME)
-                                                        .field(recordingUnitTypeField)
+                                                        .field(specimenTypeField)
                                                         .build())
                                                 .addColumn(new CustomCol.Builder()
                                                         .readOnly(false)
                                                         .className(COLUMN_CLASS_NAME)
-                                                        .field(openingDateField)
+                                                        .field(collectionDateField)
                                                         .build())
                                                 .build()
                                 ).build()
@@ -229,17 +223,18 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
         unit.setRecordingUnit(ru);
         unit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
         unit.setAuthors(List.of(sessionSettingsBean.getAuthenticatedUser()));
+        unit.setCollectors(List.of(sessionSettingsBean.getAuthenticatedUser()));
         unit.setCollectionDate(OffsetDateTime.now());
         initForms();
     }
 
-    public void createRu() {
+    public void createSpecimen() {
 
 
         try {
             updateJpaEntityFromFormResponse(formResponse, unit);
             unit.setValidated(false);
-            // todo;
+            unit = (Specimen) specimenService.save(unit);
 
         } catch (FailedRecordingUnitSaveException e) {
             MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
@@ -256,7 +251,7 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
     public void createAndOpen() {
 
         try {
-            createRu();
+            createSpecimen();
         } catch (RuntimeException e) {
             MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
             throw e;
@@ -264,14 +259,14 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
 
 
         // Open new panel
-        //todo: flowBean.addRecordingUnitPanel(unit.getId());
+        flowBean.addSpecimenPanel(unit.getId());
 
     }
 
     public void create() {
 
         try {
-            createRu();
+            createSpecimen();
         } catch (FailedRecordingUnitSaveException e) {
             MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
             throw e;
