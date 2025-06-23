@@ -17,7 +17,9 @@ import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
+import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import fr.siamois.ui.lazydatamodel.BaseRecordingUnitLazyDataModel;
@@ -131,7 +133,13 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
             .concept(spatialUnitConcept)
             .build();
 
-    public NewSpecimenDialogBean(RecordingUnitService recordingUnitService, LangBean langBean, FlowBean flowBean, ActionUnitService actionUnitService) {
+    public NewSpecimenDialogBean(RecordingUnitService recordingUnitService,
+                                 LangBean langBean,
+                                 FlowBean flowBean,
+                                 SessionSettingsBean sessionSettingsBean,
+                                 FieldConfigurationService fieldConfigurationService,
+                                 ActionUnitService actionUnitService) {
+        super(sessionSettingsBean, fieldConfigurationService);
         this.recordingUnitService = recordingUnitService;
         this.langBean = langBean;
         this.flowBean = flowBean;

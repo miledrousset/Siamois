@@ -41,7 +41,7 @@ public abstract class SpecimenParent extends TraceableEntity {
     protected OffsetDateTime collectionDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_action_unit_id")
+    @JoinColumn(name = "fk_recording_unit_id")
     protected RecordingUnit recordingUnit;
 
     @NotNull

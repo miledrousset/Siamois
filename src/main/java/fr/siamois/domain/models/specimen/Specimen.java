@@ -34,8 +34,8 @@ public class Specimen extends SpecimenParent implements ArkEntity {
 
     @ManyToMany
     @JoinTable(
-            name = "recording_unit_authors",
-            joinColumns = @JoinColumn(name = "fk_recording_unit_id"),
+            name = "specimen_authors",
+            joinColumns = @JoinColumn(name = "fk_specimen_id"),
             inverseJoinColumns = @JoinColumn(name = "fk_person_id"))
     private List<Person> authors;
 

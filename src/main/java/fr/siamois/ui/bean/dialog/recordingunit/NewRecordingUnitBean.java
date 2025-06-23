@@ -16,7 +16,9 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
+import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import fr.siamois.ui.lazydatamodel.BaseRecordingUnitLazyDataModel;
@@ -133,7 +135,12 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
             .concept(spatialUnitConcept)
             .build();
 
-    public NewRecordingUnitBean(RecordingUnitService recordingUnitService, LangBean langBean, FlowBean flowBean, ActionUnitService actionUnitService) {
+    public NewRecordingUnitBean(RecordingUnitService recordingUnitService,
+                                LangBean langBean, FlowBean flowBean,
+                                ActionUnitService actionUnitService,
+                                SessionSettingsBean sessionSettingsBean,
+                                FieldConfigurationService fieldConfigurationService) {
+        super(sessionSettingsBean, fieldConfigurationService);
         this.recordingUnitService = recordingUnitService;
         this.langBean = langBean;
         this.flowBean = flowBean;
