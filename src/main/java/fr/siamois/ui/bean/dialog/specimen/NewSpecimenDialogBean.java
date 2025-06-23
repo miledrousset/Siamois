@@ -115,9 +115,19 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
             .isSystemField(true)
             .valueBinding("type")
             .styleClass("mr-2 specimen-type-chip")
-            .iconClass("bi bi-box-2")
+            .iconClass("bi bi-box2")
             .fieldCode(Specimen.CATEGORY_FIELD)
             .concept(specimenTypeConcept)
+            .build();
+
+    private CustomFieldSelectOneFromFieldCode specimenCategoryField = new CustomFieldSelectOneFromFieldCode.Builder()
+            .label("specimen.field.category")
+            .isSystemField(true)
+            .valueBinding("category")
+            .styleClass("mr-2 specimen-type-chip")
+            .iconClass("bi bi-box2")
+            .fieldCode(Specimen.CAT_FIELD)
+            .concept(specimenCategoryConcept)
             .build();
 
 
@@ -175,6 +185,11 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
                                                         .readOnly(false)
                                                         .className(COLUMN_CLASS_NAME)
                                                         .field(collectorsField)
+                                                        .build())
+                                                .addColumn(new CustomCol.Builder()
+                                                        .readOnly(false)
+                                                        .className(COLUMN_CLASS_NAME)
+                                                        .field(specimenCategoryField)
                                                         .build())
                                                 .addColumn(new CustomCol.Builder()
                                                         .readOnly(false)

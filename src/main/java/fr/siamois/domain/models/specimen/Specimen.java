@@ -66,10 +66,13 @@ public class Specimen extends SpecimenParent implements ArkEntity {
     private Set<SpecimenGroup> groups = new HashSet<>();
 
     @FieldCode
-    public static final String CATEGORY_FIELD = "SIAS.CATEGORY";
+    public static final String CATEGORY_FIELD = "SIAS.CATEGORY"; // ceramique, ...
 
     @FieldCode
     public static final String METHOD_FIELD = "SIAS.METHOD";
+
+    @FieldCode
+    public static final String CAT_FIELD = "SIAS.CAT"; // lot, individu, echantillon
 
     @Transient
     public List<String> getBindableFieldNames() {

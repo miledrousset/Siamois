@@ -5,9 +5,14 @@ import fr.siamois.domain.models.exceptions.recordingunit.MaxRecordingUnitIdentif
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.specimen.Specimen;
+import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
 import fr.siamois.infrastructure.database.repositories.specimen.SpecimenRepository;
+import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -53,6 +58,28 @@ public class SpecimenService implements ArkEntityService {
 
     public Specimen findById(Long id) {
         return specimenRepository.findById(id).orElse(null);
+    }
+
+    @Transactional
+    public Page<Specimen> findAllByInstitutionAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+            Long institutionId,
+            String fullIdentifier,
+            Long[] categoryIds,
+            String global,
+            String langCode,
+            Pageable pageable
+    ) {
+        Page<Specimen> res = specimenRepository.findAllByInstitutionAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                institutionId, fullIdentifier, categoryIds, global, langCode, pageable
+        );
+
+
+        return res;
+    }
+
+    @Transactional
+    public int bulkUpdateType(List<Long> ids, Concept type) {
+        return specimenRepository.updateTypeByIds(type.getId(), ids);
     }
 
 }

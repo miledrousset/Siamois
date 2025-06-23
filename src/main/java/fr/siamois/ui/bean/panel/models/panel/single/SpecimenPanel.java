@@ -160,6 +160,16 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
             .concept(collectionDateConcept)
             .build();
 
+    private CustomFieldSelectOneFromFieldCode specimenCategoryField = new CustomFieldSelectOneFromFieldCode.Builder()
+            .label("specimen.field.category")
+            .isSystemField(true)
+            .valueBinding("category")
+            .styleClass("mr-2 specimen-type-chip")
+            .iconClass("bi bi-box2")
+            .fieldCode(Specimen.CAT_FIELD)
+            .concept(specimenCategoryConcept)
+            .build();
+
 
     protected SpecimenPanel(LangBean langBean,
                             SessionSettingsBean sessionSettingsBean,
@@ -204,26 +214,6 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
     @Override
     public String displayHeader() {
         return "/panel/header/specimenPanelHeader.xhtml";
-    }
-
-
-    public LocalDate offsetDateTimeToLocalDate(OffsetDateTime offsetDT) {
-        return offsetDT.toLocalDate();
-    }
-
-    public List<Concept> fetchChildrenOfConcept(Concept concept) {
-        List<Concept> concepts;
-
-        try {
-            concepts = conceptService.findDirectSubConceptOf(concept);
-        } catch (ErrorProcessingExpansionException e) {
-            log.error(e.getMessage());
-            log.debug(e.getMessage(), e);
-            return new ArrayList<>();
-        }
-
-        return concepts;
-
     }
 
 
@@ -306,6 +296,11 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
                                                     .addColumn(new CustomCol.Builder()
                                                             .readOnly(false)
                                                             .className(COLUMN_CLASS_NAME)
+                                                            .field(specimenCategoryField)
+                                                            .build())
+                                                    .addColumn(new CustomCol.Builder()
+                                                            .readOnly(false)
+                                                            .className(COLUMN_CLASS_NAME)
                                                             .field(collectionDateField)
                                                             .build())
                                                     .build()
@@ -325,9 +320,14 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
                                     .addRow(
                                             new CustomRow.Builder()
                                                     .addColumn(new CustomCol.Builder()
-                                                            .readOnly(false)
+                                                            .readOnly(true)
                                                             .className(COLUMN_CLASS_NAME)
                                                             .field(specimenTypeField)
+                                                            .build())
+                                                    .addColumn(new CustomCol.Builder()
+                                                            .readOnly(true)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(specimenCategoryField)
                                                             .build())
                                                     .build()
                                     )

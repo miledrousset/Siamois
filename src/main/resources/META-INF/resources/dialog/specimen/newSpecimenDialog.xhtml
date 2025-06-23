@@ -46,7 +46,7 @@
                                              style="margin-right: 1rem">
                             </p:commandButton>
                             <p:commandButton id="createAndViewButton"
-                                             oncomplete="PF('newSpecimenDialogBean').hide();handleScrollToTop();"
+                                             oncomplete="PF('newSpecimenDiag').hide();handleScrollToTop();"
                                              update="flow"
                                              action="#{newSpecimenDialogBean.createAndOpen()}"
                                              value='#{langBean.msg("common.action.createAndView")}'
