@@ -70,6 +70,8 @@
             <p:toolbarGroup align="right">
                 <p:commandButton value='Enregistrer'
                                  action="#{panelModel.save()}"
+                                 onstart="PF('buiContent').show()"
+                                 oncomplete="PF('buiContent').hide();handleScrollToTop();"
                                  update="flow"
                                  style="margin-right: .5rem">
                 </p:commandButton>

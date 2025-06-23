@@ -7,10 +7,7 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
-import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
-import fr.siamois.ui.lazydatamodel.BaseRecordingUnitLazyDataModel;
-import fr.siamois.ui.lazydatamodel.RecordingUnitInActionUnitLazyDataModel;
-import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
+import fr.siamois.ui.lazydatamodel.*;
 import fr.siamois.utils.MessageUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -73,6 +70,11 @@ public class NewSpatialUnitPanel extends AbstractPanel {
             spatialUnitParent = spatialUnitService.findById(typedModel.getSpatialUnit().getId());
             spatialUnit.setChildren(new HashSet<>());
             spatialUnit.getChildren().add(spatialUnitParent);
+        }
+        else if (lazyDataModel instanceof SpatialUnitParentsLazyDataModel typedModel) {
+            spatialUnitParent = spatialUnitService.findById(typedModel.getSpatialUnit().getId());
+            spatialUnit.setParents(new HashSet<>());
+            spatialUnit.getParents().add(spatialUnitParent);
         }
         spatialUnit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
 

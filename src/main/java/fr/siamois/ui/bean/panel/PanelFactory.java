@@ -189,6 +189,22 @@ public class PanelFactory {
 
     }
 
+    public NewActionUnitPanel createNewActionUnitPanel(Long spatialUnitId, PanelBreadcrumb currentBreadcrumb, BaseSpatialUnitLazyDataModel lazyModel) {
+        PanelBreadcrumb bc = null;
+        if (currentBreadcrumb != null) {
+            bc = new PanelBreadcrumb();
+            bc.getModel().getElements().clear();
+            bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+        }
+
+        return new NewActionUnitPanel.NewActionUnitPanelBuilder(newActionUnitPanelProvider)
+                .breadcrumb(bc)
+                .lazyModel(lazyModel)
+                .spatialUnitId(spatialUnitId)
+                .build();
+
+    }
+
     public SpatialUnitListPanel createSpatialUnitListPanel(PanelBreadcrumb currentBreadcrumb) {
         return new SpatialUnitListPanel.SpatialUnitListPanelBuilder(spatialUnitListPanelProvider)
                 .breadcrumb(currentBreadcrumb)

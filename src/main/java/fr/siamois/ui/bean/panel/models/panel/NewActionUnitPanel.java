@@ -12,6 +12,8 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
+import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
+import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -45,6 +48,7 @@ public class NewActionUnitPanel extends AbstractPanel {
     // Locals
     ActionUnit actionUnit;
     Long spatialUnitId;
+    BaseLazyDataModel lazyDataModel;
 
 
     public NewActionUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, ActionUnitService actionUnitService, FlowBean flowBean, FieldConfigurationService fieldConfigurationService) {
@@ -76,6 +80,10 @@ public class NewActionUnitPanel extends AbstractPanel {
         actionUnit = new ActionUnit();
         if(spatialUnitId != null) {
             actionUnit.getSpatialContext().add(spatialUnitService.findById(spatialUnitId));
+        }
+        // Set spatial context based on lazy model type
+        else if (lazyDataModel instanceof SpatialUnitChildrenLazyDataModel typedModel) {
+            actionUnit.getSpatialContext().add(spatialUnitService.findById(typedModel.getSpatialUnit().getId()));
         }
 
         DefaultMenuItem item = DefaultMenuItem.builder()
@@ -149,6 +157,12 @@ public class NewActionUnitPanel extends AbstractPanel {
 
         public NewActionUnitPanel.NewActionUnitPanelBuilder breadcrumb(PanelBreadcrumb breadcrumb) {
             newActionUnitPanel.setBreadcrumb(breadcrumb);
+
+            return this;
+        }
+
+        public NewActionUnitPanel.NewActionUnitPanelBuilder lazyModel(BaseLazyDataModel lazyModel) {
+            newActionUnitPanel.setLazyDataModel(lazyModel);
 
             return this;
         }

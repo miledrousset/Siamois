@@ -4,15 +4,11 @@ import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.form.customfield.*;
 
-import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
-import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectOneFromFieldCode;
-
-import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerText;
 import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
-import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
+
 
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 
@@ -27,7 +23,6 @@ import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import fr.siamois.ui.lazydatamodel.BaseRecordingUnitLazyDataModel;
 import fr.siamois.ui.lazydatamodel.RecordingUnitInActionUnitLazyDataModel;
 import fr.siamois.utils.MessageUtils;
-import jakarta.el.MethodExpression;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.event.AjaxBehaviorEvent;
 
@@ -38,13 +33,13 @@ import org.springframework.stereotype.Component;
 
 
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
+
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
+
 
 
 @Slf4j
@@ -52,18 +47,17 @@ import java.util.Map;
 @Getter
 @Setter
 @SessionScoped
-public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> implements Serializable  {
+public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> implements Serializable {
 
     // Deps
-    private final RecordingUnitService recordingUnitService;
-    private final LangBean langBean;
-    private final SessionSettingsBean sessionSettingsBean;
-    private final FlowBean flowBean;
-    private final ActionUnitService actionUnitService;
+    private final transient RecordingUnitService recordingUnitService;
+    private final transient LangBean langBean;
+    private final transient FlowBean flowBean;
+    private final transient ActionUnitService actionUnitService;
 
     // Locals
-    private ActionUnit actionUnit ; // parent action unit for the new recording unit
-    private SpatialUnit spatialUnit ; // parent spatial unit for the new recording unit
+    private ActionUnit actionUnit; // parent action unit for the new recording unit
+    private SpatialUnit spatialUnit; // parent spatial unit for the new recording unit
     private BaseRecordingUnitLazyDataModel lazyDataModel; // lazy data model to update after saving
 
     private static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-6";
@@ -98,7 +92,6 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
             .vocabulary(SYSTEM_THESO)
             .externalId("4286245")
             .build();
-
 
 
     private CustomFieldSelectMultiplePerson authorsField = new CustomFieldSelectMultiplePerson.Builder()
@@ -141,14 +134,14 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
             .concept(spatialUnitConcept)
             .build();
 
-    public NewRecordingUnitBean(RecordingUnitService recordingUnitService, LangBean langBean, SessionSettingsBean sessionSettingsBean, FlowBean flowBean, ActionUnitService actionUnitService) {
+    public NewRecordingUnitBean(RecordingUnitService recordingUnitService, LangBean langBean, FlowBean flowBean, ActionUnitService actionUnitService) {
         this.recordingUnitService = recordingUnitService;
         this.langBean = langBean;
-        this.sessionSettingsBean = sessionSettingsBean;
         this.flowBean = flowBean;
         this.actionUnitService = actionUnitService;
     }
 
+    @Override
     public void setFieldConceptAnswerHasBeenModified(AjaxBehaviorEvent event) {
         UIComponent component = event.getComponent();
         CustomField field = (CustomField) component.getAttributes().get("field");
@@ -218,7 +211,7 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
     public List<SpatialUnit> getSpatialUnitOptions() {
 
         // Return the spatial context of the parent action
-        if(actionUnit != null) {
+        if (actionUnit != null) {
             return new ArrayList<>(actionUnit.getSpatialContext());
         }
 
@@ -242,8 +235,7 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
             unit.setCreatedByInstitution(actionUnit.getCreatedByInstitution());
             unit.setActionUnit(actionUnit);
             unit.setCreatedByInstitution(actionUnit.getCreatedByInstitution());
-        }
-        else {
+        } else {
             unit.setCreatedByInstitution(sessionSettingsBean.getSelectedInstitution());
         }
         unit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
@@ -257,13 +249,18 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
 
     public void createRu() {
 
-        updateJpaEntityFromFormResponse(formResponse, unit);
-        unit.setValidated(false);
-        unit = recordingUnitService.save(unit, unit.getType(), List.of(), List.of(), List.of());
+
+        try {
+            updateJpaEntityFromFormResponse(formResponse, unit);
+            unit.setValidated(false);
+            unit = recordingUnitService.save(unit, unit.getType(), List.of(), List.of(), List.of());
 
 
-        if(lazyDataModel != null) {
-            lazyDataModel.addRowToModel(unit);
+            if (lazyDataModel != null) {
+                lazyDataModel.addRowToModel(unit);
+            }
+        } catch (FailedRecordingUnitSaveException e) {
+            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
         }
 
 
@@ -278,13 +275,11 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
 
         try {
             createRu();
-        }
-        catch(FailedRecordingUnitSaveException e) {
+        } catch (RuntimeException e) {
             MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
             throw e;
         }
 
-        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getFullIdentifier());
 
         // Open new panel
         flowBean.addRecordingUnitPanel(unit.getId());
@@ -295,13 +290,13 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
 
         try {
             createRu();
-        }
-        catch(FailedRecordingUnitSaveException e) {
+        } catch (FailedRecordingUnitSaveException e) {
             MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
             throw e;
         }
 
         MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getFullIdentifier());
+
 
     }
 }

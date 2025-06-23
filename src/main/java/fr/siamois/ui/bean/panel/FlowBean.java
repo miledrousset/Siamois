@@ -24,7 +24,6 @@ import fr.siamois.ui.bean.panel.models.panel.*;
 import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
-import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.ui.lazydatamodel.BaseSpatialUnitLazyDataModel;
 import jakarta.el.MethodExpression;
 import jakarta.faces.context.FacesContext;
@@ -194,6 +193,12 @@ public class FlowBean implements Serializable {
     public void addNewActionUnitPanel(Long spatialUnitId, Integer sourcePanelIndex) {
         addPanel(panelFactory.createNewActionUnitPanel(spatialUnitId, panels.get(sourcePanelIndex).getBreadcrumb()));
     }
+
+    public void addNewActionUnitPanel(Long spatialUnitId, Integer sourcePanelIndex,BaseSpatialUnitLazyDataModel lazyModel) {
+        addPanel(panelFactory.createNewActionUnitPanel(spatialUnitId, panels.get(sourcePanelIndex).getBreadcrumb(), lazyModel));
+    }
+
+
 
     public void addNewActionUnitPanel(Long spatialUnitId) {
         addPanel(panelFactory.createNewActionUnitPanel(spatialUnitId, null));

@@ -127,7 +127,8 @@
 
                     <p:commandLink
                             action="#{flowBean.goToRecordingUnitByIdNewPanel(item.id,cc.attrs.panelIndex)}"
-                            oncomplete="handleScrollToTop();"
+                            onstart="PF('buiContent').show()"
+                            oncomplete="PF('buiContent').hide();handleScrollToTop();"
                             process="@form"
                             update="flow"
                     >

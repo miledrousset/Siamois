@@ -43,7 +43,19 @@
                 panelModel="#{panelModel}"
                 panelIndex="#{panelIndex}"
                 id="spatialUnitParentsList"
-        />
+        >
+            <f:facet name="rightToolbar">
+                <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
+                                 id="newSpatialUnitParentButton"
+                                 actionListener="#{flowBean.addNewSpatialUnitPanel(panelModel, panelModel.lazyDataModelParents)}"
+                                 onstart="PF('buiContent').show()"
+                                 oncomplete="PF('buiContent').hide();handleScrollToTop();"
+                                 update="flow"
+                                 rendered="#{flowBean.readWriteMode == 'WRITE'}"
+                                 style="margin-right: .5rem">
+                </p:commandButton>
+            </f:facet>
+        </spatialUnit:spatialUnitList>
 
     </p:panel>
 

@@ -37,7 +37,7 @@
                                      action="#{cc.attrs.btnAction}" disabled="#{empty cc.attrs.btnAction}" update="flow"/>
                     <p:commandButton value='#{langBean.msg("common.action.create")}' icon="bi bi-plus-square" styleClass="#{cc.attrs.btnStyleClass}"
                                      action="#{cc.attrs.btnNewAction}"
-                                     rendered="#{not empty cc.attrs.btnNewAction}"
+                                     rendered="#{not empty cc.attrs.btnNewAction and flowBean.readWriteMode == 'WRITE'}"
                                      update="flow"
                                      onstart="PF('buiContent').show()"
                                      oncomplete="PF('buiContent').hide();handleScrollToTop();"
