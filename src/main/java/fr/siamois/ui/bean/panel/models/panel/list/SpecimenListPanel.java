@@ -47,7 +47,7 @@ public class SpecimenListPanel extends AbstractListPanel<Specimen> {
 
     // locals
     private String actionUnitListErrorMessage;
-    private Concept bulkEditTypeValue;
+
 
 
     @Override
@@ -132,48 +132,6 @@ public class SpecimenListPanel extends AbstractListPanel<Specimen> {
     public String ressourceUri() {
         return "/specimen";
     }
-
-    public void handleRowEdit(RowEditEvent<Specimen> event) {
-
-        Specimen toSave = event.getObject();
-
-        try {
-            specimenService.save(toSave);
-        }
-        catch(FailedRecordingUnitSaveException e) {
-            MessageUtils.displayErrorMessage(langBean, "common.entity.recordingUnits.updateFailed", toSave.getFullIdentifier());
-            return ;
-        }
-
-        MessageUtils.displayInfoMessage(langBean, "common.entity.recordingUnits.updated", toSave.getFullIdentifier());
-    }
-
-    public void saveFieldBulk() {
-        List<Long> ids = lazyDataModel.getSelectedUnits().stream()
-                .map(Specimen::getId)
-                .toList();
-        int updateCount = specimenService.bulkUpdateType(ids, bulkEditTypeValue);
-        // Update in-memory list (for UI sync)
-        for (Specimen s : lazyDataModel.getSelectedUnits()) {
-            s.setType(bulkEditTypeValue);
-        }
-        MessageUtils.displayInfoMessage(langBean, "common.entity.recordingUnits.bulkUpdated", updateCount);
-    }
-
-    public void duplicateRow() {
-        // Create a copy from selected row
-        Specimen original = lazyDataModel.getRowData();
-        Specimen newRec = new Specimen(original);
-        newRec.setIdentifier(specimenService.generateNextIdentifier(newRec));
-
-        // Save it
-        newRec = specimenService.save(newRec);
-
-        // Add it to the model
-        lazyDataModel.addRowToModel(newRec);
-    }
-
-
 
 
     public static class Builder {

@@ -24,7 +24,9 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import fr.siamois.ui.lazydatamodel.BaseRecordingUnitLazyDataModel;
+import fr.siamois.ui.lazydatamodel.BaseSpecimenLazyDataModel;
 import fr.siamois.ui.lazydatamodel.RecordingUnitInActionUnitLazyDataModel;
+import fr.siamois.ui.lazydatamodel.SpecimenInRecordingUnitLazyDataModel;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.event.AjaxBehaviorEvent;
@@ -59,6 +61,7 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
     private final transient SpecimenService specimenService;
 
     // Locals
+    private BaseSpecimenLazyDataModel lazyDataModel; // lazy data model to update after saving
     private RecordingUnit recordingUnit; // parent ru
 
     private static final String COLUMN_CLASS_NAME = "ui-g-12";
@@ -138,7 +141,6 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
             .showTime(false)
             .concept(collectionDateConcept)
             .build();
-
 
 
     public NewSpecimenDialogBean(RecordingUnitService recordingUnitService,
@@ -222,20 +224,27 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
     }
 
 
-
     private void reset() {
         unit = null;
         recordingUnit = null;
         formResponse = null;
     }
 
-    public void init(RecordingUnit ru) {
+
+    public void init(BaseSpecimenLazyDataModel lazyDataModel) {
         reset();
         unit = new Specimen();
-        recordingUnit = ru;
+        RecordingUnit ru;
+        if (lazyDataModel instanceof SpecimenInRecordingUnitLazyDataModel typedModel) {
+            ru = recordingUnitService.findById(typedModel.getRecordingUnit().getId());
+            recordingUnit = ru;
+            unit.setRecordingUnit(ru);
+        } else {
+            unit.setCreatedByInstitution(sessionSettingsBean.getSelectedInstitution());
+        }
+        this.lazyDataModel = lazyDataModel;
         // Attempt safe cast to access getActionUnit()
-        unit.setCreatedByInstitution(ru.getCreatedByInstitution());
-        unit.setRecordingUnit(ru);
+        unit.setCreatedByInstitution(sessionSettingsBean.getSelectedInstitution());
         unit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
         unit.setAuthors(List.of(sessionSettingsBean.getAuthenticatedUser()));
         unit.setCollectors(List.of(sessionSettingsBean.getAuthenticatedUser()));
@@ -249,7 +258,11 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
         try {
             updateJpaEntityFromFormResponse(formResponse, unit);
             unit.setValidated(false);
-            unit = (Specimen) specimenService.save(unit);
+            unit = specimenService.save(unit);
+
+            if (lazyDataModel != null) {
+                lazyDataModel.addRowToModel(unit);
+            }
 
         } catch (FailedRecordingUnitSaveException e) {
             MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());

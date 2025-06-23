@@ -79,6 +79,24 @@ public class SpecimenService implements ArkEntityService {
     }
 
     @Transactional
+    public Page<Specimen> findAllByInstitutionAndByRecordingUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+            Long institutionId,
+            Long recordingUnitId,
+            String fullIdentifier,
+            Long[] categoryIds,
+            String global,
+            String langCode,
+            Pageable pageable
+    ) {
+        Page<Specimen> res = specimenRepository.findAllByInstitutionAndByRecordingUnitIdAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                institutionId, recordingUnitId, fullIdentifier, categoryIds, global, langCode, pageable
+        );
+
+
+        return res;
+    }
+
+    @Transactional
     public int bulkUpdateType(List<Long> ids, Concept type) {
         return specimenRepository.updateTypeByIds(type.getId(), ids);
     }

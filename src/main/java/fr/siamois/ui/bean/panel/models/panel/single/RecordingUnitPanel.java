@@ -21,6 +21,7 @@ import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.models.exceptions.ErrorProcessingExpansionException;
@@ -30,6 +31,8 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
+import fr.siamois.ui.lazydatamodel.RecordingUnitInActionUnitLazyDataModel;
+import fr.siamois.ui.lazydatamodel.SpecimenInRecordingUnitLazyDataModel;
 import fr.siamois.utils.MessageUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -66,6 +69,7 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
     private final transient DocumentService documentService;
     protected final transient ConceptService conceptService;
     protected final transient FieldConfigurationService fieldConfigurationService;
+    private final SpecimenService specimenService;
 
     // ---------- Locals
     // RU
@@ -73,6 +77,9 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
 
     // Form
     protected CustomForm additionalForm;
+
+    // Linked specimen
+    private transient SpecimenInRecordingUnitLazyDataModel specimenListLazyDataModel ;
 
 
     // ----------- Concepts for system fields
@@ -241,7 +248,7 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
                                  DocumentCreationBean documentCreationBean,
                                  RedirectBean redirectBean,
                                  HistoryService historyService,
-                                 DocumentService documentService) {
+                                 DocumentService documentService, SpecimenService specimenService) {
 
         super("common.entity.recordingunit",
                 "bi bi-pencil-square",
@@ -258,6 +265,7 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
         this.redirectBean = redirectBean;
         this.historyService = historyService;
         this.documentService = documentService;
+        this.specimenService = specimenService;
     }
 
     @Override
@@ -396,6 +404,14 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
             unit = recordingUnitService.findById(idunit);
             backupClone = new RecordingUnit(unit);
             this.titleCodeOrTitle = unit.getFullIdentifier();
+
+            specimenListLazyDataModel = new SpecimenInRecordingUnitLazyDataModel(
+                    specimenService,
+                    sessionSettingsBean,
+                    langBean,
+                    unit
+            );
+            specimenListLazyDataModel.setSelectedUnits(new ArrayList<>());
 
             initForms();
 

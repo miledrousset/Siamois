@@ -78,15 +78,7 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
-    public void handleRowSelect(SelectEvent<T> event) {
-        FacesMessage msg = new FacesMessage("Row Selected");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
 
-    public void handleRowUnselect(UnselectEvent<T> event) {
-        FacesMessage msg = new FacesMessage("Row Unselected");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
 
     protected AbstractListPanel(
             String titleKey,

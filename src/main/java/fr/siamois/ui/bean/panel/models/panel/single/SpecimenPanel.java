@@ -34,6 +34,7 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
+import fr.siamois.ui.lazydatamodel.RecordingUnitInActionUnitLazyDataModel;
 import fr.siamois.utils.MessageUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -78,6 +79,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
     // ---------- Locals
     // RU
     protected RecordingUnit recordingUnit;
+
 
 
     // ----------- Concepts for system fields
