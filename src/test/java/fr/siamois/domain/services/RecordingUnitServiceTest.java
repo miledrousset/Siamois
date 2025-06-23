@@ -2,6 +2,7 @@ package fr.siamois.domain.services;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
+import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.institution.Institution;
@@ -16,6 +17,7 @@ import fr.siamois.domain.services.recordingunit.StratigraphicRelationshipService
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
+import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.recordingunit.RecordingUnitRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,8 +35,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 
@@ -43,6 +44,8 @@ class RecordingUnitServiceTest {
 
     @Mock
     private RecordingUnitRepository recordingUnitRepository;
+    @Mock
+    private PersonRepository personRepository;
     @Mock
     private FieldService fieldService;
     @Mock
@@ -180,6 +183,8 @@ class RecordingUnitServiceTest {
         postRelationship.setUnit2(recordingUnitToSave);
         postRelationship.setType(StratigraphicRelationshipService.ASYNCHRONOUS);
 
+        Person p = new Person();
+
         Concept c = new Concept();
         when(conceptService.saveOrGetConcept(c)).thenReturn(c);
 
@@ -188,6 +193,7 @@ class RecordingUnitServiceTest {
         when(recordingUnitRepository.save(any(RecordingUnit.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
+        when(personRepository.findAllById(anyList())).thenReturn(List.of(p));
 
 
         RecordingUnit result = recordingUnitService.save(recordingUnitToSave,c,
@@ -232,8 +238,12 @@ class RecordingUnitServiceTest {
         postRelationship.setUnit2(recordingUnitToSave);
         postRelationship.setType(StratigraphicRelationshipService.ASYNCHRONOUS);
 
+        Person p = new Person();
+
         Concept c = new Concept();
         when(conceptService.saveOrGetConcept(c)).thenReturn(c);
+
+        when(personRepository.findAllById(anyList())).thenReturn(List.of(p));
 
         when(recordingUnitRepository.findMaxUsedIdentifierByAction(anyLong())).thenReturn(null);
 

@@ -7,6 +7,8 @@ import fr.siamois.domain.models.history.*;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
+import fr.siamois.infrastructure.database.repositories.history.ActionUnitHistoryRepository;
+import fr.siamois.infrastructure.database.repositories.history.SpecimenHistoryRepository;
 import fr.siamois.infrastructure.database.repositories.history.GlobalHistoryRepository;
 import fr.siamois.infrastructure.database.repositories.history.RecordingUnitHistoryRepository;
 import fr.siamois.infrastructure.database.repositories.history.SpatialUnitHistoryRepository;
@@ -35,6 +37,12 @@ class HistoryServiceTest {
     private RecordingUnitHistoryRepository recordingUnitHistoryRepository;
 
     @Mock
+    private ActionUnitHistoryRepository actionUnitHistoryRepository;
+
+    @Mock
+    private SpecimenHistoryRepository specimenHistoryRepository;
+
+    @Mock
     private GlobalHistoryRepository globalHistoryRepository;
 
     private HistoryService historyService;
@@ -42,7 +50,11 @@ class HistoryServiceTest {
 
     @BeforeEach
     void setUp() {
-        historyService = new HistoryService(spatialUnitHistoryRepository, recordingUnitHistoryRepository, globalHistoryRepository);
+        historyService = new HistoryService(spatialUnitHistoryRepository,
+                actionUnitHistoryRepository,
+                recordingUnitHistoryRepository,
+                specimenHistoryRepository,
+                globalHistoryRepository);
         setupUserInfo();
     }
 
