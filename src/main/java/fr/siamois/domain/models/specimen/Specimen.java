@@ -3,12 +3,14 @@ package fr.siamois.domain.models.specimen;
 
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
+import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -29,6 +31,13 @@ public class Specimen extends SpecimenParent implements ArkEntity {
             inverseJoinColumns = { @JoinColumn(name = "fk_document_id") }
     )
     private Set<Document> documents = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "recording_unit_authors",
+            joinColumns = @JoinColumn(name = "fk_recording_unit_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_person_id"))
+    private List<Person> authors;
 
     @ManyToMany(mappedBy = "specimens")
     private Set<SpecimenGroup> groups = new HashSet<>();

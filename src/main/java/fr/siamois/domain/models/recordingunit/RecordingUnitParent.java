@@ -55,12 +55,6 @@ public abstract class RecordingUnitParent extends TraceableEntity {
     @JoinColumn(name = "fk_action_unit_id", nullable = false)
     protected ActionUnit actionUnit;
 
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fk_excavator_id")
-    protected Person excavator;
-
     @NotNull
     @Column(name = "identifier")
     protected Integer identifier;

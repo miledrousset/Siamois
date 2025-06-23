@@ -1,4 +1,4 @@
-package fr.siamois.ui.bean.recordingunit;
+package fr.siamois.ui.bean.dialog.recordingunit;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
@@ -17,7 +17,6 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.ui.bean.LangBean;
-import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import fr.siamois.ui.lazydatamodel.BaseRecordingUnitLazyDataModel;

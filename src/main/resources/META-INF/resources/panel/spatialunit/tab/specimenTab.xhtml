@@ -1,0 +1,25 @@
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml"
+             xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:recordingUnit="http://xmlns.jcp.org/jsf/composite/pages/recordingUnit/components"
+             xmlns:f="http://java.sun.com/jsf/core"
+
+>
+
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity"-->
+    <!--@elvariable id="panelIndex" type="java.lang.Integer"-->
+    🚧 En cours
+
+    <div class="specimen-panel">
+        <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
+                         id="newSpecimenButton"
+                         actionListener="#{newSpecimenDialogBean.init(panelModel.unit)}"
+                         oncomplete="PF('newSpecimenDiag').show()"
+                         update="newSpecimenForm"
+                         rendered="#{flowBean.readWriteMode == 'WRITE'}"
+                         style="margin-right: .5rem">
+        </p:commandButton>
+    </div>
+
+
+</ui:fragment>

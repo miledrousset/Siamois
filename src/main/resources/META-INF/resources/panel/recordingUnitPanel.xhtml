@@ -81,7 +81,10 @@
                         </ui:include>
                     </f:facet>
 
-                    🚧 En cours
+                    <ui:include src="/panel/spatialunit/tab/specimenTab.xhtml">
+                        <ui:param name="panelModel" value="#{panelModel}"/>
+                        <ui:param name="panelIndex" value="#{panelIndex}"/>
+                    </ui:include>
 
                 </p:tab>
 
