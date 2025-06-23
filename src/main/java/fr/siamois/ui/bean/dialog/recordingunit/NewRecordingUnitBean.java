@@ -30,6 +30,7 @@ import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
 
@@ -288,6 +289,8 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
 
 
         // Open new panel
+        PrimeFaces.current().executeScript("PF('newRecordingUnitDiag').hide();handleScrollToTop();");
+        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getFullIdentifier());
         flowBean.addRecordingUnitPanel(unit.getId());
 
     }
@@ -302,6 +305,7 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
         }
 
         MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getFullIdentifier());
+        PrimeFaces.current().executeScript("PF('newRecordingUnitDiag').hide()");
 
 
     }

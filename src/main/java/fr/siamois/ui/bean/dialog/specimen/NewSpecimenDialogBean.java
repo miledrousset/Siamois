@@ -34,6 +34,7 @@ import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
 
@@ -287,6 +288,8 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
 
 
         // Open new panel
+        PrimeFaces.current().executeScript("PF('newSpecimenDiag').hide();handleScrollToTop();");
+        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getFullIdentifier());
         flowBean.addSpecimenPanel(unit.getId());
 
     }
@@ -299,7 +302,7 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
             MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
             throw e;
         }
-
+        PrimeFaces.current().executeScript("PF('newSpecimenDiag').hide();");
         MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getFullIdentifier());
 
 
