@@ -38,12 +38,7 @@ body .ui-selectbooleanbutton.ui-state-active:not(.ui-state-disabled):hover,body 
     font-size: 16px;
 }
 
-.ui-chip.error-chip {
-    background-color: var(--error-main);
-    border: none;
-    color: white;
-    font-size: 16px;
-}
+
 
 .siamois-panel {
     border-radius: 8px;
@@ -317,6 +312,12 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 
 /* spatial input field */
 
+.spatial-unit-panel .ui-chip {
+    background-color: var(--context-main-color);
+    color: white;
+    font-size: 16px;
+}
+
 .spatial-unit-panel .ui-inputfield.ui-state-hover {
     border-color: var(--context-light-color-200);
 }
@@ -406,37 +407,7 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     border: none;
 }
 
-.ui-chip.spatial-unit-count-chip {
-    background-color: white;
-    border: 1px solid var(--context-main-color);
-    color: var(--context-main-color);
-    font-size: 16px;
-}
 
-.ui-chip.spatial-unit-count-chip-alt {
-    background-color: var(--context-main-color);
-    border: 1px solid var(--context-main-color);
-    color: white;
-    font-size: 16px;
-}
-
-.ui-chip.spatial-unit-type-chip {
-    background-color: var(--context-main-color);
-    color: white;
-    font-size: 16px;
-}
-
-.ui-chip.recording-unit-type-chip {
-    background-color: var(--ground-main-color);
-    color: white;
-    font-size: 16px;
-}
-
-.ui-chip.valid-type-chip {
-    background-color: var(--green-valid);
-    color: white;
-    font-size: 16px;
-}
 
 .ui-panel.spatial-unit-single-panel .ui-panel-content {
     background: var(--context-light-color-50);
@@ -469,20 +440,16 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     color: var(--context-main-color);
 }
 
-.recording-unit-tab .ui-datatable thead th {
-    background: var(--ground-light-color-100);
-}
 
-.recording-unit-tab .ui-commandlink, .recording-unit-tab .ui-link {
-    color: var(--ground-main-color)
-}
-
-.recording-unit-tab .ui-commandlink:hover, .recording-unit-tab:hover .ui-link {
-    color: var(--ground-main-color)
-}
 
 
 /* Action units panels */
+
+.action-unit-panel .ui-chip {
+    background-color: var(--context-main-color);
+    color: white;
+    font-size: 16px;
+}
 
 /* action thead */
 
@@ -626,26 +593,10 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     border: none;
 }
 
-.ui-chip.action-unit-count-chip {
-    background-color: white;
-    border: 1px solid var(--context-main-color);
-    color: var(--context-main-color);
-    font-size: 16px;
-}
-
-.ui-chip.action-unit-count-chip-alt {
-    background-color: var(--context-main-color);
-    border: 1px solid var(--context-main-color);
-    color: white;
-    font-size: 16px;
-}
 
 
-.ui-chip.action-unit-type-chip {
-    background-color: var(--context-main-color);
-    color: white;
-    font-size: 16px;
-}
+
+
 
 .ui-panel.action-unit-single-panel .ui-panel-content {
     background: var(--context-light-color-50);
@@ -694,6 +645,16 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 
 /* Recording units panels */
 
+.recording-unit-panel .ui-autocomplete .ui-autocomplete-multiple-container .ui-autocomplete-token {
+    background-color: var(--ground-main-color);
+    color: white;
+}
+
+.recording-unit-panel .ui-chip {
+    background-color: var(--ground-main-color);
+    color: white;
+    font-size: 16px;
+}
 
 .recording-unit-panel .sia-modified-field {
     border-color: var(--ground-main-color);
@@ -880,15 +841,7 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     color: var(--ground-main-color);
 }
 
-.recording-unit-tab .ui-button {
-    background: var(--ground-main-color);
-    border: 1px solid var(--ground-main-color);
-}
 
-.recording-unit-tab .ui-button:hover {
-    background: var(--ground-dark-color);
-    border: 1px solid var(--ground-dark-color);
-}
 
 .recording-unit-panel .ui-commandlink, .recording-unit-panel .ui-link {
     color: var(--ground-main-color);
@@ -979,7 +932,100 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     text-align: center;
 }
 
+/* tabs */
+.recording-unit-tab .ui-datatable thead th {
+    background: var(--ground-light-color-100);
+}
 
+.recording-unit-tab .ui-commandlink, .recording-unit-tab .ui-link {
+    color: var(--ground-main-color)
+}
+
+.recording-unit-tab .ui-commandlink:hover, .recording-unit-tab:hover .ui-link {
+    color: var(--ground-main-color)
+}
+
+.recording-unit-tab .ui-button {
+    background: var(--ground-main-color);
+    border: 1px solid var(--ground-main-color);
+}
+
+.recording-unit-tab .ui-button:hover {
+    background: var(--ground-dark-color);
+    border: 1px solid var(--ground-dark-color);
+}
+
+/* dialogs */
+
+.sia-new-unit-dialog.ui-dialog .ui-dialog-titlebar {
+    padding:0;
+}
+
+.sia-new-unit-dialog.ui-dialog .ui-dialog-footer {
+    padding:0;
+}
+
+.ui-chip.error-chip {
+    background-color: var(--error-main);
+    border: none;
+    color: white;
+    font-size: 16px;
+}
+
+
+/* chips */
+
+.ui-chip.action-unit-type-chip {
+    background-color: var(--context-main-color);
+    color: white;
+    font-size: 16px;
+}
+
+.ui-chip.spatial-unit-count-chip {
+    background-color: white;
+    border: 1px solid var(--context-main-color);
+    color: var(--context-main-color);
+    font-size: 16px;
+}
+
+.ui-chip.spatial-unit-count-chip-alt {
+    background-color: var(--context-main-color);
+    border: 1px solid var(--context-main-color);
+    color: white;
+    font-size: 16px;
+}
+
+.ui-chip.spatial-unit-type-chip {
+    background-color: var(--context-main-color);
+    color: white;
+    font-size: 16px;
+}
+
+.ui-chip.recording-unit-type-chip {
+    background-color: var(--ground-main-color);
+    color: white;
+    font-size: 16px;
+}
+
+.ui-chip.valid-type-chip {
+    background-color: var(--green-valid);
+    color: white;
+    font-size: 16px;
+}
+
+.ui-chip.action-unit-count-chip {
+    background-color: white;
+    border: 1px solid var(--context-main-color);
+    color: var(--context-main-color);
+    font-size: 16px;
+}
+
+.ui-chip.action-unit-count-chip-alt {
+    background-color: var(--context-main-color);
+    border: 1px solid var(--context-main-color);
+    color: white;
+    font-size: 16px;
+}
 
 
 

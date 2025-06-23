@@ -6,13 +6,13 @@
 >
 
     <!--@elvariable id="panelIndex" type="Integer"-->
-    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel"-->
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel"-->
 
     <!-- Content -->
     <p:staticMessage severity="error" summary="Error" closable="false"
                      detail="#{panelModel.spatialUnitErrorMessage}"
                      rendered="#{not empty panelModel.spatialUnitErrorMessage}"/>
-    <h:panelGroup id="contentPanel" rendered="#{panelModel.spatialUnit != null}">
+    <h:panelGroup id="spatialUnitContentPanel" rendered="#{panelModel.unit != null}">
 
 
         <h:form id="spatialUnitForm">
@@ -49,7 +49,7 @@
                     </f:facet>
 
                     <ui:include src="/panel/spatialunit/tab/detailsTab.xhtml">
-                        <ui:param name="spatialUnit" value="#{panelModel.spatialUnit}"/>
+                        <ui:param name="spatialUnit" value="#{panelModel.unit}"/>
                         <ui:param name="panelModel" value="#{panelModel}"/>
                         <ui:param name="panelIndex" value="#{panelIndex}"/>
                     </ui:include>
@@ -62,7 +62,7 @@
                             <ui:param name="icon" value="bi bi-geo-alt"/>
 
                             <ui:param name="emptyTab" value="#{panelModel.isHierarchyTabEmpty()}"/>
-                            <ui:param name="validated" value="#{panelModel.spatialUnit.validated}"/>
+                            <ui:param name="validated" value="#{panelModel.unit.validated}"/>
                         </ui:include>
 
                     </f:facet>
@@ -79,7 +79,7 @@
                             <ui:param name="title" value="Actions"/>
                             <ui:param name="icon" value="bi bi-arrow-down-square"/>
                             <ui:param name="emptyTab" value="#{panelModel.totalActionUnitCount == 0}"/>
-                            <ui:param name="validated" value="#{panelModel.spatialUnit.validated}"/>
+                            <ui:param name="validated" value="#{panelModel.unit.validated}"/>
                         </ui:include>
                     </f:facet>
 
@@ -92,10 +92,10 @@
                 <p:tab title="Enregistrements (1)">
                     <f:facet name="title">
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value="Enregistrements"/>
+                            <ui:param name="title" value="Enregistrements 🚧"/>
                             <ui:param name="icon" value="bi bi-pencil-square"/>
                             <ui:param name="emptyTab" value="true"/>
-                            <ui:param name="validated" value="#{panelModel.spatialUnit.validated}"/>
+                            <ui:param name="validated" value="#{panelModel.unit.validated}"/>
                         </ui:include>
                     </f:facet>
 
@@ -106,10 +106,10 @@
                 <p:tab title="Prelevements">
                     <f:facet name="title">
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value="Prelevements"/>
+                            <ui:param name="title" value="Prelevements 🚧"/>
                             <ui:param name="icon" value="bi bi-box2"/>
                             <ui:param name="emptyTab" value="true"/>
-                            <ui:param name="validated" value="#{panelModel.spatialUnit.validated}"/>
+                            <ui:param name="validated" value="#{panelModel.unit.validated}"/>
                         </ui:include>
                     </f:facet>
 
@@ -125,7 +125,7 @@
                             <ui:param name="title" value="Documents"/>
                             <ui:param name="icon" value="bi bi-paperclip"/>
                             <ui:param name="emptyTab" value="#{panelModel.documents.size() == 0}"/>
-                            <ui:param name="validated" value="#{panelModel.spatialUnit.validated}"/>
+                            <ui:param name="validated" value="#{panelModel.unit.validated}"/>
                         </ui:include>
                     </f:facet>
 
@@ -191,8 +191,6 @@
     <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
         <h:outputText value="Version restaurée"/>
     </p:dialog>
-
-    <ui:include src="/dialog/document/newDocument.xhtml"/>
 
 
 </ui:fragment>

@@ -4,6 +4,7 @@ package fr.siamois.domain.models.recordingunit;
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.ReferencableEntity;
+import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.actionunit.NullActionUnitIdentifierException;
 import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
@@ -12,7 +13,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -33,6 +36,8 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
         setAltitude(recordingUnit.getAltitude());
         setCreatedByInstitution(recordingUnit.getCreatedByInstitution());
         setAuthor(recordingUnit.getAuthor());
+        setAuthors(recordingUnit.getAuthors());
+        setExcavators(recordingUnit.getExcavators());
         setSpatialUnit(recordingUnit.getSpatialUnit());
     }
 
@@ -59,8 +64,19 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     private Set<RecordingUnit> parents = new HashSet<>();
 
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "recording_unit_authors",
+            joinColumns = @JoinColumn(name = "fk_recording_unit_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_person_id"))
+    private List<Person> authors = new ArrayList<>();
 
-
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "recording_unit_excavators",
+            joinColumns = @JoinColumn(name = "fk_recording_unit_id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_person_id"))
+    private List<Person> excavators = new ArrayList<>();
 
 
     @OneToMany(fetch = FetchType.LAZY)
@@ -114,5 +130,11 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     @Override
     public String toString() {
         return String.format("Recording Unit %s", displayFullIdentifier());
+    }
+
+    @Transient
+    public List<String> getBindableFieldNames() {
+        return List.of("creationTime", "startDate", "endDate", "fullIdentifier", "authors",
+                "excavators", "type", "secondaryType", "thirdType","actionUnit","spatialUnit");
     }
 }

@@ -117,6 +117,7 @@ public class PersonService {
         return personRepository.findAllByNameOrLastname(nameOrLastname);
     }
 
+
     /**
      * Find all the person being an author of a spatial unit
      *

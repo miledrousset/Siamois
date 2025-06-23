@@ -8,6 +8,8 @@
     <cc:interface>
         <cc:attribute name="set" required="true" type="java.util.Set"/>
         <cc:attribute name="commandLinkStyleClass" required="false" type="java.lang.String"/>
+        <cc:attribute name="panelModel" required="false" type="fr.siamois.ui.bean.panel.models.panel.AbstractPanel"/>
+        <cc:attribute name="onClickMethod" method-signature="void f(java.lang.Long, fr.siamois.ui.bean.panel.models.panel.AbstractPanel)" required="false"/>
         <cc:attribute name="displayAttribute" required="false" type="java.lang.String"
                       default="name"/>
     </cc:interface>
@@ -18,8 +20,24 @@
 
         <ui:repeat value="#{spatialUnitHelperService.getFirstThree(cc.attrs.set)}" var="item"
                    varStatus="status">
-            <p:commandLink styleClass="#{cc.attrs.commandLinkStyleClass}"
+
+
+            <p:commandLink
+                    rendered="#{not empty cc.attrs.onClickMethod}"
+                    styleClass="#{cc.attrs.commandLinkStyleClass}"
+                           onstart="PF('buiContent').show()"
+                           oncomplete="PF('buiContent').hide();handleScrollToTop();"
+                           update="flow"
+                           action="#{flowBean.invokeOnClick(cc.attrs.onClickMethod, item.id, cc.attrs.panelModel)}"
                            style="display: block; padding: 2px 0;"
+            >
+                <h:outputText value="#{item[cc.attrs.displayAttribute]}"/>
+            </p:commandLink>
+            <p:commandLink
+                    rendered="#{empty cc.attrs.onClickMethod}"
+                    styleClass="#{cc.attrs.commandLinkStyleClass}"
+                    disabled="true"
+                    style="display: block; padding: 2px 0;"
             >
                 <h:outputText value="#{item[cc.attrs.displayAttribute]}"/>
             </p:commandLink>

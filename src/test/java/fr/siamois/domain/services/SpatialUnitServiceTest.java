@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -329,6 +330,10 @@ class SpatialUnitServiceTest {
         String name = "SpatialUnitName";
         Concept type = new Concept();
         List<SpatialUnit> parents = List.of(spatialUnit1);
+        SpatialUnit unit = new SpatialUnit();
+        unit.setName(name);
+        unit.setCategory(type);
+        unit.setParents(new HashSet<>(parents));
 
         when(institutionService.createOrGetSettingsOf(userInfo.getInstitution())).thenReturn(new InstitutionSettings());
         when(spatialUnitRepository.findByNameAndInstitution(name, userInfo.getInstitution().getId())).thenReturn(Optional.empty());
@@ -336,7 +341,7 @@ class SpatialUnitServiceTest {
         when(spatialUnitRepository.save(any(SpatialUnit.class))).thenReturn(spatialUnit1);
 
         // Act
-        SpatialUnit result = spatialUnitService.save(userInfo, name, type, parents);
+        SpatialUnit result = spatialUnitService.save(userInfo, unit);
 
         // Assert
         assertNotNull(result);
@@ -352,13 +357,17 @@ class SpatialUnitServiceTest {
         String name = "SpatialUnitName";
         Concept type = new Concept();
         List<SpatialUnit> parents = List.of(spatialUnit1);
+        SpatialUnit unit = new SpatialUnit();
+        unit.setName(name);
+        unit.setCategory(type);
+        unit.setParents(new HashSet<>(parents));
 
         when(spatialUnitRepository.findByNameAndInstitution(name, userInfo.getInstitution().getId())).thenReturn(Optional.of(spatialUnit1));
 
         // Act & Assert
         SpatialUnitAlreadyExistsException exception = assertThrows(
                 SpatialUnitAlreadyExistsException.class,
-                () -> spatialUnitService.save(userInfo, name, type, parents)
+                () -> spatialUnitService.save(userInfo, unit)
         );
 
         assertEquals("Spatial Unit with name SpatialUnitName already exist in institution null", exception.getMessage());

@@ -35,6 +35,15 @@ public class BookmarkService {
     }
 
     @Transactional
+    public void delete(UserInfo userInfo, AbstractPanel panel) {
+        bookmarkRepository.deleteBookmarkByPersonAndInstitutionAndResourceUri(
+                userInfo.getUser(),
+                userInfo.getInstitution(),
+                panel.ressourceUri()
+        );
+    }
+
+    @Transactional
     public Bookmark save(UserInfo userInfo, String ressourceUri, String titleCodeOrTitle) {
         Bookmark bookmark = new Bookmark();
         bookmark.setPerson(userInfo.getUser());

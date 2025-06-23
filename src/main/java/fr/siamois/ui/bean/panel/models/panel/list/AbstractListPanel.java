@@ -1,4 +1,4 @@
-package fr.siamois.ui.bean.panel.models.panel;
+package fr.siamois.ui.bean.panel.models.panel.list;
 
 import fr.siamois.domain.services.BookmarkService;
 import fr.siamois.domain.services.SpatialUnitService;
@@ -8,6 +8,7 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.application.FacesMessage;
@@ -24,7 +25,6 @@ import org.primefaces.model.menu.DefaultMenuItem;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 @Getter
 @Setter
@@ -45,7 +45,7 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
     protected BaseLazyDataModel<T> lazyDataModel;
     protected long totalNumberOfUnits;
     protected String errorMessage;
-    protected transient List<T> selectedUnits ;
+
 
     protected AbstractListPanel(BookmarkService bookmarkService) {
         this.bookmarkService = bookmarkService;
@@ -80,15 +80,7 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
-    public void handleRowSelect(SelectEvent<T> event) {
-        FacesMessage msg = new FacesMessage("Row Selected");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
 
-    public void handleRowUnselect(UnselectEvent<T> event) {
-        FacesMessage msg = new FacesMessage("Row Unselected");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
 
     protected AbstractListPanel(
             String titleKey,
@@ -142,9 +134,7 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
         MessageUtils.displayInfoMessage(langBean, "common.bookmark.saved");
     }
 
-    public Boolean isRessourceBookmarkedByUser(String ressourceUri) {
-        return bookmarkService.isRessourceBookmarkedByUser(sessionSettingsBean.getUserInfo(), ressourceUri);
-    }
+
 
     protected abstract void setErrorMessage(String msg);
 

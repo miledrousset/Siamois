@@ -24,6 +24,7 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
     )
     List<Person> findAllByNameOrLastname(String nameOrLastname);
 
+
     @Query(
             nativeQuery = true,
             value = "SELECT DISTINCT p.* " +

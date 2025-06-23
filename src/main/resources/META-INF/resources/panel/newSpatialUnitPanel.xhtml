@@ -52,7 +52,8 @@
         <p:toolbar class="panel-footer">
             <p:toolbarGroup align="right">
                 <p:commandButton value='#{langBean.msg("common.action.save")}'
-                                 oncomplete="scrollToPanel(#{flowBean.lastUpdatedPanelIndex});"
+                                 onstart="PF('buiContent').show()"
+                                 oncomplete="PF('buiContent').hide();handleScrollToTop();"
                                  actionListener="#{panelModel.save()}"
                                  update="flow"
                                  style="margin-right: .5rem">

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -26,6 +27,43 @@ public class CustomForm implements Serializable {
     @Column(name = "layout", columnDefinition = "jsonb")
     @Convert(converter = CustomFormLayoutConverter.class)
     private List<CustomFormPanel> layout;
+
+    public static class Builder {
+
+        private final CustomForm form = new CustomForm();
+        private final List<CustomFormPanel> panels = new ArrayList<>();
+
+        public Builder name(String name) {
+            form.setName(name);
+            return this;
+        }
+
+        public Builder description(String description) {
+            form.setDescription(description);
+            return this;
+        }
+
+        public Builder addPanel(CustomFormPanel panel) {
+            panels.add(panel);
+            return this;
+        }
+
+        public Builder addPanels(CustomFormPanel... panelArray) {
+            panels.addAll(List.of(panelArray));
+            return this;
+        }
+
+        public Builder addPanels(List<CustomFormPanel> panelList) {
+            panels.addAll(panelList);
+            return this;
+        }
+
+        public CustomForm build() {
+            form.setLayout(panels);
+            return form;
+        }
+    }
+
 
 
 }

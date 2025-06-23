@@ -7,6 +7,7 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
+import fr.siamois.ui.lazydatamodel.*;
 import fr.siamois.utils.MessageUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.HashSet;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -34,6 +36,7 @@ public class NewSpatialUnitPanel extends AbstractPanel {
     // Locals
     SpatialUnit spatialUnit;
 
+    private BaseLazyDataModel lazyDataModel; // lazymodel to be updated after creation
 
     public NewSpatialUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, FlowBean flowBean) {
         super("panel.newspatialunit.title", "bi bi-geo-alt", "siamois-panel spatial-unit-panel new-spatial-unit-panel");
@@ -60,6 +63,21 @@ public class NewSpatialUnitPanel extends AbstractPanel {
 
     void init() {
         spatialUnit = new SpatialUnit();
+        SpatialUnit spatialUnitParent ;
+
+        // Set parents or children based on lazy model type
+        if (lazyDataModel instanceof SpatialUnitChildrenLazyDataModel typedModel) {
+            spatialUnitParent = spatialUnitService.findById(typedModel.getSpatialUnit().getId());
+            spatialUnit.setChildren(new HashSet<>());
+            spatialUnit.getChildren().add(spatialUnitParent);
+        }
+        else if (lazyDataModel instanceof SpatialUnitParentsLazyDataModel typedModel) {
+            spatialUnitParent = spatialUnitService.findById(typedModel.getSpatialUnit().getId());
+            spatialUnit.setParents(new HashSet<>());
+            spatialUnit.getParents().add(spatialUnitParent);
+        }
+        spatialUnit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
+
     }
 
 
@@ -74,7 +92,8 @@ public class NewSpatialUnitPanel extends AbstractPanel {
     public boolean save() {
 
         try {
-            SpatialUnit saved = spatialUnitService.save(sessionSettingsBean.getUserInfo(), spatialUnit.getName(), spatialUnit.getCategory(), Collections.emptyList());
+            SpatialUnit saved = spatialUnitService.save(sessionSettingsBean.getUserInfo(),
+                    spatialUnit);
 
             MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.created", saved.getName());
 
@@ -100,6 +119,12 @@ public class NewSpatialUnitPanel extends AbstractPanel {
 
         public NewSpatialUnitPanel.NewSpatialUnitPanelBuilder breadcrumb(PanelBreadcrumb breadcrumb) {
             newSpatialUnitPanel.setBreadcrumb(breadcrumb);
+
+            return this;
+        }
+
+        public NewSpatialUnitPanel.NewSpatialUnitPanelBuilder lazyModel(BaseLazyDataModel lazyModel) {
+            newSpatialUnitPanel.setLazyDataModel(lazyModel);
 
             return this;
         }

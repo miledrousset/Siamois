@@ -5,19 +5,16 @@
 >
 
     <!--@elvariable id="spatialUnit" type="fr.siamois.domain.models.spatialunit.SpatialUnit"-->
-    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel"-->
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntityPanel"-->
     <!--@elvariable id="panelIndex" type="Integer"-->
 
     <ui:include src="/pages/shared/form/customForm.xhtml">
         <ui:param name="panelModel" value="#{panelModel}"/>
-        <ui:param name="layout" value="#{panelModel.overviewLayout}"/>
+        <ui:param name="layout" value="#{panelModel.overviewForm.layout}"/>
         <ui:param name="readOnly" value="true"/>
         <ui:param name="prefix" value="overview"/>
         <ui:param name="panelId" value="panel-#{panelIndex}"/>
     </ui:include>
-
-
-
 
 
 </ui:fragment>

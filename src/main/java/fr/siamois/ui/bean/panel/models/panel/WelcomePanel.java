@@ -5,6 +5,7 @@ import fr.siamois.domain.models.events.LangageChangeEvent;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
@@ -29,17 +30,19 @@ public class WelcomePanel extends AbstractPanel {
     private final transient RecordingUnitService recordingUnitService;
     private final transient ActionUnitService actionUnitService;
     private final transient SpatialUnitService spatialUnitService;
+    private final transient SpecimenService specimenService;
     private final LangBean langBean;
 
     // Locals
     private long nbOfSpatialUnits;
     private long nbOfActionUnits;
     private long nbOfRecordingUnits;
+    private long nbOfSpecimen;
 
     public WelcomePanel(SessionSettingsBean sessionSettingsBean,
                         RecordingUnitService recordingUnitService,
                         ActionUnitService actionUnitService,
-                        SpatialUnitService spatialUnitService,
+                        SpatialUnitService spatialUnitService, SpecimenService specimenService,
                         LangBean langBean
     ) {
         super("common.location.home", "bi bi-house", "siamois-panel");
@@ -48,6 +51,7 @@ public class WelcomePanel extends AbstractPanel {
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
         this.spatialUnitService = spatialUnitService;
+        this.specimenService = specimenService;
         this.langBean = langBean;
 
         setBreadcrumb(new PanelBreadcrumb());
@@ -62,11 +66,14 @@ public class WelcomePanel extends AbstractPanel {
         nbOfActionUnits = 0;
         nbOfSpatialUnits = 0;
         nbOfRecordingUnits = 0;
+        nbOfSpecimen = 0;
+        refreshName();
 
         try {
             nbOfRecordingUnits = recordingUnitService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
             nbOfActionUnits = actionUnitService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
             nbOfSpatialUnits = spatialUnitService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
+            nbOfSpecimen = specimenService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
         }
         catch(RuntimeException e) {
             log.error(e.getMessage());
@@ -82,6 +89,11 @@ public class WelcomePanel extends AbstractPanel {
     @Override
     public String ressourceUri() {
         return "/welcome";
+    }
+
+    @Override
+    public String displayHeader() {
+        return "/panel/header/homePanelHeader.xhtml";
     }
 
     @EventListener(LangageChangeEvent.class)

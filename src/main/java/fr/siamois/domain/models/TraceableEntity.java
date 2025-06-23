@@ -1,5 +1,6 @@
 package fr.siamois.domain.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.institution.Institution;
 import jakarta.persistence.*;
@@ -28,6 +29,7 @@ public abstract class TraceableEntity implements Serializable {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_author_id", nullable = false)
+    @JsonIgnore
     protected Person author;
 
     @ColumnDefault("NOW()")
@@ -36,12 +38,26 @@ public abstract class TraceableEntity implements Serializable {
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name = "fk_institution_id", nullable = false)
     protected Institution createdByInstitution;
+
+    @NotNull
+    @Column(name = "validated", nullable = false)
+    protected Boolean validated = false;
+
+    @Column(name = "validated_at")
+    protected OffsetDateTime validatedAt ;
+
+    @ManyToOne
+    @JoinColumn(name = "fk_validated_by")
+    @JsonIgnore
+    protected Person validatedBy ;
 
     @ColumnDefault("NULL")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_last_modification_person_id")
+    @JsonIgnore
     protected Person lastModifiedBy = null;
 
     public abstract Long getId();

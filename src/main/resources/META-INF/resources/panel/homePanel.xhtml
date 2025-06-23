@@ -15,9 +15,6 @@
         <div style="padding:1em;">
             <!-- Common fields -->
 
-            <p:panel id="latestActivity" class="sia-form-panel" header="#{langBean.msg('homePanel.actionUnit')}" toggleable="true"
-                     collapsed="false">
-            </p:panel>
 
             <p:panel id="dbAccess" class="sia-form-panel" header="#{langBean.msg('homePanel.database')}" toggleable="true"
                      collapsed="false">
@@ -40,6 +37,7 @@
                                     label="#{langBean.msg('common.entity.spatialUnits')}"
                                     count="#{panelModel.nbOfSpatialUnits}"
                                     btnAction="#{flowBean.addSpatialUnitListPanel(panelModel.breadcrumb)}"
+                                    btnNewAction="#{flowBean.addNewSpatialUnitPanel(panelModel)}"
                             />
 
 
@@ -56,6 +54,7 @@
                                     label="#{langBean.msg('common.entity.actionUnits')}"
                                     count="#{panelModel.nbOfActionUnits}"
                                     btnAction="#{flowBean.addActionUnitListPanel(panelModel.breadcrumb)}"
+                                    btnNewAction="#{flowBean.addNewActionUnitPanel(null,panelIndex)}"
                             />
 
 
@@ -72,6 +71,23 @@
                                     label="#{langBean.msg('common.entity.recordingUnits')}"
                                     count="#{panelModel.nbOfRecordingUnits}"
                                     btnAction="#{flowBean.addRecordingUnitListPanel(panelModel.breadcrumb)}"
+
+                            />
+
+                        </p:column>
+
+                        <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+
+                            <siaCard:welcomeCard
+                                    icon="bi bi-box2"
+                                    cardStyleClass="sia-welcome-card sia-specimen"
+                                    chipStyleClass="specimen-count-chip-alt"
+                                    btnStyleClass="specimen-btn"
+                                    btnLabel="#{langBean.msg('homePanel.see.specimen')}"
+                                    label="#{langBean.msg('common.entity.specimen')}"
+                                    count="#{panelModel.nbOfSpecimen}"
+                                    btnAction="#{flowBean.addSpecimenListPanel(panelModel.breadcrumb)}"
+
                             />
 
                         </p:column>

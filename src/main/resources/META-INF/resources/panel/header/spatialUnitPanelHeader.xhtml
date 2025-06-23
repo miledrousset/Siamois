@@ -2,14 +2,14 @@
              xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
              xmlns:p="http://primefaces.org/ui"
 >
-    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.SpatialUnitPanel"-->
+    <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel"-->
 
-    <i class="#{panelModel.icon}"/>
-    <span>#{panelModel.titleCodeOrTitle}</span>
-    <p:chip label="#{labelBean.findLabelOf(panelModel.spatialUnit.category)}"
+    <p:chip label="#{labelBean.findLabelOf(panelModel.unit.category)}"
             icon="pi pi-map-marker"
             styleClass="mr-2 spatial-unit-type-chip"/>
-    <p:chip rendered="#{not panelModel.spatialUnit.validated}" label="Non validé"
+    <span>#{panelModel.titleCodeOrTitle}</span>
+
+    <p:chip rendered="#{not panelModel.unit.validated}" label="Non validé"
             styleClass="mr-2 error-chip"
             />
     <p:chip rendered="#{panelModel.hasUnsavedModifications}" label="Modifications non enregistré"

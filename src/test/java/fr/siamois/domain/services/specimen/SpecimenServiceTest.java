@@ -2,6 +2,7 @@ package fr.siamois.domain.services.specimen;
 
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.infrastructure.database.repositories.specimen.SpecimenRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,6 +51,9 @@ class SpecimenServiceTest {
     @Test
     void save() {
         Specimen specimen = new Specimen();
+        RecordingUnit ru = new RecordingUnit();
+        ru.setFullIdentifier("test");
+        specimen.setRecordingUnit(ru);
 
         when(specimenRepository.save(specimen)).thenReturn(specimen);
 

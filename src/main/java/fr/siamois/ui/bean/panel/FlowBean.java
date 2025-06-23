@@ -21,6 +21,13 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.breadcrumb.BreadcrumbBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.models.panel.*;
+import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.SpecimenPanel;
+import fr.siamois.ui.lazydatamodel.BaseSpatialUnitLazyDataModel;
+import jakarta.el.MethodExpression;
+import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -136,6 +143,10 @@ public class FlowBean implements Serializable {
         addPanel(panelFactory.createRecordingUnitListPanel(bc));
     }
 
+    public void addSpecimenListPanel(PanelBreadcrumb bc) {
+        addPanel(panelFactory.createSpecimenListPanel(bc));
+    }
+
 
     public void addPanel(AbstractPanel panel) {
         panels.add(0, panel);
@@ -172,13 +183,27 @@ public class FlowBean implements Serializable {
         addPanel(panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb()));
     }
 
+    public void addNewSpatialUnitPanel(AbstractPanel currentPanel, BaseSpatialUnitLazyDataModel lazyModel) {
+        addPanel(panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb(),lazyModel));
+    }
+
     public void addNewSpatialUnitPanel() {
         addPanel(panelFactory.createNewSpatialUnitPanel(null));
+    }
+
+    public void addNewActionUnitPanel(Integer sourcePanelIndex) {
+        addPanel(panelFactory.createNewActionUnitPanel(panels.get(sourcePanelIndex).getBreadcrumb()));
     }
 
     public void addNewActionUnitPanel(Long spatialUnitId, Integer sourcePanelIndex) {
         addPanel(panelFactory.createNewActionUnitPanel(spatialUnitId, panels.get(sourcePanelIndex).getBreadcrumb()));
     }
+
+    public void addNewActionUnitPanel(Long spatialUnitId, Integer sourcePanelIndex,BaseSpatialUnitLazyDataModel lazyModel) {
+        addPanel(panelFactory.createNewActionUnitPanel(spatialUnitId, panels.get(sourcePanelIndex).getBreadcrumb(), lazyModel));
+    }
+
+
 
     public void addNewActionUnitPanel(Long spatialUnitId) {
         addPanel(panelFactory.createNewActionUnitPanel(spatialUnitId, null));
@@ -192,13 +217,10 @@ public class FlowBean implements Serializable {
         addPanel(panelFactory.createRecordingUnitPanel(recordingUnitId));
     }
 
-    public void addNewRecordingUnitPanel(Long actionUnitId, Integer sourcePanelIndex) {
-        addPanel(panelFactory.createNewRecordingUnitPanel(actionUnitId, panels.get(sourcePanelIndex).getBreadcrumb()));
+    public void addSpecimenPanel(Long specimenId) {
+        addPanel(panelFactory.createSpecimenPanel(specimenId));
     }
 
-    public void addNewRecordingUnitPanel(Long actionUnitId) {
-        addPanel(panelFactory.createNewRecordingUnitPanel(actionUnitId, null));
-    }
 
     public void goToSpatialUnitByIdNewPanel(Long id, AbstractPanel currentPanel) {
         // Create new panel type and add items to its breadcrumb
@@ -217,6 +239,13 @@ public class FlowBean implements Serializable {
     public void  goToRecordingUnitByIdNewPanel(Long id, Integer currentPanelIndex) {
 
         RecordingUnitPanel newPanel = panelFactory.createRecordingUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
+        addPanel(newPanel);
+
+    }
+
+    public void  goToSpecimenByIdNewPanel(Long id, Integer currentPanelIndex) {
+
+        SpecimenPanel newPanel = panelFactory.createSpecimenPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
         addPanel(newPanel);
 
     }
@@ -297,5 +326,12 @@ public class FlowBean implements Serializable {
     public boolean userHasAddSpatialOrActionUnitPermission() {
         UserInfo info = sessionSettings.getUserInfo();
         return info.getUser().isSuperAdmin() || permissionService.isActionManager(info) || permissionService.isInstitutionManager(info);
+    }
+
+    public String invokeOnClick(MethodExpression method, Long id, AbstractPanel panelModel) {
+        if (method != null) {
+            method.invoke(FacesContext.getCurrentInstance().getELContext(), new Object[]{id, panelModel});
+        }
+        return null; // for commandLink action return
     }
 }

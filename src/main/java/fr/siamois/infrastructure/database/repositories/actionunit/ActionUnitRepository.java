@@ -18,7 +18,10 @@ import java.util.Set;
 @Repository
 public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long> {
 
-    List<ActionUnit> findAllBySpatialUnitId(Long id);
+    default List<ActionUnit> findAllBySpatialUnitId(Long id) {
+        // TODO : fixme, now actions are linked to multiple experiments
+        return List.of();
+    }
 
     Optional<ActionUnit> findByArk(Ark ark);
 

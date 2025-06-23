@@ -11,6 +11,7 @@ import fr.siamois.ui.bean.converter.InstitutionConverter;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
 import fr.siamois.ui.bean.settings.InstitutionListSettingsBean;
+import fr.siamois.utils.MessageUtils;
 import jakarta.faces.context.FacesContext;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -52,6 +53,9 @@ public class NavBean implements Serializable {
 
     @Getter(AccessLevel.NONE)
     private transient List<Bookmark> bookmarkedPanels = null;
+
+    private static final String RECORDING_UNIT_BASE_URI = "/recording-unit";
+    private static final String SPECIMEN_BASE_URI = "/specimen";
 
     public NavBean(SessionSettingsBean sessionSettingsBean,
                    InstitutionChangeEventPublisher institutionChangeEventPublisher,
@@ -99,14 +103,18 @@ public class NavBean implements Serializable {
         bookmarkedPanels.add(bookmarkService.save(sessionSettingsBean.getUserInfo(), panel));
     }
 
+    public void removeFromBookmarkedPanels(AbstractPanel panel) {
+        bookmarkService.delete(sessionSettingsBean.getUserInfo(), panel);
+    }
+
     public List<Bookmark> getBookmarkedPanels() {
         if (bookmarkedPanels == null) {
-            bookmarkedPanels = bookmarkService.findAll(sessionSettingsBean.getUserInfo());
+            reloadBookmarkedPanels();
         }
         return bookmarkedPanels;
     }
 
-    public void reloadBookarkedPanels() {
+    public void reloadBookmarkedPanels() {
         bookmarkedPanels = bookmarkService.findAll(sessionSettingsBean.getUserInfo());
     }
 
@@ -122,6 +130,90 @@ public class NavBean implements Serializable {
         SecurityContextHolder.getContext().setAuthentication(null);
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         redirectBean.redirectTo("/");
+    }
+
+    public void bookmarkRecordingUnit(String fullIdentifier) {
+
+        // Maybe check that ressource exists and user has access to it?
+        bookmarkService.save(
+                sessionSettingsBean.getUserInfo(),
+                RECORDING_UNIT_BASE_URI+fullIdentifier,
+                fullIdentifier
+        );
+        MessageUtils.displayInfoMessage(langBean, "common.bookmark.saved");
+    }
+
+    public void unBookmarkRecordingUnit(String fullIdentifier) {
+        bookmarkService.deleteBookmark(
+                sessionSettingsBean.getUserInfo(),
+                RECORDING_UNIT_BASE_URI+fullIdentifier
+        );
+        MessageUtils.displayInfoMessage(langBean, "common.bookmark.unsaved");
+    }
+
+    public void bookmark(String fullIdentifier, String Uri) {
+
+        // Maybe check that ressource exists and user has access to it?
+        bookmarkService.save(
+                sessionSettingsBean.getUserInfo(),
+                Uri,
+                fullIdentifier
+        );
+        MessageUtils.displayInfoMessage(langBean, "common.bookmark.saved");
+    }
+
+    public void unBookmark(String fullIdentifier, String Uri) {
+        bookmarkService.deleteBookmark(
+                sessionSettingsBean.getUserInfo(),
+                Uri
+        );
+        MessageUtils.displayInfoMessage(langBean, "common.bookmark.unsaved");
+    }
+
+    public Boolean isRessourceBookmarkedByUser(String ressourceUri) {
+        return bookmarkService.isRessourceBookmarkedByUser(sessionSettingsBean.getUserInfo(), ressourceUri);
+    }
+
+    public void toggleRecordingUnitBookmark(String fullIdentifier) {
+        if(Boolean.TRUE.equals(isRessourceBookmarkedByUser(RECORDING_UNIT_BASE_URI+fullIdentifier))) {
+            unBookmarkRecordingUnit(fullIdentifier);
+        }
+        else {
+            bookmarkRecordingUnit(fullIdentifier);
+        }
+        reloadBookmarkedPanels();
+    }
+
+    public void toggleSpecimenBookmark(String fullIdentifier) {
+        if(Boolean.TRUE.equals(isRessourceBookmarkedByUser(SPECIMEN_BASE_URI+fullIdentifier))) {
+            unBookmark(fullIdentifier,SPECIMEN_BASE_URI+fullIdentifier);
+        }
+        else {
+            bookmark(fullIdentifier,SPECIMEN_BASE_URI+fullIdentifier);
+        }
+        reloadBookmarkedPanels();
+    }
+
+    public Boolean isRecordingUnitBookmarkedByUser(String fullIdentifier) {
+        return isRessourceBookmarkedByUser(RECORDING_UNIT_BASE_URI+fullIdentifier);
+    }
+
+    public Boolean isSpecimenBookmarkedByUser(String fullIdentifier) {
+        return isRessourceBookmarkedByUser(SPECIMEN_BASE_URI+fullIdentifier);
+    }
+
+    public Boolean isPanelBookmarkedByUser(AbstractPanel panel) {
+        return isRessourceBookmarkedByUser(panel.ressourceUri());
+    }
+
+    public void togglePanelBookmark(AbstractPanel panel) {
+        if(Boolean.TRUE.equals(isPanelBookmarkedByUser(panel))) {
+            removeFromBookmarkedPanels(panel);
+        }
+        else {
+            addToBookmarkedPanels(panel);
+        }
+        reloadBookmarkedPanels();
     }
 
     @EventListener(LoginEvent.class)

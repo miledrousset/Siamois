@@ -3,10 +3,15 @@ package fr.siamois.ui.lazydatamodel;
 
 
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
@@ -55,6 +60,8 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
     protected transient List<ConceptLabel> selectedTypes = new ArrayList<>();
     protected transient List<ConceptLabel> selectedAuthors = new ArrayList<>();
     protected String nameFilter;
+    // selection
+    protected transient List<T> selectedUnits ;
 
     // Base implementation returns empty; override in child class
     protected Map<String, String> getFieldMapping() {
@@ -271,5 +278,37 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
         int last = first + pageSizeState;
         int total = this.getRowCount();
         return Math.min(last, total); // Ensure it doesn’t exceed total records
+    }
+
+    public void addRowToModel(T newUnit) {
+        // Create modifiable copy
+        List<T> modifiableCopy = new ArrayList<>(getWrappedData());
+
+        // Insert new record at the top
+        modifiableCopy.add(0, newUnit);
+
+        // Adjust row count
+        int newCount = getRowCount() + 1;
+        setRowCount(newCount);
+        setCachedRowCount(newCount);
+
+        // Update data
+        setWrappedData(modifiableCopy);
+        setQueryResult(modifiableCopy);
+
+        // Optional: remove last item if too many (pagination bound)
+        if (modifiableCopy.size() > getPageSizeState()) {
+            modifiableCopy.remove(modifiableCopy.size() - 1);
+        }
+    }
+
+    public void handleRowSelect(SelectEvent<T> event) {
+        FacesMessage msg = new FacesMessage("Row Selected");
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+
+    public void handleRowUnselect(UnselectEvent<T> event) {
+        FacesMessage msg = new FacesMessage("Row Unselected");
+        FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 }

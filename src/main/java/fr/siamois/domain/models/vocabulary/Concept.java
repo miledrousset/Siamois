@@ -49,4 +49,34 @@ public class Concept implements Serializable {
     }
 
 
+    public static class Builder {
+        private Long id;
+        private Vocabulary vocabulary;
+        private String externalId;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder vocabulary(Vocabulary vocabulary) {
+            this.vocabulary = vocabulary;
+            return this;
+        }
+
+        public Builder externalId(String externalId) {
+            this.externalId = externalId;
+            return this;
+        }
+
+        public Concept build() {
+            Concept concept = new Concept();
+            concept.setId(this.id);
+            concept.setVocabulary(this.vocabulary);
+            concept.setExternalId(this.externalId);
+            return concept;
+        }
+    }
+
+
 }

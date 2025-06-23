@@ -69,7 +69,9 @@
         <p:toolbar class="panel-footer">
             <p:toolbarGroup align="right">
                 <p:commandButton value='Enregistrer'
-                                 actionListener="#{panelModel.save()}"
+                                 action="#{panelModel.save()}"
+                                 onstart="PF('buiContent').show()"
+                                 oncomplete="PF('buiContent').hide();handleScrollToTop();"
                                  update="flow"
                                  style="margin-right: .5rem">
                 </p:commandButton>

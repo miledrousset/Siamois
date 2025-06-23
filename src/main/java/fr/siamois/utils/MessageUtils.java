@@ -3,6 +3,7 @@ package fr.siamois.utils;
 import fr.siamois.ui.bean.LangBean;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import org.primefaces.PrimeFaces;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,8 @@ public class MessageUtils {
 
     public static void displayMessage(FacesMessage.Severity severity, String title, String msgContent) {
         FacesMessage facesMessage = new FacesMessage(severity, title, msgContent);
-        FacesContext.getCurrentInstance().addMessage("templateForm:templateGrowl", facesMessage);
+        FacesContext.getCurrentInstance().addMessage("templateFormCC:templateForm:templateGrowl", facesMessage);
+        PrimeFaces.current().ajax().update("templateFormCC:templateForm:templateGrowl");
     }
 
     public static void displayInfoMessage(LangBean langBean, String msgCode, Object... args) {

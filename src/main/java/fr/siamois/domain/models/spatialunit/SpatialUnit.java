@@ -1,5 +1,6 @@
 package fr.siamois.domain.models.spatialunit;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
@@ -42,9 +43,11 @@ public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
             joinColumns = { @JoinColumn(name = "fk_spatial_unit_id")},
             inverseJoinColumns = { @JoinColumn(name = "fk_document_id") }
     )
+    @JsonIgnore
     private Set<Document> documents = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinTable(
             name="spatial_hierarchy",
             joinColumns = { @JoinColumn(name = "fk_parent_id") },
@@ -53,12 +56,15 @@ public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
     private Set<SpatialUnit> children = new HashSet<>();
 
     @OneToMany(mappedBy="spatialUnit")
+    @JsonIgnore
     private Set<RecordingUnit> recordingUnitList;
 
     @ManyToMany(mappedBy = "children", fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<SpatialUnit> parents = new HashSet<>();
 
     @ManyToMany(mappedBy = "spatialContext")
+    @JsonIgnore
     private Set<ActionUnit> relatedActionUnitList = new HashSet<>();
 
     public SpatialUnit() {

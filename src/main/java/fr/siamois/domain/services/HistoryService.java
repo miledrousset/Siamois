@@ -1,15 +1,12 @@
 package fr.siamois.domain.services;
 
 import fr.siamois.domain.models.UserInfo;
-import fr.siamois.domain.models.history.HistoryOperation;
-import fr.siamois.domain.models.history.HistoryUpdateType;
-import fr.siamois.domain.models.history.RecordingUnitHist;
-import fr.siamois.domain.models.history.SpatialUnitHist;
+import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.history.*;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
-import fr.siamois.infrastructure.database.repositories.history.GlobalHistoryRepository;
-import fr.siamois.infrastructure.database.repositories.history.RecordingUnitHistoryRepository;
-import fr.siamois.infrastructure.database.repositories.history.SpatialUnitHistoryRepository;
+import fr.siamois.domain.models.specimen.Specimen;
+import fr.siamois.infrastructure.database.repositories.history.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +21,9 @@ import java.util.List;
 public class HistoryService {
 
     private final SpatialUnitHistoryRepository spatialUnitHistoryRepository;
+    private final ActionUnitHistoryRepository actionUnitHistoryRepository;
     private final RecordingUnitHistoryRepository recordingUnitHistoryRepository;
+    private final SpecimenHistoryRepository specimenHistoryRepository;
     private final GlobalHistoryRepository globalHistoryRepository;
 
     private static final List<String> entityName = List.of("Action Unit", "Recording Unit", "Recording Unit Study",
@@ -33,9 +32,11 @@ public class HistoryService {
     private static final List<String> tableNames = List.of("action_unit", "recording_unit",
             "recording_unit_study", "siamois_document", "spatial_unit", "specimen", "specimen_study");
 
-    public HistoryService(SpatialUnitHistoryRepository spatialUnitHistoryRepository, RecordingUnitHistoryRepository recordingUnitHistoryRepository, GlobalHistoryRepository globalHistoryRepository) {
+    public HistoryService(SpatialUnitHistoryRepository spatialUnitHistoryRepository, ActionUnitHistoryRepository actionUnitHistoryRepository, RecordingUnitHistoryRepository recordingUnitHistoryRepository, SpecimenHistoryRepository specimenHistoryRepository, GlobalHistoryRepository globalHistoryRepository) {
         this.spatialUnitHistoryRepository = spatialUnitHistoryRepository;
+        this.actionUnitHistoryRepository = actionUnitHistoryRepository;
         this.recordingUnitHistoryRepository = recordingUnitHistoryRepository;
+        this.specimenHistoryRepository = specimenHistoryRepository;
         this.globalHistoryRepository = globalHistoryRepository;
     }
 
@@ -84,8 +85,16 @@ public class HistoryService {
         return spatialUnitHistoryRepository.findAllByTableId(current.getId());
     }
 
+    public List<ActionUnitHist> findActionUnitHistory(ActionUnit current) {
+        return actionUnitHistoryRepository.findAllByTableId(current.getId());
+    }
+
     public List<RecordingUnitHist> findRecordingUnitHistory(RecordingUnit current) {
         return recordingUnitHistoryRepository.findAllByTableId(current.getId());
+    }
+
+    public List<SpecimenHist> findSpecimenHistory(Specimen current) {
+        return specimenHistoryRepository.findAllByTableId(current.getId());
     }
 
 }

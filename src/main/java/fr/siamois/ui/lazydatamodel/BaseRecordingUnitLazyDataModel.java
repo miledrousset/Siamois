@@ -1,28 +1,40 @@
 package fr.siamois.ui.lazydatamodel;
 
 
+import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
+import fr.siamois.domain.models.specimen.Specimen;
+import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.services.specimen.SpecimenService;
+import fr.siamois.ui.bean.LangBean;
+import fr.siamois.utils.MessageUtils;
 import lombok.Getter;
 import lombok.Setter;
+import org.primefaces.event.RowEditEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
 public abstract class BaseRecordingUnitLazyDataModel extends BaseLazyDataModel<RecordingUnit> {
+
+    protected final transient RecordingUnitService recordingUnitService;
+    protected final transient LangBean langBean;
+
+    private Concept bulkEditTypeValue;
 
     private static final Map<String, String> FIELD_MAPPING;
 
     // Fields definition for cell/bulk edit
     CustomFieldSelectOneFromFieldCode typeField = new CustomFieldSelectOneFromFieldCode();
 
-    BaseRecordingUnitLazyDataModel() {
+    BaseRecordingUnitLazyDataModel(RecordingUnitService recordingUnitService, LangBean langBean) {
+        this.recordingUnitService = recordingUnitService;
+        this.langBean = langBean;
         typeField.setFieldCode("SIARU.TYPE");
     }
 
@@ -58,6 +70,7 @@ public abstract class BaseRecordingUnitLazyDataModel extends BaseLazyDataModel<R
         return recordingUnit != null ? Long.toString(recordingUnit.getId()) : null;
     }
 
+
     @Override
     public RecordingUnit getRowData(String rowKey) {
         List<RecordingUnit> units = getWrappedData();
@@ -70,5 +83,45 @@ public abstract class BaseRecordingUnitLazyDataModel extends BaseLazyDataModel<R
         }
 
         return null;
+    }
+
+    public void handleRowEdit(RowEditEvent<RecordingUnit> event) {
+
+        RecordingUnit toSave = event.getObject();
+
+        try {
+            recordingUnitService.save(toSave, toSave.getType(), List.of(),  List.of(),  List.of());
+        }
+        catch(FailedRecordingUnitSaveException e) {
+            MessageUtils.displayErrorMessage(langBean, "common.entity.recordingUnits.updateFailed", toSave.getFullIdentifier());
+            return ;
+        }
+
+        MessageUtils.displayInfoMessage(langBean, "common.entity.recordingUnits.updated", toSave.getFullIdentifier());
+    }
+
+    public void saveFieldBulk() {
+        List<Long> ids = getSelectedUnits().stream()
+                .map(RecordingUnit::getId)
+                .toList();
+        int updateCount = recordingUnitService.bulkUpdateType(ids, bulkEditTypeValue);
+        // Update in-memory list (for UI sync)
+        for (RecordingUnit s : getSelectedUnits()) {
+            s.setType(bulkEditTypeValue);
+        }
+        MessageUtils.displayInfoMessage(langBean, "common.entity.recordingUnits.bulkUpdated", updateCount);
+    }
+
+    public void duplicateRow() {
+        // Create a copy from selected row
+        RecordingUnit original = getRowData();
+        RecordingUnit newRec = new RecordingUnit(original);
+        newRec.setIdentifier(recordingUnitService.generateNextIdentifier(newRec));
+
+        // Save it
+        newRec= recordingUnitService.save(newRec, newRec.getType(), List.of(),  List.of(),  List.of());
+
+        // Add it to the model
+        addRowToModel(newRec);
     }
 }

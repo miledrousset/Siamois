@@ -2,6 +2,15 @@ package fr.siamois.ui.bean.panel;
 
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.models.panel.*;
+import fr.siamois.ui.bean.panel.models.panel.list.ActionUnitListPanel;
+import fr.siamois.ui.bean.panel.models.panel.list.RecordingUnitListPanel;
+import fr.siamois.ui.bean.panel.models.panel.list.SpatialUnitListPanel;
+import fr.siamois.ui.bean.panel.models.panel.list.SpecimenListPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.SpecimenPanel;
+import fr.siamois.ui.lazydatamodel.BaseSpatialUnitLazyDataModel;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
@@ -18,10 +27,11 @@ public class PanelFactory {
     private final ObjectProvider<NewSpatialUnitPanel> newSpatialUnitPanelProvider;
     private final ObjectProvider<NewActionUnitPanel> newActionUnitPanelProvider;
     private final ObjectProvider<ActionUnitPanel> actionUnitPanelProvider;
-    private final ObjectProvider<NewRecordingUnitPanel> newRecordingUnitPanelProvider;
     private final ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider;
     private final ObjectProvider<RecordingUnitListPanel> recordingUnitListPanelProvider;
+    private final ObjectProvider<SpecimenListPanel> specimenListPanel;
     private final ObjectProvider<WelcomePanel> welcomePanelProvider;
+    private final ObjectProvider<SpecimenPanel> specimenPanelProvider;
 
 
     public PanelFactory(
@@ -31,10 +41,9 @@ public class PanelFactory {
             ObjectProvider<NewSpatialUnitPanel> newSpatialUnitPanelProvider,
             ObjectProvider<NewActionUnitPanel> newActionUnitPanelProvider,
             ObjectProvider<ActionUnitPanel> actionUnitPanelProvider,
-            ObjectProvider<NewRecordingUnitPanel> newRecordingUnitPanelProvider,
             ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider,
-            ObjectProvider<RecordingUnitListPanel> recordingUnitListPanelProvider,
-            ObjectProvider<WelcomePanel> welcomePanelProvider) {
+            ObjectProvider<RecordingUnitListPanel> recordingUnitListPanelProvider, ObjectProvider<SpecimenListPanel> specimenListPanel,
+            ObjectProvider<WelcomePanel> welcomePanelProvider, ObjectProvider<SpecimenPanel> specimenPanelProvider) {
 
         this.spatialUnitListPanelProvider = spatialUnitListPanelProvider;
         this.actionUnitListPanelProvider = actionUnitListPanelProvider;
@@ -42,10 +51,11 @@ public class PanelFactory {
         this.newSpatialUnitPanelProvider = newSpatialUnitPanelProvider;
         this.newActionUnitPanelProvider = newActionUnitPanelProvider;
         this.actionUnitPanelProvider = actionUnitPanelProvider;
-        this.newRecordingUnitPanelProvider = newRecordingUnitPanelProvider;
         this.recordingUnitPanelProvider = recordingUnitPanelProvider;
         this.recordingUnitListPanelProvider = recordingUnitListPanelProvider;
+        this.specimenListPanel = specimenListPanel;
         this.welcomePanelProvider = welcomePanelProvider;
+        this.specimenPanelProvider = specimenPanelProvider;
     }
 
     public SpatialUnitPanel createSpatialUnitPanel(Long spatialUnitId) {
@@ -115,6 +125,23 @@ public class PanelFactory {
 
     }
 
+    public NewSpatialUnitPanel createNewSpatialUnitPanel(PanelBreadcrumb currentBreadcrumb, BaseSpatialUnitLazyDataModel lazyModel) {
+
+        PanelBreadcrumb bc = null;
+
+        if (currentBreadcrumb != null) {
+            bc = new PanelBreadcrumb();
+            bc.getModel().getElements().clear();
+            bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+        }
+
+        return new NewSpatialUnitPanel.NewSpatialUnitPanelBuilder(newSpatialUnitPanelProvider)
+                .breadcrumb(bc)
+                .lazyModel(lazyModel)
+                .build();
+
+    }
+
     public RecordingUnitPanel createRecordingUnitPanel(Long recordingUnitId, PanelBreadcrumb currentBreadcrumb) {
 
         PanelBreadcrumb bc = new PanelBreadcrumb();
@@ -139,19 +166,40 @@ public class PanelFactory {
 
     }
 
-    public NewRecordingUnitPanel createNewRecordingUnitPanel(Long actionUnitId, PanelBreadcrumb currentBreadcrumb) {
+    public SpecimenPanel createSpecimenPanel(Long id, PanelBreadcrumb currentBreadcrumb) {
 
+        PanelBreadcrumb bc = new PanelBreadcrumb();
+        bc.getModel().getElements().clear();
+        bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+
+        return new SpecimenPanel.Builder(specimenPanelProvider)
+                .id(id)
+                .breadcrumb(bc)
+                .build();
+
+    }
+
+    public SpecimenPanel createSpecimenPanel(Long id) {
+
+        PanelBreadcrumb bc = new PanelBreadcrumb();
+
+        return new SpecimenPanel.Builder(specimenPanelProvider)
+                .id(id)
+                .breadcrumb(bc)
+                .build();
+
+    }
+
+    public NewActionUnitPanel createNewActionUnitPanel(PanelBreadcrumb currentBreadcrumb) {
         PanelBreadcrumb bc = null;
-
         if (currentBreadcrumb != null) {
             bc = new PanelBreadcrumb();
             bc.getModel().getElements().clear();
             bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
         }
 
-        return new NewRecordingUnitPanel.NewRecordingUnitPanelBuilder(newRecordingUnitPanelProvider)
+        return new NewActionUnitPanel.NewActionUnitPanelBuilder(newActionUnitPanelProvider)
                 .breadcrumb(bc)
-                .actionUnitId(actionUnitId)
                 .build();
 
     }
@@ -171,6 +219,22 @@ public class PanelFactory {
 
     }
 
+    public NewActionUnitPanel createNewActionUnitPanel(Long spatialUnitId, PanelBreadcrumb currentBreadcrumb, BaseSpatialUnitLazyDataModel lazyModel) {
+        PanelBreadcrumb bc = null;
+        if (currentBreadcrumb != null) {
+            bc = new PanelBreadcrumb();
+            bc.getModel().getElements().clear();
+            bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+        }
+
+        return new NewActionUnitPanel.NewActionUnitPanelBuilder(newActionUnitPanelProvider)
+                .breadcrumb(bc)
+                .lazyModel(lazyModel)
+                .spatialUnitId(spatialUnitId)
+                .build();
+
+    }
+
     public SpatialUnitListPanel createSpatialUnitListPanel(PanelBreadcrumb currentBreadcrumb) {
         return new SpatialUnitListPanel.SpatialUnitListPanelBuilder(spatialUnitListPanelProvider)
                 .breadcrumb(currentBreadcrumb)
@@ -185,6 +249,12 @@ public class PanelFactory {
 
     public RecordingUnitListPanel createRecordingUnitListPanel(PanelBreadcrumb currentBreadcrumb) {
         return new RecordingUnitListPanel.RecordingUnitListPanelBuilder(recordingUnitListPanelProvider)
+                .breadcrumb(currentBreadcrumb)
+                .build();
+    }
+
+    public SpecimenListPanel createSpecimenListPanel(PanelBreadcrumb currentBreadcrumb) {
+        return new SpecimenListPanel.Builder(specimenListPanel)
                 .breadcrumb(currentBreadcrumb)
                 .build();
     }

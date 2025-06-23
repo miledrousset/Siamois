@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -108,6 +110,14 @@ public class SessionSettingsBean implements Serializable {
     @EventListener({InstitutionChangeEvent.class, LangageChangeEvent.class})
     public void markUserInfoAsChanged() {
         userInfo = null;
+    }
+
+    public List<Person> completePerson(String query) {
+        if (query == null || query.isEmpty()) {
+            return Collections.emptyList();
+        }
+        query = query.toLowerCase();
+        return personService.findAllByNameLastnameContaining(query);
     }
 
 }

@@ -1,6 +1,7 @@
 package fr.siamois.domain.models.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fr.siamois.domain.models.FieldCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +19,7 @@ import java.util.Objects;
 @Data
 @Entity
 @Table(name = "person", schema = "public")
-
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class Person implements UserDetails {
 
     // This limit allows the UI to be controlled

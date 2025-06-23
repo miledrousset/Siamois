@@ -2,12 +2,15 @@ package fr.siamois.domain.services.document;
 
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.document.DocumentParent;
 import fr.siamois.domain.models.exceptions.InvalidFileSizeException;
 import fr.siamois.domain.models.exceptions.InvalidFileTypeException;
 import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
+import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.services.ArkEntityService;
 import fr.siamois.domain.services.document.compressor.FileCompressor;
 import fr.siamois.infrastructure.database.repositories.DocumentRepository;
@@ -127,6 +130,18 @@ public class DocumentService implements ArkEntityService {
 
     public List<Document> findForSpatialUnit(SpatialUnit spatialUnit) {
         return documentRepository.findDocumentsBySpatialUnit(spatialUnit.getId());
+    }
+
+    public List<Document> findForActionUnit(ActionUnit actionUnit) {
+        return documentRepository.findDocumentsByActionUnit(actionUnit.getId());
+    }
+
+    public List<Document> findForRecordingUnit(RecordingUnit recordingUnit) {
+        return documentRepository.findDocumentsByRecordingUnit(recordingUnit.getId());
+    }
+
+    public List<Document> findForSpecimen(Specimen specimen) {
+        return documentRepository.findDocumentsBySpecimen(specimen.getId());
     }
 
     public void addToSpatialUnit(Document document, SpatialUnit spatialUnit) {
