@@ -55,6 +55,7 @@ public class NavBean implements Serializable {
     private transient List<Bookmark> bookmarkedPanels = null;
 
     private static final String RECORDING_UNIT_BASE_URI = "/recording-unit";
+    private static final String SPECIMEN_BASE_URI = "/specimen";
 
     public NavBean(SessionSettingsBean sessionSettingsBean,
                    InstitutionChangeEventPublisher institutionChangeEventPublisher,
@@ -150,6 +151,25 @@ public class NavBean implements Serializable {
         MessageUtils.displayInfoMessage(langBean, "common.bookmark.unsaved");
     }
 
+    public void bookmark(String fullIdentifier, String Uri) {
+
+        // Maybe check that ressource exists and user has access to it?
+        bookmarkService.save(
+                sessionSettingsBean.getUserInfo(),
+                Uri,
+                fullIdentifier
+        );
+        MessageUtils.displayInfoMessage(langBean, "common.bookmark.saved");
+    }
+
+    public void unBookmark(String fullIdentifier, String Uri) {
+        bookmarkService.deleteBookmark(
+                sessionSettingsBean.getUserInfo(),
+                Uri
+        );
+        MessageUtils.displayInfoMessage(langBean, "common.bookmark.unsaved");
+    }
+
     public Boolean isRessourceBookmarkedByUser(String ressourceUri) {
         return bookmarkService.isRessourceBookmarkedByUser(sessionSettingsBean.getUserInfo(), ressourceUri);
     }
@@ -164,8 +184,22 @@ public class NavBean implements Serializable {
         reloadBookmarkedPanels();
     }
 
+    public void toggleSpecimenBookmark(String fullIdentifier) {
+        if(Boolean.TRUE.equals(isRessourceBookmarkedByUser(SPECIMEN_BASE_URI+fullIdentifier))) {
+            unBookmark(fullIdentifier,SPECIMEN_BASE_URI+fullIdentifier);
+        }
+        else {
+            bookmark(fullIdentifier,SPECIMEN_BASE_URI+fullIdentifier);
+        }
+        reloadBookmarkedPanels();
+    }
+
     public Boolean isRecordingUnitBookmarkedByUser(String fullIdentifier) {
         return isRessourceBookmarkedByUser(RECORDING_UNIT_BASE_URI+fullIdentifier);
+    }
+
+    public Boolean isSpecimenBookmarkedByUser(String fullIdentifier) {
+        return isRessourceBookmarkedByUser(SPECIMEN_BASE_URI+fullIdentifier);
     }
 
     public Boolean isPanelBookmarkedByUser(AbstractPanel panel) {

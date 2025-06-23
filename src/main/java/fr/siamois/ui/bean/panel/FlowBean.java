@@ -24,6 +24,7 @@ import fr.siamois.ui.bean.panel.models.panel.*;
 import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.SpecimenPanel;
 import fr.siamois.ui.lazydatamodel.BaseSpatialUnitLazyDataModel;
 import jakarta.el.MethodExpression;
 import jakarta.faces.context.FacesContext;
@@ -142,6 +143,10 @@ public class FlowBean implements Serializable {
         addPanel(panelFactory.createRecordingUnitListPanel(bc));
     }
 
+    public void addSpecimenListPanel(PanelBreadcrumb bc) {
+        addPanel(panelFactory.createSpecimenListPanel(bc));
+    }
+
 
     public void addPanel(AbstractPanel panel) {
         panels.add(0, panel);
@@ -234,6 +239,13 @@ public class FlowBean implements Serializable {
     public void  goToRecordingUnitByIdNewPanel(Long id, Integer currentPanelIndex) {
 
         RecordingUnitPanel newPanel = panelFactory.createRecordingUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
+        addPanel(newPanel);
+
+    }
+
+    public void  goToSpecimenByIdNewPanel(Long id, Integer currentPanelIndex) {
+
+        SpecimenPanel newPanel = panelFactory.createSpecimenPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
         addPanel(newPanel);
 
     }

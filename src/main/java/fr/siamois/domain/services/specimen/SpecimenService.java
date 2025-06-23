@@ -25,6 +25,7 @@ public class SpecimenService implements ArkEntityService {
         this.specimenRepository = specimenRepository;
     }
 
+
     @Override
     public List<Specimen> findWithoutArk(Institution institution) {
         return specimenRepository.findAllByArkIsNullAndCreatedByInstitution(institution);
@@ -80,6 +81,10 @@ public class SpecimenService implements ArkEntityService {
     @Transactional
     public int bulkUpdateType(List<Long> ids, Concept type) {
         return specimenRepository.updateTypeByIds(type.getId(), ids);
+    }
+
+    public long countByInstitution(Institution institution) {
+        return specimenRepository.countByCreatedByInstitution(institution);
     }
 
 }

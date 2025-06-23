@@ -5,6 +5,7 @@ import fr.siamois.ui.bean.panel.models.panel.*;
 import fr.siamois.ui.bean.panel.models.panel.list.ActionUnitListPanel;
 import fr.siamois.ui.bean.panel.models.panel.list.RecordingUnitListPanel;
 import fr.siamois.ui.bean.panel.models.panel.list.SpatialUnitListPanel;
+import fr.siamois.ui.bean.panel.models.panel.list.SpecimenListPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
@@ -28,6 +29,7 @@ public class PanelFactory {
     private final ObjectProvider<ActionUnitPanel> actionUnitPanelProvider;
     private final ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider;
     private final ObjectProvider<RecordingUnitListPanel> recordingUnitListPanelProvider;
+    private final ObjectProvider<SpecimenListPanel> specimenListPanel;
     private final ObjectProvider<WelcomePanel> welcomePanelProvider;
     private final ObjectProvider<SpecimenPanel> specimenPanelProvider;
 
@@ -40,7 +42,7 @@ public class PanelFactory {
             ObjectProvider<NewActionUnitPanel> newActionUnitPanelProvider,
             ObjectProvider<ActionUnitPanel> actionUnitPanelProvider,
             ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider,
-            ObjectProvider<RecordingUnitListPanel> recordingUnitListPanelProvider,
+            ObjectProvider<RecordingUnitListPanel> recordingUnitListPanelProvider, ObjectProvider<SpecimenListPanel> specimenListPanel,
             ObjectProvider<WelcomePanel> welcomePanelProvider, ObjectProvider<SpecimenPanel> specimenPanelProvider) {
 
         this.spatialUnitListPanelProvider = spatialUnitListPanelProvider;
@@ -51,6 +53,7 @@ public class PanelFactory {
         this.actionUnitPanelProvider = actionUnitPanelProvider;
         this.recordingUnitPanelProvider = recordingUnitPanelProvider;
         this.recordingUnitListPanelProvider = recordingUnitListPanelProvider;
+        this.specimenListPanel = specimenListPanel;
         this.welcomePanelProvider = welcomePanelProvider;
         this.specimenPanelProvider = specimenPanelProvider;
     }
@@ -163,6 +166,19 @@ public class PanelFactory {
 
     }
 
+    public SpecimenPanel createSpecimenPanel(Long id, PanelBreadcrumb currentBreadcrumb) {
+
+        PanelBreadcrumb bc = new PanelBreadcrumb();
+        bc.getModel().getElements().clear();
+        bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+
+        return new SpecimenPanel.Builder(specimenPanelProvider)
+                .id(id)
+                .breadcrumb(bc)
+                .build();
+
+    }
+
     public SpecimenPanel createSpecimenPanel(Long id) {
 
         PanelBreadcrumb bc = new PanelBreadcrumb();
@@ -233,6 +249,12 @@ public class PanelFactory {
 
     public RecordingUnitListPanel createRecordingUnitListPanel(PanelBreadcrumb currentBreadcrumb) {
         return new RecordingUnitListPanel.RecordingUnitListPanelBuilder(recordingUnitListPanelProvider)
+                .breadcrumb(currentBreadcrumb)
+                .build();
+    }
+
+    public SpecimenListPanel createSpecimenListPanel(PanelBreadcrumb currentBreadcrumb) {
+        return new SpecimenListPanel.Builder(specimenListPanel)
                 .breadcrumb(currentBreadcrumb)
                 .build();
     }

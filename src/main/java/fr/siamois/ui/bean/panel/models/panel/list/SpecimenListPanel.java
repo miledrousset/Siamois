@@ -52,7 +52,7 @@ public class SpecimenListPanel extends AbstractListPanel<Specimen> {
 
     @Override
     protected long countUnitsByInstitution() {
-        return actionUnitService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
+        return specimenService.countByInstitution(sessionSettingsBean.getSelectedInstitution());
     }
 
     @Override
@@ -176,23 +176,23 @@ public class SpecimenListPanel extends AbstractListPanel<Specimen> {
 
 
 
-    public static class RecordingUnitListPanelBuilder {
+    public static class Builder {
 
-        private final SpecimenListPanel recordingUnitListPanel;
+        private final SpecimenListPanel specimenListPanel;
 
-        public RecordingUnitListPanelBuilder(ObjectProvider<SpecimenListPanel> actionUnitListPanelProvider) {
-            this.recordingUnitListPanel = actionUnitListPanelProvider.getObject();
+        public Builder(ObjectProvider<SpecimenListPanel> specimenListPanelProvider) {
+            this.specimenListPanel = specimenListPanelProvider.getObject();
         }
 
-        public SpecimenListPanel.RecordingUnitListPanelBuilder breadcrumb(PanelBreadcrumb breadcrumb) {
-            recordingUnitListPanel.setBreadcrumb(breadcrumb);
+        public SpecimenListPanel.Builder breadcrumb(PanelBreadcrumb breadcrumb) {
+            specimenListPanel.setBreadcrumb(breadcrumb);
 
             return this;
         }
 
         public SpecimenListPanel build() {
-            recordingUnitListPanel.init();
-            return recordingUnitListPanel;
+            specimenListPanel.init();
+            return specimenListPanel;
         }
     }
 

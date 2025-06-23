@@ -18,6 +18,8 @@ import java.util.List;
 public interface SpecimenRepository extends CrudRepository<Specimen, Long> {
     List<Specimen> findAllByArkIsNullAndCreatedByInstitution(@NotNull Institution createdByInstitution);
 
+    long countByCreatedByInstitution(Institution institution);
+
     /**
      * Returns the maximum identifier given to a SPECIMEN in the context of an RECORDING UNIT
      *
