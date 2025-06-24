@@ -12,6 +12,7 @@ import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ark.ArkService;
+import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.SpatialUnitRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -41,13 +42,14 @@ public class SpatialUnitService implements ArkEntityService {
     private final ConceptService conceptService;
     private final ArkService arkService;
     private final InstitutionService institutionService;
+    private final PersonService personService;
 
-    public SpatialUnitService(SpatialUnitRepository spatialUnitRepository, ConceptService conceptService, ArkService arkService, InstitutionService institutionService) {
+    public SpatialUnitService(SpatialUnitRepository spatialUnitRepository, ConceptService conceptService, ArkService arkService, InstitutionService institutionService, PersonService personService) {
         this.spatialUnitRepository = spatialUnitRepository;
         this.conceptService = conceptService;
         this.arkService = arkService;
         this.institutionService = institutionService;
-
+        this.personService = personService;
     }
 
 
@@ -136,13 +138,12 @@ public class SpatialUnitService implements ArkEntityService {
             throw new SpatialUnitAlreadyExistsException(
                     String.format("Spatial Unit with name %s already exist in institution %s", name, info.getInstitution().getName()));
 
-        type = conceptService.saveOrGetConcept(type);
 
         SpatialUnit spatialUnit = new SpatialUnit();
         spatialUnit.setName(name);
-        spatialUnit.setCreatedByInstitution(info.getInstitution());
-        spatialUnit.setAuthor(info.getUser());
-        spatialUnit.setCategory(type);
+        spatialUnit.setCreatedByInstitution(institutionService.findById(info.getInstitution().getId()));
+        spatialUnit.setAuthor(personService.findById(info.getUser().getId()));
+        spatialUnit.setCategory(conceptService.saveOrGetConcept(type));
         spatialUnit.setCreationTime(OffsetDateTime.now(ZoneId.systemDefault()));
 
         InstitutionSettings settings = institutionService.createOrGetSettingsOf(info.getInstitution());

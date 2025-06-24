@@ -41,6 +41,7 @@ public class MessageUtils {
         displayMessage(langBean, FacesMessage.SEVERITY_INFO, msgCode, args);
     }
 
+
     public static void displayErrorMessage(LangBean langBean, String msgCode, Object... args) {
         displayMessage(langBean, FacesMessage.SEVERITY_ERROR, msgCode, args);
     }
