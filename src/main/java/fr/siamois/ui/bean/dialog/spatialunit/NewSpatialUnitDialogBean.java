@@ -261,6 +261,7 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
         try {
             createSU();
         } catch (RuntimeException | SpatialUnitAlreadyExistsException e) {
+            log.error(e.getMessage());
             MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED_MESSAGE_CODE, unit.getName());
             return;
         }
@@ -278,6 +279,7 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
         try {
             createSU();
         } catch (RuntimeException | SpatialUnitAlreadyExistsException e) {
+            log.error(e.getMessage());
             MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED_MESSAGE_CODE, unit.getName());
             return;
         }

@@ -170,6 +170,7 @@ class InstitutionServiceTest {
         institution.setId(1L);
 
         when(institutionSettingsRepository.findById(institution.getId())).thenReturn(Optional.empty());
+        when(institutionRepository.findById(institution.getId())).thenReturn(Optional.of(institution));
         when(institutionSettingsRepository.save(any(InstitutionSettings.class)))
                 .then(invocation -> invocation.getArgument(0, InstitutionSettings.class));
 
@@ -580,6 +581,23 @@ class InstitutionServiceTest {
         Set<Person> result = institutionService.findManagersOf(institution);
 
         assertThat(result).containsExactlyInAnyOrder(manager1, manager2);
+    }
+
+    @Test
+    void findById_success() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+        when(institutionRepository.findById(1L)).thenReturn(Optional.of(institution));
+        Institution res = institutionService.findById(1L);
+        assertThat(institution).isNotNull();
+        assertThat(res.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void findById_null() {
+        when(institutionRepository.findById(1L)).thenReturn(Optional.empty());
+        Institution institution = institutionService.findById(1L);
+        assertThat(institution).isNull();
     }
 
 }

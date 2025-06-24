@@ -43,6 +43,14 @@ public class InstitutionService {
         this.institutionSettingsRepository = institutionSettingsRepository;
         this.teamMemberRepository = teamMemberRepository;
         this.actionManagerRepository = actionManagerRepository;
+
+
+    }
+
+    @Transactional(readOnly = true)
+    public Institution findById(Long id) {
+        Optional<Institution> institution = institutionRepository.findById(id);
+        return institution.orElse(null);
     }
 
     public Set<Institution> findAll() {
@@ -116,7 +124,7 @@ public class InstitutionService {
         Optional<InstitutionSettings> opt = institutionSettingsRepository.findById(institution.getId());
         if (opt.isPresent()) return opt.get();
         InstitutionSettings empty = new InstitutionSettings();
-        empty.setInstitution(institution);
+        empty.setInstitution(institutionRepository.findById(institution.getId()).orElse(null));
         return saveSettings(empty);
     }
 
