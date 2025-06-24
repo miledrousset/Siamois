@@ -11,6 +11,7 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.SpatialUnitRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,10 @@ class SpatialUnitServiceTest {
 
     @Mock
     private SpatialUnitRepository spatialUnitRepository;
+
+
+    @Mock
+    private PersonService personService;
 
     @Mock
     private ConceptService conceptService;
@@ -326,7 +331,11 @@ class SpatialUnitServiceTest {
     @Test
     void save_Success() throws SpatialUnitAlreadyExistsException {
         // Arrange
-        UserInfo userInfo = new UserInfo(new Institution(), new Person(), "fr");
+        Person person = new Person();
+        person.setId(1L);
+        Institution i = new Institution();
+        i.setId(1L);
+        UserInfo userInfo = new UserInfo(i ,person, "fr");
         String name = "SpatialUnitName";
         Concept type = new Concept();
         List<SpatialUnit> parents = List.of(spatialUnit1);
@@ -335,10 +344,15 @@ class SpatialUnitServiceTest {
         unit.setCategory(type);
         unit.setParents(new HashSet<>(parents));
 
+
+
+
         when(institutionService.createOrGetSettingsOf(userInfo.getInstitution())).thenReturn(new InstitutionSettings());
         when(spatialUnitRepository.findByNameAndInstitution(name, userInfo.getInstitution().getId())).thenReturn(Optional.empty());
         when(conceptService.saveOrGetConcept(type)).thenReturn(type);
         when(spatialUnitRepository.save(any(SpatialUnit.class))).thenReturn(spatialUnit1);
+        when(institutionService.findById(anyLong())).thenReturn(i);
+        when(personService.findById(anyLong())).thenReturn(person);
 
         // Act
         SpatialUnit result = spatialUnitService.save(userInfo, unit);

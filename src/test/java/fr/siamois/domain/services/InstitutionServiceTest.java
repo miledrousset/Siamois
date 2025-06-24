@@ -170,6 +170,7 @@ class InstitutionServiceTest {
         institution.setId(1L);
 
         when(institutionSettingsRepository.findById(institution.getId())).thenReturn(Optional.empty());
+        when(institutionRepository.findById(institution.getId())).thenReturn(Optional.of(institution));
         when(institutionSettingsRepository.save(any(InstitutionSettings.class)))
                 .then(invocation -> invocation.getArgument(0, InstitutionSettings.class));
 
