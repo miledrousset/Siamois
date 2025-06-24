@@ -8,6 +8,7 @@ import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.dialog.institution.PersonRole;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
 import fr.siamois.utils.DateUtils;
 import lombok.Getter;
@@ -70,7 +71,8 @@ public class InstitutionActionManagerListBean implements SettingsDatatableBean {
     public void add() {
         userDialogBean.init(langBean.msg("organisationSettings.managers.dialog.label"),
                 langBean.msg("organisationSettings.managers.add"),
-                institution, this::saveUsers);
+                institution,
+                this::processPerson);
 
         userDialogBean.getAlreadyExistingPersons().addAll(
                 refActionManagers
@@ -104,7 +106,7 @@ public class InstitutionActionManagerListBean implements SettingsDatatableBean {
         }
     }
 
-    private void addToActionManagers(UserDialogBean.PersonRole saved) {
+    private void addToActionManagers(PersonRole saved) {
         if (institutionService.addPersonToActionManager(institution, saved.person())) {
             displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", saved.person().getUsername());
         } else {
@@ -113,14 +115,11 @@ public class InstitutionActionManagerListBean implements SettingsDatatableBean {
         }
     }
 
-    public void saveUsers() {
-        for (UserDialogBean.PersonRole saved : userDialogBean.createOrSearchPersons()) {
-            addToActionManagers(saved);
-            ActionManagerRelation relation = new ActionManagerRelation(institution, saved.person());
-            refActionManagers.add(relation);
-            filteredActionManagers.add(relation);
-        }
-        userDialogBean.exit();
+    private void processPerson(PersonRole personRole) {
+        addToActionManagers(personRole);
+        ActionManagerRelation relation = new ActionManagerRelation(institution, personRole.person());
+        refActionManagers.add(relation);
+        filteredActionManagers.add(relation);
     }
 
     public String formatDate(ActionManagerRelation relation) {

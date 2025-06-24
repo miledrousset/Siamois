@@ -9,6 +9,7 @@ import fr.siamois.ui.bean.LabelBean;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.dialog.institution.PersonRole;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
 import fr.siamois.ui.bean.settings.SettingsDatatableBean;
 import fr.siamois.utils.DateUtils;
@@ -80,12 +81,12 @@ public class TeamMembersBean implements SettingsDatatableBean {
                 langBean.msg("organisationSettings.managers.add"),
                 actionUnit.getCreatedByInstitution(),
                 true,
-                this::save);
+                this::processPerson);
         PrimeFaces.current().ajax().update("userDialogBeanForm:newMemberDialog");
         PrimeFaces.current().executeScript("PF('newMemberDialog').show();");
     }
 
-    private void addPersonToActionunit(UserDialogBean.PersonRole saved) {
+    private void addPersonToActionunit(PersonRole saved) {
         if (institutionService.addPersonToActionUnit(actionUnit, saved.person(), saved.role())) {
             log.debug("Added person to action unit");
         } else {
@@ -93,15 +94,11 @@ public class TeamMembersBean implements SettingsDatatableBean {
         }
     }
 
-    public void save() {
-        List<UserDialogBean.PersonRole> result = userDialogBean.createOrSearchPersons();
-        for (UserDialogBean.PersonRole saved : result) {
-            addPersonToActionunit(saved);
-            TeamMemberRelation relation = new TeamMemberRelation(actionUnit, saved.person());
-            memberRelations.add(relation);
-            filteredMemberRelations.add(relation);
-        }
-        userDialogBean.exit();
+    private void processPerson(PersonRole saved) {
+        addPersonToActionunit(saved);
+        TeamMemberRelation relation = new TeamMemberRelation(actionUnit, saved.person());
+        memberRelations.add(relation);
+        filteredMemberRelations.add(relation);
     }
 
     @Override

@@ -40,7 +40,8 @@ class PersonServiceTest {
     private PersonRepository personRepository;
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
-    private final EmailVerifier emailVerifier = new EmailVerifier();
+
+    private EmailVerifier emailVerifier;
     private final PasswordVerifier passwordVerifier = new PasswordVerifier();
     @Mock
     private PersonSettingsRepository personSettingsRepository;
@@ -70,6 +71,8 @@ class PersonServiceTest {
         person.setId(1L);
         person.setPassword("password");
         person.setEmail("mail@localhost.com");
+
+        emailVerifier = new EmailVerifier(personRepository);
 
         List<PersonDataVerifier> verifiers = List.of(passwordVerifier, emailVerifier);
 
