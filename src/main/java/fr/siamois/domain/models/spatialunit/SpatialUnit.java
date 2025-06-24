@@ -11,6 +11,7 @@ import lombok.Data;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -87,6 +88,11 @@ public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);  // Hash based on RecordingUnit
+    }
+
+    @Transient
+    public List<String> getBindableFieldNames() {
+        return List.of("category", "name");
     }
 
 }

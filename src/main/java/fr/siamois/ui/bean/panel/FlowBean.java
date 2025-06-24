@@ -40,6 +40,7 @@ import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>This ui.bean handles the home page</p>
@@ -171,21 +172,7 @@ public class FlowBean implements Serializable {
             panels = new ArrayList<>();
         }
 
-        // Find the index of the first object of the desired type
-        int indexToMove = -1;
-        for (int i = 0; i < panels.size(); i++) {
-            if (panels.get(i) instanceof WelcomePanel) {
-                indexToMove = i;
-                break;
-            }
-        }
-
-        // If found and not already at index 0, move it to the top
-        if (indexToMove >= 0) {
-            panels.remove(indexToMove);
-        }
-
-        // Add a new instance to refresh the panel
+        // Add a new instance
         addPanel(panelFactory.createWelcomePanel());
 
     }
@@ -196,6 +183,12 @@ public class FlowBean implements Serializable {
 
     public void addNewSpatialUnitPanel(AbstractPanel currentPanel, BaseSpatialUnitLazyDataModel lazyModel) {
         addPanel(panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb(),lazyModel));
+    }
+
+    public void addNewSpatialUnitPanel(AbstractPanel currentPanel, Set<SpatialUnit> listToUpdate,
+                                       String isSetChildrenOrParents, Long childOrParentId) {
+        addPanel(panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb(),listToUpdate,
+                isSetChildrenOrParents, childOrParentId));
     }
 
     public void addNewSpatialUnitPanel() {

@@ -19,10 +19,10 @@
     >
         <f:facet name="rightToolbar">
             <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
-                             action="#{flowBean.addNewSpatialUnitPanel(panelModel)}"
+                             actionListener="#{newSpatialUnitDialogBean.init()}"
                              rendered="#{flowBean.readWriteMode == 'WRITE'}"
-                             oncomplete="handleScrollToTop();"
-                             update="flow"
+                             oncomplete="PF('newSpatialUnitDiag').show()"
+                             update="newSpatialUnitForm"
                              style="margin-right: .5rem">
             </p:commandButton>
         </f:facet>

@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean.panel;
 
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.models.panel.*;
 import fr.siamois.ui.bean.panel.models.panel.list.ActionUnitListPanel;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.ApplicationScoped;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Component
 @ApplicationScoped
@@ -138,6 +141,28 @@ public class PanelFactory {
         return new NewSpatialUnitPanel.NewSpatialUnitPanelBuilder(newSpatialUnitPanelProvider)
                 .breadcrumb(bc)
                 .lazyModel(lazyModel)
+                .build();
+
+    }
+
+    public NewSpatialUnitPanel createNewSpatialUnitPanel(PanelBreadcrumb currentBreadcrumb,
+                                                         Set<SpatialUnit> listToUpdate,
+                                                         String isSetChildrenOrParents,
+                                                         Long childOrParentId) {
+
+        PanelBreadcrumb bc = null;
+
+        if (currentBreadcrumb != null) {
+            bc = new PanelBreadcrumb();
+            bc.getModel().getElements().clear();
+            bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+        }
+
+        return new NewSpatialUnitPanel.NewSpatialUnitPanelBuilder(newSpatialUnitPanelProvider)
+                .breadcrumb(bc)
+                .setToUpdate(listToUpdate)
+                .isSetChildrenOrParents(isSetChildrenOrParents)
+                .childrenOrParentId(childOrParentId)
                 .build();
 
     }

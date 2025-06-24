@@ -17,8 +17,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.*;
+
+import static org.primefaces.component.autocomplete.AutoCompleteBase.PropertyKeys.lazyModel;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -36,7 +37,10 @@ public class NewSpatialUnitPanel extends AbstractPanel {
     // Locals
     SpatialUnit spatialUnit;
 
-    private BaseLazyDataModel<?>lazyDataModel; // lazymodel to be updated after creation
+    private BaseLazyDataModel<?> lazyDataModel; // lazymodel to be updated after creation
+    private Set<SpatialUnit> setToUpdate; // set to be updated after creation
+    private String isSetChildrenOrParents;
+    private Long childOrParentId;
 
     public NewSpatialUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, FlowBean flowBean) {
         super("panel.newspatialunit.title", "bi bi-geo-alt", "siamois-panel spatial-unit-panel new-spatial-unit-panel");
@@ -63,23 +67,34 @@ public class NewSpatialUnitPanel extends AbstractPanel {
 
     void init() {
         spatialUnit = new SpatialUnit();
-        SpatialUnit spatialUnitParent ;
+        SpatialUnit spatialUnitParent;
 
         // Set parents or children based on lazy model type
         if (lazyDataModel instanceof SpatialUnitChildrenLazyDataModel typedModel) {
             spatialUnitParent = spatialUnitService.findById(typedModel.getSpatialUnit().getId());
             spatialUnit.setChildren(new HashSet<>());
             spatialUnit.getChildren().add(spatialUnitParent);
-        }
-        else if (lazyDataModel instanceof SpatialUnitParentsLazyDataModel typedModel) {
+        } else if (lazyDataModel instanceof SpatialUnitParentsLazyDataModel typedModel) {
             spatialUnitParent = spatialUnitService.findById(typedModel.getSpatialUnit().getId());
             spatialUnit.setParents(new HashSet<>());
             spatialUnit.getParents().add(spatialUnitParent);
+        } else if (Objects.equals(isSetChildrenOrParents, "children")
+                && setToUpdate != null
+                && childOrParentId != null) {
+            spatialUnitParent = spatialUnitService.findById(childOrParentId);
+            spatialUnit.setParents(new HashSet<>());
+            spatialUnit.getParents().add(spatialUnitParent);
+        }else if (Objects.equals(isSetChildrenOrParents, "parent")
+                && setToUpdate != null
+                && childOrParentId != null) {
+            spatialUnitParent = spatialUnitService.findById(childOrParentId);
+            spatialUnit.setChildren(new HashSet<>());
+            spatialUnit.getChildren().add(spatialUnitParent);
         }
+
         spatialUnit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
 
     }
-
 
 
     /**
@@ -100,6 +115,14 @@ public class NewSpatialUnitPanel extends AbstractPanel {
             // remove last bc item before swaqping panel
             this.getBreadcrumb().getModel().getElements().remove(this.getBreadcrumb().getModel().getElements().size() - 1);
             flowBean.goToSpatialUnitByIdCurrentPanel(saved.getId(), this);
+            // Update list
+            if (setToUpdate != null) {
+                LinkedHashSet<SpatialUnit> newSet = new LinkedHashSet<>();
+                newSet.add(saved);
+                newSet.addAll(setToUpdate);
+                setToUpdate.clear();
+                setToUpdate.addAll(newSet);
+            }
 
             return true;
         } catch (SpatialUnitAlreadyExistsException e) {
@@ -125,6 +148,24 @@ public class NewSpatialUnitPanel extends AbstractPanel {
 
         public NewSpatialUnitPanel.NewSpatialUnitPanelBuilder lazyModel(BaseLazyDataModel<?> lazyModel) {
             newSpatialUnitPanel.setLazyDataModel(lazyModel);
+
+            return this;
+        }
+
+        public NewSpatialUnitPanel.NewSpatialUnitPanelBuilder setToUpdate(Set<SpatialUnit> setToUpdate) {
+            newSpatialUnitPanel.setSetToUpdate(setToUpdate);
+
+            return this;
+        }
+
+        public NewSpatialUnitPanel.NewSpatialUnitPanelBuilder isSetChildrenOrParents(String isSetChildrenOrParents) {
+            newSpatialUnitPanel.setIsSetChildrenOrParents(isSetChildrenOrParents);
+
+            return this;
+        }
+
+        public NewSpatialUnitPanel.NewSpatialUnitPanelBuilder childrenOrParentId(Long childOrParentId) {
+            newSpatialUnitPanel.setChildOrParentId(childOrParentId);
 
             return this;
         }
