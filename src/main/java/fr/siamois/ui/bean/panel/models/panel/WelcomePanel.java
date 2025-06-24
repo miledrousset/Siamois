@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Data
 @Component
 @Slf4j

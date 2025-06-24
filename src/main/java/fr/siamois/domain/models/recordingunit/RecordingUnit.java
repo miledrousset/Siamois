@@ -1,6 +1,7 @@
 package fr.siamois.domain.models.recordingunit;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.ReferencableEntity;
@@ -133,6 +134,7 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     }
 
     @Transient
+    @JsonIgnore
     public List<String> getBindableFieldNames() {
         return List.of("creationTime", "startDate", "endDate", "fullIdentifier", "authors",
                 "excavators", "type", "secondaryType", "thirdType","actionUnit","spatialUnit");

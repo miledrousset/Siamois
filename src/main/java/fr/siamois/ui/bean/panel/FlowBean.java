@@ -149,6 +149,11 @@ public class FlowBean implements Serializable {
 
 
     public void addPanel(AbstractPanel panel) {
+
+        if (panels == null || panels.isEmpty()) {
+            panels = new ArrayList<>();
+        }
+
         // If panel already exists, move it to the top
         panels.remove(panel);
         panels.add(0, panel);
@@ -158,18 +163,21 @@ public class FlowBean implements Serializable {
             panels = new ArrayList<>(panels.subList(0, MAX_NUMBER_OF_PANEL));
         }
 
-        // Collapse all except the first panel
-        for (int i = 1; i < panels.size(); i++) {
-            panels.get(i).setCollapsed(true);
+        if (panels.size() == 1) {
+            // Only one panel: open it
+            panels.get(0).setCollapsed(false);
+        } else {
+            // Collapse all except the first
+            for (int i = 1; i < panels.size(); i++) {
+                panels.get(i).setCollapsed(true);
+            }
+            // Ensure the top one is open
+            panels.get(0).setCollapsed(false);
         }
     }
 
+
     public void addWelcomePanel() {
-        // We find the index of the welcome panel in the flow, if it does not exist we add it,
-        // otherwise we move it on top.
-        if (panels == null || panels.isEmpty()) {
-            panels = new ArrayList<>();
-        }
 
         // Add a new instance
         addPanel(panelFactory.createWelcomePanel());
@@ -283,7 +291,16 @@ public class FlowBean implements Serializable {
     }
 
     public void closePanelAtIndex(int idx) {
+        if (panels == null || panels.isEmpty() || idx < 0 || idx >= panels.size()) {
+            return;
+        }
+
         panels.remove(idx);
+
+        // If only one panel is left, uncollapse it
+        if (panels.size() == 1) {
+            panels.get(0).setCollapsed(false);
+        }
     }
 
     public void changeReadWriteMode() {
