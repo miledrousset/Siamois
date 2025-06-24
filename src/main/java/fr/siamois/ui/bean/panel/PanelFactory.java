@@ -1,6 +1,6 @@
 package fr.siamois.ui.bean.panel;
 
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
+
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.models.panel.*;
 import fr.siamois.ui.bean.panel.models.panel.list.ActionUnitListPanel;
@@ -17,8 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.ApplicationScoped;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+
 
 @Component
 @ApplicationScoped
@@ -27,7 +26,6 @@ public class PanelFactory {
     private final ObjectProvider<SpatialUnitListPanel> spatialUnitListPanelProvider;
     private final ObjectProvider<ActionUnitListPanel> actionUnitListPanelProvider;
     private final ObjectProvider<SpatialUnitPanel> spatialUnitPanelProvider;
-    private final ObjectProvider<NewSpatialUnitPanel> newSpatialUnitPanelProvider;
     private final ObjectProvider<NewActionUnitPanel> newActionUnitPanelProvider;
     private final ObjectProvider<ActionUnitPanel> actionUnitPanelProvider;
     private final ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider;
@@ -41,7 +39,6 @@ public class PanelFactory {
             ObjectProvider<SpatialUnitListPanel> spatialUnitListPanelProvider,
             ObjectProvider<ActionUnitListPanel> actionUnitListPanelProvider,
             ObjectProvider<SpatialUnitPanel> spatialUnitPanelProvider,
-            ObjectProvider<NewSpatialUnitPanel> newSpatialUnitPanelProvider,
             ObjectProvider<NewActionUnitPanel> newActionUnitPanelProvider,
             ObjectProvider<ActionUnitPanel> actionUnitPanelProvider,
             ObjectProvider<RecordingUnitPanel> recordingUnitPanelProvider,
@@ -51,7 +48,6 @@ public class PanelFactory {
         this.spatialUnitListPanelProvider = spatialUnitListPanelProvider;
         this.actionUnitListPanelProvider = actionUnitListPanelProvider;
         this.spatialUnitPanelProvider = spatialUnitPanelProvider;
-        this.newSpatialUnitPanelProvider = newSpatialUnitPanelProvider;
         this.newActionUnitPanelProvider = newActionUnitPanelProvider;
         this.actionUnitPanelProvider = actionUnitPanelProvider;
         this.recordingUnitPanelProvider = recordingUnitPanelProvider;
@@ -112,60 +108,6 @@ public class PanelFactory {
 
     }
 
-    public NewSpatialUnitPanel createNewSpatialUnitPanel(PanelBreadcrumb currentBreadcrumb) {
-
-        PanelBreadcrumb bc = null;
-
-        if (currentBreadcrumb != null) {
-            bc = new PanelBreadcrumb();
-            bc.getModel().getElements().clear();
-            bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
-        }
-
-        return new NewSpatialUnitPanel.NewSpatialUnitPanelBuilder(newSpatialUnitPanelProvider)
-                .breadcrumb(bc)
-                .build();
-
-    }
-
-    public NewSpatialUnitPanel createNewSpatialUnitPanel(PanelBreadcrumb currentBreadcrumb, BaseSpatialUnitLazyDataModel lazyModel) {
-
-        PanelBreadcrumb bc = null;
-
-        if (currentBreadcrumb != null) {
-            bc = new PanelBreadcrumb();
-            bc.getModel().getElements().clear();
-            bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
-        }
-
-        return new NewSpatialUnitPanel.NewSpatialUnitPanelBuilder(newSpatialUnitPanelProvider)
-                .breadcrumb(bc)
-                .lazyModel(lazyModel)
-                .build();
-
-    }
-
-    public NewSpatialUnitPanel createNewSpatialUnitPanel(PanelBreadcrumb currentBreadcrumb,
-                                                         Set<SpatialUnit> listToUpdate,
-                                                         String isSetChildrenOrParents,
-                                                         Long childOrParentId) {
-
-        PanelBreadcrumb bc = null;
-
-        if (currentBreadcrumb != null) {
-            bc = new PanelBreadcrumb();
-            bc.getModel().getElements().clear();
-            bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
-        }
-
-        return new NewSpatialUnitPanel.NewSpatialUnitPanelBuilder(newSpatialUnitPanelProvider)
-                .breadcrumb(bc)
-                .setToUpdate(listToUpdate)
-                .isSetChildrenOrParents(isSetChildrenOrParents)
-                .childrenOrParentId(childOrParentId)
-                .build();
-
-    }
 
     public RecordingUnitPanel createRecordingUnitPanel(Long recordingUnitId, PanelBreadcrumb currentBreadcrumb) {
 

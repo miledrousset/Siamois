@@ -38,7 +38,7 @@ public class SpatialUnitController {
     @GetMapping("/spatialunit/add")
     public String toAddSpatialUnit()  {
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
-        flowBean.addNewSpatialUnitPanel();
+        // todo : open new spatial unit dialog
         return FLOW_XHTML;
     }
 

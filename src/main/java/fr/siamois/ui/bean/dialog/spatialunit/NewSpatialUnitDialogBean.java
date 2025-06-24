@@ -1,16 +1,14 @@
 package fr.siamois.ui.bean.dialog.spatialunit;
 
 
-import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
+
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.form.customfield.*;
 import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
-import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
-import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -34,7 +32,6 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
-import java.time.OffsetDateTime;
 import java.util.*;
 
 
@@ -97,7 +94,7 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
             .build();
 
 
-    public NewSpatialUnitDialogBean(RecordingUnitService recordingUnitService,
+    public NewSpatialUnitDialogBean(
                                     LangBean langBean,
                                     FlowBean flowBean,
                                     SessionSettingsBean sessionSettingsBean,
@@ -233,10 +230,8 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
 
 
 
-    public void createSU() {
+    public void createSU() throws SpatialUnitAlreadyExistsException {
 
-
-        try {
             updateJpaEntityFromFormResponse(formResponse, unit);
             unit.setValidated(false);
             unit = spatialUnitService.save(sessionSettingsBean.getUserInfo(),
@@ -254,11 +249,6 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
                 setToUpdate.addAll(newSet);
             }
 
-        } catch (Exception e) {
-            MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED_MESSAGE_CODE, unit.getName());
-        }
-
-
     }
 
     @Override
@@ -270,9 +260,9 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
 
         try {
             createSU();
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | SpatialUnitAlreadyExistsException e) {
             MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED_MESSAGE_CODE, unit.getName());
-            throw e;
+            return;
         }
 
 
@@ -287,9 +277,9 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
 
         try {
             createSU();
-        } catch (FailedRecordingUnitSaveException e) {
+        } catch (RuntimeException | SpatialUnitAlreadyExistsException e) {
             MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED_MESSAGE_CODE, unit.getName());
-            throw e;
+            return;
         }
         PrimeFaces.current().executeScript("PF('newSpatialUnitDiag').hide();");
         MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getName());

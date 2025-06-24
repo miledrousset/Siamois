@@ -234,6 +234,14 @@
                                              text="#{langBean.msg('table.spatialunit.column.actions')}"/>
                     </f:facet>
                     <cellbody:cellBodyThreeItems set="#{item.relatedActionUnitList}"/>
+                    <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
+                                     action="#{flowBean.addNewActionUnitPanel(item.id, cc.attrs.panelIndex)}"
+                                     rendered="#{flowBean.readWriteMode == 'WRITE'}"
+                                     onstart="PF('buiContent').show()"
+                                     oncomplete="PF('buiContent').hide();handleScrollToTop();"
+                                     update="flow"
+                                     style="margin-right: .5rem">
+                    </p:commandButton>
                 </p:column>
 
                 <!-- Enregistrements -->

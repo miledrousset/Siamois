@@ -18,10 +18,7 @@
     <cc:implementation>
 
         <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.list.ActionUnitListPanel"-->
-        <h:form id="actionUnitListForm"
 
-        >
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
 
             <!-- datatable property partialUpdate=false because otherwise the paginator template is reset after sort or filter actions-->
@@ -70,8 +67,8 @@
                                 <p:commandButton style="margin-left: 1em;" id="toggler" type="button"
                                                  value="#{langBean.msg('table.columnvisibility')}"
                                                  icon="pi pi-align-justify"/>
-                                <p:columnToggler datasource=":#{cc.clientId}:actionUnitListForm:actionUnitDataTable"
-                                                 trigger=":#{cc.clientId}:actionUnitListForm:actionUnitDataTable:toggler">
+                                <p:columnToggler datasource=":#{cc.clientId}:actionUnitDataTable"
+                                                 trigger=":#{cc.clientId}:actionUnitDataTable:toggler">
 
                                 </p:columnToggler>
 
@@ -208,6 +205,11 @@
                                              text="#{langBean.msg('table.spatialunit.column.spatialunits')}"/>
                     </f:facet>
                     <cellbody:cellBodyThreeItems set="#{item.spatialContext}"/>
+                    <p:commandButton value="Ajouter" icon="bi bi-plus-square"
+                                     disabled="true"
+                                     rendered="#{flowBean.readWriteMode == 'WRITE'}"
+                                     style="margin-right: .5rem">
+                    </p:commandButton>
                 </p:column>
 
                 <!-- Enregistrements -->
@@ -240,7 +242,7 @@
             </p:blockUI>
 
 
-        </h:form>
+
     </cc:implementation>
 </ui:composition>
 

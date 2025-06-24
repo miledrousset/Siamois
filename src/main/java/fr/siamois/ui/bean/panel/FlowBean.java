@@ -40,7 +40,6 @@ import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * <p>This ui.bean handles the home page</p>
@@ -177,23 +176,6 @@ public class FlowBean implements Serializable {
 
     }
 
-    public void addNewSpatialUnitPanel(AbstractPanel currentPanel) {
-        addPanel(panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb()));
-    }
-
-    public void addNewSpatialUnitPanel(AbstractPanel currentPanel, BaseSpatialUnitLazyDataModel lazyModel) {
-        addPanel(panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb(),lazyModel));
-    }
-
-    public void addNewSpatialUnitPanel(AbstractPanel currentPanel, Set<SpatialUnit> listToUpdate,
-                                       String isSetChildrenOrParents, Long childOrParentId) {
-        addPanel(panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb(),listToUpdate,
-                isSetChildrenOrParents, childOrParentId));
-    }
-
-    public void addNewSpatialUnitPanel() {
-        addPanel(panelFactory.createNewSpatialUnitPanel(null));
-    }
 
     public void addNewActionUnitPanel(Integer sourcePanelIndex) {
         addPanel(panelFactory.createNewActionUnitPanel(panels.get(sourcePanelIndex).getBreadcrumb()));
