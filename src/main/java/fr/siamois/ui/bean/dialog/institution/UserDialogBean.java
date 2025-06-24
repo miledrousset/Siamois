@@ -1,6 +1,5 @@
 package fr.siamois.ui.bean.dialog.institution;
 
-import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.exceptions.auth.*;
@@ -19,6 +18,7 @@ import fr.siamois.utils.MessageUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.TabChangeEvent;
 import org.springframework.context.event.EventListener;
@@ -49,7 +49,7 @@ public class UserDialogBean implements Serializable {
 
     // Data storage
     private Institution institution;
-    private transient ActionFromBean actionFromBean;
+    private transient ProcessPerson processPerson;
     private String title;
     private String buttonLabel;
     private List<Person> alreadyExistingPersons = new ArrayList<>();
@@ -83,24 +83,24 @@ public class UserDialogBean implements Serializable {
         this.labelBean = labelBean;
     }
 
-    public void init(String title, String buttonLabel, Institution institution, ActionFromBean actionFromBean) {
+    public void init(String title, String buttonLabel, Institution institution, ProcessPerson processPerson) {
         reset();
         this.title = title;
         this.buttonLabel = buttonLabel;
         this.institution = institution;
         this.shouldRenderRoleField = false;
-        this.actionFromBean = actionFromBean;
+        this.processPerson = processPerson;
         this.tabState = TabState.SEARCH;
         PrimeFaces.current().ajax().update("newMemberDialog");
     }
 
-    public void init(String title, String buttonLabel, Institution institution, boolean shouldRenderRole, ActionFromBean actionFromBean) {
+    public void init(String title, String buttonLabel, Institution institution, boolean shouldRenderRole, ProcessPerson processPerson) {
         reset();
         this.title = title;
         this.buttonLabel = buttonLabel;
         this.institution = institution;
         this.shouldRenderRoleField = shouldRenderRole;
-        this.actionFromBean = actionFromBean;
+        this.processPerson = processPerson;
         if (shouldRenderRole) {
             conceptCompleteUrl = fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), Person.USER_ROLE_FIELD_CODE);
             try {
@@ -119,7 +119,7 @@ public class UserDialogBean implements Serializable {
         this.title = null;
         this.buttonLabel = null;
         this.shouldRenderRoleField = false;
-        this.actionFromBean = null;
+        this.processPerson = null;
         this.tabState = TabState.SEARCH;
         this.selectedExistingPerson = null;
         this.personSelectedList.clear();
@@ -132,16 +132,32 @@ public class UserDialogBean implements Serializable {
         this.confirmPassword = null;
     }
 
-    /**
-     * Creates and saves a new Person in the database.
-     * @return the list of created or found Person objects. If a single Person is created or found, it will be returned as a single-element list.
-     */
-    public List<PersonRole> createOrSearchPersons() {
-        return switch (tabState) {
-            case SEARCH -> searchPerson();
-            case CREATE -> List.of(createPerson());
-            case BULK -> throw new UnsupportedOperationException("Bulk creation is not implemented yet.");
-        };
+    public void applyToAllPerson() {
+        int affected = 0;
+        for (PersonRole personRole : createOrSearchPersons()) {
+            if (personRole != null) {
+                processPerson.process(personRole);
+                affected++;
+            }
+        }
+        if (affected > 0) {
+            exit();
+        }
+    }
+
+    private List<PersonRole> createOrSearchPersons() {
+        if (tabState == TabState.SEARCH) {
+            return searchPerson();
+        } else if (tabState == TabState.CREATE) {
+            PersonRole result = createPerson();
+            if (result != null)
+                return List.of(result);
+            return List.of();
+        } else if (tabState == TabState.BULK) {
+            throw new UnsupportedOperationException("Bulk creation is not implemented yet.");
+        }
+
+        throw new IllegalStateException("Unexpected tab state: " + tabState);
     }
 
     public List<PersonRole> searchPerson() {
@@ -149,13 +165,13 @@ public class UserDialogBean implements Serializable {
     }
 
     public PersonRole createPerson() {
-        if (firstname == null || lastname == null || username == null || email == null || password == null || confirmPassword == null) {
-            log.error("All fields must be filled out.");
+        if (oneFieldIsEmpty()) {
+            displayErrorMessage(langBean, "userDialog.error.fields");
             return null;
         }
 
         if (!password.equals(confirmPassword)) {
-            log.error("Password and confirmation do not match.");
+            displayErrorMessage(langBean, "userDialog.error.password.match");
             return null;
         }
 
@@ -170,17 +186,27 @@ public class UserDialogBean implements Serializable {
         try {
             return new PersonRole(personService.createPerson(person), null);
         } catch (InvalidUsernameException e) {
-            log.error("Invalid username: {}", e.getMessage());
+            displayErrorMessage(langBean, "userDialog.error.username");
         } catch (InvalidEmailException e) {
-            log.error("Invalid email: {}", e.getMessage());
+            displayErrorMessage(langBean, "userDialog.error.email");
         } catch (UserAlreadyExistException e) {
-            log.error("User already exists: {}", e.getMessage());
+            displayErrorMessage(langBean, "userDialog.error.username.alreadyexists");
         } catch (InvalidPasswordException e) {
-            log.error("Invalid password: {}", e.getMessage());
+            displayErrorMessage(langBean, "userDialog.error.password");
         } catch (InvalidNameException e) {
-            log.error("Invalid name: {}", e.getMessage());
+            displayErrorMessage(langBean, "userDialog.error.name");
         }
         return null;
+    }
+
+    private boolean oneFieldIsEmpty() {
+        List<String> fields = List.of(firstname, lastname, username, email, password, confirmPassword);
+        for (String field : fields) {
+            if (StringUtils.isBlank(field)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void exit() {
@@ -199,10 +225,7 @@ public class UserDialogBean implements Serializable {
         log.trace("Tab changed from {} to: {}", oldState, tabState);
     }
 
-    public record PersonRole(
-            Person person,
-            Concept role
-    ) {}
+
 
     public enum TabState {
         SEARCH,
@@ -217,7 +240,7 @@ public class UserDialogBean implements Serializable {
         }
 
         for (PersonRole person : personSelectedList) {
-            result.remove(person.person);
+            result.remove(person.person());
         }
 
         return result;

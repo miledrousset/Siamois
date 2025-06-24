@@ -8,6 +8,7 @@ import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.dialog.institution.PersonRole;
 import fr.siamois.ui.bean.dialog.institution.UserDialogBean;
 import fr.siamois.ui.bean.settings.SettingsDatatableBean;
 import lombok.Getter;
@@ -87,12 +88,15 @@ public class InstitutionManagerListBean implements SettingsDatatableBean {
     @Override
     public void add() {
         log.trace("Creating manager");
-        userDialogBean.init(langBean.msg("organisationSettings.managers.dialog.label"), langBean.msg("organisationSettings.managers.add"), institution, this::save);
+        userDialogBean.init(langBean.msg("organisationSettings.managers.dialog.label"),
+                langBean.msg("organisationSettings.managers.add"),
+                institution,
+                this::processPerson);
         PrimeFaces.current().ajax().update("newMemberDialog");
         PrimeFaces.current().executeScript("PF('newMemberDialog').show();");
     }
 
-    private void addPersonToInstitution(UserDialogBean.PersonRole saved) {
+    private void addPersonToInstitution(PersonRole saved) {
         if (institutionService.addToManagers(institution, saved.person())) {
             displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", saved.person().getUsername());
         } else {
@@ -101,14 +105,10 @@ public class InstitutionManagerListBean implements SettingsDatatableBean {
         }
     }
 
-    public void save() {
-        List<UserDialogBean.PersonRole> saved = userDialogBean.createOrSearchPersons();
-        for (UserDialogBean.PersonRole personRole : saved) {
-            addPersonToInstitution(personRole);
-            refMembers.add(personRole.person());
-            members.add(personRole.person());
-        }
-        userDialogBean.exit();
+    private void processPerson(PersonRole saved) {
+        addPersonToInstitution(saved);
+        refMembers.add(saved.person());
+        members.add(saved.person());
     }
 
     @EventListener(LoginEvent.class)
