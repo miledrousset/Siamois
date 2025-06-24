@@ -68,8 +68,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     private final transient ActionUnitService actionUnitService;
     private final LangBean langBean;
 
-    private final SessionSettingsBean sessionSettingsBean;
-    private final transient FieldConfigurationService fieldConfigurationService;
     private final transient FieldService fieldService;
     private final RedirectBean redirectBean;
     private final transient LabelService labelService;
@@ -110,8 +108,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
                 documentCreationBean, sessionSettingsBean, fieldConfigurationService);
         this.actionUnitService = actionUnitService;
         this.langBean = langBean;
-        this.sessionSettingsBean = sessionSettingsBean;
-        this.fieldConfigurationService = fieldConfigurationService;
         this.fieldService = fieldService;
         this.redirectBean = redirectBean;
         this.labelService = labelService;

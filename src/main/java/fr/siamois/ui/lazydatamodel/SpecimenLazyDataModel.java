@@ -1,8 +1,6 @@
 package fr.siamois.ui.lazydatamodel;
 
-import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.specimen.Specimen;
-import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
@@ -12,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 
 public class SpecimenLazyDataModel extends BaseSpecimenLazyDataModel {
 
-    private final transient SpecimenService specimenService;
     private final transient SessionSettingsBean sessionSettings;
 
     public SpecimenLazyDataModel(
@@ -20,7 +17,6 @@ public class SpecimenLazyDataModel extends BaseSpecimenLazyDataModel {
                                  SessionSettingsBean sessionSettings,
                                  LangBean langBean) {
         super(specimenService, langBean);
-        this.specimenService = specimenService;
         this.sessionSettings = sessionSettings;
     }
 

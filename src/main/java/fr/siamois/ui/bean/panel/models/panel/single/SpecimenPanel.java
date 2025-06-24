@@ -64,7 +64,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
 
     // Deps
     protected final transient LangBean langBean;
-    protected final transient SessionSettingsBean sessionSettingsBean;
+
     protected final transient SpatialUnitService spatialUnitService;
     protected final transient ActionUnitService actionUnitService;
     protected final transient RecordingUnitService recordingUnitService;
@@ -74,7 +74,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
     private final transient HistoryService historyService;
     private final transient DocumentService documentService;
     protected final transient ConceptService conceptService;
-    protected final transient FieldConfigurationService fieldConfigurationService;
+
 
     // ---------- Locals
     // RU
@@ -190,14 +190,12 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
                 "siamois-panel specimen-panel specimen-single-panel",
                 documentCreationBean, sessionSettingsBean, fieldConfigurationService);
         this.langBean = langBean;
-        this.sessionSettingsBean = sessionSettingsBean;
         this.spatialUnitService = spatialUnitService;
         this.actionUnitService = actionUnitService;
         this.recordingUnitService = recordingUnitService;
         this.personService = personService;
         this.specimenService = specimenService;
         this.conceptService = conceptService;
-        this.fieldConfigurationService = fieldConfigurationService;
         this.redirectBean = redirectBean;
         this.historyService = historyService;
         this.documentService = documentService;
@@ -402,12 +400,12 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
 
     @Override
     public void visualise(SpecimenHist history) {
-
+        // todo: implement
     }
 
     @Override
     public void saveDocument() {
-
+        // todo: implement
     }
 
     @Override

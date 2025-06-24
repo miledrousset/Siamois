@@ -58,22 +58,14 @@ public class SpatialUnitHelperService {
     public void reinitialize(Consumer<SpatialUnit> spatialUnitSetter,
                              Consumer<String> spatialUnitErrorMessageSetter,
                              Consumer<String> spatialUnitListErrorMessageSetter,
-                             Consumer<String> recordingUnitListErrorMessageSetter,
-                             Consumer<String> actionUnitListErrorMessageSetter,
                              Consumer<List<SpatialUnit>> spatialUnitListSetter,
-                             Consumer<List<RecordingUnit>> recordingUnitListSetter,
-                             Consumer<List<ActionUnit>> actionUnitListSetter,
                              Consumer<List<SpatialUnit>> spatialUnitParentsListSetter,
                              Consumer<String> spatialUnitParentsListErrorMessageSetter) {
 
         spatialUnitSetter.accept(null);
         spatialUnitErrorMessageSetter.accept(null);
         spatialUnitListErrorMessageSetter.accept(null);
-        recordingUnitListErrorMessageSetter.accept(null);
-        actionUnitListErrorMessageSetter.accept(null);
         spatialUnitListSetter.accept(null);
-        recordingUnitListSetter.accept(null);
-        actionUnitListSetter.accept(null);
         spatialUnitParentsListSetter.accept(null);
         spatialUnitParentsListErrorMessageSetter.accept(null);
     }

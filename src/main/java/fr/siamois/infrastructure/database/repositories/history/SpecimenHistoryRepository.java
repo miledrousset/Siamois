@@ -1,6 +1,5 @@
 package fr.siamois.infrastructure.database.repositories.history;
 
-import fr.siamois.domain.models.history.RecordingUnitHist;
 import fr.siamois.domain.models.history.SpecimenHist;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

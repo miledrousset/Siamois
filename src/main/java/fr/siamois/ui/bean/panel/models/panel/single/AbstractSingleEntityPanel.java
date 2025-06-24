@@ -92,11 +92,6 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
         this.documentCreationBean = null;
     }
 
-    protected AbstractSingleEntityPanel(DocumentCreationBean documentCreationBean, SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService) {
-        super();
-        this.documentCreationBean = documentCreationBean;
-    }
-
     protected AbstractSingleEntityPanel(String titleCodeOrTitle, String icon, String panelClass, DocumentCreationBean documentCreationBean,
                                         SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService) {
         super(titleCodeOrTitle, icon, panelClass, sessionSettingsBean, fieldConfigurationService);
@@ -128,7 +123,7 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     }
 
 
-    public void onTabChange(TabChangeEvent event) {
+    public void onTabChange(TabChangeEvent<?> event) {
         // update tab inddex
         TabView tabView = (TabView) event.getComponent(); // Get the TabView
         Tab activeTab = event.getTab(); // Get the selected tab

@@ -12,9 +12,8 @@ import org.springframework.data.domain.Pageable;
 
 public class SpecimenInRecordingUnitLazyDataModel extends BaseSpecimenLazyDataModel {
 
-    private final transient SpecimenService specimenService;
+
     private final transient SessionSettingsBean sessionSettings;
-    private final transient LangBean langBean;
 
     // locals
     @Getter
@@ -25,9 +24,7 @@ public class SpecimenInRecordingUnitLazyDataModel extends BaseSpecimenLazyDataMo
             SessionSettingsBean sessionSettings,
             LangBean langBean, RecordingUnit recordingUnit) {
         super(specimenService, langBean);
-        this.specimenService = specimenService;
         this.sessionSettings = sessionSettings;
-        this.langBean = langBean;
         this.recordingUnit = recordingUnit;
     }
 

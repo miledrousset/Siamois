@@ -36,7 +36,7 @@ public class NewSpatialUnitPanel extends AbstractPanel {
     // Locals
     SpatialUnit spatialUnit;
 
-    private BaseLazyDataModel lazyDataModel; // lazymodel to be updated after creation
+    private BaseLazyDataModel<?>lazyDataModel; // lazymodel to be updated after creation
 
     public NewSpatialUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, FlowBean flowBean) {
         super("panel.newspatialunit.title", "bi bi-geo-alt", "siamois-panel spatial-unit-panel new-spatial-unit-panel");
@@ -123,7 +123,7 @@ public class NewSpatialUnitPanel extends AbstractPanel {
             return this;
         }
 
-        public NewSpatialUnitPanel.NewSpatialUnitPanelBuilder lazyModel(BaseLazyDataModel lazyModel) {
+        public NewSpatialUnitPanel.NewSpatialUnitPanelBuilder lazyModel(BaseLazyDataModel<?> lazyModel) {
             newSpatialUnitPanel.setLazyDataModel(lazyModel);
 
             return this;

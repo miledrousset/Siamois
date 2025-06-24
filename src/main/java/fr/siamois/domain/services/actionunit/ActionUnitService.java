@@ -43,9 +43,6 @@ public class ActionUnitService implements ArkEntityService {
         this.actionCodeRepository = actionCodeRepository;
     }
 
-    public List<ActionUnit> findAllBySpatialUnitId(SpatialUnit spatialUnit)   {
-        return actionUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
-    }
 
     @Transactional(readOnly = true)
     public Page<ActionUnit> findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(

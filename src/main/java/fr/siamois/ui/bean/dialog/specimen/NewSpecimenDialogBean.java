@@ -1,6 +1,6 @@
 package fr.siamois.ui.bean.dialog.specimen;
 
-import fr.siamois.domain.models.actionunit.ActionUnit;
+
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.form.customfield.*;
 
@@ -12,7 +12,7 @@ import fr.siamois.domain.models.form.customform.CustomRow;
 
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
+
 import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -23,14 +23,15 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
-import fr.siamois.ui.lazydatamodel.BaseRecordingUnitLazyDataModel;
+
 import fr.siamois.ui.lazydatamodel.BaseSpecimenLazyDataModel;
-import fr.siamois.ui.lazydatamodel.RecordingUnitInActionUnitLazyDataModel;
+
 import fr.siamois.ui.lazydatamodel.SpecimenInRecordingUnitLazyDataModel;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.event.AjaxBehaviorEvent;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,6 @@ import javax.faces.bean.SessionScoped;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 
 import java.util.List;
 
@@ -52,6 +52,7 @@ import java.util.List;
 @Getter
 @Setter
 @SessionScoped
+@EqualsAndHashCode(callSuper = true)
 public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implements Serializable {
 
     // Deps
@@ -66,6 +67,7 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
     private RecordingUnit recordingUnit; // parent ru
 
     private static final String COLUMN_CLASS_NAME = "ui-g-12";
+    private static final String UPDATE_FAILED_MESSAGE_CODE = "common.entity.spatialUnits.updateFailed";
 
     // ----------- Concepts for system fields
     // Authors
@@ -266,7 +268,7 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
             }
 
         } catch (FailedRecordingUnitSaveException e) {
-            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
+            MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED_MESSAGE_CODE, unit.getFullIdentifier());
         }
 
 
@@ -282,7 +284,7 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
         try {
             createSpecimen();
         } catch (RuntimeException e) {
-            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
+            MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED_MESSAGE_CODE, unit.getFullIdentifier());
             throw e;
         }
 
@@ -299,7 +301,7 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
         try {
             createSpecimen();
         } catch (FailedRecordingUnitSaveException e) {
-            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
+            MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED_MESSAGE_CODE, unit.getFullIdentifier());
             throw e;
         }
         PrimeFaces.current().executeScript("PF('newSpecimenDiag').hide();");
