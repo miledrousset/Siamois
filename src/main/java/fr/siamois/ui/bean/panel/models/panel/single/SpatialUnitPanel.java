@@ -261,6 +261,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
         CustomCol col3 = new CustomCol();
         col3.setField(typeField);
         col3.setClassName(COLUMN_CLASS_NAME);
+        col3.setReadOnly(true);
         row2.setColumns(List.of(col3));
         mainOverviewPanel.setRows(List.of(row2));
         overviewForm = new CustomForm.Builder()
