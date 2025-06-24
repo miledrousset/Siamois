@@ -18,9 +18,7 @@
     <cc:implementation>
 
         <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.list.SpatialUnitListPanel"-->
-        <h:form id="spatialUnitListForm"
 
-        >
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
 
@@ -70,8 +68,8 @@
                                 <p:commandButton style="margin-left: 1em;" id="toggler" type="button"
                                                  value="#{langBean.msg('table.columnvisibility')}"
                                                  icon="pi pi-align-justify"/>
-                                <p:columnToggler datasource=":#{cc.clientId}:spatialUnitListForm:spatialUnitDataTable"
-                                                 trigger=":#{cc.clientId}:spatialUnitListForm:spatialUnitDataTable:toggler">
+                                <p:columnToggler datasource=":#{cc.clientId}:spatialUnitDataTable"
+                                                 trigger=":#{cc.clientId}:spatialUnitDataTable:toggler">
                                     <p:ajax event="toggle" listener="#{cc.attrs.panelModel.onToggle}"/>
                                 </p:columnToggler>
 
@@ -193,6 +191,16 @@
                             panelModel="#{cc.attrs.panelModel}"
                             onClickMethod="#{flowBean.goToSpatialUnitByIdNewPanel}"
                     />
+                    <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
+                                     id="newSpatialUnitParentsButton"
+                                     actionListener="#{newSpatialUnitDialogBean.init('parents', item.id
+                                     , item.parents)}"
+                                     oncomplete="PF('newSpatialUnitDiag').show()"
+                                     update="newSpatialUnitForm"
+                                     rendered="#{flowBean.readWriteMode == 'WRITE'}"
+                                     style="margin-right: .5rem">
+                    </p:commandButton>
+
                 </p:column>
 
 
@@ -209,14 +217,14 @@
                     />
                     <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
                                      id="newSpatialUnitChildrenButton"
-                                     actionListener="#{flowBean.addNewSpatialUnitPanel(panelModel, item.children,
-                                     'children', item.id)}"
-                                     onstart="PF('buiContent').show()"
-                                     oncomplete="PF('buiContent').hide();handleScrollToTop();"
-                                     update="flow"
+                                     actionListener="#{newSpatialUnitDialogBean.init('children', item.id
+                                     , item.children)}"
+                                     oncomplete="PF('newSpatialUnitDiag').show()"
+                                     update="newSpatialUnitForm"
                                      rendered="#{flowBean.readWriteMode == 'WRITE'}"
                                      style="margin-right: .5rem">
                     </p:commandButton>
+
                 </p:column>
 
                 <!-- Actions -->
@@ -257,7 +265,7 @@
             </p:blockUI>
 
 
-        </h:form>
+
     </cc:implementation>
 </ui:composition>
 

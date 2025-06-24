@@ -14,7 +14,6 @@
              toggleable="true"
              collapsed="false">
         <spatialUnit:spatialUnitList
-                disableAddBtn="true"
                 lazyDataModel="#{panelModel.lazyDataModelChildren}"
                 panelModel="#{panelModel}"
                 panelIndex="#{panelIndex}"
@@ -23,10 +22,9 @@
             <f:facet name="rightToolbar">
                 <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
                                  id="newSpatialUnitChildrenButton"
-                                 actionListener="#{flowBean.addNewSpatialUnitPanel(panelModel, panelModel.lazyDataModelChildren)}"
-                                 onstart="PF('buiContent').show()"
-                                 oncomplete="PF('buiContent').hide();handleScrollToTop();"
-                                 update="flow"
+                                 actionListener="#{newSpatialUnitDialogBean.init(panelModel.lazyDataModelChildren)}"
+                                 oncomplete="PF('newSpatialUnitDiag').show()"
+                                 update="newSpatialUnitForm"
                                  rendered="#{flowBean.readWriteMode == 'WRITE'}"
                                  style="margin-right: .5rem">
                 </p:commandButton>
@@ -38,7 +36,6 @@
              header="Fait partie de" toggleable="true"
              collapsed="false">
         <spatialUnit:spatialUnitList
-                disableAddBtn="true"
                 lazyDataModel="#{panelModel.lazyDataModelParents}"
                 panelModel="#{panelModel}"
                 panelIndex="#{panelIndex}"
@@ -47,10 +44,9 @@
             <f:facet name="rightToolbar">
                 <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
                                  id="newSpatialUnitParentButton"
-                                 actionListener="#{flowBean.addNewSpatialUnitPanel(panelModel, panelModel.lazyDataModelParents)}"
-                                 onstart="PF('buiContent').show()"
-                                 oncomplete="PF('buiContent').hide();handleScrollToTop();"
-                                 update="flow"
+                                 actionListener="#{newSpatialUnitDialogBean.init(panelModel.lazyDataModelParents)}"
+                                 oncomplete="PF('newSpatialUnitDiag').show()"
+                                 update="newSpatialUnitForm"
                                  rendered="#{flowBean.readWriteMode == 'WRITE'}"
                                  style="margin-right: .5rem">
                 </p:commandButton>

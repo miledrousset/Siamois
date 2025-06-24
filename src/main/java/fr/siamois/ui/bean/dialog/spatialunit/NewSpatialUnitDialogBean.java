@@ -35,10 +35,7 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 
 @Slf4j
@@ -59,8 +56,6 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
     // Locals
     private BaseSpatialUnitLazyDataModel lazyDataModel; // lazymodel to be updated after creation
     private Set<SpatialUnit> setToUpdate; // set to be updated after creation
-    private String isSetChildrenOrParents;
-    private Long childOrParentId;
 
 
     private static final String COLUMN_CLASS_NAME = "ui-g-12";
@@ -173,8 +168,6 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
         formResponse = null;
         lazyDataModel= null;
         setToUpdate= null;
-        isSetChildrenOrParents= null;
-        childOrParentId= null;
 
     }
 
@@ -195,13 +188,42 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
             this.lazyDataModel = lazyDataModel;
             if (lazyDataModel instanceof SpatialUnitChildrenLazyDataModel typedModel) {
                 SpatialUnit spatialUnitParent = spatialUnitService.findById(typedModel.getSpatialUnit().getId());
-                unit.setChildren(new HashSet<>());
-                unit.getChildren().add(spatialUnitParent);
+                unit.setParents(new HashSet<>());
+                unit.getParents().add(spatialUnitParent);
             } else if (lazyDataModel instanceof SpatialUnitParentsLazyDataModel typedModel) {
                 SpatialUnit spatialUnitChild = spatialUnitService.findById(typedModel.getSpatialUnit().getId());
-                unit.setParents(new HashSet<>());
-                unit.getParents().add(spatialUnitChild);
+                unit.setChildren(new HashSet<>());
+                unit.getChildren().add(spatialUnitChild);
             }
+        }
+        unit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
+        unit.setCreatedByInstitution(sessionSettingsBean.getSelectedInstitution());
+        initForms();
+    }
+
+    // Init when creating with button in table column
+    public void init(String isSetChildrenOrParents,
+                     Long childOrParentId,
+                     Set<SpatialUnit> setToUpdate) {
+
+
+        reset();
+        unit = new SpatialUnit();
+        // Set parents or children based on children or parents
+        if (Objects.equals(isSetChildrenOrParents, "children")
+                && setToUpdate != null
+                && childOrParentId != null) {
+            SpatialUnit spatialUnitParent = spatialUnitService.findById(childOrParentId);
+            unit.setParents(new HashSet<>());
+            unit.getParents().add(spatialUnitParent);
+            this.setToUpdate = setToUpdate;
+        }else if (Objects.equals(isSetChildrenOrParents, "parents")
+                && setToUpdate != null
+                && childOrParentId != null) {
+            SpatialUnit spatialUnitChild = spatialUnitService.findById(childOrParentId);
+            unit.setChildren(new HashSet<>());
+            unit.getChildren().add(spatialUnitChild);
+            this.setToUpdate = setToUpdate;
         }
         unit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
         unit.setCreatedByInstitution(sessionSettingsBean.getSelectedInstitution());
@@ -220,8 +242,16 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
             unit = spatialUnitService.save(sessionSettingsBean.getUserInfo(),
                     unit);
 
+            // if the request came from a set or a lazy model, update the set or lazy model
             if (lazyDataModel != null) {
                 lazyDataModel.addRowToModel(unit);
+            }
+            if (setToUpdate != null) {
+                LinkedHashSet<SpatialUnit> newSet = new LinkedHashSet<>();
+                newSet.add(unit);
+                newSet.addAll(setToUpdate);
+                setToUpdate.clear();
+                setToUpdate.addAll(newSet);
             }
 
         } catch (Exception e) {
