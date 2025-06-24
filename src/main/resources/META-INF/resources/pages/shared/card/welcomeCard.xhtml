@@ -15,6 +15,9 @@
         <cc:attribute name="count" type="long" required="true" />
         <cc:attribute name="btnLabel" type="java.lang.String" required="true"/>
         <cc:attribute name="btnAction" required="false" method-signature="java.lang.Void f()"/>
+        <cc:attribute name="btnNewActionUpdate" required="false" default="flow"/>
+        <cc:attribute name="btnNewActionOnComplete" required="false" default="PF('buiContent').hide();handleScrollToTop();"/>
+        <cc:attribute name="btnNewActionOnStart" required="false" default="PF('buiContent').show()" />
         <cc:attribute name="btnNewAction" required="false" method-signature="java.lang.Void f()"/>
         <cc:attribute name="panelModel" required="false"/>
     </cc:interface>
@@ -36,11 +39,11 @@
                                      onstart="PF('buiContent').show()" oncomplete="PF('buiContent').hide();handleScrollToTop();"
                                      action="#{cc.attrs.btnAction}" disabled="#{empty cc.attrs.btnAction}" update="flow"/>
                     <p:commandButton value='#{langBean.msg("common.action.create")}' icon="bi bi-plus-square" styleClass="#{cc.attrs.btnStyleClass}"
-                                     action="#{cc.attrs.btnNewAction}"
+                                     actionListener="#{cc.attrs.btnNewAction}"
                                      rendered="#{not empty cc.attrs.btnNewAction and flowBean.readWriteMode == 'WRITE'}"
-                                     update="flow"
-                                     onstart="PF('buiContent').show()"
-                                     oncomplete="PF('buiContent').hide();handleScrollToTop();"
+                                     update="#{cc.attrs.btnNewActionUpdate}"
+                                     onstart="#{cc.attrs.btnNewActionOnStart}"
+                                     oncomplete="#{cc.attrs.btnNewActionOnComplete}"
                                      id="openNewUnitPanelButton"
                                      disabled="#{empty cc.attrs.btnNewAction}"
                                      style="margin-right: .5rem">

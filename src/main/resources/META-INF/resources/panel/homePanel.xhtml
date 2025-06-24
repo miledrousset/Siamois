@@ -37,7 +37,10 @@
                                     label="#{langBean.msg('common.entity.spatialUnits')}"
                                     count="#{panelModel.nbOfSpatialUnits}"
                                     btnAction="#{flowBean.addSpatialUnitListPanel(panelModel.breadcrumb)}"
-                                    btnNewAction="#{flowBean.addNewSpatialUnitPanel(panelModel)}"
+                                    btnNewActionUpdate="newSpatialUnitForm"
+                                    btnNewActionOnComplete="PF('newSpatialUnitDiag').show()"
+                                    btnNewActionOnStart=""
+                                    btnNewAction="#{newSpatialUnitDialogBean.init()}"
                             />
 
 

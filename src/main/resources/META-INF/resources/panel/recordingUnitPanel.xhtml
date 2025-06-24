@@ -145,18 +145,7 @@
         </h:form>
 
     </h:panelGroup>
-    <p:dialog id="idDisplayVersion" widgetVar="displayVersion" closeOnEscape="true">
-        <h:form id="displayVersionForm">
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <h:panelGroup id="versionVisualizer" rendered="#{panelModel.revisionToDisplay != null}">
-                <p>Name : #{panelModel.revisionToDisplay.name}</p>
-                <p>Category : #{labelBean.findLabelOf(panelModel.revisionToDisplay.category)}</p>
-            </h:panelGroup>
-        </h:form>
-    </p:dialog>
-    <p:dialog widgetVar="restored-dlg" closeOnEscape="true" onHide="location.reload();">
-        <h:outputText value="Version restaurée"/>
-    </p:dialog>
+
 
 
 

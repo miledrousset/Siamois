@@ -101,12 +101,8 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
     private String spatialUnitErrorMessage;
     private transient List<SpatialUnit> spatialUnitList;
     private transient List<SpatialUnit> spatialUnitParentsList;
-    private transient List<RecordingUnit> recordingUnitList;
-    private transient List<ActionUnit> actionUnitList;
     private String spatialUnitListErrorMessage;
     private String spatialUnitParentsListErrorMessage;
-    private String actionUnitListErrorMessage;
-    private String recordingUnitListErrorMessage;
 
 
 
@@ -265,6 +261,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
         CustomCol col3 = new CustomCol();
         col3.setField(typeField);
         col3.setClassName(COLUMN_CLASS_NAME);
+        col3.setReadOnly(true);
         row2.setColumns(List.of(col3));
         mainOverviewPanel.setRows(List.of(row2));
         overviewForm = new CustomForm.Builder()
@@ -295,11 +292,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
                 unit -> this.unit = unit,
                 msg -> this.spatialUnitErrorMessage = msg,
                 msg -> this.spatialUnitListErrorMessage = msg,
-                msg -> this.recordingUnitListErrorMessage = msg,
-                msg -> this.actionUnitListErrorMessage = msg,
                 list -> this.spatialUnitList = list,
-                list -> this.recordingUnitList = list,
-                list -> this.actionUnitList = list,
                 list -> this.spatialUnitParentsList = list,
                 msg -> this.spatialUnitParentsListErrorMessage = msg
         );
@@ -349,19 +342,6 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
             this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
         }
 
-        DataLoaderUtils.loadData(
-                () -> recordingUnitService.findAllBySpatialUnit(unit),
-                list -> this.recordingUnitList = list,
-                msg -> this.recordingUnitListErrorMessage = msg,
-                "Unable to load recording units: "
-        );
-
-        DataLoaderUtils.loadData(
-                () -> actionUnitService.findAllBySpatialUnitId(unit),
-                list -> this.actionUnitList = list,
-                msg -> this.actionUnitListErrorMessage = msg,
-                "Unable to load action units: "
-        );
 
         historyVersion = spatialUnitHelperService.findHistory(unit);
         documents = documentService.findForSpatialUnit(unit);

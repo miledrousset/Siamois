@@ -151,21 +151,21 @@ public class NavBean implements Serializable {
         MessageUtils.displayInfoMessage(langBean, "common.bookmark.unsaved");
     }
 
-    public void bookmark(String fullIdentifier, String Uri) {
+    public void bookmark(String fullIdentifier, String uri) {
 
         // Maybe check that ressource exists and user has access to it?
         bookmarkService.save(
                 sessionSettingsBean.getUserInfo(),
-                Uri,
+                uri,
                 fullIdentifier
         );
         MessageUtils.displayInfoMessage(langBean, "common.bookmark.saved");
     }
 
-    public void unBookmark(String fullIdentifier, String Uri) {
+    public void unBookmark(String uri) {
         bookmarkService.deleteBookmark(
                 sessionSettingsBean.getUserInfo(),
-                Uri
+                uri
         );
         MessageUtils.displayInfoMessage(langBean, "common.bookmark.unsaved");
     }
@@ -186,7 +186,7 @@ public class NavBean implements Serializable {
 
     public void toggleSpecimenBookmark(String fullIdentifier) {
         if(Boolean.TRUE.equals(isRessourceBookmarkedByUser(SPECIMEN_BASE_URI+fullIdentifier))) {
-            unBookmark(fullIdentifier,SPECIMEN_BASE_URI+fullIdentifier);
+            unBookmark(SPECIMEN_BASE_URI+fullIdentifier);
         }
         else {
             bookmark(fullIdentifier,SPECIMEN_BASE_URI+fullIdentifier);

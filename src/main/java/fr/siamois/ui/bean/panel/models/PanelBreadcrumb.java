@@ -29,7 +29,6 @@ public class PanelBreadcrumb implements Serializable {
                 .value("Dashboard")
                 .id("home")
                 .icon("pi pi-home")
-                .command("#{flowBean.goToHomeCurrentPanel}")
                 .update("flow")
                 .build();
         model.getElements().add(item);
@@ -41,7 +40,6 @@ public class PanelBreadcrumb implements Serializable {
                 .value(spatialUnit.getName())
                 .id("site-item-1")
                 .icon("pi pi-map-marker")
-                .command("#{flowBean.goToHomeCurrentPanel}")
                 .update("flow")
                 .build();
         model.getElements().add(item);

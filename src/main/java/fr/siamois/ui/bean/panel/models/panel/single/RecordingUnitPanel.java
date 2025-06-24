@@ -44,6 +44,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
@@ -55,11 +56,10 @@ import java.util.*;
 @Data
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit, RecordingUnitHist> {
+public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit, RecordingUnitHist>  implements Serializable {
 
     // Deps
     protected final transient LangBean langBean;
-    protected final transient SessionSettingsBean sessionSettingsBean;
     protected final transient SpatialUnitService spatialUnitService;
     protected final transient ActionUnitService actionUnitService;
     protected final transient RecordingUnitService recordingUnitService;
@@ -68,8 +68,8 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
     private final transient HistoryService historyService;
     private final transient DocumentService documentService;
     protected final transient ConceptService conceptService;
-    protected final transient FieldConfigurationService fieldConfigurationService;
-    private final SpecimenService specimenService;
+    private final transient SpecimenService specimenService;
+
 
     // ---------- Locals
     // RU
@@ -255,13 +255,11 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
                 "siamois-panel recording-unit-panel recording-unit-single-panel",
                 documentCreationBean, sessionSettingsBean, fieldConfigurationService);
         this.langBean = langBean;
-        this.sessionSettingsBean = sessionSettingsBean;
         this.spatialUnitService = spatialUnitService;
         this.actionUnitService = actionUnitService;
         this.recordingUnitService = recordingUnitService;
         this.personService = personService;
         this.conceptService = conceptService;
-        this.fieldConfigurationService = fieldConfigurationService;
         this.redirectBean = redirectBean;
         this.historyService = historyService;
         this.documentService = documentService;
@@ -610,12 +608,12 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
 
     @Override
     public void visualise(RecordingUnitHist history) {
-
+        // todo: implement
     }
 
     @Override
     public void saveDocument() {
-
+        // todo: implement
     }
 
     @Override

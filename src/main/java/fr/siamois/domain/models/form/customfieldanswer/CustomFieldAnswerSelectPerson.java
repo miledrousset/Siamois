@@ -1,7 +1,5 @@
 package fr.siamois.domain.models.form.customfieldanswer;
 
-import fr.siamois.domain.models.auth.Person;
-import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Objects;

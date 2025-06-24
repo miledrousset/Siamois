@@ -32,6 +32,7 @@ import org.primefaces.component.tabview.Tab;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.time.OffsetDateTime;
@@ -44,7 +45,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
-public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEntity<T>  {
+public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEntity<T>  implements Serializable {
 
     // Deps
     protected final transient DocumentCreationBean documentCreationBean;
@@ -92,11 +93,6 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
         this.documentCreationBean = null;
     }
 
-    protected AbstractSingleEntityPanel(DocumentCreationBean documentCreationBean, SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService) {
-        super();
-        this.documentCreationBean = documentCreationBean;
-    }
-
     protected AbstractSingleEntityPanel(String titleCodeOrTitle, String icon, String panelClass, DocumentCreationBean documentCreationBean,
                                         SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService) {
         super(titleCodeOrTitle, icon, panelClass, sessionSettingsBean, fieldConfigurationService);
@@ -128,7 +124,7 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     }
 
 
-    public void onTabChange(TabChangeEvent event) {
+    public void onTabChange(TabChangeEvent<?> event) {
         // update tab inddex
         TabView tabView = (TabView) event.getComponent(); // Get the TabView
         Tab activeTab = event.getTab(); // Get the selected tab

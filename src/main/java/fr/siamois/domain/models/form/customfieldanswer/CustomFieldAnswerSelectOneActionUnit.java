@@ -1,7 +1,6 @@
 package fr.siamois.domain.models.form.customfieldanswer;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import jakarta.persistence.*;
 import lombok.Data;
 

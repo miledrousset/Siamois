@@ -3,8 +3,6 @@ package fr.siamois.ui.bean.panel.models.panel.single;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.document.Document;
-import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.form.customfield.*;
 import fr.siamois.domain.models.form.customfieldanswer.*;
 import fr.siamois.domain.models.form.customform.CustomCol;
@@ -17,9 +15,7 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
-import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.utils.DateUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
@@ -27,12 +23,8 @@ import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.primefaces.PrimeFaces;
-import org.primefaces.component.tabview.Tab;
-import org.primefaces.component.tabview.TabView;
-import org.primefaces.event.TabChangeEvent;
-
-import java.lang.reflect.Field;
+import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -44,7 +36,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
-public abstract class AbstractSingleEntity<T> extends AbstractPanel {
+public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements Serializable {
 
     // Deps
     protected final transient SessionSettingsBean sessionSettingsBean;
@@ -181,61 +173,80 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel {
 
     public static CustomFormResponse initializeFormResponse(CustomForm form, Object jpaEntity) {
         CustomFormResponse response = new CustomFormResponse();
-        Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
-
-        List<String> bindableFields = getBindableFieldNames(jpaEntity);
-
         if (form.getLayout() == null) return response;
 
+        Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
+        List<String> bindableFields = getBindableFieldNames(jpaEntity);
+
         for (CustomFormPanel panel : form.getLayout()) {
-            if (panel.getRows() == null) continue;
-
-            for (CustomRow row : panel.getRows()) {
-                if (row.getColumns() == null) continue;
-
-                for (CustomCol col : row.getColumns()) {
-                    CustomField field = col.getField();
-                    if (field != null && !answers.containsKey(field)) {
-                        CustomFieldAnswer answer = instantiateAnswerForField(field);
-                        if (answer != null) {
-                            CustomFieldAnswerId answerId = new CustomFieldAnswerId();
-                            answerId.setField(field);
-                            answer.setPk(answerId);
-                            answer.setHasBeenModified(false);
-
-                            if (Boolean.TRUE.equals(field.getIsSystemField())
-                                    && field.getValueBinding() != null
-                                    && bindableFields.contains(field.getValueBinding())) {
-
-                                Object value = getFieldValue(jpaEntity, field.getValueBinding());
-                                if (value instanceof OffsetDateTime odt && answer instanceof CustomFieldAnswerDateTime) {
-                                    ((CustomFieldAnswerDateTime) answer).setValue(odt.toLocalDateTime());
-                                } else if (value instanceof String odt && answer instanceof CustomFieldAnswerText) {
-                                    ((CustomFieldAnswerText) answer).setValue(odt);
-                                } else if (value instanceof List<?> list && answer instanceof CustomFieldAnswerSelectMultiplePerson &&
-                                        list.stream().allMatch(p -> p instanceof Person)) {
-                                    ((CustomFieldAnswerSelectMultiplePerson) answer).setValue((List<Person>) list);
-                                } else if (value instanceof Concept c && answer instanceof CustomFieldAnswerSelectOneFromFieldCode) {
-                                    ((CustomFieldAnswerSelectOneFromFieldCode) answer).setValue(c);
-                                }else if (value instanceof Concept c && answer instanceof CustomFieldAnswerSelectOneConceptFromChildrenOfConcept) {
-                                    ((CustomFieldAnswerSelectOneConceptFromChildrenOfConcept) answer).setValue(c);
-                                }else if (value instanceof ActionUnit a && answer instanceof CustomFieldAnswerSelectOneActionUnit) {
-                                    ((CustomFieldAnswerSelectOneActionUnit) answer).setValue(a);
-                                }else if (value instanceof SpatialUnit a && answer instanceof CustomFieldAnswerSelectOneSpatialUnit) {
-                                    ((CustomFieldAnswerSelectOneSpatialUnit) answer).setValue(a);
-                                }
-                            }
-
-                            answers.put(field, answer);
-                        }
-                    }
-                }
-            }
+            processPanel(panel, jpaEntity, bindableFields, answers);
         }
 
         response.setAnswers(answers);
         return response;
     }
+
+    private static void processPanel(CustomFormPanel panel, Object jpaEntity, List<String> bindableFields, Map<CustomField, CustomFieldAnswer> answers) {
+        if (panel.getRows() == null) return;
+
+        for (CustomRow row : panel.getRows()) {
+            if (row.getColumns() == null) continue;
+
+            for (CustomCol col : row.getColumns()) {
+                processColumn(col, jpaEntity, bindableFields, answers);
+            }
+        }
+    }
+
+    private static void processColumn(CustomCol col, Object jpaEntity, List<String> bindableFields, Map<CustomField, CustomFieldAnswer> answers) {
+        CustomField field = col.getField();
+        if (field == null || answers.containsKey(field)) return;
+
+        CustomFieldAnswer answer = instantiateAnswerForField(field);
+        if (answer == null) return;
+
+        initializeAnswer(answer, field);
+
+        if (Boolean.TRUE.equals(field.getIsSystemField())
+                && field.getValueBinding() != null
+                && bindableFields.contains(field.getValueBinding())) {
+
+            populateSystemFieldValue(answer, jpaEntity, field);
+        }
+
+        answers.put(field, answer);
+    }
+
+    private static void initializeAnswer(CustomFieldAnswer answer, CustomField field) {
+        CustomFieldAnswerId answerId = new CustomFieldAnswerId();
+        answerId.setField(field);
+        answer.setPk(answerId);
+        answer.setHasBeenModified(false);
+    }
+
+    private static void populateSystemFieldValue(CustomFieldAnswer answer, Object jpaEntity, CustomField field) {
+        Object value = getFieldValue(jpaEntity, field.getValueBinding());
+
+        if (value instanceof OffsetDateTime odt && answer instanceof CustomFieldAnswerDateTime dateTimeAnswer) {
+            dateTimeAnswer.setValue(odt.toLocalDateTime());
+        } else if (value instanceof String str && answer instanceof CustomFieldAnswerText textAnswer) {
+            textAnswer.setValue(str);
+        } else if (value instanceof List<?> list && answer instanceof CustomFieldAnswerSelectMultiplePerson multiplePersonAnswer &&
+                list.stream().allMatch(Person.class::isInstance)) {
+            multiplePersonAnswer.setValue((List<Person>) list);
+        } else if (value instanceof Concept c) {
+            if (answer instanceof CustomFieldAnswerSelectOneFromFieldCode codeAnswer) {
+                codeAnswer.setValue(c);
+            } else if (answer instanceof CustomFieldAnswerSelectOneConceptFromChildrenOfConcept childAnswer) {
+                childAnswer.setValue(c);
+            }
+        } else if (value instanceof ActionUnit a && answer instanceof CustomFieldAnswerSelectOneActionUnit actionUnitAnswer) {
+            actionUnitAnswer.setValue(a);
+        } else if (value instanceof SpatialUnit s && answer instanceof CustomFieldAnswerSelectOneSpatialUnit spatialUnitAnswer) {
+            spatialUnitAnswer.setValue(s);
+        }
+    }
+
 
     public static void updateJpaEntityFromFormResponse(CustomFormResponse response, Object jpaEntity) {
         if (response == null || jpaEntity == null) return;
@@ -246,37 +257,41 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel {
             CustomField field = entry.getKey();
             CustomFieldAnswer answer = entry.getValue();
 
-            if (field == null || answer == null) continue;
+            if (!isBindableSystemField(field, answer, bindableFields)) continue;
 
-            String binding = field.getValueBinding();
-            if (!Boolean.TRUE.equals(field.getIsSystemField()) || binding == null || !bindableFields.contains(binding)) {
-                continue;
-            }
-
-            Object value = null;
-
-            if (answer instanceof CustomFieldAnswerDateTime a && a.getValue() != null) {
-                value = a.getValue().atOffset(ZoneOffset.UTC);
-            } else if (answer instanceof CustomFieldAnswerText a) {
-                value = a.getValue();
-            } else if (answer instanceof CustomFieldAnswerSelectMultiplePerson a) {
-                value = a.getValue();
-            } else if (answer instanceof CustomFieldAnswerSelectOneFromFieldCode a) {
-                value = a.getValue();
-            } else if (answer instanceof CustomFieldAnswerSelectOneConceptFromChildrenOfConcept a) {
-                value = a.getValue();
-            }else if (answer instanceof CustomFieldAnswerSelectOneActionUnit a) {
-                value = a.getValue();
-            }else if (answer instanceof CustomFieldAnswerSelectOneSpatialUnit a) {
-                value = a.getValue();
-            }
-
+            Object value = extractValueFromAnswer(answer);
             if (value != null) {
-                setFieldValue(jpaEntity, binding, value);
+                setFieldValue(jpaEntity, field.getValueBinding(), value);
             }
         }
     }
 
+    private static boolean isBindableSystemField(CustomField field, CustomFieldAnswer answer, List<String> bindableFields) {
+        return field != null
+                && answer != null
+                && Boolean.TRUE.equals(field.getIsSystemField())
+                && field.getValueBinding() != null
+                && bindableFields.contains(field.getValueBinding());
+    }
+
+    private static Object extractValueFromAnswer(CustomFieldAnswer answer) {
+        if (answer instanceof CustomFieldAnswerDateTime a && a.getValue() != null) {
+            return a.getValue().atOffset(ZoneOffset.UTC);
+        } else if (answer instanceof CustomFieldAnswerText a) {
+            return a.getValue();
+        } else if (answer instanceof CustomFieldAnswerSelectMultiplePerson a) {
+            return a.getValue();
+        } else if (answer instanceof CustomFieldAnswerSelectOneFromFieldCode a) {
+            return a.getValue();
+        } else if (answer instanceof CustomFieldAnswerSelectOneConceptFromChildrenOfConcept a) {
+            return a.getValue();
+        } else if (answer instanceof CustomFieldAnswerSelectOneActionUnit a) {
+            return a.getValue();
+        } else if (answer instanceof CustomFieldAnswerSelectOneSpatialUnit a) {
+            return a.getValue();
+        }
+        return null;
+    }
 
     private static List<String> getBindableFieldNames(Object entity) {
         try {
@@ -289,33 +304,20 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel {
 
     private static Object getFieldValue(Object obj, String fieldName) {
         try {
-            Field field = findField(obj.getClass(), fieldName);
-            field.setAccessible(true);
-            return field.get(obj);
+            PropertyDescriptor pd = new PropertyDescriptor(fieldName, obj.getClass());
+            return pd.getReadMethod().invoke(obj);
         } catch (Exception e) {
             return null;
         }
     }
 
-    private static Field findField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
-        Class<?> current = clazz;
-        while (current != null) {
-            try {
-                return current.getDeclaredField(fieldName);
-            } catch (NoSuchFieldException e) {
-                current = current.getSuperclass();
-            }
-        }
-        throw new NoSuchFieldException("Field " + fieldName + " not found in " + clazz);
-    }
-
     private static void setFieldValue(Object obj, String fieldName, Object value) {
         try {
-            Field field = findField(obj.getClass(), fieldName);
-            field.setAccessible(true);
-            field.set(obj, value);
+            PropertyDescriptor pd = new PropertyDescriptor(fieldName, obj.getClass());
+            Method setter = pd.getWriteMethod();
+            setter.invoke(obj, value);
         } catch (Exception e) {
-
+            // Ignored, the value won't be set
         }
     }
 

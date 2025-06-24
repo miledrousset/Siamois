@@ -21,13 +21,14 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class SpatialUnitListPanel extends AbstractListPanel<SpatialUnit> {
+public class SpatialUnitListPanel extends AbstractListPanel<SpatialUnit>  implements Serializable {
 
     // locals
     private String spatialUnitListErrorMessage;

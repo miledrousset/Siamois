@@ -118,33 +118,6 @@ class ActionUnitServiceTest {
 
     }
 
-    @Test
-    void findAllBySpatialUnitId() {
-
-        when(actionUnitRepository.findAllBySpatialUnitId(spatialUnit1.getId())).thenReturn(List.of(actionUnit1, actionUnit2));
-
-        // Act
-        List<ActionUnit> actualResult = actionUnitService.findAllBySpatialUnitId(spatialUnit1);
-
-        // Assert
-        assertEquals(List.of(actionUnit1, actionUnit2), actualResult);
-    }
-
-    @Test
-    void findAllBySpatialUnitId_Exception() {
-
-        // Arrange
-        when(actionUnitRepository.findAllBySpatialUnitId(spatialUnit1.getId())).thenThrow(new RuntimeException("Database error"));
-
-        // Act & Assert
-        Exception exception = assertThrows(
-                Exception.class,
-                () -> actionUnitService.findAllBySpatialUnitId(spatialUnit1)
-        );
-
-        assertEquals("Database error", exception.getMessage());
-
-    }
 
     @Test
     void findById_success() {

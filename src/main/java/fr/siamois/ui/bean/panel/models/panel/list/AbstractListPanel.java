@@ -13,23 +13,24 @@ import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.event.ColumnToggleEvent;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.Visibility;
 import org.primefaces.model.menu.DefaultMenuItem;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 @Getter
 @Setter
 @NoArgsConstructor(force = true)
-public abstract class AbstractListPanel<T> extends AbstractPanel {
+@EqualsAndHashCode(callSuper = true)
+public abstract class AbstractListPanel<T> extends AbstractPanel  implements Serializable {
 
     // deps
     protected final transient SpatialUnitService spatialUnitService;
@@ -59,18 +60,6 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
         sessionSettingsBean = null;
     }
 
-    protected AbstractListPanel(SpatialUnitService spatialUnitService, PersonService personService, ConceptService conceptService, SessionSettingsBean sessionSettingsBean, LangBean langBean, LabelService labelService, ActionUnitService actionUnitService, BookmarkService bookmarkService) {
-
-        this.spatialUnitService = spatialUnitService;
-        this.personService = personService;
-        this.conceptService = conceptService;
-        this.sessionSettingsBean = sessionSettingsBean;
-        this.langBean = langBean;
-        this.labelService = labelService;
-        this.actionUnitService = actionUnitService;
-        this.bookmarkService = bookmarkService;
-    }
-
     public void onToggle(ColumnToggleEvent e) {
         Integer index = (Integer) e.getData();
         UIColumn column = e.getColumn();
@@ -79,8 +68,6 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
         FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Column " + index + " toggled: " + header + " " + visibility, null);
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
-
-
 
     protected AbstractListPanel(
             String titleKey,
@@ -110,8 +97,6 @@ public abstract class AbstractListPanel<T> extends AbstractPanel {
     protected abstract long countUnitsByInstitution();
 
     protected abstract BaseLazyDataModel<T> createLazyDataModel();
-
-
 
     protected void configureLazyDataModel(BaseLazyDataModel<T> model) {
         model.setSortBy(new HashSet<>());

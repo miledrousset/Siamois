@@ -2,15 +2,14 @@ package fr.siamois.ui.bean.panel.models.panel.list;
 
 
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
-import fr.siamois.domain.models.recordingunit.RecordingUnit;
+
 import fr.siamois.domain.models.specimen.Specimen;
-import fr.siamois.domain.models.vocabulary.Concept;
+
 import fr.siamois.domain.services.BookmarkService;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.person.PersonService;
-import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+
 import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
@@ -19,18 +18,19 @@ import fr.siamois.ui.bean.NavBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
-import fr.siamois.ui.lazydatamodel.RecordingUnitLazyDataModel;
+
 import fr.siamois.ui.lazydatamodel.SpecimenLazyDataModel;
-import fr.siamois.utils.MessageUtils;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.primefaces.event.RowEditEvent;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +40,7 @@ import java.util.List;
 @Setter
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class SpecimenListPanel extends AbstractListPanel<Specimen> {
+public class SpecimenListPanel extends AbstractListPanel<Specimen>  implements Serializable {
 
     private final transient SpecimenService specimenService;
     private final transient NavBean navBean;
@@ -74,7 +74,7 @@ public class SpecimenListPanel extends AbstractListPanel<Specimen> {
                              LangBean langBean,
                              LabelService labelService,
                              ActionUnitService actionUnitService,
-                             RecordingUnitService recordingUnitService, BookmarkService bookmarkService, SpecimenService specimenService, NavBean navBean) {
+                             BookmarkService bookmarkService, SpecimenService specimenService, NavBean navBean) {
 
 
 

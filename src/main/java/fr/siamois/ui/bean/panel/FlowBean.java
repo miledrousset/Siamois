@@ -71,8 +71,8 @@ public class FlowBean implements Serializable {
     // locals
     private transient DashboardModel responsiveModel;
     private static final String RESPONSIVE_CLASS = "col-12 lg:col-6 xl:col-6";
-    private Integer lastUpdatedPanelIndex = 0;
     private String readWriteMode = "READ";
+    private static final int MAX_NUMBER_OF_PANEL = 10;
 
     // Search bar
     private List<SpatialUnit> fSpatialUnits = List.of();
@@ -149,8 +149,19 @@ public class FlowBean implements Serializable {
 
 
     public void addPanel(AbstractPanel panel) {
+        // If panel already exists, move it to the top
+        panels.remove(panel);
         panels.add(0, panel);
-        lastUpdatedPanelIndex = 0;
+
+        // Trim the list if it exceeds max allowed
+        if (panels.size() > MAX_NUMBER_OF_PANEL) {
+            panels = new ArrayList<>(panels.subList(0, MAX_NUMBER_OF_PANEL));
+        }
+
+        // Collapse all except the first panel
+        for (int i = 1; i < panels.size(); i++) {
+            panels.get(i).setCollapsed(true);
+        }
     }
 
     public void addWelcomePanel() {
@@ -160,36 +171,11 @@ public class FlowBean implements Serializable {
             panels = new ArrayList<>();
         }
 
-        // Find the index of the first object of the desired type
-        int indexToMove = -1;
-        for (int i = 0; i < panels.size(); i++) {
-            if (panels.get(i) instanceof WelcomePanel) {
-                indexToMove = i;
-                break;
-            }
-        }
-
-        // If found and not already at index 0, move it to the top
-        if (indexToMove >= 0) {
-            panels.remove(indexToMove);
-        }
-
-        // Add a new instance to refresh the panel
+        // Add a new instance
         addPanel(panelFactory.createWelcomePanel());
 
     }
 
-    public void addNewSpatialUnitPanel(AbstractPanel currentPanel) {
-        addPanel(panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb()));
-    }
-
-    public void addNewSpatialUnitPanel(AbstractPanel currentPanel, BaseSpatialUnitLazyDataModel lazyModel) {
-        addPanel(panelFactory.createNewSpatialUnitPanel(currentPanel.getBreadcrumb(),lazyModel));
-    }
-
-    public void addNewSpatialUnitPanel() {
-        addPanel(panelFactory.createNewSpatialUnitPanel(null));
-    }
 
     public void addNewActionUnitPanel(Integer sourcePanelIndex) {
         addPanel(panelFactory.createNewActionUnitPanel(panels.get(sourcePanelIndex).getBreadcrumb()));
@@ -232,7 +218,6 @@ public class FlowBean implements Serializable {
 
         RecordingUnitPanel newPanel = panelFactory.createRecordingUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
         panels.set(currentPanelIndex, newPanel);
-        lastUpdatedPanelIndex = currentPanelIndex;
 
     }
 
@@ -262,7 +247,7 @@ public class FlowBean implements Serializable {
         if (index != -1) {
             SpatialUnitPanel newPanel = panelFactory.createSpatialUnitPanel(id, currentPanel.getBreadcrumb());
             panels.set(index, newPanel);
-            lastUpdatedPanelIndex = index;
+
         }
 
     }
@@ -272,9 +257,6 @@ public class FlowBean implements Serializable {
         int index = currentPanelIndex;
         ActionUnitPanel newPanel = panelFactory.createActionUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
         panels.set(index, newPanel);
-        lastUpdatedPanelIndex = index;
-
-
     }
 
     public void fullScreen(AbstractPanel panel) {
