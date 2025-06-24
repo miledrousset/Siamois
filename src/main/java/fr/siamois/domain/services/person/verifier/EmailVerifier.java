@@ -37,10 +37,6 @@ public class EmailVerifier implements PersonDataVerifier {
     }
 
     private void checkMailExistance(String email) throws InvalidEmailException {
-        if (email == null || email.isEmpty()) {
-            throw new InvalidEmailException("Email cannot be empty.");
-        }
-
         boolean emailExist = personRepository.findByEmailIgnoreCase(email).isPresent();
         if (emailExist) {
             throw new EmailAlreadyExistException("Email already exists.");
