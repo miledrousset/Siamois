@@ -71,8 +71,8 @@ public class FlowBean implements Serializable {
     // locals
     private transient DashboardModel responsiveModel;
     private static final String RESPONSIVE_CLASS = "col-12 lg:col-6 xl:col-6";
-    private Integer lastUpdatedPanelIndex = 0;
     private String readWriteMode = "READ";
+    private static final int MAX_NUMBER_OF_PANEL = 10;
 
     // Search bar
     private List<SpatialUnit> fSpatialUnits = List.of();
@@ -149,8 +149,19 @@ public class FlowBean implements Serializable {
 
 
     public void addPanel(AbstractPanel panel) {
+        // If panel already exists, move it to the top
+        panels.remove(panel);
         panels.add(0, panel);
-        lastUpdatedPanelIndex = 0;
+
+        // Trim the list if it exceeds max allowed
+        if (panels.size() > MAX_NUMBER_OF_PANEL) {
+            panels = new ArrayList<>(panels.subList(0, MAX_NUMBER_OF_PANEL));
+        }
+
+        // Collapse all except the first panel
+        for (int i = 1; i < panels.size(); i++) {
+            panels.get(i).setCollapsed(true);
+        }
     }
 
     public void addWelcomePanel() {
@@ -232,7 +243,6 @@ public class FlowBean implements Serializable {
 
         RecordingUnitPanel newPanel = panelFactory.createRecordingUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
         panels.set(currentPanelIndex, newPanel);
-        lastUpdatedPanelIndex = currentPanelIndex;
 
     }
 
@@ -262,7 +272,7 @@ public class FlowBean implements Serializable {
         if (index != -1) {
             SpatialUnitPanel newPanel = panelFactory.createSpatialUnitPanel(id, currentPanel.getBreadcrumb());
             panels.set(index, newPanel);
-            lastUpdatedPanelIndex = index;
+
         }
 
     }
@@ -272,9 +282,6 @@ public class FlowBean implements Serializable {
         int index = currentPanelIndex;
         ActionUnitPanel newPanel = panelFactory.createActionUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
         panels.set(index, newPanel);
-        lastUpdatedPanelIndex = index;
-
-
     }
 
     public void fullScreen(AbstractPanel panel) {

@@ -30,6 +30,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ import java.util.List;
 @Setter
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class SpecimenListPanel extends AbstractListPanel<Specimen> {
+public class SpecimenListPanel extends AbstractListPanel<Specimen>  implements Serializable {
 
     private final transient SpecimenService specimenService;
     private final transient NavBean navBean;

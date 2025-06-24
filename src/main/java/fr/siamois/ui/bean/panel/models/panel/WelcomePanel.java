@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class WelcomePanel extends AbstractPanel {
+public class WelcomePanel extends AbstractPanel  implements Serializable {
 
     private final SessionSettingsBean sessionSettingsBean;
     private final transient RecordingUnitService recordingUnitService;

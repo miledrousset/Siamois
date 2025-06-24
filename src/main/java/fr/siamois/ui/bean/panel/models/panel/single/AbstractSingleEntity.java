@@ -24,6 +24,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -35,7 +36,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
-public abstract class AbstractSingleEntity<T> extends AbstractPanel {
+public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements Serializable {
 
     // Deps
     protected final transient SessionSettingsBean sessionSettingsBean;

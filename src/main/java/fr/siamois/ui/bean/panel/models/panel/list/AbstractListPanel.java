@@ -13,6 +13,7 @@ import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,13 +22,15 @@ import org.primefaces.event.ColumnToggleEvent;
 import org.primefaces.model.Visibility;
 import org.primefaces.model.menu.DefaultMenuItem;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 @Getter
 @Setter
 @NoArgsConstructor(force = true)
-public abstract class AbstractListPanel<T> extends AbstractPanel {
+@EqualsAndHashCode(callSuper = true)
+public abstract class AbstractListPanel<T> extends AbstractPanel  implements Serializable {
 
     // deps
     protected final transient SpatialUnitService spatialUnitService;

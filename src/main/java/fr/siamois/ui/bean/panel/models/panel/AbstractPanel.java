@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
  * Abstract class representing a panel in the UI.
@@ -85,6 +86,20 @@ public abstract class AbstractPanel implements Serializable {
     public PanelBreadcrumb getBreadcrumb() {
         if (breadcrumb == null) return new PanelBreadcrumb();
         return breadcrumb;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        AbstractPanel other = (AbstractPanel) obj;
+        return Objects.equals(this.ressourceUri(), other.ressourceUri());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ressourceUri());
     }
 
 }

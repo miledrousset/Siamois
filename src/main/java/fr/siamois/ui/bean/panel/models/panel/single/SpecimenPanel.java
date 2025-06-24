@@ -46,6 +46,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
@@ -60,7 +61,7 @@ import java.util.Set;
 @Data
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenHist> {
+public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenHist>  implements Serializable {
 
     // Deps
     protected final transient LangBean langBean;
