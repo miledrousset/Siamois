@@ -583,4 +583,21 @@ class InstitutionServiceTest {
         assertThat(result).containsExactlyInAnyOrder(manager1, manager2);
     }
 
+    @Test
+    void findById_success() {
+        Institution institution = new Institution();
+        institution.setId(1L);
+        when(institutionRepository.findById(1L)).thenReturn(Optional.of(institution));
+        Institution res = institutionService.findById(1L);
+        assertThat(institution).isNotNull();
+        assertThat(res.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void findById_null() {
+        when(institutionRepository.findById(1L)).thenReturn(Optional.empty());
+        Institution institution = institutionService.findById(1L);
+        assertThat(institution).isNull();
+    }
+
 }
