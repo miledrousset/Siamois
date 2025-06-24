@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Getter
 @Setter
 @Component

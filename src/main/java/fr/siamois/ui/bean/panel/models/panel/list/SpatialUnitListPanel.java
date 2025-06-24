@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Data
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

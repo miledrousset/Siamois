@@ -91,6 +91,7 @@ public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
     }
 
     @Transient
+    @JsonIgnore
     public List<String> getBindableFieldNames() {
         return List.of("category", "name");
     }

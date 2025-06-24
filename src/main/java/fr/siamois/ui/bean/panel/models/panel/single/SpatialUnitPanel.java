@@ -77,7 +77,7 @@ import java.util.stream.Collectors;
  *
  * @author Grégory Bliault
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Slf4j
 @Data
 @Component

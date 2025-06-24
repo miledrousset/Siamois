@@ -29,7 +29,7 @@ import java.util.HashSet;
 @Getter
 @Setter
 @NoArgsConstructor(force = true)
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public abstract class AbstractListPanel<T> extends AbstractPanel  implements Serializable {
 
     // deps

@@ -52,7 +52,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 
 @Slf4j
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Data
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

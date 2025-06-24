@@ -57,7 +57,7 @@ import java.util.List;
 import java.util.Set;
 
 @Slf4j
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Data
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

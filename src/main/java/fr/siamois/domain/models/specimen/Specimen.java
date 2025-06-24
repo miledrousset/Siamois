@@ -1,6 +1,7 @@
 package fr.siamois.domain.models.specimen;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.auth.Person;
@@ -75,6 +76,7 @@ public class Specimen extends SpecimenParent implements ArkEntity {
     public static final String CAT_FIELD = "SIAS.CAT"; // lot, individu, echantillon
 
     @Transient
+    @JsonIgnore
     public List<String> getBindableFieldNames() {
         return List.of("collectionDate", "collectors", "fullIdentifier", "authors",
                 "type", "category");
