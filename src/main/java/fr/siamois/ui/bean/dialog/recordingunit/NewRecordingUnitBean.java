@@ -27,6 +27,7 @@ import fr.siamois.utils.MessageUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.event.AjaxBehaviorEvent;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +46,7 @@ import java.util.List;
 
 
 @Slf4j
+@EqualsAndHashCode(callSuper = true)
 @Component
 @Getter
 @Setter
@@ -63,7 +65,8 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
     private BaseRecordingUnitLazyDataModel lazyDataModel; // lazy data model to update after saving
 
     private static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-6";
-
+    private static final String UPDATE_FAILED = "common.entity.spatialUnits.updateFailed";
+    
     // ----------- Concepts for system fields
     // Authors
     private Concept authorsConcept = new Concept.Builder()
@@ -267,7 +270,7 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
                 lazyDataModel.addRowToModel(unit);
             }
         } catch (FailedRecordingUnitSaveException e) {
-            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
+            MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED, unit.getFullIdentifier());
         }
 
 
@@ -283,7 +286,7 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
         try {
             createRu();
         } catch (RuntimeException e) {
-            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
+            MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED, unit.getFullIdentifier());
             throw e;
         }
 
@@ -300,7 +303,7 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
         try {
             createRu();
         } catch (FailedRecordingUnitSaveException e) {
-            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
+            MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED, unit.getFullIdentifier());
             throw e;
         }
 

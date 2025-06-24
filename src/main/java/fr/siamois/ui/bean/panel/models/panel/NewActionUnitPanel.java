@@ -48,7 +48,7 @@ public class NewActionUnitPanel extends AbstractPanel {
     // Locals
     ActionUnit actionUnit;
     Long spatialUnitId;
-    BaseLazyDataModel lazyDataModel;
+    BaseLazyDataModel<?> lazyDataModel;
 
 
     public NewActionUnitPanel(LangBean langBean, SessionSettingsBean sessionSettingsBean, SpatialUnitService spatialUnitService, ActionUnitService actionUnitService, FlowBean flowBean, FieldConfigurationService fieldConfigurationService) {
@@ -161,7 +161,7 @@ public class NewActionUnitPanel extends AbstractPanel {
             return this;
         }
 
-        public NewActionUnitPanel.NewActionUnitPanelBuilder lazyModel(BaseLazyDataModel lazyModel) {
+        public NewActionUnitPanel.NewActionUnitPanelBuilder lazyModel(BaseLazyDataModel<?> lazyModel) {
             newActionUnitPanel.setLazyDataModel(lazyModel);
 
             return this;
