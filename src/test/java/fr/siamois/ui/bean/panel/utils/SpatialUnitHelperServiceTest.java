@@ -82,11 +82,7 @@ class SpatialUnitHelperServiceTest {
         Consumer<SpatialUnit> spatialUnitSetter = mock(Consumer.class);
         Consumer<String> spatialUnitErrorMessageSetter = mock(Consumer.class);
         Consumer<String> spatialUnitListErrorMessageSetter = mock(Consumer.class);
-        Consumer<String> recordingUnitListErrorMessageSetter = mock(Consumer.class);
-        Consumer<String> actionUnitListErrorMessageSetter = mock(Consumer.class);
         Consumer<List<SpatialUnit>> spatialUnitListSetter = mock(Consumer.class);
-        Consumer<List<RecordingUnit>> recordingUnitListSetter = mock(Consumer.class);
-        Consumer<List<ActionUnit>> actionUnitListSetter = mock(Consumer.class);
         Consumer<List<SpatialUnit>> spatialUnitParentsListSetter = mock(Consumer.class);
         Consumer<String> spatialUnitParentsListErrorMessageSetter = mock(Consumer.class);
 
@@ -94,11 +90,7 @@ class SpatialUnitHelperServiceTest {
                 spatialUnitSetter,
                 spatialUnitErrorMessageSetter,
                 spatialUnitListErrorMessageSetter,
-                recordingUnitListErrorMessageSetter,
-                actionUnitListErrorMessageSetter,
                 spatialUnitListSetter,
-                recordingUnitListSetter,
-                actionUnitListSetter,
                 spatialUnitParentsListSetter,
                 spatialUnitParentsListErrorMessageSetter
         );
@@ -106,11 +98,7 @@ class SpatialUnitHelperServiceTest {
         verify(spatialUnitSetter).accept(null);
         verify(spatialUnitErrorMessageSetter).accept(null);
         verify(spatialUnitListErrorMessageSetter).accept(null);
-        verify(recordingUnitListErrorMessageSetter).accept(null);
-        verify(actionUnitListErrorMessageSetter).accept(null);
         verify(spatialUnitListSetter).accept(null);
-        verify(recordingUnitListSetter).accept(null);
-        verify(actionUnitListSetter).accept(null);
         verify(spatialUnitParentsListSetter).accept(null);
         verify(spatialUnitParentsListErrorMessageSetter).accept(null);
     }
