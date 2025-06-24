@@ -40,7 +40,8 @@ class PersonServiceTest {
     private PersonRepository personRepository;
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
-    private final EmailVerifier emailVerifier = new EmailVerifier();
+
+    private final EmailVerifier emailVerifier = new EmailVerifier(personRepository);
     private final PasswordVerifier passwordVerifier = new PasswordVerifier();
     @Mock
     private PersonSettingsRepository personSettingsRepository;

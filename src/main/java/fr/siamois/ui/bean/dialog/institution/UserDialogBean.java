@@ -187,10 +187,12 @@ public class UserDialogBean implements Serializable {
             return new PersonRole(personService.createPerson(person), null);
         } catch (InvalidUsernameException e) {
             displayErrorMessage(langBean, "userDialog.error.username");
+        } catch (EmailAlreadyExistException e) {
+            displayErrorMessage(langBean, "userDialog.error.email.alreadyexists", email);
         } catch (InvalidEmailException e) {
             displayErrorMessage(langBean, "userDialog.error.email");
         } catch (UserAlreadyExistException e) {
-            displayErrorMessage(langBean, "userDialog.error.username.alreadyexists");
+            displayErrorMessage(langBean, "userDialog.error.username.alreadyexists", username);
         } catch (InvalidPasswordException e) {
             displayErrorMessage(langBean, "userDialog.error.password");
         } catch (InvalidNameException e) {
@@ -224,7 +226,6 @@ public class UserDialogBean implements Serializable {
         }
         log.trace("Tab changed from {} to: {}", oldState, tabState);
     }
-
 
 
     public enum TabState {

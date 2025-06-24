@@ -2,13 +2,21 @@ package fr.siamois.domain.services.person.verifier;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.InvalidEmailException;
+import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ExtendWith(MockitoExtension.class)
 class EmailVerifierTest {
 
-    private final EmailVerifier emailVerifier = new EmailVerifier();
+    @Mock
+    private PersonRepository personRepository;
+
+    private final EmailVerifier emailVerifier = new EmailVerifier(personRepository);
 
     @Test
     void verify_shouldThrowInvalidEmail_whenEmailIsInvalid() {
