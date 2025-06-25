@@ -16,7 +16,6 @@ import fr.siamois.infrastructure.database.repositories.FieldRepository;
 import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
