@@ -36,23 +36,25 @@ class ConceptServiceIntTest {
 
     private ConceptService conceptService;
 
+    private Vocabulary vocabulary;
+
     @BeforeEach
     void setUp() {
         ConceptApi conceptApi = new ConceptApi(new TestRestTemplate().getRestTemplate());
         conceptService = new ConceptService(conceptRepository, conceptApi, labelService);
+        vocabulary = new Vocabulary();
+        vocabulary.setId(1L);
+        vocabulary.setExternalVocabularyId("th230");
+        vocabulary.setBaseUri("https://thesaurus.mom.fr");
     }
 
     @Test
     void findDirectSubConceptOf() throws ErrorProcessingExpansionException {
-        Vocabulary vocabulary = new Vocabulary();
-        vocabulary.setId(1L);
-        vocabulary.setExternalVocabularyId("th223");
-        vocabulary.setBaseUri("https://thesaurus.mom.fr");
-
+        // Concept parent "Type d'unité d'enregistrement"
         Concept concept = new Concept();
         concept.setId(1L);
         concept.setVocabulary(vocabulary);
-        concept.setExternalId("4282375");
+        concept.setExternalId("4282367");
 
         Person person = new Person();
         person.setId(1L);
@@ -70,19 +72,16 @@ class ConceptServiceIntTest {
         List<Concept> result = conceptService.findDirectSubConceptOf(concept);
 
         assertThat(result)
-                .hasSize(2)
+                .hasSize(4)
                 .allMatch(Objects::nonNull)
-                .anyMatch(currentConcept -> currentConcept.getExternalId().equalsIgnoreCase("4282377"))
-                .anyMatch(currentConcept -> currentConcept.getExternalId().equalsIgnoreCase("4284785"));
+                .anyMatch(currentConcept -> currentConcept.getExternalId().equalsIgnoreCase("4282373"))
+                .anyMatch(currentConcept -> currentConcept.getExternalId().equalsIgnoreCase("4282374"))
+                .anyMatch(currentConcept -> currentConcept.getExternalId().equalsIgnoreCase("4282375"))
+                .anyMatch(currentConcept -> currentConcept.getExternalId().equalsIgnoreCase("4282376"));
     }
 
     @Test
     void findDirectSubConceptOf_shouldOnlyReturnDirectChilds() throws ErrorProcessingExpansionException {
-        Vocabulary vocabulary = new Vocabulary();
-        vocabulary.setId(1L);
-        vocabulary.setExternalVocabularyId("th223");
-        vocabulary.setBaseUri("https://thesaurus.mom.fr");
-
         Concept concept = new Concept();
         concept.setId(1L);
         concept.setVocabulary(vocabulary);

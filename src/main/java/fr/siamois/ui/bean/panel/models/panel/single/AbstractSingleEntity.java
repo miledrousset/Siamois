@@ -147,7 +147,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
         }
 
         UserInfo userInfo = sessionSettingsBean.getUserInfo();
-        return fieldConfigurationService.fetchConceptChildrenAutocomplete(userInfo, parentConcept, input);
+        return fieldConfigurationService.fetchAutocomplete(userInfo, parentConcept, input);
     }
 
     public String getUrlForDependentConcept(
@@ -224,6 +224,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
         answer.setHasBeenModified(false);
     }
 
+    @SuppressWarnings("unchecked")
     private static void populateSystemFieldValue(CustomFieldAnswer answer, Object jpaEntity, CustomField field) {
         Object value = getFieldValue(jpaEntity, field.getValueBinding());
 
@@ -293,6 +294,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private static List<String> getBindableFieldNames(Object entity) {
         try {
             Method method = entity.getClass().getMethod("getBindableFieldNames");

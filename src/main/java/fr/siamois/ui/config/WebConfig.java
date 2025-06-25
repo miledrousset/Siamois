@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
 @Configuration
-public class PageRedirectConfig implements WebMvcConfigurer {
+public class WebConfig implements WebMvcConfigurer {
 
     /**
      * Specifies the page redirection without parameters. The page redirection with parameters are placed inside
