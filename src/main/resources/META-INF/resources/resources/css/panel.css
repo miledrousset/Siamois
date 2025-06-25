@@ -12,15 +12,15 @@ body .ui-selectbooleanbutton.ui-state-active, body .ui-selectonebutton > .ui-but
 }
 
 body .ui-selectbooleanbutton.ui-state-active.ui-state-hover, body .ui-selectonebutton > .ui-button.ui-state-active.ui-state-hover, body .ui-selectmanybutton > .ui-button.ui-state-active.ui-state-hover {
-     background: var(--siamois-green);
-     border-color: var(--siamois-green);
+    background: var(--siamois-green);
+    border-color: var(--siamois-green);
 }
 
 body .ui-button.ui-state-focus {
     box-shadow: var(--siamois-green-light-200)
 }
 
-body .ui-selectbooleanbutton.ui-state-active:not(.ui-state-disabled):hover,body .ui-selectonebutton>.ui-button.ui-state-active:not(.ui-state-disabled):hover,body .ui-selectmanybutton>.ui-button.ui-state-active:not(.ui-state-disabled):hover {
+body .ui-selectbooleanbutton.ui-state-active:not(.ui-state-disabled):hover, body .ui-selectonebutton > .ui-button.ui-state-active:not(.ui-state-disabled):hover, body .ui-selectmanybutton > .ui-button.ui-state-active:not(.ui-state-disabled):hover {
     background: var(--siamois-green);
     border-color: var(--siamois-green);
 }
@@ -70,7 +70,7 @@ body .ui-inputfield.ui-state-focus {
     box-shadow: 0 0 0 .2em var(--siamois-green-light-350);
 }
 
-body .ui-datatable .ui-datatable-data>tr>td {
+body .ui-datatable .ui-datatable-data > tr > td {
     padding: 0.5em;
 }
 
@@ -126,7 +126,6 @@ body .ui-datatable .ui-datatable-data>tr>td {
 body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-state-highlight {
     background: var(--siamois-green-light-100);
 }
-
 
 
 body .ui-datatable thead th.ui-sortable-column.ui-state-focus {
@@ -221,7 +220,6 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-column-title {
 body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-icon.ui-icon-carat-2-n-s {
     color: var(--siamois-green);
 }
-
 
 
 /* spatial-unit */
@@ -358,9 +356,6 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 }
 
 
-
-
-
 /* buttons */
 
 .spatial-unit-panel .ui-button {
@@ -403,7 +398,6 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 }
 
 
-
 .ui-panel.spatial-unit-single-panel .ui-panel-content {
     background: var(--context-light-color-50);
 }
@@ -434,8 +428,6 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 .spatial-unit-panel .ui-commandlink:hover, .spatial-unit-panel .ui-link:hover {
     color: var(--context-main-color);
 }
-
-
 
 
 /* Action units panels */
@@ -587,10 +579,6 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
     border-radius: 0;
     border: none;
 }
-
-
-
-
 
 
 .ui-panel.action-unit-single-panel .ui-panel-content {
@@ -837,7 +825,6 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 }
 
 
-
 .recording-unit-panel .ui-commandlink, .recording-unit-panel .ui-link {
     color: var(--ground-main-color);
 }
@@ -847,11 +834,11 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 }
 
 
-.ui-commandlink.sia-recording-unit-command-link , .sia-recording-unit-command-link.ui-link:hover {
+.ui-commandlink.sia-recording-unit-command-link, .sia-recording-unit-command-link.ui-link:hover {
     color: var(--ground-main-color);
 }
 
-.ui-commandlink.sia-recording-unit-command-link:hover , .sia-recording-unit-command-link.ui-link:hover  {
+.ui-commandlink.sia-recording-unit-command-link:hover, .sia-recording-unit-command-link.ui-link:hover {
     color: var(--ground-main-color);
 }
 
@@ -1079,7 +1066,6 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 }
 
 
-
 .specimen-panel .ui-commandlink, .specimen-panel .ui-link {
     color: var(--ground-main-color);
 }
@@ -1089,11 +1075,11 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 }
 
 
-.ui-commandlink.sia-specimen-command-link , .sia-specimen-command-link.ui-link:hover {
+.ui-commandlink.sia-specimen-command-link, .sia-specimen-command-link.ui-link:hover {
     color: var(--ground-main-color);
 }
 
-.ui-commandlink.sia-specimen-command-link:hover , .sia-specimen-command-link.ui-link:hover  {
+.ui-commandlink.sia-specimen-command-link:hover, .sia-specimen-command-link.ui-link:hover {
     color: var(--ground-main-color);
 }
 
@@ -1226,11 +1212,11 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 /* dialogs */
 
 .sia-new-unit-dialog.ui-dialog .ui-dialog-titlebar {
-    padding:0;
+    padding: 0;
 }
 
 .sia-new-unit-dialog.ui-dialog .ui-dialog-footer {
-    padding:0;
+    padding: 0;
 }
 
 .ui-chip.error-chip {
