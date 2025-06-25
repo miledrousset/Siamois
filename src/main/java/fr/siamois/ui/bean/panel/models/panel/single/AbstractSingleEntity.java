@@ -147,7 +147,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
         }
 
         UserInfo userInfo = sessionSettingsBean.getUserInfo();
-        return fieldConfigurationService.fetchConceptChildrenAutocomplete(userInfo, parentConcept, input);
+        return fieldConfigurationService.fetchAutocomplete(userInfo, parentConcept, input);
     }
 
     public String getUrlForDependentConcept(

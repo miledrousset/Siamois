@@ -9,11 +9,9 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
-import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.infrastructure.api.ConceptApi;
 import fr.siamois.infrastructure.api.dto.ConceptBranchDTO;
 import fr.siamois.infrastructure.api.dto.FullInfoDTO;
-import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
 import fr.siamois.infrastructure.database.repositories.FieldRepository;
 import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +20,6 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
-import static fr.siamois.utils.FullInfoDTOUtils.getPrefLabelOfLang;
 
 @Slf4j
 @Service
@@ -36,7 +32,6 @@ public class FieldConfigurationService {
     private final ConceptRepository conceptRepository;
     private final ConceptService conceptService;
 
-    private static final double SIMILARITY_CAP = 0.5;
     private final LabelService labelService;
 
 
@@ -159,77 +154,24 @@ public class FieldConfigurationService {
         }
     }
 
-    public List<Concept> fetchConceptChildrenAutocomplete(UserInfo info, Concept concept, String input) {
-        List<Concept> candidates;
+    public List<Concept> fetchAutocomplete(UserInfo info, Concept parentConcept, String input) {
         try {
-            candidates = conceptService.findDirectSubConceptOf(concept);
+            List<Concept> candidates = conceptService.findDirectSubConceptOf(parentConcept);
+            if (StringUtils.isEmpty(input)) return candidates;
+
+            return  candidates
+                    .stream()
+                    .filter(c -> labelContainsInputIgnoreCase(info, input, c))
+                    .toList();
+
         } catch (ErrorProcessingExpansionException e) {
-            log.error("Error fetching children concepts for autocomplete", e);
+            log.debug("Error fetching children concepts for autocomplete", e);
             return List.of();
         }
-        Map<Concept, ConceptLabel> labels = new HashMap<>();
-
-        if (StringUtils.isEmpty(input)) return candidates;
-
-        List<Concept> result = new ArrayList<>();
-
-        input = input.toLowerCase();
-
-        for (Concept c : candidates) {
-            ConceptLabel label = labelService.findLabelOf(c, info.getLang());
-            labels.put(c, label);
-            if (label.getValue().toLowerCase().contains(input)) {
-                result.add(c);
-            }
-        }
-
-        if (result.isEmpty()) {
-            for (Concept c : candidates) {
-                ConceptLabel label = labels.get(c);
-                double similarity = stringSimilarity(label.getValue().toLowerCase(), input);
-                if (similarity >= SIMILARITY_CAP) {
-                    result.add(c);
-                }
-            }
-        }
-
-        return result;
     }
 
-    public List<Concept> fetchAutocomplete(UserInfo info, Concept parentConcept, String input) {
-        if (StringUtils.isEmpty(input)) return fetchAllValues(parentConcept);
-
-        ConceptBranchDTO terms;
-        try {
-            terms = conceptApi.fetchConceptsUnderTopTerm(parentConcept);
-        } catch (ErrorProcessingExpansionException e) {
-            log.error("Error fetching concepts for autocomplete", e);
-            return List.of();
-        }
-        List<Concept> result = new ArrayList<>();
-
-        input = input.toLowerCase();
-
-        for (FullInfoDTO fullConcept : terms.getData().values()) {
-            if (isNotParentConcept(fullConcept, parentConcept)) {
-                PurlInfoDTO label = getPrefLabelOfLang(info, fullConcept);
-                if (label.getValue().toLowerCase().contains(input)) {
-                    result.add(conceptService.saveOrGetConceptFromFullDTO(parentConcept.getVocabulary(), fullConcept));
-                }
-            }
-        }
-
-        if (result.isEmpty()) {
-            for (FullInfoDTO fullInfoDTO : terms.getData().values()) {
-                PurlInfoDTO label = getPrefLabelOfLang(info, fullInfoDTO);
-                double similarity = stringSimilarity(label.getValue().toLowerCase(), input);
-                if (similarity >= SIMILARITY_CAP) {
-                    result.add(conceptService.saveOrGetConceptFromFullDTO(parentConcept.getVocabulary(), fullInfoDTO));
-                }
-            }
-        }
-
-        return result;
+    private boolean labelContainsInputIgnoreCase(UserInfo info, String input, Concept c) {
+        return labelService.findLabelOf(c, info.getLang()).getValue().toLowerCase().contains(input.toLowerCase());
     }
 
     public List<Concept> fetchAutocomplete(UserInfo info, String fieldCode, String input) throws NoConfigForFieldException {
