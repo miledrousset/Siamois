@@ -12,6 +12,7 @@ import javax.faces.bean.SessionScoped;
 @SessionScoped
 public class RecordingUnitController {
 
+    public static final String FORWARD_FLOW_XHTML = "forward:/flow.xhtml";
     private final FlowBean flowBean;
     private final NavBean navBean;
 
@@ -20,18 +21,25 @@ public class RecordingUnitController {
         this.navBean = navBean;
     }
 
+    @GetMapping("/recordingunit")
+    public String toRecordingUnitList() {
+        navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
+        flowBean.addRecordingUnitListPanel(null);
+        return FORWARD_FLOW_XHTML;
+    }
+
     @GetMapping("/recordingunit/{id}")
     public String toRecordingUnit(@PathVariable Long id) {
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
         flowBean.addRecordingUnitPanel(id);
-        return "forward:/flow.xhtml";
+        return FORWARD_FLOW_XHTML;
     }
 
     @GetMapping("/actionunit/{id}/recordingunit/new")
     public String newRecordingUnit(@PathVariable Long id) {
         // todo : open dialog
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
-        return "forward:/flow.xhtml";
+        return FORWARD_FLOW_XHTML;
     }
 
 }

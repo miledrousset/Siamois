@@ -133,6 +133,8 @@ public class NewActionUnitPanel extends AbstractPanel {
             this.getBreadcrumb().getModel().getElements().remove(this.getBreadcrumb().getModel().getElements().size() - 1);
             flowBean.goToActionUnitByIdCurrentPanel(saved.getId(), idx);
 
+            flowBean.updateHomePanel();
+
             return true;
 
         } catch (RuntimeException e) {
