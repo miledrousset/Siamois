@@ -20,14 +20,14 @@ public class RecordingUnitController {
         this.navBean = navBean;
     }
 
-    @GetMapping("/recording-unit/{id}")
+    @GetMapping("/recordingunit/{id}")
     public String toRecordingUnit(@PathVariable Long id) {
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
         flowBean.addRecordingUnitPanel(id);
         return "forward:/flow.xhtml";
     }
 
-    @GetMapping("/actionunit/{id}/recording-unit/new")
+    @GetMapping("/actionunit/{id}/recordingunit/new")
     public String newRecordingUnit(@PathVariable Long id) {
         // todo : open dialog
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
