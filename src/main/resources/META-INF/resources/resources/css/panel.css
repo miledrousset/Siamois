@@ -30,14 +30,9 @@ body .ui-selectbooleanbutton.ui-state-active:not(.ui-state-disabled):hover,body 
     transition: outline 0.5s ease-in-out;
 }
 
-.sia-flow-panel-title {
-    font-size: 20px;
+.sia-flow-panel-title, .ui-chip-text {
+    font-size: 14px;
 }
-
-.ui-chip {
-    font-size: 16px;
-}
-
 
 
 .siamois-panel {
