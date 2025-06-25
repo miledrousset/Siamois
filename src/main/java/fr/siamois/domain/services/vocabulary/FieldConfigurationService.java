@@ -179,24 +179,6 @@ public class FieldConfigurationService {
         return fetchAutocomplete(info, parentConcept, input);
     }
 
-    /**
-     * Calculates the similarity (between 0 and 1) of the strings using Levenshtein distance algorithm
-     * @param s1 First string
-     * @param s2 Second String
-     * @return A number between 0.0 and 1.0 representing the similarity of the two strings. The number is equal to 1 if the strings are the same.
-     */
-    double stringSimilarity(String s1, String s2) {
-        String longer = s1;
-        String shorter = s2;
-        if (s1.length() < shorter.length()) {
-            longer = s2;
-            shorter = s1;
-        }
-        int longerLength = longer.length();
-        int distance = LevenshteinDistance.getDefaultInstance().apply(longer, shorter);
-        return (longerLength - distance) / (double) longerLength;
-    }
-
     public List<Concept> fetchAllValues(Concept parent) {
         ConceptBranchDTO terms;
         try {
