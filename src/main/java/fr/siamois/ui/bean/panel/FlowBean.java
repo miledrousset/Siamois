@@ -333,4 +333,12 @@ public class FlowBean implements Serializable {
         }
         return null; // for commandLink action return
     }
+
+    public void updateHomePanel() {
+        for (AbstractPanel panel : panels) {
+            if (panel instanceof WelcomePanel welcomePanel && Boolean.FALSE.equals(welcomePanel.getCollapsed())) {
+                welcomePanel.init();
+            }
+        }
+    }
 }

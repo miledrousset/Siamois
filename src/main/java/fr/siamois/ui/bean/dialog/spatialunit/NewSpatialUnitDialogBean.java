@@ -271,7 +271,7 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
         PrimeFaces.current().executeScript("PF('newSpatialUnitDiag').hide();handleScrollToTop();");
         MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getName());
         flowBean.addSpatialUnitPanel(unit.getId());
-
+        flowBean.updateHomePanel();
     }
 
     public void create() {
@@ -285,7 +285,6 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
         }
         PrimeFaces.current().executeScript("PF('newSpatialUnitDiag').hide();");
         MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getName());
-
-
+        flowBean.updateHomePanel();
     }
 }
