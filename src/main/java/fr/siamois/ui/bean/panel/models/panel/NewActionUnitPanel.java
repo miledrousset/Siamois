@@ -21,7 +21,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.model.CheckboxTreeNode;
-import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.springframework.beans.factory.ObjectProvider;

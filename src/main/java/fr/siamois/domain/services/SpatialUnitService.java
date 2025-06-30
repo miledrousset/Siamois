@@ -211,11 +211,7 @@ public class SpatialUnitService implements ArkEntityService {
     }
 
     public List<SpatialUnit> findAll() {
-        List<SpatialUnit> result = new ArrayList<>();
-        for (SpatialUnit spatialUnit : spatialUnitRepository.findAll()) {
-            result.add(spatialUnit);
-        }
-        return result;
+        return new ArrayList<>(spatialUnitRepository.findAll());
     }
 
     public long countChildrenByParentId(Long id) {
