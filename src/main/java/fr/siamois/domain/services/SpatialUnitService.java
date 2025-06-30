@@ -24,10 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Service to manage SpatialUnit
@@ -227,5 +224,42 @@ public class SpatialUnitService implements ArkEntityService {
 
     public long countParentsByChildId(Long id) {
         return spatialUnitRepository.countParentsByChildId(id);
+    }
+
+    public List<SpatialUnit> findRootsOf(Institution institution) {
+        List<SpatialUnit> result = new ArrayList<>();
+        for (SpatialUnit spatialUnit : findAllOfInstitution(institution)) {
+            if (spatialUnitRepository.numberOfParentsOf(institution.getId(), spatialUnit.getId()) == 0) {
+                result.add(spatialUnit);
+            }
+        }
+        return result;
+    }
+
+    public List<SpatialUnit> findDirectChildrensOf(SpatialUnit spatialUnit) {
+        return spatialUnitRepository.findChildrensOf(spatialUnit.getId()).stream().toList();
+    }
+
+    public Map<SpatialUnit, List<SpatialUnit>> neighborMapOfAllSpatialUnit(Institution institution) {
+        Map<SpatialUnit, List<SpatialUnit>> neighborMap = new HashMap<>();
+        Set<SpatialUnit> alreadyProcessed = new HashSet<>();
+
+        Queue<SpatialUnit> toProcess = new ArrayDeque<>(findRootsOf(institution));
+
+        while (!toProcess.isEmpty()) {
+            SpatialUnit current = toProcess.poll();
+            List<SpatialUnit> childrens = neighborMap.computeIfAbsent(current, su -> new ArrayList<>());
+
+            for (SpatialUnit child : findDirectChildrensOf(current)) {
+                childrens.add(child);
+                if (!alreadyProcessed.contains(child)) {
+                    toProcess.add(child);
+                }
+            }
+
+            alreadyProcessed.add(current);
+        }
+
+        return neighborMap;
     }
 }
