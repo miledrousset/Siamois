@@ -174,9 +174,7 @@ public class SpatialUnitService implements ArkEntityService {
     @Override
     @Transactional
     public ArkEntity save(ArkEntity toSave) {
-
         try {
-
             SpatialUnit managedSpatialUnit ;
             SpatialUnit spatialUnit = (SpatialUnit) toSave;
 
@@ -214,18 +212,18 @@ public class SpatialUnitService implements ArkEntityService {
         return new ArrayList<>(spatialUnitRepository.findAll());
     }
 
-    public long countChildrenByParentId(Long id) {
-        return spatialUnitRepository.countChildrenByParentId(id);
+    public long countChildrenByParent(SpatialUnit spatialUnit) {
+        return spatialUnitRepository.countChildrenByParentId(spatialUnit.getId());
     }
 
-    public long countParentsByChildId(Long id) {
-        return spatialUnitRepository.countParentsByChildId(id);
+    public long countParentsByChild(SpatialUnit spatialUnit) {
+        return spatialUnitRepository.countParentsByChildId(spatialUnit.getId());
     }
 
     public List<SpatialUnit> findRootsOf(Institution institution) {
         List<SpatialUnit> result = new ArrayList<>();
         for (SpatialUnit spatialUnit : findAllOfInstitution(institution)) {
-            if (spatialUnitRepository.numberOfParentsOf(institution.getId(), spatialUnit.getId()) == 0) {
+            if (countParentsByChild(spatialUnit) == 0) {
                 result.add(spatialUnit);
             }
         }

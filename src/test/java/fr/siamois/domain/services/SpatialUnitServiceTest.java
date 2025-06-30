@@ -29,7 +29,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -459,6 +461,93 @@ class SpatialUnitServiceTest {
         assertTrue(actualResult.contains(spatialUnit1));
         assertTrue(actualResult.contains(spatialUnit2));
         verify(spatialUnitRepository, times(1)).findAll();
+    }
+
+    @Test
+    void test_countChildrenByParent() {
+        SpatialUnit su = new SpatialUnit();
+        su.setId(1L);
+
+        when(spatialUnitRepository.countChildrenByParentId(1L)).thenReturn(1L);
+
+        long result = spatialUnitService.countChildrenByParent(su);
+
+        assertEquals(1L, result);
+    }
+
+    @Test
+    void test_countParentByChild() {
+        SpatialUnit su = new SpatialUnit();
+        su.setId(1L);
+
+        when(spatialUnitRepository.countParentsByChildId(1L)).thenReturn(1L);
+
+        long result = spatialUnitService.countParentsByChild(su);
+
+        assertEquals(1L, result);
+    }
+
+    @Test
+    void test_findRootsOf() {
+        SpatialUnit su1 = new SpatialUnit();
+        su1.setId(1L);
+
+        SpatialUnit su2 = new SpatialUnit();
+        su2.setId(2L);
+
+        SpatialUnit su3 = new SpatialUnit();
+        su3.setId(3L);
+
+        Institution institution = new Institution();
+        institution.setId(1L);
+
+        when(spatialUnitRepository.findAllOfInstitution(institution.getId())).thenReturn(List.of(su1,su2,su3));
+        when(spatialUnitRepository.countParentsByChildId(su1.getId())).thenReturn(0L);
+        when(spatialUnitRepository.countParentsByChildId(su2.getId())).thenReturn(1L);
+        when(spatialUnitRepository.countParentsByChildId(su3.getId())).thenReturn(1L);
+
+        List<SpatialUnit> roots = spatialUnitService.findRootsOf(institution);
+
+        assertThat(roots)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(su1);
+    }
+
+    @Test
+    void test_findDirectChildrensOf() {
+        SpatialUnit su1 = new SpatialUnit();
+        su1.setId(1L);
+
+        SpatialUnit su2 = new SpatialUnit();
+        su2.setId(2L);
+
+        SpatialUnit su3 = new SpatialUnit();
+        su3.setId(3L);
+
+        when(spatialUnitRepository.findChildrensOf(su1.getId())).thenReturn(Set.of(su2,su3));
+
+        List<SpatialUnit> result = spatialUnitService.findDirectChildrensOf(su1);
+
+        assertThat(result)
+                .hasSize(2)
+                .containsExactlyInAnyOrder(su2,su3);
+    }
+
+    @Test
+    void test_neighborMapOfAllSpatialUnit() {
+        SpatialUnit su1 = new SpatialUnit();
+        su1.setId(1L);
+
+        SpatialUnit su2 = new SpatialUnit();
+        su2.setId(2L);
+
+        SpatialUnit su3 = new SpatialUnit();
+        su3.setId(3L);
+
+        SpatialUnit su4 = new SpatialUnit();
+        su3.setId(4L);
+
+        fail("WIP");
     }
 
 }
