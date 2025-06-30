@@ -138,7 +138,10 @@ public class NewActionUnitPanel extends AbstractPanel {
             actionUnit.setValidated(false);
 
             for (CheckboxTreeNode<SpatialUnit> su : selectedForAction) {
-                actionUnit.getSpatialContext().add(su.getData());
+                SpatialUnit spatialUnit = su.getData();
+                if (!actionUnit.getSpatialContext().contains(spatialUnit)) {
+                    actionUnit.getSpatialContext().add(spatialUnit);
+                }
             }
 
             ActionUnit saved = actionUnitService.save(sessionSettingsBean.getUserInfo() ,actionUnit, actionUnit.getType());
