@@ -39,7 +39,7 @@ public class Bookmark {
             return "var(--context-main-color)";
         } else if (resourceUri.startsWith("/actionunit" )) {
             return "var(--context-main-color)";
-        } else if (resourceUri.startsWith("/recording-unit" )) {
+        } else if (resourceUri.startsWith("/recordingunit" )) {
             return "var(--ground-main-color)";
         } else if (resourceUri.startsWith("/specimen" )) {
             return "var(--ground-main-color)";
