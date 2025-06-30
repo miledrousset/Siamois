@@ -67,17 +67,14 @@
                 <p:panelGrid id="spatialUnitPanelGrid" layout="grid">
                     <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
                         <sharedInput:panelField title="Emprise spatiale" id="spatialUnitTreeList">
-                            <p:treeTable value="#{panelModel.rootNodeOfSpatialUnits()}"
+                            <p:treeTable value="#{panelModel.root}"
+                                         selection="#{panelModel.selectedForAction}"
                                          var="spatialUnit"
-                                         selectionMode="multiple"
+                                         selectionMode="checkbox"
+                                         propagateSelectionUp="false"
                             >
                                 <p:column headerText="Nom">
                                     <p:outputLabel value="#{spatialUnit.getName()}"/>
-                                </p:column>
-                                <p:column>
-                                    <p:selectBooleanCheckbox value="#{panelModel.spatialUnitIsInAction.get(spatialUnit)}">
-                                        <p:ajax update="@form" listener="#{panelModel.changeValueFor(spatialUnit)}"/>
-                                    </p:selectBooleanCheckbox>
                                 </p:column>
                             </p:treeTable>
                         </sharedInput:panelField>

@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Table(name = "bookmark", schema = "public")
+@Table(name = "bookmark", schema = "public" )
 @NoArgsConstructor
 public class Bookmark {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "bookmark_id")
+    @Column(name = "bookmark_id" )
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -35,37 +35,29 @@ public class Bookmark {
     }
 
     public String getBookmarkColor() {
-        if(resourceUri.startsWith("/spatialunit")){
+        if (resourceUri.startsWith("/spatialunit" )) {
             return "var(--context-main-color)";
-        }
-        else if(resourceUri.startsWith("/actionunit")){
+        } else if (resourceUri.startsWith("/actionunit" )) {
             return "var(--context-main-color)";
-        }
-        else if(resourceUri.startsWith("/recording-unit")){
+        } else if (resourceUri.startsWith("/recording-unit" )) {
             return "var(--ground-main-color)";
-        }
-        else if(resourceUri.startsWith("/specimen")){
+        } else if (resourceUri.startsWith("/specimen" )) {
             return "var(--ground-main-color)";
-        }
-        else {
+        } else {
             return "var(--siamois-green)";
         }
     }
 
     public String getBookmarkIcon() {
-        if(resourceUri.startsWith("/spatialunit")){
+        if (resourceUri.startsWith("/spatialunit" )) {
             return "bi bi-geo-alt";
-        }
-        else if(resourceUri.startsWith("/actionunit")){
+        } else if (resourceUri.startsWith("/actionunit" )) {
             return "bi bi-arrow-down-square";
-        }
-        else if(resourceUri.startsWith("/recording-unit")){
+        } else if (resourceUri.startsWith("/recordingunit" )) {
             return "bi bi-pencil-square";
-        }
-        else if(resourceUri.startsWith("/specimen")){
+        } else if (resourceUri.startsWith("/specimen" )) {
             return "bi bi-box2";
-        }
-        else {
+        } else {
             return "bi bi-bookmark-fill";
         }
     }
