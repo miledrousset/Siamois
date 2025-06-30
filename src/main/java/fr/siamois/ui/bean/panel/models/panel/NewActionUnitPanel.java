@@ -206,8 +206,17 @@ public class NewActionUnitPanel extends AbstractPanel {
     public void changeValueFor(SpatialUnit spatialUnit) {
         boolean newValue = !spatialUnitIsInAction.getOrDefault(spatialUnit, false);
         spatialUnitIsInAction.put(spatialUnit, newValue);
-        for (SpatialUnit child : neighborMap.get(spatialUnit)) {
-            spatialUnitIsInAction.put(child, newValue);
+
+        Queue<SpatialUnit> toProcess = new ArrayDeque<>(neighborMap.get(spatialUnit));
+        Set<SpatialUnit> alreadyProcessed = new HashSet<>();
+
+        while (!toProcess.isEmpty()) {
+            SpatialUnit current = toProcess.poll();
+            if (!alreadyProcessed.contains(current)) {
+                spatialUnitIsInAction.put(current, newValue);
+                toProcess.addAll(neighborMap.get(current));
+                alreadyProcessed.add(current);
+            }
         }
     }
 
