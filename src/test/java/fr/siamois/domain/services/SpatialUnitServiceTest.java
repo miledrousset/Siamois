@@ -26,10 +26,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -545,9 +542,43 @@ class SpatialUnitServiceTest {
         su3.setId(3L);
 
         SpatialUnit su4 = new SpatialUnit();
-        su3.setId(4L);
+        su4.setId(4L);
 
-        fail("WIP");
+        Institution institution = new Institution();
+        institution.setId(2L);
+
+        when(spatialUnitRepository.findAllOfInstitution(institution.getId())).thenReturn(List.of(su1, su2, su3, su4));
+
+        when(spatialUnitRepository.countParentsByChildId(su1.getId())).thenReturn(0L);
+        when(spatialUnitRepository.countParentsByChildId(su2.getId())).thenReturn(1L);
+        when(spatialUnitRepository.countParentsByChildId(su3.getId())).thenReturn(1L);
+        when(spatialUnitRepository.countParentsByChildId(su4.getId())).thenReturn(1L);
+
+        when(spatialUnitRepository.findChildrensOf(su1.getId())).thenReturn(Set.of(su2, su3));
+        when(spatialUnitRepository.findChildrensOf(su3.getId())).thenReturn(Set.of(su4));
+        when(spatialUnitRepository.findChildrensOf(su2.getId())).thenReturn(Set.of());
+        when(spatialUnitRepository.findChildrensOf(su4.getId())).thenReturn(Set.of());
+
+        // Appel de la méthode à tester
+        Map<SpatialUnit, List<SpatialUnit>> neighborMap = spatialUnitService.neighborMapOfAllSpatialUnit(institution);
+
+        // Vérifications
+        assertNotNull(neighborMap);
+        assertEquals(4, neighborMap.size());
+        assertTrue(neighborMap.get(su1).containsAll(List.of(su2, su3)));
+        assertTrue(neighborMap.get(su3).contains(su4));
+        assertTrue(neighborMap.get(su2).isEmpty());
+        assertTrue(neighborMap.get(su4).isEmpty());
+
+        assertThat(neighborMap)
+                .isNotNull()
+                .hasSize(4)
+                .containsKeys(su1, su2, su3, su4);
+
+        assertThat(neighborMap.get(su1)).containsExactlyInAnyOrder(su2, su3);
+        assertThat(neighborMap.get(su2)).isEmpty();
+        assertThat(neighborMap.get(su3)).containsExactlyInAnyOrder(su4);
+        assertThat(neighborMap.get(su4)).isEmpty();
     }
 
 }
