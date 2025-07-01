@@ -49,10 +49,6 @@ public class WebSecurityConfig {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
         );
-        http.sessionManagement(session ->
-                session.sessionConcurrency(concurency ->
-                        concurency.maximumSessions(1)
-                        ));
 
         return http.build();
     }
