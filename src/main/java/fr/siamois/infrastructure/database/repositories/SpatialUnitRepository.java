@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface SpatialUnitRepository extends JpaRepository<SpatialUnit, Long> {
@@ -272,5 +273,13 @@ public interface SpatialUnitRepository extends JpaRepository<SpatialUnit, Long> 
     List<SpatialUnit> findAllByArkIsNullAndCreatedByInstitution(@NotNull Institution createdByInstitution);
 
     long countByCreatedByInstitution(Institution institution);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT DISTINCT su.* FROM spatial_unit su " +
+                    "JOIN spatial_hierarchy sh ON sh.fk_child_id = su.spatial_unit_id " +
+                    "WHERE sh.fk_parent_id = :spatialUnitId"
+    )
+    Set<SpatialUnit> findChildrensOf(Long spatialUnitId);
 }
 

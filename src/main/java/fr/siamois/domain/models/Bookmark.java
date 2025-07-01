@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @Entity
 @Table(name = "bookmark", schema = "public")
@@ -34,39 +36,33 @@ public class Bookmark {
         return String.format("Bookmark n°%s to %s", id, resourceUri);
     }
 
+    private static final Map<String, String> COLOR_MAP = Map.of(
+            "/spatialunit", "var(--context-main-color)",
+            "/actionunit", "var(--context-main-color)",
+            "/recordingunit", "var(--ground-main-color)",
+            "/specimen", "var(--ground-main-color)"
+    );
+
+    private static final Map<String, String> ICON_MAP = Map.of(
+            "/spatialunit", "bi bi-geo-alt",
+            "/actionunit", "bi bi-arrow-down-square",
+            "/recordingunit", "bi bi-pencil-square",
+            "/specimen", "bi bi-box2"
+    );
+
     public String getBookmarkColor() {
-        if(resourceUri.startsWith("/spatialunit")){
-            return "var(--context-main-color)";
-        }
-        else if(resourceUri.startsWith("/actionunit")){
-            return "var(--context-main-color)";
-        }
-        else if(resourceUri.startsWith("/recording-unit")){
-            return "var(--ground-main-color)";
-        }
-        else if(resourceUri.startsWith("/specimen")){
-            return "var(--ground-main-color)";
-        }
-        else {
-            return "var(--siamois-green)";
-        }
+        return COLOR_MAP.entrySet().stream()
+                .filter(entry -> resourceUri.startsWith(entry.getKey()))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse("var(--siamois-green)");
     }
 
     public String getBookmarkIcon() {
-        if(resourceUri.startsWith("/spatialunit")){
-            return "bi bi-geo-alt";
-        }
-        else if(resourceUri.startsWith("/actionunit")){
-            return "bi bi-arrow-down-square";
-        }
-        else if(resourceUri.startsWith("/recording-unit")){
-            return "bi bi-pencil-square";
-        }
-        else if(resourceUri.startsWith("/specimen")){
-            return "bi bi-box2";
-        }
-        else {
-            return "bi bi-bookmark-fill";
-        }
+        return ICON_MAP.entrySet().stream()
+                .filter(entry -> resourceUri.startsWith(entry.getKey()))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse("bi bi-bookmark-fill");
     }
 }

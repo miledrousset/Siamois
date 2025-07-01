@@ -112,6 +112,7 @@
                                                var="item"
                                                itemValue="#{item}"
                                                itemLabel="#{item.name}"
+                                               itemDisabled="true"
                                 />
 
                                 <p:column>
@@ -164,11 +165,11 @@
 
                             </p:selectOneMenu>
                         </h:panelGroup>
-                        <p:button value="+"/>
+                        <p:button value="+" disabled="true"/>
                     </article>
                     <article>
                     <span class="ui-input-icon-right">
-                        <p:inputText styleClass="searchInput" placeholder=""/>
+                        <p:inputText styleClass="searchInput" placeholder="" value="🚧" disabled="true"/>
                         <i class="bi bi-play-circle"/>
                     </span>
                     </article>

@@ -4,6 +4,7 @@ import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -19,6 +20,8 @@ import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.model.CheckboxTreeNode;
+import org.primefaces.model.TreeNode;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -26,9 +29,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Data
@@ -44,6 +45,11 @@ public class NewActionUnitPanel extends AbstractPanel {
     private final transient ActionUnitService actionUnitService;
     private final FlowBean flowBean;
     private final transient FieldConfigurationService fieldConfigurationService;
+
+    private List<CheckboxTreeNode<SpatialUnit>> selectedForAction;
+    private Map<SpatialUnit, List<SpatialUnit>> neighborMap;
+    private Map<SpatialUnit, CheckboxTreeNode<SpatialUnit>> nodes;
+    private transient TreeNode<SpatialUnit> root;
 
     // Locals
     ActionUnit actionUnit;
@@ -78,12 +84,20 @@ public class NewActionUnitPanel extends AbstractPanel {
 
     void init() {
         actionUnit = new ActionUnit();
+        neighborMap = spatialUnitService.neighborMapOfAllSpatialUnit(sessionSettingsBean.getSelectedInstitution());
+        prepareRootNode();
+        selectedForAction = new ArrayList<>();
+
         if(spatialUnitId != null) {
-            actionUnit.getSpatialContext().add(spatialUnitService.findById(spatialUnitId));
+            SpatialUnit spatialUnitById = spatialUnitService.findById(spatialUnitId);
+            actionUnit.getSpatialContext().add(spatialUnitById);
+            selectedForAction.add(nodes.get(spatialUnitById));
         }
         // Set spatial context based on lazy model type
         else if (lazyDataModel instanceof SpatialUnitChildrenLazyDataModel typedModel) {
-            actionUnit.getSpatialContext().add(spatialUnitService.findById(typedModel.getSpatialUnit().getId()));
+            SpatialUnit spatialUnitByTypedModel = spatialUnitService.findById(typedModel.getSpatialUnit().getId());
+            actionUnit.getSpatialContext().add(spatialUnitByTypedModel);
+            selectedForAction.add(nodes.get(spatialUnitByTypedModel));
         }
 
         DefaultMenuItem item = DefaultMenuItem.builder()
@@ -123,6 +137,11 @@ public class NewActionUnitPanel extends AbstractPanel {
             actionUnit.setEndDate(OffsetDateTime.now());
             actionUnit.setValidated(false);
 
+            for (CheckboxTreeNode<SpatialUnit> su : selectedForAction) {
+                SpatialUnit spatialUnit = su.getData();
+                actionUnit.getSpatialContext().add(spatialUnit);
+            }
+
             ActionUnit saved = actionUnitService.save(sessionSettingsBean.getUserInfo() ,actionUnit, actionUnit.getType());
 
             Integer idx = flowBean.getPanels().indexOf(this);
@@ -147,6 +166,38 @@ public class NewActionUnitPanel extends AbstractPanel {
             log.error("Error while saving: {}", e.getMessage());
             return false;
         }
+    }
+
+    public void prepareRootNode() {
+        TreeNode<SpatialUnit> rootNode = new CheckboxTreeNode<>(new SpatialUnit(), null);
+        nodes = new HashMap<>();
+
+        for (Map.Entry<SpatialUnit, List<SpatialUnit>> entry : neighborMap.entrySet()) {
+            TreeNode<SpatialUnit> parent = nodes.computeIfAbsent(entry.getKey(), k -> new CheckboxTreeNode<>(entry.getKey()));
+            for (SpatialUnit child : entry.getValue()) {
+                TreeNode<SpatialUnit> childNode = nodes.computeIfAbsent(child, k -> new CheckboxTreeNode<>(child, parent));
+                parent.getChildren().add(childNode);
+            }
+        }
+
+        for (SpatialUnit spatialUnit : neighborMap.keySet()) {
+            if (numberOfParentsOf(neighborMap, spatialUnit) == 0) {
+                rootNode.getChildren().add(nodes.get(spatialUnit));
+            }
+        }
+
+        this.root = rootNode;
+    }
+
+    private long numberOfParentsOf(Map<SpatialUnit, List<SpatialUnit>> neighborMap, SpatialUnit spatialUnit) {
+        long count = 0;
+        for (Map.Entry<SpatialUnit, List<SpatialUnit>> entry : neighborMap.entrySet()) {
+            for (SpatialUnit child : entry.getValue()) {
+                if (child.getId().equals(spatialUnit.getId()))
+                    count++;
+            }
+        }
+        return count;
     }
 
     public static class NewActionUnitPanelBuilder {

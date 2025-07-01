@@ -18,7 +18,6 @@ import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.bean.breadcrumb.BreadcrumbBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.models.panel.*;
 import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
@@ -65,7 +64,6 @@ public class FlowBean implements Serializable {
     private final transient PersonService personService;
     private final transient ConceptService conceptService;
     private final transient StratigraphicRelationshipService stratigraphicRelationshipService;
-    private final BreadcrumbBean breadcrumbBean;
     private final transient PermissionService permissionService;
 
     // locals
@@ -95,7 +93,8 @@ public class FlowBean implements Serializable {
                     PanelFactory panelFactory,
                     PersonService personService,
                     ConceptService conceptService,
-                    StratigraphicRelationshipService stratigraphicRelationshipService, BreadcrumbBean breadcrumbBean, PermissionService permissionService) {
+                    StratigraphicRelationshipService stratigraphicRelationshipService,
+                    PermissionService permissionService) {
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;
@@ -108,7 +107,6 @@ public class FlowBean implements Serializable {
         this.personService = personService;
         this.conceptService = conceptService;
         this.stratigraphicRelationshipService = stratigraphicRelationshipService;
-        this.breadcrumbBean = breadcrumbBean;
         this.permissionService = permissionService;
     }
 

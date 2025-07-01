@@ -63,6 +63,24 @@
 
             </p:panel>
 
+            <p:panel id="spatialUnitsPanel" styleClass="sia-form-panel" header="Emprise spatiale" toggleable="true" collapsed="false">
+                <p:panelGrid id="spatialUnitPanelGrid" layout="grid">
+                    <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                        <sharedInput:panelField title="Emprise spatiale" id="spatialUnitTreeList">
+                            <p:treeTable value="#{panelModel.root}"
+                                         selection="#{panelModel.selectedForAction}"
+                                         var="spatialUnit"
+                                         selectionMode="checkbox"
+                                         propagateSelectionUp="false"
+                            >
+                                <p:column headerText="Nom">
+                                    <p:outputLabel value="#{spatialUnit.getName()}"/>
+                                </p:column>
+                            </p:treeTable>
+                        </sharedInput:panelField>
+                    </p:column>
+                </p:panelGrid>
+            </p:panel>
 
         </div>
 
