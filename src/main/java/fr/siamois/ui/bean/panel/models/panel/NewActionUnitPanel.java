@@ -49,7 +49,7 @@ public class NewActionUnitPanel extends AbstractPanel {
     private List<CheckboxTreeNode<SpatialUnit>> selectedForAction;
     private Map<SpatialUnit, List<SpatialUnit>> neighborMap;
     private Map<SpatialUnit, CheckboxTreeNode<SpatialUnit>> nodes;
-    private TreeNode<SpatialUnit> root;
+    private transient TreeNode<SpatialUnit> root;
 
     // Locals
     ActionUnit actionUnit;
@@ -139,9 +139,7 @@ public class NewActionUnitPanel extends AbstractPanel {
 
             for (CheckboxTreeNode<SpatialUnit> su : selectedForAction) {
                 SpatialUnit spatialUnit = su.getData();
-                if (!actionUnit.getSpatialContext().contains(spatialUnit)) {
-                    actionUnit.getSpatialContext().add(spatialUnit);
-                }
+                actionUnit.getSpatialContext().add(spatialUnit);
             }
 
             ActionUnit saved = actionUnitService.save(sessionSettingsBean.getUserInfo() ,actionUnit, actionUnit.getType());
