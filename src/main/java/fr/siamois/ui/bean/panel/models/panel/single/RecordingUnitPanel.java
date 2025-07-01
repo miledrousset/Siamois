@@ -273,7 +273,7 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
 
     @Override
     public String ressourceUri() {
-        return "/recording-unit/" + idunit;
+        return "/recordingunit/" + idunit;
     }
 
     @Override

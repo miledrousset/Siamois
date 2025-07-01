@@ -5,11 +5,14 @@ import fr.siamois.domain.models.Bookmark;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
+import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.services.BookmarkService;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.ui.bean.converter.InstitutionConverter;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
 import fr.siamois.ui.bean.settings.InstitutionListSettingsBean;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.context.FacesContext;
@@ -54,8 +57,8 @@ public class NavBean implements Serializable {
     @Getter(AccessLevel.NONE)
     private transient List<Bookmark> bookmarkedPanels = null;
 
-    private static final String RECORDING_UNIT_BASE_URI = "/recordingunit";
-    private static final String SPECIMEN_BASE_URI = "/specimen";
+    private static final String RECORDING_UNIT_BASE_URI = "/recordingunit/";
+    private static final String SPECIMEN_BASE_URI = "/specimen/";
 
     public NavBean(SessionSettingsBean sessionSettingsBean,
                    InstitutionChangeEventPublisher institutionChangeEventPublisher,
@@ -132,32 +135,32 @@ public class NavBean implements Serializable {
         redirectBean.redirectTo("/");
     }
 
-    public void bookmarkRecordingUnit(String fullIdentifier) {
+    public void bookmarkRecordingUnit(RecordingUnit recordingUnit) {
 
         // Maybe check that ressource exists and user has access to it?
         bookmarkService.save(
                 sessionSettingsBean.getUserInfo(),
-                RECORDING_UNIT_BASE_URI+fullIdentifier,
-                fullIdentifier
+                RECORDING_UNIT_BASE_URI+ recordingUnit.getId(),
+                recordingUnit.getFullIdentifier()
         );
         MessageUtils.displayInfoMessage(langBean, "common.bookmark.saved");
     }
 
-    public void unBookmarkRecordingUnit(String fullIdentifier) {
+    public void unBookmarkRecordingUnit(RecordingUnit recordingUnit) {
         bookmarkService.deleteBookmark(
                 sessionSettingsBean.getUserInfo(),
-                RECORDING_UNIT_BASE_URI+fullIdentifier
+                RECORDING_UNIT_BASE_URI + recordingUnit.getId()
         );
         MessageUtils.displayInfoMessage(langBean, "common.bookmark.unsaved");
     }
 
-    public void bookmark(String fullIdentifier, String uri) {
+    public void bookmark(Specimen specimen) {
 
         // Maybe check that ressource exists and user has access to it?
         bookmarkService.save(
                 sessionSettingsBean.getUserInfo(),
-                uri,
-                fullIdentifier
+                SPECIMEN_BASE_URI + specimen.getId(),
+                specimen.getFullIdentifier()
         );
         MessageUtils.displayInfoMessage(langBean, "common.bookmark.saved");
     }
@@ -174,22 +177,22 @@ public class NavBean implements Serializable {
         return bookmarkService.isRessourceBookmarkedByUser(sessionSettingsBean.getUserInfo(), ressourceUri);
     }
 
-    public void toggleRecordingUnitBookmark(String fullIdentifier) {
-        if(Boolean.TRUE.equals(isRessourceBookmarkedByUser(RECORDING_UNIT_BASE_URI+fullIdentifier))) {
-            unBookmarkRecordingUnit(fullIdentifier);
+    public void toggleRecordingUnitBookmark(RecordingUnit recordingUnit) {
+        if(Boolean.TRUE.equals(isRessourceBookmarkedByUser(RECORDING_UNIT_BASE_URI + recordingUnit.getId()))) {
+            unBookmarkRecordingUnit(recordingUnit);
         }
         else {
-            bookmarkRecordingUnit(fullIdentifier);
+            bookmarkRecordingUnit(recordingUnit);
         }
         reloadBookmarkedPanels();
     }
 
-    public void toggleSpecimenBookmark(String fullIdentifier) {
-        if(Boolean.TRUE.equals(isRessourceBookmarkedByUser(SPECIMEN_BASE_URI+fullIdentifier))) {
-            unBookmark(SPECIMEN_BASE_URI+fullIdentifier);
+    public void toggleSpecimenBookmark(Specimen specimen) {
+        if(Boolean.TRUE.equals(isRessourceBookmarkedByUser(SPECIMEN_BASE_URI + specimen.getId()))) {
+            unBookmark(SPECIMEN_BASE_URI + specimen.getId());
         }
         else {
-            bookmark(fullIdentifier,SPECIMEN_BASE_URI+fullIdentifier);
+            bookmark(specimen);
         }
         reloadBookmarkedPanels();
     }

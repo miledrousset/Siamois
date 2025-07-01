@@ -246,7 +246,7 @@
                     <p:toolbarGroup>
                         <p:commandButton id="bookmarkToggleButton" icon="#{navBean.isRecordingUnitBookmarkedByUser(item.fullIdentifier) ?
                             'bi bi-bookmark-x-fill' : 'bi bi-bookmark-plus' }" styleClass="sia-icon-btn"
-                                         action="#{navBean.toggleRecordingUnitBookmark(item.fullIdentifier)}"
+                                         action="#{navBean.toggleRecordingUnitBookmark(item)}"
                                          update="bookmarkToggleButton navBarCsrfForm:siamoisNavForm:bookmarkGroup"/>
                         <p:commandButton rendered="#{flowBean.readWriteMode == 'WRITE'}" icon="bi bi-copy"
                                          action="#{cc.attrs.lazyDataModel.duplicateRow()}"
