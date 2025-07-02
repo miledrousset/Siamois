@@ -1,7 +1,6 @@
 package fr.siamois.domain.services.recordingunit;
 
 import fr.siamois.domain.models.ArkEntity;
-import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.exceptions.recordingunit.MaxRecordingUnitIdentifierReached;
@@ -9,7 +8,6 @@ import fr.siamois.domain.models.exceptions.recordingunit.RecordingUnitNotFoundEx
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
 import fr.siamois.domain.services.form.CustomFormResponseService;
@@ -23,10 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Service to manage RecordingUnit
@@ -51,36 +47,6 @@ public class RecordingUnitService implements ArkEntityService {
         this.conceptService = conceptService;
         this.customFormResponseService = customFormResponseService;
         this.personRepository = personRepository;
-    }
-
-
-    /**
-     * Find all the recording units from a spatial unit
-     *
-     * @return The List of RecordingUnit
-     * @throws RuntimeException If the repository method throws an Exception
-     */
-    @Transactional(readOnly = true)
-    public List<RecordingUnit> findAllBySpatialUnit(SpatialUnit spatialUnit) {
-        List<RecordingUnit> recordingUnits = recordingUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
-
-        for (RecordingUnit recordingUnit : recordingUnits) {
-            if (recordingUnit.getFormResponse() != null) {
-                Hibernate.initialize(recordingUnit.getFormResponse().getAnswers());
-            }
-        }
-        return recordingUnits;
-    }
-
-    /**
-     * Find all the recording units from an action unit
-     *
-     * @return The List of RecordingUnit
-     * @throws RuntimeException If the repository method throws an Exception
-     */
-    @Transactional(readOnly = true)
-    public List<RecordingUnit> findAllByActionUnit(ActionUnit actionUnit) {
-        return recordingUnitRepository.findAllByActionUnit(actionUnit);
     }
 
     /**

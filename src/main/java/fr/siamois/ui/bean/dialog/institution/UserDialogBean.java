@@ -9,7 +9,6 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
-import fr.siamois.ui.bean.ActionFromBean;
 import fr.siamois.ui.bean.LabelBean;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;

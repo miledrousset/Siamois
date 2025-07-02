@@ -3,6 +3,7 @@ package fr.siamois.domain.models.form.customfieldanswer;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
+
 import java.util.Objects;
 
 

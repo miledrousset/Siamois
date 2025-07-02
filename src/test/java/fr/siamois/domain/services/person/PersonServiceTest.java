@@ -19,7 +19,8 @@ import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepos
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
 import fr.siamois.ui.email.EmailManager;
-import jakarta.servlet.http.HttpServletRequest;import org.junit.jupiter.api.BeforeEach;
+import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

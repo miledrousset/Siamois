@@ -18,7 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Service for managing field configurations of the vocabulary.
@@ -242,42 +243,5 @@ public class FieldConfigurationService {
         return fetchAutocomplete(info, parentConcept, input);
     }
 
-    /**
-     * Fetches all values (sub-concepts) under a given parent concept.
-     *
-     * @param parent the parent concept under which to search for values
-     * @return a list of concepts that are sub-concepts of the parent
-     */
-    public List<Concept> fetchAllValues(Concept parent) {
-        ConceptBranchDTO terms;
-        try {
-            terms = conceptApi.fetchConceptsUnderTopTerm(parent);
-        } catch (ErrorProcessingExpansionException e) {
-            log.error("Error fetching concepts under top term", e);
-            return List.of();
-        }
-        List<Concept> result = new ArrayList<>();
-        for (FullInfoDTO fullConcept : terms.getData().values()) {
-            if (isNotParentConcept(fullConcept, parent)) {
-                result.add(conceptService.saveOrGetConceptFromFullDTO(parent.getVocabulary(), fullConcept));
-            }
-        }
-        return result;
-    }
-
-
-    private static boolean isNotParentConcept(FullInfoDTO fullConcept, Concept parentConcept) {
-        return !fullConcept.getIdentifier()[0].getValue().equalsIgnoreCase(parentConcept.getExternalId());
-    }
-
-    /**
-     * Checks if a user has a configuration for fields in their institution.
-     *
-     * @param info the user information containing institution details
-     * @return true if the user has a configuration, false otherwise
-     */
-    public boolean hasUserConfig(UserInfo info) {
-        return fieldRepository.hasUserConfig(info.getUser().getId(), info.getInstitution().getId());
-    }
 
 }

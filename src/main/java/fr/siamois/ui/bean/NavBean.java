@@ -12,7 +12,6 @@ import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.ui.bean.converter.InstitutionConverter;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
-import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
 import fr.siamois.ui.bean.settings.InstitutionListSettingsBean;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.context.FacesContext;
@@ -75,10 +74,6 @@ public class NavBean implements Serializable {
         this.bookmarkService = bookmarkService;
         this.flowBean = flowBean;
         this.langBean = langBean;
-    }
-
-    public boolean userIsSuperAdmin() {
-        return sessionSettingsBean.getUserInfo().getUser().isSuperAdmin();
     }
 
     public Institution getSelectedInstitution() {

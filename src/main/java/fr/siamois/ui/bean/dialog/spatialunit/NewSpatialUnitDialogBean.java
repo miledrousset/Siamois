@@ -1,9 +1,10 @@
 package fr.siamois.ui.bean.dialog.spatialunit;
 
 
-
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
-import fr.siamois.domain.models.form.customfield.*;
+import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
+import fr.siamois.domain.models.form.customfield.CustomFieldText;
 import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
@@ -12,14 +13,15 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
-import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
-import fr.siamois.ui.lazydatamodel.*;
+import fr.siamois.ui.lazydatamodel.BaseSpatialUnitLazyDataModel;
+import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
+import fr.siamois.ui.lazydatamodel.SpatialUnitParentsLazyDataModel;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.event.AjaxBehaviorEvent;
@@ -32,7 +34,10 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
 
 
 @Slf4j

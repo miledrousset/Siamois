@@ -1,7 +1,6 @@
 package fr.siamois.domain.services.recordingunit;
 
 import fr.siamois.domain.models.ArkEntity;
-import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.services.form.CustomFormResponseService;
@@ -44,23 +43,6 @@ class RecordingUnitServiceTest {
     void beforeEach() {
         recordingUnitService = new RecordingUnitService(recordingUnitRepository, conceptService,
                 customFormResponseService,personRepository);
-    }
-
-    @Test
-    void findAllByActionUnit() {
-        ActionUnit actionUnit = new ActionUnit();
-        actionUnit.setId(1L);
-        RecordingUnit recordingUnit = new RecordingUnit();
-        recordingUnit.setActionUnit(actionUnit);
-
-        when(recordingUnitRepository.findAllByActionUnit(actionUnit)).thenReturn(Collections.singletonList(recordingUnit));
-
-        List<RecordingUnit> result = recordingUnitService.findAllByActionUnit(actionUnit);
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(actionUnit, result.get(0).getActionUnit());
-        verify(recordingUnitRepository, times(1)).findAllByActionUnit(actionUnit);
     }
 
     @Test

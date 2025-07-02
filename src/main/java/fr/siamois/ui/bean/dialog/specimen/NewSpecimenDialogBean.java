@@ -2,17 +2,15 @@ package fr.siamois.ui.bean.dialog.specimen;
 
 
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
-import fr.siamois.domain.models.form.customfield.*;
-
+import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.form.customfield.CustomFieldDateTime;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectMultiplePerson;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
 import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
-
-
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
-
-
 import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -23,14 +21,11 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
-
 import fr.siamois.ui.lazydatamodel.BaseSpecimenLazyDataModel;
-
 import fr.siamois.ui.lazydatamodel.SpecimenInRecordingUnitLazyDataModel;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.event.AjaxBehaviorEvent;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,12 +33,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
-
 import javax.faces.bean.SessionScoped;
-
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-
 import java.util.List;
 
 

@@ -1,14 +1,11 @@
 package fr.siamois.domain.services.specimen;
 
 import fr.siamois.domain.models.ArkEntity;
-
 import fr.siamois.domain.models.institution.Institution;
-
 import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
 import fr.siamois.infrastructure.database.repositories.specimen.SpecimenRepository;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

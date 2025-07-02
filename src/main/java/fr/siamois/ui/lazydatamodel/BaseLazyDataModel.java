@@ -1,9 +1,7 @@
 package fr.siamois.ui.lazydatamodel;
 
 
-
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import jakarta.faces.application.FacesMessage;
@@ -189,10 +187,7 @@ public abstract class BaseLazyDataModel<T> extends LazyDataModel<T> {
         Object value1 = filter1.getFilterValue();
         Object value2 = filter2.getFilterValue();
 
-        if (value1 instanceof Collection && value2 instanceof Collection) {
-            Collection<?> col1 = (Collection<?>) value1;
-            Collection<?> col2 = (Collection<?>) value2;
-
+        if (value1 instanceof Collection<?> col1 && value2 instanceof Collection<?> col2) {
             // Compare as sets to ignore order and duplicates
             return new HashSet<>(col1).equals(new HashSet<>(col2));
         }

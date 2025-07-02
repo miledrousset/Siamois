@@ -1,7 +1,6 @@
 package fr.siamois.ui.bean.field;
 
 import fr.siamois.domain.models.events.LoginEvent;
-import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
@@ -14,7 +13,6 @@ import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.utils.MessageUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import lombok.Getter;
@@ -112,29 +110,8 @@ public class SpatialUnitFieldBean implements Serializable {
         fChildrenSpatialUnits = children;
     }
 
-
-    public String getUrlForSpatialUnitTypeFieldCode() {
-        return getUrlForFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
-    }
-
     public String getUrlForFieldCode(String fieldCode) {
         return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), fieldCode);
-    }
-
-
-    /**
-     * Fetch the autocomplete results on API for the category field and add them to the list of concepts.
-     *
-     * @param input the input of the user
-     * @return the list of concepts that match the input to display in the autocomplete
-     */
-    public List<Concept> completeCategory(String input) {
-        try {
-            return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE, input);
-        } catch (NoConfigForFieldException e) {
-            log.warn(e.getMessage());
-            return new ArrayList<>();
-        }
     }
 
     /**

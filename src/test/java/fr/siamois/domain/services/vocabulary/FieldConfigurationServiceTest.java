@@ -2,6 +2,7 @@ package fr.siamois.domain.services.vocabulary;
 
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.exceptions.ErrorProcessingExpansionException;
 import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.institution.Institution;
@@ -16,7 +17,6 @@ import fr.siamois.infrastructure.api.dto.FullInfoDTO;
 import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
 import fr.siamois.infrastructure.database.repositories.FieldRepository;
 import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
-import fr.siamois.domain.models.exceptions.ErrorProcessingExpansionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -251,26 +251,6 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void fetchAllValues() throws ErrorProcessingExpansionException {
-        ConceptBranchDTO dto = new ConceptBranchDTO();
-        dto.addConceptBranchDTO("http://localhost/th223/1213", fullConceptDTO("1213", "", "First value"));
-        dto.addConceptBranchDTO("http://localhost/th223/1214", fullConceptDTO("1214", "", "Second value"));
-        dto.addConceptBranchDTO("http://localhost/th223/1215", fullConceptDTO("1215", "", "Third value"));
-
-        Concept parentConcept = new Concept();
-        parentConcept.setId(-1L);
-        parentConcept.setExternalId("1212");
-        parentConcept.setVocabulary(vocabulary);
-
-
-        when(conceptApi.fetchConceptsUnderTopTerm(parentConcept)).thenReturn(dto);
-
-        List<Concept> result = service.fetchAllValues(parentConcept);
-
-        assertThat(result).hasSize(3);
-    }
-
-    @Test
     void getUrlOfConcept_success() {
 
         Concept concept = new Concept();
@@ -307,32 +287,6 @@ class FieldConfigurationServiceTest {
 
         String url = service.getUrlForFieldCode(userInfo, "SIATEST");
         assertThat(url).isNull();
-    }
-
-    @Test
-    void hasUserConfig_shouldReturnTrue_whenUserConfigExists() {
-        userInfo = new UserInfo(new Institution(), new Person(), "fr");
-        userInfo.getInstitution().setId(12L);
-        userInfo.getUser().setId(34L);
-
-        when(fieldRepository.hasUserConfig(34L, 12L)).thenReturn(true);
-
-        boolean result = service.hasUserConfig(userInfo);
-
-        assertThat(result).isTrue();
-    }
-
-    @Test
-    void hasUserConfig_shouldReturnFalse_whenUserConfigDoesNotExist() {
-        userInfo = new UserInfo(new Institution(), new Person(), "fr");
-        userInfo.getInstitution().setId(12L);
-        userInfo.getUser().setId(34L);
-
-        when(fieldRepository.hasUserConfig(34L, 12L)).thenReturn(false);
-
-        boolean result = service.hasUserConfig(userInfo);
-
-        assertThat(result).isFalse();
     }
 
     @Test

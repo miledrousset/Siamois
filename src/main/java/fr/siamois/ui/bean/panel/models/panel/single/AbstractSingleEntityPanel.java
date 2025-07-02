@@ -1,29 +1,15 @@
 package fr.siamois.ui.bean.panel.models.panel.single;
 
-import fr.siamois.domain.models.UserInfo;
-import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
-import fr.siamois.domain.models.form.customfield.*;
-import fr.siamois.domain.models.form.customfieldanswer.*;
-import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
-import fr.siamois.domain.models.form.customform.CustomFormPanel;
-import fr.siamois.domain.models.form.customform.CustomRow;
-import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
-import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
-import fr.siamois.utils.DateUtils;
-import jakarta.faces.component.UIComponent;
-import jakarta.faces.context.FacesContext;
-import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -33,14 +19,7 @@ import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Data

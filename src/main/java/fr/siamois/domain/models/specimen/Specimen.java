@@ -6,7 +6,6 @@ import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
-import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

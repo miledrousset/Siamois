@@ -1,12 +1,9 @@
 package fr.siamois.ui.bean.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.StreamReadConstraints;
-import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
