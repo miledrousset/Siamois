@@ -47,23 +47,6 @@ class RecordingUnitServiceTest {
     }
 
     @Test
-    void findAllByActionUnit() {
-        ActionUnit actionUnit = new ActionUnit();
-        actionUnit.setId(1L);
-        RecordingUnit recordingUnit = new RecordingUnit();
-        recordingUnit.setActionUnit(actionUnit);
-
-        when(recordingUnitRepository.findAllByActionUnit(actionUnit)).thenReturn(Collections.singletonList(recordingUnit));
-
-        List<RecordingUnit> result = recordingUnitService.findAllByActionUnit(actionUnit);
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(actionUnit, result.get(0).getActionUnit());
-        verify(recordingUnitRepository, times(1)).findAllByActionUnit(actionUnit);
-    }
-
-    @Test
     void findWithoutArk() {
         Institution institution = new Institution();
         institution.setId(1L);

@@ -13,7 +13,6 @@ import lombok.EqualsAndHashCode;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @MappedSuperclass
 public abstract class SpecimenParent extends TraceableEntity {

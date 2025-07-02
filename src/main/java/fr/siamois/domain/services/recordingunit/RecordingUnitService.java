@@ -51,36 +51,6 @@ public class RecordingUnitService implements ArkEntityService {
         this.personRepository = personRepository;
     }
 
-
-    /**
-     * Find all the recording units from a spatial unit
-     *
-     * @return The List of RecordingUnit
-     * @throws RuntimeException If the repository method throws an Exception
-     */
-    @Transactional(readOnly = true)
-    public List<RecordingUnit> findAllBySpatialUnit(SpatialUnit spatialUnit) {
-        List<RecordingUnit> recordingUnits = recordingUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
-
-        for (RecordingUnit recordingUnit : recordingUnits) {
-            if (recordingUnit.getFormResponse() != null) {
-                Hibernate.initialize(recordingUnit.getFormResponse().getAnswers());
-            }
-        }
-        return recordingUnits;
-    }
-
-    /**
-     * Find all the recording units from an action unit
-     *
-     * @return The List of RecordingUnit
-     * @throws RuntimeException If the repository method throws an Exception
-     */
-    @Transactional(readOnly = true)
-    public List<RecordingUnit> findAllByActionUnit(ActionUnit actionUnit) {
-        return recordingUnitRepository.findAllByActionUnit(actionUnit);
-    }
-
     /**
      * Generate the next identifier for a recording unit.
      *

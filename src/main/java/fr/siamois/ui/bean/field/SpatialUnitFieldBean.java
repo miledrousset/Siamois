@@ -110,29 +110,8 @@ public class SpatialUnitFieldBean implements Serializable {
         fChildrenSpatialUnits = children;
     }
 
-
-    public String getUrlForSpatialUnitTypeFieldCode() {
-        return getUrlForFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
-    }
-
     public String getUrlForFieldCode(String fieldCode) {
         return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), fieldCode);
-    }
-
-
-    /**
-     * Fetch the autocomplete results on API for the category field and add them to the list of concepts.
-     *
-     * @param input the input of the user
-     * @return the list of concepts that match the input to display in the autocomplete
-     */
-    public List<Concept> completeCategory(String input) {
-        try {
-            return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), SpatialUnit.CATEGORY_FIELD_CODE, input);
-        } catch (NoConfigForFieldException e) {
-            log.warn(e.getMessage());
-            return new ArrayList<>();
-        }
     }
 
     /**

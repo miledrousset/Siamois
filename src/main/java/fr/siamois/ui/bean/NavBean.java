@@ -76,10 +76,6 @@ public class NavBean implements Serializable {
         this.langBean = langBean;
     }
 
-    public boolean userIsSuperAdmin() {
-        return sessionSettingsBean.getUserInfo().getUser().isSuperAdmin();
-    }
-
     public Institution getSelectedInstitution() {
         return sessionSettingsBean.getSelectedInstitution();
     }

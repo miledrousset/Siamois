@@ -105,34 +105,6 @@ class RecordingUnitServiceTest {
     }
 
     @Test
-    void findAllBySpatialUnitId_Success() {
-
-        when(recordingUnitRepository.findAllBySpatialUnitId(spatialUnit1.getId())).thenReturn(List.of(recordingUnit1, recordingUnit2));
-
-        // Act
-        List<RecordingUnit> actualResult = recordingUnitService.findAllBySpatialUnit(spatialUnit1);
-
-        // Assert
-        assertEquals(List.of(recordingUnit1, recordingUnit2), actualResult);
-    }
-
-    @Test
-    void findAllBySpatialUnitId_Exception() {
-
-        // Arrange
-        when(recordingUnitRepository.findAllBySpatialUnitId(spatialUnit1.getId())).thenThrow(new RuntimeException("Database error"));
-
-        // Act & Assert
-        Exception exception = assertThrows(
-                Exception.class,
-                () -> recordingUnitService.findAllBySpatialUnit(spatialUnit1)
-        );
-
-        assertEquals("Database error", exception.getMessage());
-
-    }
-
-    @Test
     void findById_success() {
 
         when(recordingUnitRepository.findById(recordingUnit1.getId())).thenReturn(Optional.ofNullable(recordingUnit1));
