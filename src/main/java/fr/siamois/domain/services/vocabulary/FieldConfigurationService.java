@@ -244,8 +244,4 @@ public class FieldConfigurationService {
     }
 
 
-    private static boolean isNotParentConcept(FullInfoDTO fullConcept, Concept parentConcept) {
-        return !fullConcept.getIdentifier()[0].getValue().equalsIgnoreCase(parentConcept.getExternalId());
-    }
-
 }
