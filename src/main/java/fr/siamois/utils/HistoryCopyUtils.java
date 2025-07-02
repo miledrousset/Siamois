@@ -11,8 +11,7 @@ import java.lang.reflect.Field;
  */
 public class HistoryCopyUtils {
 
-    private HistoryCopyUtils() {
-    }
+    private HistoryCopyUtils() {}
 
     /**
      * Copy attributes from history to target. The ID field of the target is set to the tableId of the history.
