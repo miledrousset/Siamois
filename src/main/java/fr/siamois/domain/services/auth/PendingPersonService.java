@@ -87,8 +87,12 @@ public class PendingPersonService {
      */
     String invitationLink(PendingPerson pendingPerson) {
         String domain = httpServletRequest.getScheme() + "://" + httpServletRequest.getServerName() +
-                (httpServletRequest.getServerPort() != 80 && httpServletRequest.getServerPort() != 443 ? ":" + httpServletRequest.getServerPort() : "");
+                (isNotCommonHttpPort() ? ":" + httpServletRequest.getServerPort() : "");
         return String.format("%s%s/register/%s", domain, httpServletRequest.getContextPath(), pendingPerson.getRegisterToken());
+    }
+
+    private boolean isNotCommonHttpPort() {
+        return httpServletRequest.getServerPort() != 80 && httpServletRequest.getServerPort() != 443;
     }
 
     /**
