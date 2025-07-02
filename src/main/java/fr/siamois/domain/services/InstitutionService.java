@@ -109,27 +109,6 @@ public class InstitutionService {
     }
 
     /**
-     * Finds all members of a given institution.
-     *
-     * @param institution the institution whose members to find
-     * @return a set of persons who are members of the institution
-     */
-    public Set<Person> findMembersOf(Institution institution) {
-
-        Set<Person> result = teamMemberRepository.findAllByInstitution(institution.getId())
-                .stream()
-                .map(TeamMemberRelation::getPerson).collect(Collectors.toSet());
-
-        List<Person> actionManagers = actionManagerRepository.findAllByInstitution(institution).stream()
-                .map(ActionManagerRelation::getPerson)
-                .toList();
-
-        result.addAll(actionManagers);
-
-        return result;
-    }
-
-    /**
      * Finds all relations of a given action unit.
      *
      * @param actionUnit the action unit whose relations to find
@@ -236,8 +215,7 @@ public class InstitutionService {
      * @return the number of members in the institution
      */
     public long countMembersInInstitution(Institution institution) {
-        Set<Person> members = findMembersOf(institution);
-        return members.size();
+        return personRepository.countPersonsInInstitution(institution.getId());
     }
 
     /**

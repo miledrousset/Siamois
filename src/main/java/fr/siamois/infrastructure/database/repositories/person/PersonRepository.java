@@ -45,13 +45,6 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
     Optional<Person> findById(long id);
 
-    @Query(
-            nativeQuery = true,
-            value = "SELECT DISTINCT p.* FROM person p " +
-                    "JOIN institution i ON p.person_id = i.fk_manager_id;"
-    )
-    List<Person> findAllInstitutionManagers();
-
     @Modifying
     @Transactional
     @Query(
@@ -86,4 +79,19 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
                     "LIMIT 10"
     )
     Set<Person> findClosestByUsernameLimit10(String input);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT COUNT(DISTINCT p.person_id) " +
+                    "FROM person p " +
+                    "         LEFT JOIN institution_manager im ON p.person_id = im.fk_person_id AND im.fk_institution_id = :institutionId " +
+                    "         LEFT JOIN action_manager am ON p.person_id = am.fk_person_id AND am.fk_institution_id = :institutionId " +
+                    "         LEFT JOIN team_member tm ON p.person_id = tm.fk_person_id " +
+                    "         LEFT JOIN action_unit au ON tm.fk_action_unit_id = au.action_unit_id AND au.fk_institution_id = :institutionId " +
+                    "WHERE (im.fk_person_id IS NOT NULL " +
+                    "    OR am.fk_person_id IS NOT NULL " +
+                    "    OR au.action_unit_id IS NOT NULL) " +
+                    "  AND NOT p.is_super_admin;"
+    )
+    long countPersonsInInstitution(Long institutionId);
 }
