@@ -1,9 +1,7 @@
 package fr.siamois.ui.lazydatamodel;
 
 
-
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import jakarta.faces.application.FacesMessage;

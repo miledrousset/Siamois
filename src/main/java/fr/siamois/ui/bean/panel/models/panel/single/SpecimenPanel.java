@@ -1,21 +1,18 @@
 package fr.siamois.ui.bean.panel.models.panel.single;
 
-import fr.siamois.domain.models.actionunit.ActionUnitFormMapping;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.actionunit.ActionUnitNotFoundException;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
-import fr.siamois.domain.models.form.customfield.*;
-import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerInteger;
-import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectMultiple;
+import fr.siamois.domain.models.form.customfield.CustomFieldDateTime;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectMultiplePerson;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
+import fr.siamois.domain.models.form.customfield.CustomFieldText;
 import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
-import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
-import fr.siamois.domain.models.history.RecordingUnitHist;
 import fr.siamois.domain.models.history.SpecimenHist;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.HistoryService;
@@ -27,14 +24,12 @@ import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
-import fr.siamois.domain.models.exceptions.ErrorProcessingExpansionException;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
-import fr.siamois.ui.lazydatamodel.RecordingUnitInActionUnitLazyDataModel;
 import fr.siamois.utils.MessageUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -47,14 +42,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)

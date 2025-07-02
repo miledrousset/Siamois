@@ -2,14 +2,11 @@ package fr.siamois.ui.bean.panel.models.panel.list;
 
 
 import fr.siamois.domain.models.auth.Person;
-
 import fr.siamois.domain.models.specimen.Specimen;
-
 import fr.siamois.domain.services.BookmarkService;
 import fr.siamois.domain.services.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.person.PersonService;
-
 import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
@@ -18,13 +15,10 @@ import fr.siamois.ui.bean.NavBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
-
 import fr.siamois.ui.lazydatamodel.SpecimenLazyDataModel;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;

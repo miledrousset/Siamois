@@ -2,7 +2,8 @@ package fr.siamois.ui.bean.panel;
 
 
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
-import fr.siamois.ui.bean.panel.models.panel.*;
+import fr.siamois.ui.bean.panel.models.panel.NewActionUnitPanel;
+import fr.siamois.ui.bean.panel.models.panel.WelcomePanel;
 import fr.siamois.ui.bean.panel.models.panel.list.ActionUnitListPanel;
 import fr.siamois.ui.bean.panel.models.panel.list.RecordingUnitListPanel;
 import fr.siamois.ui.bean.panel.models.panel.list.SpatialUnitListPanel;

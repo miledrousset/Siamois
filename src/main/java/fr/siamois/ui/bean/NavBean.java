@@ -12,7 +12,6 @@ import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.ui.bean.converter.InstitutionConverter;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
-import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
 import fr.siamois.ui.bean.settings.InstitutionListSettingsBean;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.context.FacesContext;
