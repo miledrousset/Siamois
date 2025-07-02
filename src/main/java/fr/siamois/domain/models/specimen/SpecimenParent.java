@@ -8,7 +8,6 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.time.OffsetDateTime;
 import java.util.Objects;
