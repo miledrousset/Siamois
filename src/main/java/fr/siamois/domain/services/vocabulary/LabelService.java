@@ -11,6 +11,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service to manage labels for concepts and vocabularies.
+ * This service provides methods to find, update, and create labels for concepts and vocabularies.
+ * It handles the retrieval of labels based on language codes and ensures that default labels are created when necessary.
+ */
 @Service
 public class LabelService {
 
@@ -22,6 +27,14 @@ public class LabelService {
         this.vocabularyLabelRepository = vocabularyLabelRepository;
     }
 
+    /**
+     * Finds the label for a given concept in the specified language.
+     * If no label exists, it returns a default label with the concept's external ID.
+     *
+     * @param concept  the concept to find the label for
+     * @param langCode the language code for the label
+     * @return the found or default label
+     */
     public ConceptLabel findLabelOf(Concept concept, String langCode) {
         if (concept == null) {
             ConceptLabel label = new ConceptLabel();
@@ -46,6 +59,13 @@ public class LabelService {
         return allLabels.get(0);
     }
 
+    /**
+     * Finds the label for a given vocabulary in the specified language.
+     *
+     * @param vocabulary the vocabulary to find the label for
+     * @param langCode   the language code for the label
+     * @return the found or default label
+     */
     public VocabularyLabel findLabelOf(Vocabulary vocabulary, String langCode) {
         if (vocabulary == null) {
             VocabularyLabel label = new VocabularyLabel();
@@ -70,6 +90,13 @@ public class LabelService {
         return allLabels.get(0);
     }
 
+    /**
+     * Updates or creates a label for a concept in the specified language.
+     *
+     * @param concept  the concept to update the label for
+     * @param langCode the language code for the label
+     * @param value    the value of the label
+     */
     public void updateLabel(Concept concept, String langCode, String value) {
         Optional<ConceptLabel> existingLabelOpt = conceptLabelRepository.findByConceptAndLangCode(concept, langCode);
         if (existingLabelOpt.isEmpty()) {
@@ -90,6 +117,13 @@ public class LabelService {
 
     }
 
+    /**
+     * Updates or creates a label for a vocabulary in the specified language.
+     *
+     * @param vocabulary the vocabulary to update the label for
+     * @param langCode   the language code for the label
+     * @param value      the value of the label
+     */
     public void updateLabel(Vocabulary vocabulary, String langCode, String value) {
         Optional<VocabularyLabel> existingLabelOpt = vocabularyLabelRepository.findByVocabularyAndLangCode(vocabulary, langCode);
         if (existingLabelOpt.isEmpty()) {

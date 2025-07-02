@@ -22,6 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Converter for CustomFormLayout, which serializes and deserializes a list of CustomFormPanel objects to and from a JSON string.
+ * This converter is used to store the layout of custom forms in the database.
+ */
 @Converter
 @Component
 @Slf4j
@@ -38,6 +42,7 @@ public class CustomFormLayoutConverter implements AttributeConverter<List<Custom
     private CustomFieldRepository getCustomFieldRepository() {
         return applicationContext.getBean(CustomFieldRepository.class);
     }
+
 
     @Override
     public String convertToDatabaseColumn(List<CustomFormPanel> layout) {
@@ -86,7 +91,8 @@ public class CustomFormLayoutConverter implements AttributeConverter<List<Custom
     @Override
     public List<CustomFormPanel> convertToEntityAttribute(String json) {
         try {
-            List<Map<String, Object>> parsedPanels = objectMapper.readValue(json, new TypeReference<>() {});
+            List<Map<String, Object>> parsedPanels = objectMapper.readValue(json, new TypeReference<>() {
+            });
             return parsedPanels.stream()
                     .map(this::deserializePanel)
                     .toList();
@@ -96,6 +102,7 @@ public class CustomFormLayoutConverter implements AttributeConverter<List<Custom
         }
     }
 
+    @SuppressWarnings("unchecked")
     private CustomFormPanel deserializePanel(Map<String, Object> panelMap) {
         CustomFormPanel panel = new CustomFormPanel();
         panel.setClassName((String) panelMap.get(CLASS_NAME_KEY));
@@ -111,6 +118,7 @@ public class CustomFormLayoutConverter implements AttributeConverter<List<Custom
         return panel;
     }
 
+    @SuppressWarnings("unchecked")
     private CustomRow deserializeRow(Map<String, Object> rowMap) {
         CustomRow row = new CustomRow();
         List<Map<String, Object>> colsList = (List<Map<String, Object>>) rowMap.get("columns");

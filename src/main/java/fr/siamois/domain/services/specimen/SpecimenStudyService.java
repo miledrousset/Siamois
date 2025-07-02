@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service for managing SpecimenStudy entities.
+ * This service provides methods to find and save SpecimenStudy entities.
+ */
 @Service
 public class SpecimenStudyService implements ArkEntityService {
 

@@ -28,6 +28,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service for managing documents in the system.
+ * This service provides methods to save, retrieve, and validate documents,
+ * as well as to handle file uploads and storage.
+ */
 @Slf4j
 @Service
 @Setter
@@ -56,6 +61,11 @@ public class DocumentService implements ArkEntityService {
         return documentRepository.save((Document) toSave);
     }
 
+    /**
+     * Returns a list of supported MIME types for document uploads.
+     *
+     * @return a list of supported MIME types
+     */
     public List<MimeType> supportedMimeTypes() {
         return documentStorage.supportedMimeTypes();
     }
@@ -74,6 +84,18 @@ public class DocumentService implements ArkEntityService {
         return code;
     }
 
+    /**
+     * Saves a file associated with a document.
+     *
+     * @param userInfo        the user information for the operation
+     * @param document        the document to which the file is associated
+     * @param fileInputStream the input stream of the file to be saved
+     * @param contextPath     the context path for the file URL
+     * @return the saved document with updated file information
+     * @throws InvalidFileTypeException if the file type is not supported
+     * @throws InvalidFileSizeException if the file size exceeds the allowed limit
+     * @throws IOException              if an I/O error occurs during file processing
+     */
     public Document saveFile(UserInfo userInfo, Document document, InputStream fileInputStream, String contextPath) throws InvalidFileTypeException, InvalidFileSizeException, IOException {
         log.trace("Started to upload document {} to {}", document.getFileName(), userInfo.getInstitution().getId());
 
@@ -97,8 +119,8 @@ public class DocumentService implements ArkEntityService {
     void checkFileData(Document document) throws InvalidFileTypeException, InvalidFileSizeException {
         List<MimeType> supportedMimeTypes = supportedMimeTypes();
         if (allWildCardIsNotInMimetypes(supportedMimeTypes) && documentMimeTypeIsNotSupported(document)) {
-                throw new InvalidFileTypeException(String.format("Type %s is not allowed", document.getMimeType()));
-            }
+            throw new InvalidFileTypeException(String.format("Type %s is not allowed", document.getMimeType()));
+        }
 
 
         if (document.getFileName().length() > DocumentParent.MAX_FILE_NAME_LENGTH) {
@@ -120,36 +142,84 @@ public class DocumentService implements ArkEntityService {
         return supportedMimeTypes.stream().noneMatch(type -> type.toString().equals("*/*"));
     }
 
+    /**
+     * Finds a file associated with a document.
+     *
+     * @param document the document for which the file is to be found
+     * @return an Optional containing the file if found, or empty if not found
+     */
     public Optional<File> findFile(Document document) {
         return documentStorage.find(document);
     }
 
+    /**
+     * Finds a document by its file code.
+     *
+     * @param fileCode the file code of the document to find
+     * @return an Optional containing the document if found, or empty if not found
+     */
     public Optional<Document> findByFileCode(String fileCode) {
         return documentRepository.findByFileCode(fileCode);
     }
 
+    /**
+     * Finds documents associated with a specific spatial unit.
+     *
+     * @param spatialUnit the spatial unit for which documents are to be found
+     * @return a list of documents associated with the spatial unit
+     */
     public List<Document> findForSpatialUnit(SpatialUnit spatialUnit) {
         return documentRepository.findDocumentsBySpatialUnit(spatialUnit.getId());
     }
 
+    /**
+     * Finds documents associated with a specific action unit.
+     *
+     * @param actionUnit the action unit for which documents are to be found
+     * @return a list of documents associated with the action unit
+     */
     public List<Document> findForActionUnit(ActionUnit actionUnit) {
         return documentRepository.findDocumentsByActionUnit(actionUnit.getId());
     }
 
+    /**
+     * Finds documents associated with a specific recording unit.
+     *
+     * @param recordingUnit the recording unit for which documents are to be found
+     * @return a list of documents associated with the recording unit
+     */
     public List<Document> findForRecordingUnit(RecordingUnit recordingUnit) {
         return documentRepository.findDocumentsByRecordingUnit(recordingUnit.getId());
     }
 
+    /**
+     * Finds documents associated with a specific specimen.
+     *
+     * @param specimen the specimen for which documents are to be found
+     * @return a list of documents associated with the specimen
+     */
     public List<Document> findForSpecimen(Specimen specimen) {
         return documentRepository.findDocumentsBySpecimen(specimen.getId());
     }
 
+    /**
+     * Adds a document to a spatial unit.
+     *
+     * @param document    the document to be added
+     * @param spatialUnit the spatial unit to which the document is to be added
+     */
     public void addToSpatialUnit(Document document, SpatialUnit spatialUnit) {
         documentRepository.addDocumentToSpatialUnit(document.getId(), spatialUnit.getId());
     }
 
+    /**
+     * Finds an InputStream for a document.
+     *
+     * @param document the document for which the InputStream is to be found
+     * @return an Optional containing the InputStream if found, or empty if not found
+     */
     public Optional<InputStream> findInputStreamOfDocument(Document document) {
-        Optional<byte[]> result  = documentStorage.findStreamOf(document);
+        Optional<byte[]> result = documentStorage.findStreamOf(document);
         if (result.isEmpty())
             return Optional.empty();
 
@@ -158,10 +228,21 @@ public class DocumentService implements ArkEntityService {
         return Optional.of(bais);
     }
 
+    /**
+     * Returns the maximum file size allowed for uploads. This limit is set in the application properties.
+     *
+     * @return the maximum file size in bytes
+     */
     public long maxFileSize() {
         return DocumentUtils.byteParser(documentStorage.getMaxUploadSize());
     }
 
+    /**
+     * Finds the appropriate file compressor for a given document based on its MIME type.
+     *
+     * @param document the document for which the compressor is to be found
+     * @return the FileCompressor that matches the document's MIME type
+     */
     public FileCompressor findCompressorOf(Document document) {
         for (FileCompressor fileCompressor : fileCompressors) {
             if (fileCompressor.isMatchingCompressor(document.mimeTypeObject()))
@@ -170,11 +251,25 @@ public class DocumentService implements ArkEntityService {
         throw new IllegalStateException(String.format("No file compressor found for %s", document.getMimeType()));
     }
 
+    /**
+     * Calculates the MD5 checksum of the content of an InputStream.
+     *
+     * @param inputStream the InputStream containing the file content
+     * @return the MD5 checksum as a hexadecimal string
+     * @throws IOException if an I/O error occurs while reading the InputStream
+     */
     public String getMD5Sum(InputStream inputStream) throws IOException {
         BufferedInputStream bis = new BufferedInputStream(inputStream);
         return DocumentUtils.md5(bis);
     }
 
+    /**
+     * Checks if a document with a specific hash exists in a given spatial unit.
+     *
+     * @param spatialUnit the spatial unit in which to check for the document
+     * @param hash        the hash of the document to check
+     * @return true if the document exists in the spatial unit, false otherwise
+     */
     public boolean existInSpatialUnitByHash(SpatialUnit spatialUnit, String hash) {
         return documentRepository.existsByHashInSpatialUnit(spatialUnit.getId(), hash);
     }

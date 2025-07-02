@@ -5,6 +5,9 @@ import fr.siamois.infrastructure.database.repositories.form.FormRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service for managing custom forms.
+ */
 @Service
 public class FormService {
 
@@ -22,7 +25,6 @@ public class FormService {
      */
     @Transactional(readOnly = true)
     public CustomForm findById(long id) {
-
         return formRepository.findById(id).orElse(null);
     }
 

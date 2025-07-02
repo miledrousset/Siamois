@@ -20,6 +20,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * Service for managing field configurations of the vocabulary.
+ */
 @Slf4j
 @Service
 public class FieldConfigurationService {
@@ -51,8 +54,17 @@ public class FieldConfigurationService {
         return conceptDTO.getFieldcode().isPresent();
     }
 
+    /**
+     * Sets up the field configuration for an institution based on the vocabulary.
+     *
+     * @param info       the user information containing institution details
+     * @param vocabulary the vocabulary to use for configuration
+     * @return an Optional containing GlobalFieldConfig if the configuration is wrong, otherwise empty
+     * @throws NotSiamoisThesaurusException      if the vocabulary is not a Siamois thesaurus
+     * @throws ErrorProcessingExpansionException if there is an error processing the vocabulary expansion
+     */
     public Optional<GlobalFieldConfig> setupFieldConfigurationForInstitution(UserInfo info, Vocabulary vocabulary) throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
-        ConceptBranchDTO conceptBranchDTO =  conceptApi.fetchFieldsBranch(vocabulary);
+        ConceptBranchDTO conceptBranchDTO = conceptApi.fetchFieldsBranch(vocabulary);
         GlobalFieldConfig config = createConfigOfThesaurus(conceptBranchDTO);
         if (config.isWrongConfig()) return Optional.of(config);
 
@@ -91,8 +103,17 @@ public class FieldConfigurationService {
         return new GlobalFieldConfig(missingFieldCode, validConcept);
     }
 
+    /**
+     * Sets up the field configuration for a user based on the vocabulary.
+     *
+     * @param info       the user information containing institution and user details
+     * @param vocabulary the vocabulary to use for configuration
+     * @return an Optional containing GlobalFieldConfig if the configuration is wrong, otherwise empty
+     * @throws NotSiamoisThesaurusException      if the vocabulary is not a Siamois thesaurus
+     * @throws ErrorProcessingExpansionException if there is an error processing the vocabulary expansion
+     */
     public Optional<GlobalFieldConfig> setupFieldConfigurationForUser(UserInfo info, Vocabulary vocabulary) throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
-        ConceptBranchDTO conceptBranchDTO =  conceptApi.fetchFieldsBranch(vocabulary);
+        ConceptBranchDTO conceptBranchDTO = conceptApi.fetchFieldsBranch(vocabulary);
         GlobalFieldConfig config = createConfigOfThesaurus(conceptBranchDTO);
         if (config.isWrongConfig()) return Optional.of(config);
 
@@ -115,6 +136,12 @@ public class FieldConfigurationService {
         return Optional.empty();
     }
 
+    /**
+     * Finds the vocabulary URL for a given institution.
+     *
+     * @param institution the institution for which to find the vocabulary URL
+     * @return an Optional containing the vocabulary URL if found, otherwise empty
+     */
     public Optional<String> findVocabularyUrlOfInstitution(Institution institution) {
         Optional<Concept> optConcept = conceptRepository
                 .findTopTermConfigForFieldCodeOfInstitution(institution.getId(), SpatialUnit.CATEGORY_FIELD_CODE);
@@ -123,6 +150,14 @@ public class FieldConfigurationService {
         return Optional.of(vocabulary.getBaseUri() + "/?idt=" + vocabulary.getExternalVocabularyId());
     }
 
+    /**
+     * Finds the configuration for a specific field code for a user.
+     *
+     * @param info      the user information containing institution and user details
+     * @param fieldCode the field code for which to find the configuration
+     * @return the Concept associated with the field code
+     * @throws NoConfigForFieldException if no configuration is found for the field code
+     */
     public Concept findConfigurationForFieldCode(UserInfo info, String fieldCode) throws NoConfigForFieldException {
         Optional<Concept> optConcept = conceptRepository
                 .findTopTermConfigForFieldCodeOfUser(info.getInstitution().getId(),
@@ -140,24 +175,45 @@ public class FieldConfigurationService {
         return optConcept.get();
     }
 
+    /**
+     * Gets the URL of a concept based on its vocabulary and external ID.
+     *
+     * @param c the Concept for which to get the URL
+     * @return the URL of the concept
+     */
     public String getUrlOfConcept(Concept c) {
-        return c.getVocabulary().getBaseUri()+"/?idc="+c.getExternalId()+"&idt="+c.getVocabulary().getExternalVocabularyId();
+        return c.getVocabulary().getBaseUri() + "/?idc=" + c.getExternalId() + "&idt=" + c.getVocabulary().getExternalVocabularyId();
     }
 
+    /**
+     * Gets the URL for a specific field code for a user.
+     *
+     * @param info      the user information containing institution and user details
+     * @param fieldCode the field code for which to get the URL
+     * @return the URL of the concept associated with the field code, or null if no configuration is found
+     */
     public String getUrlForFieldCode(UserInfo info, String fieldCode) {
         try {
             return getUrlOfConcept(findConfigurationForFieldCode(info, fieldCode));
-        } catch(NoConfigForFieldException e) {
+        } catch (NoConfigForFieldException e) {
             return null;
         }
     }
 
+    /**
+     * Fetches autocomplete suggestions for concepts under a given parent concept based on user input.
+     *
+     * @param info          the user information containing language settings
+     * @param parentConcept the parent concept under which to search for children concepts
+     * @param input         the user input to filter concepts
+     * @return a list of concepts that match the input
+     */
     public List<Concept> fetchAutocomplete(UserInfo info, Concept parentConcept, String input) {
         try {
             List<Concept> candidates = conceptService.findDirectSubConceptOf(parentConcept);
             if (StringUtils.isEmpty(input)) return candidates;
 
-            return  candidates
+            return candidates
                     .stream()
                     .filter(c -> labelContainsInputIgnoreCase(info, input, c))
                     .toList();
@@ -172,11 +228,26 @@ public class FieldConfigurationService {
         return labelService.findLabelOf(c, info.getLang()).getValue().toLowerCase().contains(input.toLowerCase());
     }
 
+    /**
+     * Fetches autocomplete suggestions for a specific field code based on user input.
+     *
+     * @param info      the user information containing institution and user details
+     * @param fieldCode the field code for which to fetch autocomplete suggestions
+     * @param input     the user input to filter concepts
+     * @return a list of concepts that match the input
+     * @throws NoConfigForFieldException if no configuration is found for the field code
+     */
     public List<Concept> fetchAutocomplete(UserInfo info, String fieldCode, String input) throws NoConfigForFieldException {
         Concept parentConcept = findConfigurationForFieldCode(info, fieldCode);
         return fetchAutocomplete(info, parentConcept, input);
     }
 
+    /**
+     * Fetches all values (sub-concepts) under a given parent concept.
+     *
+     * @param parent the parent concept under which to search for values
+     * @return a list of concepts that are sub-concepts of the parent
+     */
     public List<Concept> fetchAllValues(Concept parent) {
         ConceptBranchDTO terms;
         try {
@@ -199,6 +270,12 @@ public class FieldConfigurationService {
         return !fullConcept.getIdentifier()[0].getValue().equalsIgnoreCase(parentConcept.getExternalId());
     }
 
+    /**
+     * Checks if a user has a configuration for fields in their institution.
+     *
+     * @param info the user information containing institution details
+     * @return true if the user has a configuration, false otherwise
+     */
     public boolean hasUserConfig(UserInfo info) {
         return fieldRepository.hasUserConfig(info.getUser().getId(), info.getInstitution().getId());
     }

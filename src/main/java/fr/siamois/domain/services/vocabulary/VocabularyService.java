@@ -44,11 +44,24 @@ public class VocabularyService {
         return this.vocabularyRepository.findById(id).orElseThrow(() -> new VocabularyNotFoundException("Vocabulary not found with ID: " + id));
     }
 
+    /**
+     * Save a vocabulary if it does not exist, or return the existing one.
+     *
+     * @param vocabulary The vocabulary to save or retrieve
+     * @return The saved or existing vocabulary
+     */
     public Vocabulary saveOrGetVocabulary(Vocabulary vocabulary) {
         Optional<Vocabulary> vocabOpt = vocabularyRepository.findVocabularyByBaseUriAndVocabExternalId(vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId());
         return vocabOpt.orElseGet(() -> vocabularyRepository.save(vocabulary));
     }
 
+    /**
+     * Find or create a vocabulary based on the given URI.
+     *
+     * @param uri The URI of the vocabulary to find or create.
+     * @return The found or created Vocabulary.
+     * @throws InvalidEndpointException If the endpoint is invalid or cannot be reached.
+     */
     public Vocabulary findOrCreateVocabularyOfUri(String uri) throws InvalidEndpointException {
         ThesaurusDTO thesaurus = thesaurusApi.fetchThesaurusInfo(uri);
 

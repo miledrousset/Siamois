@@ -87,6 +87,17 @@ public class PersonService {
         pendingPersonRepository.delete(p);
     }
 
+    /**
+     * Create a new Person in the database.
+     *
+     * @param person The Person to create with a plain password. It will be hashed before saving.
+     * @return The created Person with its ID set.
+     * @throws InvalidUsernameException  if the username is invalid or already exists.
+     * @throws InvalidEmailException     if the email is invalid or already exists.
+     * @throws UserAlreadyExistException if a user with the same username or email already exists.
+     * @throws InvalidPasswordException  if the password does not meet the required criteria.
+     * @throws InvalidNameException      if the name is invalid or does not meet the required criteria.
+     */
     public Person createPerson(Person person) throws InvalidUsernameException, InvalidEmailException, UserAlreadyExistException, InvalidPasswordException, InvalidNameException {
         person.setId(-1L);
 
@@ -140,6 +151,7 @@ public class PersonService {
 
     /**
      * Find a person by its ID
+     *
      * @param id The ID of the person
      * @return The person having the given ID
      */
@@ -147,12 +159,29 @@ public class PersonService {
         return personRepository.findById(id).orElse(null);
     }
 
+    /**
+     * Update a Person in the database.
+     *
+     * @param person The Person to update. It must have an ID set.
+     * @throws UserAlreadyExistException if a user with the same username or email already exists.
+     * @throws InvalidNameException      if the name is invalid or does not meet the required criteria.
+     * @throws InvalidPasswordException  if the password does not meet the required criteria.
+     * @throws InvalidUsernameException  if the username is invalid or already exists.
+     * @throws InvalidEmailException     if the email is invalid or already exists.
+     */
     public void updatePerson(Person person) throws UserAlreadyExistException, InvalidNameException, InvalidPasswordException, InvalidUsernameException, InvalidEmailException {
         checkPersonData(person);
 
         personRepository.save(person);
     }
 
+    /**
+     * Check if the given plain password matches the hashed password of the person.
+     *
+     * @param person        The Person whose password is to be checked.
+     * @param plainPassword The plain password to check against the hashed password.
+     * @return true if the plain password matches the hashed password, false otherwise.
+     */
     public boolean passwordMatch(Person person, String plainPassword) {
         return passwordEncoder.matches(plainPassword, person.getPassword());
     }
@@ -164,6 +193,13 @@ public class PersonService {
         return Optional.empty();
     }
 
+    /**
+     * Update the password of a Person.
+     *
+     * @param person      The Person whose password is to be updated. The person must have an ID set.
+     * @param newPassword The new plain password to set for the person.
+     * @throws InvalidPasswordException if the new password does not meet the required criteria.
+     */
     public void updatePassword(Person person, String newPassword) throws InvalidPasswordException {
         PasswordVerifier verifier = findPasswordVerifier().orElseThrow(() -> new IllegalStateException("Password verifier is not defined"));
 
@@ -176,6 +212,12 @@ public class PersonService {
         personRepository.save(person);
     }
 
+    /**
+     * Create or get the settings of a Person.
+     *
+     * @param person The Person for whom to create or get the settings.
+     * @return The PersonSettings object for the given person.
+     */
     public PersonSettings createOrGetSettingsOf(Person person) {
         Optional<PersonSettings> personSettings = personSettingsRepository.findByPerson(person);
         if (personSettings.isPresent()) return personSettings.get();
@@ -197,15 +239,33 @@ public class PersonService {
         return institutions.isEmpty() ? null : institutions.stream().findFirst().orElseThrow(IllegalStateException::new);
     }
 
+    /**
+     * Update the settings of a Person.
+     *
+     * @param personSettings The PersonSettings to update. It must have a Person set.
+     * @return The updated PersonSettings object.
+     */
     public PersonSettings updatePersonSettings(PersonSettings personSettings) {
         log.trace("Updating person settings {}", personSettings.getPerson().getUsername());
         return personSettingsRepository.save(personSettings);
     }
 
+    /**
+     * Find a Person by its email.
+     *
+     * @param email The email of the person to find.
+     * @return An Optional containing the Person if found, or empty if not found.
+     */
     public Optional<Person> findByEmail(String email) {
         return personRepository.findByEmailIgnoreCase(email);
     }
 
+    /**
+     * Find a Person by its username or email. Case-insensitive. Uses the pg_trgm extension for fuzzy matching.
+     *
+     * @param usernameOrMailInput The username or email of the person to find.
+     * @return An Optional containing the Person if found, or empty if not found.
+     */
     public List<Person> findClosestByUsernameOrEmail(String usernameOrMailInput) {
         if (usernameOrMailInput == null || usernameOrMailInput.isBlank()) {
             return List.of();

@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service for managing ARK (Archival Resource Key) assignments to entities within an institution.
+ * This service iterates through various entity services to assign ARKs to entities that do not have one.
+ */
 @Service
 public class ArkManagerService {
 
@@ -25,6 +29,11 @@ public class ArkManagerService {
         this.arkService = arkService;
     }
 
+    /**
+     * Adds ARK to entities that do not have one in the specified institution.
+     *
+     * @param institution the institution for which to add ARKs to entities
+     */
     public void addArkToEntitiesWithoutArk(Institution institution) {
         InstitutionSettings settings = institutionService.createOrGetSettingsOf(institution);
 
