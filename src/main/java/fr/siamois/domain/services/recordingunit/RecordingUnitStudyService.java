@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service for managing RecordingUnitStudy entities.
+ * This service provides methods to find RecordingUnitStudy entities without an associated Ark,
+ */
 @Service
 public class RecordingUnitStudyService implements ArkEntityService {
     private final RecordingUnitStudyRepository recordingUnitStudyRepository;

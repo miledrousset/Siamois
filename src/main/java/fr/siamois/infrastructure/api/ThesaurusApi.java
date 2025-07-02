@@ -47,6 +47,13 @@ public class ThesaurusApi {
         }
     }
 
+    /**
+     * Fetch thesaurus information based on the provided URI.
+     *
+     * @param uri The URI of the thesaurus, which should contain the idt parameter.
+     * @return ThesaurusDTO containing the information of the thesaurus.
+     * @throws InvalidEndpointException If the URI is invalid or if the thesaurus information cannot be fetched.
+     */
     public ThesaurusDTO fetchThesaurusInfo(String uri) throws InvalidEndpointException {
         URI uriObj;
         try {
@@ -67,7 +74,7 @@ public class ThesaurusApi {
         Optional<ThesaurusDTO> result = fetchThesaurusInfo(host, externalId);
         if (result.isEmpty()) {
             throw new InvalidEndpointException(
-                    String.format("Could not fetch thesaurus info of %s from the API %s", externalId ,host)
+                    String.format("Could not fetch thesaurus info of %s from the API %s", externalId, host)
             );
         }
         return result.get();
@@ -87,6 +94,14 @@ public class ThesaurusApi {
         return uriObj.getRawQuery() == null || uriObj.getRawQuery().isEmpty() || !uriObj.getRawQuery().contains("idt");
     }
 
+    /**
+     * Fetch thesaurus information based on the server and idThesaurus.
+     *
+     * @param server      The server URL where the thesaurus is hosted.
+     * @param idThesaurus The ID of the thesaurus to fetch.
+     * @return An Optional containing the ThesaurusDTO if found, otherwise empty.
+     * @throws InvalidEndpointException If the server URL is invalid or if the thesaurus information cannot be fetched.
+     */
     public Optional<ThesaurusDTO> fetchThesaurusInfo(String server, String idThesaurus) throws InvalidEndpointException {
         List<ThesaurusDTO> publicThesaurus = fetchAllPublicThesaurus(server);
 

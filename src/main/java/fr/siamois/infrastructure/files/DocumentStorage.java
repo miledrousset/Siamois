@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service to manage document storage.
+ * Handles saving, finding, and compressing documents.
+ */
 @Slf4j
 @Service
 public class DocumentStorage {
@@ -37,6 +41,11 @@ public class DocumentStorage {
         this.compressors = compressors;
     }
 
+    /**
+     * Returns the list of supported MIME types for document storage.
+     *
+     * @return List of supported MIME types.
+     */
     public List<MimeType> supportedMimeTypes() {
         List<MimeType> types = new ArrayList<>();
         for (String mimeType : mimeTypes) {
@@ -45,6 +54,14 @@ public class DocumentStorage {
         return types;
     }
 
+    /**
+     * Saves a document to the storage.
+     *
+     * @param userInfo User information for the document creator.
+     * @param document Document object containing metadata and file information.
+     * @param content  InputStream containing the document content.
+     * @throws IOException If an I/O error occurs during saving the document.
+     */
     public void save(UserInfo userInfo, Document document, InputStream content) throws IOException {
         byte[] bytes = compressAndSetStoredName(document, content);
         ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
@@ -89,6 +106,12 @@ public class DocumentStorage {
         throw new IllegalStateException("Unsupported mime type: " + type);
     }
 
+    /**
+     * Finds a document file in the storage based on the Document object.
+     *
+     * @param document Document object containing metadata to locate the file.
+     * @return Optional containing the File if found, otherwise empty.
+     */
     public Optional<File> find(Document document) {
         Path filePath = Paths.get(
                 documentsPath,
@@ -105,6 +128,12 @@ public class DocumentStorage {
         return Optional.empty();
     }
 
+    /**
+     * Finds the byte stream of a file based on its Document object.
+     *
+     * @param document Document object containing metadata to locate the file.
+     * @return Optional containing the byte array of the file if found, otherwise empty.
+     */
     public Optional<byte[]> findStreamOf(Document document) {
         Optional<File> file = find(document);
         if (file.isEmpty())

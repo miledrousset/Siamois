@@ -16,6 +16,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Service for managing history operations.
+ * This service provides methods to retrieve history operations for various entities
+ * such as Action Unit, Recording Unit, Spatial Unit, and Specimen.
+ */
 @Slf4j
 @Service
 public class HistoryService {
@@ -40,7 +45,15 @@ public class HistoryService {
         this.globalHistoryRepository = globalHistoryRepository;
     }
 
-
+    /**
+     * Finds all history operations of a user and team between specified start and end times.
+     *
+     * @param info  the user information
+     * @param start the start time of the period
+     * @param end   the end time of the period
+     * @return a list of history operations
+     * @throws SQLException if there is an error accessing the database
+     */
     public List<HistoryOperation> findAllOperationsOfUserAndTeamBetween(UserInfo info, OffsetDateTime start, OffsetDateTime end) throws SQLException {
         if (start.isAfter(end)) return new ArrayList<>();
 
@@ -60,15 +73,15 @@ public class HistoryService {
 
     private void addHistoryOperation(List<HistoryOperation> operations, String tableName, String entityName, UserInfo info, OffsetDateTime start, OffsetDateTime end) throws SQLException {
         globalHistoryRepository.findAllHistoryOfUserBetween("history_" + tableName, info, start, end).forEach(entry ->
-                        operations.add(new HistoryOperation(entry.getUpdateType(),
-                                entityName,
-                                entry.getTableId(),
-                                entry.getUpdateTime()))
-                );
+                operations.add(new HistoryOperation(entry.getUpdateType(),
+                        entityName,
+                        entry.getTableId(),
+                        entry.getUpdateTime()))
+        );
     }
 
     private void addCreateOperation(List<HistoryOperation> operations, String tableName, String entityName, UserInfo info, OffsetDateTime start, OffsetDateTime end) throws SQLException {
-        globalHistoryRepository.findAllCreationOfUserBetween(tableName, info,  start, end).forEach(entity ->
+        globalHistoryRepository.findAllCreationOfUserBetween(tableName, info, start, end).forEach(entity ->
                 operations.add(new HistoryOperation(HistoryUpdateType.CREATE,
                         entityName,
                         entity.getId(),
@@ -81,18 +94,42 @@ public class HistoryService {
             addCreateOperation(operations, tableNames.get(i), entityName.get(i), info, beginTime, endTime);
     }
 
+    /**
+     * Finds the history of a Spatial Unit.
+     *
+     * @param current the current Spatial Unit
+     * @return a list of SpatialUnitHist objects representing the history of the Spatial Unit
+     */
     public List<SpatialUnitHist> findSpatialUnitHistory(SpatialUnit current) {
         return spatialUnitHistoryRepository.findAllByTableId(current.getId());
     }
 
+    /**
+     * Finds the history of an Action Unit.
+     *
+     * @param current the current Action Unit
+     * @return a list of ActionUnitHist objects representing the history of the Action Unit
+     */
     public List<ActionUnitHist> findActionUnitHistory(ActionUnit current) {
         return actionUnitHistoryRepository.findAllByTableId(current.getId());
     }
 
+    /**
+     * Finds the history of a Recording Unit.
+     *
+     * @param current the current Recording Unit
+     * @return a list of RecordingUnitHist objects representing the history of the Recording Unit
+     */
     public List<RecordingUnitHist> findRecordingUnitHistory(RecordingUnit current) {
         return recordingUnitHistoryRepository.findAllByTableId(current.getId());
     }
 
+    /**
+     * Finds the history of a Specimen.
+     *
+     * @param current the current Specimen
+     * @return a list of SpecimenHist objects representing the history of the Specimen
+     */
     public List<SpecimenHist> findSpecimenHistory(Specimen current) {
         return specimenHistoryRepository.findAllByTableId(current.getId());
     }

@@ -28,6 +28,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Service for managing Action Units.
+ * This service provides methods to find, save, and manage Action Units in the system.
+ */
 @Slf4j
 @Service
 public class ActionUnitService implements ArkEntityService {
@@ -43,7 +47,18 @@ public class ActionUnitService implements ArkEntityService {
         this.actionCodeRepository = actionCodeRepository;
     }
 
-
+    /**
+     * Find all Action Units by institution, name, categories, persons, and global search.
+     *
+     * @param institutionId The ID of the institution to filter by
+     * @param name          The name to search for in Action Units
+     * @param categoryIds   The IDs of categories to filter by
+     * @param personIds     The IDs of persons to filter by
+     * @param global        The global search term to filter by
+     * @param langCode      The language code to filter by
+     * @param pageable      The pagination information
+     * @return A page of Action Units matching the criteria
+     */
     @Transactional(readOnly = true)
     public Page<ActionUnit> findAllByInstitutionAndByNameContainingAndByCategoriesAndByGlobalContaining(
             Long institutionId,
@@ -68,6 +83,19 @@ public class ActionUnitService implements ArkEntityService {
         return res;
     }
 
+    /**
+     * Find all Action Units by institution, spatial unit, name, categories, persons, and global search.
+     *
+     * @param institutionId The ID of the institution to filter by
+     * @param spatialUnitId The ID of the spatial unit to filter by
+     * @param name          The name to search for in Action Units
+     * @param categoryIds   The IDs of categories to filter by
+     * @param personIds     The IDs of persons to filter by
+     * @param global        The global search term to filter by
+     * @param langCode      The language code to filter by
+     * @param pageable      The pagination information
+     * @return A page of Action Units matching the criteria
+     */
     @Transactional(readOnly = true)
     public Page<ActionUnit> findAllByInstitutionAndBySpatialUnitAndByNameContainingAndByCategoriesAndByGlobalContaining(
             Long institutionId, Long spatialUnitId,
@@ -98,7 +126,7 @@ public class ActionUnitService implements ArkEntityService {
      * @param id The ID of the action unit
      * @return The ActionUnit having the given ID
      * @throws ActionUnitNotFoundException If no action unit are found for the given id
-     * @throws RuntimeException             If the repository method returns a RuntimeException
+     * @throws RuntimeException            If the repository method returns a RuntimeException
      */
     @Transactional(readOnly = true)
     public ActionUnit findById(long id) {
@@ -110,7 +138,14 @@ public class ActionUnitService implements ArkEntityService {
         }
     }
 
-
+    /**
+     * Save an ActionUnit without a transaction.
+     *
+     * @param info        User information containing the user and institution
+     * @param actionUnit  The ActionUnit to save
+     * @param typeConcept The concept type of the ActionUnit
+     * @return The saved ActionUnit
+     */
     public ActionUnit saveNotTransactional(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
 
         try {
@@ -139,11 +174,25 @@ public class ActionUnitService implements ArkEntityService {
         }
     }
 
+    /**
+     * Save an ActionUnit with a transaction.
+     *
+     * @param info        User information containing the user and institution
+     * @param actionUnit  The ActionUnit to save
+     * @param typeConcept The concept type of the ActionUnit
+     * @return The saved ActionUnit
+     */
     @Transactional
     public ActionUnit save(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
         return saveNotTransactional(info, actionUnit, typeConcept);
     }
 
+    /**
+     * Find all ActionCodes that contain the given query string in their code, ignoring case.
+     *
+     * @param query The query string to search for in ActionCodes
+     * @return A list of ActionCodes that match the query
+     */
     public List<ActionCode> findAllActionCodeByCodeIsContainingIgnoreCase(String query) {
         return actionCodeRepository.findAllByCodeIsContainingIgnoreCase(query);
     }
@@ -151,21 +200,27 @@ public class ActionUnitService implements ArkEntityService {
     private ActionCode saveOrGetActionCode(ActionCode actionCode) {
         Optional<ActionCode> optActionCode = actionCodeRepository.findById(actionCode.getCode()); // We try to get the code
         if (optActionCode.isPresent()) {
-            // We test if the type is the same because it's not possible to modify the type of a code already in the system
-            if(actionCode.getType().equals(optActionCode.get().getType())) {
+            // We test if the type is the same because it's not possible to modify the type of code already in the system
+            if (actionCode.getType().equals(optActionCode.get().getType())) {
                 // If the type matches it's fine, we return it.
                 return optActionCode.get();
-            }
-            else {
+            } else {
                 throw new FailedActionUnitSaveException("Code exists but type does not match");
             }
-        }
-        else {
+        } else {
             // SAVE THE CODE
             return actionCodeRepository.save(actionCode);
         }
     }
 
+    /**
+     * Save an ActionUnit with its primary action code and a list of secondary action codes.
+     *
+     * @param actionUnit           The ActionUnit to save
+     * @param secondaryActionCodes The list of secondary ActionCodes to associate with the ActionUnit
+     * @param info                 User information containing the user and institution
+     * @return The saved ActionUnit
+     */
     @Transactional
     public ActionUnit save(ActionUnit actionUnit, List<ActionCode> secondaryActionCodes, UserInfo info) {
 
@@ -188,11 +243,7 @@ public class ActionUnitService implements ArkEntityService {
             // 1. Remove the ones that are not linked to the action unit anymore
             currentSecondaryActionCodes.removeIf(actionCode -> !secondaryActionCodes.contains(actionCode));
             // 2. Add the ones that were not present
-            secondaryActionCodes.forEach(actionCode -> {
-                if (!currentSecondaryActionCodes.contains(actionCode)) {
-                    currentSecondaryActionCodes.add(actionCode);
-                }
-            });
+            currentSecondaryActionCodes.addAll(secondaryActionCodes);
 
             // Update action code secondary codes set
             actionUnit.setSecondaryActionCodes(new HashSet<>());
@@ -212,28 +263,64 @@ public class ActionUnitService implements ArkEntityService {
         }
     }
 
+    /**
+     * Find an ActionUnit by its ARK.
+     *
+     * @param ark The ARK of the ActionUnit to find
+     * @return An Optional containing the ActionUnit if found, or empty if not found
+     */
     public Optional<ActionUnit> findByArk(Ark ark) {
         return actionUnitRepository.findByArk(ark);
     }
 
+    /**
+     * Find all ActionUnits that do not have an ARK associated with them.
+     *
+     * @param institution The institution to filter ActionUnits by
+     * @return A list of ActionUnits that do not have an ARK associated with them
+     */
     @Override
     public List<ActionUnit> findWithoutArk(Institution institution) {
         return actionUnitRepository.findAllByArkIsNullAndCreatedByInstitution(institution);
     }
 
+    /**
+     * Save an ActionUnit.
+     *
+     * @param toSave The ActionUnit to save
+     * @return The saved ActionUnit
+     */
     @Override
     public ArkEntity save(ArkEntity toSave) {
         return actionUnitRepository.save((ActionUnit) toSave);
     }
 
+    /**
+     * Count the number of ActionUnits created by a specific institution.
+     *
+     * @param institution The institution to count ActionUnits for
+     * @return The count of ActionUnits created by the institution
+     */
     public long countByInstitution(Institution institution) {
         return actionUnitRepository.countByCreatedByInstitution(institution);
     }
 
+    /**
+     * Count the number of ActionUnits associated with a specific SpatialUnit.
+     *
+     * @param spatialUnit The SpatialUnit to count ActionUnits for
+     * @return The count of ActionUnits associated with the SpatialUnit
+     */
     public long countBySpatialContext(SpatialUnit spatialUnit) {
         return actionUnitRepository.countBySpatialContext(spatialUnit.getId());
     }
 
+    /**
+     * Find all ActionUnits created by a specific institution.
+     *
+     * @param institution The institution to find ActionUnits for
+     * @return A set of ActionUnits created by the institution
+     */
     public Set<ActionUnit> findAllByInstitution(Institution institution) {
         return actionUnitRepository.findByCreatedByInstitution(institution);
     }

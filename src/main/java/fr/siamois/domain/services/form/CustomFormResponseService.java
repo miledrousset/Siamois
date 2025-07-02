@@ -16,6 +16,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * Service for managing custom form responses.
+ * This service handles the creation, updating, and deletion of custom field answers
+ * associated with a custom form response.
+ */
 @Service
 public class CustomFormResponseService {
 
@@ -92,10 +97,10 @@ public class CustomFormResponseService {
     }
 
     private void saveAnswer(CustomField managedField,
-                           CustomFormResponse customFormResponse,
-                           CustomFormResponse managedFormResponse,
-                           Map<CustomField, CustomFieldAnswer> toBeDeleted
-                           ) {
+                            CustomFormResponse customFormResponse,
+                            CustomFormResponse managedFormResponse,
+                            Map<CustomField, CustomFieldAnswer> toBeDeleted
+    ) {
         CustomFieldAnswer answer = customFormResponse.getAnswers().get(managedField); // get answer
 
         if (answer != null) {
@@ -124,7 +129,12 @@ public class CustomFormResponseService {
         }
     }
 
-    // Process the form response and its answers. By removing answers that are not part of the form.
+    /**
+     * Process the form response and its answers. By removing answers that are not part of the form.
+     *
+     * @param managedFormResponse the managed form response that is saved
+     * @param customFormResponse  the custom form response that is being saved
+     */
     public void saveFormResponse(CustomFormResponse managedFormResponse, CustomFormResponse customFormResponse) {
 
         // get form
@@ -132,10 +142,9 @@ public class CustomFormResponseService {
         Map<CustomField, CustomFieldAnswer> toBeDeleted;
 
         Optional<CustomForm> optManagedForm = customFormRepository.findById(customFormResponse.getForm().getId());
-        if(optManagedForm.isPresent()) {
+        if (optManagedForm.isPresent()) {
             managedForm = optManagedForm.get();
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("CustomForm not found");
         }
         managedFormResponse.setForm(managedForm);

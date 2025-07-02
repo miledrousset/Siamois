@@ -8,8 +8,8 @@ import java.util.Map;
 /**
  * <p>Uses the NOID CHECK DIGIT ALGORITHM to create control character</p>
  *
- * @see <a href="https://metacpan.org/dist/Noid/view/noid#NOID-CHECK-DIGIT-ALGORITHM">NOID CHECK DIGIT ALGORITHM</a>
  * @author Julien Linget
+ * @see <a href="https://metacpan.org/dist/Noid/view/noid#NOID-CHECK-DIGIT-ALGORITHM">NOID CHECK DIGIT ALGORITHM</a>
  */
 @Service
 public class NoidCheckService {
@@ -24,6 +24,12 @@ public class NoidCheckService {
         }
     }
 
+    /**
+     * Calculates the check digit for a given identifier using the NOID CHECK DIGIT ALGORITHM.
+     *
+     * @param identifier the identifier for which to calculate the check digit
+     * @return the check digit as a character
+     */
     public String calculateCheckDigit(String identifier) {
         char[] idArray = identifier.toLowerCase().toCharArray();
         int sum = 0;

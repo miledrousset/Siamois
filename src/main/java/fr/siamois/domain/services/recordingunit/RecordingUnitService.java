@@ -83,6 +83,12 @@ public class RecordingUnitService implements ArkEntityService {
         return recordingUnitRepository.findAllByActionUnit(actionUnit);
     }
 
+    /**
+     * Generate the next identifier for a recording unit.
+     *
+     * @param recordingUnit The recording unit for which to generate the next identifier.
+     * @return The next identifier for the recording unit.
+     */
     public int generateNextIdentifier(RecordingUnit recordingUnit) {
         // Generate next identifier
         Integer currentMaxIdentifier = recordingUnitRepository.findMaxUsedIdentifierByAction(recordingUnit.getActionUnit().getId());
@@ -93,12 +99,29 @@ public class RecordingUnitService implements ArkEntityService {
         return (nextIdentifier);
     }
 
+    /**
+     * Bulk update the type of multiple recording units.
+     *
+     * @param ids  The list of IDs of the recording units to update.
+     * @param type The new type to set for the recording units.
+     * @return The number of recording units updated.
+     */
     @Transactional
     public int bulkUpdateType(List<Long> ids, Concept type) {
         return recordingUnitRepository.updateTypeByIds(type.getId(), ids);
     }
 
-    @Transactional()
+    /**
+     * Save a recording unit with its associated concept and related units.
+     *
+     * @param recordingUnit    The recording unit to save.
+     * @param concept          The concept associated with the recording unit.
+     * @param anteriorUnits    List of recording units that are considered as "anterior" to the current one.
+     * @param synchronousUnits List of recording units that are considered as "synchronous" to the current one.
+     * @param posteriorUnits   List of recording units that are considered as "posterior" to the current one.
+     * @return The saved RecordingUnit instance.
+     */
+    @Transactional
     public RecordingUnit save(RecordingUnit recordingUnit, Concept concept,
                               List<RecordingUnit> anteriorUnits,
                               List<RecordingUnit> synchronousUnits,
@@ -138,9 +161,9 @@ public class RecordingUnitService implements ArkEntityService {
 
             // many to many (need managed instances)
             managedRecordingUnit.setAuthors((List<Person>) personRepository.findAllById(
-                    recordingUnit.getAuthors().stream()
-                            .map(Person::getId)
-                            .toList()
+                            recordingUnit.getAuthors().stream()
+                                    .map(Person::getId)
+                                    .toList()
                     )
             );
             managedRecordingUnit.setExcavators((List<Person>) personRepository.findAllById(
@@ -220,10 +243,27 @@ public class RecordingUnitService implements ArkEntityService {
         return recordingUnitRepository.save((RecordingUnit) toSave);
     }
 
+    /**
+     * Count the number of recording units created by a specific institution.
+     *
+     * @param institution The institution for which to count the recording units.
+     * @return The count of recording units created by the specified institution.
+     */
     public long countByInstitution(Institution institution) {
         return recordingUnitRepository.countByCreatedByInstitution(institution);
     }
 
+    /**
+     * Find all recording units by institution and filter by full identifier, categories, and global search.
+     *
+     * @param institutionId  The ID of the institution to filter by.
+     * @param fullIdentifier The full identifier to search for (can be partial).
+     * @param categoryIds    The IDs of categories to filter by (can be null).
+     * @param global         The global search term to filter by (can be null).
+     * @param langCode       The language code for localization (can be null).
+     * @param pageable       The pagination information.
+     * @return A page of RecordingUnit matching the criteria.
+     */
     @Transactional
     public Page<RecordingUnit> findAllByInstitutionAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
             Long institutionId,
@@ -248,6 +288,18 @@ public class RecordingUnitService implements ArkEntityService {
         return res;
     }
 
+    /**
+     * Find all recording units by institution, action unit, full identifier, categories, and global search.
+     *
+     * @param institutionId  The ID of the institution to filter by.
+     * @param actionId       The ID of the action unit to filter by.
+     * @param fullIdentifier The full identifier to search for (can be partial).
+     * @param categoryIds    The IDs of categories to filter by (can be null).
+     * @param global         The global search term to filter by (can be null).
+     * @param langCode       The language code for localization (can be null).
+     * @param pageable       The pagination information.
+     * @return A page of RecordingUnit matching the criteria.
+     */
     @Transactional
     public Page<RecordingUnit> findAllByInstitutionAndByActionUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
             Long institutionId,

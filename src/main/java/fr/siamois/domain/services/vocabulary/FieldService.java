@@ -46,6 +46,11 @@ public class FieldService {
         }
     }
 
+    /**
+     * Returns all field codes in the application.
+     *
+     * @return a list of field codes
+     */
     public List<String> searchAllFieldCodes() {
         return new ArrayList<>(FIELD_CODES);
     }

@@ -9,6 +9,11 @@ import org.springframework.context.event.EventListener;
 
 import java.util.List;
 
+/**
+ * ApplicationReadyListener is a Spring configuration class that listens for the ApplicationReadyEvent.
+ * It initializes the database using the provided DatabaseInitializer instances when the application is ready.
+ * If any initialization fails, it logs the error and exits the application with a non-zero status.
+ */
 @Slf4j
 @Configuration
 public class ApplicationReadyListener {
@@ -19,6 +24,11 @@ public class ApplicationReadyListener {
         this.databaseInitializer = initializers;
     }
 
+    /**
+     * onApplicationReady is triggered when the application is fully started.
+     * It calls every DatabaseInitializer's initialize method to set up the database.
+     * If an exception occurs during initialization, it logs the error and exits the application.
+     */
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
         for (DatabaseInitializer initializer : databaseInitializer) {

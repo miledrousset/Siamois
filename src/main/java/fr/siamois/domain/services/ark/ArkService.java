@@ -13,6 +13,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.security.SecureRandom;
 
+/**
+ * Service for managing ARK (Archival Resource Key) generation and validation.
+ * This service provides methods to generate unique ARK qualifiers,
+ */
 @Service
 public class ArkService {
 
@@ -26,6 +30,13 @@ public class ArkService {
 
     private ServletUriComponentsBuilder builder;
 
+    /**
+     * Autowired constructor for ArkService.
+     *
+     * @param noidCheckService   the service for NOID (Name of Identifier) checks
+     * @param arkRepository      the repository for ARK entities
+     * @param institutionService the service for managing institutions
+     */
     @Autowired
     public ArkService(NoidCheckService noidCheckService,
                       ArkRepository arkRepository,
@@ -35,6 +46,14 @@ public class ArkService {
         this.institutionService = institutionService;
     }
 
+    /**
+     * Constructor for ArkService with a custom ServletUriComponentsBuilder for unit tests.
+     *
+     * @param noidCheckService   the service for NOID (Name of Identifier) checks
+     * @param arkRepository      the repository for ARK entities
+     * @param institutionService the service for managing institutions
+     * @param builder            the ServletUriComponentsBuilder to use for building URIs
+     */
     public ArkService(NoidCheckService noidCheckService,
                       ArkRepository arkRepository,
                       InstitutionService institutionService,
@@ -49,6 +68,12 @@ public class ArkService {
         return VALID_CHAR_STR.charAt(RANDOM.nextInt(VALID_CHAR_STR.length()));
     }
 
+    /**
+     * Generates a random ARK qualifier of the specified length.
+     *
+     * @param length the length of the ARK qualifier to generate
+     * @return a random ARK qualifier string
+     */
     private String randomArkQualifier(int length) {
         StringBuilder stringBuilder = new StringBuilder();
         while (stringBuilder.length() < length) {
@@ -62,10 +87,26 @@ public class ArkService {
         return stringBuilder.toString();
     }
 
+    /**
+     * Checks if a given ARK qualifier does not exist in the specified institution.
+     *
+     * @param institution the institution to check against
+     * @param qualifier   the ARK qualifier to check
+     * @return true if the qualifier does not exist in the institution, false otherwise
+     */
     public boolean qualifierNotExistInInstitution(Institution institution, String qualifier) {
         return arkRepository.findByInstitutionAndQualifier(institution.getId(), qualifier).isEmpty();
     }
 
+    /**
+     * Generates a new ARK and saves it to the repository.
+     *
+     * @param settings the institution settings containing ARK configuration
+     * @return the generated and saved ARK
+     * @throws NoArkConfigException        if the institution does not have ARK configuration
+     * @throws TooManyGenerationsException if the maximum number of ARK generations is reached without finding a unique qualifier.
+     *                                     At this point, either the institution's ARK configuration is incorrect, or the ARK size is too small.
+     */
     public Ark generateAndSave(InstitutionSettings settings) throws NoArkConfigException, TooManyGenerationsException {
         Institution institution = settings.getInstitution();
         if (settings.getArkNaan() == null) {
@@ -93,6 +134,12 @@ public class ArkService {
         return arkRepository.save(ark);
     }
 
+    /**
+     * Finds the URI of the ARK based on the given Ark object.
+     *
+     * @param ark the Ark object for which to find the URI
+     * @return the URI of the ARK as a String
+     */
     public String getUriOf(Ark ark) {
         InstitutionSettings settings = institutionService.createOrGetSettingsOf(ark.getCreatingInstitution());
         if (!settings.hasEnabledArkConfig()) {
@@ -117,7 +164,6 @@ public class ArkService {
                 .path(qualifier)
                 .toUriString();
     }
-
 
 
 }

@@ -14,6 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service for managing stratigraphic relationships between recording units.
+ * This service provides methods to retrieve synchronous and asynchronous relationships,
+ * as well as to save or retrieve existing relationships.
+ */
 @Service
 public class StratigraphicRelationshipService {
 
@@ -38,14 +43,16 @@ public class StratigraphicRelationshipService {
         ASYNCHRONOUS_DEDUCTED.setExternalId("SIAMOIS_ASYNCHRONOUS_DEDUCTED");
     }
 
-    public StratigraphicRelationshipService(
-            StratigraphicRelationshipRepository relationshipRepository) {
-
+    public StratigraphicRelationshipService(StratigraphicRelationshipRepository relationshipRepository) {
         this.relationshipRepository = relationshipRepository;
-
     }
 
-
+    /**
+     * Returns a list of recording units that are synchronous with the given unit.
+     *
+     * @param usq the recording unit to check for synchronous relationships
+     * @return a list of recording units that are synchronous with the given unit
+     */
     public List<RecordingUnit> getSynchronousUnits(RecordingUnit usq) {
         List<RecordingUnit> synchronousUnits = new ArrayList<>();
 
@@ -64,6 +71,12 @@ public class StratigraphicRelationshipService {
         return synchronousUnits;
     }
 
+    /**
+     * Returns a list of recording units that are asynchronous with the given unit.
+     *
+     * @param usq the recording unit to check for asynchronous relationships
+     * @return a list of recording units that are asynchronous with the given unit
+     */
     public List<RecordingUnit> getAnteriorUnits(RecordingUnit usq) {
         return relationshipRepository.findByUnit2AndType(usq, ASYNCHRONOUS)
                 .stream()
@@ -71,6 +84,12 @@ public class StratigraphicRelationshipService {
                 .toList();
     }
 
+    /**
+     * Returns a list of recording units that are posterior to the given unit.
+     *
+     * @param usq the recording unit to check for posterior relationships
+     * @return a list of recording units that are posterior to the given unit
+     */
     public List<RecordingUnit> getPosteriorUnits(RecordingUnit usq) {
         return relationshipRepository.findByUnit1AndType(usq, ASYNCHRONOUS)
                 .stream()
@@ -78,6 +97,14 @@ public class StratigraphicRelationshipService {
                 .toList();
     }
 
+    /**
+     * Saves a stratigraphic relationship between two recording units.
+     *
+     * @param unit1 the first recording unit
+     * @param unit2 the second recording unit
+     * @param type  the type of relationship
+     * @return the saved or updated stratigraphic relationship
+     */
     @Transactional
     public StratigraphicRelationship saveOrGet(RecordingUnit unit1, RecordingUnit unit2, Concept type) {
 

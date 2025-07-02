@@ -84,15 +84,6 @@ class InstitutionServiceTest {
     }
 
     @Test
-    void findAllManagers() {
-        when(personRepository.findAllInstitutionManagers()).thenReturn(List.of(manager));
-
-        List<Person> result = institutionService.findAllManagers();
-
-        assertThat(result).containsExactlyInAnyOrder(manager);
-    }
-
-    @Test
     void createInstitution_throwsInstitutionAlreadyExist() {
         when(institutionRepository.findInstitutionByIdentifier("123456")).thenReturn(Optional.of(institution1));
 

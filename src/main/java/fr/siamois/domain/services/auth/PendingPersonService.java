@@ -22,6 +22,9 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Service for managing pending persons. Pending persons are users who have been invited to register but have not yet completed the registration process.
+ */
 @Service
 public class PendingPersonService {
 
@@ -53,7 +56,8 @@ public class PendingPersonService {
 
     /**
      * Generate a random token for the pending person.
-      * @return a random token
+     *
+     * @return a random token
      */
     String generateToken() {
         StringBuilder token;
@@ -77,6 +81,7 @@ public class PendingPersonService {
 
     /**
      * Generate the invitation link for the pending person.
+     *
      * @param pendingPerson the pending person
      * @return the invitation link
      */
@@ -88,6 +93,7 @@ public class PendingPersonService {
 
     /**
      * Create or get a pending person by email.
+     *
      * @param email the email of the pending person
      * @return the pending person
      */
@@ -109,10 +115,11 @@ public class PendingPersonService {
 
     /**
      * Send an invitation email to the pending person with the option to set them as a manager.
+     *
      * @param pendingPerson the pending person
-     * @param institution the institution
-     * @param isManager true if the pending person should be a manager, false otherwise
-     * @param mailLang the language of the email
+     * @param institution   the institution
+     * @param isManager     true if the pending person should be a manager, false otherwise
+     * @param mailLang      the language of the email
      * @return true if the email was sent, false if the invitation already exists
      */
     public boolean sendPendingManagerInstitutionInvite(PendingPerson pendingPerson, Institution institution, boolean isManager, String mailLang) {
@@ -129,9 +136,10 @@ public class PendingPersonService {
 
     /**
      * Send an action manager invitation email to the pending person.
+     *
      * @param pendingPerson the pending person
-     * @param institution the institution
-     * @param mailLang the language of the email
+     * @param institution   the institution
+     * @param mailLang      the language of the email
      * @return true if the email was sent, false if the invitation already exists
      */
     public boolean sendPendingActionManagerInstitutionInvite(PendingPerson pendingPerson, Institution institution, String mailLang) {
@@ -143,6 +151,15 @@ public class PendingPersonService {
         return true;
     }
 
+    /**
+     * Add a pending person to an action unit and send an invitation email if they are not already invited in the institution.
+     *
+     * @param pendingPerson the pending person to invite
+     * @param actionUnit    the action unit to which the pending person is being invited
+     * @param role          the role of the pending person in the action unit
+     * @param mailLang      the language of the email to be sent
+     * @return true if the email was sent, false if the pending person is already invited in the institution
+     */
     public boolean sendPendingActionMemberInvite(PendingPerson pendingPerson, ActionUnit actionUnit, Concept role, String mailLang) {
         Optional<PendingInstitutionInvite> optInvite = pendingInstitutionInviteRepository.findByInstitutionAndPendingPerson(actionUnit.getCreatedByInstitution(), pendingPerson);
         if (optInvite.isPresent()) {
@@ -195,28 +212,57 @@ public class PendingPersonService {
 
     /**
      * Delete a pending person from the database.
+     *
      * @param pendingPerson the pending person to delete
      */
     public void delete(PendingPerson pendingPerson) {
         pendingPersonRepository.delete(pendingPerson);
     }
 
+    /**
+     * Delete a pending institution invite from the database.
+     *
+     * @param pendingInstitutionInvite the pending institution invite to delete
+     */
     public void delete(PendingInstitutionInvite pendingInstitutionInvite) {
         pendingInstitutionInviteRepository.delete(pendingInstitutionInvite);
     }
 
+    /**
+     * Delete a pending action unit attribution from the database.
+     *
+     * @param pendingActionUnitAttribution the pending action unit attribution to delete
+     */
     public void delete(PendingActionUnitAttribution pendingActionUnitAttribution) {
         pendingActionUnitRepository.delete(pendingActionUnitAttribution);
     }
 
+    /**
+     * Find a pending person by their registration token.
+     *
+     * @param token the registration token of the pending person
+     * @return an Optional containing the pending person if found, or empty if not found
+     */
     public Optional<PendingPerson> findByToken(String token) {
         return pendingPersonRepository.findByRegisterToken(token);
     }
 
+    /**
+     * Find all pending institution invites for a given pending person.
+     *
+     * @param pendingPerson the pending person for whom to find institution invites
+     * @return a Set of PendingInstitutionInvite associated with the pending person
+     */
     public Set<PendingInstitutionInvite> findInstitutionsByPendingPerson(PendingPerson pendingPerson) {
         return pendingInstitutionInviteRepository.findAllByPendingPerson(pendingPerson);
     }
 
+    /**
+     * Find all pending action unit attributions for a given pending institution invite.
+     *
+     * @param invite the pending institution invite for which to find action attributions
+     * @return a Set of PendingActionUnitAttribution associated with the pending institution invite
+     */
     public Set<PendingActionUnitAttribution> findActionAttributionsByPendingInvite(PendingInstitutionInvite invite) {
         return pendingActionUnitRepository.findByInstitutionInvite(invite);
     }

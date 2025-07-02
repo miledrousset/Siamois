@@ -6,6 +6,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service for managing custom fields in the context of recording units.
+ * This service provides methods to retrieve custom fields associated with spatial units.
+ */
 @Service
 public class CustomFieldService {
 
@@ -15,7 +19,12 @@ public class CustomFieldService {
         this.customFieldRepository = customFieldRepository;
     }
 
-    // Find all the custom fields used in the recording units in the scope of a spatial unit
+    /**
+     * Finds all custom fields associated with a given spatial unit ID.
+     *
+     * @param spatialUnitId the ID of the spatial unit for which to find custom fields
+     * @return a list of CustomField objects associated with the specified spatial unit ID
+     */
     public List<CustomField> findAllFieldsBySpatialUnitId(Long spatialUnitId) {
         return customFieldRepository.findAllFieldsBySpatialUnitId(spatialUnitId);
     }
