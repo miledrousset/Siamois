@@ -31,7 +31,7 @@ public class PendingPersonService {
     private final PendingPersonRepository pendingPersonRepository;
     private final SecureRandom random = new SecureRandom();
 
-    public static final int MAX_GENERATION = 1000;
+    public static final int MAX_GENERATION = 3000;
     public static final int TOKEN_LENGTH = 20;
     private static final String ALLOWED_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
