@@ -108,46 +108,11 @@ public class InstitutionService {
         }
     }
 
-    /**
-     * Finds all members of a given institution.
-     * This includes : institution managers (excluding super admins), team members, and action managers without duplicate persons.
-     *
-     * @param institution the institution whose members to find
-     * @return a set of persons who are members of the institution
-     */
-    @Transactional(readOnly = true)
-    public Set<Person> findMembersOf(Institution institution) {
-        Set<Person> result = new HashSet<>();
-
-        Set<Person> managersWithoutSuperAdmin = findAllInstitutionManagersOf(institution)
-                .stream()
-                .filter(p -> !p.isSuperAdmin())
-                .collect(Collectors.toSet());
-
-        result.addAll(managersWithoutSuperAdmin);
-        result.addAll(findAllTeamMembersOf(institution));
-        result.addAll(findAllActionManagersAsPersonsOf(institution));
-
-        return result;
-    }
-
     private List<Person> findAllActionManagersAsPersonsOf(Institution institution) {
         return actionManagerRepository.findAllByInstitution(institution)
                 .stream()
                 .map(ActionManagerRelation::getPerson)
                 .toList();
-    }
-
-
-    /**
-     * Finds all institution managers of a given institution.
-     *
-     * @param institution the institution whose managers to find
-     * @return a set of persons who are managers of the institution
-     */
-    @Transactional(readOnly = true)
-    public Set<Person> findAllInstitutionManagersOf(Institution institution) {
-        return institution.getManagers();
     }
 
     private List<Person> findAllTeamMembersOf(Institution institution) {
@@ -263,9 +228,8 @@ public class InstitutionService {
      * @param institution the institution for which to count members
      * @return the number of members in the institution
      */
-    @Transactional(readOnly = true)
     public long countMembersInInstitution(Institution institution) {
-        return findMembersOf(institution).size();
+        return personRepository.countPersonsInInstitution(institution.getId());
     }
 
     /**
