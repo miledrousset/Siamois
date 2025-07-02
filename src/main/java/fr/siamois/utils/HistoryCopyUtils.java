@@ -4,16 +4,23 @@ import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Field;
 
+/**
+ * Utility class to copy attributes from a history object to a target object.
+ * The ID field of the target is set to the tableId of the history.
+ * This is useful for copying data from history records to current entities.
+ */
 public class HistoryCopyUtils {
 
-    private HistoryCopyUtils() {}
+    private HistoryCopyUtils() {
+    }
 
     /**
      * Copy attributes from history to target. The ID field of the target is set to the tableId of the history.
+     *
      * @param history The history object
-     * @param target The target object
-     * @param <A> The type of the history object
-     * @param <B> The type of the target object
+     * @param target  The target object
+     * @param <A>     The type of the history object
+     * @param <B>     The type of the target object
      */
     public static <A, B> void copyAttributesFromHistToTarget(A history, B target) {
         BeanUtils.copyProperties(history, target);
