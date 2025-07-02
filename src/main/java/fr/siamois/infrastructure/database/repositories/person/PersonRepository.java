@@ -45,13 +45,6 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
     Optional<Person> findById(long id);
 
-    @Query(
-            nativeQuery = true,
-            value = "SELECT DISTINCT p.* FROM person p " +
-                    "JOIN institution i ON p.person_id = i.fk_manager_id;"
-    )
-    List<Person> findAllInstitutionManagers();
-
     @Modifying
     @Transactional
     @Query(

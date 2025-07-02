@@ -108,20 +108,6 @@ public class InstitutionService {
         }
     }
 
-    private List<Person> findAllActionManagersAsPersonsOf(Institution institution) {
-        return actionManagerRepository.findAllByInstitution(institution)
-                .stream()
-                .map(ActionManagerRelation::getPerson)
-                .toList();
-    }
-
-    private List<Person> findAllTeamMembersOf(Institution institution) {
-        return teamMemberRepository.findAllByInstitution(institution.getId())
-                .stream()
-                .map(TeamMemberRelation::getPerson)
-                .toList();
-    }
-
     /**
      * Finds all relations of a given action unit.
      *
