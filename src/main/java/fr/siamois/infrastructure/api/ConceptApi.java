@@ -26,6 +26,7 @@ import java.util.Optional;
 
 /**
  * Service to fetch concept information from the API.
+ *
  * @author Julien Linget
  */
 @Slf4j
@@ -36,6 +37,11 @@ public class ConceptApi {
 
     private final ObjectMapper mapper;
 
+    /**
+     * Autowired constructor for ConceptApi.
+     *
+     * @param factory RequestFactory to build the RestTemplate.
+     */
     @Autowired
     public ConceptApi(RequestFactory factory) {
         restTemplate = factory.buildRestTemplate(true);
@@ -43,28 +49,55 @@ public class ConceptApi {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    /**
+     * Constructor for ConceptApi with a custom RestTemplate for testing purposes.
+     *
+     * @param restTemplate RestTemplate to use for API requests.
+     */
     public ConceptApi(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
         mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    /**
+     * Constructor for ConceptApi with a custom ObjectMapper for testing purposes.
+     *
+     * @param factory RequestFactory to build the RestTemplate.
+     * @param mapper  ObjectMapper to use for JSON processing.
+     */
     ConceptApi(RequestFactory factory, ObjectMapper mapper) {
         this.restTemplate = factory.buildRestTemplate(true);
         this.mapper = mapper;
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    /**
+     * Fetches the concepts under the top term of a given concept.
+     *
+     * @param concept the concept for which to fetch the expansion
+     * @return ConceptBranchDTO containing the concepts under the top term
+     * @throws ErrorProcessingExpansionException if there is an error processing the expansion
+     */
     public ConceptBranchDTO fetchConceptsUnderTopTerm(Concept concept) throws ErrorProcessingExpansionException {
         return fetchDownExpansion(concept.getVocabulary(), concept.getExternalId());
     }
 
+    /**
+     * Fetches the down expansion of a concept in a given vocabulary.
+     *
+     * @param vocabulary the vocabulary in which the concept is defined
+     * @param idConcept  the external ID of the concept to expand
+     * @return ConceptBranchDTO containing the expanded concepts
+     * @throws ErrorProcessingExpansionException if there is an error processing the expansion
+     */
     public ConceptBranchDTO fetchDownExpansion(Vocabulary vocabulary, String idConcept) throws ErrorProcessingExpansionException {
         URI uri = URI.create(String.format("%s/openapi/v1/concept/%s/%s/expansion?way=down", vocabulary.getBaseUri(), vocabulary.getExternalVocabularyId(), idConcept));
 
         ResponseEntity<String> response = sendRequestAcceptJson(uri);
 
-        TypeReference<Map<String, FullInfoDTO>> typeReference = new TypeReference<>() {};
+        TypeReference<Map<String, FullInfoDTO>> typeReference = new TypeReference<>() {
+        };
         Map<String, FullInfoDTO> result;
         try {
             result = mapper.readValue(response.getBody(), typeReference);
@@ -85,11 +118,19 @@ public class ConceptApi {
         LabelDTO[] labels;
     }
 
+    /**
+     * Fetches the full information of a concept in a given vocabulary.
+     *
+     * @param vocabulary the vocabulary in which the concept is defined
+     * @param conceptId  the external ID of the concept to fetch
+     * @return FullInfoDTO containing the full information of the concept
+     */
     public FullInfoDTO fetchConceptInfo(Vocabulary vocabulary, String conceptId) {
         URI uri = URI.create(vocabulary.getBaseUri() + String.format("/openapi/v1/concept/%s/%s", vocabulary.getExternalVocabularyId(), conceptId));
         ResponseEntity<String> response = sendRequestAcceptJson(uri);
 
-        TypeReference<Map<String, FullInfoDTO>> typeReference = new TypeReference<>() {};
+        TypeReference<Map<String, FullInfoDTO>> typeReference = new TypeReference<>() {
+        };
 
         try {
             Map<String, FullInfoDTO> result = mapper.readValue(response.getBody(), typeReference);
@@ -124,6 +165,14 @@ public class ConceptApi {
         return Optional.empty();
     }
 
+    /**
+     * Fetches the branch of fields for a given vocabulary.
+     *
+     * @param vocabulary the vocabulary for which to fetch the fields branch
+     * @return ConceptBranchDTO containing the fields branch
+     * @throws NotSiamoisThesaurusException      if the vocabulary is not a Siamois thesaurus
+     * @throws ErrorProcessingExpansionException if there is an error processing the expansion
+     */
     public ConceptBranchDTO fetchFieldsBranch(Vocabulary vocabulary) throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
         URI uri = URI.create(vocabulary.getBaseUri() + String.format("/openapi/v1/thesaurus/%s/topconcept", vocabulary.getExternalVocabularyId()));
 
