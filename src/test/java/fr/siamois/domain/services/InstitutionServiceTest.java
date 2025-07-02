@@ -284,16 +284,7 @@ class InstitutionServiceTest {
         Institution institution = new Institution();
         institution.setId(1L);
 
-        Person person1 = new Person();
-        person1.setId(1L);
-
-        Person person2 = new Person();
-        person2.setId(2L);
-
-        when(teamMemberRepository.findAllByInstitution(institution.getId()))
-                .thenReturn(Set.of(new TeamMemberRelation(actionUnit, person1), new TeamMemberRelation(actionUnit, person2)));
-        when(actionManagerRepository.findAllByInstitution(institution))
-                .thenReturn(Set.of(new ActionManagerRelation(institution, person1)));
+        when(personRepository.countPersonsInInstitution(institution.getId())).thenReturn(2L);
 
         long result = institutionService.countMembersInInstitution(institution);
 
