@@ -46,7 +46,6 @@ public class NewActionUnitPanel extends AbstractPanel {
     private final FlowBean flowBean;
     private final transient FieldConfigurationService fieldConfigurationService;
 
-    private List<CheckboxTreeNode<SpatialUnit>> selectedForAction;
     private Map<SpatialUnit, List<SpatialUnit>> neighborMap;
     private Map<SpatialUnit, CheckboxTreeNode<SpatialUnit>> nodes;
     private transient TreeNode<SpatialUnit> root;
