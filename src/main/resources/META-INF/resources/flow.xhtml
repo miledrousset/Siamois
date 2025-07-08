@@ -202,7 +202,8 @@
                              toggleable="true" closable="true"
                              toggleableHeader="true" collapsed="#{panel.collapsed}">
 
-                        <p:ajax event="close" listener="#{flowBean.closePanelAtIndex(status.index)}"/>
+                        <p:ajax event="close" listener="#{flowBean.closePanelAtIndex(status.index)}" update="flow"
+                                onstart="PF('buiContent').show()" oncomplete="PF('buiContent').hide()"/>
                         <p:ajax event="toggle" listener="#{flowBean.handleToggleOfPanelAtIndex(status.index)}"/>
 
                         <f:facet name="header">
