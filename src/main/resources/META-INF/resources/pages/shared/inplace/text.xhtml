@@ -21,6 +21,14 @@
                 <h:outputText value="#{cc.attrs.answer.value}"/>
             </f:facet>
             <f:facet name="input">
+                <p:commandButton
+                        rendered="#{cc.attrs.panelModel.hasAutoGenerationFunction(cc.attrs.field)}"
+                        icon="pi pi-refresh"
+                        styleClass="rounded-button"
+                        immediate="true"
+                        actionListener="#{cc.attrs.panelModel.generateValueForField(cc.attrs.field, cc.attrs.answer)}"
+                        update="#{cc.attrs.updateTargetsOnBlur}"
+                />
                 <p:inputText value="#{cc.attrs.answer.value}" styleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"  required="true"
                              label="text">
                     <p:ajax event="blur" update="#{cc.attrs.updateTargetsOnBlur}"

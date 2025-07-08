@@ -53,6 +53,18 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
 
     public static final Vocabulary SYSTEM_THESO;
 
+    public boolean hasAutoGenerationFunction(CustomFieldText field) {
+        return field != null && field.getAutoGenerationFunction() != null;
+    }
+
+    public void generateValueForField(CustomFieldText field, CustomFieldAnswerText answer) {
+        if (field != null && field.getAutoGenerationFunction() != null) {
+            String generatedValue = field.generateAutoValue();
+            answer.setValue(generatedValue);
+            setFieldAnswerHasBeenModified(field);
+        }
+    }
+
     static {
         SYSTEM_THESO = new Vocabulary();
         SYSTEM_THESO.setBaseUri("https://thesaurus.mom.fr/");

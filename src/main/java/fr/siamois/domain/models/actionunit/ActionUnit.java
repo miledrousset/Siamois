@@ -1,5 +1,6 @@
 package fr.siamois.domain.models.actionunit;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.document.Document;
@@ -11,6 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -95,6 +97,12 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Override
     public String toString() {
         return String.format("Action Unit %s", displayFullIdentifier());
+    }
+
+    @Transient
+    @JsonIgnore
+    public List<String> getBindableFieldNames() {
+        return List.of("type", "name", "identifier");
     }
 
 }
