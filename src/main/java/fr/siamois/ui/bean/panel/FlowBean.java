@@ -31,6 +31,7 @@ import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.dashboard.DashboardModel;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.event.EventListener;
@@ -173,6 +174,12 @@ public class FlowBean implements Serializable {
             // Ensure the top one is open
             panels.get(0).setCollapsed(false);
         }
+
+        //if fullscreen set this new panel as the active one
+        if(fullscreenPanelIndex >= 0) {
+            fullscreenPanelIndex = 0;
+        }
+
     }
 
 
@@ -300,6 +307,20 @@ public class FlowBean implements Serializable {
         if (panels.size() == 1) {
             panels.get(0).setCollapsed(false);
         }
+        // If no panel left, open the homepanel
+        else if (panels.isEmpty()) {
+            addWelcomePanel();
+            PrimeFaces.current().ajax().update("flow");
+        }
+
+        // If fullscreen, update the whole flow and check that the index is valid
+        if(fullscreenPanelIndex > 0) {
+            if(fullscreenPanelIndex > panels.size() - 1) {
+                fullscreenPanelIndex = 0;
+            }
+            PrimeFaces.current().ajax().update("flow");
+        }
+
     }
 
     public void changeReadWriteMode() {
