@@ -6,6 +6,7 @@ import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
@@ -73,8 +74,9 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     }
 
     protected AbstractSingleEntityPanel(String titleCodeOrTitle, String icon, String panelClass, DocumentCreationBean documentCreationBean,
-                                        SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService) {
-        super(titleCodeOrTitle, icon, panelClass, sessionSettingsBean, fieldConfigurationService);
+                                        SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService,
+                                        SpatialUnitTreeService spatialUnitTreeService) {
+        super(titleCodeOrTitle, icon, panelClass, sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
         this.documentCreationBean = documentCreationBean;
     }
 

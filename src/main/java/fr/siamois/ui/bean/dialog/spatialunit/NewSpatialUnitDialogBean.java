@@ -11,8 +11,9 @@ import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.domain.services.SpatialUnitService;
+import fr.siamois.domain.services.spatialunit.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
@@ -104,8 +105,9 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
                                     FlowBean flowBean,
                                     SessionSettingsBean sessionSettingsBean,
                                     FieldConfigurationService fieldConfigurationService, SpatialUnitService spatialUnitService,
-                                    ActionUnitService actionUnitService, SpecimenService specimenService) {
-        super(sessionSettingsBean, fieldConfigurationService);
+                                    ActionUnitService actionUnitService, SpecimenService specimenService,
+                                    SpatialUnitTreeService spatialUnitTreeService) {
+        super(sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
         this.spatialUnitService = spatialUnitService;
         this.langBean = langBean;
         this.flowBean = flowBean;

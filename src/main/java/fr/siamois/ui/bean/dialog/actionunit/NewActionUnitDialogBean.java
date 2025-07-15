@@ -2,19 +2,17 @@ package fr.siamois.ui.bean.dialog.actionunit;
 
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
-import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
 import fr.siamois.domain.models.form.customfield.CustomFieldText;
-import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerText;
 import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.domain.services.SpatialUnitService;
+import fr.siamois.domain.services.spatialunit.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
@@ -22,9 +20,6 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import fr.siamois.ui.lazydatamodel.BaseActionUnitLazyDataModel;
-import fr.siamois.ui.lazydatamodel.BaseSpatialUnitLazyDataModel;
-import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
-import fr.siamois.ui.lazydatamodel.SpatialUnitParentsLazyDataModel;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.event.AjaxBehaviorEvent;
@@ -36,7 +31,6 @@ import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;
-import javax.swing.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -124,8 +118,9 @@ public class NewActionUnitDialogBean extends AbstractSingleEntity<ActionUnit> im
             FlowBean flowBean,
             SessionSettingsBean sessionSettingsBean,
             FieldConfigurationService fieldConfigurationService, SpatialUnitService spatialUnitService,
-            ActionUnitService actionUnitService, SpecimenService specimenService) {
-        super(sessionSettingsBean, fieldConfigurationService);
+            ActionUnitService actionUnitService, SpecimenService specimenService,
+            SpatialUnitTreeService spatialUnitTreeService) {
+        super(sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
         this.spatialUnitService = spatialUnitService;
         this.langBean = langBean;
         this.flowBean = flowBean;

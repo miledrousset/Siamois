@@ -23,6 +23,7 @@ import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.domain.services.vocabulary.LabelService;
@@ -103,9 +104,10 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
                            FieldService fieldService, RedirectBean redirectBean,
                            LabelService labelService, TeamMembersBean teamMembersBean,
                            HistoryService historyService, DocumentService documentService, RecordingUnitService recordingUnitService,
-                           DocumentCreationBean documentCreationBean) {
+                           DocumentCreationBean documentCreationBean,
+                           SpatialUnitTreeService spatialUnitTreeService) {
         super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel action-unit-single-panel",
-                documentCreationBean, sessionSettingsBean, fieldConfigurationService);
+                documentCreationBean, sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
         this.actionUnitService = actionUnitService;
         this.langBean = langBean;
         this.fieldService = fieldService;

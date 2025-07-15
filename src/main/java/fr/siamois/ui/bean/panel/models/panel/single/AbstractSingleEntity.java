@@ -13,6 +13,7 @@ import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
@@ -23,25 +24,25 @@ import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.model.CheckboxTreeNode;
+import org.primefaces.model.TreeNode;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Data
 @Slf4j
-public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements Serializable {
+public abstract class AbstractSingleEntity<T> extends AbstractPanel implements Serializable {
 
     // Deps
     protected final transient SessionSettingsBean sessionSettingsBean;
     protected final transient FieldConfigurationService fieldConfigurationService;
+    private final transient  SpatialUnitTreeService spatialUnitTreeService;
 
     //--------------- Locals
     protected transient T unit;
@@ -77,20 +78,29 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
         super();
         this.sessionSettingsBean = null;
         this.fieldConfigurationService = null;
+        this.spatialUnitTreeService = null;
 
     }
 
-    protected AbstractSingleEntity(SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService) {
+    protected AbstractSingleEntity(SessionSettingsBean sessionSettingsBean,
+                                   FieldConfigurationService fieldConfigurationService,
+                                   SpatialUnitTreeService spatialUnitTreeService) {
         super();
         this.sessionSettingsBean = sessionSettingsBean;
         this.fieldConfigurationService = fieldConfigurationService;
+        this.spatialUnitTreeService = spatialUnitTreeService;
     }
 
-    protected AbstractSingleEntity(String titleCodeOrTitle, String icon, String panelClass,
-                                   SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService) {
+    protected AbstractSingleEntity(String titleCodeOrTitle,
+                                   String icon,
+                                   String panelClass,
+                                   SessionSettingsBean sessionSettingsBean,
+                                   FieldConfigurationService fieldConfigurationService,
+                                   SpatialUnitTreeService spatialUnitTreeService) {
         super(titleCodeOrTitle, icon, panelClass);
         this.sessionSettingsBean = sessionSettingsBean;
         this.fieldConfigurationService = fieldConfigurationService;
+        this.spatialUnitTreeService = spatialUnitTreeService;
     }
 
     public String formatDate(OffsetDateTime offsetDateTime) {
@@ -98,12 +108,10 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
     }
 
 
-
     public String getAutocompleteClass() {
         // Default implementation
         return "";
     }
-
 
 
     public abstract void initForms();
@@ -113,8 +121,6 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
         // Implement in child classes if necessary
         return List.of();
     }
-
-
 
 
     public void setFieldAnswerHasBeenModified(CustomField field) {
@@ -184,7 +190,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
         return parentConcept != null ? fieldConfigurationService.getUrlOfConcept(parentConcept) : null;
     }
 
-    public static CustomFormResponse initializeFormResponse(CustomForm form, Object jpaEntity) {
+    public CustomFormResponse initializeFormResponse(CustomForm form, Object jpaEntity) {
         CustomFormResponse response = new CustomFormResponse();
         if (form.getLayout() == null) return response;
 
@@ -199,7 +205,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
         return response;
     }
 
-    private static void processPanel(CustomFormPanel panel, Object jpaEntity, List<String> bindableFields, Map<CustomField, CustomFieldAnswer> answers) {
+    private void processPanel(CustomFormPanel panel, Object jpaEntity, List<String> bindableFields, Map<CustomField, CustomFieldAnswer> answers) {
         if (panel.getRows() == null) return;
 
         for (CustomRow row : panel.getRows()) {
@@ -211,7 +217,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
         }
     }
 
-    private static void processColumn(CustomCol col, Object jpaEntity, List<String> bindableFields, Map<CustomField, CustomFieldAnswer> answers) {
+    private void processColumn(CustomCol col, Object jpaEntity, List<String> bindableFields, Map<CustomField, CustomFieldAnswer> answers) {
         CustomField field = col.getField();
         if (field == null || answers.containsKey(field)) return;
 
@@ -230,6 +236,19 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
         answers.put(field, answer);
     }
 
+    private void markSelected(TreeNode<SpatialUnit> node, Set<SpatialUnit> selectedUnits) {
+        if (node == null) return;
+
+        SpatialUnit data = node.getData();
+        if (data != null && selectedUnits.contains(data)) {
+            node.setSelected(true);
+        }
+
+        for (TreeNode<SpatialUnit> child : node.getChildren()) {
+            markSelected(child, selectedUnits);
+        }
+    }
+
     private static void initializeAnswer(CustomFieldAnswer answer, CustomField field) {
         CustomFieldAnswerId answerId = new CustomFieldAnswerId();
         answerId.setField(field);
@@ -237,8 +256,23 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
         answer.setHasBeenModified(false);
     }
 
-    @SuppressWarnings("unchecked")
-    private static void populateSystemFieldValue(CustomFieldAnswer answer, Object jpaEntity, CustomField field) {
+    private List<CheckboxTreeNode<SpatialUnit>> getSelectedNodes(TreeNode<SpatialUnit> root) {
+        List<CheckboxTreeNode<SpatialUnit>> selectedNodes = new ArrayList<>();
+        collectSelectedNodes(root, selectedNodes);
+        return selectedNodes;
+    }
+
+    private void collectSelectedNodes(TreeNode<SpatialUnit> node, List<CheckboxTreeNode<SpatialUnit>> selectedNodes) {
+        if (node instanceof CheckboxTreeNode<SpatialUnit> cbNode && cbNode.isSelected()) {
+            selectedNodes.add(cbNode);
+        }
+
+        for (TreeNode<SpatialUnit> child : node.getChildren()) {
+            collectSelectedNodes(child, selectedNodes);
+        }
+    }
+
+    private void populateSystemFieldValue(CustomFieldAnswer answer, Object jpaEntity, CustomField field) {
         Object value = getFieldValue(jpaEntity, field.getValueBinding());
 
         if (value instanceof OffsetDateTime odt && answer instanceof CustomFieldAnswerDateTime dateTimeAnswer) {
@@ -258,6 +292,19 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
             actionUnitAnswer.setValue(a);
         } else if (value instanceof SpatialUnit s && answer instanceof CustomFieldAnswerSelectOneSpatialUnit spatialUnitAnswer) {
             spatialUnitAnswer.setValue(s);
+        } else if (value instanceof Set<?> set && answer instanceof CustomFieldAnswerSelectMultipleSpatialUnitTree treeAnswer) {
+            // Cast set to the expected type
+            Set<SpatialUnit> selectedSpatialUnits = (Set<SpatialUnit>) set;
+
+            // Build the root tree
+            TreeNode<SpatialUnit> root = spatialUnitTreeService.buildTree();
+
+            // Mark selected nodes based on spatial units
+            markSelected(root, selectedSpatialUnits);
+
+            // Set root and selected nodes into the answer
+            treeAnswer.setRoot(root);
+            treeAnswer.setValue(getSelectedNodes(root));
         }
     }
 
@@ -349,7 +396,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel  implements 
             return new CustomFieldAnswerDateTime();
         } else if (field instanceof CustomFieldSelectOneActionUnit) {
             return new CustomFieldAnswerSelectOneActionUnit();
-        }else if (field instanceof CustomFieldSelectOneSpatialUnit) {
+        } else if (field instanceof CustomFieldSelectOneSpatialUnit) {
             return new CustomFieldAnswerSelectOneSpatialUnit();
         }
 

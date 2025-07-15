@@ -16,11 +16,12 @@ import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.HistoryService;
-import fr.siamois.domain.services.SpatialUnitService;
+import fr.siamois.domain.services.spatialunit.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
@@ -174,12 +175,13 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
                             DocumentCreationBean documentCreationBean,
                             RedirectBean redirectBean,
                             HistoryService historyService,
-                            DocumentService documentService) {
+                            DocumentService documentService,
+                            SpatialUnitTreeService spatialUnitTreeService) {
 
         super("common.entity.specimen",
                 "bi bi-box2",
                 "siamois-panel specimen-panel specimen-single-panel",
-                documentCreationBean, sessionSettingsBean, fieldConfigurationService);
+                documentCreationBean, sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
         this.langBean = langBean;
         this.spatialUnitService = spatialUnitService;
         this.actionUnitService = actionUnitService;

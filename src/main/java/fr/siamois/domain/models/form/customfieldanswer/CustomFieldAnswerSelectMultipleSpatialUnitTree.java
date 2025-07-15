@@ -1,10 +1,10 @@
 package fr.siamois.domain.models.form.customfieldanswer;
 
-import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.primefaces.model.CheckboxTreeNode;
+import org.primefaces.model.TreeNode;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,7 +17,9 @@ import java.util.Objects;
 public class CustomFieldAnswerSelectMultipleSpatialUnitTree extends CustomFieldAnswer {
 
     @Transient
+    // Attention : CheckboxTreeNode<SpatialUnit> est très lié à PrimeFaces, à voir pour ajouter un niveau d'abstraction
     private List<CheckboxTreeNode<SpatialUnit>> value;
+    private transient TreeNode<SpatialUnit> root;
 
     @Override
     public boolean equals(Object o) {
