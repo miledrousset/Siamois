@@ -14,12 +14,14 @@ import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.event.AjaxBehaviorEvent;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Slf4j
+@EqualsAndHashCode(callSuper = true)
 public abstract class AbstractNewUnitDialogBean<T extends TraceableEntity> extends AbstractSingleEntity<T> {
 
     protected BaseLazyDataModel<T> lazyDataModel;
