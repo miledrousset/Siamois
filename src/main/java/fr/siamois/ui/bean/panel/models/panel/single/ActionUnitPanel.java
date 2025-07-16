@@ -169,7 +169,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
 
         } catch (RuntimeException e) {
-            this.errorMessage = "Failed to load spatial unit: " + e.getMessage();
+            this.errorMessage = "Failed to load action unit: " + e.getMessage();
         }
 
 

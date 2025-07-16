@@ -85,7 +85,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
         SYSTEM_THESO.setExternalVocabularyId("th230");
     }
 
-    protected static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-4";
+    public static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-4";
 
     protected AbstractSingleEntity() {
         super();

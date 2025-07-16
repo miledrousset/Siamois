@@ -191,23 +191,6 @@ public class FlowBean implements Serializable {
     }
 
 
-    public void addNewActionUnitPanel(Integer sourcePanelIndex) {
-        addPanel(panelFactory.createNewActionUnitPanel(panels.get(sourcePanelIndex).getBreadcrumb()));
-    }
-
-    public void addNewActionUnitPanel(Long spatialUnitId, Integer sourcePanelIndex) {
-        addPanel(panelFactory.createNewActionUnitPanel(spatialUnitId, panels.get(sourcePanelIndex).getBreadcrumb()));
-    }
-
-    public void addNewActionUnitPanel(Long spatialUnitId, Integer sourcePanelIndex,BaseSpatialUnitLazyDataModel lazyModel) {
-        addPanel(panelFactory.createNewActionUnitPanel(spatialUnitId, panels.get(sourcePanelIndex).getBreadcrumb(), lazyModel));
-    }
-
-
-
-    public void addNewActionUnitPanel(Long spatialUnitId) {
-        addPanel(panelFactory.createNewActionUnitPanel(spatialUnitId, null));
-    }
 
     public void addActionUnitPanel(Long actionUnitId) {
         addPanel(panelFactory.createActionUnitPanel(actionUnitId));

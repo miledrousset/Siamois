@@ -10,6 +10,7 @@ import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.spatialunit.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -62,69 +63,10 @@ public class NewActionUnitDialogBean extends AbstractSingleEntity<ActionUnit> im
     private static final String COLUMN_CLASS_NAME = "ui-g-12";
     private static final String UPDATE_FAILED_MESSAGE_CODE = "common.entity.spatialUnits.updateFailed";
 
-    public String generateRandomActionUnitIdentifier() {
+    public static String generateRandomActionUnitIdentifier() {
         return "2025";
     }
 
-    // ----------- Concepts for system fields
-
-
-    // uni category
-    private Concept actionUnitTypeConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4282386")
-            .build();
-    // unit name
-    private Concept nameConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4285848")
-            .build();
-
-    // action unit id
-    private Concept identifierConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4286193")
-            .build();
-
-    // spatial context
-    private Concept spatialContextConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4286503")
-            .build();
-
-
-    // --------------- Fields
-    private CustomFieldSelectOneFromFieldCode actionUnitTypeField = new CustomFieldSelectOneFromFieldCode.Builder()
-            .label("specimen.field.category")
-            .isSystemField(true)
-            .valueBinding("type")
-            .styleClass("mr-2 action-unit-type-chip")
-            .iconClass("bi bi-box2")
-            .fieldCode(ActionUnit.TYPE_FIELD_CODE)
-            .concept(actionUnitTypeConcept)
-            .build();
-
-    private CustomFieldText nameField = new CustomFieldText.Builder()
-            .label("common.label.name")
-            .isSystemField(true)
-            .valueBinding("name")
-            .concept(nameConcept)
-            .build();
-
-    private CustomFieldText identifierField = new CustomFieldText.Builder()
-            .label("common.label.identifier")
-            .isSystemField(true)
-            .autoGenerationFunction(this::generateRandomActionUnitIdentifier)
-            .valueBinding("identifier")
-            .concept(identifierConcept)
-            .build();
-
-    private CustomFieldSelectMultipleSpatialUnitTree spatialContextField = new CustomFieldSelectMultipleSpatialUnitTree.Builder()
-            .label("common.label.spatialContext")
-            .isSystemField(true)
-            .valueBinding("spatialContext")
-            .concept(spatialContextConcept)
-            .build();
 
 
     public NewActionUnitDialogBean(
@@ -155,48 +97,7 @@ public class NewActionUnitDialogBean extends AbstractSingleEntity<ActionUnit> im
     public void initForms() {
 
         // Details form
-        detailsForm = new CustomForm.Builder()
-                .name("Details tab form")
-                .description("Contains the main form")
-                .addPanel(
-                        new CustomFormPanel.Builder()
-                                .name("common.header.general")
-                                .isSystemPanel(true)
-                                .addRow(
-                                        new CustomRow.Builder()
-                                                .addColumn(new CustomCol.Builder()
-                                                        .readOnly(false)
-                                                        .className(COLUMN_CLASS_NAME)
-                                                        .field(nameField)
-                                                        .build())
-                                                .addColumn(new CustomCol.Builder()
-                                                        .readOnly(false)
-                                                        .className(COLUMN_CLASS_NAME)
-                                                        .field(actionUnitTypeField)
-                                                        .build())
-                                                .addColumn(new CustomCol.Builder()
-                                                        .readOnly(false)
-                                                        .className(COLUMN_CLASS_NAME)
-                                                        .field(identifierField)
-                                                        .build())
-                                                .build()
-                                ).build()
-                )
-                .addPanel(
-                        new CustomFormPanel.Builder()
-                                .name("common.label.spatialContext")
-                                .isSystemPanel(true)
-                                .addRow(
-                                        new CustomRow.Builder()
-                                                .addColumn(new CustomCol.Builder()
-                                                        .readOnly(false)
-                                                        .className(COLUMN_CLASS_NAME)
-                                                        .field(spatialContextField)
-                                                        .build())
-                                                .build()
-                                ).build()
-                )
-                .build();
+        detailsForm = ActionUnit.NEW_UNIT_FORM;
 
         // Init system form answers
         formResponse = initializeFormResponse(detailsForm, unit);
@@ -244,32 +145,18 @@ public class NewActionUnitDialogBean extends AbstractSingleEntity<ActionUnit> im
         initForms();
     }
 
-    // Init when creating with button in table column
-    public void init(String isSetChildrenOrParents,
-                     Long childOrParentId,
+    // Init when creating with button in table, actions column
+    public void init(
+                     Long spatialUnitId,
                      Set<ActionUnit> setToUpdate) {
 
 
         reset();
         unit = new ActionUnit();
-        // Set parents or children based on children or parents
-        if (Objects.equals(isSetChildrenOrParents, "children")
-                && setToUpdate != null
-                && childOrParentId != null) {
-            ActionUnit actionUnitParent = actionUnitService.findById(childOrParentId);
-            unit.setParents(new HashSet<>());
-            unit.getParents().add(actionUnitParent);
-            this.setToUpdate = setToUpdate;
-        } else if (Objects.equals(isSetChildrenOrParents, "parents")
-                && setToUpdate != null
-                && childOrParentId != null) {
-            ActionUnit actionUnitChild = actionUnitService.findById(childOrParentId);
-            unit.setChildren(new HashSet<>());
-            unit.getChildren().add(actionUnitChild);
-            this.setToUpdate = setToUpdate;
-        }
+        unit.getSpatialContext().add(spatialUnitService.findById(spatialUnitId));
         unit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
         unit.setCreatedByInstitution(sessionSettingsBean.getSelectedInstitution());
+        this.setToUpdate = setToUpdate;
         initForms();
     }
 
