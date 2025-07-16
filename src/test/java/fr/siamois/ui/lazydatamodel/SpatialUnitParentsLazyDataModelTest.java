@@ -2,7 +2,7 @@ package fr.siamois.ui.lazydatamodel;
 
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
-import fr.siamois.domain.services.SpatialUnitService;
+import fr.siamois.domain.services.spatialunit.SpatialUnitService;
 import fr.siamois.ui.bean.LangBean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

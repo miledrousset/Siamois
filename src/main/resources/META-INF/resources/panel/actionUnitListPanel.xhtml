@@ -24,11 +24,10 @@
         >
             <f:facet name="rightToolbar">
                 <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
-                                 disabled="#{cc.attrs.disableAddBtn}"
-                                 action="#{flowBean.addNewActionUnitPanel(panelIndex)}"
+                                 actionListener="#{newActionUnitDialogBean.init(panelModel.lazyDataModel)}"
                                  rendered="#{flowBean.readWriteMode == 'WRITE'}"
-                                 oncomplete="handleScrollToTop();"
-                                 update="flow"
+                                 oncomplete="PF('newActionUnitDiag').show()"
+                                 update="newActionUnitForm"
                                  style="margin-right: .5rem">
                 </p:commandButton>
             </f:facet>

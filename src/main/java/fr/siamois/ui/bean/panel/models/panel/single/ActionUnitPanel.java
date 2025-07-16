@@ -23,6 +23,7 @@ import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.domain.services.vocabulary.LabelService;
@@ -85,11 +86,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     private Boolean editType;
     private Concept fType;
 
-    // form
-    private CustomFieldText nameField;
-    private Concept nameConcept;
-    private CustomFieldSelectOneFromFieldCode typeField;
-    private Concept actionUnitTypeConcept;
 
     private transient List<ActionCode> secondaryActionCodes;
 
@@ -103,9 +99,10 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
                            FieldService fieldService, RedirectBean redirectBean,
                            LabelService labelService, TeamMembersBean teamMembersBean,
                            HistoryService historyService, DocumentService documentService, RecordingUnitService recordingUnitService,
-                           DocumentCreationBean documentCreationBean) {
+                           DocumentCreationBean documentCreationBean,
+                           SpatialUnitTreeService spatialUnitTreeService) {
         super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel action-unit-single-panel",
-                documentCreationBean, sessionSettingsBean, fieldConfigurationService);
+                documentCreationBean, sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
         this.actionUnitService = actionUnitService;
         this.langBean = langBean;
         this.fieldService = fieldService;
@@ -167,7 +164,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
 
         } catch (RuntimeException e) {
-            this.errorMessage = "Failed to load spatial unit: " + e.getMessage();
+            this.errorMessage = "Failed to load action unit: " + e.getMessage();
         }
 
 
@@ -180,10 +177,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         try {
             activeTabIndex = 0;
 
-
-            nameConcept = new Concept();
-            nameConcept.setExternalId("SYSTEM_NAME");
-            nameConcept.setVocabulary(SYSTEM_THESO);
 
 
             if (idunit == null) {
@@ -234,74 +227,10 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     @Override
     public void initForms() {
 
-        // Get from from DB in futur iteration
-
-        // Init details tab form
-
-        CustomFormPanel mainPanel = new CustomFormPanel();
-        mainPanel.setIsSystemPanel(true);
-        mainPanel.setName("common.header.general");
-        // One row
-        CustomRow row1 = new CustomRow();
-        // Two cols
-
-        CustomCol col1 = new CustomCol();
-        nameField = new CustomFieldText();
-        nameField.setIsSystemField(true);
-        nameField.setLabel("spatialunit.field.name");
-        col1.setField(nameField);
-        col1.setClassName(COLUMN_CLASS_NAME);
-
-        CustomCol col2 = new CustomCol();
-        typeField = new CustomFieldSelectOneFromFieldCode();
-        typeField.setLabel("spatialunit.field.type");
-        typeField.setIsSystemField(true);
-        typeField.setFieldCode(ActionUnit.TYPE_FIELD_CODE);
-        col2.setField(typeField);
-        col2.setClassName(COLUMN_CLASS_NAME);
-
-        row1.setColumns(List.of(col1, col2));
-        mainPanel.setRows(List.of(row1));
-
-
-        // init overveiw tab form
-
-        CustomFormPanel mainOverviewPanel = new CustomFormPanel();
-        mainOverviewPanel.setIsSystemPanel(true);
-        mainOverviewPanel.setName("common.header.general");
-        // One row
-        CustomRow row2 = new CustomRow();
-        // one cols
-        CustomCol col3 = new CustomCol();
-        col3.setReadOnly(true);
-        col3.setField(typeField);
-        col3.setClassName(COLUMN_CLASS_NAME);
-        row2.setColumns(List.of(col3));
-        mainOverviewPanel.setRows(List.of(row2));
-
-        overviewForm = new CustomForm.Builder()
-                .name("Overview tab form")
-                .description("Contains the overview")
-                .addPanel(mainOverviewPanel)
-                .build();
-        detailsForm = new CustomForm.Builder()
-                .name("Overview tab form")
-                .description("Contains the overview")
-                .addPanel(mainPanel)
-                .build();
-
-        // Init form answers
-        formResponse = new CustomFormResponse();
-        Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
-        CustomFieldAnswerText nameAnswer = new CustomFieldAnswerText();
-        CustomFieldAnswerSelectOneFromFieldCode typeAnswer = new CustomFieldAnswerSelectOneFromFieldCode();
-        nameAnswer.setValue(unit.getName());
-        nameAnswer.setHasBeenModified(false);
-        answers.put(nameField, nameAnswer);
-        typeAnswer.setValue(unit.getType());
-        typeAnswer.setHasBeenModified(false);
-        answers.put(typeField, typeAnswer);
-        formResponse.setAnswers(answers);
+        overviewForm = ActionUnit.OVERVIEW_FORM;
+        detailsForm = ActionUnit.DETAILS_FORM;
+        // Init system form answers
+        formResponse = initializeFormResponse(detailsForm, unit);
 
     }
 
@@ -327,14 +256,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     @Override
     public void save(Boolean validated) {
 
-        // Recupération des champs systeme
-
-        // Name
-        CustomFieldAnswerText nameAnswer = (CustomFieldAnswerText) formResponse.getAnswers().get(nameField);
-        CustomFieldAnswerSelectOneFromFieldCode typeAnswer = (CustomFieldAnswerSelectOneFromFieldCode) formResponse.getAnswers().get(typeField);
-        unit.setName(nameAnswer.getValue());
-        unit.setType(typeAnswer.getValue());
-
+        updateJpaEntityFromFormResponse(formResponse, unit);
         unit.setValidated(validated);
         try {
             actionUnitService.save(unit);

@@ -7,7 +7,7 @@ import fr.siamois.domain.models.events.LoginEvent;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.HistoryService;
-import fr.siamois.domain.services.SpatialUnitService;
+import fr.siamois.domain.services.spatialunit.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.authorization.PermissionService;
 import fr.siamois.domain.services.person.PersonService;
@@ -25,7 +25,7 @@ import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.SpecimenPanel;
-import fr.siamois.ui.lazydatamodel.BaseSpatialUnitLazyDataModel;
+
 import jakarta.el.MethodExpression;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
@@ -191,23 +191,6 @@ public class FlowBean implements Serializable {
     }
 
 
-    public void addNewActionUnitPanel(Integer sourcePanelIndex) {
-        addPanel(panelFactory.createNewActionUnitPanel(panels.get(sourcePanelIndex).getBreadcrumb()));
-    }
-
-    public void addNewActionUnitPanel(Long spatialUnitId, Integer sourcePanelIndex) {
-        addPanel(panelFactory.createNewActionUnitPanel(spatialUnitId, panels.get(sourcePanelIndex).getBreadcrumb()));
-    }
-
-    public void addNewActionUnitPanel(Long spatialUnitId, Integer sourcePanelIndex,BaseSpatialUnitLazyDataModel lazyModel) {
-        addPanel(panelFactory.createNewActionUnitPanel(spatialUnitId, panels.get(sourcePanelIndex).getBreadcrumb(), lazyModel));
-    }
-
-
-
-    public void addNewActionUnitPanel(Long spatialUnitId) {
-        addPanel(panelFactory.createNewActionUnitPanel(spatialUnitId, null));
-    }
 
     public void addActionUnitPanel(Long actionUnitId) {
         addPanel(panelFactory.createActionUnitPanel(actionUnitId));

@@ -15,6 +15,7 @@ import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
@@ -143,8 +144,9 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
                                  FlowBean flowBean,
                                  SessionSettingsBean sessionSettingsBean,
                                  FieldConfigurationService fieldConfigurationService,
-                                 ActionUnitService actionUnitService, SpecimenService specimenService) {
-        super(sessionSettingsBean, fieldConfigurationService);
+                                 ActionUnitService actionUnitService, SpecimenService specimenService,
+                                 SpatialUnitTreeService spatialUnitTreeService) {
+        super(sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
         this.recordingUnitService = recordingUnitService;
         this.langBean = langBean;
         this.flowBean = flowBean;
@@ -301,4 +303,6 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
 
 
     }
+
+
 }

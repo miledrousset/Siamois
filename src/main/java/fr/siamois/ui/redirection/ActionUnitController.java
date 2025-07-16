@@ -39,7 +39,7 @@ public class ActionUnitController {
     @GetMapping("/spatialunit/{id}/actionunit/new")
     public String addActionUnit(@PathVariable Long id) {
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
-        flowBean.addNewActionUnitPanel(id);
+        // TODO : open new action unit dialog
         return FLOW_FORWARD_PATH;
     }
 
