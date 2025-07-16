@@ -54,7 +54,18 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
     //
     protected CustomForm detailsForm;
 
+    public static String generateRandomActionUnitIdentifier() {
+        return "2025";
+    }
+
     public static final Vocabulary SYSTEM_THESO;
+
+    static {
+        SYSTEM_THESO = new Vocabulary();
+        SYSTEM_THESO.setBaseUri("https://thesaurus.mom.fr/");
+        SYSTEM_THESO.setExternalVocabularyId("th230");
+    }
+
 
     private static final Map<Class<? extends CustomField>, Supplier<? extends CustomFieldAnswer>> ANSWER_CREATORS = Map.of(
             CustomFieldText.class, CustomFieldAnswerText::new,
@@ -77,12 +88,6 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
             answer.setValue(generatedValue);
             setFieldAnswerHasBeenModified(field);
         }
-    }
-
-    static {
-        SYSTEM_THESO = new Vocabulary();
-        SYSTEM_THESO.setBaseUri("https://thesaurus.mom.fr/");
-        SYSTEM_THESO.setExternalVocabularyId("th230");
     }
 
     public static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-4";

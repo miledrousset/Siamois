@@ -82,13 +82,7 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
         this.specimenService = specimenService;
     }
 
-    @Override
-    public void setFieldConceptAnswerHasBeenModified(AjaxBehaviorEvent event) {
-        UIComponent component = event.getComponent();
-        CustomField field = (CustomField) component.getAttributes().get("field");
 
-        formResponse.getAnswers().get(field).setHasBeenModified(true);
-    }
 
     @Override
     public void initForms() {
