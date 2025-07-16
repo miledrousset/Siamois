@@ -40,10 +40,11 @@ import java.util.function.Supplier;
 @Slf4j
 public abstract class AbstractSingleEntity<T> extends AbstractPanel implements Serializable {
 
+    private static SpatialUnit spatialUnit;
     // Deps
     protected final transient SessionSettingsBean sessionSettingsBean;
     protected final transient FieldConfigurationService fieldConfigurationService;
-    private final transient  SpatialUnitTreeService spatialUnitTreeService;
+    private final transient SpatialUnitTreeService spatialUnitTreeService;
 
     //--------------- Locals
     protected transient T unit;
@@ -362,7 +363,16 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
             return a.getValue();
         } else if (answer instanceof CustomFieldAnswerSelectOneSpatialUnit a) {
             return a.getValue();
+        } else if (answer instanceof CustomFieldAnswerSelectMultipleSpatialUnitTree a) {
+            Set<SpatialUnit> ret = new HashSet<>();
+            for (CheckboxTreeNode<SpatialUnit> su : a.getValue()) {
+                SpatialUnit spatialUnit = su.getData();
+                ret.add(spatialUnit);
+            }
+            return ret;
         }
+
+
         return null;
     }
 

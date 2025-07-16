@@ -18,7 +18,7 @@
     <cc:implementation>
         <p:inplace mode="#{cc.attrs.mode}" toggleable="false">
             <f:facet name="output">
-
+Just testing
             </f:facet>
             <f:facet name="input">
                 <p:treeTable value="#{cc.attrs.answer.root}"
@@ -29,12 +29,12 @@
                              propagateSelectionUp="false"
                 >
                     <p:ajax event="select"
-                            listener="#{cc.attrs.panelModel.setFieldConceptAnswerHasBeenModified}"
+                            listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(cc.attrs.field)}" />
                             update="#{cc.attrs.updateTargetsOnBlur}"
                             immediate="true"
                             process="#{cc.attrs.updateTargetsOnBlur}"/>
                     <p:ajax event="unselect"
-                            listener="#{cc.attrs.panelModel.setFieldConceptAnswerHasBeenModified}"
+                            listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(cc.attrs.field)}" />
                             update="#{cc.attrs.updateTargetsOnBlur}"
                             immediate="true"
                             process="#{cc.attrs.updateTargetsOnBlur}"/>

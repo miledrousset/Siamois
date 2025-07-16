@@ -97,7 +97,7 @@ public class NewActionUnitDialogBean extends AbstractSingleEntity<ActionUnit> im
     private CustomFieldSelectOneFromFieldCode actionUnitTypeField = new CustomFieldSelectOneFromFieldCode.Builder()
             .label("specimen.field.category")
             .isSystemField(true)
-            .valueBinding("category")
+            .valueBinding("type")
             .styleClass("mr-2 action-unit-type-chip")
             .iconClass("bi bi-box2")
             .fieldCode(ActionUnit.TYPE_FIELD_CODE)
