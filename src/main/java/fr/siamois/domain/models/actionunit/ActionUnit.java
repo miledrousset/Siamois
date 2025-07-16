@@ -237,4 +237,65 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
             )
             .build();
 
+    @Transient
+    @JsonIgnore
+    public static final CustomForm OVERVIEW_FORM = new CustomForm.Builder()
+            .name("Details tab form")
+            .description("Contains the main form")
+            .addPanel(
+                    new CustomFormPanel.Builder()
+                            .name("common.header.general")
+                            .isSystemPanel(true)
+                            .addRow(
+                                    new CustomRow.Builder()
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(ACTION_UNIT_TYPE_FIELD)
+                                                    .build())
+                                            .build()
+                            ).build()
+            )
+            .build();
+
+    @Transient
+    @JsonIgnore
+    public static final CustomForm DETAILS_FORM = new CustomForm.Builder()
+            .name("Details tab form")
+            .description("Contains the main form")
+            .addPanel(
+                    new CustomFormPanel.Builder()
+                            .name("common.header.general")
+                            .isSystemPanel(true)
+                            .addRow(
+                                    new CustomRow.Builder()
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(NAME_FIELD)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(ACTION_UNIT_TYPE_FIELD)
+                                                    .build())
+                                            .build()
+                            ).build()
+            )
+            .addPanel(
+                    new CustomFormPanel.Builder()
+                            .name("common.label.spatialContext")
+                            .isSystemPanel(true)
+                            .addRow(
+                                    new CustomRow.Builder()
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(SPATIAL_CONTEXT_FIELD)
+                                                    .build())
+                                            .build()
+                            ).build()
+            )
+            .build();
+
 }
