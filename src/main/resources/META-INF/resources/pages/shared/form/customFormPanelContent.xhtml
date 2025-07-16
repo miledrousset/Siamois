@@ -7,134 +7,139 @@
 >
 
     <!--@elvariable id="bean" type="fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity"-->
-   <!--@elvariable id="customFormPanel" type="fr.siamois.domain.models.form.CustomFormPanel" -->
-   <!--@elvariable id="readOnly" type="java.lang.Boolean" -->
-   <!--@elvariable id="prefix" type="String" -->
-   <!--@elvariable id="updateTargetsOnBlur" type="String" -->
-   <!--@elvariable id="statusIndex" type="Object" -->
+    <!--@elvariable id="customFormPanel" type="fr.siamois.domain.models.form.CustomFormPanel" -->
+    <!--@elvariable id="readOnly" type="java.lang.Boolean" -->
+    <!--@elvariable id="prefix" type="String" -->
+    <!--@elvariable id="updateTargetsOnBlur" type="String" -->
+    <!--@elvariable id="statusIndex" type="Object" -->
 
 
-   <p:panelGrid id="customFormPanelGrid-#{prefix}-#{statusIndex}"
-                layout="grid"
-   >
-      <c:forEach items="#{customFormPanel.rows}" var="row" varStatus="rowStatus">
-         <p:row>
+    <p:panelGrid id="customFormPanelGrid-#{prefix}-#{statusIndex}"
+                 layout="grid"
+    >
+        <c:forEach items="#{customFormPanel.rows}" var="row" varStatus="rowStatus">
+            <p:row>
 
-            <c:forEach items="#{row.columns}" var="col" varStatus="colStatus">
-
-
-               <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
-                  <!-- Text -->
-                  <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
-                                          rendered="#{col.field['class'].simpleName eq 'CustomFieldText'}">
-
-                     <siaInplace:text
-                             panelModel="#{bean}"
-                             field="#{col.field}"
-                             hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
-                             answer="#{bean.formResponse.answers.get(col.field)}"
-                             mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
-                             updateTargetsOnBlur="#{updateTargetsOnBlur}"
-                     >
-
-                     </siaInplace:text>
-                  </sharedInput:panelField>
-
-                  <!-- DateTime -->
-                  <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
-                                          rendered="#{col.field['class'].simpleName eq 'CustomFieldDateTime'}">
-
-                     <siaInplace:datePicker
-                             panelModel="#{bean}"
-                             field="#{col.field}"
-                             hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
-                             answer="#{bean.formResponse.answers.get(col.field)}"
-                             mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
-                             updateTargetsOnBlur="#{updateTargetsOnBlur}"
-                     >
-
-                     </siaInplace:datePicker>
-                  </sharedInput:panelField>
-
-                  <!-- Select one from field code -->
-                  <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}" isTheso="true"
-                                          rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneFromFieldCode'}">
-                     <siaInplace:concept
-                             hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
-                             field="#{col.field}"
-                             mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
-                             panelModel="#{bean}"
-                             updateTargetsOnBlur="#{updateTargetsOnBlur}"
-                             answer="#{bean.formResponse.answers.get(col.field)}"/>
-                  </sharedInput:panelField>
-
-                  <!-- Select one concept from field parent concept children -->
-                  <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}" isTheso="true"
-                                          rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneConceptFromChildrenOfConcept'}">
-                     <siaInplace:childConcept
-                             hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
-                             field="#{col.field}"
-                             mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
-                             panelModel="#{bean}"
-                             updateTargetsOnBlur="#{updateTargetsOnBlur}"
-                             answer="#{bean.formResponse.answers.get(col.field)}"/>
-                  </sharedInput:panelField>
-
-                  <!-- Select one action -->
-                  <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
-                                          rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneActionUnit'}">
-                     <siaInplace:action
-                             hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
-                             field="#{col.field}"
-                             mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
-                             panelModel="#{bean}"
-                             updateTargetsOnBlur="#{updateTargetsOnBlur}"
-                             answer="#{bean.formResponse.answers.get(col.field)}"/>
-                  </sharedInput:panelField>
-
-                  <!-- Select one spatial -->
-                  <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
-                                          rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneSpatialUnit'}">
-                     <siaInplace:spatial
-                             hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
-                             field="#{col.field}"
-                             mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
-                             panelModel="#{bean}"
-                             updateTargetsOnBlur="#{updateTargetsOnBlur}"
-                             answer="#{bean.formResponse.answers.get(col.field)}"/>
-                  </sharedInput:panelField>
-
-                  <!-- Select one from person -->
-                  <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
-                                          rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOnePerson'}">
-                     <siaInplace:person
-                             hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
-                             field="#{col.field}"
-                             mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
-                             panelModel="#{bean}"
-                             updateTargetsOnBlur="#{updateTargetsOnBlur}"
-                             answer="#{bean.formResponse.answers.get(col.field)}"/>
-                  </sharedInput:panelField>
-
-                  <!-- Select multiple from person -->
-                  <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
-                                          rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectMultiplePerson'}">
-                     <siaInplace:person
-                             hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
-                             field="#{col.field}"
-                             multiple="true"
-                             mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
-                             panelModel="#{bean}"
-                             updateTargetsOnBlur="#{updateTargetsOnBlur}"
-                             answer="#{bean.formResponse.answers.get(col.field)}"/>
-                  </sharedInput:panelField>
-
-               </p:column>
+                <c:forEach items="#{row.columns}" var="col" varStatus="colStatus">
 
 
-            </c:forEach>
-         </p:row>
-      </c:forEach>
-   </p:panelGrid>
+                    <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                        <!-- Text -->
+                        <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}">
+
+
+                            <siaInplace:text
+                                    rendered="#{col.field['class'].simpleName eq 'CustomFieldText'}"
+                                    panelModel="#{bean}"
+                                    field="#{col.field}"
+                                    hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
+                                    answer="#{bean.formResponse.answers.get(col.field)}"
+                                    mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
+                                    updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                            >
+
+                            </siaInplace:text>
+
+
+                            <!-- DateTime -->
+
+
+                            <siaInplace:datePicker
+                                    panelModel="#{bean}"
+                                    rendered="#{col.field['class'].simpleName eq 'CustomFieldDateTime'}"
+                                    field="#{col.field}"
+                                    hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
+                                    answer="#{bean.formResponse.answers.get(col.field)}"
+                                    mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
+                                    updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                            >
+
+                            </siaInplace:datePicker>
+
+
+                            <siaInplace:concept
+                                    rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneFromFieldCode'}"
+                                    hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
+                                    field="#{col.field}"
+                                    mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
+                                    panelModel="#{bean}"
+                                    updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                    answer="#{bean.formResponse.answers.get(col.field)}"/>
+
+
+                            <!-- Select one concept from field parent concept children -->
+
+                            <siaInplace:childConcept
+                                    rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneConceptFromChildrenOfConcept'}"
+                                    hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
+                                    field="#{col.field}"
+                                    mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
+                                    panelModel="#{bean}"
+                                    updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                    answer="#{bean.formResponse.answers.get(col.field)}"/>
+
+
+                            <!-- Select one action -->
+                            <siaInplace:action
+                                    rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneActionUnit'}"
+                                    hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
+                                    field="#{col.field}"
+                                    mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
+                                    panelModel="#{bean}"
+                                    updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                    answer="#{bean.formResponse.answers.get(col.field)}"/>
+
+
+                            <siaInplace:spatial
+                                    rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneSpatialUnit'}"
+                                    hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
+                                    field="#{col.field}"
+                                    mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
+                                    panelModel="#{bean}"
+                                    updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                    answer="#{bean.formResponse.answers.get(col.field)}"/>
+
+
+                            <!-- Select one from person -->
+                            <siaInplace:person
+                                    rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOnePerson'}"
+                                    hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
+                                    field="#{col.field}"
+                                    mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
+                                    panelModel="#{bean}"
+                                    updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                    answer="#{bean.formResponse.answers.get(col.field)}"/>
+
+
+                            <!-- Select multiple from person -->
+                            <siaInplace:person
+                                    rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectMultiplePerson'}"
+                                    hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
+                                    field="#{col.field}"
+                                    multiple="true"
+                                    mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
+                                    panelModel="#{bean}"
+                                    updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                    answer="#{bean.formResponse.answers.get(col.field)}"/>
+
+
+                            <!-- Select spatial unit from tree -->
+                            <siaInplace:spatialUnitTree
+                                    rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectMultipleSpatialUnitTree'}"
+                                    hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
+                                    field="#{col.field}"
+                                    mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
+                                    panelModel="#{bean}"
+                                    updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                    answer="#{bean.formResponse.answers.get(col.field)}"/>
+                        </sharedInput:panelField>
+
+                    </p:column>
+
+
+                </c:forEach>
+            </p:row>
+        </c:forEach>
+    </p:panelGrid>
 
 </ui:fragment>

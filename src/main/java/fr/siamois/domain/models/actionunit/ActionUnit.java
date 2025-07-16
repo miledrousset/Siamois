@@ -102,7 +102,7 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Transient
     @JsonIgnore
     public List<String> getBindableFieldNames() {
-        return List.of("type", "name", "identifier");
+        return List.of("type", "name", "identifier", "spatialContext");
     }
 
 }

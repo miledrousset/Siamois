@@ -3,6 +3,7 @@ package fr.siamois.ui.bean.dialog.actionunit;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectMultipleSpatialUnitTree;
 import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
 import fr.siamois.domain.models.form.customfield.CustomFieldText;
 import fr.siamois.domain.models.form.customform.CustomCol;
@@ -85,6 +86,12 @@ public class NewActionUnitDialogBean extends AbstractSingleEntity<ActionUnit> im
             .externalId("4286193")
             .build();
 
+    // spatial context
+    private Concept spatialContextConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286503")
+            .build();
+
 
     // --------------- Fields
     private CustomFieldSelectOneFromFieldCode actionUnitTypeField = new CustomFieldSelectOneFromFieldCode.Builder()
@@ -112,6 +119,13 @@ public class NewActionUnitDialogBean extends AbstractSingleEntity<ActionUnit> im
             .concept(identifierConcept)
             .build();
 
+    private CustomFieldSelectMultipleSpatialUnitTree spatialContextField = new CustomFieldSelectMultipleSpatialUnitTree.Builder()
+            .label("common.label.spatialContext")
+            .isSystemField(true)
+            .valueBinding("spatialContext")
+            .concept(spatialContextConcept)
+            .build();
+
 
     public NewActionUnitDialogBean(
             LangBean langBean,
@@ -135,7 +149,6 @@ public class NewActionUnitDialogBean extends AbstractSingleEntity<ActionUnit> im
 
         formResponse.getAnswers().get(field).setHasBeenModified(true);
     }
-
 
 
     @Override
@@ -171,14 +184,14 @@ public class NewActionUnitDialogBean extends AbstractSingleEntity<ActionUnit> im
                 )
                 .addPanel(
                         new CustomFormPanel.Builder()
-                                .name("common.header.general")
+                                .name("common.label.spatialContext")
                                 .isSystemPanel(true)
                                 .addRow(
                                         new CustomRow.Builder()
                                                 .addColumn(new CustomCol.Builder()
                                                         .readOnly(false)
                                                         .className(COLUMN_CLASS_NAME)
-                                                        .field(nameField)
+                                                        .field(spatialContextField)
                                                         .build())
                                                 .build()
                                 ).build()
@@ -204,8 +217,8 @@ public class NewActionUnitDialogBean extends AbstractSingleEntity<ActionUnit> im
     private void reset() {
         unit = null;
         formResponse = null;
-        lazyDataModel= null;
-        setToUpdate= null;
+        lazyDataModel = null;
+        setToUpdate = null;
 
     }
 
@@ -222,7 +235,7 @@ public class NewActionUnitDialogBean extends AbstractSingleEntity<ActionUnit> im
         reset();
         unit = new ActionUnit();
         // Set parents or children based on lazy model type
-        if(lazyDataModel != null) {
+        if (lazyDataModel != null) {
             this.lazyDataModel = lazyDataModel;
             // todo add handling children/parents list
         }
@@ -247,7 +260,7 @@ public class NewActionUnitDialogBean extends AbstractSingleEntity<ActionUnit> im
             unit.setParents(new HashSet<>());
             unit.getParents().add(actionUnitParent);
             this.setToUpdate = setToUpdate;
-        }else if (Objects.equals(isSetChildrenOrParents, "parents")
+        } else if (Objects.equals(isSetChildrenOrParents, "parents")
                 && setToUpdate != null
                 && childOrParentId != null) {
             ActionUnit actionUnitChild = actionUnitService.findById(childOrParentId);
@@ -259,8 +272,6 @@ public class NewActionUnitDialogBean extends AbstractSingleEntity<ActionUnit> im
         unit.setCreatedByInstitution(sessionSettingsBean.getSelectedInstitution());
         initForms();
     }
-
-
 
 
     public void createSU() {

@@ -33,6 +33,7 @@ import java.lang.reflect.Method;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.function.Supplier;
 
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Data
@@ -53,6 +54,17 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
     protected CustomForm detailsForm;
 
     public static final Vocabulary SYSTEM_THESO;
+
+    private static final Map<Class<? extends CustomField>, Supplier<? extends CustomFieldAnswer>> ANSWER_CREATORS = Map.of(
+            CustomFieldText.class, CustomFieldAnswerText::new,
+            CustomFieldSelectOneFromFieldCode.class, CustomFieldAnswerSelectOneFromFieldCode::new,
+            CustomFieldSelectOneConceptFromChildrenOfConcept.class, CustomFieldAnswerSelectOneConceptFromChildrenOfConcept::new,
+            CustomFieldSelectMultiplePerson.class, CustomFieldAnswerSelectMultiplePerson::new,
+            CustomFieldDateTime.class, CustomFieldAnswerDateTime::new,
+            CustomFieldSelectOneActionUnit.class, CustomFieldAnswerSelectOneActionUnit::new,
+            CustomFieldSelectOneSpatialUnit.class, CustomFieldAnswerSelectOneSpatialUnit::new,
+            CustomFieldSelectMultipleSpatialUnitTree.class, CustomFieldAnswerSelectMultipleSpatialUnitTree::new
+    );
 
     public boolean hasAutoGenerationFunction(CustomFieldText field) {
         return field != null && field.getAutoGenerationFunction() != null;
@@ -384,23 +396,11 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
     }
 
     private static CustomFieldAnswer instantiateAnswerForField(CustomField field) {
-        if (field instanceof CustomFieldText) {
-            return new CustomFieldAnswerText();
-        } else if (field instanceof CustomFieldSelectOneFromFieldCode) {
-            return new CustomFieldAnswerSelectOneFromFieldCode();
-        } else if (field instanceof CustomFieldSelectOneConceptFromChildrenOfConcept) {
-            return new CustomFieldAnswerSelectOneConceptFromChildrenOfConcept();
-        } else if (field instanceof CustomFieldSelectMultiplePerson) {
-            return new CustomFieldAnswerSelectMultiplePerson();
-        } else if (field instanceof CustomFieldDateTime) {
-            return new CustomFieldAnswerDateTime();
-        } else if (field instanceof CustomFieldSelectOneActionUnit) {
-            return new CustomFieldAnswerSelectOneActionUnit();
-        } else if (field instanceof CustomFieldSelectOneSpatialUnit) {
-            return new CustomFieldAnswerSelectOneSpatialUnit();
+        Supplier<? extends CustomFieldAnswer> creator = ANSWER_CREATORS.get(field.getClass());
+        if (creator != null) {
+            return creator.get();
         }
-
-        return null;
+        throw new IllegalArgumentException("Unsupported CustomField type: " + field.getClass().getName());
     }
 
 
