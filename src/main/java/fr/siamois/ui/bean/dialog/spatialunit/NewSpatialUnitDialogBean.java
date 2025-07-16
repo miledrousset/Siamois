@@ -1,6 +1,5 @@
 package fr.siamois.ui.bean.dialog.spatialunit;
 
-import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -19,7 +18,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.SessionScoped;

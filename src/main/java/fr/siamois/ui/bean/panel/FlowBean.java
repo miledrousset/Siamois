@@ -25,7 +25,7 @@ import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.SpecimenPanel;
-import fr.siamois.ui.lazydatamodel.BaseSpatialUnitLazyDataModel;
+
 import jakarta.el.MethodExpression;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
