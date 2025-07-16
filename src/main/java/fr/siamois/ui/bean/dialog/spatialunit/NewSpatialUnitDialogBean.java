@@ -64,40 +64,7 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
     private static final String COLUMN_CLASS_NAME = "ui-g-12";
     private static final String UPDATE_FAILED_MESSAGE_CODE = "common.entity.spatialUnits.updateFailed";
 
-    // ----------- Concepts for system fields
 
-
-    // uni category
-    private Concept spatialUnitTypeConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4282365")
-            .build();
-    // unit name
-    private Concept nameConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4285848")
-            .build();
-
-
-    // --------------- Fields
-
-
-    private CustomFieldSelectOneFromFieldCode spatialUnitTypeField = new CustomFieldSelectOneFromFieldCode.Builder()
-            .label("specimen.field.category")
-            .isSystemField(true)
-            .valueBinding("category")
-            .styleClass("mr-2 specimen-type-chip")
-            .iconClass("bi bi-box2")
-            .fieldCode(SpatialUnit.CATEGORY_FIELD_CODE)
-            .concept(spatialUnitTypeConcept)
-            .build();
-
-    private CustomFieldText nameField = new CustomFieldText.Builder()
-            .label("common.label.name")
-            .isSystemField(true)
-            .valueBinding("name")
-            .concept(nameConcept)
-            .build();
 
 
     public NewSpatialUnitDialogBean(
@@ -127,29 +94,7 @@ public class NewSpatialUnitDialogBean extends AbstractSingleEntity<SpatialUnit> 
     public void initForms() {
 
         // Details form
-        detailsForm = new CustomForm.Builder()
-                .name("Details tab form")
-                .description("Contains the main form")
-                .addPanel(
-                        new CustomFormPanel.Builder()
-                                .name("common.header.general")
-                                .isSystemPanel(true)
-                                .addRow(
-                                        new CustomRow.Builder()
-                                                .addColumn(new CustomCol.Builder()
-                                                        .readOnly(false)
-                                                        .className(COLUMN_CLASS_NAME)
-                                                        .field(nameField)
-                                                        .build())
-                                                .addColumn(new CustomCol.Builder()
-                                                        .readOnly(false)
-                                                        .className(COLUMN_CLASS_NAME)
-                                                        .field(spatialUnitTypeField)
-                                                        .build())
-                                                .build()
-                                ).build()
-                )
-                .build();
+        detailsForm = SpatialUnit.NEW_UNIT_FORM;
 
         // Init system form answers
         formResponse = initializeFormResponse(detailsForm, unit);

@@ -5,7 +5,16 @@ import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectMultipleSpatialUnitTree;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
+import fr.siamois.domain.models.form.customfield.CustomFieldText;
+import fr.siamois.domain.models.form.customform.CustomCol;
+import fr.siamois.domain.models.form.customform.CustomForm;
+import fr.siamois.domain.models.form.customform.CustomFormPanel;
+import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
+import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.ui.bean.dialog.actionunit.NewActionUnitDialogBean;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.SQLRestriction;
@@ -14,6 +23,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
+import static fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity.COLUMN_CLASS_NAME;
+import static fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity.SYSTEM_THESO;
 
 @Data
 @Entity
@@ -95,5 +107,122 @@ public class SpatialUnit extends SpatialUnitGeneric implements ArkEntity {
     public List<String> getBindableFieldNames() {
         return List.of("category", "name");
     }
+
+    // ----------- Concepts for system fields
+
+
+    // uni category
+    @Transient
+    @JsonIgnore
+    public static final Concept SPATIAL_UNIT_TYPE_CONCEPT = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4282365")
+            .build();
+    // unit name
+    @Transient
+    @JsonIgnore
+    public static final Concept NAME_CONCEPT = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4285848")
+            .build();
+
+
+    // --------------- Fields
+
+
+    @Transient
+    @JsonIgnore
+    public static final CustomFieldSelectOneFromFieldCode SPATIAL_UNIT_TYPE_FIELD = new CustomFieldSelectOneFromFieldCode.Builder()
+            .label("specimen.field.category")
+            .isSystemField(true)
+            .valueBinding("category")
+            .styleClass("mr-2 spatial-unit-type-chip")
+            .iconClass("bi bi-geo-alt")
+            .fieldCode(SpatialUnit.CATEGORY_FIELD_CODE)
+            .concept(SPATIAL_UNIT_TYPE_CONCEPT)
+            .build();
+
+    @Transient
+    @JsonIgnore
+    public static final CustomFieldText NAME_FIELD = new CustomFieldText.Builder()
+            .label("common.label.name")
+            .isSystemField(true)
+            .valueBinding("name")
+            .concept(NAME_CONCEPT)
+            .build();
+
+    @Transient
+    @JsonIgnore
+    public static final CustomForm NEW_UNIT_FORM = new CustomForm.Builder()
+            .name("Details tab form")
+            .description("Contains the main form")
+            .addPanel(
+                    new CustomFormPanel.Builder()
+                            .name("common.header.general")
+                            .isSystemPanel(true)
+                            .addRow(
+                                    new CustomRow.Builder()
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(NAME_FIELD)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(SPATIAL_UNIT_TYPE_FIELD)
+                                                    .build())
+                                            .build()
+                            ).build()
+            )
+            .build();
+
+    @Transient
+    @JsonIgnore
+    public static final CustomForm OVERVIEW_FORM = new CustomForm.Builder()
+            .name("Details tab form")
+            .description("Contains the main form")
+            .addPanel(
+                    new CustomFormPanel.Builder()
+                            .name("common.header.general")
+                            .isSystemPanel(true)
+                            .addRow(
+                                    new CustomRow.Builder()
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(true)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(SPATIAL_UNIT_TYPE_FIELD)
+                                                    .build())
+                                            .build()
+                            ).build()
+            )
+            .build();
+
+    @Transient
+    @JsonIgnore
+    public static final CustomForm DETAILS_FORM = new CustomForm.Builder()
+            .name("Details tab form")
+            .description("Contains the main form")
+            .addPanel(
+                    new CustomFormPanel.Builder()
+                            .name("common.header.general")
+                            .isSystemPanel(true)
+                            .addRow(
+                                    new CustomRow.Builder()
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(NAME_FIELD)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(SPATIAL_UNIT_TYPE_FIELD)
+                                                    .build())
+                                            .build()
+                            ).build()
+            )
+            .build();
+
 
 }

@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean.panel.models.panel.single;
 
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
@@ -114,15 +115,6 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
     private String barModel;
 
-    // form
-    private CustomFieldText nameField;
-    private Concept nameConcept ;
-    private CustomFieldSelectOneFromFieldCode typeField;
-    private Concept spatialUnitTypeConcept;
-
-
-
-
 
     @Autowired
     private SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService, DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
@@ -210,72 +202,10 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
     @Override
     public void initForms() {
 
-        // Get from from DB in futur iteration
-
-
-        CustomFormPanel mainPanel = new CustomFormPanel();
-        mainPanel.setIsSystemPanel(true);
-        mainPanel.setName("common.header.general");
-        // One row
-        CustomRow row1 = new CustomRow();
-        // Two cols
-
-        CustomCol col1 = new CustomCol();
-        nameField = new CustomFieldText();
-        nameField.setIsSystemField(true);
-        nameField.setLabel("spatialunit.field.name");
-        col1.setField(nameField);
-        col1.setClassName(COLUMN_CLASS_NAME);
-
-        CustomCol col2 = new CustomCol();
-        typeField = new CustomFieldSelectOneFromFieldCode();
-        typeField.setLabel("spatialunit.field.type");
-        typeField.setIsSystemField(true);
-        typeField.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
-        col2.setField(typeField);
-        col2.setClassName(COLUMN_CLASS_NAME);
-
-        row1.setColumns(List.of(col1, col2));
-        mainPanel.setRows(List.of(row1));
-
-        detailsForm = new CustomForm.Builder()
-                .name("Overview tab form")
-                .description("Contains the overview")
-                .addPanel(mainPanel)
-                .build();
-
-        // init overveiw tab form
-
-        CustomFormPanel mainOverviewPanel = new CustomFormPanel();
-        mainOverviewPanel.setIsSystemPanel(true);
-        mainOverviewPanel.setName("common.header.general");
-        // One row
-        CustomRow row2 = new CustomRow();
-        // one cols
-        CustomCol col3 = new CustomCol();
-        col3.setField(typeField);
-        col3.setClassName(COLUMN_CLASS_NAME);
-        col3.setReadOnly(true);
-        row2.setColumns(List.of(col3));
-        mainOverviewPanel.setRows(List.of(row2));
-        overviewForm = new CustomForm.Builder()
-                .name("Overview tab form")
-                .description("Contains the overview")
-                .addPanel(mainOverviewPanel)
-                .build();
-
-        // Init form answers
-        formResponse = new CustomFormResponse();
-        Map<CustomField, CustomFieldAnswer> answers = new HashMap<>();
-        CustomFieldAnswerText nameAnswer = new CustomFieldAnswerText();
-        CustomFieldAnswerSelectOneFromFieldCode typeAnswer = new CustomFieldAnswerSelectOneFromFieldCode();
-        nameAnswer.setValue(unit.getName());
-        nameAnswer.setHasBeenModified(false);
-        answers.put(nameField, nameAnswer);
-        typeAnswer.setValue(unit.getCategory());
-        typeAnswer.setHasBeenModified(false);
-        answers.put(typeField, typeAnswer);
-        formResponse.setAnswers(answers);
+        overviewForm = SpatialUnit.OVERVIEW_FORM;
+        detailsForm = SpatialUnit.DETAILS_FORM;
+        // Init system form answers
+        formResponse = initializeFormResponse(detailsForm, unit);
     }
 
     public void refreshUnit() {
@@ -359,9 +289,6 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
         activeTabIndex = 0;
 
-        nameConcept = new Concept();
-        nameConcept.setExternalId("SYSTEM_NAME");
-        nameConcept.setVocabulary(SYSTEM_THESO);
 
 
         if (idunit == null) {
@@ -461,10 +388,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
         // Recupération des champs systeme
 
         // Name
-        CustomFieldAnswerText nameAnswer = (CustomFieldAnswerText) formResponse.getAnswers().get(nameField);
-        CustomFieldAnswerSelectOneFromFieldCode typeAnswer = (CustomFieldAnswerSelectOneFromFieldCode) formResponse.getAnswers().get(typeField);
-        unit.setName(nameAnswer.getValue());
-        unit.setCategory(typeAnswer.getValue());
+        updateJpaEntityFromFormResponse(formResponse, unit);
 
         unit.setValidated(validated);
         try {
