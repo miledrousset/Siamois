@@ -5,6 +5,7 @@ import fr.siamois.ui.bean.settings.InstitutionListSettingsBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+
 import javax.faces.bean.SessionScoped;
 
 @Controller
@@ -48,5 +49,6 @@ public class SettingsController {
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
         return "forward:/flow.xhtml";
     }
+
 
 }

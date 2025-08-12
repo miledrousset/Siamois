@@ -1,9 +1,11 @@
 package fr.siamois.ui.bean.dialog.institution;
 
 import fr.siamois.domain.models.events.LoginEvent;
+import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.ui.bean.ActionFromBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
@@ -33,6 +35,8 @@ public class InstitutionDialogBean implements Serializable {
     private String institutionName;
     private String identifier;
     private String description;
+    private String thesaurusUrl;
+    private Boolean thesaurusError;
 
     public InstitutionDialogBean(InstitutionService institutionService,
                                  SessionSettingsBean sessionSettingsBean) {
@@ -44,6 +48,8 @@ public class InstitutionDialogBean implements Serializable {
     public void reset() {
         log.trace("Reset called");
         actionFromBean = null;
+        thesaurusUrl = null;
+        thesaurusError = false;
         institutionName = "";
         identifier = "";
         description = "";
@@ -51,14 +57,15 @@ public class InstitutionDialogBean implements Serializable {
         buttonLabel = "";
     }
 
-    public Institution createInstitution() throws InstitutionAlreadyExistException, FailedInstitutionSaveException {
+    public Institution createInstitution() throws InstitutionAlreadyExistException, FailedInstitutionSaveException, InvalidEndpointException {
         Institution institution = new Institution();
         institution.setName(institutionName);
         institution.setIdentifier(identifier);
         institution.setId(-1L);
         institution.getManagers().add(sessionSettingsBean.getAuthenticatedUser());
         institution.setDescription(description);
-        return institutionService.createInstitution(institution);
+
+        return institutionService.createInstitution(institution, thesaurusUrl);
     }
 
     public void save() {
@@ -69,7 +76,7 @@ public class InstitutionDialogBean implements Serializable {
     public void exit() {
         log.trace("Exit organization dialog");
         reset();
-        PrimeFaces.current().executeScript("PF('newInstitutionDialog').close();");
+        PrimeFaces.current().executeScript("PF('newInstitutionDialog').hide();");
     }
 
 }

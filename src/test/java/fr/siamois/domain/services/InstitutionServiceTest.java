@@ -2,6 +2,7 @@ package fr.siamois.domain.services;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
@@ -87,19 +88,19 @@ class InstitutionServiceTest {
     void createInstitution_throwsInstitutionAlreadyExist() {
         when(institutionRepository.findInstitutionByIdentifier("123456")).thenReturn(Optional.of(institution1));
 
-        assertThrows(InstitutionAlreadyExistException.class, () -> institutionService.createInstitution(institution1));
+        assertThrows(InstitutionAlreadyExistException.class, () -> institutionService.createInstitution(institution1,""));
     }
 
     @Test
     void createInstitution_throwsFailedInstitutionSaveException() {
         when(institutionRepository.save(institution1)).thenThrow(new RuntimeException("Error while saving institution"));
 
-        assertThrows(FailedInstitutionSaveException.class, () -> institutionService.createInstitution(institution1));
+        assertThrows(FailedInstitutionSaveException.class, () -> institutionService.createInstitution(institution1,""));
     }
 
     @Test
-    void createInstitution() throws InstitutionAlreadyExistException, FailedInstitutionSaveException {
-        institutionService.createInstitution(institution1);
+    void createInstitution() throws InstitutionAlreadyExistException, FailedInstitutionSaveException, InvalidEndpointException {
+        institutionService.createInstitution(institution1,"");
 
         verify(institutionRepository, times(1)).save(institution1);
     }
