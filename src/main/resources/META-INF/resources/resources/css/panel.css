@@ -1131,12 +1131,23 @@ body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-i
 
 
 /* Welcome cards */
-.sia-welcome-card .ui-card-body {
-    height: 20vh;
-    flex: 1;
+.sia-welcome-card.ui-card {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    height: 100%; /* important so the body/footer layout fills column height */
+}
+
+/* Let the body take up remaining space and keep content at the top */
+.sia-welcome-card .ui-card-body {
+    flex: 1 1 auto;         /* grow/shrink to fill */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* content starts at top */
+}
+
+/* Push the footer to the very bottom */
+.sia-welcome-card .ui-card-footer {
+    margin-top: auto;
 }
 
 .sia-welcome-card.sia-spatial-unit {

@@ -97,6 +97,25 @@
                 <form:csrfform formId="searchBarForm">
                     <article>
                         <h:panelGroup styleClass="ui-inputgroup">
+                            <h:panelGroup id="iconInstit" styleClass="ui-inputgroup-addon">
+                                <i class="bi bi-buildings"/>
+                            </h:panelGroup>
+                            <p:outputLabel
+                                    style="background: #fff;
+                                        padding: .5rem .5rem;
+                                        border: 1px  solid #ced4da;
+                                        border-left: 0px;
+                                        outline: 0 none;
+                                        font-size: 1rem;
+                                        transition: background-color .2s,color .2s,border-color .2s,box-shadow .2s,opacity .2s;
+                                        -webkit-appearance: none;
+                                        appearance: none;"
+                                    value="#{navBean.selectedInstitution.name}"
+                            >
+
+                            </p:outputLabel>
+                        </h:panelGroup>
+                        <h:panelGroup styleClass="ui-inputgroup">
                             <h:panelGroup id="iconSU" styleClass="ui-inputgroup-addon">
                                 <i class="bi bi-geo-alt"/>
                             </h:panelGroup>

@@ -45,17 +45,8 @@
                             <h:commandLink action="#{flowBean.addWelcomePanel}" styleClass="nav-link"
                                            update="flow" id="homeLink">
                                 <i class="bi bi-house-door-fill"/>
-                                <span class="menu-text">#{langBean.msg('nav.home')}</span>
+                                <span class="menu-text">#{langBean.msg('nav.home')} - #{navBean.selectedInstitution.name}</span>
                                 <p:tooltip for="homeLink" value="#{langBean.msg('nav.home.hint')}"/>
-                            </h:commandLink>
-                        </li>
-                        <li class="nav-item">
-                            <h:commandLink action="#{flowBean.addWelcomePanel}" styleClass="nav-link"
-                                           update="flow" id="databaseLink" class="nav-link">
-                                <i class="bi bi-database-fill"/>
-                                <span class="menu-text">#{langBean.msg('nav.database')} #{navBean.selectedInstitution.name}</span>
-                                <p:tooltip for="databaseLink"
-                                           value="#{langBean.msg('nav.database')} #{navBean.selectedInstitution.name}"/>
                             </h:commandLink>
                         </li>
                         <li class="nav-item">
@@ -66,6 +57,7 @@
                                 <p:tooltip for="settingsLink" value="#{langBean.msg('nav.settings.hint')}"/>
                             </h:commandLink>
                         </li>
+                        <p:divider/>
                         <h:panelGroup id="bookmarkGroup" layout="none"
                                       rendered="#{navBean.bookmarkedPanels.size() > 0}">
                             <li class="nav-header">
