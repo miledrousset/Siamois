@@ -11,6 +11,7 @@ import fr.siamois.domain.models.team.ActionManagerRelation;
 import fr.siamois.domain.models.team.TeamMemberRelation;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
@@ -40,17 +41,19 @@ public class InstitutionService {
     private final TeamMemberRepository teamMemberRepository;
     private final ActionManagerRepository actionManagerRepository;
     private final VocabularyService vocabularyService;
+    private final FieldConfigurationService fieldConfigurationService;
 
 
     public InstitutionService(InstitutionRepository institutionRepository,
                               PersonRepository personRepository,
-                              InstitutionSettingsRepository institutionSettingsRepository, TeamMemberRepository teamMemberRepository, ActionManagerRepository actionManagerRepository, VocabularyService vocabularyService) {
+                              InstitutionSettingsRepository institutionSettingsRepository, TeamMemberRepository teamMemberRepository, ActionManagerRepository actionManagerRepository, VocabularyService vocabularyService, FieldConfigurationService fieldConfigurationService) {
         this.institutionRepository = institutionRepository;
         this.personRepository = personRepository;
         this.institutionSettingsRepository = institutionSettingsRepository;
         this.teamMemberRepository = teamMemberRepository;
         this.actionManagerRepository = actionManagerRepository;
         this.vocabularyService = vocabularyService;
+        this.fieldConfigurationService = fieldConfigurationService;
     }
 
     /**
@@ -105,13 +108,14 @@ public class InstitutionService {
         if (existing.isPresent())
             throw new InstitutionAlreadyExistException("Institution with code " + institution.getIdentifier() + " already exists");
 
-        // TODO : Vérifier que l'URL de thésaurus est valide
-
-        //fieldConfigurationService.setupFieldConfigurationForInstitution(userInfo, vocabulary);
+        // Récuperation ou création du vocabulaire
         Vocabulary vocabulary = vocabularyService.findOrCreateVocabularyOfUri(thesaurusUrl);
 
         try {
-            return institutionRepository.save(institution);
+            // Création de l'institution et préparation des concepts du thésaurus sélectionnés
+            Institution i = institutionRepository.save(institution);
+            fieldConfigurationService.setupFieldConfigurationForInstitution(i, vocabulary);
+            return i;
         } catch (Exception e) {
             log.error("Error while saving institution", e);
             throw new FailedInstitutionSaveException("Failed to save institution");

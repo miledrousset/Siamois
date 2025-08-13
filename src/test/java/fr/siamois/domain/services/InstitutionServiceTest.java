@@ -2,7 +2,9 @@ package fr.siamois.domain.services;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.exceptions.ErrorProcessingExpansionException;
 import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
+import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
@@ -10,6 +12,10 @@ import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.team.ActionManagerRelation;
 import fr.siamois.domain.models.team.TeamMemberRelation;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
+import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
+import fr.siamois.domain.services.vocabulary.VocabularyService;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
@@ -44,6 +50,10 @@ class InstitutionServiceTest {
     private ActionManagerRepository actionManagerRepository;
     @Mock
     private TeamMemberRepository teamMemberRepository;
+    @Mock
+    private VocabularyService vocabularyService;
+    @Mock
+    private FieldConfigurationService fieldConfigurationService;
 
     @InjectMocks
     private InstitutionService institutionService;
@@ -87,22 +97,42 @@ class InstitutionServiceTest {
     @Test
     void createInstitution_throwsInstitutionAlreadyExist() {
         when(institutionRepository.findInstitutionByIdentifier("123456")).thenReturn(Optional.of(institution1));
-
-        assertThrows(InstitutionAlreadyExistException.class, () -> institutionService.createInstitution(institution1,""));
+        assertThrows(InstitutionAlreadyExistException.class, () -> institutionService.createInstitution(institution1, "invalid_url"));
     }
 
     @Test
-    void createInstitution_throwsFailedInstitutionSaveException() {
+    void createInstitution_throwsFailedInstitutionSaveException() throws InvalidEndpointException {
+
+        // Mock
         when(institutionRepository.save(institution1)).thenThrow(new RuntimeException("Error while saving institution"));
+        Vocabulary fakeVocabulary = new Vocabulary();
+        when(vocabularyService.findOrCreateVocabularyOfUri(anyString()))
+                .thenReturn(fakeVocabulary);
 
-        assertThrows(FailedInstitutionSaveException.class, () -> institutionService.createInstitution(institution1,""));
+        assertThrows(FailedInstitutionSaveException.class, () -> institutionService.createInstitution(institution1, "valid_url"));
     }
 
     @Test
-    void createInstitution() throws InstitutionAlreadyExistException, FailedInstitutionSaveException, InvalidEndpointException {
-        institutionService.createInstitution(institution1,"");
+    void createInstitution() throws InstitutionAlreadyExistException, FailedInstitutionSaveException, InvalidEndpointException, NotSiamoisThesaurusException, ErrorProcessingExpansionException {
+
+        Vocabulary fakeVocabulary = new Vocabulary();
+        when(vocabularyService.findOrCreateVocabularyOfUri(anyString()))
+                .thenReturn(fakeVocabulary);
+        when(fieldConfigurationService
+                .setupFieldConfigurationForInstitution(any(Institution.class), any(Vocabulary.class))).thenReturn(Optional.of(mock(GlobalFieldConfig.class)));
+        when(institutionRepository.save(any(Institution.class))).thenReturn(mock(Institution.class));
+
+        institutionService.createInstitution(institution1, "valid_url");
 
         verify(institutionRepository, times(1)).save(institution1);
+    }
+
+    @Test
+    void createInstitution_throwsInvalidEndpointException() throws InvalidEndpointException {
+
+        when(vocabularyService.findOrCreateVocabularyOfUri(anyString())).thenThrow(new InvalidEndpointException("Invalid url"));
+
+        assertThrows(InvalidEndpointException.class, () -> institutionService.createInstitution(institution1, "invalid_url"));
     }
 
     @Test

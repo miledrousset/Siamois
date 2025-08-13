@@ -65,6 +65,19 @@ public class FieldConfigurationService {
      * @throws ErrorProcessingExpansionException if there is an error processing the vocabulary expansion
      */
     public Optional<GlobalFieldConfig> setupFieldConfigurationForInstitution(UserInfo info, Vocabulary vocabulary) throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
+        return setupFieldConfigurationForInstitution(info.getInstitution(), vocabulary);
+    }
+
+    /**
+     * Sets up the field configuration for an institution based on the vocabulary.
+     *
+     * @param institution       the institution
+     * @param vocabulary the vocabulary to use for configuration
+     * @return an Optional containing GlobalFieldConfig if the configuration is wrong, otherwise empty
+     * @throws NotSiamoisThesaurusException      if the vocabulary is not a Siamois thesaurus
+     * @throws ErrorProcessingExpansionException if there is an error processing the vocabulary expansion
+     */
+    public Optional<GlobalFieldConfig> setupFieldConfigurationForInstitution(Institution institution, Vocabulary vocabulary) throws NotSiamoisThesaurusException, ErrorProcessingExpansionException {
         ConceptBranchDTO conceptBranchDTO = conceptApi.fetchFieldsBranch(vocabulary);
         GlobalFieldConfig config = createConfigOfThesaurus(conceptBranchDTO);
         if (config.isWrongConfig()) return Optional.of(config);
@@ -73,9 +86,9 @@ public class FieldConfigurationService {
             Concept concept = conceptService.saveOrGetConceptFromFullDTO(vocabulary, conceptDTO);
             String fieldCode = conceptDTO.getFieldcode().orElseThrow(() -> FIELD_CODE_NOT_FOUND);
 
-            int rowAffected = fieldRepository.updateConfigForFieldOfInstitution(info.getInstitution().getId(), fieldCode, concept.getId());
+            int rowAffected = fieldRepository.updateConfigForFieldOfInstitution(institution.getId(), fieldCode, concept.getId());
             if (rowAffected == 0) {
-                fieldRepository.saveConceptForFieldOfInstitution(info.getInstitution().getId(), fieldCode, concept.getId());
+                fieldRepository.saveConceptForFieldOfInstitution(institution.getId(), fieldCode, concept.getId());
             }
         }
 
