@@ -17,7 +17,7 @@
     </cc:interface>
 
     <cc:implementation>
-        <form:csrfform formId="#{cc.attrs.formId}" style="width: 100%" onkeypress="if (event.keyCode === ENTER) { return false; }">
+        <form:csrfform id="formCC" formId="#{cc.attrs.formId}" style="width: 100%" onkeypress="if (event.keyCode === ENTER) { return false; }">
             <div class="datatable-settings">
                 <div class="datatable-info">
                     <h2 class="dt-title">#{cc.attrs.title}</h2>
