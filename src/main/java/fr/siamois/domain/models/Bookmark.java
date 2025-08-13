@@ -63,6 +63,6 @@ public class Bookmark {
                 .filter(entry -> resourceUri.startsWith(entry.getKey()))
                 .map(Map.Entry::getValue)
                 .findFirst()
-                .orElse("bi bi-bookmark-fill");
+                .orElse("bi bi-bookmark");
     }
 }
