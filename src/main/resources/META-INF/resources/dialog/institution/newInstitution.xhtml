@@ -20,67 +20,77 @@
             <div class="dialog-new-institution">
                 <h3>#{institutionDialogBean.title}</h3>
                 <hr/>
-                <div class="form-group row">
-                    <label class="col-lg-4 col-form-label"
-                           for="name">#{langBean.msg('organisationManagement.orgName')}</label>
-                    <div class="col-lg-6 ms-auto">
-                        <p:inputText
-                                required="true"
-                                id="name"
-                                value="#{institutionDialogBean.institutionName}"
-                                maxlength="#{documentCreationBean.maxTitleLength()}"
-                        />
+                <div class="sia-settings-dialog-form">
+                    <div class="form-group row">
+                        <p:outputLabel class="col-lg-4 col-form-label"
+                                       for="name">#{langBean.msg('organisationManagement.orgName')}</p:outputLabel>
+                        <div class="col-lg-6 ms-auto">
+                            <p:inputText
+                                    required="true"
+                                    id="name"
+                                    value="#{institutionDialogBean.institutionName}"
+                                    maxlength="#{documentCreationBean.maxTitleLength()}"
+                            />
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-lg-4 col-form-label"
-                           for="identifier">#{langBean.msg('common.label.identifier')}</label>
-                    <div class="col-lg-6 ms-auto">
-                        <p:inputText
-                                required="true"
-                                id="identifier"
-                                value="#{institutionDialogBean.identifier}"
-                        />
+                    <div class="form-group row">
+                        <p:outputLabel class="col-lg-4 col-form-label"
+                                       for="identifier">#{langBean.msg('common.label.identifier')}</p:outputLabel>
+                        <div class="col-lg-6 ms-auto">
+                            <p:inputText
+                                    required="true"
+                                    id="identifier"
+                                    value="#{institutionDialogBean.identifier}"
+                            />
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-lg-3 col-form-label"
-                           for="thesaurus">#{langBean.msg('common.label.thesaurusUrl')}</label>
-                    <div class="col-lg-1 ms-auto">
-                        <p:commandButton id="image" type="button" icon="bi bi-question-circle" />
-                        <p:overlayPanel for="image" dismissable="false" showCloseIcon="true" style="width:60vh; height: auto;">
-                            <pe:imageZoom for="help"/>
-                            <h:graphicImage styleClass="config-example" id="help" library="img" name="opentheso_config_example.png" alt="Example configuration on OpenTheso"/>
-                        </p:overlayPanel>
-                    </div>
-                    <div class="col-lg-6 ms-auto">
-                        <p:inputText
-                                required="true"
-                                id="thesaurus"
-                                value="#{institutionDialogBean.thesaurusUrl}"
-                                styleClass="#{institutionDialogBean.thesaurusError ? 'ui-state-error' : ''}"
-                        />
-                    </div>
+                    <div class="form-group row">
+                        <p:outputLabel class="col-lg-3 col-form-label"
+                                       for="thesaurus">#{langBean.msg('common.label.thesaurusUrl')}</p:outputLabel>
+                        <div class="col-lg-1 ms-auto">
+                            <p:commandButton id="image" type="button" icon="bi bi-question-circle"/>
+                            <p:overlayPanel for="image" dismissable="false" showCloseIcon="true"
+                                            style="width:60vh; height: auto;">
+                                <pe:imageZoom for="help"/>
+                                <h:graphicImage styleClass="config-example" id="help" library="img"
+                                                name="opentheso_config_example.png"
+                                                alt="Example configuration on OpenTheso"/>
+                            </p:overlayPanel>
+                        </div>
+                        <div class="col-lg-6 ms-auto">
+                            <p:inputText
+                                    required="true"
+                                    id="thesaurus"
+                                    value="#{institutionDialogBean.thesaurusUrl}"
+                                    styleClass="#{institutionDialogBean.thesaurusError ? 'ui-state-error' : ''}"
+                            />
+                        </div>
 
 
-                </div>
-                <div class="form-group row">
-                    <label class="col-lg-4 col-form-label"
-                           for="description">#{langBean.msg('common.label.description')}</label>
-                    <div class="col-lg-6 ms-auto">
-                        <p:inputTextarea
-                                id="description"
-                                value="#{institutionDialogBean.description}"
-                        />
+                    </div>
+                    <div class="form-group row">
+                        <p:outputLabel class="col-lg-4 col-form-label"
+                                       for="description">#{langBean.msg('common.label.description')}</p:outputLabel>
+                        <div class="col-lg-6 ms-auto">
+                            <p:inputTextarea
+                                    id="description"
+                                    value="#{institutionDialogBean.description}"
+                            />
+                        </div>
                     </div>
                 </div>
                 <hr/>
-                <div class="dialog-buttons">
-                    <p:commandButton value="#{langBean.msg('common.action.cancel')}"
-                                     immediate="true" action="#{institutionDialogBean.exit()}" update="@form"/>
-                    <p:commandButton value="#{institutionDialogBean.buttonLabel}"
-                                     action="#{institutionDialogBean.save()}" update="@form institutionManagerDatatable:formCC:institutionManagerForm"/>
-                </div>
+
+                <p:toolbar class="dialog-buttons">
+                    <p:toolbarGroup align="right">
+                        <p:commandButton value="#{langBean.msg('common.action.cancel')}"
+                                         styleClass="ui-button-secondary"
+                                         immediate="true" action="#{institutionDialogBean.exit()}" update="@form"/>
+                        <p:commandButton value="#{institutionDialogBean.buttonLabel}"
+                                         action="#{institutionDialogBean.save()}"
+                                         update="@form institutionManagerDatatable:formCC:institutionManagerForm"/>
+                    </p:toolbarGroup>
+                </p:toolbar>
             </div>
         </h:form>
     </p:dialog>
