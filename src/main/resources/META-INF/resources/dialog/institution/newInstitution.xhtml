@@ -3,6 +3,7 @@
              xmlns:form="http://xmlns.jcp.org/jsf/composite/pages/shared/form"
              xmlns:pe="http://primefaces.org/ui/extensions"
              xmlns:p="http://primefaces.org/ui" xmlns:h="http://java.sun.com/jsf/html"
+             xmlns:f="http://java.sun.com/jsf/core"
 
 >
 
@@ -27,10 +28,15 @@
                         <div class="col-lg-6 ms-auto">
                             <p:inputText
                                     required="true"
+                                    style="width: 100%"
+                                    placeholder="#{langBean.msg('common.placeholder.institution')}"
                                     id="name"
+                                    widgetVar="nameW"
                                     value="#{institutionDialogBean.institutionName}"
                                     maxlength="#{documentCreationBean.maxTitleLength()}"
-                            />
+                            >
+                                <p:ajax event="keyup" delay="300" oncomplete="updateSlugFromName()" />
+                            </p:inputText>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -39,9 +45,18 @@
                         <div class="col-lg-6 ms-auto">
                             <p:inputText
                                     required="true"
+                                    style="width: 100%"
                                     id="identifier"
+                                    widgetVar="slugW"
+                                    placeholder="#{langBean.msg('common.placeholder.institutionCode')}"
                                     value="#{institutionDialogBean.identifier}"
-                            />
+                                    oninput="markSlugDirty()"
+                            >
+                                <f:validateRegex pattern="^[a-z0-9]+(-[a-z0-9]+)*$"/>
+                            </p:inputText>
+                            <small id="slugHelp" class="form-text text-muted">
+                                Lettres, chiffres et tirets uniquement, en minuscules.
+                            </small>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -59,7 +74,9 @@
                         </div>
                         <div class="col-lg-6 ms-auto">
                             <p:inputText
+                                    style="width: 100%"
                                     required="true"
+                                    placeholder="ex: https://thesaurus.mom.fr/?idt=th230"
                                     id="thesaurus"
                                     value="#{institutionDialogBean.thesaurusUrl}"
                                     styleClass="#{institutionDialogBean.thesaurusError ? 'ui-state-error' : ''}"
@@ -73,6 +90,7 @@
                                        for="description">#{langBean.msg('common.label.description')}</p:outputLabel>
                         <div class="col-lg-6 ms-auto">
                             <p:inputTextarea
+                                    style="width: 100%"
                                     id="description"
                                     value="#{institutionDialogBean.description}"
                             />

@@ -19,6 +19,52 @@
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap"/>
 
+    <script type="text/javascript">
+        let slugDirty = false; // passe à true dès que l'user modifie manuellement le champ slug
+        let slugDebounce;
+
+        function markSlugDirty() {
+            // appelé sur oninput du champ slug
+            slugDirty = true;
+        }
+
+        function slugify(str) {
+            if (!str) return "";
+            return str
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // retire accents
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9\s-]/g, '')   // supprime ponctuation
+                .replace(/\s+/g, '-')           // espaces -> tirets
+                .replace(/-+/g, '-')            // compresse ---
+                .replace(/^-+|-+$/g, '');       // trim tirets
+        }
+
+        function updateSlugFromName() {
+            if (slugDirty) return; // ne pas écraser si l’utilisateur a déjà modifié le slug
+            clearTimeout(slugDebounce);
+            slugDebounce = setTimeout(function () {
+                const nameEl = PF('nameW').jq;   // PrimeFaces widgetVar
+                const slugEl = PF('slugW').jq;
+                if (!nameEl || !slugEl) return;
+
+                const proposal = slugify(nameEl.val());
+                slugEl.val(proposal);
+            }, 250);
+        }
+
+        function regenSlug() {
+            const nameEl = PF('nameW').jq;
+            const slugEl = PF('slugW').jq;
+            const base = slugify(nameEl.val());
+            const rand = Math.random().toString(36).slice(2, 6);
+            const proposal = base ? `${base}-${rand}` : `inst-${rand}`;
+            slugEl.val(proposal);
+        }
+
+    </script>
+
+
 
     <ui:insert name="head"/>
 
