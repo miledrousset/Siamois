@@ -6,24 +6,6 @@
     font-family: 'Inter', sans-serif;
 }
 
-body .ui-selectbooleanbutton.ui-state-active, body .ui-selectonebutton > .ui-button.ui-state-active, body .ui-selectmanybutton > .ui-button.ui-state-active {
-    background: var(--siamois-green);
-    border-color: var(--siamois-green);
-}
-
-body .ui-selectbooleanbutton.ui-state-active.ui-state-hover, body .ui-selectonebutton > .ui-button.ui-state-active.ui-state-hover, body .ui-selectmanybutton > .ui-button.ui-state-active.ui-state-hover {
-    background: var(--siamois-green);
-    border-color: var(--siamois-green);
-}
-
-body .ui-button.ui-state-focus {
-    box-shadow: var(--siamois-green-light-200)
-}
-
-body .ui-selectbooleanbutton.ui-state-active:not(.ui-state-disabled):hover, body .ui-selectonebutton > .ui-button.ui-state-active:not(.ui-state-disabled):hover, body .ui-selectmanybutton > .ui-button.ui-state-active:not(.ui-state-disabled):hover {
-    background: var(--siamois-green);
-    border-color: var(--siamois-green);
-}
 
 .panel-highlight {
     outline: 3px solid var(--siamois-green-light-350);
@@ -33,7 +15,6 @@ body .ui-selectbooleanbutton.ui-state-active:not(.ui-state-disabled):hover, body
 .sia-flow-panel-title, .ui-chip-text {
     font-size: 14px;
 }
-
 
 .siamois-panel {
     border-radius: 8px;
@@ -60,15 +41,6 @@ body .ui-selectbooleanbutton.ui-state-active:not(.ui-state-disabled):hover, body
 
 
 /* input fields */
-
-body .ui-inputfield.ui-state-hover {
-    border-color: var(--siamois-green);
-}
-
-body .ui-inputfield.ui-state-focus {
-    border-color: var(--siamois-green);
-    box-shadow: 0 0 0 .2em var(--siamois-green-light-350);
-}
 
 body .ui-datatable .ui-datatable-data > tr > td {
     padding: 0.5em;
@@ -110,117 +82,6 @@ body .ui-datatable .ui-datatable-data > tr > td {
     padding-bottom: 0.5em;
     background: none;
 }
-
-/* autocomplete */
-
-.ui-autocomplete-panel .ui-button {
-    background: var(--siamois-green);
-    border-color: var(--siamois-green);
-}
-
-.ui-autocomplete-panel .ui-button:hover {
-    background: var(--siamois-green-light-350);
-    border-color: var(--siamois-green-light-350);
-}
-
-body .ui-autocomplete-panel .ui-autocomplete-items .ui-autocomplete-item.ui-state-highlight {
-    background: var(--siamois-green-light-100);
-}
-
-
-body .ui-datatable thead th.ui-sortable-column.ui-state-focus {
-    outline: 0 none;
-    outline-offset: 0;
-    box-shadow: inset 0 0 0 .2rem var(--siamois-green);
-}
-
-body .ui-datatable-data td[role="gridcell"]:focus, .ui-datatable-data td[role="gridcell"] *:focus, .ui-datatable-data td[role="grid"] [tabindex="0"]:focus {
-    outline: var(--siamois-green);
-    outline-style: solid;
-    outline-width: 2px;
-    border: 0;
-}
-
-body .ui-datatable thead th .ui-sortable-column-badge {
-    border-radius: 50%;
-    height: 1.143rem;
-    min-width: 1.143rem;
-    line-height: 1.143rem;
-    color: #fff;
-    background: var(--siamois-green);
-    margin-left: .5rem;
-    font-size: .75rem;
-}
-
-/* paginator */
-
-body .ui-paginator .ui-paginator-pages .ui-paginator-page.ui-state-active {
-    background: var(--siamois-green-light-100);
-    color: var(--text-main);
-}
-
-body .ui-paginator .ui-paginator-pages .ui-paginator-page.ui-state-focus {
-    outline: 0 none;
-    outline-offset: 0;
-    box-shadow: 0 0 0 .2rem var(--siamois-green-light-200);
-}
-
-
-body .ui-paginator .ui-paginator-first.ui-state-focus, body .ui-paginator .ui-paginator-prev.ui-state-focus, body .ui-paginator .ui-paginator-next.ui-state-focus, body .ui-paginator .ui-paginator-last.ui-state-focus {
-    outline: 0 none;
-    outline-offset: 0;
-    box-shadow: 0 0 0 .2rem var(--siamois-green-light-200);
-}
-
-body .ui-datatable .ui-paginator.ui-paginator-bottom {
-    text-align: right;
-}
-
-/* thead */
-
-body .ui-datatable thead th {
-    background: var(--siamois-green-light-100);
-    align-content: start;
-}
-
-body .ui-datatable thead th.ui-state-active {
-    color: var(--siamois-green);
-    background: var(--siamois-green-light-200);
-}
-
-body .ui-datatable thead th.ui-state-hover {
-    background: var(--siamois-green-light-50);
-}
-
-body .ui-datatable thead th.ui-state-active.ui-state-hover {
-    color: var(--siamois-green);
-    background: var(--siamois-green-light-50);
-}
-
-body .ui-datatable thead th.ui-state-active .ui-column-title {
-    color: var(--siamois-green)
-}
-
-body .ui-datatable thead th.ui-state-active .ui-sortable-column-icon.ui-icon-carat-2-n-s {
-    color: var(--siamois-green);
-}
-
-body .ui-datatable thead th.ui-state-hover .ui-column-title {
-    color: var(--siamois-green)
-}
-
-body .ui-datatable thead th.ui-state-hover .ui-sortable-column-icon.ui-icon-carat-2-n-s {
-    color: var(--siamois-green);
-}
-
-body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-column-title {
-    color: var(--siamois-green)
-}
-
-body .ui-datatable thead th.ui-state-active.ui-state-hover .ui-sortable-column-icon.ui-icon-carat-2-n-s {
-    color: var(--siamois-green);
-}
-
 
 /* spatial-unit */
 

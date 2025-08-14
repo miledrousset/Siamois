@@ -93,7 +93,7 @@
     <dependencies>
 
         <!-- https://mvnrepository.com/artifact/org.joinfaces/primefaces-spring-boot-starter -->
-        <dependency>
+        <dependency>https://mvnrepository.com/artifact/org.joinfaces/primefaces-spring-boot-starter
             <groupId>org.joinfaces</groupId>
             <artifactId>primefaces-spring-boot-starter</artifactId>
         </dependency>
