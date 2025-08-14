@@ -16,11 +16,12 @@
             modal="true"
             closable="false"
     >
+        <f:facet name="header">
+            <h3>#{institutionDialogBean.title}</h3>
+        </f:facet>
         <h:form>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <div class="dialog-new-institution">
-                <h3>#{institutionDialogBean.title}</h3>
-                <hr/>
                 <div class="sia-settings-dialog-form">
                     <div class="form-group row">
                         <p:outputLabel class="col-lg-4 col-form-label"

@@ -21,115 +21,163 @@
             <section>
                 <h3>#{userDialogBean.title}</h3>
             </section>
-            <form:csrfform formId="userDialogBeanForm">
-                <section>
-                    <p:tabView>
-                        <p:ajax event="tabChange" update="@form" listener="#{userDialogBean.tabChanged}"/>
-                        <p:tab title="Ajouter des utilisateurs existants" id="addExistingUser">
-                            <p:outputLabel value="Email ou nom d'utilisateur"/>
-                            <p:autoComplete id="userSelect"
-                                            value="#{userDialogBean.selectedExistingPerson}"
-                                            completeMethod="#{userDialogBean.searchUser}"
-                                            var="user"
-                                            itemLabel="#{user.displayName()}"
-                                            itemValue="#{user}"
-                                            converter="#{personConverter}">
+            <section>
+                <p:tabView>
+                    <p:ajax event="tabChange" update="@form" listener="#{userDialogBean.tabChanged}"/>
+                    <p:tab title="Ajouter des utilisateurs existants" id="addExistingUser">
+                        <form:csrfform formId="userDialogBeanFormExisting">
+                            <div class="sia-settings-dialog-form">
+                                <div class="form-group">
+                                    <p:outputLabel value="Email ou nom d'utilisateur" for="userSelect"
+                                                   class="col-lg-4 col-form-label"/>
+                                    <p:autoComplete id="userSelect" class="col-lg-4"
+                                                    value="#{userDialogBean.selectedExistingPerson}"
+                                                    completeMethod="#{userDialogBean.searchUser}"
+                                                    required="true"
+                                                    var="user"
+                                                    itemLabel="#{user.displayName()}"
+                                                    itemValue="#{user}"
+                                                    converter="#{personConverter}">
 
-                                <p:column>
-                                    <f:facet name="header">
-                                        <p:outputLabel value="ID"/>
-                                    </f:facet>
-                                    <h:outputText value="#{user.id}"/>
-                                </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <p:outputLabel value="ID"/>
+                                            </f:facet>
+                                            <h:outputText value="#{user.id}"/>
+                                        </p:column>
 
-                                <p:column>
-                                    <f:facet name="header">
-                                        <p:outputLabel value="Username"/>
-                                    </f:facet>
-                                    <h:outputText value="#{user.username}"/>
-                                </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <p:outputLabel value="Username"/>
+                                            </f:facet>
+                                            <h:outputText value="#{user.username}"/>
+                                        </p:column>
 
-                                <p:column>
-                                    <f:facet name="header">
-                                        <p:outputLabel value="Email"/>
-                                    </f:facet>
-                                    <h:outputText value="#{user.email}"/>
-                                </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <p:outputLabel value="Email"/>
+                                            </f:facet>
+                                            <h:outputText value="#{user.email}"/>
+                                        </p:column>
 
 
-                            </p:autoComplete>
-                            <h:panelGroup rendered="#{userDialogBean.shouldRenderRoleField}">
-                                <label class="col-lg-4 col-form-label" for="description">Votre rôle</label>
-                                <div class="col-lg-6 ms-auto">
-                                    <input:conceptAutocomplete completeMethod="#{userDialogBean.completeRole}"
-                                                               editConceptUrl="#{userDialogBean.conceptCompleteUrl}"
-                                                               selectedConcept="#{userDialogBean.currentSelectedRole}"
-                                                               required="false"
-                                    />
+                                    </p:autoComplete>
+                                    <h:panelGroup rendered="#{userDialogBean.shouldRenderRoleField}">
+                                        <label class="col-lg-4 col-form-label" for="role">Votre rôle</label>
+                                        <div class="col-lg-6 ms-auto">
+                                            <input:conceptAutocomplete
+                                                    completeMethod="#{userDialogBean.completeRole}"
+                                                    id="role"
+                                                    editConceptUrl="#{userDialogBean.conceptCompleteUrl}"
+                                                    selectedConcept="#{userDialogBean.currentSelectedRole}"
+                                                    required="false"
+                                            />
+                                        </div>
+                                    </h:panelGroup>
+                                    <p:commandButton action="#{userDialogBean.addToList()}"
+                                                     icon="bi bi-plus-circle" update="@form" class="col-lg-2"/>
+
                                 </div>
-                            </h:panelGroup>
-                            <p:commandButton value="Ajouter" action="#{userDialogBean.addToList()}" icon="bi bi-plus" update="@form"/>
-                            <h:panelGroup rendered="#{userDialogBean.personSelectedList.size() > 0}">
-                                <h4>Utilisateurs à ajouter</h4>
-                                <ui:repeat value="#{userDialogBean.personSelectedList}" var="personRole">
-                                    <article>
-                                        <p:outputLabel value="#{personRole.person().displayName()} (#{personRole.person().username}) - #{labelBean.findLabelOf(personRole.role())}"/>
-                                        <p:commandButton icon="bi bi-trash"
-                                                         action="#{userDialogBean.removeFromList(user)}"
-                                                         update="@form"
-                                                         styleClass="btn-danger"
-                                        />
-                                    </article>
-                                </ui:repeat>
-                            </h:panelGroup>
-                        </p:tab>
-                        <p:tab title="Créer un nouvel utilisateur" id="createNewUser">
+                                <h:panelGroup rendered="#{userDialogBean.personSelectedList.size() > 0}">
+                                    <h4>Utilisateurs à ajouter</h4>
+                                    <ui:repeat value="#{userDialogBean.personSelectedList}" var="personRole">
+                                        <article>
+                                            <p:outputLabel
+                                                    value="#{personRole.person().displayName()} (#{personRole.person().username}) - #{labelBean.findLabelOf(personRole.role())}"/>
+                                            <p:commandButton icon="bi bi-dash-circle"
+                                                             immediate="true"
+                                                             action="#{userDialogBean.removeFromList(user)}"
+                                                             update="@form"
+                                                             styleClass="ui-button-secondary"
+                                            />
+                                        </article>
+                                    </ui:repeat>
+                                </h:panelGroup>
+                            </div>
+                            <hr/>
+                            <div class="dialog-buttons">
+                                <p:commandButton value="#{langBean.msg('common.action.cancel')}"
+                                                 immediate="true"
+                                                 styleClass="ui-button-secondary"
+                                                 action="#{userDialogBean.exit()}"
+                                                 update="@form"/>
+                                <p:commandButton value="#{userDialogBean.buttonLabel}"
+                                                 action="#{userDialogBean.applyToAllPerson()}"
+                                                 update="@form"/>
+                            </div>
+                        </form:csrfform>
+                    </p:tab>
+                    <p:tab title="Créer un nouvel utilisateur" id="createNewUser">
+                        <form:csrfform formId="formCreate">
                             <h:panelGroup layout="block" styleClass="form-container">
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label" for="firstName">Prénom</label>
-                                        <p:inputText placeholder="Jean" id="firstName" value="#{userDialogBean.firstname}"/>
+                                <div class="sia-settings-dialog-form">
+                                    <div class="form-row row">
+                                        <div class="form-group col-md-6">
+                                            <p:outputLabel class="col-form-label"
+                                                           for="firstName">Prénom</p:outputLabel>
+                                            <p:inputText placeholder="Jean" id="firstName"
+                                                         required="true"
+                                                         value="#{userDialogBean.firstname}"/>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <p:outputLabel class="col-form-label" for="lastName">Nom</p:outputLabel>
+                                            <p:inputText placeholder="Dupont" id="lastName"
+                                                         required="true"
+                                                         value="#{userDialogBean.lastname}"/>
+                                        </div>
                                     </div>
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label" for="lastName">Nom</label>
-                                        <p:inputText placeholder="Dupont" id="lastName" value="#{userDialogBean.lastname}"/>
+                                    <div class="form-row row">
+                                        <div class="form-group col-md-6">
+                                            <p:outputLabel class="col-form-label"
+                                                           for="username">Nom d'utilisateur</p:outputLabel>
+                                            <p:inputText id="username" placeholder="Username"
+                                                         required="true"
+                                                         value="#{userDialogBean.username}"/>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <p:outputLabel class="col-form-label" for="email">Email</p:outputLabel>
+                                            <p:inputText type="email" id="email" placeholder="jean.dupont@mail.com"
+                                                         required="true"
+                                                         value="#{userDialogBean.email}"/>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label" for="username">Nom d'utilisateur</label>
-                                        <p:inputText id="username" placeholder="Username" value="#{userDialogBean.username}"/>
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label class="col-form-label" for="email">Email</label>
-                                        <p:inputText type="email" id="email" placeholder="jean.dupont@mail.com" value="#{userDialogBean.email}"/>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="password">Mot de passe temporaire</label>
-                                        <p:inputText type="password" id="password" placeholder="Mot de passe" value="#{userDialogBean.password}"/>
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="confirmPassword">Confirmer le mot de passe</label>
-                                        <p:inputText type="password" id="confirmPassword" placeholder="Confirmation du mot de passe" value="#{userDialogBean.confirmPassword}"/>
+                                    <div class="form-row row">
+                                        <div class="form-group col-md-6">
+                                            <p:outputLabel for="password">Mot de passe temporaire</p:outputLabel>
+                                            <p:inputText type="password" id="password" placeholder="Mot de passe"
+                                                         required="true"
+                                                         value="#{userDialogBean.password}"/>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <p:outputLabel
+                                                    for="confirmPassword">Confirmer le mot de passe</p:outputLabel>
+                                            <p:inputText type="password" id="confirmPassword"
+                                                         placeholder="Confirmation du mot de passe"
+                                                         required="true"
+                                                         value="#{userDialogBean.confirmPassword}"/>
+                                        </div>
                                     </div>
                                 </div>
                             </h:panelGroup>
-                        </p:tab>
-                        <p:tab title="Importer un groupe d'utilisateur" disabled="true" id="importUserGroup">
-                        </p:tab>
-                    </p:tabView>
-                </section>
-                <hr/>
-                <div class="dialog-buttons">
-                    <p:commandButton value="#{langBean.msg('common.action.cancel')}"
-                                     action="#{userDialogBean.exit()}"
-                                     update="@form"/>
-                    <p:commandButton value="#{userDialogBean.buttonLabel}" action="#{userDialogBean.applyToAllPerson()}"
-                                     update="@form"/>
-                </div>
-            </form:csrfform>
+                            <hr/>
+                            <div class="dialog-buttons">
+                                <p:commandButton value="#{langBean.msg('common.action.cancel')}"
+                                                 immediate="true"
+                                                 styleClass="ui-button-secondary"
+                                                 action="#{userDialogBean.exit()}"
+                                                 update="@form"/>
+                                <p:commandButton value="#{userDialogBean.buttonLabel}"
+                                                 action="#{userDialogBean.applyToAllPerson()}"
+                                                 update="@form"/>
+                            </div>
+                        </form:csrfform>
+                    </p:tab>
+                    <p:tab title="Importer un groupe d'utilisateur" disabled="true" id="importUserGroup">
+                    </p:tab>
+                </p:tabView>
+            </section>
+
+
         </div>
     </p:dialog>
 
