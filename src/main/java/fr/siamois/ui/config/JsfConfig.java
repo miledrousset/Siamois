@@ -26,7 +26,7 @@ public class JsfConfig implements ServletContextAware {
         servletContext.setInitParameter("javax.faces.FACELETS_REFRESH_PERIOD", "1");
 
         servletContext.setInitParameter("primefaces.CLIENT_SIDE_VALIDATION", Boolean.TRUE.toString());
-        servletContext.setInitParameter("primefaces.THEME", "saga");
+        servletContext.setInitParameter("primefaces.THEME", "siamois-theme");
     }
 
     @Bean

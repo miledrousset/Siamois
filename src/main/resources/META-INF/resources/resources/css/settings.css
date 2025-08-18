@@ -9,7 +9,7 @@ main {
     flex-direction: column;
 }
 
-main form {
+main form.sia-settings-form {
     width: 100%;
     display: flex;
     justify-content: center
@@ -150,9 +150,13 @@ main form:first-child .field-value-group {
 }
 
 .dialog-new-institution .dialog-buttons {
-    margin-left: auto;
+    background: none;
+    border: none;
+}
+
+.dialog-new-institution .dialog-buttons .ui-toolbar-group-left, .dialog-new-institution .dialog-buttons .ui-toolbar-group-right {
     display: flex;
-    gap: 30px
+    gap: 30px;
 }
 
 .category-container {
@@ -240,4 +244,10 @@ a:hover {
 .config-example {
     object-fit: contain;
     width: 100%;
+}
+
+.sia-settings-dialog-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
 }

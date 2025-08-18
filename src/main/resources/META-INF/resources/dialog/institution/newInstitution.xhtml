@@ -1,54 +1,117 @@
 <ui:fragment xmlns="http://www.w3.org/1999/xhtml"
              xmlns:ui="http://java.sun.com/jsf/facelets"
-             xmlns:p="http://primefaces.org/ui"
+             xmlns:form="http://xmlns.jcp.org/jsf/composite/pages/shared/form"
+             xmlns:pe="http://primefaces.org/ui/extensions"
+             xmlns:p="http://primefaces.org/ui" xmlns:h="http://java.sun.com/jsf/html"
+             xmlns:f="http://java.sun.com/jsf/core"
 
 >
+
 
     <p:dialog
             widgetVar="newInstitutionDialog"
             id="newInstitutionDialog"
             width="40vw"
             showEffect="fade"
-            appendToBody="true"
+            modal="true"
             closable="false"
     >
-        <div class="dialog-new-institution">
+        <f:facet name="header">
             <h3>#{institutionDialogBean.title}</h3>
-            <hr/>
-            <div class="form-group row">
-                <label class="col-lg-4 col-form-label" for="name">#{langBean.msg('organisationManagement.orgName')}</label>
-                <div class="col-lg-6 ms-auto">
-                    <p:inputText
-                            id="name"
-                            value="#{institutionDialogBean.institutionName}"
-                            maxlength="#{documentCreationBean.maxTitleLength()}"
-                    />
+        </f:facet>
+        <h:form>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <div class="dialog-new-institution">
+                <div class="sia-settings-dialog-form">
+                    <div class="form-group row">
+                        <p:outputLabel class="col-lg-4 col-form-label"
+                                       for="name">#{langBean.msg('organisationManagement.orgName')}</p:outputLabel>
+                        <div class="col-lg-6 ms-auto">
+                            <p:inputText
+                                    required="true"
+                                    style="width: 100%"
+                                    placeholder="#{langBean.msg('common.placeholder.institution')}"
+                                    id="name"
+                                    widgetVar="nameW"
+                                    value="#{institutionDialogBean.institutionName}"
+                                    maxlength="#{documentCreationBean.maxTitleLength()}"
+                            >
+                                <p:ajax event="keyup" delay="300" oncomplete="updateSlugFromName()" />
+                            </p:inputText>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <p:outputLabel class="col-lg-4 col-form-label"
+                                       for="identifier">#{langBean.msg('common.label.identifier')}</p:outputLabel>
+                        <div class="col-lg-6 ms-auto">
+                            <p:inputText
+                                    required="true"
+                                    style="width: 100%"
+                                    id="identifier"
+                                    widgetVar="slugW"
+                                    placeholder="#{langBean.msg('common.placeholder.institutionCode')}"
+                                    value="#{institutionDialogBean.identifier}"
+                                    oninput="markSlugDirty()"
+                            >
+                                <f:validateRegex pattern="^[a-z0-9]+(-[a-z0-9]+)*$"/>
+                            </p:inputText>
+                            <small id="slugHelp" class="form-text text-muted">
+                                Lettres, chiffres et tirets uniquement, en minuscules.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <p:outputLabel class="col-lg-3 col-form-label"
+                                       for="thesaurus">#{langBean.msg('common.label.thesaurusUrl')}</p:outputLabel>
+                        <div class="col-lg-1 ms-auto">
+                            <p:commandButton id="image" type="button" icon="bi bi-question-circle"/>
+                            <p:overlayPanel for="image" dismissable="false" showCloseIcon="true"
+                                            style="width:60vh; height: auto;">
+                                <pe:imageZoom for="help"/>
+                                <h:graphicImage styleClass="config-example" id="help" library="img"
+                                                name="opentheso_config_example.png"
+                                                alt="Example configuration on OpenTheso"/>
+                            </p:overlayPanel>
+                        </div>
+                        <div class="col-lg-6 ms-auto">
+                            <p:inputText
+                                    style="width: 100%"
+                                    required="true"
+                                    placeholder="ex: https://thesaurus.mom.fr/?idt=th230"
+                                    id="thesaurus"
+                                    value="#{institutionDialogBean.thesaurusUrl}"
+                                    styleClass="#{institutionDialogBean.thesaurusError ? 'ui-state-error' : ''}"
+                            />
+                        </div>
+
+
+                    </div>
+                    <div class="form-group row">
+                        <p:outputLabel class="col-lg-4 col-form-label"
+                                       for="description">#{langBean.msg('common.label.description')}</p:outputLabel>
+                        <div class="col-lg-6 ms-auto">
+                            <p:inputTextarea
+                                    style="width: 100%"
+                                    id="description"
+                                    value="#{institutionDialogBean.description}"
+                            />
+                        </div>
+                    </div>
                 </div>
+                <hr/>
+
+                <p:toolbar class="dialog-buttons">
+                    <p:toolbarGroup align="right">
+                        <p:commandButton value="#{langBean.msg('common.action.cancel')}"
+                                         styleClass="ui-button-secondary"
+                                         immediate="true" action="#{institutionDialogBean.exit()}" update="@form"/>
+                        <p:commandButton value="#{institutionDialogBean.buttonLabel}"
+                                         action="#{institutionDialogBean.save()}"
+                                         update="@form institutionManagerDatatable:formCC:institutionManagerForm"/>
+                    </p:toolbarGroup>
+                </p:toolbar>
             </div>
-            <div class="form-group row">
-                <label class="col-lg-4 col-form-label" for="identifier">#{langBean.msg('common.label.identifier')}</label>
-                <div class="col-lg-6 ms-auto">
-                    <p:inputText
-                            id="identifier"
-                            value="#{institutionDialogBean.identifier}"
-                    />
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-lg-4 col-form-label" for="description">#{langBean.msg('common.label.description')}</label>
-                <div class="col-lg-6 ms-auto">
-                    <p:inputTextarea
-                            id="description"
-                            value="#{institutionDialogBean.description}"
-                    />
-                </div>
-            </div>
-            <hr/>
-            <div class="dialog-buttons">
-                <p:commandButton value="#{langBean.msg('common.action.cancel')}" action="#{institutionDialogBean.exit()}" update="@form"/>
-                <p:commandButton value="#{institutionDialogBean.buttonLabel}" action="#{institutionDialogBean.save()}" update="@form"/>
-            </div>
-        </div>
+        </h:form>
     </p:dialog>
 
 </ui:fragment>

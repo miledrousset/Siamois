@@ -74,6 +74,12 @@ public class InstitutionDetailsBean implements Serializable {
             }));
         }
 
+        elements.add(new OptionElement("bi bi-table", langBean.msg("common.label.thesaurus"),
+                langBean.msg("organisationSettings.descriptions.thesaurus"), () -> {
+            institutionThesaurusSettingsBean.init(institution);
+            return "/pages/settings/institution/thesaurusSettings.xhtml?faces-redirect=true";
+        }));
+
         elements.add(new OptionElement("bi bi-person-circle",
                 langBean.msg("organisationSettings.titles.actionManagers"),
                 langBean.msg("organisationSettings.descriptions.actionManagers"), () -> {
@@ -87,11 +93,7 @@ public class InstitutionDetailsBean implements Serializable {
             return "/pages/settings/team/teamList.xhtml?faces-redirect=true";
         }));
 
-        elements.add(new OptionElement("bi bi-table", langBean.msg("common.label.thesaurus"),
-                langBean.msg("organisationSettings.descriptions.thesaurus"), () -> {
-            institutionThesaurusSettingsBean.init(institution);
-            return "/pages/settings/institution/thesaurusSettings.xhtml?faces-redirect=true";
-        }));
+
     }
 
     public String goToInstitutionList() {

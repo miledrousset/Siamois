@@ -94,11 +94,12 @@ public class TeamMembersBean implements SettingsDatatableBean {
         }
     }
 
-    private void processPerson(PersonRole saved) {
+    private Boolean processPerson(PersonRole saved) {
         addPersonToActionunit(saved);
         TeamMemberRelation relation = new TeamMemberRelation(actionUnit, saved.person());
         memberRelations.add(relation);
         filteredMemberRelations.add(relation);
+        return true;
     }
 
     @Override

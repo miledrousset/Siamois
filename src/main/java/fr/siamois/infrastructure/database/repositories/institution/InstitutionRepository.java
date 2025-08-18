@@ -1,5 +1,6 @@
 package fr.siamois.infrastructure.database.repositories.institution;
 
+
 import fr.siamois.domain.models.institution.Institution;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Query;
@@ -44,5 +45,7 @@ public interface InstitutionRepository extends CrudRepository<Institution, Long>
                     "WHERE im.fk_person_id = :personId AND im.fk_institution_id = :institutionId"
     )
     boolean personIsInstitutionManager(Long institutionId, Long personId);
+
+
 
 }

@@ -2,9 +2,10 @@ package fr.siamois.infrastructure.database.repositories.person;
 
 import fr.siamois.domain.models.auth.Person;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Repository
-public interface PersonRepository extends CrudRepository<Person, Long> {
+public interface PersonRepository extends JpaRepository<Person, Long> {
 
     Optional<Person> findByUsernameIgnoreCase(String username);
 
@@ -94,4 +95,15 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
                     "  AND NOT p.is_super_admin;"
     )
     long countPersonsInInstitution(Long institutionId);
+
+    @Query(
+            value = """
+              select p.* 
+              from person p
+              inner join institution_manager im 
+                     on p.person_id = im.fk_person_id
+              where im.fk_institution_id = :id
+              """,
+            nativeQuery = true)
+    Set<Person> findManagersOfInstitution(@Param("id") Long institutionId);
 }

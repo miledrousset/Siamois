@@ -19,7 +19,7 @@
 
     <ui:define name="content">
         <main>
-            <h:form id="profileForm">
+            <h:form id="profileForm" styleClass="sia-settings-form">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <div class="field-value-group">
                     <h2 class="field-value-title">#{langBean.msg('nav.myProfile')}</h2>
@@ -52,7 +52,7 @@
                     />
                 </div>
             </h:form>
-            <h:form id="preferenceSettingsForm">
+            <h:form id="preferenceSettingsForm" styleClass="sia-settings-form">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <div class="field-value-group">
                     <h2 class="field-value-title">#{langBean.msg('myProfile.preferences')}</h2>

@@ -3,6 +3,7 @@ package fr.siamois.ui.bean.settings;
 import fr.siamois.domain.events.publisher.InstitutionChangeEventPublisher;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.events.LoginEvent;
+import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
@@ -132,6 +133,7 @@ public class InstitutionListSettingsBean implements Serializable {
 
     public void createInstitution() {
         Institution institution;
+        institutionDialogBean.setThesaurusError(false);
 
         try {
             institution = institutionDialogBean.createInstitution();
@@ -143,6 +145,11 @@ public class InstitutionListSettingsBean implements Serializable {
         } catch (FailedInstitutionSaveException e) {
             log.error("Failed to create institution", e);
             MessageUtils.displayErrorMessage(langBean, "common.error.internal");
+            return;
+        } catch(InvalidEndpointException e) {
+            log.error("Invalid thesaurus url", e);
+            institutionDialogBean.setThesaurusError(true);
+            MessageUtils.displayErrorMessage(langBean, "common.error.thesaurusConfig.invalidUrl");
             return;
         }
 

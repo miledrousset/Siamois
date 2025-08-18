@@ -2,6 +2,9 @@ package fr.siamois.domain.services;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.exceptions.ErrorProcessingExpansionException;
+import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
+import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
@@ -9,6 +12,10 @@ import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.team.ActionManagerRelation;
 import fr.siamois.domain.models.team.TeamMemberRelation;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.vocabulary.GlobalFieldConfig;
+import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
+import fr.siamois.domain.services.vocabulary.VocabularyService;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.InstitutionSettingsRepository;
@@ -21,13 +28,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,6 +47,10 @@ class InstitutionServiceTest {
     private ActionManagerRepository actionManagerRepository;
     @Mock
     private TeamMemberRepository teamMemberRepository;
+    @Mock
+    private VocabularyService vocabularyService;
+    @Mock
+    private FieldConfigurationService fieldConfigurationService;
 
     @InjectMocks
     private InstitutionService institutionService;
@@ -86,22 +94,42 @@ class InstitutionServiceTest {
     @Test
     void createInstitution_throwsInstitutionAlreadyExist() {
         when(institutionRepository.findInstitutionByIdentifier("123456")).thenReturn(Optional.of(institution1));
-
-        assertThrows(InstitutionAlreadyExistException.class, () -> institutionService.createInstitution(institution1));
+        assertThrows(InstitutionAlreadyExistException.class, () -> institutionService.createInstitution(institution1, "invalid_url"));
     }
 
     @Test
-    void createInstitution_throwsFailedInstitutionSaveException() {
+    void createInstitution_throwsFailedInstitutionSaveException() throws InvalidEndpointException {
+
+        // Mock
         when(institutionRepository.save(institution1)).thenThrow(new RuntimeException("Error while saving institution"));
+        Vocabulary fakeVocabulary = new Vocabulary();
+        when(vocabularyService.findOrCreateVocabularyOfUri(anyString()))
+                .thenReturn(fakeVocabulary);
 
-        assertThrows(FailedInstitutionSaveException.class, () -> institutionService.createInstitution(institution1));
+        assertThrows(FailedInstitutionSaveException.class, () -> institutionService.createInstitution(institution1, "valid_url"));
     }
 
     @Test
-    void createInstitution() throws InstitutionAlreadyExistException, FailedInstitutionSaveException {
-        institutionService.createInstitution(institution1);
+    void createInstitution() throws InstitutionAlreadyExistException, FailedInstitutionSaveException, InvalidEndpointException, NotSiamoisThesaurusException, ErrorProcessingExpansionException {
+
+        Vocabulary fakeVocabulary = new Vocabulary();
+        when(vocabularyService.findOrCreateVocabularyOfUri(anyString()))
+                .thenReturn(fakeVocabulary);
+        when(fieldConfigurationService
+                .setupFieldConfigurationForInstitution(any(Institution.class), any(Vocabulary.class))).thenReturn(Optional.of(mock(GlobalFieldConfig.class)));
+        when(institutionRepository.save(any(Institution.class))).thenReturn(mock(Institution.class));
+
+        institutionService.createInstitution(institution1, "valid_url");
 
         verify(institutionRepository, times(1)).save(institution1);
+    }
+
+    @Test
+    void createInstitution_throwsInvalidEndpointException() throws InvalidEndpointException {
+
+        when(vocabularyService.findOrCreateVocabularyOfUri(anyString())).thenThrow(new InvalidEndpointException("Invalid url"));
+
+        assertThrows(InvalidEndpointException.class, () -> institutionService.createInstitution(institution1, "invalid_url"));
     }
 
     @Test
@@ -249,34 +277,44 @@ class InstitutionServiceTest {
 
     @Test
     void addToManagers_shouldAddManagerAndReturnTrue() {
-        Institution institution = new Institution();
-        institution.setId(1L);
+        // given
+        Institution inst = new Institution();
+        inst.setId(1L);
 
-        Person person = new Person();
-        person.setId(2L);
+        Person p = new Person();
+        p.setId(2L);
 
-        when(institutionRepository.save(institution)).thenReturn(institution);
+        when(institutionRepository.findById(1L)).thenReturn(Optional.of(inst));
+        when(personRepository.getReferenceById(2L)).thenReturn(p);
 
-        boolean result = institutionService.addToManagers(institution, person);
+        // when
+        boolean added = institutionService.addToManagers(inst, p);
 
-        assertThat(result).isTrue();
-        assertThat(institution.getManagers()).contains(person);
-        verify(institutionRepository, times(1)).save(institution);
+        // then
+        assertTrue(added);                       // return value is true
+        assertTrue(inst.getManagers().contains(p)); // person is in managers set
     }
 
     @Test
     void addToManagers_shouldNotAddManagerIfAlreadyExists() {
-        Institution institution = new Institution();
-        institution.setId(1L);
+        // given
+        Institution inst = new Institution();
+        inst.setId(1L);
 
-        Person person = new Person();
-        person.setId(2L);
-        institution.getManagers().add(person);
+        Person p = new Person();
+        p.setId(2L);
 
-        boolean result = institutionService.addToManagers(institution, person);
+        inst.getManagers().add(p);
 
-        assertThat(result).isFalse();
-        verify(institutionRepository, times(1)).save(institution);
+        when(institutionRepository.findById(1L)).thenReturn(Optional.of(inst));
+        when(personRepository.getReferenceById(2L)).thenReturn(p);
+
+        // when
+        boolean added = institutionService.addToManagers(inst, p);
+
+        // then
+        assertTrue(!added);                       // return value is true
+        assertTrue(inst.getManagers().contains(p)); // person is in managers set
     }
 
     @Test
@@ -536,21 +574,27 @@ class InstitutionServiceTest {
 
     @Test
     void findManagersOf_shouldReturnAllManagers() {
-        Institution institution = new Institution();
-        institution.setId(1L);
+        // given
+        Institution inst = new Institution();
+        inst.setId(42L);
 
-        Person manager1 = new Person();
-        manager1.setId(1L);
+        Person p1 = new Person(); p1.setId(1L);
+        Person p2 = new Person(); p2.setId(2L);
+        Set<Person> repoResult = new HashSet<>(Arrays.asList(p1, p2));
 
-        Person manager2 = new Person();
-        manager2.setId(2L);
+        when(personRepository.findManagersOfInstitution(42L)).thenReturn(repoResult);
 
-        institution.getManagers().add(manager1);
-        institution.getManagers().add(manager2);
+        // when
+        Set<Person> result = institutionService.findManagersOf(inst);
 
-        Set<Person> result = institutionService.findManagersOf(institution);
+        // then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(p1));
+        assertTrue(result.contains(p2));
 
-        assertThat(result).containsExactlyInAnyOrder(manager1, manager2);
+        verify(personRepository, times(1)).findManagersOfInstitution(42L);
+
     }
 
     @Test

@@ -12,6 +12,7 @@
     <ui:define name="content">
         <main>
             <comp:datatable
+                    id="institutionManagerDatatable"
                     formId="institutionManagerForm"
                     title="#{langBean.msg('nav.organisationManagement')}"
                     filterAction="#{institutionListSettingsBean.onFilterType()}"
@@ -55,8 +56,8 @@
                         />
                     </p:column>
                 </p:dataTable>
-                <ui:include src="/dialog/institution/newInstitution.xhtml"/>
             </comp:datatable>
+            <ui:include src="/dialog/institution/newInstitution.xhtml"/>
         </main>
     </ui:define>
 

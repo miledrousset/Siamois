@@ -18,6 +18,52 @@
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap"/>
 
+    <script type="text/javascript">
+        let slugDirty = false; // passe à true dès que l'user modifie manuellement le champ slug
+        let slugDebounce;
+
+        function markSlugDirty() {
+            // appelé sur oninput du champ slug
+            slugDirty = true;
+        }
+
+        function slugify(str) {
+            if (!str) return "";
+            return str
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // retire accents
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9\s-]/g, '')   // supprime ponctuation
+                .replace(/\s+/g, '-')           // espaces -> tirets
+                .replace(/-+/g, '-')            // compresse ---
+                .replace(/^-+|-+$/g, '');       // trim tirets
+        }
+
+        function updateSlugFromName() {
+            if (slugDirty) return; // ne pas écraser si l’utilisateur a déjà modifié le slug
+            clearTimeout(slugDebounce);
+            slugDebounce = setTimeout(function () {
+                const nameEl = PF('nameW').jq;   // PrimeFaces widgetVar
+                const slugEl = PF('slugW').jq;
+                if (!nameEl || !slugEl) return;
+
+                const proposal = slugify(nameEl.val());
+                slugEl.val(proposal);
+            }, 250);
+        }
+
+        function regenSlug() {
+            const nameEl = PF('nameW').jq;
+            const slugEl = PF('slugW').jq;
+            const base = slugify(nameEl.val());
+            const rand = Math.random().toString(36).slice(2, 6);
+            const proposal = base ? `${base}-${rand}` : `inst-${rand}`;
+            slugEl.val(proposal);
+        }
+
+    </script>
+
+
 
     <ui:insert name="head"/>
 
@@ -43,37 +89,37 @@
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <h:commandLink action="#{flowBean.addWelcomePanel}" styleClass="nav-link"
-                            update="flow" id="homeLink">
-                                <i class="bi bi-gear-fill"/>
-                                <span class="menu-text">#{langBean.msg('nav.home')}</span>
+                                           update="flow" id="homeLink">
+                                <i class="bi bi-house-door-fill"/>
+                                <span class="menu-text">#{langBean.msg('nav.home')} - #{navBean.selectedInstitution.name}</span>
                                 <p:tooltip for="homeLink" value="#{langBean.msg('nav.home.hint')}"/>
                             </h:commandLink>
                         </li>
                         <li class="nav-item">
-                            <h:commandLink href="#" class="nav-link">
-                                <i class="bi bi-compass-fill"/>
-                                <span class="menu-text">#{langBean.msg('nav.database')} #{navBean.selectedInstitution.name}</span>
-                            </h:commandLink>
-                        </li>
-                        <li class="nav-item">
-                            <h:commandLink action="#{redirectBean.redirectTo('/settings')}" styleClass="nav-link" id="settingsLink">
+                            <h:commandLink action="#{redirectBean.redirectTo('/settings')}" styleClass="nav-link"
+                                           id="settingsLink">
                                 <i class="bi bi-gear-fill"/>
                                 <span class="menu-text">#{langBean.msg('nav.settings')}</span>
                                 <p:tooltip for="settingsLink" value="#{langBean.msg('nav.settings.hint')}"/>
                             </h:commandLink>
                         </li>
-                        <h:panelGroup id="bookmarkGroup" layout="none" rendered="#{navBean.bookmarkedPanels.size() > 0}">
+                        <p:divider/>
+                        <h:panelGroup id="bookmarkGroup" layout="none"
+                                      rendered="#{navBean.bookmarkedPanels.size() > 0}">
                             <li class="nav-header">
                                 #{langBean.msg('nav.header.bookmark')}
                             </li>
                             <ui:repeat value="#{navBean.bookmarkedPanels}" var="bookmark">
                                 <p:autoUpdate/>
                                 <li class="nav-item">
-                                    <h:commandLink action="#{redirectBean.redirectTo(bookmark.getResourceUri())}" styleClass="nav-link">
-                                        <i class="#{bookmark.getBookmarkIcon()}" style="color: #{bookmark.getBookmarkColor()}"/>
-
+                                    <h:commandLink id="bookmarkLink"
+                                                   action="#{redirectBean.redirectTo(bookmark.getResourceUri())}"
+                                                   styleClass="nav-link">
+                                        <i class="#{bookmark.getBookmarkIcon()}"
+                                           style="color: #{bookmark.getBookmarkColor()}"/>
                                         <span class="menu-text">#{navBean.bookmarkTitle(bookmark)}</span>
                                     </h:commandLink>
+                                    <p:tooltip for="bookmarkLink" value="#{navBean.bookmarkTitle(bookmark)}"/>
                                 </li>
                             </ui:repeat>
                         </h:panelGroup>
@@ -81,23 +127,30 @@
                 </form:csrfform>
                 <div class="sidebar-footer">
                     <hr class="sidebar-divider"/>
-                    <a class="nav-link">
-                        <i class="bi bi-file-earmark-person-fill"/>
-                        <span class="menu-text">#{navBean.currentUser().email}</span>
-                    </a>
                     <form:csrfform formId="logoutForm">
+                        <div style="
+                                padding-left:1em;
+                                width: 100%;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                gap: 2em;">
+                            <span class="menu-text">#{navBean.currentUser().email}</span>
+                            <p:commandButton action="#{navBean.logout()}"
+                                             icon="bi bi-box-arrow-right"
+                                             styleClass="nav-link logout-button">
+                                <p:confirm header="#{langBean.msg('nav.logout')}"
+                                           message="#{langBean.msg('logout.warning')}" icon="pi pi-info-circle"/>
+                            </p:commandButton>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true"
+                                             width="350">
+                                <p:commandButton value="#{langBean.msg('common.label.no')}" type="button"
+                                                 styleClass="ui-confirmdialog-no ui-button-flat"/>
+                                <p:commandButton value="#{langBean.msg('common.label.yes')}" type="button"
+                                                 styleClass="ui-confirmdialog-yes"/>
+                            </p:confirmDialog>
+                        </div>
 
-                        <p:commandButton action="#{navBean.logout()}"
-                                         icon="bi bi-door-open-fill"
-                                         styleClass="nav-link logout-button"
-                                         value="#{langBean.msg('nav.logout')}">
-                            <p:confirm header="#{langBean.msg('nav.logout')}" message="#{langBean.msg('logout.warning')}" icon="pi pi-info-circle"/>
-                        </p:commandButton>
-
-                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
-                            <p:commandButton value="#{langBean.msg('common.label.no')}" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
-                            <p:commandButton value="#{langBean.msg('common.label.yes')}" type="button" styleClass="ui-confirmdialog-yes" />
-                        </p:confirmDialog>
                     </form:csrfform>
                 </div>
             </nav>
@@ -107,7 +160,8 @@
                 <form:csrfform formId="settingsNavForm">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}" styleClass="nav-link" id="backToDashboardLink">
+                            <h:commandLink action="#{redirectBean.redirectTo('/dashboard')}" styleClass="nav-link"
+                                           id="backToDashboardLink">
                                 <i class="bi bi-arrow-left"/>
                                 <span class="menu-text">#{langBean.msg('nav.header')}</span>
                                 <p:tooltip for="backToDashboardLink" value="#{langBean.msg('nav.header.hint')}"/>
@@ -118,15 +172,17 @@
                     <ul class="nav flex-column">
                         <li class="nav-header">#{langBean.msg('nav.header.profile')}</li>
                         <li class="nav-item">
-                            <h:commandLink action="#{redirectBean.redirectTo('/settings/profile')}" styleClass="nav-link" id="myProfileLink">
+                            <h:commandLink action="#{redirectBean.redirectTo('/settings/profile')}"
+                                           styleClass="nav-link" id="myProfileLink">
                                 <i class="bi bi-person"/>
                                 <span class="menu-text">#{langBean.msg('nav.myProfile')}</span>
                                 <p:tooltip for="myProfileLink" value="#{langBean.msg('nav.myProfile.hint')}"/>
                             </h:commandLink>
                         </li>
                         <li class="nav-item">
-                            <h:commandLink action="#{redirectBean.redirectTo('/settings/profile/thesaurus')}" styleClass="nav-link" id="myThesaurusLink">
-                                <i class="bi bi-calendar"/>
+                            <h:commandLink action="#{redirectBean.redirectTo('/settings/profile/thesaurus')}"
+                                           styleClass="nav-link" id="myThesaurusLink">
+                                <i class="bi bi-table"/>
                                 <span class="menu-text">#{langBean.msg('nav.myThesaurus')}</span>
                                 <p:tooltip for="myThesaurusLink" value="#{langBean.msg('nav.myThesaurus.hint')}"/>
                             </h:commandLink>
@@ -136,10 +192,12 @@
                     <ul class="nav flex-column">
                         <li class="nav-header">#{langBean.msg("nav.header.organisations")}</li>
                         <li class="nav-item">
-                            <h:commandLink action="#{navBean.goToOrganisationSettings()}" styleClass="nav-link" id="organisationManagementLink">
-                                <i class="bi bi-house-door-fill"/>
+                            <h:commandLink action="#{navBean.goToOrganisationSettings()}" styleClass="nav-link"
+                                           id="organisationManagementLink">
+                                <i class="bi bi-buildings"/>
                                 <span class="menu-text">#{langBean.msg('nav.organisationManagement')}</span>
-                                <p:tooltip for="organisationManagementLink" value="#{langBean.msg('nav.organisationManagement.hint')}"/>
+                                <p:tooltip for="organisationManagementLink"
+                                           value="#{langBean.msg('nav.organisationManagement.hint')}"/>
                             </h:commandLink>
                         </li>
                     </ul>
@@ -170,7 +228,6 @@
 
 
     </div>
-
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
