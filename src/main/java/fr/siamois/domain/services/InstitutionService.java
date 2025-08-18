@@ -341,6 +341,6 @@ public class InstitutionService {
      */
     @Transactional(readOnly = true)
     public Set<Person> findManagersOf(Institution institution) {
-        return institution.getManagers();
+        return personRepository.findManagersOfInstitution(institution.getId());
     }
 }
