@@ -99,19 +99,29 @@ public class InstitutionManagerListBean implements SettingsDatatableBean {
         PrimeFaces.current().executeScript("PF('newMemberDialog').show();");
     }
 
-    private void addPersonToInstitution(PersonRole saved) {
-        if (institutionService.addToManagers(institution, saved.person())) {
-            displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", saved.person().getUsername());
-        } else {
+    private Boolean addPersonToInstitution(PersonRole saved) {
+        try {
+            if (institutionService.addToManagers(institution, saved.person())) {
+                displayInfoMessage(langBean, "organisationSettings.action.addUserToManager", saved.person().getUsername());
+                return true;
+            } else {
+                displayWarnMessage(langBean, "organisationSettings.error.manager", saved.person().getEmail(), institution.getName());
+                PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
+            }
+            return false;
+        } catch(Exception err) {
             displayWarnMessage(langBean, "organisationSettings.error.manager", saved.person().getEmail(), institution.getName());
             PrimeFaces.current().executeScript("PF('newMemberDialog').showError();");
+            return false;
         }
+
     }
 
-    private void processPerson(PersonRole saved) {
-        addPersonToInstitution(saved);
+    private Boolean processPerson(PersonRole saved) {
+        Boolean processed = addPersonToInstitution(saved);
         refMembers.add(saved.person());
         members.add(saved.person());
+        return processed;
     }
 
     @EventListener(LoginEvent.class)

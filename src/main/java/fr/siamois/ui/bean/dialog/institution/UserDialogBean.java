@@ -135,8 +135,10 @@ public class UserDialogBean implements Serializable {
         int affected = 0;
         for (PersonRole personRole : createOrSearchPersons()) {
             if (personRole != null) {
-                processPerson.process(personRole);
-                affected++;
+                Boolean added = processPerson.process(personRole);
+                if(Boolean.TRUE.equals(added)) {
+                    affected++;
+                }
             }
         }
         if (affected > 0) {

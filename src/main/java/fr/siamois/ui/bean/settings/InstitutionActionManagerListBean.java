@@ -115,11 +115,12 @@ public class InstitutionActionManagerListBean implements SettingsDatatableBean {
         }
     }
 
-    private void processPerson(PersonRole personRole) {
+    private Boolean processPerson(PersonRole personRole) {
         addToActionManagers(personRole);
         ActionManagerRelation relation = new ActionManagerRelation(institution, personRole.person());
         refActionManagers.add(relation);
         filteredActionManagers.add(relation);
+        return true;
     }
 
     public String formatDate(ActionManagerRelation relation) {
