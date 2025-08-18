@@ -195,11 +195,13 @@ public class InstitutionService {
      * @param person      the person to add as a manager
      * @return true if the person was added successfully, false if they were already a manager
      */
+    @Transactional
     public boolean addToManagers(Institution institution, Person person) {
-        boolean result = institution.getManagers().add(person);
-        institutionRepository.save(institution);
-        return result;
+        Institution inst = institutionRepository.findById(institution.getId()).orElseThrow();
+        Person p = personRepository.getReferenceById(person.getId());
+        return inst.getManagers().add(p); // no explicit save()
     }
+
 
     /**
      * Checks if a person is a manager of a given institution.
