@@ -28,13 +28,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -280,34 +277,44 @@ class InstitutionServiceTest {
 
     @Test
     void addToManagers_shouldAddManagerAndReturnTrue() {
-        Institution institution = new Institution();
-        institution.setId(1L);
+        // given
+        Institution inst = new Institution();
+        inst.setId(1L);
 
-        Person person = new Person();
-        person.setId(2L);
+        Person p = new Person();
+        p.setId(2L);
 
-        when(institutionRepository.save(institution)).thenReturn(institution);
+        when(institutionRepository.findById(1L)).thenReturn(Optional.of(inst));
+        when(personRepository.getReferenceById(2L)).thenReturn(p);
 
-        boolean result = institutionService.addToManagers(institution, person);
+        // when
+        boolean added = institutionService.addToManagers(inst, p);
 
-        assertThat(result).isTrue();
-        assertThat(institution.getManagers()).contains(person);
-        verify(institutionRepository, times(1)).save(institution);
+        // then
+        assertTrue(added);                       // return value is true
+        assertTrue(inst.getManagers().contains(p)); // person is in managers set
     }
 
     @Test
     void addToManagers_shouldNotAddManagerIfAlreadyExists() {
-        Institution institution = new Institution();
-        institution.setId(1L);
+        // given
+        Institution inst = new Institution();
+        inst.setId(1L);
 
-        Person person = new Person();
-        person.setId(2L);
-        institution.getManagers().add(person);
+        Person p = new Person();
+        p.setId(2L);
 
-        boolean result = institutionService.addToManagers(institution, person);
+        inst.getManagers().add(p);
 
-        assertThat(result).isFalse();
-        verify(institutionRepository, times(1)).save(institution);
+        when(institutionRepository.findById(1L)).thenReturn(Optional.of(inst));
+        when(personRepository.getReferenceById(2L)).thenReturn(p);
+
+        // when
+        boolean added = institutionService.addToManagers(inst, p);
+
+        // then
+        assertTrue(!added);                       // return value is true
+        assertTrue(inst.getManagers().contains(p)); // person is in managers set
     }
 
     @Test
@@ -567,21 +574,27 @@ class InstitutionServiceTest {
 
     @Test
     void findManagersOf_shouldReturnAllManagers() {
-        Institution institution = new Institution();
-        institution.setId(1L);
+        // given
+        Institution inst = new Institution();
+        inst.setId(42L);
 
-        Person manager1 = new Person();
-        manager1.setId(1L);
+        Person p1 = new Person(); p1.setId(1L);
+        Person p2 = new Person(); p2.setId(2L);
+        Set<Person> repoResult = new HashSet<>(Arrays.asList(p1, p2));
 
-        Person manager2 = new Person();
-        manager2.setId(2L);
+        when(personRepository.findManagersOfInstitution(42L)).thenReturn(repoResult);
 
-        institution.getManagers().add(manager1);
-        institution.getManagers().add(manager2);
+        // when
+        Set<Person> result = institutionService.findManagersOf(inst);
 
-        Set<Person> result = institutionService.findManagersOf(institution);
+        // then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(p1));
+        assertTrue(result.contains(p2));
 
-        assertThat(result).containsExactlyInAnyOrder(manager1, manager2);
+        verify(personRepository, times(1)).findManagersOfInstitution(42L);
+
     }
 
     @Test
