@@ -1006,10 +1006,7 @@ body .ui-datatable .ui-datatable-data > tr > td {
     justify-content: flex-start; /* content starts at top */
 }
 
-/* Push the footer to the very bottom */
-.sia-welcome-card .ui-card-footer {
-    margin-top: auto;
-}
+
 
 .sia-welcome-card.sia-spatial-unit {
     background: var(--context-light-color-50);
@@ -1033,6 +1030,7 @@ body .ui-datatable .ui-datatable-data > tr > td {
 
 .sia-welcome-card .ui-card-footer {
     text-align: center;
+    margin-top: auto;
 }
 
 /* tabs */
