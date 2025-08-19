@@ -9,6 +9,7 @@
         <cc:attribute name="formId" type="java.lang.String" required="true"/>
         <cc:attribute name="title" type="java.lang.String" required="true"/>
         <cc:attribute name="saveMethod" method-signature="java.lang.Void f()" required="false"/>
+        <cc:attribute name="cancelMethod" method-signature="java.lang.String f()" required="false"/>
         <cc:attribute name="displaySaveButton" type="boolean" default="true"/>
     </cc:interface>
 
@@ -20,6 +21,8 @@
                     <cc:insertChildren/>
                 </div>
                 <p:outputPanel rendered="#{cc.attrs.displaySaveButton}" layout="block" styleClass="field-value-save">
+                    <p:commandButton action="#{cc.attrs.cancelMethod}"
+                                     value="#{langBean.msg('common.action.cancel')}"  />
                     <p:commandButton
                             value="#{langBean.msg('common.action.save')}"
                             action="#{cc.attrs.saveMethod}"/>
