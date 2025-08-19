@@ -1,0 +1,146 @@
+@use 'sass:color';
+
+// Theme Specific Variables
+$primaryColor :#80B480;
+$primaryTextColor: #ffffff;
+
+$primaryLightColor: color.scale($primaryColor, $lightness: 60%) !default;
+$primaryDarkColor: color.scale($primaryColor, $lightness: -10%) !default;
+$primaryDarkerColor: color.scale($primaryColor, $lightness: -20%) !default;
+
+
+// Entity specific color
+$siamoisGreen: #80B480;
+$siamoisPrimary: #BED730;
+$siamoisGreenUnknown: #f9fbf9;
+$siamoisPrimaryGreen: #BED730;
+$siamoisGreenLight100: #E6F0E6;
+$siamoisGreenLight350: #A6CBA6;
+$siamoisGreenLight200: #C0DAC0;
+$siamoisGreenLight50: #F3F7F3;
+$mainContentBackground: #FAFAFA;
+$mainContentTopStroke: #c4c4c4;
+$textLight: #6B7280;
+$textMain: #2A2C30;
+$siamoisOverGrey: #F3F7F3;
+
+$contextMainColor: #068DA9;
+$contextLightColor50: #EDF4F6;
+$contextLightColor100: #CDE8EE;
+$contextLightColor200: #B4DDE5;
+$contextDarkColor: #056376;
+
+$groundMainColor: #7E1717;
+$groundLightColor100: #E5D1D1;
+$groundLightColor200: #D8B9B9;
+$groundLightColor50: #ECE4E4;
+$groundDarkColor: #581011;
+
+
+$colors: (
+    "blue": #2196F3,
+    "green": #4caf50,
+    "yellow": #FBC02D,
+    "cyan": #00BCD4,
+    "pink": #E91E63,
+    "indigo": #3F51B5,
+    "teal": #009688,
+    "orange": #F57C00,
+    "bluegray": #607D8B,
+    "purple": #9C27B0,
+    "red": #FF4032,
+    "primary": $primaryColor
+);
+
+//highlight
+$highlightBg:#E3F2FD !default;
+$highlightTextColor:#6B7280 !default;
+
+// Mandatory Designer Variables
+@import './variables/_general';
+@import './variables/_form';
+@import './variables/_button';
+@import './variables/_panel';
+@import './variables/_data';
+@import './variables/_overlay';
+@import './variables/_message';
+@import './variables/_menu';
+@import './variables/_misc';
+@import './variables/_media';
+
+:root {
+    --surface-a:#ffffff;
+    --surface-b:#f8f9fa;
+    --surface-c:#e9ecef;
+    --surface-d:#dee2e6;
+    --surface-e:#ffffff;
+    --surface-f:#ffffff;
+    --text-color:#495057;
+    --text-color-secondary:#6c757d;
+    --primary-color:#699369;
+    --primary-color-text:#ffffff;
+    --font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --surface-0: #ffffff;
+    --surface-50: #FAFAFA;
+    --surface-100: #F5F5F5;
+    --surface-200: #EEEEEE;
+    --surface-300: #E0E0E0;
+    --surface-400: #BDBDBD;
+    --surface-500: #9E9E9E;
+    --surface-600: #757575;
+    --surface-700: #616161;
+    --surface-800: #424242;
+    --surface-900: #212121;
+    --gray-50: #FAFAFA;
+    --gray-100: #F5F5F5;
+    --gray-200: #EEEEEE;
+    --gray-300: #E0E0E0;
+    --gray-400: #BDBDBD;
+    --gray-500: #9E9E9E;
+    --gray-600: #757575;
+    --gray-700: #616161;
+    --gray-800: #424242;
+    --gray-900: #212121;
+    --content-padding:#{$panelContentPadding};
+    --inline-spacing:#{$inlineSpacing};
+    --border-radius:#{$borderRadius};
+    --surface-ground:#f8f9fa;
+    --surface-section:#ffffff;
+    --surface-card:#ffffff;
+    --surface-overlay:#ffffff;
+    --surface-border:#dee2e6;
+    --surface-hover:#e9ecef;
+    --maskbg: #{$maskBg};
+    --focus-ring: #{$focusShadow};
+    color-scheme: light;
+
+    // siamois specific
+    --green-valid: #22c55e;
+    --brand-primary: #80B480;
+    --siamois-green: #{$siamoisGreen};
+    --siamois-primary: #{$siamoisPrimary};
+    --siamois-green-unknown: #{$siamoisGreenUnknown};
+    --siamois-primary-green: #{$siamoisPrimaryGreen};
+    --siamois-green-light-100: #{$siamoisGreenLight100};
+    --siamois-green-light-350: #{$siamoisGreenLight350};
+    --main-content-background: #{$mainContentBackground};
+    --main-content-top-stroke: #{$mainContentTopStroke};
+    --text-light: #{$textLight};
+    --text-main: #{$textMain};
+    --siamois-green-light-200: #{$siamoisGreenLight200};
+    --siamois-green-light-50: #{$siamoisGreenLight50};
+    --siamois-over-grey: #{$siamoisOverGrey};
+
+    --context-main-color: #{$contextMainColor};
+    --context-light-color-50: #{$contextLightColor50};
+    --context-light-color-100: #{$contextLightColor100};
+    --context-light-color-200: #{$contextLightColor200};
+    --context-dark-color: #{$contextDarkColor};
+
+    --ground-main-color: #{$groundMainColor};
+    --ground-light-color-100: #{$groundLightColor100};
+    --ground-light-color-200: #{$groundLightColor200};
+    --ground-light-color-50: #{$groundLightColor50};
+    --ground-dark-color: #{$groundDarkColor};
+    --error-main: #D32F2F;
+}
