@@ -1,4 +1,4 @@
-.ui-chip.error-chip {
+body .ui-chip.error-chip {
     background-color: var(--error-main);
     border: none;
     color: white;
@@ -6,7 +6,7 @@
 }
 
 
-.ui-chip.valid-type-chip {
+body .ui-chip.valid-type-chip {
     background-color: var(--green-valid);
     color: white;
     font-size: 16px;

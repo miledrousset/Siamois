@@ -383,15 +383,6 @@
                         <configuration>
                             <outputDirectory>${project.build.outputDirectory}/META-INF/resources/resources</outputDirectory>
                             <resources>
-                                <!-- panels.css -->
-                                <resource>
-                                    <directory>${project.build.directory}/generated-resources/css</directory>
-                                    <includes>
-                                        <include>panels.css</include>
-                                    </includes>
-                                    <targetPath>css</targetPath>
-                                </resource>
-
                                 <!-- theme.css for siamois -->
                                 <resource>
                                     <directory>${project.build.directory}/generated-resources/css</directory>
@@ -399,6 +390,22 @@
                                         <include>theme.css</include>
                                     </includes>
                                     <targetPath>primefaces-siamois-theme</targetPath>
+                                </resource>
+                                <!-- settings.css -->
+                                <resource>
+                                    <directory>${project.build.directory}/generated-resources/css</directory>
+                                    <includes>
+                                        <include>settings.css</include>
+                                    </includes>
+                                    <targetPath>css</targetPath>
+                                </resource>
+                                <!-- login.css -->
+                                <resource>
+                                    <directory>${project.build.directory}/generated-resources/css</directory>
+                                    <includes>
+                                        <include>login.css</include>
+                                    </includes>
+                                    <targetPath>css</targetPath>
                                 </resource>
                             </resources>
                         </configuration>

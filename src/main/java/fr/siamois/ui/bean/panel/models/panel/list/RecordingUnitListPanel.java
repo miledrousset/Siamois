@@ -79,7 +79,7 @@ public class RecordingUnitListPanel extends AbstractListPanel<RecordingUnit>  im
 
         super("panel.title.allrecordingunit",
                 "bi bi-pencil-square",
-                "siamois-panel recording-unit-panel recording-unit-list-panel",
+                "siamois-panel recording-unit-panel list-panel",
                 spatialUnitService,
                 personService,
                 conceptService,

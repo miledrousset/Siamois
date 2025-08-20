@@ -1,4 +1,4 @@
-@import './variables';
+@import '../../variables';
 
 
 // Mixin that creates themed styles
@@ -22,6 +22,36 @@
       .ui-panel-titlebar {
         background: var(--light-color-100);
       }
+      // Single unit panels
+      &.single-panel {
+
+        // content
+        .ui-tabs-nav {
+          background: var(--light-color-50);
+        }
+
+        // breadcrumb
+        .ui-breadcrumb {
+          border: none;
+          background: var(--light-color-50);
+        }
+
+        // tabs
+        .ui-tabs {
+          &.ui-tabs-top > .ui-tabs-nav,
+          .ui-tabs-nav {
+            li.ui-tabs-header.ui-state-active {
+              border-color: var(--main-color);
+
+              a {
+                color: var(--main-color);
+              }
+            }
+          }
+        }
+
+
+      }
     }
 
     // Panel title
@@ -29,8 +59,10 @@
       color: var(--main-color);
     }
 
-    .sia-form-panel .ui-panel-titlebar {
-      border-bottom: 1px solid var(--light-color-200);
+    &.siamois-panel {
+      .sia-form-panel .ui-panel-titlebar {
+        border-bottom: 1px solid var(--light-color-200);
+      }
     }
 
     // Datatable
@@ -185,42 +217,6 @@
       color: white;
     }
 
-  }
-
-  // Single unit panels
-  .#{$panel-selector}-single-panel {
-
-    // CSS custom properties for this panel
-    --main-color: #{$main-color};
-    --light-color-50: #{$light50-color};
-    --light-color-100: #{$light100-color};
-    --light-color-200: #{$light200-color};
-    --dark-color: #{$dark-color};
-
-    // content
-    .ui-panel-content {
-      background: var(--light-color-50);
-    }
-
-    // breadcrumb
-    .ui-breadcrumb {
-      border: none;
-      background: var(--light-color-50);
-    }
-
-    // tabs
-    .ui-tabs {
-      &.ui-tabs-top > .ui-tabs-nav,
-      .ui-tabs-nav {
-        li.ui-tabs-header.ui-state-active {
-          border-color: var(--main-color);
-
-          a {
-            color: var(--main-color);
-          }
-        }
-      }
-    }
 
 
   }

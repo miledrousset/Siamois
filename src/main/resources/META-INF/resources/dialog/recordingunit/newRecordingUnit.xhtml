@@ -11,14 +11,14 @@
                   appendToBody="true" modal="true" styleClass="sia-new-unit-dialog">
 
             <f:facet name="header">
-                <div class="ui-panel recording-unit-panel">
+                <div class="siamois-panel  recording-unit-panel">
                     <div class="sia-flow-panel-title ui-panel-titlebar">
                         <i class="bi bi-pencil-square"/>
                         <span style="padding-right:0.5em;">Nouvelle unité d'enregistrement</span>
                     </div>
                 </div>
             </f:facet>
-            <div class="ui-panel recording-unit-panel">
+            <div class="siamois-panel  recording-unit-panel">
                 <ui:include src="/pages/shared/form/customForm.xhtml">
                     <ui:param name="panelModel" value="#{newRecordingUnitBean}"/>
                     <ui:param name="layout" value="#{newRecordingUnitBean.detailsForm.layout}"/>
@@ -30,7 +30,7 @@
 
             <!-- Save/Cancel Toolbar -->
             <f:facet name="footer">
-                <div class="ui-panel recording-unit-panel">
+                <div class="siamois-panel  recording-unit-panel">
                     <p:toolbar class="panel-footer">
                         <p:toolbarGroup align="right">
                             <p:commandLink value='#{langBean.msg("common.action.cancel")}'

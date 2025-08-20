@@ -6,6 +6,12 @@
     font-family: 'Inter', sans-serif;
 }
 
+.siamois-panel .field-value-group {
+    display: block;
+    margin-top: 0;
+    width: auto;
+}
+
 .panel-highlight {
     outline: 3px solid var(--siamois-green-light-350);
     transition: outline 0.5s ease-in-out;
@@ -39,7 +45,7 @@
 
 /* input fields */
 
-body .ui-datatable .ui-datatable-data > tr > td {
+.siamois-panel .ui-datatable .ui-datatable-data > tr > td {
     padding: 0.5em;
 }
 
@@ -97,7 +103,7 @@ body .ui-datatable .ui-datatable-data > tr > td {
 }
 
 
-.ui-panel.sia-form-panel .ui-panel-titlebar {
+.siamois-panel .ui-panel.sia-form-panel .ui-panel-titlebar {
     background: transparent;
     border: none;
     border-bottom: 1px solid var(--siamois-green-light-350);
