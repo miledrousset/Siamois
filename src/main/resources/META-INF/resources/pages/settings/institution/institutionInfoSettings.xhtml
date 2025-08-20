@@ -23,6 +23,7 @@
             </form:csrfform>
             <settings:fieldValue
                     formId="institutionInfoForm"
+                    cancelMethod="#{institutionDetailsBean.backToInstitutionSettings()}"
                     title="#{langBean.msg('organisationSettings.titles.settings')}"
                     saveMethod="#{institutionInfoSettingsBean.updateName()}"
             >

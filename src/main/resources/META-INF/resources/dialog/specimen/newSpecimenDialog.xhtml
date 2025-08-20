@@ -18,7 +18,7 @@
                     </div>
                 </div>
             </f:facet>
-            <div class="ui-panel specimen-panel">
+            <div class="siamois-panel  specimen-panel">
                 <ui:include src="/pages/shared/form/customForm.xhtml">
                     <ui:param name="panelModel" value="#{newSpecimenDialogBean}"/>
                     <ui:param name="layout" value="#{newSpecimenDialogBean.detailsForm.layout}"/>
@@ -30,7 +30,7 @@
 
             <!-- Save/Cancel Toolbar -->
             <f:facet name="footer">
-                <div class="ui-panel specimen-panel">
+                <div class="siamois-panel  specimen-panel">
                     <p:toolbar class="panel-footer">
                         <p:toolbarGroup align="right">
                             <p:commandLink value='#{langBean.msg("common.action.cancel")}'

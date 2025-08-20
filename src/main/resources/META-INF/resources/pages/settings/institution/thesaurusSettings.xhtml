@@ -25,6 +25,7 @@
                     title="#{langBean.msg('organisationSettings.thesaurus.title', institutionThesaurusSettingsBean.institution.name)}"
                     formId="thesaurusForm"
                     saveMethod="#{institutionThesaurusSettingsBean.saveConfig()}"
+                    cancelMethod="#{institutionDetailsBean.backToInstitutionSettings()}"
             >
                 <p:messages showDetail="true" autoUpdate="true" closable="true" id="messages"/>
 

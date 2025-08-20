@@ -344,6 +344,75 @@
 
     <build>
         <plugins>
+            <!-- Compile SCSS to CSS -->
+            <plugin>
+                <groupId>io.github.cleydyr</groupId>
+                <artifactId>dart-sass-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-themes</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>compile-sass</goal>
+                        </goals>
+                        <configuration>
+                            <!-- adjust path if your scss lives elsewhere -->
+                            <inputFolder>${project.basedir}/primefaces-themes/themes/primefaces-siamois-theme</inputFolder>
+                            <outputFolder>${project.build.directory}/generated-resources/css</outputFolder>
+                            <update>true</update>
+                            <noSourceMap>true</noSourceMap>
+                            <style>COMPRESSED</style>
+                            <quiet>false</quiet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Copy generated CSS into META-INF/resources/resources -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-themes</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/META-INF/resources/resources</outputDirectory>
+                            <resources>
+                                <!-- theme.css for siamois -->
+                                <resource>
+                                    <directory>${project.build.directory}/generated-resources/css</directory>
+                                    <includes>
+                                        <include>theme.css</include>
+                                    </includes>
+                                    <targetPath>primefaces-siamois-theme</targetPath>
+                                </resource>
+                                <!-- settings.css -->
+                                <resource>
+                                    <directory>${project.build.directory}/generated-resources/css</directory>
+                                    <includes>
+                                        <include>settings.css</include>
+                                    </includes>
+                                    <targetPath>css</targetPath>
+                                </resource>
+                                <!-- login.css -->
+                                <resource>
+                                    <directory>${project.build.directory}/generated-resources/css</directory>
+                                    <includes>
+                                        <include>login.css</include>
+                                    </includes>
+                                    <targetPath>css</targetPath>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

@@ -74,7 +74,7 @@ public class SpecimenListPanel extends AbstractListPanel<Specimen>  implements S
 
         super("panel.title.allspecimenunit",
                 "bi bi-box2",
-                "siamois-panel specimen-panel specimen-list-panel",
+                "siamois-panel specimen-panel list-panel",
                 spatialUnitService,
                 personService,
                 conceptService,

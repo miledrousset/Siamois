@@ -8,17 +8,17 @@
     <h:form id="newSpatialUnitForm">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <p:dialog widgetVar="newSpatialUnitDiag" id="newSpatialUnitDiag" showEffect="fade" closeOnEscape="true"
-                  appendToBody="true" modal="true" styleClass="sia-new-unit-dialog">
+                  appendToBody="true" modal="true" styleClass="sia-new-unit-dialog ui-panel siamois-panel spatial-unit-panel">
 
             <f:facet name="header">
-                <div class="ui-panel spatial-unit-panel">
+                <div >
                     <div class="sia-flow-panel-title ui-panel-titlebar">
                         <i class="bi bi-pencil-square"/>
                         <span style="padding-right:0.5em;">Nouvelle unité spatiale</span>
                     </div>
                 </div>
             </f:facet>
-            <div class="ui-panel spatial-unit-panel">
+            <div >
                 <ui:include src="/pages/shared/form/customForm.xhtml">
                     <ui:param name="panelModel" value="#{newSpatialUnitDialogBean}"/>
                     <ui:param name="layout" value="#{newSpatialUnitDialogBean.detailsForm.layout}"/>
@@ -30,7 +30,7 @@
 
             <!-- Save/Cancel Toolbar -->
             <f:facet name="footer">
-                <div class="ui-panel spatial-unit-panel">
+                <div >
                     <p:toolbar class="panel-footer">
                         <p:toolbarGroup align="right">
                             <p:commandLink value='#{langBean.msg("common.action.cancel")}'

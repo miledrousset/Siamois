@@ -122,7 +122,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
                              LabelService labelService, LangBean langBean, PersonService personService,
                              SpatialUnitTreeService spatialUnitTreeService) {
 
-        super("common.entity.spatialUnit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel spatial-unit-single-panel",
+        super("common.entity.spatialUnit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel single-panel",
                 documentCreationBean, sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;

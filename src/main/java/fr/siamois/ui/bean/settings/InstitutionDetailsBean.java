@@ -67,25 +67,26 @@ public class InstitutionDetailsBean implements Serializable {
                 return "/pages/settings/institution/institutionInfoSettings.xhtml?faces-redirect=true";
             }));
 
+            elements.add(new OptionElement("bi bi-table", langBean.msg("common.label.thesaurus"),
+                    langBean.msg("organisationSettings.descriptions.thesaurus"), () -> {
+                institutionThesaurusSettingsBean.init(institution);
+                return "/pages/settings/institution/thesaurusSettings.xhtml?faces-redirect=true";
+            }));
+
             elements.add(new OptionElement("bi bi-person-circle", langBean.msg("organisationSettings.titles.managers"),
                     langBean.msg("organisationSettings.descriptions.managers", institution.getName()), () -> {
                 institutionManagerListBean.init(institution);
                 return "/pages/settings/institution/institutionManagerSettings.xhtml?faces-redirect=true";
             }));
+
+            elements.add(new OptionElement("bi bi-person-circle",
+                    langBean.msg("organisationSettings.titles.actionManagers"),
+                    langBean.msg("organisationSettings.descriptions.actionManagers"), () -> {
+                institutionActionManagerListBean.init(institution);
+                return "/pages/settings/institution/institutionActionManagerSettings.xhtml?faces-redirect=true";
+            }));
         }
 
-        elements.add(new OptionElement("bi bi-table", langBean.msg("common.label.thesaurus"),
-                langBean.msg("organisationSettings.descriptions.thesaurus"), () -> {
-            institutionThesaurusSettingsBean.init(institution);
-            return "/pages/settings/institution/thesaurusSettings.xhtml?faces-redirect=true";
-        }));
-
-        elements.add(new OptionElement("bi bi-person-circle",
-                langBean.msg("organisationSettings.titles.actionManagers"),
-                langBean.msg("organisationSettings.descriptions.actionManagers"), () -> {
-            institutionActionManagerListBean.init(institution);
-            return "/pages/settings/institution/institutionActionManagerSettings.xhtml?faces-redirect=true";
-        }));
 
         elements.add(new OptionElement("bi bi-people", langBean.msg("organisationSettings.titles.teams"),
                 langBean.msg("organisationSettings.descriptions.teams", institution.getName()), () -> {

@@ -180,7 +180,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
 
         super("common.entity.specimen",
                 "bi bi-box2",
-                "siamois-panel specimen-panel specimen-single-panel",
+                "siamois-panel specimen-panel single-panel",
                 documentCreationBean, sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
         this.langBean = langBean;
         this.spatialUnitService = spatialUnitService;

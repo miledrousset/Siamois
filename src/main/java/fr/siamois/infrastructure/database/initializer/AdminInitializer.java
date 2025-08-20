@@ -121,10 +121,10 @@ public class AdminInitializer implements DatabaseInitializer {
         if (processExistingInstitution()) return;
 
         Institution institution = new Institution();
-        institution.setName("Siamois Administration");
+        institution.setName("Organisation par défaut");
         institution.setDescription("DEFAULT");
         institution.getManagers().add(createdAdmin);
-        institution.setIdentifier("SIAMOIS");
+        institution.setIdentifier("siamois");
 
         createdInstitution = institutionRepository.save(institution);
 

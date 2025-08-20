@@ -42,7 +42,7 @@ public class SpatialUnitListPanel extends AbstractListPanel<SpatialUnit>  implem
                                 ActionUnitService actionUnitService) {
         super("panel.title.allspatialunit",
                 "bi bi-geo-alt",
-                "siamois-panel spatial-unit-panel spatial-unit-list-panel",
+                "siamois-panel spatial-unit-panel list-panel",
                 spatialUnitService,
                 personService,
                 conceptService,

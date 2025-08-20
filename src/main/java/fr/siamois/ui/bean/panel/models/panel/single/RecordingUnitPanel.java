@@ -257,7 +257,7 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
 
         super("common.entity.recordingunit",
                 "bi bi-pencil-square",
-                "siamois-panel recording-unit-panel recording-unit-single-panel",
+                "siamois-panel recording-unit-panel single-panel",
                 documentCreationBean, sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
         this.langBean = langBean;
         this.spatialUnitService = spatialUnitService;

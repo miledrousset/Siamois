@@ -1,43 +1,9 @@
 
 
 :root {
-
     --green-valid: #22c55e;
     --brand-primary: #80B480;
-    --siamois-green: #80B480;
-    --siamois-primary: #BED730;
-    --siamois-green-unknown: #f9fbf9;
-    --siamois-primary-green: #BED730;
-    --siamois-green-light-100: #E6F0E6;
-    --siamois-green-light-350: #A6CBA6;
-    --main-content-background: #FAFAFA;
-    --main-content-top-stroke: #c4c4c4;
-    --text-light: #6B7280;
-    --text-main: #2A2C30;
-
-    --siamois-green-light-200: #C0DAC0;
-    --siamois-green-light-50: #F3F7F3;
-
-    --siamois-over-grey: #F3F7F3;
-
-    --context-main-color: #068DA9;
-    --context-light-color-50: #EDF4F6;
-    --context-light-color-100: #CDE8EE;
-    --context-light-color-200: #B4DDE5;
-    --context-dark-color: #056376;
-
-    --ground-main-color: #7E1717;
-    --ground-light-color-100: #E5D1D1;
-    --ground-light-color-200: #D8B9B9;
-    --ground-light-color-50: #ECE4E4;
-    --ground-dark-color: #581011;
-
-
     --error-main: #D32F2F;
-}
-
-.spatial-unit-panel {
-    --context-main-color: var(--context-main-color)
 }
 
 /* in order to align boostrap icons */
@@ -147,8 +113,8 @@ html, body {
 }
 
 .left-menu {
-    border: none; !important;
-    width: 100%; !important;
+    border: none !important;
+    width: 100% !important;
 }
 
 
