@@ -91,7 +91,7 @@
 
     <ui:define name="content">
 
-        <div style="display: flex; flex-direction: row">
+        <div style="display: flex; flex-direction: row; flex-shrink: 0">
             <div id="search-bar" style="flex:4">
                 <form:csrfform formId="searchBarForm">
                     <article>
@@ -208,7 +208,9 @@
         </div>
 
 
-        <p:outputPanel id="flow">
+        <p:outputPanel id="flow" style="
+        flex: 1;
+             overflow-y: auto;">
 
             <h:panelGroup
                     style="#{flowBean.fullscreenPanelIndex == -1 ? 'display:flex;flex-direction: column;gap:1em;padding:1em;' : 'display:flex;flex-direction: column;gap:1em;padding:0.5em;'}"

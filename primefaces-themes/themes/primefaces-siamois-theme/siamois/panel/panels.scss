@@ -4,7 +4,6 @@
 // Mixin that creates themed styles
 @mixin themed-panel($panel-selector, $main-color, $light50-color, $light100-color, $light200-color, $dark-color) {
 
-  // Main style for panels
   .#{$panel-selector}-panel {
 
     // CSS custom properties for this panel
@@ -23,7 +22,8 @@
         background: var(--light-color-100);
       }
       // Single unit panels
-      &.single-panel {
+      &.single-panel {  // Main style for panels
+
 
         // content
         .ui-tabs-nav {
