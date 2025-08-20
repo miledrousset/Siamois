@@ -14,6 +14,7 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.ark.ArkService;
+import fr.siamois.domain.services.authorization.PermissionServiceImpl;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.SpatialUnitRepository;
@@ -42,13 +43,15 @@ public class SpatialUnitService implements ArkEntityService {
     private final ArkService arkService;
     private final InstitutionService institutionService;
     private final PersonService personService;
+    private final PermissionServiceImpl permissionService;
 
-    public SpatialUnitService(SpatialUnitRepository spatialUnitRepository, ConceptService conceptService, ArkService arkService, InstitutionService institutionService, PersonService personService) {
+    public SpatialUnitService(SpatialUnitRepository spatialUnitRepository, ConceptService conceptService, ArkService arkService, InstitutionService institutionService, PersonService personService, PermissionServiceImpl permissionService) {
         this.spatialUnitRepository = spatialUnitRepository;
         this.conceptService = conceptService;
         this.arkService = arkService;
         this.institutionService = institutionService;
         this.personService = personService;
+        this.permissionService = permissionService;
     }
 
 
@@ -369,5 +372,16 @@ public class SpatialUnitService implements ArkEntityService {
         }
 
         return neighborMap;
+    }
+
+    /**
+     * Verify if the user has the permission to create spatial units
+     *
+     * @param user The user to check the permission on
+     * @return True if the user has sufficient permissions
+     */
+    public boolean hasCreatePermission(UserInfo user) {
+        return permissionService.isInstitutionManager(user)
+                || permissionService.isActionManager(user);
     }
 }

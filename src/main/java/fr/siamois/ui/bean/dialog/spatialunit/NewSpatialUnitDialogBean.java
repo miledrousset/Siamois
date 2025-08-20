@@ -144,4 +144,6 @@ public class NewSpatialUnitDialogBean extends AbstractNewUnitDialogBean<SpatialU
         }
         this.setToUpdate = setToUpdate;
     }
+
+    
 }

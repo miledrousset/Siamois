@@ -25,20 +25,23 @@
 
                     <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
                         <!-- Text -->
-                        <sharedInput:panelField title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}">
+                        <sharedInput:panelField
+                                id="panelFieldCC"
+                                title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
+                                forId="#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}:input"
+                        >
 
 
                             <siaInplace:text
                                     rendered="#{col.field['class'].simpleName eq 'CustomFieldText'}"
+                                    id="#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
                                     panelModel="#{bean}"
                                     field="#{col.field}"
                                     hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
                                     answer="#{bean.formResponse.answers.get(col.field)}"
                                     mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
                                     updateTargetsOnBlur="#{updateTargetsOnBlur}"
-                            >
-
-                            </siaInplace:text>
+                            />
 
 
                             <!-- DateTime -->

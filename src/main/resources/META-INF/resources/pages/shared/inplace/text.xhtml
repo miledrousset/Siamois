@@ -29,8 +29,10 @@
                         actionListener="#{cc.attrs.panelModel.generateValueForField(cc.attrs.field, cc.attrs.answer)}"
                         update="#{cc.attrs.updateTargetsOnBlur}"
                 />
-                <p:inputText value="#{cc.attrs.answer.value}" styleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"  required="true"
-                             label="text">
+                <p:inputText value="#{cc.attrs.answer.value}"
+                             styleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"
+                             required="true"
+                             id="input">
                     <p:ajax event="blur" update="#{cc.attrs.updateTargetsOnBlur}"
                             listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(cc.attrs.field)}" />
                 </p:inputText>

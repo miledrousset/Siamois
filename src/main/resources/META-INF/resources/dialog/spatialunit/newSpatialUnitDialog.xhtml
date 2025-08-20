@@ -8,6 +8,11 @@
     <h:form id="newSpatialUnitForm">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <p:dialog widgetVar="newSpatialUnitDiag" id="newSpatialUnitDiag" showEffect="fade" closeOnEscape="true"
+                  fitViewport="true"
+                  width="60vw"
+                  minWidth="400"
+                  maxWidth="90vw"
+                  style="max-height:90vh;"
                   appendToBody="true" modal="true" styleClass="sia-new-unit-dialog ui-panel siamois-panel spatial-unit-panel">
 
             <f:facet name="header">
