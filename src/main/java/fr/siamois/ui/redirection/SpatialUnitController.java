@@ -25,21 +25,21 @@ public class SpatialUnitController {
         this.newSpatialUnitDialogBean = newSpatialUnitDialogBean;
     }
 
-    @GetMapping("/spatialunit/{id}")
+    @GetMapping("/spatial-unit/{id}")
     public String toSpatialUnit(@PathVariable Long id)  {
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
         flowBean.addSpatialUnitPanel(id);
         return FLOW_XHTML;
     }
 
-    @GetMapping("/spatialunit")
+    @GetMapping("/spatial-unit")
     public String toSpatialUnitList() {
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
         flowBean.addSpatialUnitListPanel(null);
         return FLOW_XHTML;
     }
 
-    @GetMapping("/spatialunit/add")
+    @GetMapping("/spatial-unit/new")
     public String toAddSpatialUnit()  {
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
         newSpatialUnitDialogBean.init();

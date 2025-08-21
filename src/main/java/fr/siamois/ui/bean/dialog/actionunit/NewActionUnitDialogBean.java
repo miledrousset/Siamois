@@ -8,6 +8,7 @@ import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
+import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.AbstractNewUnitDialogBean;
 import fr.siamois.ui.bean.panel.FlowBean;
@@ -40,8 +41,8 @@ public class NewActionUnitDialogBean extends AbstractNewUnitDialogBean<ActionUni
                                    SpatialUnitService spatialUnitService,
                                    ActionUnitService actionUnitService,
                                    SpecimenService specimenService,
-                                   SpatialUnitTreeService spatialUnitTreeService) {
-        super(sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService, langBean, flowBean);
+                                   SpatialUnitTreeService spatialUnitTreeService, RedirectBean redirectBean) {
+        super(sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService, langBean, flowBean, redirectBean);
         this.spatialUnitService = spatialUnitService;
         this.actionUnitService = actionUnitService;
         this.specimenService = specimenService;

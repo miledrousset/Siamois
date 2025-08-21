@@ -26,8 +26,7 @@
                     <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
                         <!-- Text -->
                         <sharedInput:panelField
-                                id="panelFieldCC"
-                                isRequired="true"
+                                required="#{col.required}"
                                 title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
                                 forId="#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}:input"
                         >
@@ -38,6 +37,8 @@
                                     id="#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
                                     panelModel="#{bean}"
                                     field="#{col.field}"
+                                    required="#{col.required}"
+                                    label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
                                     hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
                                     answer="#{bean.formResponse.answers.get(col.field)}"
                                     mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
@@ -65,6 +66,8 @@
                                     rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneFromFieldCode'}"
                                     hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
                                     field="#{col.field}"
+                                    required="#{col.required}"
+                                    label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
                                     mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
                                     panelModel="#{bean}"
                                     updateTargetsOnBlur="#{updateTargetsOnBlur}"

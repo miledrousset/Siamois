@@ -23,7 +23,7 @@
                     </div>
                 </div>
             </f:facet>
-            <div >
+            <p:outputPanel id="newSpatialUnitFormContent">
                 <ui:include src="/pages/shared/form/customForm.xhtml">
                     <ui:param name="panelModel" value="#{newSpatialUnitDialogBean}"/>
                     <ui:param name="layout" value="#{newSpatialUnitDialogBean.detailsForm.layout}"/>
@@ -31,7 +31,7 @@
                     <ui:param name="prefix" value="newSpatialUnit"/>
                     <ui:param name="panelId" value="newSpatialUnitForm:customFormPanel-newSpatialUnit-0"/>
                 </ui:include>
-            </div>
+            </p:outputPanel>
 
             <!-- Save/Cancel Toolbar -->
             <f:facet name="footer">
@@ -45,11 +45,11 @@
                             </p:commandLink>
                             <p:commandButton id="createButton" value='#{langBean.msg("common.action.create")}'
                                              action="#{newSpatialUnitDialogBean.create()}"
-                                             update="flow"
+                                             update="newSpatialUnitFormContent templateFormCC:templateForm:templateGrowl"
                                              style="margin-right: 1rem">
                             </p:commandButton>
                             <p:commandButton id="createAndViewButton"
-                                             update="flow"
+                                             update="newSpatialUnitFormContent templateFormCC:templateForm:templateGrowl"
                                              action="#{newSpatialUnitDialogBean.createAndOpen()}"
                                              value='#{langBean.msg("common.action.createAndView")}'
                                              style="margin-right: .5rem">

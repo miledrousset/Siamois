@@ -10,6 +10,7 @@ import java.io.Serializable;
 public class CustomCol implements Serializable {
 
     private boolean readOnly = false;
+    private boolean isRequired = false;
     private CustomField field;
     private String className;
 
@@ -19,6 +20,11 @@ public class CustomCol implements Serializable {
 
         public Builder readOnly(boolean readOnly) {
             col.setReadOnly(readOnly);
+            return this;
+        }
+
+        public Builder isRequired(boolean isRequired) {
+            col.setRequired(isRequired);
             return this;
         }
 
