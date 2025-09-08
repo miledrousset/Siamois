@@ -21,6 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.LazyDataModel;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.ViewScoped;
@@ -38,7 +39,7 @@ import java.util.Set;
 public class GenericNewUnitDialogBean<T extends TraceableEntity>
         extends AbstractSingleEntity<T> implements Serializable {
 
-    // ==== champs hérités d'AbstractNewUnitDialogBean ====
+    // The sets to update after creation
     protected BaseLazyDataModel<T> lazyDataModel;
     protected transient Set<T> setToUpdate;
 
@@ -75,6 +76,14 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
         this.kind = kind;
         this.handler = (INewUnitHandler<T>) handlers.get(kind);
         init();
+    }
+
+    @SuppressWarnings("unchecked")
+    public void selectKind(UnitKind kind, BaseLazyDataModel<T> context) {
+        this.kind = kind;
+        this.handler = (INewUnitHandler<T>) handlers.get(kind);
+        init();
+        this.lazyDataModel = context;
     }
 
     // ==== méthodes utilitaires (ex-abstracts supprimées) ====
@@ -132,7 +141,7 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
 
     }
 
-    public Void createAndOpen() { return performCreate(true, true); }
+    public void createAndOpen() { performCreate(true, true); }
     public void create() { performCreate(false, false); }
 
     @Override
@@ -146,21 +155,21 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
         return handler.getAutocompleteClass();
     }
 
-    private Void performCreate(boolean openAfter, boolean scrollToTop) {
+    private void performCreate(boolean openAfter, boolean scrollToTop) {
         try {
             createUnit();
         } catch (EntityAlreadyExistsException e) {
             log.error(e.getMessage(), e);
             MessageUtils.displayErrorMessage(langBean, ENTITY_ALREADY_EXIST_MESSAGE_CODE, unitName());
-            return null;
+            return;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED_MESSAGE_CODE, unitName());
-            return null;
+            return;
         }
 
         // JS conditionnel (widgetVar fixe)
-        String js = "PF('newUnitDialog').hide();" + (scrollToTop ? "handleScrollToTop();" : "");
+        String js = "PF('newUnitDiag').hide();" + (scrollToTop ? "handleScrollToTop();" : "");
         PrimeFaces.current().executeScript(js);
 
         // Refresh commun
@@ -175,11 +184,10 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
         if (openAfter) {
             redirectBean.redirectTo(handler.viewUrlFor(getUnitId()));
         }
-        return null;
     }
 
-    protected void createUnit() throws Exception {
-        updateJpaEntityFromFormResponse(formResponse, unit);
+    protected void createUnit() throws EntityAlreadyExistsException {
+        updateJpaEntityFromFormResponse(formResponse, unit); // Update Unit based on form response
         unit.setValidated(false);
         unit = handler.save(sessionSettingsBean.getUserInfo(), unit);
         updateCollections();
