@@ -61,7 +61,7 @@
             **/config/**/*.*,
             **/*Exception.*,
             **/*Bean.*,
-            **/ui/bean/dialog/newunit/*,
+            **/ui/bean/dialog/newunit/**,
             **/*Converter.*,
             **/*Builder.*,
             **/*Controller.*,
