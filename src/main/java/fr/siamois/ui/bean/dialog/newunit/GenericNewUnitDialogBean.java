@@ -1,15 +1,15 @@
-package fr.siamois.ui.bean.dialog;
-
-
+package fr.siamois.ui.bean.dialog.newunit;
 
 import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.exceptions.EntityAlreadyExistsException;
 import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
+import fr.siamois.ui.bean.dialog.newunit.handler.INewUnitHandler;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
@@ -17,15 +17,28 @@ import fr.siamois.utils.MessageUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
+import org.springframework.stereotype.Component;
+
+import javax.faces.bean.ViewScoped;
+import java.io.Serializable;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Slf4j
+@ViewScoped
+@Component
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
-public abstract class AbstractNewUnitDialogBean<T extends TraceableEntity> extends AbstractSingleEntity<T> {
+public class GenericNewUnitDialogBean<T extends TraceableEntity>
+        extends AbstractSingleEntity<T> implements Serializable {
 
+    // ==== champs hérités d'AbstractNewUnitDialogBean ====
     protected BaseLazyDataModel<T> lazyDataModel;
     protected transient Set<T> setToUpdate;
 
@@ -36,33 +49,70 @@ public abstract class AbstractNewUnitDialogBean<T extends TraceableEntity> exten
     protected static final String UPDATE_FAILED_MESSAGE_CODE = "common.entity.spatialUnits.updateFailed";
     protected static final String ENTITY_ALREADY_EXIST_MESSAGE_CODE = "common.entity.alreadyExist";
 
-    protected AbstractNewUnitDialogBean(SessionSettingsBean sessionSettingsBean,
-                                        FieldConfigurationService fieldConfigurationService,
-                                        SpatialUnitTreeService spatialUnitTreeService,
-                                        LangBean langBean,
-                                        FlowBean flowBean, RedirectBean redirectBean) {
+    // ==== handlers ====
+    private transient Map<UnitKind, INewUnitHandler<? extends TraceableEntity>> handlers;
+    private UnitKind kind;
+    private transient INewUnitHandler<T> handler;
+
+
+    public GenericNewUnitDialogBean(SessionSettingsBean sessionSettingsBean,
+                                    FieldConfigurationService fieldConfigurationService,
+                                    SpatialUnitTreeService spatialUnitTreeService,
+                                    LangBean langBean,
+                                    FlowBean flowBean,
+                                    RedirectBean redirectBean,
+                                    Set<INewUnitHandler<? extends TraceableEntity>> handlerSet) {
         super(sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
         this.langBean = langBean;
         this.flowBean = flowBean;
         this.redirectBean = redirectBean;
+        this.handlers = handlerSet.stream()
+                .collect(java.util.stream.Collectors.toMap(INewUnitHandler::kind, h -> h));
     }
 
-    protected abstract void persistUnit() throws Exception;
+    @SuppressWarnings("unchecked")
+    public void selectKind(UnitKind kind) {
+        this.kind = kind;
+        this.handler = (INewUnitHandler<T>) handlers.get(kind);
+        init();
+    }
 
-    protected abstract String getDialogWidgetVar();
+    // ==== méthodes utilitaires (ex-abstracts supprimées) ====
 
-    protected abstract String getSuccessMessageCode();
+    public String getDialogWidgetVar() {
+        return handler != null ? handler.dialogWidgetVar() : "newUnitDialog";
+    }
 
-    protected abstract void openPanel(Long unitId);
+    public String getSuccessMessageCode() {
+        return handler.successMessageCode();
+    }
 
-    protected abstract void createEmptyUnit();
+    public String unitName() {
+        return unit != null ? handler.getName(unit) : " Unnamed unit";
+    }
 
+    @Override
+    public String ressourceUri() {
+        return handler != null ? handler.getRessourceUri() : "generic-new-unit";
+    }
+
+    public Long getUnitId() {
+        return unit != null ? unit.getId() : null;
+    }
+
+    // ==== logique ====
     @Override
     public void setFieldConceptAnswerHasBeenModified(AjaxBehaviorEvent event) {
         UIComponent component = event.getComponent();
         CustomField field = (CustomField) component.getAttributes().get("field");
-
         formResponse.getAnswers().get(field).setHasBeenModified(true);
+    }
+
+    @Override
+    public void initForms() {
+        detailsForm = SpatialUnit.NEW_UNIT_FORM;
+        formResponse = initializeFormResponse(detailsForm, unit);
+
     }
 
     protected void reset() {
@@ -74,41 +124,44 @@ public abstract class AbstractNewUnitDialogBean<T extends TraceableEntity> exten
 
     public void init() {
         reset();
-        createEmptyUnit();
+        unit = handler.newEmpty();
         unit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
         unit.setCreatedByInstitution(sessionSettingsBean.getSelectedInstitution());
         initForms();
+        handler.onInitFromContext(this); // hook optionnel
+
     }
 
-    public void createAndOpen() {
-        performCreate(true, true); // open panel + scroll to top
+    public Void createAndOpen() { return performCreate(true, true); }
+    public void create() { performCreate(false, false); }
+
+    @Override
+    public String display() {
+        return "";
     }
 
-    public void create() {
-        performCreate(false, false); // pas d'ouverture, pas de scroll
+    @Override
+    public String getAutocompleteClass() {
+        // Default implementation
+        return handler.getAutocompleteClass();
     }
 
-    private void performCreate(boolean openAfter, boolean scrollToTop) {
+    private Void performCreate(boolean openAfter, boolean scrollToTop) {
         try {
             createUnit();
         } catch (EntityAlreadyExistsException e) {
             log.error(e.getMessage(), e);
             MessageUtils.displayErrorMessage(langBean, ENTITY_ALREADY_EXIST_MESSAGE_CODE, unitName());
-            return;
+            return null;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED_MESSAGE_CODE, unitName());
-            return;
+            return null;
         }
 
-        // JS conditionnel
-        StringBuilder js = new StringBuilder("PF('")
-                .append(getDialogWidgetVar())
-                .append("').hide();");
-        if (scrollToTop) {
-            js.append("handleScrollToTop();");
-        }
-        PrimeFaces.current().executeScript(js.toString());
+        // JS conditionnel (widgetVar fixe)
+        String js = "PF('newUnitDialog').hide();" + (scrollToTop ? "handleScrollToTop();" : "");
+        PrimeFaces.current().executeScript(js);
 
         // Refresh commun
         PrimeFaces.current().ajax().update("flow");
@@ -116,33 +169,27 @@ public abstract class AbstractNewUnitDialogBean<T extends TraceableEntity> exten
         // Message succès
         MessageUtils.displayInfoMessage(langBean, getSuccessMessageCode(), unitName());
 
-        // Actions spécifiques
-        if (openAfter) {
-            openPanel(getUnitId());
-            //redirectBean.redirectTo("");
-        }
-
-        // Commun
+        // update des compteurs du home panel
         flowBean.updateHomePanel();
+
+        if (openAfter) {
+            redirectBean.redirectTo(handler.viewUrlFor(getUnitId()));
+        }
+        return null;
     }
-
-
 
     protected void createUnit() throws Exception {
         updateJpaEntityFromFormResponse(formResponse, unit);
         unit.setValidated(false);
-        persistUnit();
+        unit = handler.save(sessionSettingsBean.getUserInfo(), unit);
         updateCollections();
     }
 
     private void updateCollections() {
-
         if (lazyDataModel != null) {
             lazyDataModel.addRowToModel(unit);
         }
         if (setToUpdate != null) {
-            // TODO : Dans certains cas, ce n'est pas la bonne liste, par exemple si je clique sur créée depuis la colonne "actions" du tableau d'unité spatiale
-            // Mais que dans le formulaire je decide de changer l'unité spatiale choisi par défaut par une autre, ce ne sera pas la bonne ligne
             LinkedHashSet<T> newSet = new LinkedHashSet<>();
             newSet.add(unit);
             newSet.addAll(setToUpdate);
@@ -150,8 +197,4 @@ public abstract class AbstractNewUnitDialogBean<T extends TraceableEntity> exten
             setToUpdate.addAll(newSet);
         }
     }
-
-    protected abstract String unitName();
-
-    protected abstract Long getUnitId();
 }

@@ -194,8 +194,8 @@
                                      id="newSpatialUnitParentsButton"
                                      actionListener="#{newSpatialUnitDialogBean.init('parents', item.id
                                      , item.parents)}"
-                                     oncomplete="PF('newSpatialUnitDiag').show()"
-                                     update="newSpatialUnitForm"
+                                     oncomplete="PF('newUnitDiag').show()"
+                                     update="newUnitForm"
                                      rendered="#{flowBean.readWriteMode == 'WRITE'}"
                                      style="margin-right: .5rem">
                     </p:commandButton>
@@ -218,8 +218,8 @@
                                      id="newSpatialUnitChildrenButton"
                                      actionListener="#{newSpatialUnitDialogBean.init('children', item.id
                                      , item.children)}"
-                                     oncomplete="PF('newSpatialUnitDiag').show()"
-                                     update="newSpatialUnitForm"
+                                     oncomplete="PF('newUnitDiag').show()"
+                                     update="newUnitForm"
                                      rendered="#{flowBean.readWriteMode == 'WRITE'}"
                                      style="margin-right: .5rem">
                     </p:commandButton>

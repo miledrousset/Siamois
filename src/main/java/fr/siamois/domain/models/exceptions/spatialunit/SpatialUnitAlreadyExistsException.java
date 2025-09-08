@@ -1,6 +1,8 @@
 package fr.siamois.domain.models.exceptions.spatialunit;
 
-public class SpatialUnitAlreadyExistsException extends Exception {
+import fr.siamois.domain.models.exceptions.EntityAlreadyExistsException;
+
+public class SpatialUnitAlreadyExistsException extends EntityAlreadyExistsException {
     public SpatialUnitAlreadyExistsException(String s) {
         super(s);
     }

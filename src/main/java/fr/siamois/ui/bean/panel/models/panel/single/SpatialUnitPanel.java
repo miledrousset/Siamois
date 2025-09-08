@@ -160,7 +160,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
     @Override
     public String ressourceUri() {
-        return "/spatialunit/" + idunit;
+        return "/spatial-unit/" + idunit;
     }
 
     @Override

@@ -11,6 +11,7 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.services.authorization.PermissionServiceImpl;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.spatialunit.SpatialUnitService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
@@ -40,9 +41,11 @@ class SpatialUnitServiceTest {
     @Mock
     private SpatialUnitRepository spatialUnitRepository;
 
-
     @Mock
     private PersonService personService;
+
+    @Mock
+    private PermissionServiceImpl permissionService;
 
     @Mock
     private ConceptService conceptService;
@@ -580,6 +583,46 @@ class SpatialUnitServiceTest {
         assertThat(neighborMap.get(su2)).isEmpty();
         assertThat(neighborMap.get(su3)).containsExactlyInAnyOrder(su4);
         assertThat(neighborMap.get(su4)).isEmpty();
+    }
+
+    @Test
+    void returnsTrue_whenUserIsInstitutionManager() {
+        Person person = new Person();
+        person.setId(1L);
+        Institution i = new Institution();
+        i.setId(1L);
+        UserInfo user = new UserInfo(i ,person, "fr");
+
+        when(permissionService.isInstitutionManager(user)).thenReturn(true);
+
+
+        assertTrue(spatialUnitService.hasCreatePermission(user));
+    }
+
+    @Test
+    void returnsTrue_whenUserIsActionManager() {
+        Person person = new Person();
+        person.setId(1L);
+        Institution i = new Institution();
+        i.setId(1L);
+        UserInfo user = new UserInfo(i ,person, "fr");
+        when(permissionService.isInstitutionManager(user)).thenReturn(false);
+        when(permissionService.isActionManager(user)).thenReturn(true);
+
+        assertTrue(spatialUnitService.hasCreatePermission(user));
+    }
+
+    @Test
+    void returnsFalse_whenUserHasNoPermissions() {
+        Person person = new Person();
+        person.setId(1L);
+        Institution i = new Institution();
+        i.setId(1L);
+        UserInfo user = new UserInfo(i ,person, "fr");
+        when(permissionService.isInstitutionManager(user)).thenReturn(false);
+        when(permissionService.isActionManager(user)).thenReturn(false);
+
+        assertFalse(spatialUnitService.hasCreatePermission(user));
     }
 
 }

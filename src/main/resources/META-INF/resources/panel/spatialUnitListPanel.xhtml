@@ -21,10 +21,10 @@
         >
             <f:facet name="rightToolbar">
                 <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
-                                 actionListener="#{newSpatialUnitDialogBean.init(panelModel.lazyDataModel)}"
-                                 rendered="#{flowBean.readWriteMode == 'WRITE'}"
-                                 oncomplete="PF('newSpatialUnitDiag').show()"
-                                 update="newSpatialUnitForm"
+                                 actionListener="#{genericNewUnitDialogBean.selectKind('SPATIAL')}"
+                                 rendered="#{flowBean.readWriteMode == 'WRITE' and spatialUnitFieldBean.isCreateAllowed()}"
+                                 oncomplete="PF('newUnitDiag').show();"
+                                 update="newUnitForm"
                                  style="margin-right: .5rem">
                 </p:commandButton>
             </f:facet>

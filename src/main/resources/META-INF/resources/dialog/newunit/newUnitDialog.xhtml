@@ -5,28 +5,33 @@
              xmlns:f="http://java.sun.com/jsf/core"
 
 >
-    <h:form id="newSpatialUnitForm">
+    <h:form id="newUnitForm">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-        <p:dialog widgetVar="newSpatialUnitDiag" id="newSpatialUnitDiag" showEffect="fade" closeOnEscape="true"
-                  appendToBody="true" modal="true" styleClass="sia-new-unit-dialog ui-panel siamois-panel spatial-unit-panel">
+        <p:dialog widgetVar="newUnitDiag" id="newUnitDiag" showEffect="fade" closeOnEscape="true"
+                  fitViewport="true"
+                  width="60vw"
+                  minWidth="400"
+                  maxWidth="90vw"
+                  style="max-height:90vh;"
+                  appendToBody="true" modal="true" styleClass="sia-new-unit-dialog ui-panel siamois-panel #{genericNewUnitDialogBean.handler.styleClassName()}">
 
             <f:facet name="header">
                 <div >
                     <div class="sia-flow-panel-title ui-panel-titlebar">
-                        <i class="bi bi-pencil-square"/>
-                        <span style="padding-right:0.5em;">Nouvelle unité spatiale</span>
+                        <i class="#{genericNewUnitDialogBean.handler.getIcon()}"/>
+                        <span style="padding-right:0.5em;">#{genericNewUnitDialogBean.handler.getTitle()}</span>
                     </div>
                 </div>
             </f:facet>
-            <div >
+            <p:outputPanel id="newUnitFormContent">
                 <ui:include src="/pages/shared/form/customForm.xhtml">
-                    <ui:param name="panelModel" value="#{newSpatialUnitDialogBean}"/>
-                    <ui:param name="layout" value="#{newSpatialUnitDialogBean.detailsForm.layout}"/>
+                    <ui:param name="panelModel" value="#{genericNewUnitDialogBean}"/>
+                    <ui:param name="layout" value="#{genericNewUnitDialogBean.detailsForm.layout}"/>
                     <ui:param name="readOnly" value="#{false}"/>
-                    <ui:param name="prefix" value="newSpatialUnit"/>
-                    <ui:param name="panelId" value="newSpatialUnitForm:customFormPanel-newSpatialUnit-0"/>
+                    <ui:param name="prefix" value="newUnit"/>
+                    <ui:param name="panelId" value="newUnitForm:customFormPanel-newUnit-0"/>
                 </ui:include>
-            </div>
+            </p:outputPanel>
 
             <!-- Save/Cancel Toolbar -->
             <f:facet name="footer">
@@ -34,18 +39,18 @@
                     <p:toolbar class="panel-footer">
                         <p:toolbarGroup align="right">
                             <p:commandLink value='#{langBean.msg("common.action.cancel")}'
-                                           oncomplete="PF('newSpatialUnitDiag').hide()"
+                                           oncomplete="PF('newUnitDiag').hide()"
                                            immediate="true"
                                            style="margin-right: 1rem">
                             </p:commandLink>
                             <p:commandButton id="createButton" value='#{langBean.msg("common.action.create")}'
-                                             action="#{newSpatialUnitDialogBean.create()}"
-                                             update="flow"
+                                             action="#{genericNewUnitDialogBean.create()}"
+                                             update="newUnitFormContent templateFormCC:templateForm:templateGrowl"
                                              style="margin-right: 1rem">
                             </p:commandButton>
                             <p:commandButton id="createAndViewButton"
-                                             update="flow"
-                                             action="#{newSpatialUnitDialogBean.createAndOpen()}"
+                                             update="newUnitFormContent templateFormCC:templateForm:templateGrowl"
+                                             action="#{genericNewUnitDialogBean.createAndOpen()}"
                                              value='#{langBean.msg("common.action.createAndView")}'
                                              style="margin-right: .5rem">
                             </p:commandButton>

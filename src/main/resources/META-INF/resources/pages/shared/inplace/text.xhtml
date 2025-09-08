@@ -12,6 +12,8 @@
         <cc:attribute name="field" type="fr.siamois.domain.models.form.customfield.CustomFieldText"
                       required="true"/>
         <cc:attribute name="mode" type="String" required="false" default="READ"/>
+        <cc:attribute name="label" type="String" required="false"/>
+        <cc:attribute name="required" type="java.lang.Boolean" required="true"/>
         <cc:attribute name="updateTargetsOnBlur" type="String" required="false" default="@this"/>
     </cc:interface>
 
@@ -29,8 +31,11 @@
                         actionListener="#{cc.attrs.panelModel.generateValueForField(cc.attrs.field, cc.attrs.answer)}"
                         update="#{cc.attrs.updateTargetsOnBlur}"
                 />
-                <p:inputText value="#{cc.attrs.answer.value}" styleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"  required="true"
-                             label="text">
+                <p:inputText value="#{cc.attrs.answer.value}"
+                             styleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"
+                             label="#{cc.attrs.label}"
+                             required="#{cc.attrs.required}"
+                             id="input">
                     <p:ajax event="blur" update="#{cc.attrs.updateTargetsOnBlur}"
                             listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(cc.attrs.field)}" />
                 </p:inputText>

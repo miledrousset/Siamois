@@ -145,4 +145,13 @@ public class SpatialUnitFieldBean implements Serializable {
         }
         return p.getName();
     }
+
+    /**
+     * Is creation of new spatial units allowed?
+     *
+     * @return true if creation is allowed
+     */
+    public boolean isCreateAllowed() {
+        return spatialUnitService.hasCreatePermission(sessionSettingsBean.getUserInfo());
+    }
 }
