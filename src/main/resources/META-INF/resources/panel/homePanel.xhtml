@@ -36,10 +36,10 @@
                                     label="#{langBean.msg('common.entity.spatialUnits')}"
                                     count="#{panelModel.nbOfSpatialUnits}"
                                     btnAction="#{flowBean.addSpatialUnitListPanel(panelModel.breadcrumb)}"
-                                    btnNewActionUpdate="newSpatialUnitForm"
-                                    btnNewActionOnComplete="PF('newSpatialUnitDiag').show()"
+                                    btnNewActionUpdate="newUnitForm"
+                                    btnNewActionOnComplete="PF('newUnitDiag').show();"
                                     btnNewActionOnStart=""
-                                    btnNewAction="#{newSpatialUnitDialogBean.init()}"
+                                    btnNewAction="#{genericNewUnitDialogBean.selectKind('SPATIAL')}"
                                     isCreateAllowed="#{spatialUnitFieldBean.isCreateAllowed()}"
                             />
 

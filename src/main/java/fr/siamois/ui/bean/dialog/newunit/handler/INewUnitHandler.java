@@ -1,18 +1,27 @@
-package fr.siamois.ui.bean.dialog.newunit;
+package fr.siamois.ui.bean.dialog.newunit.handler;
 
 import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.exceptions.EntityAlreadyExistsException;
 import fr.siamois.domain.models.form.customform.CustomForm;
+import fr.siamois.ui.bean.dialog.newunit.GenericNewUnitDialogBean;
+import fr.siamois.ui.bean.dialog.newunit.UnitKind;
 
 
 public interface INewUnitHandler<T extends TraceableEntity> {
     UnitKind kind();
     T newEmpty();
-    T save(UserInfo user, T unit) throws Exception;
-    String dialogWidgetVar();                 // ex. "newSpatialUnitDiag" / "newActionUnitDiag"
+    T save(UserInfo user, T unit) throws EntityAlreadyExistsException;
+    String dialogWidgetVar();
     String successMessageCode();              // ex. "common.entity.spatialUnits.updated"
     String viewUrlFor(Long id);               // ex. "/spatial-unit/%d" ou "/action-unit/%d"
     CustomForm formLayout();            // ton objet/form layout (SpatialUnit.NEW_UNIT_FORM, etc.)
     void onInitFromContext(GenericNewUnitDialogBean<?> bean); // optionnel pour pré-remplir (parents/enfants…)
+    String getName(T unit); // Get unit name
+    String getRessourceUri();
+    String getTitle();
+    String styleClassName();
+    String getIcon();
+    String getAutocompleteClass();
 }
 

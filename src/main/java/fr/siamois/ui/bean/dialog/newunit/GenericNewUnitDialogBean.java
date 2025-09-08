@@ -1,17 +1,15 @@
-package fr.siamois.ui.bean.dialog;
-
-
+package fr.siamois.ui.bean.dialog.newunit;
 
 import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.exceptions.EntityAlreadyExistsException;
 import fr.siamois.domain.models.form.customfield.CustomField;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
-import fr.siamois.ui.bean.dialog.newunit.INewUnitHandler;
-import fr.siamois.ui.bean.dialog.newunit.UnitKind;
+import fr.siamois.ui.bean.dialog.newunit.handler.INewUnitHandler;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
@@ -25,19 +23,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.springframework.stereotype.Component;
 
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 @Slf4j
-//@ViewScoped (recommandé) + @Named si CDI
-//@SessionScoped si tu restes en scope session (pense à bien reset à chaque init)
+@ViewScoped
 @Component
-@SessionScoped
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
 public class GenericNewUnitDialogBean<T extends TraceableEntity>
         extends AbstractSingleEntity<T> implements Serializable {
 
@@ -53,9 +50,9 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
     protected static final String ENTITY_ALREADY_EXIST_MESSAGE_CODE = "common.entity.alreadyExist";
 
     // ==== handlers ====
-    private Map<UnitKind, INewUnitHandler<? extends TraceableEntity>> handlers;
+    private transient Map<UnitKind, INewUnitHandler<? extends TraceableEntity>> handlers;
     private UnitKind kind;
-    private INewUnitHandler<T> handler;
+    private transient INewUnitHandler<T> handler;
 
 
     public GenericNewUnitDialogBean(SessionSettingsBean sessionSettingsBean,
@@ -91,7 +88,12 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
     }
 
     public String unitName() {
-        return unit != null ? unit.getName() : "";
+        return unit != null ? handler.getName(unit) : " Unnamed unit";
+    }
+
+    @Override
+    public String ressourceUri() {
+        return handler != null ? handler.getRessourceUri() : "generic-new-unit";
     }
 
     public Long getUnitId() {
@@ -106,6 +108,13 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
         formResponse.getAnswers().get(field).setHasBeenModified(true);
     }
 
+    @Override
+    public void initForms() {
+        detailsForm = SpatialUnit.NEW_UNIT_FORM;
+        formResponse = initializeFormResponse(detailsForm, unit);
+
+    }
+
     protected void reset() {
         unit = null;
         formResponse = null;
@@ -118,16 +127,26 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
         unit = handler.newEmpty();
         unit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
         unit.setCreatedByInstitution(sessionSettingsBean.getSelectedInstitution());
-        // layout + init réponses
-        detailsForm = handler.formLayout();
-        formResponse = initializeFormResponse(detailsForm, unit);
-        handler.onInit(this); // hook optionnel
+        initForms();
+        handler.onInitFromContext(this); // hook optionnel
+
     }
 
-    public String createAndOpen() { return performCreate(true, true); }
+    public Void createAndOpen() { return performCreate(true, true); }
     public void create() { performCreate(false, false); }
 
-    private String performCreate(boolean openAfter, boolean scrollToTop) {
+    @Override
+    public String display() {
+        return "";
+    }
+
+    @Override
+    public String getAutocompleteClass() {
+        // Default implementation
+        return handler.getAutocompleteClass();
+    }
+
+    private Void performCreate(boolean openAfter, boolean scrollToTop) {
         try {
             createUnit();
         } catch (EntityAlreadyExistsException e) {

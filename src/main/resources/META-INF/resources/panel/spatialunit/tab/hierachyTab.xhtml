@@ -23,8 +23,8 @@
                 <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
                                  id="newSpatialUnitChildrenButton"
                                  actionListener="#{newSpatialUnitDialogBean.init(panelModel.lazyDataModelChildren)}"
-                                 oncomplete="PF('newSpatialUnitDiag').show()"
-                                 update="newSpatialUnitForm"
+                                 oncomplete="PF('newUnitDiag').show()"
+                                 update="newUnitForm"
                                  rendered="#{flowBean.readWriteMode == 'WRITE'}"
                                  style="margin-right: .5rem">
                 </p:commandButton>
@@ -45,8 +45,8 @@
                 <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
                                  id="newSpatialUnitParentButton"
                                  actionListener="#{newSpatialUnitDialogBean.init(panelModel.lazyDataModelParents)}"
-                                 oncomplete="PF('newSpatialUnitDiag').show()"
-                                 update="newSpatialUnitForm"
+                                 oncomplete="PF('newUnitDiag').show()"
+                                 update="newUnitForm"
                                  rendered="#{flowBean.readWriteMode == 'WRITE'}"
                                  style="margin-right: .5rem">
                 </p:commandButton>
