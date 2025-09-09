@@ -186,7 +186,7 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Transient
     @JsonIgnore
     public static final CustomFieldSelectMultipleSpatialUnitTree SPATIAL_CONTEXT_FIELD = new CustomFieldSelectMultipleSpatialUnitTree.Builder()
-            .label("common.label.spatialContext")
+            .label("common.label.spatialContext") // todo; move to const
             .isSystemField(true)
             .valueBinding("spatialContext")
             .concept(SPATIAL_CONTEXT_CONCEPT)
@@ -195,11 +195,11 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Transient
     @JsonIgnore
     public static final CustomForm NEW_UNIT_FORM = new CustomForm.Builder()
-            .name("Details tab form")
-            .description("Contains the main form")
+            .name("Details tab form") // todo: move to const
+            .description("Contains the main form") // todo : moveto const
             .addPanel(
                     new CustomFormPanel.Builder()
-                            .name("common.header.general")
+                            .name("common.header.general") // todo : move to const
                             .isSystemPanel(true)
                             .addRow(
                                     new CustomRow.Builder()
@@ -229,7 +229,7 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
                                     new CustomRow.Builder()
                                             .addColumn(new CustomCol.Builder()
                                                     .readOnly(false)
-                                                    .className(COLUMN_CLASS_NAME)
+                                                    .className("ui-g-12")
                                                     .field(SPATIAL_CONTEXT_FIELD)
                                                     .build())
                                             .build()
@@ -290,7 +290,7 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
                                     new CustomRow.Builder()
                                             .addColumn(new CustomCol.Builder()
                                                     .readOnly(false)
-                                                    .className(COLUMN_CLASS_NAME)
+                                                    .className("ui-g-12 ui-md-12 ui-lg-12")
                                                     .field(SPATIAL_CONTEXT_FIELD)
                                                     .build())
                                             .build()

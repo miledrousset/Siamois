@@ -6,10 +6,14 @@
 >
 
     <cc:interface>
-        <cc:attribute name="answer" type="fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectMultipleSpatialUnitTree" required="true"/>
-        <cc:attribute name="panelModel" type="fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity" required="true"/>
+        <cc:attribute name="answer"
+                      type="fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectMultipleSpatialUnitTree"
+                      required="true"/>
+        <cc:attribute name="panelModel" type="fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity"
+                      required="true"/>
         <cc:attribute name="hasBeenModified" type="Boolean" required="false" default="false"/>
-        <cc:attribute name="field" type="fr.siamois.domain.models.form.customfield.CustomFieldSelectMultipleSpatialUnitTree"
+        <cc:attribute name="field"
+                      type="fr.siamois.domain.models.form.customfield.CustomFieldSelectMultipleSpatialUnitTree"
                       required="true"/>
         <cc:attribute name="mode" type="String" required="false" default="READ"/>
         <cc:attribute name="updateTargetsOnBlur" type="String" required="false" default="@this"/>
@@ -18,27 +22,49 @@
     <cc:implementation>
         <p:inplace mode="#{cc.attrs.mode}" toggleable="false">
             <f:facet name="output">
-Just testing
+                Just testing
             </f:facet>
             <f:facet name="input">
+                <!-- Affichage de la liste normalisé des USp séléctionnées -->
+                <p:panel id="selectedSpatialUnitPanel" header="USp sélectionnées:" style="margin-top:1rem">
+                    <h:panelGroup rendered="#{not empty cc.attrs.answer.normalizedSpatialUnits}">
+                        <ui:repeat value="#{cc.attrs.answer.normalizedSpatialUnits}" var="su">
+                            <span>
+                                <p:chip label="#{su.name}" styleClass="mr-2 mb-2" removable="true">
+                                    <p:ajax event="close" listener="#{cc.attrs.answer.removeSpatialUnit(su)}"
+                                            update="#{cc.attrs.updateTargetsOnBlur}"/>
+                                </p:chip>
+                            </span>
+                        </ui:repeat>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{empty cc.attrs.answer.normalizedSpatialUnits}">
+                        <em>Aucune USp sélectionnée.</em>
+                    </h:panelGroup>
+                </p:panel>
+                <!-- Séléction des USp dans un treenode -->
                 <p:treeTable value="#{cc.attrs.answer.root}"
                              selection="#{cc.attrs.answer.value}"
+                             rows="5"
+                             propagateSelectionUp="false"
+                             scrollable="true"
+                             scrollHeight="400px"
+                             paginator="true"
+                             propagateSelectionDown="true"
                              var="spatialUnit"
                              selectionMode="checkbox"
                              styleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"
-                             propagateSelectionUp="false"
                 >
                     <p:ajax event="select"
-                            listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(cc.attrs.field)}" />
-                            update="#{cc.attrs.updateTargetsOnBlur}"
+                            listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(cc.attrs.field)}"
+                            update="#{cc.attrs.updateTargetsOnBlur} selectedSpatialUnitPanel"
                             immediate="true"
                             process="#{cc.attrs.updateTargetsOnBlur}"/>
                     <p:ajax event="unselect"
-                            listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(cc.attrs.field)}" />
-                            update="#{cc.attrs.updateTargetsOnBlur}"
+                            listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(cc.attrs.field)}"
+                            update="#{cc.attrs.updateTargetsOnBlur}  selectedSpatialUnitPanel"
                             immediate="true"
                             process="#{cc.attrs.updateTargetsOnBlur}"/>
-                    <p:column headerText="Nom">
+                    <p:column headerText="Nom" filterable="true">
                         <p:outputLabel value="#{spatialUnit.getName()}"/>
                     </p:column>
                 </p:treeTable>

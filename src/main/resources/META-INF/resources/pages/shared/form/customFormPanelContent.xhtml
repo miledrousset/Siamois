@@ -23,7 +23,7 @@
                 <c:forEach items="#{row.columns}" var="col" varStatus="colStatus">
 
 
-                    <p:column styleClass="ui-g-12 ui-md-6 ui-lg-4">
+                    <p:column styleClass="#{col.className}">
                         <!-- Text -->
                         <sharedInput:panelField
                                 required="#{col.required}"

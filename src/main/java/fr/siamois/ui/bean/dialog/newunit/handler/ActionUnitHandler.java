@@ -49,7 +49,7 @@ public class ActionUnitHandler implements INewUnitHandler<ActionUnit> {
 
     @Override
     public String getIcon() {
-        return "bi bi-pencil-square";
+        return "bi bi-arrow-down-square";
     }
 
     @Override

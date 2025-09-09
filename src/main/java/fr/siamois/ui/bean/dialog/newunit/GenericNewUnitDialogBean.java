@@ -119,7 +119,7 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
 
     @Override
     public void initForms() {
-        detailsForm = SpatialUnit.NEW_UNIT_FORM;
+        detailsForm = handler.formLayout();
         formResponse = initializeFormResponse(detailsForm, unit);
 
     }

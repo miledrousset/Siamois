@@ -55,7 +55,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
     protected CustomForm detailsForm;
 
     public static String generateRandomActionUnitIdentifier() {
-        return "2025";
+        return "2025"; // todo : real implementation
     }
 
     public static final Vocabulary SYSTEM_THESO;
@@ -291,7 +291,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
     }
 
     private void populateSystemFieldValue(CustomFieldAnswer answer, Object jpaEntity, CustomField field) {
-        Object value = getFieldValue(jpaEntity, field.getValueBinding());
+        Object value = getFieldValue(jpaEntity, field.getValueBinding()); // todo ; reduce cognitive complexity
 
         if (value instanceof OffsetDateTime odt && answer instanceof CustomFieldAnswerDateTime dateTimeAnswer) {
             dateTimeAnswer.setValue(odt.toLocalDateTime());
@@ -417,6 +417,8 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
         }
         throw new IllegalArgumentException("Unsupported CustomField type: " + field.getClass().getName());
     }
+
+
 
 
 }
