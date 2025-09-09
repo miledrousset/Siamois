@@ -21,14 +21,22 @@ public class SpatialUnitTreeService {
 
     public TreeNode<SpatialUnit> buildTree() {
 
-        Map<SpatialUnit, List<SpatialUnit>> neighborMap = spatialUnitService.neighborMapOfAllSpatialUnit(sessionSettingsBean.getSelectedInstitution());
+        Map<SpatialUnit, List<SpatialUnit>> neighborMap =
+                spatialUnitService.neighborMapOfAllSpatialUnit(sessionSettingsBean.getSelectedInstitution());
+
         TreeNode<SpatialUnit> rootNode = new CheckboxTreeNode<>(new SpatialUnit(), null);
+        rootNode.setRowKey("root"); // rowKey explicite pour la racine
+
         Map<SpatialUnit, TreeNode<SpatialUnit>> nodes = new HashMap<>();
 
         for (Map.Entry<SpatialUnit, List<SpatialUnit>> entry : neighborMap.entrySet()) {
-            TreeNode<SpatialUnit> parent = nodes.computeIfAbsent(entry.getKey(), k -> new CheckboxTreeNode<>(entry.getKey()));
+            SpatialUnit parentSu = entry.getKey();
+            TreeNode<SpatialUnit> parent = nodes.computeIfAbsent(parentSu,
+                    k -> createNodeWithKey(parentSu, null));
+
             for (SpatialUnit child : entry.getValue()) {
-                TreeNode<SpatialUnit> childNode = nodes.computeIfAbsent(child, k -> new CheckboxTreeNode<>(child, parent));
+                TreeNode<SpatialUnit> childNode = nodes.computeIfAbsent(child,
+                        k -> createNodeWithKey(child, parent));
                 parent.getChildren().add(childNode);
             }
         }
@@ -40,6 +48,16 @@ public class SpatialUnitTreeService {
         }
 
         return rootNode;
+    }
+
+    private CheckboxTreeNode<SpatialUnit> createNodeWithKey(SpatialUnit su, TreeNode<SpatialUnit> parent) {
+        CheckboxTreeNode<SpatialUnit> node = new CheckboxTreeNode<>(su, parent);
+        if (su.getId() != null) {
+            node.setRowKey(""+su.getId()); // clé stable
+        } else {
+            node.setRowKey(UUID.randomUUID().toString()); // fallback si pas d’ID
+        }
+        return node;
     }
 
     private long numberOfParentsOf(Map<SpatialUnit, List<SpatialUnit>> neighborMap, SpatialUnit spatialUnit) {

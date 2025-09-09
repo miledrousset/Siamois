@@ -44,6 +44,8 @@
                 <!-- Séléction des USp dans un treenode -->
                 <p:treeTable value="#{cc.attrs.answer.root}"
                              selection="#{cc.attrs.answer.value}"
+                             selectionMode="checkbox"
+                             widgetVar="spatialUnitTreeTable"
                              rows="5"
                              propagateSelectionUp="false"
                              scrollable="true"
@@ -51,7 +53,6 @@
                              paginator="true"
                              propagateSelectionDown="true"
                              var="spatialUnit"
-                             selectionMode="checkbox"
                              styleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"
                 >
                     <p:ajax event="select"
@@ -64,7 +65,8 @@
                             update="#{cc.attrs.updateTargetsOnBlur}  selectedSpatialUnitPanel"
                             immediate="true"
                             process="#{cc.attrs.updateTargetsOnBlur}"/>
-                    <p:column headerText="Nom" filterable="true">
+                    <p:column headerText="Nom" filterBy="#{spatialUnit.name}"
+                              filterMatchMode="contains">
                         <p:outputLabel value="#{spatialUnit.getName()}"/>
                     </p:column>
                 </p:treeTable>
