@@ -17,9 +17,10 @@ import java.util.stream.Collectors;
 public class CustomFieldAnswerSelectMultipleSpatialUnitTree extends CustomFieldAnswer {
 
     @Transient
-    // Attention : CheckboxTreeNode<SpatialUnit> est très lié à PrimeFaces, à voir pour ajouter un niveau d'abstraction
-    private List<CheckboxTreeNode<SpatialUnit>> value;
     private transient TreeNode<SpatialUnit> root;
+    @Transient // racine "technique" de la TreeTable
+    private List<CheckboxTreeNode<SpatialUnit>> selection;   // cases cochées (sélection multiple)
+    private final Map<Long, Set<Long>> ancestorCache = new HashMap<>();
 
     @Transient
     public Set<SpatialUnit> getNormalizedSpatialUnits() {
@@ -27,14 +28,77 @@ public class CustomFieldAnswerSelectMultipleSpatialUnitTree extends CustomFieldA
     }
 
     /** Retourne les USp sélectionnées après normalisation (pas d’enfant si un ancêtre est sélectionné) */
+    @Transient
     public Set<SpatialUnit> toNormalizedSpatialUnits() {
-        List<CheckboxTreeNode<SpatialUnit>> sel = value != null ? value : Collections.emptyList();
+        List<CheckboxTreeNode<SpatialUnit>> sel = selection != null ? selection : Collections.emptyList();
         List<CheckboxTreeNode<SpatialUnit>> normalized = normalizeTreeSelection(sel);
 
         return normalized.stream()
                 .map(CheckboxTreeNode::getData)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    /** Normalise la sélection pour les "chips" au niveau MÉTIER (graph multi-parents). */
+    public List<SpatialUnit> getNormalizedSelectedUnits(List<CheckboxTreeNode<SpatialUnit>> selectedNodes) {
+        if (selectedNodes == null || selectedNodes.isEmpty()) return Collections.emptyList();
+
+        // 1) Ramène à des IDs uniques d'entités
+        Map<Long, SpatialUnit> byId = new HashMap<>();
+        Set<Long> selectedIds = new LinkedHashSet<>();
+        for (CheckboxTreeNode<SpatialUnit> node : selectedNodes) {
+            SpatialUnit u = node.getData();
+            if (u == null) continue;
+            byId.putIfAbsent(u.getId(), u);
+            selectedIds.add(u.getId());
+        }
+
+        // 2) Marque les entités "dominées" par un ancêtre sélectionné
+        Set<Long> toRemove = new HashSet<>();
+        for (Long id : selectedIds) {
+            if (toRemove.contains(id)) continue;
+            Set<Long> ancestors = getAllAncestorIds(id); // transitif, métier
+            // si l'intersection ancestors ∩ selectedIds n'est pas vide -> enlever l'enfant
+            for (Long a : ancestors) {
+                if (selectedIds.contains(a)) {
+                    toRemove.add(id);
+                    break;
+                }
+            }
+        }
+
+        // 3) Garde seulement l’ensemble minimal
+        selectedIds.removeAll(toRemove);
+
+        // 4) Retourne la liste des entités pour afficher les chips
+        List<SpatialUnit> chips = new ArrayList<>(selectedIds.size());
+        for (Long id : selectedIds) chips.add(byId.get(id));
+        // (optionnel) ordonner
+        chips.sort(Comparator.comparing(SpatialUnit::getName, Comparator.nullsLast(String::compareToIgnoreCase)));
+        return chips;
+    }
+
+    /** Renvoie tous les IDs des ancêtres métier (transitifs), avec détection de cycles. */
+    private Set<Long> getAllAncestorIds(long id) {
+        // cache simple pour éviter de recalculer
+        Set<Long> cached = ancestorCache.get(id);
+        if (cached != null) return cached;
+
+        Set<Long> res = new HashSet<>();
+        Deque<Long> stack = new ArrayDeque<>(repo.findDirectParentIdsOf(id));
+        while (!stack.isEmpty()) {
+            long cur = stack.pop();
+            if (res.add(cur)) {
+                List<Long> parents = repo.findDirectParentIdsOf(cur);
+                if (parents != null) {
+                    for (Long p : parents) {
+                        if (!res.contains(p)) stack.push(p);
+                    }
+                }
+            }
+        }
+        ancestorCache.put(id, res);
+        return res;
     }
 
 
@@ -84,7 +148,7 @@ public class CustomFieldAnswerSelectMultipleSpatialUnitTree extends CustomFieldA
         unselectDescendants(node);
 
         // 2) Reconstituer la sélection "value" à partir de l'arbre
-        this.value = collectSelectedNodes(root);
+        this.selection = collectSelectedNodes(root);
 
         return true;
     }

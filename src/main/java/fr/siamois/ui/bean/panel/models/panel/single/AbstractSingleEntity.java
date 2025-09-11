@@ -322,7 +322,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
 
             // Set root and selected nodes into the answer
             treeAnswer.setRoot(root);
-            treeAnswer.setValue(getSelectedNodes(root));
+            treeAnswer.setSelection(getSelectedNodes(root));
         }
     }
 
@@ -370,7 +370,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
             return a.getValue();
         } else if (answer instanceof CustomFieldAnswerSelectMultipleSpatialUnitTree a) {
             Set<SpatialUnit> ret = new HashSet<>();
-            for (CheckboxTreeNode<SpatialUnit> su : a.getValue()) {
+            for (CheckboxTreeNode<SpatialUnit> su : a.getSelection()) {
                 SpatialUnit spatialUnit = su.getData();
                 ret.add(spatialUnit);
             }

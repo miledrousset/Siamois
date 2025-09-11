@@ -3,6 +3,7 @@ package fr.siamois.domain.services.spatialunit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import org.primefaces.model.CheckboxTreeNode;
+import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +20,46 @@ public class SpatialUnitTreeService {
         this.sessionSettingsBean = sessionSettingsBean;
     }
 
+    /** Récursion avec détection de cycle par "chemin" */
+    private void buildChildren(TreeNode parentNode, SpatialUnit parent, Set<Long> pathIds) {
+        List<SpatialUnit> enfants = spatialUnitService.findDirectChildrensOf(parent);
+        if (enfants == null || enfants.isEmpty()) {
+            return;
+        }
+        for (SpatialUnit child : enfants) {
+            if (pathIds.contains(child.getId())) {
+                // Cycle détecté : on l’affiche en grisé et non sélectionnable
+                TreeNode cycle = new CheckboxTreeNode("cycle", child, parentNode);
+                cycle.setSelectable(false);
+                continue;
+            }
+            TreeNode childNode = new CheckboxTreeNode("SpatialUnit", child, parentNode);
+            // nouveau "chemin" pour la branche (important avec multi-parents)
+            Set<Long> nextPath = new HashSet<>(pathIds);
+            nextPath.add(child.getId());
+            buildChildren(childNode, child, nextPath);
+        }
+    }
+
+
+
     public TreeNode<SpatialUnit> buildTree() {
 
-        Map<SpatialUnit, List<SpatialUnit>> neighborMap =
+        TreeNode<SpatialUnit> root = new CheckboxTreeNode<>(new SpatialUnit(), null);
+        List<SpatialUnit> racines = spatialUnitService.findRootsOf(sessionSettingsBean.getSelectedInstitution());
+
+        for (SpatialUnit r : racines) {
+            TreeNode rNode = new CheckboxTreeNode("SpatialUnit", r, root);
+            rNode.setExpanded(false);
+            // on mémorise le chemin (ids vus) pour éviter les cycles
+            Set<Long> path = new HashSet<>();
+            path.add(r.getId());
+            buildChildren(rNode, r, path);
+        }
+
+        return root;
+
+/*        Map<SpatialUnit, List<SpatialUnit>> neighborMap =
                 spatialUnitService.neighborMapOfAllSpatialUnit(sessionSettingsBean.getSelectedInstitution());
 
         TreeNode<SpatialUnit> rootNode = new CheckboxTreeNode<>(new SpatialUnit(), null);
@@ -47,7 +85,7 @@ public class SpatialUnitTreeService {
             }
         }
 
-        return rootNode;
+        return rootNode;*/
     }
 
     private CheckboxTreeNode<SpatialUnit> createNodeWithKey(SpatialUnit su, TreeNode<SpatialUnit> parent) {
