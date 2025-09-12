@@ -13,10 +13,12 @@ import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.services.spatialunit.SpatialUnitService;
 import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
+import fr.siamois.ui.viewmodel.TreeUiStateViewModel;
 import fr.siamois.utils.DateUtils;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
@@ -26,6 +28,7 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.model.CheckboxTreeNode;
 import org.primefaces.model.TreeNode;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
@@ -34,17 +37,20 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Data
 @Slf4j
 public abstract class AbstractSingleEntity<T> extends AbstractPanel implements Serializable {
 
-    private static SpatialUnit spatialUnit;
     // Deps
     protected final transient SessionSettingsBean sessionSettingsBean;
     protected final transient FieldConfigurationService fieldConfigurationService;
     private final transient SpatialUnitTreeService spatialUnitTreeService;
+
+    @Autowired
+    private transient SpatialUnitService spatialUnitService;
 
     //--------------- Locals
     protected transient T unit;
@@ -53,6 +59,9 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
 
     //
     protected CustomForm detailsForm;
+
+    // For multi select tree UI
+    private final Map<CustomFieldAnswerSelectMultipleSpatialUnitTree, TreeUiStateViewModel> treeStates = new HashMap<>();
 
     public static String generateRandomActionUnitIdentifier() {
         return "2025"; // todo : real implementation
@@ -290,6 +299,161 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
         }
     }
 
+    // --------------------Spatial Unit Tree
+    private TreeUiStateViewModel buildUiFor(CustomFieldAnswerSelectMultipleSpatialUnitTree answer) {
+        // Add selection TODO
+        TreeUiStateViewModel ui = new TreeUiStateViewModel();
+        ui.setRoot(spatialUnitTreeService.buildTree());          // construit l’arbre metier
+        return ui;
+    }
+
+    // Returns the root for a given answer
+    public TreeNode<SpatialUnit> getRoot(CustomFieldAnswerSelectMultipleSpatialUnitTree answer) {
+        return treeStates.get(answer).getRoot();
+    }
+
+    public List<SpatialUnit> getNormalizedSpatialUnits(CustomFieldAnswerSelectMultipleSpatialUnitTree answer) {
+        return getNormalizedSelectedUnits(treeStates.get(answer).getSelection());
+    }
+
+    /**
+     * Normalise la sélection pour les "chips" au niveau MÉTIER (graph multi-parents).
+     */
+    public List<SpatialUnit> getNormalizedSelectedUnits(List<CheckboxTreeNode<SpatialUnit>> selectedNodes) {
+        if (selectedNodes == null || selectedNodes.isEmpty()) return Collections.emptyList();
+
+        // 1) Ramène à des IDs uniques d'entités
+        Map<Long, SpatialUnit> byId = new HashMap<>();
+        Set<Long> selectedIds = new LinkedHashSet<>();
+        for (CheckboxTreeNode<SpatialUnit> node : selectedNodes) {
+            SpatialUnit u = node.getData();
+            if (u == null) continue;
+            byId.putIfAbsent(u.getId(), u);
+            selectedIds.add(u.getId());
+        }
+
+        // 2) Marque les entités "dominées" par un ancêtre sélectionné
+        Set<Long> toRemove = new HashSet<>();
+        for (Long id : selectedIds) {
+            if (toRemove.contains(id)) continue;
+            Set<Long> ancestors = getAllAncestorIds(id); // transitif, métier
+            // si l'intersection ancestors ∩ selectedIds n'est pas vide -> enlever l'enfant
+            for (Long a : ancestors) {
+                if (selectedIds.contains(a)) {
+                    toRemove.add(id);
+                    break;
+                }
+            }
+        }
+
+        // 3) Garde seulement l’ensemble minimal
+        selectedIds.removeAll(toRemove);
+
+        // 4) Retourne la liste des entités pour afficher les chips
+        List<SpatialUnit> chips = new ArrayList<>(selectedIds.size());
+        for (Long id : selectedIds) chips.add(byId.get(id));
+        // (optionnel) ordonner
+        chips.sort(Comparator.comparing(SpatialUnit::getName, Comparator.nullsLast(String::compareToIgnoreCase)));
+        return chips;
+    }
+
+    /**
+     * Renvoie tous les IDs des ancêtres métier (transitifs), avec détection de cycles.
+     */
+    private Set<Long> getAllAncestorIds(long id) {
+        Set<Long> res = new HashSet<>();
+        Deque<Long> stack = spatialUnitService.findDirectParentsOf(id).stream()
+                .map(SpatialUnit::getId)
+                .filter(Objects::nonNull).distinct().collect(Collectors.toCollection(ArrayDeque::new));
+        while (!stack.isEmpty()) {
+            long cur = stack.pop();
+            if (res.add(cur)) {
+                List<Long> parents = spatialUnitService.findDirectParentsOf(id).stream()
+                        .map(SpatialUnit::getId)
+                        .filter(Objects::nonNull)
+                        .toList();
+                if (parents != null) {
+                    for (Long p : parents) {
+                        if (!res.contains(p)) stack.push(p);
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    // Remove a spatial unit from the selection
+    public boolean removeSpatialUnit(CustomFieldAnswerSelectMultipleSpatialUnitTree answer, SpatialUnit su) {
+
+        TreeNode<SpatialUnit> root = treeStates.get(answer).getRoot();
+
+        if (su == null || root == null) return false;
+
+        // 1) Décocher le nœud correspondant (et enlever l'état partiel)
+        CheckboxTreeNode<SpatialUnit> node = findNodeById(root, su.getId());
+        if (node == null) return false;
+
+        node.setSelected(false);
+        node.setPartialSelected(false);
+
+        // Tout décocher sous ce nœud
+        unselectDescendants(node);
+
+        // 2) Reconstituer la sélection "value" à partir de l'arbre
+        treeStates.get(answer).setSelection(collectSelectedNodes(root));
+
+        return true;
+    }
+
+    /* -------- Helpers privés -------- */
+
+    private CheckboxTreeNode<SpatialUnit> findNodeById(TreeNode<SpatialUnit> node, Long targetId) {
+        if (node == null || targetId == null) return null;
+
+        SpatialUnit data = node.getData();
+        if (data != null && Objects.equals(data.getId(), targetId) && node instanceof CheckboxTreeNode) {
+            @SuppressWarnings("unchecked")
+            CheckboxTreeNode<SpatialUnit> cb = (CheckboxTreeNode<SpatialUnit>) node;
+            return cb;
+        }
+        for (TreeNode<SpatialUnit> child : node.getChildren()) {
+            CheckboxTreeNode<SpatialUnit> found = findNodeById(child, targetId);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    private List<CheckboxTreeNode<SpatialUnit>> collectSelectedNodes(TreeNode<SpatialUnit> node) {
+        List<CheckboxTreeNode<SpatialUnit>> acc = new ArrayList<>();
+        collectSelectedNodesRec(node, acc);
+        return acc;
+    }
+
+    private void collectSelectedNodesRec(TreeNode<SpatialUnit> node, List<CheckboxTreeNode<SpatialUnit>> acc) {
+        if (node instanceof CheckboxTreeNode<?> cb && ((CheckboxTreeNode<?>) cb).isSelected()) {
+            @SuppressWarnings("unchecked")
+            CheckboxTreeNode<SpatialUnit> typed = (CheckboxTreeNode<SpatialUnit>) cb;
+            acc.add(typed);
+        }
+        for (TreeNode<SpatialUnit> child : node.getChildren()) {
+            collectSelectedNodesRec(child, acc);
+        }
+    }
+
+    // Si tu veux propager la désélection sur tous les descendants (optionnel)
+    @SuppressWarnings("unchecked")
+    private void unselectDescendants(TreeNode<SpatialUnit> node) {
+        for (TreeNode<SpatialUnit> child : node.getChildren()) {
+            if (child instanceof CheckboxTreeNode<?> cb) {
+                ((CheckboxTreeNode<?>) cb).setSelected(false);
+                ((CheckboxTreeNode<?>) cb).setPartialSelected(false);
+            }
+            unselectDescendants(child);
+        }
+    }
+
+    // ------------- End spatial unit tree
+
     private void populateSystemFieldValue(CustomFieldAnswer answer, Object jpaEntity, CustomField field) {
         Object value = getFieldValue(jpaEntity, field.getValueBinding()); // todo ; reduce cognitive complexity
 
@@ -312,17 +476,14 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
             spatialUnitAnswer.setValue(s);
         } else if (value instanceof Set<?> set && answer instanceof CustomFieldAnswerSelectMultipleSpatialUnitTree treeAnswer) {
             // Cast set to the expected type
-            Set<SpatialUnit> selectedSpatialUnits = (Set<SpatialUnit>) set;
-
-            // Build the root tree
-            TreeNode<SpatialUnit> root = spatialUnitTreeService.buildTree();
+            treeAnswer.setValue((Set<SpatialUnit>) set);
+            TreeUiStateViewModel ui = buildUiFor(treeAnswer);
+            treeStates.put(treeAnswer, ui);
+            // Answer ➜ UI : cocher selon IDs persistés
+            //syncAnswerToUi(treeAnswer, ui);
 
             // Mark selected nodes based on spatial units
-            markSelected(root, selectedSpatialUnits);
-
-            // Set root and selected nodes into the answer
-            treeAnswer.setRoot(root);
-            treeAnswer.setSelection(getSelectedNodes(root));
+            //markSelected(root, selectedSpatialUnits);
         }
     }
 
@@ -370,10 +531,11 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
             return a.getValue();
         } else if (answer instanceof CustomFieldAnswerSelectMultipleSpatialUnitTree a) {
             Set<SpatialUnit> ret = new HashSet<>();
-            for (CheckboxTreeNode<SpatialUnit> su : a.getSelection()) {
-                SpatialUnit spatialUnit = su.getData();
-                ret.add(spatialUnit);
-            }
+            // todo : fixme
+//            for (CheckboxTreeNode<SpatialUnit> su : a.getSelection()) {
+//                SpatialUnit spatialUnit = su.getData();
+//                ret.add(spatialUnit);
+//            }
             return ret;
         }
 
@@ -417,8 +579,6 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
         }
         throw new IllegalArgumentException("Unsupported CustomField type: " + field.getClass().getName());
     }
-
-
 
 
 }

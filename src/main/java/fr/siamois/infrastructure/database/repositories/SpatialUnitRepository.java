@@ -281,5 +281,13 @@ public interface SpatialUnitRepository extends JpaRepository<SpatialUnit, Long> 
                     "WHERE sh.fk_parent_id = :spatialUnitId"
     )
     Set<SpatialUnit> findChildrensOf(Long spatialUnitId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT DISTINCT su.* FROM spatial_unit su " +
+                    "JOIN spatial_hierarchy sh ON sh.fk_parent_id = su.spatial_unit_id " +
+                    "WHERE sh.fk_child_id = :spatialUnitId"
+    )
+    Set<SpatialUnit> findParentsOf(Long spatialUnitId);
 }
 

@@ -346,6 +346,16 @@ public class SpatialUnitService implements ArkEntityService {
     }
 
     /**
+     * Find all direct parents of a given SpatialUnit
+     *
+     * @param id The ID of the SpatialUnit to find parents for
+     * @return A list of direct parents SpatialUnit of the given SpatialUnit
+     */
+    public List<SpatialUnit> findDirectParentsOf(Long id) {
+        return spatialUnitRepository.findParentsOf(id).stream().toList();
+    }
+
+    /**
      * Create a map of all SpatialUnits and their direct neighbors (children)
      *
      * @param institution The institution to filter by

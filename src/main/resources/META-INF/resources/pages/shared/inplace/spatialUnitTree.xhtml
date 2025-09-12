@@ -27,23 +27,25 @@
             <f:facet name="input">
                 <!-- Affichage de la liste normalisé des USp séléctionnées -->
                 <p:panel id="selectedSpatialUnitPanel" header="USp sélectionnées:" style="margin-top:1rem">
-                    <h:panelGroup rendered="#{not empty cc.attrs.answer.normalizedSpatialUnits}">
-                        <ui:repeat value="#{cc.attrs.answer.normalizedSpatialUnits}" var="su">
+                    <h:panelGroup
+                            rendered="#{not empty cc.attrs.panelModel.getNormalizedSpatialUnits(cc.attrs.answer)}">
+                        <ui:repeat value="#{cc.attrs.panelModel.getNormalizedSpatialUnits(cc.attrs.answer)}" var="su">
                             <span>
                                 <p:chip label="#{su.name}" styleClass="mr-2 mb-2" removable="true">
-                                    <p:ajax event="close" listener="#{cc.attrs.answer.removeSpatialUnit(su)}"
+                                    <p:ajax event="close"
+                                            listener="#{cc.attrs.panelModel.removeSpatialUnit(cc.attrs.answer,su)}"
                                             update="#{cc.attrs.updateTargetsOnBlur}"/>
                                 </p:chip>
                             </span>
                         </ui:repeat>
                     </h:panelGroup>
-                    <h:panelGroup rendered="#{empty cc.attrs.answer.normalizedSpatialUnits}">
+                    <h:panelGroup rendered="#{empty cc.attrs.panelModel.getNormalizedSpatialUnits(cc.attrs.answer)}">
                         <em>Aucune USp sélectionnée.</em>
                     </h:panelGroup>
                 </p:panel>
                 <!-- Séléction des USp dans un treenode -->
-                <p:treeTable value="#{cc.attrs.answer.root}"
-                             selection="#{cc.attrs.answer.selection}"
+                <p:treeTable value="#{cc.attrs.panelModel.getRoot(cc.attrs.answer)}"
+                             selection="#{cc.attrs.panelModel.treeStates[cc.attrs.answer].selection}"
                              selectionMode="checkbox"
                              widgetVar="spatialUnitTreeTable"
                              rows="5"
