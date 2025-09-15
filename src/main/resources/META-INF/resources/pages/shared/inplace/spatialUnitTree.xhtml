@@ -45,32 +45,27 @@
                 </p:panel>
                 <!-- Séléction des USp dans un treenode -->
                 <p:treeTable value="#{cc.attrs.panelModel.getRoot(cc.attrs.answer)}"
-                             selection="#{cc.attrs.panelModel.treeStates[cc.attrs.answer].selection}"
-                             selectionMode="checkbox"
                              widgetVar="spatialUnitTreeTable"
                              rows="5"
                              propagateSelectionUp="false"
                              scrollable="true"
                              scrollHeight="400px"
                              paginator="true"
-                             propagateSelectionDown="true"
                              var="spatialUnit"
                              styleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"
                 >
-                    <p:ajax event="select"
-                            listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(cc.attrs.field)}"
-                            update="#{cc.attrs.updateTargetsOnBlur} selectedSpatialUnitPanel"
-                            immediate="true"
-                            process="#{cc.attrs.updateTargetsOnBlur}"/>
-                    <p:ajax event="unselect"
-                            listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(cc.attrs.field)}"
-                            update="#{cc.attrs.updateTargetsOnBlur}  selectedSpatialUnitPanel"
-                            immediate="true"
-                            process="#{cc.attrs.updateTargetsOnBlur}"/>
                     <p:column headerText="Nom" filterBy="#{spatialUnit.name}"
                               filterMatchMode="contains">
-                        <p:outputLabel value="#{spatialUnit.getName()}"/>
+
+                            <p:outputLabel value="#{spatialUnit.getName()}" style="margin-right:1em"/>
+                            <p:commandButton value="Ajouter"
+                                             rendered="#{!cc.attrs.panelModel.treeStates.get(cc.attrs.answer).selection.contains(spatialUnit)}"
+                                             actionListener="#{cc.attrs.panelModel.addSUToSelection(cc.attrs.answer,spatialUnit)}"
+                                             update="#{cc.attrs.updateTargetsOnBlur} selectedSpatialUnitPanel"
+                                             immediate="true"/>
+
                     </p:column>
+
                 </p:treeTable>
             </f:facet>
         </p:inplace>

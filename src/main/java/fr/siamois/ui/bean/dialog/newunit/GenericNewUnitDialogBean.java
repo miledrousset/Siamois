@@ -56,14 +56,12 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
     private transient INewUnitHandler<T> handler;
 
 
-    public GenericNewUnitDialogBean(SessionSettingsBean sessionSettingsBean,
-                                    FieldConfigurationService fieldConfigurationService,
-                                    SpatialUnitTreeService spatialUnitTreeService,
+    public GenericNewUnitDialogBean(AbstractSingleEntity.Deps deps,
                                     LangBean langBean,
                                     FlowBean flowBean,
                                     RedirectBean redirectBean,
                                     Set<INewUnitHandler<? extends TraceableEntity>> handlerSet) {
-        super(sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
+        super(deps);
         this.langBean = langBean;
         this.flowBean = flowBean;
         this.redirectBean = redirectBean;

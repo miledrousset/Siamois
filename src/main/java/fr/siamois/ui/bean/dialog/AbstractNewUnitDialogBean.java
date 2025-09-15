@@ -36,12 +36,11 @@ public abstract class AbstractNewUnitDialogBean<T extends TraceableEntity> exten
     protected static final String UPDATE_FAILED_MESSAGE_CODE = "common.entity.spatialUnits.updateFailed";
     protected static final String ENTITY_ALREADY_EXIST_MESSAGE_CODE = "common.entity.alreadyExist";
 
-    protected AbstractNewUnitDialogBean(SessionSettingsBean sessionSettingsBean,
-                                        FieldConfigurationService fieldConfigurationService,
-                                        SpatialUnitTreeService spatialUnitTreeService,
-                                        LangBean langBean,
-                                        FlowBean flowBean, RedirectBean redirectBean) {
-        super(sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
+    protected AbstractNewUnitDialogBean(LangBean langBean,
+                                        RedirectBean redirectBean,
+                                        FlowBean flowBean,
+                                        AbstractSingleEntity.Deps deps) {
+        super(deps);
         this.langBean = langBean;
         this.flowBean = flowBean;
         this.redirectBean = redirectBean;

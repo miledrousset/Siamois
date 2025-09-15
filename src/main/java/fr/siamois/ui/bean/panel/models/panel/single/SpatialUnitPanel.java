@@ -117,13 +117,16 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
 
     @Autowired
-    private SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService, DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
-                             ConceptService conceptService, SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService,
+    private SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService,
+                             ActionUnitService actionUnitService, SessionSettingsBean sessionSettings,
+                             SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService,
+                             DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
+                             ConceptService conceptService,
                              LabelService labelService, LangBean langBean, PersonService personService,
-                             SpatialUnitTreeService spatialUnitTreeService) {
+                             AbstractSingleEntity.Deps deps) {
 
         super("common.entity.spatialUnit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel single-panel",
-                documentCreationBean, sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
+                documentCreationBean, deps);
         this.spatialUnitService = spatialUnitService;
         this.recordingUnitService = recordingUnitService;
         this.actionUnitService = actionUnitService;

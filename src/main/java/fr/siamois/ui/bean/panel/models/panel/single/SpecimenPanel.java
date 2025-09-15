@@ -166,22 +166,20 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
 
 
     protected SpecimenPanel(LangBean langBean,
-                            SessionSettingsBean sessionSettingsBean,
                             SpatialUnitService spatialUnitService,
                             ActionUnitService actionUnitService,
                             RecordingUnitService recordingUnitService,
                             PersonService personService, SpecimenService specimenService, ConceptService conceptService,
-                            FieldConfigurationService fieldConfigurationService,
                             DocumentCreationBean documentCreationBean,
                             RedirectBean redirectBean,
+                            AbstractSingleEntity.Deps deps,
                             HistoryService historyService,
-                            DocumentService documentService,
-                            SpatialUnitTreeService spatialUnitTreeService) {
+                            DocumentService documentService) {
 
         super("common.entity.specimen",
                 "bi bi-box2",
                 "siamois-panel specimen-panel single-panel",
-                documentCreationBean, sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
+                documentCreationBean, deps);
         this.langBean = langBean;
         this.spatialUnitService = spatialUnitService;
         this.actionUnitService = actionUnitService;

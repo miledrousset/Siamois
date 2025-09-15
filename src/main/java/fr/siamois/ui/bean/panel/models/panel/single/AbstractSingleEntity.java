@@ -25,10 +25,10 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.model.CheckboxTreeNode;
 import org.primefaces.model.TreeNode;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
@@ -48,9 +48,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
     protected final transient SessionSettingsBean sessionSettingsBean;
     protected final transient FieldConfigurationService fieldConfigurationService;
     private final transient SpatialUnitTreeService spatialUnitTreeService;
-
-    @Autowired
-    private transient SpatialUnitService spatialUnitService;
+    private final transient SpatialUnitService spatialUnitService;
 
     //--------------- Locals
     protected transient T unit;
@@ -103,31 +101,37 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
 
     protected AbstractSingleEntity() {
         super();
+        this.spatialUnitService = null;
         this.sessionSettingsBean = null;
         this.fieldConfigurationService = null;
         this.spatialUnitTreeService = null;
 
     }
 
-    protected AbstractSingleEntity(SessionSettingsBean sessionSettingsBean,
-                                   FieldConfigurationService fieldConfigurationService,
-                                   SpatialUnitTreeService spatialUnitTreeService) {
-        super();
-        this.sessionSettingsBean = sessionSettingsBean;
-        this.fieldConfigurationService = fieldConfigurationService;
-        this.spatialUnitTreeService = spatialUnitTreeService;
+    protected AbstractSingleEntity(Deps deps) {
+        this.sessionSettingsBean = deps.sessionSettingsBean;
+        this.fieldConfigurationService = deps.fieldConfigurationService;
+        this.spatialUnitTreeService = deps.spatialUnitTreeService;
+        this.spatialUnitService = deps.spatialUnitService;
+    }
+
+    @RequiredArgsConstructor
+    public static class Deps {
+        public final SessionSettingsBean sessionSettingsBean;
+        public final FieldConfigurationService fieldConfigurationService;
+        public final SpatialUnitTreeService spatialUnitTreeService;
+        public final SpatialUnitService spatialUnitService;
     }
 
     protected AbstractSingleEntity(String titleCodeOrTitle,
                                    String icon,
                                    String panelClass,
-                                   SessionSettingsBean sessionSettingsBean,
-                                   FieldConfigurationService fieldConfigurationService,
-                                   SpatialUnitTreeService spatialUnitTreeService) {
+                                   Deps deps) {
         super(titleCodeOrTitle, icon, panelClass);
-        this.sessionSettingsBean = sessionSettingsBean;
-        this.fieldConfigurationService = fieldConfigurationService;
-        this.spatialUnitTreeService = spatialUnitTreeService;
+        this.sessionSettingsBean = deps.sessionSettingsBean;
+        this.fieldConfigurationService = deps.fieldConfigurationService;
+        this.spatialUnitTreeService = deps.spatialUnitTreeService;
+        this.spatialUnitService = deps.spatialUnitService;
     }
 
     public String formatDate(OffsetDateTime offsetDateTime) {
@@ -263,19 +267,6 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
         answers.put(field, answer);
     }
 
-    private void markSelected(TreeNode<SpatialUnit> node, Set<SpatialUnit> selectedUnits) {
-        if (node == null) return;
-
-        SpatialUnit data = node.getData();
-        if (data != null && selectedUnits.contains(data)) {
-            node.setSelected(true);
-        }
-
-        for (TreeNode<SpatialUnit> child : node.getChildren()) {
-            markSelected(child, selectedUnits);
-        }
-    }
-
     private static void initializeAnswer(CustomFieldAnswer answer, CustomField field) {
         CustomFieldAnswerId answerId = new CustomFieldAnswerId();
         answerId.setField(field);
@@ -283,27 +274,11 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
         answer.setHasBeenModified(false);
     }
 
-    private List<CheckboxTreeNode<SpatialUnit>> getSelectedNodes(TreeNode<SpatialUnit> root) {
-        List<CheckboxTreeNode<SpatialUnit>> selectedNodes = new ArrayList<>();
-        collectSelectedNodes(root, selectedNodes);
-        return selectedNodes;
-    }
-
-    private void collectSelectedNodes(TreeNode<SpatialUnit> node, List<CheckboxTreeNode<SpatialUnit>> selectedNodes) {
-        if (node instanceof CheckboxTreeNode<SpatialUnit> cbNode && cbNode.isSelected()) {
-            selectedNodes.add(cbNode);
-        }
-
-        for (TreeNode<SpatialUnit> child : node.getChildren()) {
-            collectSelectedNodes(child, selectedNodes);
-        }
-    }
-
     // --------------------Spatial Unit Tree
     private TreeUiStateViewModel buildUiFor(CustomFieldAnswerSelectMultipleSpatialUnitTree answer) {
-        // Add selection TODO
         TreeUiStateViewModel ui = new TreeUiStateViewModel();
         ui.setRoot(spatialUnitTreeService.buildTree());          // construit l’arbre metier
+        ui.setSelection(answer.getValue());
         return ui;
     }
 
@@ -316,17 +291,20 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
         return getNormalizedSelectedUnits(treeStates.get(answer).getSelection());
     }
 
+    public void addSUToSelection(CustomFieldAnswerSelectMultipleSpatialUnitTree answer, SpatialUnit su) {
+        treeStates.get(answer).getSelection().add(su);
+    }
+
     /**
      * Normalise la sélection pour les "chips" au niveau MÉTIER (graph multi-parents).
      */
-    public List<SpatialUnit> getNormalizedSelectedUnits(List<CheckboxTreeNode<SpatialUnit>> selectedNodes) {
+    public List<SpatialUnit> getNormalizedSelectedUnits(Set<SpatialUnit> selectedNodes) {
         if (selectedNodes == null || selectedNodes.isEmpty()) return Collections.emptyList();
 
         // 1) Ramène à des IDs uniques d'entités
         Map<Long, SpatialUnit> byId = new HashMap<>();
         Set<Long> selectedIds = new LinkedHashSet<>();
-        for (CheckboxTreeNode<SpatialUnit> node : selectedNodes) {
-            SpatialUnit u = node.getData();
+        for (SpatialUnit u : selectedNodes) {
             if (u == null) continue;
             byId.putIfAbsent(u.getId(), u);
             selectedIds.add(u.getId());
@@ -385,72 +363,12 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
     // Remove a spatial unit from the selection
     public boolean removeSpatialUnit(CustomFieldAnswerSelectMultipleSpatialUnitTree answer, SpatialUnit su) {
 
-        TreeNode<SpatialUnit> root = treeStates.get(answer).getRoot();
-
-        if (su == null || root == null) return false;
-
-        // 1) Décocher le nœud correspondant (et enlever l'état partiel)
-        CheckboxTreeNode<SpatialUnit> node = findNodeById(root, su.getId());
-        if (node == null) return false;
-
-        node.setSelected(false);
-        node.setPartialSelected(false);
-
-        // Tout décocher sous ce nœud
-        unselectDescendants(node);
-
-        // 2) Reconstituer la sélection "value" à partir de l'arbre
-        treeStates.get(answer).setSelection(collectSelectedNodes(root));
+        treeStates.get(answer).getSelection().remove(su);
 
         return true;
     }
 
-    /* -------- Helpers privés -------- */
 
-    private CheckboxTreeNode<SpatialUnit> findNodeById(TreeNode<SpatialUnit> node, Long targetId) {
-        if (node == null || targetId == null) return null;
-
-        SpatialUnit data = node.getData();
-        if (data != null && Objects.equals(data.getId(), targetId) && node instanceof CheckboxTreeNode) {
-            @SuppressWarnings("unchecked")
-            CheckboxTreeNode<SpatialUnit> cb = (CheckboxTreeNode<SpatialUnit>) node;
-            return cb;
-        }
-        for (TreeNode<SpatialUnit> child : node.getChildren()) {
-            CheckboxTreeNode<SpatialUnit> found = findNodeById(child, targetId);
-            if (found != null) return found;
-        }
-        return null;
-    }
-
-    private List<CheckboxTreeNode<SpatialUnit>> collectSelectedNodes(TreeNode<SpatialUnit> node) {
-        List<CheckboxTreeNode<SpatialUnit>> acc = new ArrayList<>();
-        collectSelectedNodesRec(node, acc);
-        return acc;
-    }
-
-    private void collectSelectedNodesRec(TreeNode<SpatialUnit> node, List<CheckboxTreeNode<SpatialUnit>> acc) {
-        if (node instanceof CheckboxTreeNode<?> cb && ((CheckboxTreeNode<?>) cb).isSelected()) {
-            @SuppressWarnings("unchecked")
-            CheckboxTreeNode<SpatialUnit> typed = (CheckboxTreeNode<SpatialUnit>) cb;
-            acc.add(typed);
-        }
-        for (TreeNode<SpatialUnit> child : node.getChildren()) {
-            collectSelectedNodesRec(child, acc);
-        }
-    }
-
-    // Si tu veux propager la désélection sur tous les descendants (optionnel)
-    @SuppressWarnings("unchecked")
-    private void unselectDescendants(TreeNode<SpatialUnit> node) {
-        for (TreeNode<SpatialUnit> child : node.getChildren()) {
-            if (child instanceof CheckboxTreeNode<?> cb) {
-                ((CheckboxTreeNode<?>) cb).setSelected(false);
-                ((CheckboxTreeNode<?>) cb).setPartialSelected(false);
-            }
-            unselectDescendants(child);
-        }
-    }
 
     // ------------- End spatial unit tree
 
@@ -479,11 +397,6 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
             treeAnswer.setValue((Set<SpatialUnit>) set);
             TreeUiStateViewModel ui = buildUiFor(treeAnswer);
             treeStates.put(treeAnswer, ui);
-            // Answer ➜ UI : cocher selon IDs persistés
-            //syncAnswerToUi(treeAnswer, ui);
-
-            // Mark selected nodes based on spatial units
-            //markSelected(root, selectedSpatialUnits);
         }
     }
 
@@ -530,13 +443,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
         } else if (answer instanceof CustomFieldAnswerSelectOneSpatialUnit a) {
             return a.getValue();
         } else if (answer instanceof CustomFieldAnswerSelectMultipleSpatialUnitTree a) {
-            Set<SpatialUnit> ret = new HashSet<>();
-            // todo : fixme
-//            for (CheckboxTreeNode<SpatialUnit> su : a.getSelection()) {
-//                SpatialUnit spatialUnit = su.getData();
-//                ret.add(spatialUnit);
-//            }
-            return ret;
+            return a.getValue();
         }
 
 

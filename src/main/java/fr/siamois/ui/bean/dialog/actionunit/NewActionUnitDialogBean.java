@@ -4,14 +4,12 @@ package fr.siamois.ui.bean.dialog.actionunit;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.services.spatialunit.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
-import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.specimen.SpecimenService;
-import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
-import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.AbstractNewUnitDialogBean;
 import fr.siamois.ui.bean.panel.FlowBean;
+import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import fr.siamois.ui.lazydatamodel.BaseActionUnitLazyDataModel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,13 +34,12 @@ public class NewActionUnitDialogBean extends AbstractNewUnitDialogBean<ActionUni
     private final transient SpecimenService specimenService;
 
     public NewActionUnitDialogBean(LangBean langBean, FlowBean flowBean,
-                                   SessionSettingsBean sessionSettingsBean,
-                                   FieldConfigurationService fieldConfigurationService,
                                    SpatialUnitService spatialUnitService,
                                    ActionUnitService actionUnitService,
                                    SpecimenService specimenService,
-                                   SpatialUnitTreeService spatialUnitTreeService, RedirectBean redirectBean) {
-        super(sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService, langBean, flowBean, redirectBean);
+                                   AbstractSingleEntity.Deps deps,
+                                   RedirectBean redirectBean) {
+        super(langBean, redirectBean, flowBean, deps);
         this.spatialUnitService = spatialUnitService;
         this.actionUnitService = actionUnitService;
         this.specimenService = specimenService;

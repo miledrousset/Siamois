@@ -6,9 +6,6 @@ import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
-import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
-import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
-import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import lombok.Data;
@@ -68,15 +65,9 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
 
     protected static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-4";
 
-    protected AbstractSingleEntityPanel() {
-        super();
-        this.documentCreationBean = null;
-    }
-
     protected AbstractSingleEntityPanel(String titleCodeOrTitle, String icon, String panelClass, DocumentCreationBean documentCreationBean,
-                                        SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService,
-                                        SpatialUnitTreeService spatialUnitTreeService) {
-        super(titleCodeOrTitle, icon, panelClass, sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
+                                        AbstractSingleEntity.Deps deps) {
+        super(titleCodeOrTitle, icon, panelClass, deps);
         this.documentCreationBean = documentCreationBean;
     }
 
