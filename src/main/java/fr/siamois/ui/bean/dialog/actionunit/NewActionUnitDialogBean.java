@@ -2,6 +2,7 @@ package fr.siamois.ui.bean.dialog.actionunit;
 
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.exceptions.EntityAlreadyExistsException;
 import fr.siamois.domain.services.spatialunit.SpatialUnitService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.specimen.SpecimenService;
@@ -51,7 +52,7 @@ public class NewActionUnitDialogBean extends AbstractNewUnitDialogBean<ActionUni
     }
 
     @Override
-    protected void persistUnit() {
+    protected void persistUnit() throws EntityAlreadyExistsException {
         unit = actionUnitService.save(sessionSettingsBean.getUserInfo(), unit, unit.getType());
     }
 

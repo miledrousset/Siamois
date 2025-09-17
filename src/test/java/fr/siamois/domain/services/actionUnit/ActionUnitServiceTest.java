@@ -7,7 +7,9 @@ import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.exceptions.actionunit.ActionUnitAlreadyExistsException;
 import fr.siamois.domain.models.exceptions.actionunit.FailedActionUnitSaveException;
+import fr.siamois.domain.models.exceptions.actionunit.NullActionUnitIdentifierException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
@@ -148,7 +150,7 @@ class ActionUnitServiceTest {
     }
 
     @Test
-    void SaveWithActionCodes_Success() {
+    void SaveWithActionCodes_Success() throws ActionUnitAlreadyExistsException {
 
         lenient().when(conceptService.saveOrGetConcept(c1)).thenReturn(c1);
         lenient().when(conceptService.saveOrGetConcept(c2)).thenReturn(c2);
@@ -188,7 +190,7 @@ class ActionUnitServiceTest {
 
         // Act & Assert
         Exception exception = assertThrows(
-                FailedActionUnitSaveException.class,
+                NullActionUnitIdentifierException.class,
                 () -> actionUnitService.save(actionUnitWithCodes, toSave,info)
         );
 

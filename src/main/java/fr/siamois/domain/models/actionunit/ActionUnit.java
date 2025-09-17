@@ -17,6 +17,7 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.ui.bean.dialog.actionunit.NewActionUnitDialogBean;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -30,7 +31,7 @@ import static fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity.
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "action_unit")
+@Table(name = "action_unit", uniqueConstraints = @UniqueConstraint(columnNames = "identifier"))
 public class ActionUnit extends ActionUnitParent implements ArkEntity {
 
     public ActionUnit() {
@@ -206,17 +207,20 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
                                             .addColumn(new CustomCol.Builder()
                                                     .readOnly(false)
                                                     .className(COLUMN_CLASS_NAME)
+                                                    .field(IDENTIFIER_FIELD)
+                                                    .isRequired(true)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .isRequired(true)
+                                                    .className(COLUMN_CLASS_NAME)
                                                     .field(NAME_FIELD)
                                                     .build())
                                             .addColumn(new CustomCol.Builder()
                                                     .readOnly(false)
+                                                    .isRequired(true)
                                                     .className(COLUMN_CLASS_NAME)
                                                     .field(ACTION_UNIT_TYPE_FIELD)
-                                                    .build())
-                                            .addColumn(new CustomCol.Builder()
-                                                    .readOnly(false)
-                                                    .className(COLUMN_CLASS_NAME)
-                                                    .field(IDENTIFIER_FIELD)
                                                     .build())
                                             .build()
                             ).build()

@@ -13,6 +13,7 @@ import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.spatialunit.SpatialUnitService;
 import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
@@ -25,14 +26,13 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.AjaxBehaviorEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.primefaces.model.CheckboxTreeNode;
 import org.primefaces.model.TreeNode;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -47,8 +47,9 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
     // Deps
     protected final transient SessionSettingsBean sessionSettingsBean;
     protected final transient FieldConfigurationService fieldConfigurationService;
-    private final transient SpatialUnitTreeService spatialUnitTreeService;
-    private final transient SpatialUnitService spatialUnitService;
+    protected final transient SpatialUnitTreeService spatialUnitTreeService;
+    protected final transient SpatialUnitService spatialUnitService;
+    protected final transient ActionUnitService actionUnitService;
 
     //--------------- Locals
     protected transient T unit;
@@ -62,7 +63,9 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
     private final Map<CustomFieldAnswerSelectMultipleSpatialUnitTree, TreeUiStateViewModel> treeStates = new HashMap<>();
 
     public static String generateRandomActionUnitIdentifier() {
-        return "2025"; // todo : real implementation
+        int currentYear = LocalDate.now().getYear();
+        String baseIdentifier = String.valueOf(currentYear);
+        return baseIdentifier;
     }
 
     public static final Vocabulary SYSTEM_THESO;
@@ -99,29 +102,13 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
 
     public static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-4";
 
-    protected AbstractSingleEntity() {
-        super();
-        this.spatialUnitService = null;
-        this.sessionSettingsBean = null;
-        this.fieldConfigurationService = null;
-        this.spatialUnitTreeService = null;
-
-    }
-
     protected AbstractSingleEntity(Deps deps) {
-        this.sessionSettingsBean = deps.sessionSettingsBean;
-        this.fieldConfigurationService = deps.fieldConfigurationService;
-        this.spatialUnitTreeService = deps.spatialUnitTreeService;
-        this.spatialUnitService = deps.spatialUnitService;
+        this(null, null, null, deps);
     }
 
-    @RequiredArgsConstructor
-    public static class Deps {
-        public final SessionSettingsBean sessionSettingsBean;
-        public final FieldConfigurationService fieldConfigurationService;
-        public final SpatialUnitTreeService spatialUnitTreeService;
-        public final SpatialUnitService spatialUnitService;
-    }
+
+    public record Deps(SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService,
+                       SpatialUnitTreeService spatialUnitTreeService, SpatialUnitService spatialUnitService, ActionUnitService actionUnitService) {}
 
     protected AbstractSingleEntity(String titleCodeOrTitle,
                                    String icon,
@@ -132,7 +119,10 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
         this.fieldConfigurationService = deps.fieldConfigurationService;
         this.spatialUnitTreeService = deps.spatialUnitTreeService;
         this.spatialUnitService = deps.spatialUnitService;
+        this.actionUnitService = deps.actionUnitService;
     }
+
+
 
     public String formatDate(OffsetDateTime offsetDateTime) {
         return DateUtils.formatOffsetDateTime(offsetDateTime);
@@ -367,7 +357,6 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
 
         return true;
     }
-
 
 
     // ------------- End spatial unit tree

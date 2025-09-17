@@ -193,6 +193,7 @@ public class SpatialUnitService implements ArkEntityService {
         Optional<SpatialUnit> optSpatialUnit = spatialUnitRepository.findByNameAndInstitution(name, info.getInstitution().getId());
         if (optSpatialUnit.isPresent())
             throw new SpatialUnitAlreadyExistsException(
+                    "identifier",
                     String.format("Spatial Unit with name %s already exist in institution %s", name, info.getInstitution().getName()));
 
 
@@ -355,34 +356,6 @@ public class SpatialUnitService implements ArkEntityService {
         return spatialUnitRepository.findParentsOf(id).stream().toList();
     }
 
-    /**
-     * Create a map of all SpatialUnits and their direct neighbors (children)
-     *
-     * @param institution The institution to filter by
-     * @return A map where keys are SpatialUnit and values are lists of their direct children
-     */
-    public Map<SpatialUnit, List<SpatialUnit>> neighborMapOfAllSpatialUnit(Institution institution) {
-        Map<SpatialUnit, List<SpatialUnit>> neighborMap = new HashMap<>();
-        Set<SpatialUnit> alreadyProcessed = new HashSet<>();
-
-        Queue<SpatialUnit> toProcess = new ArrayDeque<>(findRootsOf(institution));
-
-        while (!toProcess.isEmpty()) {
-            SpatialUnit current = toProcess.poll();
-            List<SpatialUnit> childrens = neighborMap.computeIfAbsent(current, su -> new ArrayList<>());
-
-            for (SpatialUnit child : findDirectChildrensOf(current)) {
-                childrens.add(child);
-                if (!alreadyProcessed.contains(child)) {
-                    toProcess.add(child);
-                }
-            }
-
-            alreadyProcessed.add(current);
-        }
-
-        return neighborMap;
-    }
 
     /**
      * Verify if the user has the permission to create spatial units

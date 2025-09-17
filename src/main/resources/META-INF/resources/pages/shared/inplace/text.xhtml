@@ -28,6 +28,7 @@
                         icon="pi pi-refresh"
                         styleClass="rounded-button"
                         immediate="true"
+                        process="@this"
                         actionListener="#{cc.attrs.panelModel.generateValueForField(cc.attrs.field, cc.attrs.answer)}"
                         update="#{cc.attrs.updateTargetsOnBlur}"
                 />
@@ -36,7 +37,8 @@
                              label="#{cc.attrs.label}"
                              required="#{cc.attrs.required}"
                              id="input">
-                    <p:ajax event="blur" update="#{cc.attrs.updateTargetsOnBlur}"
+                    <p:ajax event="keyup" delay="1000" update="#{cc.attrs.updateTargetsOnBlur}"
+                            process="@this"
                             listener="#{cc.attrs.panelModel.setFieldAnswerHasBeenModified(cc.attrs.field)}" />
                 </p:inputText>
             </f:facet>

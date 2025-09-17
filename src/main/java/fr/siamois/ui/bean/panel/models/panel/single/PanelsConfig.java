@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean.panel.models.panel.single;
 
+import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.spatialunit.SpatialUnitService;
 import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
@@ -14,10 +15,11 @@ class PanelsConfig {
             SessionSettingsBean sessionSettingsBean,
             FieldConfigurationService fieldConfigurationService,
             SpatialUnitTreeService spatialUnitTreeService,
-            SpatialUnitService spatialUnitService
+            SpatialUnitService spatialUnitService,
+            ActionUnitService actionUnitService
     ) {
         return new AbstractSingleEntity.Deps(
-                sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService, spatialUnitService
+                sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService, spatialUnitService, actionUnitService
         );
     }
 }

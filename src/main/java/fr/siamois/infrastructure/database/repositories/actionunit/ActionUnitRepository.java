@@ -186,4 +186,6 @@ public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long> {
             Pageable pageable);
 
     Set<ActionUnit> findByCreatedByInstitution(Institution createdByInstitution);
+    Optional<ActionUnit> findByNameAndCreatedByInstitution(String name, Institution institution);
+    Optional<ActionUnit> findByIdentifierAndCreatedByInstitution(String identifier, Institution institution);
 }

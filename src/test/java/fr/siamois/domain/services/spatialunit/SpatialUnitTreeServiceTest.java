@@ -49,7 +49,6 @@ class SpatialUnitTreeServiceTest {
         // Institution mock
         Institution mockInstitution = new Institution();
         when(sessionSettingsBean.getSelectedInstitution()).thenReturn(mockInstitution);
-        when(spatialUnitService.neighborMapOfAllSpatialUnit(mockInstitution)).thenReturn(mockMap);
 
         // Act
         TreeNode<SpatialUnit> tree = spatialUnitTreeService.buildTree();
@@ -91,7 +90,7 @@ class SpatialUnitTreeServiceTest {
         // Institution mock
         Institution mockInstitution = new Institution();
         when(sessionSettingsBean.getSelectedInstitution()).thenReturn(mockInstitution);
-        when(spatialUnitService.neighborMapOfAllSpatialUnit(mockInstitution)).thenReturn(mockMap);
+
 
         // Act
         TreeNode<SpatialUnit> tree = spatialUnitTreeService.buildTree();
@@ -113,7 +112,6 @@ class SpatialUnitTreeServiceTest {
     void testBuildTree_EmptyMap() {
         Institution mockInstitution = new Institution();
         when(sessionSettingsBean.getSelectedInstitution()).thenReturn(mockInstitution);
-        when(spatialUnitService.neighborMapOfAllSpatialUnit(mockInstitution)).thenReturn(Collections.emptyMap());
 
         TreeNode<SpatialUnit> tree = spatialUnitTreeService.buildTree();
 

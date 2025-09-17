@@ -156,31 +156,31 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
     private void performCreate(boolean openAfter, boolean scrollToTop) {
         try {
             createUnit();
+            // JS conditionnel (widgetVar fixe)
+            String js = "PF('newUnitDiag').hide();" + (scrollToTop ? "handleScrollToTop();" : "");
+            PrimeFaces.current().executeScript(js);
+
+            // Refresh commun
+            PrimeFaces.current().ajax().update("flow");
+
+            // Message succès
+            MessageUtils.displayInfoMessage(langBean, getSuccessMessageCode(), unitName());
+
+            // update des compteurs du home panel
+            flowBean.updateHomePanel();
+
+            if (openAfter) {
+                redirectBean.redirectTo(handler.viewUrlFor(getUnitId()));
+            }
+
         } catch (EntityAlreadyExistsException e) {
             log.error(e.getMessage(), e);
-            MessageUtils.displayErrorMessage(langBean, ENTITY_ALREADY_EXIST_MESSAGE_CODE, unitName());
-            return;
+            MessageUtils.displayErrorMessage(langBean, ENTITY_ALREADY_EXIST_MESSAGE_CODE, unitName(), e.getField());
+
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED_MESSAGE_CODE, unitName());
-            return;
-        }
 
-        // JS conditionnel (widgetVar fixe)
-        String js = "PF('newUnitDiag').hide();" + (scrollToTop ? "handleScrollToTop();" : "");
-        PrimeFaces.current().executeScript(js);
-
-        // Refresh commun
-        PrimeFaces.current().ajax().update("flow");
-
-        // Message succès
-        MessageUtils.displayInfoMessage(langBean, getSuccessMessageCode(), unitName());
-
-        // update des compteurs du home panel
-        flowBean.updateHomePanel();
-
-        if (openAfter) {
-            redirectBean.redirectTo(handler.viewUrlFor(getUnitId()));
         }
     }
 

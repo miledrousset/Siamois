@@ -5,10 +5,10 @@ import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
-import fr.siamois.domain.models.exceptions.actionunit.ActionUnitNotFoundException;
-import fr.siamois.domain.models.exceptions.actionunit.FailedActionUnitSaveException;
-import fr.siamois.domain.models.exceptions.actionunit.NullActionUnitIdentifierException;
+import fr.siamois.domain.models.exceptions.EntityAlreadyExistsException;
+import fr.siamois.domain.models.exceptions.actionunit.*;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
+import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
@@ -146,31 +146,41 @@ public class ActionUnitService implements ArkEntityService {
      * @param typeConcept The concept type of the ActionUnit
      * @return The saved ActionUnit
      */
-    public ActionUnit saveNotTransactional(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
+    public ActionUnit saveNotTransactional(UserInfo info, ActionUnit actionUnit, Concept typeConcept)
+            throws ActionUnitAlreadyExistsException {
+
+        actionUnit.setCreatedByInstitution(info.getInstitution());
+
+        Optional<ActionUnit> opt = actionUnitRepository.findByNameAndCreatedByInstitution(actionUnit.getName(), info.getInstitution());
+        if (opt.isPresent())
+            throw new ActionUnitAlreadyExistsException(
+                    "name",
+                    String.format("Spatial Unit with name %s already exist in institution %s", actionUnit.getName(), info.getInstitution().getName()));
+
+        opt = actionUnitRepository.findByIdentifierAndCreatedByInstitution(actionUnit.getIdentifier(), info.getInstitution());
+        if (opt.isPresent())
+            throw new ActionUnitAlreadyExistsException(
+                    "identifier",
+                    String.format("Spatial Unit with identifier %s already exist in institution %s", actionUnit.getIdentifier(), info.getInstitution().getName()));
+
+        // Generate unique identifier if not presents
+        if (actionUnit.getFullIdentifier() == null) {
+            if (actionUnit.getIdentifier() == null) {
+                throw new NullActionUnitIdentifierException("ActionUnit identifier must be set");
+            }
+            // Set full identifier
+            actionUnit.setFullIdentifier(actionUnit.displayFullIdentifier());
+        }
+
+        // Add concept
+        Concept type = conceptService.saveOrGetConcept(typeConcept);
+        actionUnit.setType(type);
+        actionUnit.setAuthor(info.getUser());
 
         try {
-
-            actionUnit.setCreatedByInstitution(info.getInstitution());
-
-            // Generate unique identifier if not presents
-            if (actionUnit.getFullIdentifier() == null) {
-                if (actionUnit.getIdentifier() == null) {
-                    throw new NullActionUnitIdentifierException("ActionUnit identifier must be set");
-                }
-                // Set full identifier
-                actionUnit.setFullIdentifier(actionUnit.displayFullIdentifier());
-            }
-
-            // Add concept
-            Concept type = conceptService.saveOrGetConcept(typeConcept);
-            actionUnit.setType(type);
-
-            actionUnit.setAuthor(info.getUser());
-
-
             return actionUnitRepository.save(actionUnit);
         } catch (RuntimeException e) {
-            throw new FailedRecordingUnitSaveException(e.getMessage());
+            throw new FailedActionUnitSaveException(e.getMessage());
         }
     }
 
@@ -183,7 +193,8 @@ public class ActionUnitService implements ArkEntityService {
      * @return The saved ActionUnit
      */
     @Transactional
-    public ActionUnit save(UserInfo info, ActionUnit actionUnit, Concept typeConcept) {
+    public ActionUnit save(UserInfo info, ActionUnit actionUnit, Concept typeConcept)
+            throws ActionUnitAlreadyExistsException{
         return saveNotTransactional(info, actionUnit, typeConcept);
     }
 
@@ -222,7 +233,8 @@ public class ActionUnitService implements ArkEntityService {
      * @return The saved ActionUnit
      */
     @Transactional
-    public ActionUnit save(ActionUnit actionUnit, List<ActionCode> secondaryActionCodes, UserInfo info) {
+    public ActionUnit save(ActionUnit actionUnit, List<ActionCode> secondaryActionCodes, UserInfo info)
+            throws ActionUnitAlreadyExistsException {
 
         try {
 
@@ -254,13 +266,13 @@ public class ActionUnitService implements ArkEntityService {
             });
 
             actionUnit.setSecondaryActionCodes(currentSecondaryActionCodes);
-
-            // Saving the action unit
-            return saveNotTransactional(info, actionUnit, actionUnit.getType());
-
         } catch (RuntimeException e) {
             throw new FailedActionUnitSaveException(e.getMessage());
         }
+
+        // Saving the action unit
+        return saveNotTransactional(info, actionUnit, actionUnit.getType());
+
     }
 
     /**
