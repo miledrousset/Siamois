@@ -580,6 +580,7 @@ class SpatialUnitServiceTest {
         // given
         Long id = 1L;
         SpatialUnit parent1 = new SpatialUnit();
+        parent1.setId(1L);
         SpatialUnit parent2 = new SpatialUnit();
         Set<SpatialUnit> repoResult = Set.of(parent1, parent2);
 
