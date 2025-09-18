@@ -47,7 +47,6 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
     private final transient RecordingUnitService recordingUnitService;
     private final transient LangBean langBean;
     private final transient FlowBean flowBean;
-    private final transient ActionUnitService actionUnitService;
 
     // Locals
     private ActionUnit actionUnit; // parent action unit for the new recording unit
@@ -131,13 +130,11 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
 
     public NewRecordingUnitBean(RecordingUnitService recordingUnitService,
                                 LangBean langBean, FlowBean flowBean,
-                                ActionUnitService actionUnitService,
                                 AbstractSingleEntity.Deps deps) {
         super(deps);
         this.recordingUnitService = recordingUnitService;
         this.langBean = langBean;
         this.flowBean = flowBean;
-        this.actionUnitService = actionUnitService;
     }
 
     @Override

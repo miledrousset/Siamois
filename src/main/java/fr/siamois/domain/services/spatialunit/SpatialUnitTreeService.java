@@ -3,7 +3,6 @@ package fr.siamois.domain.services.spatialunit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import org.primefaces.model.CheckboxTreeNode;
-import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,7 @@ public class SpatialUnitTreeService {
     }
 
     /** Récursion avec détection de cycle par "chemin" */
-    private void buildChildren(TreeNode parentNode, SpatialUnit parent, Set<Long> pathIds) {
+    private void buildChildren(TreeNode<SpatialUnit> parentNode, SpatialUnit parent, Set<Long> pathIds) {
         List<SpatialUnit> enfants = spatialUnitService.findDirectChildrensOf(parent);
         if (enfants == null || enfants.isEmpty()) {
             return;
@@ -29,11 +28,11 @@ public class SpatialUnitTreeService {
         for (SpatialUnit child : enfants) {
             if (pathIds.contains(child.getId())) {
                 // Cycle détecté : on l’affiche en grisé et non sélectionnable
-                TreeNode cycle = new CheckboxTreeNode("cycle", child, parentNode);
+                TreeNode<SpatialUnit> cycle = new CheckboxTreeNode<>("cycle", child, parentNode);
                 cycle.setSelectable(false);
                 continue;
             }
-            TreeNode childNode = new CheckboxTreeNode("SpatialUnit", child, parentNode);
+            TreeNode<SpatialUnit> childNode = new CheckboxTreeNode<>("SpatialUnit", child, parentNode);
             // nouveau "chemin" pour la branche (important avec multi-parents)
             Set<Long> nextPath = new HashSet<>(pathIds);
             nextPath.add(child.getId());
@@ -49,7 +48,7 @@ public class SpatialUnitTreeService {
         List<SpatialUnit> racines = spatialUnitService.findRootsOf(sessionSettingsBean.getSelectedInstitution());
 
         for (SpatialUnit r : racines) {
-            TreeNode rNode = new CheckboxTreeNode("SpatialUnit", r, root);
+            TreeNode<SpatialUnit> rNode = new CheckboxTreeNode<>("SpatialUnit", r, root);
             rNode.setExpanded(false);
             // on mémorise le chemin (ids vus) pour éviter les cycles
             Set<Long> path = new HashSet<>();

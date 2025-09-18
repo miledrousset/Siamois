@@ -34,6 +34,10 @@ import static fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity.
 @Table(name = "action_unit", uniqueConstraints = @UniqueConstraint(columnNames = "identifier"))
 public class ActionUnit extends ActionUnitParent implements ArkEntity {
 
+    private static String SPATIAL_UNIT_CONTEXT_LABEL_CODE = "common.label.spatialContext";
+    private static String GENERAL_LABEL_CODE = "common.header.general";
+    private static String DETAIL_TAB_NAME = "\"Details tab form\"";
+
     public ActionUnit() {
 
     }
@@ -187,7 +191,7 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Transient
     @JsonIgnore
     public static final CustomFieldSelectMultipleSpatialUnitTree SPATIAL_CONTEXT_FIELD = new CustomFieldSelectMultipleSpatialUnitTree.Builder()
-            .label("common.label.spatialContext") // todo; move to const
+            .label(SPATIAL_UNIT_CONTEXT_LABEL_CODE)
             .isSystemField(true)
             .valueBinding("spatialContext")
             .concept(SPATIAL_CONTEXT_CONCEPT)
@@ -196,11 +200,11 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Transient
     @JsonIgnore
     public static final CustomForm NEW_UNIT_FORM = new CustomForm.Builder()
-            .name("Details tab form") // todo: move to const
-            .description("Contains the main form") // todo : moveto const
+            .name(DETAIL_TAB_NAME)
+            .description("")
             .addPanel(
                     new CustomFormPanel.Builder()
-                            .name("common.header.general") // todo : move to const
+                            .name(GENERAL_LABEL_CODE) // todo : move to const
                             .isSystemPanel(true)
                             .addRow(
                                     new CustomRow.Builder()
@@ -227,7 +231,7 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
             )
             .addPanel(
                     new CustomFormPanel.Builder()
-                            .name("common.label.spatialContext")
+                            .name(SPATIAL_UNIT_CONTEXT_LABEL_CODE)
                             .isSystemPanel(true)
                             .addRow(
                                     new CustomRow.Builder()
@@ -244,11 +248,11 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Transient
     @JsonIgnore
     public static final CustomForm OVERVIEW_FORM = new CustomForm.Builder()
-            .name("Details tab form")
-            .description("Contains the main form")
+            .name(DETAIL_TAB_NAME)
+            .description("")
             .addPanel(
                     new CustomFormPanel.Builder()
-                            .name("common.header.general")
+                            .name(GENERAL_LABEL_CODE)
                             .isSystemPanel(true)
                             .addRow(
                                     new CustomRow.Builder()
@@ -265,11 +269,11 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Transient
     @JsonIgnore
     public static final CustomForm DETAILS_FORM = new CustomForm.Builder()
-            .name("Details tab form")
-            .description("Contains the main form")
+            .name(DETAIL_TAB_NAME)
+            .description("")
             .addPanel(
                     new CustomFormPanel.Builder()
-                            .name("common.header.general")
+                            .name(GENERAL_LABEL_CODE)
                             .isSystemPanel(true)
                             .addRow(
                                     new CustomRow.Builder()
@@ -288,7 +292,7 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
             )
             .addPanel(
                     new CustomFormPanel.Builder()
-                            .name("common.label.spatialContext")
+                            .name(SPATIAL_UNIT_CONTEXT_LABEL_CODE)
                             .isSystemPanel(true)
                             .addRow(
                                     new CustomRow.Builder()

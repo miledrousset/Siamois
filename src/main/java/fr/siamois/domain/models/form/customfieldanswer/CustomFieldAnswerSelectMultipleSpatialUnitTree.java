@@ -1,14 +1,9 @@
 package fr.siamois.domain.models.form.customfieldanswer;
-
-import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.primefaces.model.CheckboxTreeNode;
-import org.primefaces.model.TreeNode;
-
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 
 @Data

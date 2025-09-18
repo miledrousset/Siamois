@@ -49,7 +49,6 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
     private final transient RecordingUnitService recordingUnitService;
     private final transient LangBean langBean;
     private final transient FlowBean flowBean;
-    private final transient ActionUnitService actionUnitService;
     private final transient SpecimenService specimenService;
 
     // Locals
@@ -145,7 +144,6 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
         this.recordingUnitService = recordingUnitService;
         this.langBean = langBean;
         this.flowBean = flowBean;
-        this.actionUnitService = actionUnitService;
         this.specimenService = specimenService;
     }
 

@@ -30,19 +30,14 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class NewActionUnitDialogBean extends AbstractNewUnitDialogBean<ActionUnit> {
 
-    private final transient ActionUnitService actionUnitService;
-    private final transient SpatialUnitService spatialUnitService;
+
     private final transient SpecimenService specimenService;
 
     public NewActionUnitDialogBean(LangBean langBean, FlowBean flowBean,
-                                   SpatialUnitService spatialUnitService,
-                                   ActionUnitService actionUnitService,
                                    SpecimenService specimenService,
                                    AbstractSingleEntity.Deps deps,
                                    RedirectBean redirectBean) {
         super(langBean, redirectBean, flowBean, deps);
-        this.spatialUnitService = spatialUnitService;
-        this.actionUnitService = actionUnitService;
         this.specimenService = specimenService;
     }
 

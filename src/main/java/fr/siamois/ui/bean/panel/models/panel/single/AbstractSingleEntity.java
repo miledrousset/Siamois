@@ -64,8 +64,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
 
     public static String generateRandomActionUnitIdentifier() {
         int currentYear = LocalDate.now().getYear();
-        String baseIdentifier = String.valueOf(currentYear);
-        return baseIdentifier;
+        return String.valueOf(currentYear);
     }
 
     public static final Vocabulary SYSTEM_THESO;
@@ -362,7 +361,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
     // ------------- End spatial unit tree
 
     private void populateSystemFieldValue(CustomFieldAnswer answer, Object jpaEntity, CustomField field) {
-        Object value = getFieldValue(jpaEntity, field.getValueBinding()); // todo ; reduce cognitive complexity
+        Object value = getFieldValue(jpaEntity, field.getValueBinding());
 
         if (value instanceof OffsetDateTime odt && answer instanceof CustomFieldAnswerDateTime dateTimeAnswer) {
             dateTimeAnswer.setValue(odt.toLocalDateTime());
