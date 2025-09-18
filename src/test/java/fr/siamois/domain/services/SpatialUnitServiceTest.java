@@ -575,4 +575,38 @@ class SpatialUnitServiceTest {
         assertFalse(spatialUnitService.hasCreatePermission(user));
     }
 
+    @Test
+    void shouldReturnDirectParentsAsList() {
+        // given
+        Long id = 1L;
+        SpatialUnit parent1 = new SpatialUnit();
+        SpatialUnit parent2 = new SpatialUnit();
+        Set<SpatialUnit> repoResult = Set.of(parent1, parent2);
+
+        when(spatialUnitRepository.findParentsOf(id)).thenReturn(repoResult);
+
+        // when
+        List<SpatialUnit> result = spatialUnitService.findDirectParentsOf(id);
+
+        // then
+        assertThat(result).containsExactlyInAnyOrder(parent1, parent2);
+        verify(spatialUnitRepository).findParentsOf(id);
+        verifyNoMoreInteractions(spatialUnitRepository);
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenNoParentsFound() {
+        // given
+        Long id = 2L;
+        when(spatialUnitRepository.findParentsOf(id)).thenReturn(Set.of());
+
+        // when
+        List<SpatialUnit> result = spatialUnitService.findDirectParentsOf(id);
+
+        // then
+        assertThat(result).isEmpty();
+        verify(spatialUnitRepository).findParentsOf(id);
+        verifyNoMoreInteractions(spatialUnitRepository);
+    }
+
 }

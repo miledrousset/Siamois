@@ -198,6 +198,48 @@ class ActionUnitServiceTest {
     }
 
     @Test
+    void SaveNotTransactional_FailureBecauseSameNameExists() {
+
+
+        Optional<ActionUnit> opt = Optional.ofNullable(actionUnit1);
+        assert actionUnit1 != null;
+        actionUnit1.setName("already exists");
+        actionUnit1.setCreatedByInstitution(new Institution());
+
+        when(actionUnitRepository.findByNameAndCreatedByInstitution(any(String.class),
+                any(Institution.class))).thenReturn(opt);
+
+        // Act & Assert
+        Exception exception = assertThrows(
+                ActionUnitAlreadyExistsException.class,
+                () -> actionUnitService.saveNotTransactional(info, actionUnit1, new Concept())
+        );
+
+        assertEquals("Action unit with name already exists already exist in institution null", exception.getMessage());
+    }
+
+    @Test
+    void SaveNotTransactional_FailureBecauseSameIdentifierExists() {
+
+
+        Optional<ActionUnit> opt = Optional.ofNullable(actionUnit1);
+        assert actionUnit1 != null;
+        actionUnit1.setIdentifier("already-exists");
+        actionUnit1.setCreatedByInstitution(new Institution());
+
+        when(actionUnitRepository.findByIdentifierAndCreatedByInstitution(any(String.class),
+                any(Institution.class))).thenReturn(opt);
+
+        // Act & Assert
+        Exception exception = assertThrows(
+                ActionUnitAlreadyExistsException.class,
+                () -> actionUnitService.saveNotTransactional(info, actionUnit1, new Concept())
+        );
+
+        assertEquals("Action unit with identifier already-exists already exist in institution null", exception.getMessage());
+    }
+
+    @Test
     void SaveActionCodes_FailedCodeExistsButTypeDoesNotMatch() {
         lenient().when(conceptService.saveOrGetConcept(c1)).thenReturn(c1);
         lenient().when(conceptService.saveOrGetConcept(c2)).thenReturn(c2);

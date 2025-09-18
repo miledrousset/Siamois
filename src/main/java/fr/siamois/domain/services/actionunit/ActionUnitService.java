@@ -155,13 +155,13 @@ public class ActionUnitService implements ArkEntityService {
         if (opt.isPresent())
             throw new ActionUnitAlreadyExistsException(
                     "name",
-                    String.format("Spatial Unit with name %s already exist in institution %s", actionUnit.getName(), info.getInstitution().getName()));
+                    String.format("Action unit with name %s already exist in institution %s", actionUnit.getName(), info.getInstitution().getName()));
 
         opt = actionUnitRepository.findByIdentifierAndCreatedByInstitution(actionUnit.getIdentifier(), info.getInstitution());
         if (opt.isPresent())
             throw new ActionUnitAlreadyExistsException(
                     "identifier",
-                    String.format("Spatial Unit with identifier %s already exist in institution %s", actionUnit.getIdentifier(), info.getInstitution().getName()));
+                    String.format("Action unit with identifier %s already exist in institution %s", actionUnit.getIdentifier(), info.getInstitution().getName()));
 
         // Generate unique identifier if not presents
         if (actionUnit.getFullIdentifier() == null) {
