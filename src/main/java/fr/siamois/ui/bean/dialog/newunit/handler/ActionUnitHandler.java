@@ -32,29 +32,5 @@ public class ActionUnitHandler implements INewUnitHandler<ActionUnit> {
         return unit.getName();
     }
 
-    @Override
-    public String getRessourceUri() {
-        return "/action-unit/new";
-    }
-
-    @Override
-    public String getTitle() {
-        return "Nouvelle unité d'action";
-    }
-
-    @Override
-    public String styleClassName() {
-        return "action-unit-panel";
-    }
-
-    @Override
-    public String getIcon() {
-        return "bi bi-arrow-down-square";
-    }
-
-    @Override
-    public String getAutocompleteClass() {
-        return "action-unit-autocomplete";
-    }
 
 }

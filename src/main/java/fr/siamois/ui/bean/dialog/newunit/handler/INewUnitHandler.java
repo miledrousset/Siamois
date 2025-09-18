@@ -18,10 +18,12 @@ public interface INewUnitHandler<T extends TraceableEntity> {
     CustomForm formLayout();            // ton objet/form layout (SpatialUnit.NEW_UNIT_FORM, etc.)
     void onInitFromContext(GenericNewUnitDialogBean<?> bean); // optionnel pour pré-remplir (parents/enfants…)
     String getName(T unit); // Get unit name
-    String getRessourceUri();
-    String getTitle();
-    String styleClassName();
-    String getIcon();
-    String getAutocompleteClass();
+
+    // shared UI defaults (pull from UnitKind)
+    default String getResourceUri()     { return kind().resourceUri(); }
+    default String getTitle()           { return kind().title(); }
+    default String styleClassName()     { return kind().styleClass(); }
+    default String getIcon()            { return kind().icon(); }
+    default String getAutocompleteClass(){ return kind().autocompleteClass(); }
 }
 

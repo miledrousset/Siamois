@@ -32,29 +32,5 @@ public class SpatialUnitHandler implements INewUnitHandler<SpatialUnit> {
         return unit.getName();
     }
 
-    @Override
-    public String getRessourceUri() {
-        return "/spatial-unit/new";
-    }
-
-    @Override
-    public String getTitle() {
-        return "Nouvelle unité spatiale";
-    }
-
-    @Override
-    public String styleClassName() {
-        return "spatial-unit-panel";
-    }
-
-    @Override
-    public String getIcon() {
-        return "bi bi-pencil-square";
-    }
-
-    @Override
-    public String getAutocompleteClass() {
-        return "spatial-unit-autocomplete";
-    }
 
 }

@@ -100,7 +100,7 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
 
     @Override
     public String ressourceUri() {
-        return handler != null ? handler.getRessourceUri() : "generic-new-unit";
+        return handler != null ? handler.getResourceUri() : "generic-new-unit";
     }
 
     public Long getUnitId() {
