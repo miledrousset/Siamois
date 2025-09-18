@@ -15,9 +15,8 @@ import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.ui.bean.dialog.actionunit.NewActionUnitDialogBean;
+import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -183,7 +182,7 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     public static final CustomFieldText IDENTIFIER_FIELD = new CustomFieldText.Builder()
             .label("common.label.identifier")
             .isSystemField(true)
-            .autoGenerationFunction(NewActionUnitDialogBean::generateRandomActionUnitIdentifier)
+            .autoGenerationFunction(AbstractSingleEntity::generateRandomActionUnitIdentifier)
             .valueBinding("identifier")
             .concept(IDENTIFIER_CONCEPT)
             .build();
