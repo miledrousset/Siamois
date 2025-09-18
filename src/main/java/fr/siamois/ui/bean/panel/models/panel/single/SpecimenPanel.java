@@ -16,18 +16,17 @@ import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.HistoryService;
-import fr.siamois.domain.services.spatialunit.SpatialUnitService;
-import fr.siamois.domain.services.actionunit.ActionUnitService;
+
 import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
-import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
+
 import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
-import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
+
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
-import fr.siamois.ui.bean.SessionSettingsBean;
+
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
@@ -165,8 +164,6 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
 
 
     protected SpecimenPanel(LangBean langBean,
-                            SpatialUnitService spatialUnitService,
-                            ActionUnitService actionUnitService,
                             RecordingUnitService recordingUnitService,
                             PersonService personService, SpecimenService specimenService, ConceptService conceptService,
                             DocumentCreationBean documentCreationBean,

@@ -34,9 +34,9 @@ import static fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity.
 @Table(name = "action_unit", uniqueConstraints = @UniqueConstraint(columnNames = "identifier"))
 public class ActionUnit extends ActionUnitParent implements ArkEntity {
 
-    private static String SPATIAL_UNIT_CONTEXT_LABEL_CODE = "common.label.spatialContext";
-    private static String GENERAL_LABEL_CODE = "common.header.general";
-    private static String DETAIL_TAB_NAME = "\"Details tab form\"";
+    private static final String SPATIAL_UNIT_CONTEXT_LABEL_CODE = "common.label.spatialContext";
+    private static final String GENERAL_LABEL_CODE = "common.header.general";
+    private static final String DETAIL_TAB_NAME = "\"Details tab form\"";
 
     public ActionUnit() {
 
@@ -204,7 +204,7 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
             .description("")
             .addPanel(
                     new CustomFormPanel.Builder()
-                            .name(GENERAL_LABEL_CODE) // todo : move to const
+                            .name(GENERAL_LABEL_CODE)
                             .isSystemPanel(true)
                             .addRow(
                                     new CustomRow.Builder()

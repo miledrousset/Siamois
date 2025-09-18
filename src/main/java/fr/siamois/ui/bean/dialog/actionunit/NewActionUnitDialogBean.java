@@ -3,8 +3,6 @@ package fr.siamois.ui.bean.dialog.actionunit;
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.exceptions.EntityAlreadyExistsException;
-import fr.siamois.domain.services.spatialunit.SpatialUnitService;
-import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;

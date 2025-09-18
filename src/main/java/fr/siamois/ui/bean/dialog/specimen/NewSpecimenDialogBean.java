@@ -138,7 +138,7 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
     public NewSpecimenDialogBean(RecordingUnitService recordingUnitService,
                                  LangBean langBean,
                                  FlowBean flowBean,
-                                 ActionUnitService actionUnitService, SpecimenService specimenService,
+                                  SpecimenService specimenService,
                                  AbstractSingleEntity.Deps deps) {
         super(deps);
         this.recordingUnitService = recordingUnitService;
