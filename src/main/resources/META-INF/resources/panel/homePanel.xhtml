@@ -56,8 +56,12 @@
                                     label="#{langBean.msg('common.entity.actionUnits')}"
                                     count="#{panelModel.nbOfActionUnits}"
                                     btnAction="#{flowBean.addActionUnitListPanel(panelModel.breadcrumb)}"
-                                    btnNewAction="#{flowBean.addNewActionUnitPanel(null,panelIndex)}"
-                            />
+                                    btnNewActionUpdate="newUnitForm"
+                                    btnNewActionOnComplete="PF('newUnitDiag').show();"
+                                    btnNewActionOnStart=""
+                                    btnNewAction="#{genericNewUnitDialogBean.selectKind('ACTION')}"
+                                    isCreateAllowed="#{spatialUnitFieldBean.isCreateAllowed()}"
+                            /><!--  TODO : from action service -->
 
 
                         </p:column>

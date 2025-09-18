@@ -21,6 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.LazyDataModel;
 import org.springframework.stereotype.Component;
 
 import javax.faces.bean.ViewScoped;
@@ -38,7 +39,7 @@ import java.util.Set;
 public class GenericNewUnitDialogBean<T extends TraceableEntity>
         extends AbstractSingleEntity<T> implements Serializable {
 
-    // ==== champs hérités d'AbstractNewUnitDialogBean ====
+    // The sets to update after creation
     protected BaseLazyDataModel<T> lazyDataModel;
     protected transient Set<T> setToUpdate;
 
@@ -55,14 +56,12 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
     private transient INewUnitHandler<T> handler;
 
 
-    public GenericNewUnitDialogBean(SessionSettingsBean sessionSettingsBean,
-                                    FieldConfigurationService fieldConfigurationService,
-                                    SpatialUnitTreeService spatialUnitTreeService,
+    public GenericNewUnitDialogBean(AbstractSingleEntity.Deps deps,
                                     LangBean langBean,
                                     FlowBean flowBean,
                                     RedirectBean redirectBean,
                                     Set<INewUnitHandler<? extends TraceableEntity>> handlerSet) {
-        super(sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
+        super(deps);
         this.langBean = langBean;
         this.flowBean = flowBean;
         this.redirectBean = redirectBean;
@@ -75,6 +74,14 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
         this.kind = kind;
         this.handler = (INewUnitHandler<T>) handlers.get(kind);
         init();
+    }
+
+    @SuppressWarnings("unchecked")
+    public void selectKind(UnitKind kind, BaseLazyDataModel<T> context) {
+        this.kind = kind;
+        this.handler = (INewUnitHandler<T>) handlers.get(kind);
+        init();
+        this.lazyDataModel = context;
     }
 
     // ==== méthodes utilitaires (ex-abstracts supprimées) ====
@@ -93,7 +100,7 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
 
     @Override
     public String ressourceUri() {
-        return handler != null ? handler.getRessourceUri() : "generic-new-unit";
+        return handler != null ? handler.getResourceUri() : "generic-new-unit";
     }
 
     public Long getUnitId() {
@@ -110,7 +117,7 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
 
     @Override
     public void initForms() {
-        detailsForm = SpatialUnit.NEW_UNIT_FORM;
+        detailsForm = handler.formLayout();
         formResponse = initializeFormResponse(detailsForm, unit);
 
     }
@@ -132,7 +139,7 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
 
     }
 
-    public Void createAndOpen() { return performCreate(true, true); }
+    public void createAndOpen() { performCreate(true, true); }
     public void create() { performCreate(false, false); }
 
     @Override
@@ -146,40 +153,39 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
         return handler.getAutocompleteClass();
     }
 
-    private Void performCreate(boolean openAfter, boolean scrollToTop) {
+    private void performCreate(boolean openAfter, boolean scrollToTop) {
         try {
             createUnit();
+            // JS conditionnel (widgetVar fixe)
+            String js = "PF('newUnitDiag').hide();" + (scrollToTop ? "handleScrollToTop();" : "");
+            PrimeFaces.current().executeScript(js);
+
+            // Refresh commun
+            PrimeFaces.current().ajax().update("flow");
+
+            // Message succès
+            MessageUtils.displayInfoMessage(langBean, getSuccessMessageCode(), unitName());
+
+            // update des compteurs du home panel
+            flowBean.updateHomePanel();
+
+            if (openAfter) {
+                redirectBean.redirectTo(handler.viewUrlFor(getUnitId()));
+            }
+
         } catch (EntityAlreadyExistsException e) {
             log.error(e.getMessage(), e);
-            MessageUtils.displayErrorMessage(langBean, ENTITY_ALREADY_EXIST_MESSAGE_CODE, unitName());
-            return null;
+            MessageUtils.displayErrorMessage(langBean, ENTITY_ALREADY_EXIST_MESSAGE_CODE, unitName(), e.getField());
+
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             MessageUtils.displayErrorMessage(langBean, UPDATE_FAILED_MESSAGE_CODE, unitName());
-            return null;
+
         }
-
-        // JS conditionnel (widgetVar fixe)
-        String js = "PF('newUnitDialog').hide();" + (scrollToTop ? "handleScrollToTop();" : "");
-        PrimeFaces.current().executeScript(js);
-
-        // Refresh commun
-        PrimeFaces.current().ajax().update("flow");
-
-        // Message succès
-        MessageUtils.displayInfoMessage(langBean, getSuccessMessageCode(), unitName());
-
-        // update des compteurs du home panel
-        flowBean.updateHomePanel();
-
-        if (openAfter) {
-            redirectBean.redirectTo(handler.viewUrlFor(getUnitId()));
-        }
-        return null;
     }
 
-    protected void createUnit() throws Exception {
-        updateJpaEntityFromFormResponse(formResponse, unit);
+    protected void createUnit() throws EntityAlreadyExistsException {
+        updateJpaEntityFromFormResponse(formResponse, unit); // Update Unit based on form response
         unit.setValidated(false);
         unit = handler.save(sessionSettingsBean.getUserInfo(), unit);
         updateCollections();

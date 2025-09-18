@@ -79,9 +79,7 @@ import java.util.stream.Collectors;
 public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, SpatialUnitHist> implements Serializable {
 
     // Dependencies
-    private final transient  SpatialUnitService spatialUnitService;
     private final transient RecordingUnitService recordingUnitService;
-    private final transient ActionUnitService actionUnitService;
     private final transient SessionSettingsBean sessionSettings;
     private final transient SpatialUnitHelperService spatialUnitHelperService;
     private final transient DocumentService documentService;
@@ -117,16 +115,17 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
 
     @Autowired
-    private SpatialUnitPanel(SpatialUnitService spatialUnitService, RecordingUnitService recordingUnitService, ActionUnitService actionUnitService, SessionSettingsBean sessionSettings, SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService, DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
-                             ConceptService conceptService, SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService,
+    private SpatialUnitPanel(RecordingUnitService recordingUnitService,
+                             SessionSettingsBean sessionSettings,
+                             SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService,
+                             DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
+                             ConceptService conceptService,
                              LabelService labelService, LangBean langBean, PersonService personService,
-                             SpatialUnitTreeService spatialUnitTreeService) {
+                             AbstractSingleEntity.Deps deps) {
 
         super("common.entity.spatialUnit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel single-panel",
-                documentCreationBean, sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
-        this.spatialUnitService = spatialUnitService;
+                documentCreationBean, deps);
         this.recordingUnitService = recordingUnitService;
-        this.actionUnitService = actionUnitService;
         this.sessionSettings = sessionSettings;
         this.spatialUnitHelperService = spatialUnitHelperService;
         this.documentService = documentService;

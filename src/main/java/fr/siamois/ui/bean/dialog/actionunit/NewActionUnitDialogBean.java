@@ -2,16 +2,13 @@ package fr.siamois.ui.bean.dialog.actionunit;
 
 
 import fr.siamois.domain.models.actionunit.ActionUnit;
-import fr.siamois.domain.services.spatialunit.SpatialUnitService;
-import fr.siamois.domain.services.actionunit.ActionUnitService;
-import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
+import fr.siamois.domain.models.exceptions.EntityAlreadyExistsException;
 import fr.siamois.domain.services.specimen.SpecimenService;
-import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
-import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.AbstractNewUnitDialogBean;
 import fr.siamois.ui.bean.panel.FlowBean;
+import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import fr.siamois.ui.lazydatamodel.BaseActionUnitLazyDataModel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,20 +28,14 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class NewActionUnitDialogBean extends AbstractNewUnitDialogBean<ActionUnit> {
 
-    private final transient ActionUnitService actionUnitService;
-    private final transient SpatialUnitService spatialUnitService;
+
     private final transient SpecimenService specimenService;
 
     public NewActionUnitDialogBean(LangBean langBean, FlowBean flowBean,
-                                   SessionSettingsBean sessionSettingsBean,
-                                   FieldConfigurationService fieldConfigurationService,
-                                   SpatialUnitService spatialUnitService,
-                                   ActionUnitService actionUnitService,
                                    SpecimenService specimenService,
-                                   SpatialUnitTreeService spatialUnitTreeService, RedirectBean redirectBean) {
-        super(sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService, langBean, flowBean, redirectBean);
-        this.spatialUnitService = spatialUnitService;
-        this.actionUnitService = actionUnitService;
+                                   AbstractSingleEntity.Deps deps,
+                                   RedirectBean redirectBean) {
+        super(langBean, redirectBean, flowBean, deps);
         this.specimenService = specimenService;
     }
 
@@ -54,7 +45,7 @@ public class NewActionUnitDialogBean extends AbstractNewUnitDialogBean<ActionUni
     }
 
     @Override
-    protected void persistUnit() {
+    protected void persistUnit() throws EntityAlreadyExistsException {
         unit = actionUnitService.save(sessionSettingsBean.getUserInfo(), unit, unit.getType());
     }
 

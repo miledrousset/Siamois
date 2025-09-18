@@ -5,6 +5,7 @@ import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.exceptions.actionunit.ActionUnitAlreadyExistsException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
@@ -142,7 +143,7 @@ class ActionUnitServiceTest {
     }
 
     @Test
-    void save_withUserInfo_success() {
+    void save_withUserInfo_success() throws ActionUnitAlreadyExistsException {
 
 
         ActionUnit actionUnit = new ActionUnit();

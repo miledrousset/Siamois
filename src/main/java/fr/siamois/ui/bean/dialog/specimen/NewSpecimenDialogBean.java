@@ -15,11 +15,8 @@ import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
-import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.specimen.SpecimenService;
-import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
-import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import fr.siamois.ui.lazydatamodel.BaseSpecimenLazyDataModel;
@@ -52,7 +49,6 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
     private final transient RecordingUnitService recordingUnitService;
     private final transient LangBean langBean;
     private final transient FlowBean flowBean;
-    private final transient ActionUnitService actionUnitService;
     private final transient SpecimenService specimenService;
 
     // Locals
@@ -142,15 +138,12 @@ public class NewSpecimenDialogBean extends AbstractSingleEntity<Specimen> implem
     public NewSpecimenDialogBean(RecordingUnitService recordingUnitService,
                                  LangBean langBean,
                                  FlowBean flowBean,
-                                 SessionSettingsBean sessionSettingsBean,
-                                 FieldConfigurationService fieldConfigurationService,
-                                 ActionUnitService actionUnitService, SpecimenService specimenService,
-                                 SpatialUnitTreeService spatialUnitTreeService) {
-        super(sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
+                                  SpecimenService specimenService,
+                                 AbstractSingleEntity.Deps deps) {
+        super(deps);
         this.recordingUnitService = recordingUnitService;
         this.langBean = langBean;
         this.flowBean = flowBean;
-        this.actionUnitService = actionUnitService;
         this.specimenService = specimenService;
     }
 

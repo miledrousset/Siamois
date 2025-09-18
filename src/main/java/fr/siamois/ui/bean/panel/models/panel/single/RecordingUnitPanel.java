@@ -64,8 +64,6 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
 
     // Deps
     protected final transient LangBean langBean;
-    protected final transient SpatialUnitService spatialUnitService;
-    protected final transient ActionUnitService actionUnitService;
     protected final transient RecordingUnitService recordingUnitService;
     protected final transient PersonService personService;
     private final transient RedirectBean redirectBean;
@@ -243,25 +241,19 @@ public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit,
 
 
     protected RecordingUnitPanel(LangBean langBean,
-                                 SessionSettingsBean sessionSettingsBean,
-                                 SpatialUnitService spatialUnitService,
-                                 ActionUnitService actionUnitService,
                                  RecordingUnitService recordingUnitService,
                                  PersonService personService, ConceptService conceptService,
-                                 FieldConfigurationService fieldConfigurationService,
                                  DocumentCreationBean documentCreationBean,
                                  RedirectBean redirectBean,
                                  HistoryService historyService,
-                                 DocumentService documentService, SpecimenService specimenService,
-                                 SpatialUnitTreeService spatialUnitTreeService) {
+                                 AbstractSingleEntity.Deps deps,
+                                 DocumentService documentService, SpecimenService specimenService) {
 
         super("common.entity.recordingunit",
                 "bi bi-pencil-square",
                 "siamois-panel recording-unit-panel single-panel",
-                documentCreationBean, sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
+                documentCreationBean, deps);
         this.langBean = langBean;
-        this.spatialUnitService = spatialUnitService;
-        this.actionUnitService = actionUnitService;
         this.recordingUnitService = recordingUnitService;
         this.personService = personService;
         this.conceptService = conceptService;

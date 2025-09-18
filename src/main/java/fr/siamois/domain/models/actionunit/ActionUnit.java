@@ -17,6 +17,7 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.ui.bean.dialog.actionunit.NewActionUnitDialogBean;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -30,8 +31,12 @@ import static fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity.
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "action_unit")
+@Table(name = "action_unit", uniqueConstraints = @UniqueConstraint(columnNames = "identifier"))
 public class ActionUnit extends ActionUnitParent implements ArkEntity {
+
+    private static final String SPATIAL_UNIT_CONTEXT_LABEL_CODE = "common.label.spatialContext";
+    private static final String GENERAL_LABEL_CODE = "common.header.general";
+    private static final String DETAIL_TAB_NAME = "\"Details tab form\"";
 
     public ActionUnit() {
 
@@ -186,7 +191,7 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Transient
     @JsonIgnore
     public static final CustomFieldSelectMultipleSpatialUnitTree SPATIAL_CONTEXT_FIELD = new CustomFieldSelectMultipleSpatialUnitTree.Builder()
-            .label("common.label.spatialContext")
+            .label(SPATIAL_UNIT_CONTEXT_LABEL_CODE)
             .isSystemField(true)
             .valueBinding("spatialContext")
             .concept(SPATIAL_CONTEXT_CONCEPT)
@@ -195,41 +200,44 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Transient
     @JsonIgnore
     public static final CustomForm NEW_UNIT_FORM = new CustomForm.Builder()
-            .name("Details tab form")
-            .description("Contains the main form")
+            .name(DETAIL_TAB_NAME)
+            .description("")
             .addPanel(
                     new CustomFormPanel.Builder()
-                            .name("common.header.general")
+                            .name(GENERAL_LABEL_CODE)
                             .isSystemPanel(true)
                             .addRow(
                                     new CustomRow.Builder()
                                             .addColumn(new CustomCol.Builder()
                                                     .readOnly(false)
                                                     .className(COLUMN_CLASS_NAME)
+                                                    .field(IDENTIFIER_FIELD)
+                                                    .isRequired(true)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .isRequired(true)
+                                                    .className(COLUMN_CLASS_NAME)
                                                     .field(NAME_FIELD)
                                                     .build())
                                             .addColumn(new CustomCol.Builder()
                                                     .readOnly(false)
+                                                    .isRequired(true)
                                                     .className(COLUMN_CLASS_NAME)
                                                     .field(ACTION_UNIT_TYPE_FIELD)
-                                                    .build())
-                                            .addColumn(new CustomCol.Builder()
-                                                    .readOnly(false)
-                                                    .className(COLUMN_CLASS_NAME)
-                                                    .field(IDENTIFIER_FIELD)
                                                     .build())
                                             .build()
                             ).build()
             )
             .addPanel(
                     new CustomFormPanel.Builder()
-                            .name("common.label.spatialContext")
+                            .name(SPATIAL_UNIT_CONTEXT_LABEL_CODE)
                             .isSystemPanel(true)
                             .addRow(
                                     new CustomRow.Builder()
                                             .addColumn(new CustomCol.Builder()
                                                     .readOnly(false)
-                                                    .className(COLUMN_CLASS_NAME)
+                                                    .className("ui-g-12")
                                                     .field(SPATIAL_CONTEXT_FIELD)
                                                     .build())
                                             .build()
@@ -240,11 +248,11 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Transient
     @JsonIgnore
     public static final CustomForm OVERVIEW_FORM = new CustomForm.Builder()
-            .name("Details tab form")
-            .description("Contains the main form")
+            .name(DETAIL_TAB_NAME)
+            .description("")
             .addPanel(
                     new CustomFormPanel.Builder()
-                            .name("common.header.general")
+                            .name(GENERAL_LABEL_CODE)
                             .isSystemPanel(true)
                             .addRow(
                                     new CustomRow.Builder()
@@ -261,11 +269,11 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Transient
     @JsonIgnore
     public static final CustomForm DETAILS_FORM = new CustomForm.Builder()
-            .name("Details tab form")
-            .description("Contains the main form")
+            .name(DETAIL_TAB_NAME)
+            .description("")
             .addPanel(
                     new CustomFormPanel.Builder()
-                            .name("common.header.general")
+                            .name(GENERAL_LABEL_CODE)
                             .isSystemPanel(true)
                             .addRow(
                                     new CustomRow.Builder()
@@ -284,13 +292,13 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
             )
             .addPanel(
                     new CustomFormPanel.Builder()
-                            .name("common.label.spatialContext")
+                            .name(SPATIAL_UNIT_CONTEXT_LABEL_CODE)
                             .isSystemPanel(true)
                             .addRow(
                                     new CustomRow.Builder()
                                             .addColumn(new CustomCol.Builder()
                                                     .readOnly(false)
-                                                    .className(COLUMN_CLASS_NAME)
+                                                    .className("ui-g-12 ui-md-12 ui-lg-12")
                                                     .field(SPATIAL_CONTEXT_FIELD)
                                                     .build())
                                             .build()

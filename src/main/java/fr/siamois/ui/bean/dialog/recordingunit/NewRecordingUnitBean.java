@@ -12,10 +12,7 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
-import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
-import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
-import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import fr.siamois.ui.lazydatamodel.BaseRecordingUnitLazyDataModel;
@@ -50,7 +47,6 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
     private final transient RecordingUnitService recordingUnitService;
     private final transient LangBean langBean;
     private final transient FlowBean flowBean;
-    private final transient ActionUnitService actionUnitService;
 
     // Locals
     private ActionUnit actionUnit; // parent action unit for the new recording unit
@@ -134,15 +130,11 @@ public class NewRecordingUnitBean extends AbstractSingleEntity<RecordingUnit> im
 
     public NewRecordingUnitBean(RecordingUnitService recordingUnitService,
                                 LangBean langBean, FlowBean flowBean,
-                                ActionUnitService actionUnitService,
-                                SessionSettingsBean sessionSettingsBean,
-                                FieldConfigurationService fieldConfigurationService,
-                                SpatialUnitTreeService spatialUnitTreeService) {
-        super(sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
+                                AbstractSingleEntity.Deps deps) {
+        super(deps);
         this.recordingUnitService = recordingUnitService;
         this.langBean = langBean;
         this.flowBean = flowBean;
-        this.actionUnitService = actionUnitService;
     }
 
     @Override

@@ -12,7 +12,7 @@
                   width="60vw"
                   minWidth="400"
                   maxWidth="90vw"
-                  style="max-height:90vh;"
+                  style="max-height:80vh;"
                   appendToBody="true" modal="true" styleClass="sia-new-unit-dialog ui-panel siamois-panel #{genericNewUnitDialogBean.handler.styleClassName()}">
 
             <f:facet name="header">
@@ -28,8 +28,8 @@
                     <ui:param name="panelModel" value="#{genericNewUnitDialogBean}"/>
                     <ui:param name="layout" value="#{genericNewUnitDialogBean.detailsForm.layout}"/>
                     <ui:param name="readOnly" value="#{false}"/>
-                    <ui:param name="prefix" value="newUnit"/>
-                    <ui:param name="panelId" value="newUnitForm:customFormPanel-newUnit-0"/>
+                    <ui:param name="prefix" value="newUnitForm"/>
+                    <ui:param name="panelId" value="newUnitForm:newUnitFormContent"/>
                 </ui:include>
             </p:outputPanel>
 

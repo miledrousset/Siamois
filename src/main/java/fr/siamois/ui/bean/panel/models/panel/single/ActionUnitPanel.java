@@ -66,7 +66,7 @@ import java.util.stream.Collectors;
 public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, ActionUnitHist> implements Serializable {
 
     // Deps
-    private final transient ActionUnitService actionUnitService;
+
     private final LangBean langBean;
 
     private final transient FieldService fieldService;
@@ -93,17 +93,15 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     private transient RecordingUnitInActionUnitLazyDataModel recordingUnitListLazyDataModel ;
 
 
-    public ActionUnitPanel(ActionUnitService actionUnitService, LangBean langBean,
-                           SessionSettingsBean sessionSettingsBean,
-                           FieldConfigurationService fieldConfigurationService,
+    public ActionUnitPanel(LangBean langBean,
                            FieldService fieldService, RedirectBean redirectBean,
                            LabelService labelService, TeamMembersBean teamMembersBean,
-                           HistoryService historyService, DocumentService documentService, RecordingUnitService recordingUnitService,
                            DocumentCreationBean documentCreationBean,
-                           SpatialUnitTreeService spatialUnitTreeService) {
+                           HistoryService historyService, DocumentService documentService, RecordingUnitService recordingUnitService,
+                           AbstractSingleEntity.Deps deps) {
         super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel single-panel",
-                documentCreationBean, sessionSettingsBean, fieldConfigurationService, spatialUnitTreeService);
-        this.actionUnitService = actionUnitService;
+                documentCreationBean, deps );
+
         this.langBean = langBean;
         this.fieldService = fieldService;
         this.redirectBean = redirectBean;

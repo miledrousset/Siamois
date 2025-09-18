@@ -62,6 +62,7 @@
             **/*Exception.*,
             **/*Bean.*,
             **/ui/bean/dialog/newunit/**,
+            **/*ViewModel.*,
             **/*Converter.*,
             **/*Builder.*,
             **/*Controller.*,

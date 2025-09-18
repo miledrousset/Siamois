@@ -193,6 +193,7 @@ public class SpatialUnitService implements ArkEntityService {
         Optional<SpatialUnit> optSpatialUnit = spatialUnitRepository.findByNameAndInstitution(name, info.getInstitution().getId());
         if (optSpatialUnit.isPresent())
             throw new SpatialUnitAlreadyExistsException(
+                    "identifier",
                     String.format("Spatial Unit with name %s already exist in institution %s", name, info.getInstitution().getName()));
 
 
@@ -346,33 +347,15 @@ public class SpatialUnitService implements ArkEntityService {
     }
 
     /**
-     * Create a map of all SpatialUnits and their direct neighbors (children)
+     * Find all direct parents of a given SpatialUnit
      *
-     * @param institution The institution to filter by
-     * @return A map where keys are SpatialUnit and values are lists of their direct children
+     * @param id The ID of the SpatialUnit to find parents for
+     * @return A list of direct parents SpatialUnit of the given SpatialUnit
      */
-    public Map<SpatialUnit, List<SpatialUnit>> neighborMapOfAllSpatialUnit(Institution institution) {
-        Map<SpatialUnit, List<SpatialUnit>> neighborMap = new HashMap<>();
-        Set<SpatialUnit> alreadyProcessed = new HashSet<>();
-
-        Queue<SpatialUnit> toProcess = new ArrayDeque<>(findRootsOf(institution));
-
-        while (!toProcess.isEmpty()) {
-            SpatialUnit current = toProcess.poll();
-            List<SpatialUnit> childrens = neighborMap.computeIfAbsent(current, su -> new ArrayList<>());
-
-            for (SpatialUnit child : findDirectChildrensOf(current)) {
-                childrens.add(child);
-                if (!alreadyProcessed.contains(child)) {
-                    toProcess.add(child);
-                }
-            }
-
-            alreadyProcessed.add(current);
-        }
-
-        return neighborMap;
+    public List<SpatialUnit> findDirectParentsOf(Long id) {
+        return spatialUnitRepository.findParentsOf(id).stream().toList();
     }
+
 
     /**
      * Verify if the user has the permission to create spatial units
