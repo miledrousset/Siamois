@@ -37,6 +37,7 @@
                     <ui:include src="/panel/spatialunit/tab/overviewTab.xhtml">
                         <ui:param name="panelModel" value="#{panelModel}"/>
                         <ui:param name="panelIndex" value="#{panelIndex}"/>
+                        <ui:param name="root" value="actionUnitForm:actionUnitTabs"/>
                     </ui:include>
 
                 </p:tab>
@@ -47,6 +48,7 @@
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
                             <ui:param name="title" value='#{langBean.msg("panel.tab.details")}'/>
                             <ui:param name="icon" value="bi bi-info-circle"/>
+
                         </ui:include>
                     </f:facet>
 
@@ -54,6 +56,7 @@
                         <ui:param name="spatialUnit" value="#{panelModel.unit}"/>
                         <ui:param name="panelModel" value="#{panelModel}"/>
                         <ui:param name="panelIndex" value="#{panelIndex}"/>
+                        <ui:param name="root" value="actionUnitForm:actionUnitTabs"/>
                     </ui:include>
 
                 </p:tab>

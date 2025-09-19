@@ -60,8 +60,8 @@
                                     btnNewActionOnComplete="PF('newUnitDiag').show();"
                                     btnNewActionOnStart=""
                                     btnNewAction="#{genericNewUnitDialogBean.selectKind('ACTION')}"
-                                    isCreateAllowed="#{spatialUnitFieldBean.isCreateAllowed()}"
-                            /><!--  TODO : from action service -->
+                                    isCreateAllowed="#{flowBean.isActionUnitCreateAllowed()}"
+                            />
 
 
                         </p:column>

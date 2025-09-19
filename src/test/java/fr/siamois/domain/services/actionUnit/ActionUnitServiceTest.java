@@ -14,6 +14,7 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.authorization.PermissionServiceImpl;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
@@ -44,6 +45,8 @@ class ActionUnitServiceTest {
     private ConceptService conceptService;
     @Mock
     private ActionCodeRepository actionCodeRepository;
+    @Mock
+    private PermissionServiceImpl permissionService;
 
 
     @InjectMocks
@@ -385,6 +388,46 @@ class ActionUnitServiceTest {
         assertEquals(2, result.size());
         assertTrue(result.contains(actionUnit1));
         assertTrue(result.contains(actionUnit2));
+    }
+
+    @Test
+    void returnsTrue_whenUserIsInstitutionManager() {
+        Person person = new Person();
+        person.setId(1L);
+        Institution i = new Institution();
+        i.setId(1L);
+        UserInfo user = new UserInfo(i ,person, "fr");
+
+        when(permissionService.isInstitutionManager(user)).thenReturn(true);
+
+
+        assertTrue(actionUnitService.hasCreatePermission(user));
+    }
+
+    @Test
+    void returnsTrue_whenUserIsActionManager() {
+        Person person = new Person();
+        person.setId(1L);
+        Institution i = new Institution();
+        i.setId(1L);
+        UserInfo user = new UserInfo(i ,person, "fr");
+        when(permissionService.isInstitutionManager(user)).thenReturn(false);
+        when(permissionService.isActionManager(user)).thenReturn(true);
+
+        assertTrue(actionUnitService.hasCreatePermission(user));
+    }
+
+    @Test
+    void returnsFalse_whenUserHasNoPermissions() {
+        Person person = new Person();
+        person.setId(1L);
+        Institution i = new Institution();
+        i.setId(1L);
+        UserInfo user = new UserInfo(i ,person, "fr");
+        when(permissionService.isInstitutionManager(user)).thenReturn(false);
+        when(permissionService.isActionManager(user)).thenReturn(false);
+
+        assertFalse(actionUnitService.hasCreatePermission(user));
     }
 
 }

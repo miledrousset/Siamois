@@ -8,10 +8,11 @@
     <!--@elvariable id="layout" type="java.util.List<fr.siamois.domain.models.form.CustomFormPanel>" -->
     <!--@elvariable id="readOnly" type="java.lang.Boolean" -->
     <!--@elvariable id="prefix" type="String" -->
+    <!--@elvariable id="root" type="String" -->
     <!--@elvariable id="panelId" type="String" -->
 
     <c:forEach items="#{layout}" var="customFormPanel" varStatus="status">
-        <p:panel header="#{spatialUnitFieldBean.resolvePanelLabel(customFormPanel)}" id="customFormPanel-#{prefix}-#{status.index}"
+        <p:panel header="#{spatialUnitFieldBean.resolvePanelLabel(customFormPanel)}" id="customFormPanel-#{status.index}-#{prefix}"
                  class="sia-form-panel"
                  toggleable="true">
 
@@ -20,6 +21,7 @@
                 <ui:param name="customFormPanel" value="#{customFormPanel}"/>
                 <ui:param name="readOnly" value="#{readOnly}"/>
                 <ui:param name="prefix" value="#{prefix}"/>
+                <ui:param name="root" value="#{root}"/>
                 <ui:param name="updateTargetsOnBlur" value="#{panelId}"/>
                 <ui:param name="statusIndex" value="#{status.index}"/>
             </ui:include>

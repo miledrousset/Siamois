@@ -29,12 +29,14 @@
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
                             <ui:param name="title" value='#{langBean.msg("panel.tab.overview")}'/>
                             <ui:param name="icon" value="bi bi-eye"/>
+                            <ui:param name="root" value="spatialUnitForm:spatialUnitTabs"/>
                         </ui:include>
                     </f:facet>
 
                     <ui:include src="/panel/spatialunit/tab/overviewTab.xhtml">
                         <ui:param name="panelModel" value="#{panelModel}"/>
                         <ui:param name="panelIndex" value="#{panelIndex}"/>
+                        <ui:param name="root" value="spatialUnitForm:spatialUnitTabs"/>
                     </ui:include>
 
                 </p:tab>

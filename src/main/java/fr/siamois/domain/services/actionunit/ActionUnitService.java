@@ -13,6 +13,8 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
+import fr.siamois.domain.services.authorization.PermissionService;
+import fr.siamois.domain.services.authorization.PermissionServiceImpl;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
@@ -39,12 +41,14 @@ public class ActionUnitService implements ArkEntityService {
     private final ActionUnitRepository actionUnitRepository;
     private final ConceptService conceptService;
     private final ActionCodeRepository actionCodeRepository;
+    private final PermissionServiceImpl permissionService;
 
     public ActionUnitService(ActionUnitRepository actionUnitRepository,
-                             ConceptService conceptService, ActionCodeRepository actionCodeRepository) {
+                             ConceptService conceptService, ActionCodeRepository actionCodeRepository, PermissionServiceImpl permissionService) {
         this.actionUnitRepository = actionUnitRepository;
         this.conceptService = conceptService;
         this.actionCodeRepository = actionCodeRepository;
+        this.permissionService = permissionService;
     }
 
     /**
@@ -335,5 +339,16 @@ public class ActionUnitService implements ArkEntityService {
      */
     public Set<ActionUnit> findAllByInstitution(Institution institution) {
         return actionUnitRepository.findByCreatedByInstitution(institution);
+    }
+
+    /**
+     * Verify if the user has the permission to create spatial units
+     *
+     * @param user The user to check the permission on
+     * @return True if the user has sufficient permissions
+     */
+    public boolean hasCreatePermission(UserInfo user) {
+        return permissionService.isInstitutionManager(user)
+                || permissionService.isActionManager(user);
     }
 }
