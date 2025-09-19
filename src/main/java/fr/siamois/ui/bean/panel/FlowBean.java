@@ -344,4 +344,13 @@ public class FlowBean implements Serializable {
             }
         }
     }
+
+    /**
+     * Is creation of new action units allowed?
+     *
+     * @return true if creation is allowed
+     */
+    public boolean isActionUnitCreateAllowed() {
+        return actionUnitService.hasCreatePermission(sessionSettings.getUserInfo());
+    }
 }

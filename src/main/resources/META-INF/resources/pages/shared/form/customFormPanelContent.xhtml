@@ -10,24 +10,25 @@
     <!--@elvariable id="customFormPanel" type="fr.siamois.domain.models.form.CustomFormPanel" -->
     <!--@elvariable id="readOnly" type="java.lang.Boolean" -->
     <!--@elvariable id="prefix" type="String" -->
+    <!--@elvariable id="root" type="String" -->
     <!--@elvariable id="updateTargetsOnBlur" type="String" -->
     <!--@elvariable id="statusIndex" type="Object" -->
 
 
-    <p:panelGrid id="customFormPanelGrid-#{prefix}-#{statusIndex}"
+    <p:panelGrid id="customFormPanelGrid-#{statusIndex}-#{prefix}"
                  layout="grid"
     >
         <c:forEach items="#{customFormPanel.rows}" var="row" varStatus="rowStatus">
-            <p:row id="row-#{statusIndex}-#{rowStatus.index}">
+            <p:row id="row-#{prefix}-#{statusIndex}-#{rowStatus.index}">
 
                 <c:forEach items="#{row.columns}" var="col" varStatus="colStatus">
 
 
                     <p:column styleClass="#{col.className}"
-                              id="col-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}">
-                        <p:outputPanel id="field-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}">
+                              id="col-#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}">
+                        <p:outputPanel id="field-#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}">
                             <sharedInput:panelField
-                                    id="panelField-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
+                                    id="panelField-#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
                                     required="#{col.required}"
                                     title="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
                                     forId="#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}:input"
@@ -44,7 +45,7 @@
                                         hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
                                         answer="#{bean.formResponse.answers.get(col.field)}"
                                         mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
-                                        updateTargetsOnBlur="#{prefix}:field-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
+                                        updateTargetsOnBlur="#{root}:field-#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
                                 />
 
 

@@ -22,24 +22,23 @@ public class ActionUnitController {
         this.navBean = navBean;
     }
 
-    @GetMapping("/actionunit/{id}")
+    @GetMapping("/action-unit/{id}")
     public String toActionUnit(@PathVariable Long id) {
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
         flowBean.addActionUnitPanel(id);
         return FLOW_FORWARD_PATH;
     }
 
-    @GetMapping("/actionunit")
+    @GetMapping("/action-unit")
     public String toActionUnitList() {
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
         flowBean.addActionUnitListPanel(null);
         return FLOW_FORWARD_PATH;
     }
 
-    @GetMapping("/spatial-unit/{id}/actionunit/new")
+    @GetMapping("/spatial-unit/{id}/action-unit/new")
     public String addActionUnit(@PathVariable Long id) {
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
-        // TODO : open new action unit dialog
         return FLOW_FORWARD_PATH;
     }
 

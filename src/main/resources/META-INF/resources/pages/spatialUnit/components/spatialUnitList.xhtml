@@ -233,10 +233,10 @@
                                              text="#{langBean.msg('table.spatialunit.column.actions')}"/>
                     </f:facet>
                     <cellbody:cellBodyThreeItems set="#{item.relatedActionUnitList}"/>
+                    <!-- todo : fixme -->
                     <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
                                      actionListener="#{newActionUnitDialogBean.init(item.id, item.relatedActionUnitList)}"
                                      oncomplete="PF('newActionUnitDiag').show()"
-                                     update="newActionUnitForm"
                                      rendered="#{flowBean.readWriteMode == 'WRITE'}"
                                      style="margin-right: .5rem">
                     </p:commandButton>
