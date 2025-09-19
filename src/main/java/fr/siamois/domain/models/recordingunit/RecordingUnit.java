@@ -9,7 +9,16 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.actionunit.NullActionUnitIdentifierException;
 import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
+import fr.siamois.domain.models.form.customfield.CustomFieldDateTime;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectMultiplePerson;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
+import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneSpatialUnit;
+import fr.siamois.domain.models.form.customform.CustomCol;
+import fr.siamois.domain.models.form.customform.CustomForm;
+import fr.siamois.domain.models.form.customform.CustomFormPanel;
+import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
+import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,11 +28,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity.COLUMN_CLASS_NAME;
+import static fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity.SYSTEM_THESO;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "recording_unit")
 public class RecordingUnit extends RecordingUnitParent implements ArkEntity, ReferencableEntity {
+
+
 
     public RecordingUnit() {
 
@@ -55,9 +69,9 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
 
     @ManyToMany
     @JoinTable(
-            name="recording_unit_hierarchy",
-            joinColumns = { @JoinColumn(name = "fk_parent_id") },
-            inverseJoinColumns = { @JoinColumn(name = "fk_child_id") }
+            name = "recording_unit_hierarchy",
+            joinColumns = {@JoinColumn(name = "fk_parent_id")},
+            inverseJoinColumns = {@JoinColumn(name = "fk_child_id")}
     )
     private Set<RecordingUnit> children = new HashSet<>();
 
@@ -83,8 +97,8 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "recording_unit_document",
-            joinColumns = { @JoinColumn(name = "fk_recording_unit_id")},
-            inverseJoinColumns = { @JoinColumn(name = "fk_document_id") }
+            joinColumns = {@JoinColumn(name = "fk_recording_unit_id")},
+            inverseJoinColumns = {@JoinColumn(name = "fk_document_id")}
     )
     private Set<Document> documents = new HashSet<>();
 
@@ -108,16 +122,15 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
 
     // utils
     public String displayFullIdentifier() {
-        if(getFullIdentifier() == null) {
-            if(getCreatedByInstitution().getIdentifier() == null) {
+        if (getFullIdentifier() == null) {
+            if (getCreatedByInstitution().getIdentifier() == null) {
                 throw new NullInstitutionIdentifier("Institution identifier must be set");
             }
-            if(getActionUnit().getIdentifier() == null) {
+            if (getActionUnit().getIdentifier() == null) {
                 throw new NullActionUnitIdentifierException("Action identifier must be set");
             }
             return getCreatedByInstitution().getIdentifier() + "-" + getActionUnit().getIdentifier() + "-" + (getIdentifier() == null ? "?" : getIdentifier());
-        }
-        else {
+        } else {
             return getFullIdentifier();
         }
     }
@@ -137,6 +150,140 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     @JsonIgnore
     public List<String> getBindableFieldNames() {
         return List.of("creationTime", "startDate", "endDate", "fullIdentifier", "authors",
-                "excavators", "type", "secondaryType", "thirdType","actionUnit","spatialUnit");
+                "excavators", "type", "secondaryType", "thirdType", "actionUnit", "spatialUnit");
     }
+
+    // ----------- Concepts for system fields
+    // Authors
+    @Transient
+    @JsonIgnore
+    private static Concept authorsConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286194")
+            .build();
+    // Excavators
+    @Transient
+    @JsonIgnore
+    private static Concept excavatorsConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286195")
+            .build();
+
+    // Recording Unit type
+    @Transient
+    @JsonIgnore
+    private static Concept recordingUnitTypeConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4282367")
+            .build();
+
+    // Date
+    @Transient
+    @JsonIgnore
+    private static Concept openingDateConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286198")
+            .build();
+
+
+    // Spatial Unit
+    @Transient
+    @JsonIgnore
+    private static Concept spatialUnitConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286245")
+            .build();
+
+    @Transient
+    @JsonIgnore
+    private static CustomFieldSelectMultiplePerson authorsField = new CustomFieldSelectMultiplePerson.Builder()
+            .label("recordingunit.field.authors")
+            .isSystemField(true)
+            .valueBinding("authors")
+            .concept(authorsConcept)
+            .build();
+    @Transient
+    @JsonIgnore
+    private static CustomFieldSelectMultiplePerson excavatorsField = new CustomFieldSelectMultiplePerson.Builder()
+            .label("recordingunit.field.excavators")
+            .isSystemField(true)
+            .valueBinding("excavators")
+            .concept(excavatorsConcept)
+            .build();
+    @Transient
+    @JsonIgnore
+    private static CustomFieldSelectOneFromFieldCode recordingUnitTypeField = new CustomFieldSelectOneFromFieldCode.Builder()
+            .label("spatialunit.field.type")
+            .isSystemField(true)
+            .valueBinding("type")
+            .styleClass("mr-2 recording-unit-type-chip")
+            .iconClass("bi bi-pencil-square")
+            .fieldCode(RecordingUnit.TYPE_FIELD_CODE)
+            .concept(recordingUnitTypeConcept)
+            .build();
+
+    @Transient
+    @JsonIgnore
+    private static CustomFieldDateTime openingDateField = new CustomFieldDateTime.Builder()
+            .label("recordingunit.field.openingDate")
+            .isSystemField(true)
+            .valueBinding("startDate")
+            .showTime(false)
+            .concept(openingDateConcept)
+            .build();
+
+    @Transient
+    @JsonIgnore
+    private static CustomFieldSelectOneSpatialUnit spatialUnitField = new CustomFieldSelectOneSpatialUnit.Builder()
+            .label("recordingunit.field.spatialUnit")
+            .isSystemField(true)
+            .valueBinding("spatialUnit")
+            .concept(spatialUnitConcept)
+            .build();
+
+    @Transient
+    @JsonIgnore
+    public static final CustomForm NEW_UNIT_FORM = new CustomForm.Builder()
+            .name("Details tab form")
+            .description("Contains the main form")
+            .addPanel(
+                    new CustomFormPanel.Builder()
+                            .name("common.header.general")
+                            .isSystemPanel(true)
+                            .addRow(
+                                    new CustomRow.Builder()
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .isRequired(true)
+                                                    .field(spatialUnitField)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .isRequired(true)
+                                                    .field(authorsField)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .isRequired(true)
+                                                    .field(excavatorsField)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .isRequired(true)
+                                                    .field(recordingUnitTypeField)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .isRequired(true)
+                                                    .field(openingDateField)
+                                                    .build())
+                                            .build()
+                            ).build()
+            )
+            .build();
 }

@@ -20,9 +20,9 @@
             <f:facet name="rightToolbar">
                 <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
                                  id="newRecordingUnitButton"
-                                 actionListener="#{newRecordingUnitBean.init(panelModel.recordingUnitListLazyDataModel)}"
-                                 oncomplete="PF('newRecordingUnitDiag').show()"
-                                 update="newRecordingUnitForm"
+                                 actionListener="#{genericNewUnitDialogBean.selectKind('RECORDING',panelModel.recordingUnitListLazyDataModel)}"
+                                 oncomplete="PF('newUnitDiag').show();"
+                                 update="newUnitForm"
                                  rendered="#{flowBean.readWriteMode == 'WRITE'}"
                                  style="margin-right: .5rem">
                 </p:commandButton>
