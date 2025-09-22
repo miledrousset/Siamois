@@ -14,6 +14,8 @@
         <cc:attribute name="hasBeenModified" type="Boolean" required="false" default="false"/>
         <cc:attribute name="field" type="fr.siamois.domain.models.form.customfield.CustomFieldSelectOneSpatialUnit"
                       required="true"/>
+        <cc:attribute name="label" type="String" required="false"/>
+        <cc:attribute name="required" type="java.lang.Boolean" required="true"/>
         <cc:attribute name="mode" type="String" required="false" default="READ"/>
         <cc:attribute name="updateTargetsOnBlur" type="String" required="false" default="@this"/>
         <cc:attribute name="multiple" type="Boolean" required="false" default="false"/>
@@ -39,8 +41,8 @@
                                  panelStyleClass="#{cc.attrs.panelModel.autocompleteClass}"
                                  styleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"
                                  value="#{cc.attrs.answer.value}"
-                                 label="#{langBean.msg('common.action.selectSpatialUnit')}"
-                                 required="false"
+                                 label="#{cc.attrs.label}"
+                                 required="#{cc.attrs.required}"
                                  var="su"
                                  converter="#{spatialUnitConverter}">
                     <f:selectItems

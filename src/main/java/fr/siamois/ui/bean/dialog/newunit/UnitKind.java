@@ -14,6 +14,13 @@ public enum UnitKind {
             "action-unit-panel",
             "bi bi-arrow-down-square",
             "action-unit-autocomplete"
+    ),
+    RECORDING(
+            "/recording-unit/new",
+                    "Nouvelle unité d'enregistrement",
+                    "recording-unit-panel",
+                    "bi bi-pencil-square",
+                    "recording-unit-autocomplete"
     );
 
     private final String resourceUri;

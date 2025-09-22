@@ -11,6 +11,8 @@
         <cc:attribute name="hasBeenModified" type="Boolean" required="false" default="false"/>
         <cc:attribute name="field" type="fr.siamois.domain.models.form.customfield.CustomFieldSelectPerson"
                       required="true"/>
+        <cc:attribute name="label" type="String" required="false"/>
+        <cc:attribute name="required" type="java.lang.Boolean" required="true"/>
         <cc:attribute name="mode" type="String" required="false" default="READ"/>
         <cc:attribute name="updateTargetsOnBlur" type="String" required="false" default="@this"/>
         <cc:attribute name="multiple" type="Boolean" required="false" default="false"/>
@@ -45,8 +47,9 @@
                                 value="#{cc.attrs.answer.value}"
                                 completeMethod="#{sessionSettingsBean.completePerson}"
                                 forceSelection="true"
+                                label="#{cc.attrs.label}"
+                                required="#{cc.attrs.required}"
                                 scrollHeight="300"
-                                required="false"
                                 var="person" itemLabel="#{person.displayName()}"
                                 itemValue="#{person}"
                                 converter="#{personConverter}"

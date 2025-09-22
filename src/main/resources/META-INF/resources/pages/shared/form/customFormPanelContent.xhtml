@@ -50,13 +50,15 @@
 
 
                                 <siaInplace:datePicker
+                                        required="#{col.required}"
                                         panelModel="#{bean}"
+                                        label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
                                         rendered="#{col.field['class'].simpleName eq 'CustomFieldDateTime'}"
                                         field="#{col.field}"
                                         hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
                                         answer="#{bean.formResponse.answers.get(col.field)}"
                                         mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
-                                        updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                        updateTargetsOnBlur="#{root}:field-#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
                                 >
 
                                 </siaInplace:datePicker>
@@ -70,7 +72,7 @@
                                         label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
                                         mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
                                         panelModel="#{bean}"
-                                        updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                        updateTargetsOnBlur="#{root}:field-#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
                                         answer="#{bean.formResponse.answers.get(col.field)}"/>
 
 
@@ -82,7 +84,7 @@
                                         field="#{col.field}"
                                         mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
                                         panelModel="#{bean}"
-                                        updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                        updateTargetsOnBlur="#{root}:field-#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
                                         answer="#{bean.formResponse.answers.get(col.field)}"/>
 
 
@@ -93,7 +95,9 @@
                                         field="#{col.field}"
                                         mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
                                         panelModel="#{bean}"
-                                        updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                        required="#{col.required}"
+                                        label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
+                                        updateTargetsOnBlur="#{root}:field-#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
                                         answer="#{bean.formResponse.answers.get(col.field)}"/>
 
 
@@ -103,7 +107,9 @@
                                         field="#{col.field}"
                                         mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
                                         panelModel="#{bean}"
-                                        updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                        required="#{col.required}"
+                                        label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
+                                        updateTargetsOnBlur="#{root}:field-#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
                                         answer="#{bean.formResponse.answers.get(col.field)}"/>
 
 
@@ -114,7 +120,9 @@
                                         field="#{col.field}"
                                         mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
                                         panelModel="#{bean}"
-                                        updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                        required="#{col.required}"
+                                        label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
+                                        updateTargetsOnBlur="#{root}:field-#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
                                         answer="#{bean.formResponse.answers.get(col.field)}"/>
 
 
@@ -124,9 +132,11 @@
                                         hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
                                         field="#{col.field}"
                                         multiple="true"
+                                        required="#{col.required}"
+                                        label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
                                         mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
                                         panelModel="#{bean}"
-                                        updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                        updateTargetsOnBlur="#{root}:field-#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
                                         answer="#{bean.formResponse.answers.get(col.field)}"/>
 
 
@@ -137,7 +147,7 @@
                                         field="#{col.field}"
                                         mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
                                         panelModel="#{bean}"
-                                        updateTargetsOnBlur="#{updateTargetsOnBlur}"
+                                        updateTargetsOnBlur="#{root}:field-#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
                                         answer="#{bean.formResponse.answers.get(col.field)}"/>
                             </sharedInput:panelField>
                         </p:outputPanel>
