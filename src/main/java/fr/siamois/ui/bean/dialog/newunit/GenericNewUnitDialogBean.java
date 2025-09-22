@@ -26,9 +26,7 @@ import org.springframework.stereotype.Component;
 
 import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @ViewScoped
@@ -70,18 +68,20 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
     }
 
     @SuppressWarnings("unchecked")
-    public void selectKind(UnitKind kind) {
+    public void selectKind(UnitKind kind) throws Exception {
         this.kind = kind;
         this.handler = (INewUnitHandler<T>) handlers.get(kind);
+        this.lazyDataModel = null;
         init();
     }
 
     @SuppressWarnings("unchecked")
-    public void selectKind(UnitKind kind, BaseLazyDataModel<T> context) {
+    public void selectKind(UnitKind kind, BaseLazyDataModel<T> context) throws Exception {
         this.kind = kind;
         this.handler = (INewUnitHandler<T>) handlers.get(kind);
-        init();
         this.lazyDataModel = context;
+        init();
+
     }
 
     // ==== méthodes utilitaires (ex-abstracts supprimées) ====
@@ -119,24 +119,21 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
     public void initForms() {
         detailsForm = handler.formLayout();
         formResponse = initializeFormResponse(detailsForm, unit);
-
     }
 
     protected void reset() {
         unit = null;
         formResponse = null;
-        lazyDataModel = null;
         setToUpdate = null;
     }
 
-    public void init() {
+    public void init() throws Exception {
         reset();
         unit = handler.newEmpty();
         unit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
         unit.setCreatedByInstitution(sessionSettingsBean.getSelectedInstitution());
+        handler.initFromContext(this);
         initForms();
-        handler.onInitFromContext(this); // hook optionnel
-
     }
 
     public void createAndOpen() { performCreate(true, true); }
@@ -151,6 +148,15 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
     public String getAutocompleteClass() {
         // Default implementation
         return handler.getAutocompleteClass();
+    }
+
+    /**
+     * Return the spatial unit options for spatial unit selection field
+     * @return The list of selectable spatial unit
+     */
+    @Override
+    public List<SpatialUnit> getSpatialUnitOptions() {
+        return handler.getSpatialUnitOptions(unit);
     }
 
     private void performCreate(boolean openAfter, boolean scrollToTop) {

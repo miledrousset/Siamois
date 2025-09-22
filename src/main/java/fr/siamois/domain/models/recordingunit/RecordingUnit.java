@@ -9,10 +9,7 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.actionunit.NullActionUnitIdentifierException;
 import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
-import fr.siamois.domain.models.form.customfield.CustomFieldDateTime;
-import fr.siamois.domain.models.form.customfield.CustomFieldSelectMultiplePerson;
-import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
-import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneSpatialUnit;
+import fr.siamois.domain.models.form.customfield.*;
 import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
@@ -194,6 +191,14 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
             .externalId("4286245")
             .build();
 
+    // Action unit
+    @Transient
+    @JsonIgnore
+    private static Concept actionUnitConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286244")
+            .build();
+
     @Transient
     @JsonIgnore
     private static CustomFieldSelectMultiplePerson authorsField = new CustomFieldSelectMultiplePerson.Builder()
@@ -243,6 +248,15 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
 
     @Transient
     @JsonIgnore
+    private static CustomFieldSelectOneActionUnit actionUnitField = new CustomFieldSelectOneActionUnit.Builder()
+            .label("recordingunit.field.actionUnit")
+            .isSystemField(true)
+            .valueBinding("actionUnit")
+            .concept(actionUnitConcept)
+            .build();
+
+    @Transient
+    @JsonIgnore
     public static final CustomForm NEW_UNIT_FORM = new CustomForm.Builder()
             .name("Details tab form")
             .description("Contains the main form")
@@ -252,6 +266,12 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
                             .isSystemPanel(true)
                             .addRow(
                                     new CustomRow.Builder()
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(true)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .isRequired(true)
+                                                    .field(actionUnitField)
+                                                    .build())
                                             .addColumn(new CustomCol.Builder()
                                                     .readOnly(false)
                                                     .className(COLUMN_CLASS_NAME)

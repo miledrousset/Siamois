@@ -1,5 +1,4 @@
 package fr.siamois.ui.bean.dialog.newunit.handler;
-
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.exceptions.EntityAlreadyExistsException;
 import fr.siamois.domain.models.form.customform.CustomForm;
@@ -8,6 +7,8 @@ import fr.siamois.domain.services.spatialunit.SpatialUnitService;
 import fr.siamois.ui.bean.dialog.newunit.GenericNewUnitDialogBean;
 import fr.siamois.ui.bean.dialog.newunit.UnitKind;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class SpatialUnitHandler implements INewUnitHandler<SpatialUnit> {
@@ -25,7 +26,12 @@ public class SpatialUnitHandler implements INewUnitHandler<SpatialUnit> {
     @Override public String successMessageCode() { return "common.entity.spatialUnits.updated"; }
     @Override public String viewUrlFor(Long id) { return "/spatial-unit/" + id; }
     @Override public CustomForm formLayout() { return SpatialUnit.NEW_UNIT_FORM; }
-    @Override public void onInitFromContext(GenericNewUnitDialogBean<?> bean) { /* parents/enfants si besoin */ }
+    @Override public void initFromContext(GenericNewUnitDialogBean<?> bean) { /* parents/enfants si besoin */ }
+
+    @Override
+    public List<SpatialUnit> getSpatialUnitOptions(SpatialUnit unit) {
+        return List.of();
+    }
 
     @Override
     public String getName(SpatialUnit unit) {

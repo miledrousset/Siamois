@@ -35,6 +35,7 @@
                     <ui:include src="/panel/spatialunit/tab/overviewTab.xhtml">
                         <ui:param name="panelModel" value="#{panelModel}"/>
                         <ui:param name="panelIndex" value="#{panelIndex}"/>
+                        <ui:param name="root" value="recordingUnitForm:recordingUnitTabs"/>
                     </ui:include>
 
                 </p:tab>
@@ -52,6 +53,7 @@
                         <ui:param name="spatialUnit" value="#{panelModel.unit}"/>
                         <ui:param name="panelModel" value="#{panelModel}"/>
                         <ui:param name="panelIndex" value="#{panelIndex}"/>
+                        <ui:param name="root" value="recordingUnitForm:recordingUnitTabs"/>
                     </ui:include>
 
                 </p:tab>
