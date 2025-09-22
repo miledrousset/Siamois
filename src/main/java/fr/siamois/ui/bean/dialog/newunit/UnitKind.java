@@ -15,6 +15,13 @@ public enum UnitKind {
             "bi bi-arrow-down-square",
             "action-unit-autocomplete"
     ),
+    SPECIMEN(
+            "/specimen/new",
+            "Nouveau prélèvement",
+            "specimen-panel",
+            "bi bi-box-2e",
+            "specimen-autocomplete"
+    ),
     RECORDING(
             "/recording-unit/new",
                     "Nouvelle unité d'enregistrement",
