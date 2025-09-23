@@ -22,13 +22,13 @@ public interface INewUnitHandler<T extends TraceableEntity> {
     List<SpatialUnit> getSpatialUnitOptions(T unit);
 
     // shared UI defaults (pull from UnitKind)
-    default String getResourceUri()     { return kind().resourceUri(); }
-    default String getTitle()           { return kind().title(); }
-    default String styleClassName()     { return kind().styleClass(); }
-    default String getIcon()            { return kind().icon(); }
-    default String getAutocompleteClass(){ return kind().autocompleteClass(); }
-    default CustomForm formLayout(){ return kind().formLayout(); }
-    default String viewUrlFor(Long id){ return kind().viewUrlFor(id); }
-    default String successMessageCode(){ return kind().successMessageCode(); }
+    default String getResourceUri()     { return kind().getConfig().resourceUri(); }
+    default String getTitle()           { return kind().getConfig().title(); }
+    default String styleClassName()     { return kind().getConfig().styleClass(); }
+    default String getIcon()            { return kind().getConfig().icon(); }
+    default String getAutocompleteClass(){ return kind().getConfig().autocompleteClass(); }
+    default CustomForm formLayout(){ return kind().getConfig().customForm(); }
+    default String viewUrlFor(Long id){ return kind().getConfig().urlPrefix() + id; }
+    default String successMessageCode(){ return kind().getConfig().successMessageCode(); }
 }
 
