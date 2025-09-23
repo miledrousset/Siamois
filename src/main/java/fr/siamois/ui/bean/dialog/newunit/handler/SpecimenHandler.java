@@ -54,7 +54,7 @@ public class SpecimenHandler implements INewUnitHandler<Specimen> {
 
     @Override
     public String successMessageCode() {
-        return "common.entity.recordingUnits.updated";
+        return "common.entity.specimen.updated";
     }
 
     @Override
