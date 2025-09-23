@@ -40,6 +40,8 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
     // The sets to update after creation
     protected BaseLazyDataModel<T> lazyDataModel;
     protected transient Set<T> setToUpdate;
+    // Context of creation (parent)
+    protected TraceableEntity parent;
 
     protected final LangBean langBean;
     protected final FlowBean flowBean;
@@ -80,8 +82,18 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
         this.kind = kind;
         this.handler = (INewUnitHandler<T>) handlers.get(kind);
         this.lazyDataModel = context;
+        this.setToUpdate = null;
+        this.parent = null;
         init();
+    }
 
+    public void selectKind(UnitKind kind, Set<T> context, TraceableEntity parent) throws Exception {
+        this.kind = kind;
+        this.handler = (INewUnitHandler<T>) handlers.get(kind);
+        this.lazyDataModel = null;
+        this.setToUpdate = context;
+        this.parent = parent;
+        init();
     }
 
     // ==== méthodes utilitaires (ex-abstracts supprimées) ====
