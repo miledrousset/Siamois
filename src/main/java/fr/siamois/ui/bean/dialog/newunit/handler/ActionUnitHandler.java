@@ -25,9 +25,6 @@ public class ActionUnitHandler implements INewUnitHandler<ActionUnit> {
     @Override public ActionUnit newEmpty() { return new ActionUnit(); }
     @Override public ActionUnit save(UserInfo u, ActionUnit unit) throws EntityAlreadyExistsException { return actionUnitService.save(u, unit, unit.getType()); }
     @Override public String dialogWidgetVar() { return "newUnitDiag"; }
-    @Override public String successMessageCode() { return "common.entity.spatialUnits.updated"; }
-    @Override public String viewUrlFor(Long id) { return "/action-unit/" + id; }
-    @Override public CustomForm formLayout() { return ActionUnit.NEW_UNIT_FORM; }
     @Override public void initFromContext(GenericNewUnitDialogBean<?> bean) { /* parents/enfants si besoin */ }
 
     @Override

@@ -52,20 +52,6 @@ public class SpecimenHandler implements INewUnitHandler<Specimen> {
         return "newUnitDiag";
     }
 
-    @Override
-    public String successMessageCode() {
-        return "common.entity.specimen.updated";
-    }
-
-    @Override
-    public String viewUrlFor(Long id) {
-        return "/specimen/" + id;
-    }
-
-    @Override
-    public CustomForm formLayout() {
-        return Specimen.NEW_UNIT_FORM;
-    }
 
     @Override
     public void initFromContext(GenericNewUnitDialogBean<?> bean) throws CannotInitializeNewUnitDialogException {

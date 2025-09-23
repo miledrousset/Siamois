@@ -17,9 +17,6 @@ public interface INewUnitHandler<T extends TraceableEntity> {
     T newEmpty();
     T save(UserInfo user, T unit) throws EntityAlreadyExistsException;
     String dialogWidgetVar();
-    String successMessageCode();              // ex. "common.entity.spatialUnits.updated"
-    String viewUrlFor(Long id);               // ex. "/spatial-unit/%d" ou "/action-unit/%d"
-    CustomForm formLayout();            // ton objet/form layout (SpatialUnit.NEW_UNIT_FORM, etc.)
     void initFromContext(GenericNewUnitDialogBean<?> bean) throws CannotInitializeNewUnitDialogException; // optionnel pour pré-remplir (parents/enfants…)
     String getName(T unit); // Get unit name
     List<SpatialUnit> getSpatialUnitOptions(T unit);
@@ -30,5 +27,8 @@ public interface INewUnitHandler<T extends TraceableEntity> {
     default String styleClassName()     { return kind().styleClass(); }
     default String getIcon()            { return kind().icon(); }
     default String getAutocompleteClass(){ return kind().autocompleteClass(); }
+    default CustomForm formLayout(){ return kind().formLayout(); }
+    default String viewUrlFor(Long id){ return kind().viewUrlFor(id); }
+    default String successMessageCode(){ return kind().successMessageCode(); }
 }
 

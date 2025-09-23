@@ -23,9 +23,7 @@ public class SpatialUnitHandler implements INewUnitHandler<SpatialUnit> {
     @Override public SpatialUnit newEmpty() { return new SpatialUnit(); }
     @Override public SpatialUnit save(UserInfo u, SpatialUnit unit) throws EntityAlreadyExistsException { return spatialUnitService.save(u, unit); }
     @Override public String dialogWidgetVar() { return "newUnitDiag"; }
-    @Override public String successMessageCode() { return "common.entity.spatialUnits.updated"; }
-    @Override public String viewUrlFor(Long id) { return "/spatial-unit/" + id; }
-    @Override public CustomForm formLayout() { return SpatialUnit.NEW_UNIT_FORM; }
+
     @Override public void initFromContext(GenericNewUnitDialogBean<?> bean) { /* parents/enfants si besoin */ }
 
     @Override
