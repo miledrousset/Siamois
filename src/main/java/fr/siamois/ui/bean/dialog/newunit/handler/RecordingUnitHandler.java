@@ -3,7 +3,6 @@ package fr.siamois.ui.bean.dialog.newunit.handler;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.exceptions.EntityAlreadyExistsException;
-import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -50,9 +49,6 @@ public class RecordingUnitHandler implements INewUnitHandler<RecordingUnit> {
     @Override public RecordingUnit save(UserInfo u, RecordingUnit unit) throws EntityAlreadyExistsException {
         return recordingUnitService.save(unit, unit.getType(), null, null, null); }
     @Override public String dialogWidgetVar() { return "newUnitDiag"; }
-    @Override public String successMessageCode() { return "common.entity.recordingUnits.updated"; }
-    @Override public String viewUrlFor(Long id) { return "/recording-unit/" + id; }
-    @Override public CustomForm formLayout() { return RecordingUnit.NEW_UNIT_FORM; }
     @Override public void initFromContext(GenericNewUnitDialogBean<?> bean) throws CannotInitializeNewUnitDialogException {
         RecordingUnit unit = (RecordingUnit) bean.getUnit();
         ActionUnit actionUnit ;

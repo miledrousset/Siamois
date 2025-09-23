@@ -3,7 +3,6 @@ package fr.siamois.ui.bean.dialog.newunit.handler;
 import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.exceptions.EntityAlreadyExistsException;
-import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.ui.bean.dialog.newunit.GenericNewUnitDialogBean;
@@ -25,9 +24,6 @@ public class ActionUnitHandler implements INewUnitHandler<ActionUnit> {
     @Override public ActionUnit newEmpty() { return new ActionUnit(); }
     @Override public ActionUnit save(UserInfo u, ActionUnit unit) throws EntityAlreadyExistsException { return actionUnitService.save(u, unit, unit.getType()); }
     @Override public String dialogWidgetVar() { return "newUnitDiag"; }
-    @Override public String successMessageCode() { return "common.entity.spatialUnits.updated"; }
-    @Override public String viewUrlFor(Long id) { return "/action-unit/" + id; }
-    @Override public CustomForm formLayout() { return ActionUnit.NEW_UNIT_FORM; }
     @Override public void initFromContext(GenericNewUnitDialogBean<?> bean) { /* parents/enfants si besoin */ }
 
     @Override
