@@ -15,6 +15,7 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
 import fr.siamois.domain.services.authorization.PermissionService;
 import fr.siamois.domain.services.authorization.PermissionServiceImpl;
+import fr.siamois.domain.services.authorization.writeverifier.ActionUnitWriteVerifier;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
@@ -25,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -42,13 +44,15 @@ public class ActionUnitService implements ArkEntityService {
     private final ConceptService conceptService;
     private final ActionCodeRepository actionCodeRepository;
     private final PermissionServiceImpl permissionService;
+    private final ActionUnitWriteVerifier actionUnitWriteVerifier;
 
     public ActionUnitService(ActionUnitRepository actionUnitRepository,
-                             ConceptService conceptService, ActionCodeRepository actionCodeRepository, PermissionServiceImpl permissionService) {
+                             ConceptService conceptService, ActionCodeRepository actionCodeRepository, PermissionServiceImpl permissionService, ActionUnitWriteVerifier actionUnitWriteVerifier) {
         this.actionUnitRepository = actionUnitRepository;
         this.conceptService = conceptService;
         this.actionCodeRepository = actionCodeRepository;
         this.permissionService = permissionService;
+        this.actionUnitWriteVerifier = actionUnitWriteVerifier;
     }
 
     /**
@@ -342,7 +346,7 @@ public class ActionUnitService implements ArkEntityService {
     }
 
     /**
-     * Verify if the user has the permission to create spatial units
+     * Verify if the user has the permission to create action units
      *
      * @param user The user to check the permission on
      * @return True if the user has sufficient permissions
@@ -350,5 +354,35 @@ public class ActionUnitService implements ArkEntityService {
     public boolean hasCreatePermission(UserInfo user) {
         return permissionService.isInstitutionManager(user)
                 || permissionService.isActionManager(user);
+    }
+
+    /**
+     * Verify if the action is still active
+     *
+     * @param actionUnit The action
+     * @return True if the action is open
+     */
+    public boolean isActionUnitStillOngoing(ActionUnit actionUnit) {
+        OffsetDateTime beginDate = actionUnit.getBeginDate();
+        OffsetDateTime endDate = actionUnit.getEndDate();
+
+        // If either date is missing, treat as invalid
+        if (beginDate == null || endDate == null) {
+            return false;
+        }
+
+        OffsetDateTime now = OffsetDateTime.now();
+        return !now.isBefore(beginDate) && !now.isAfter(endDate);
+    }
+
+    /**
+     * Verify if the user has the permission to create recording units in the context of an action unit
+     *
+     * @param user The user to check the permission on
+     * @return True if the user has sufficient permissions
+     */
+    public boolean canCreateRecordingUnit(UserInfo user, ActionUnit action) {
+        return (permissionService.isInstitutionManager(user) || permissionService.isActionManager(user)) ||
+                (actionUnitWriteVerifier.hasSpecificWritePermission(user, action) && isActionUnitStillOngoing(action));
     }
 }

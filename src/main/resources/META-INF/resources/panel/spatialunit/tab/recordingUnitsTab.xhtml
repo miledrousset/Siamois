@@ -23,7 +23,7 @@
                                  actionListener="#{genericNewUnitDialogBean.selectKind('RECORDING',panelModel.recordingUnitListLazyDataModel)}"
                                  oncomplete="PF('newUnitDiag').show();"
                                  update="newUnitForm"
-                                 rendered="#{flowBean.readWriteMode == 'WRITE'}"
+                                 rendered="#{actionUnitBean.showCreateRecordingUnitButton(panelModel.unit)}"
                                  style="margin-right: .5rem">
                 </p:commandButton>
             </f:facet>
