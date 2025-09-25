@@ -5,6 +5,7 @@ import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
+import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.EntityAlreadyExistsException;
 import fr.siamois.domain.models.exceptions.actionunit.*;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
@@ -13,12 +14,14 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
+import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.authorization.PermissionService;
 import fr.siamois.domain.services.authorization.PermissionServiceImpl;
 import fr.siamois.domain.services.authorization.writeverifier.ActionUnitWriteVerifier;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
+import fr.siamois.infrastructure.database.repositories.team.TeamMemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
@@ -44,15 +47,19 @@ public class ActionUnitService implements ArkEntityService {
     private final ConceptService conceptService;
     private final ActionCodeRepository actionCodeRepository;
     private final PermissionServiceImpl permissionService;
-    private final ActionUnitWriteVerifier actionUnitWriteVerifier;
+    private final TeamMemberRepository teamMemberRepository;
+    private final InstitutionService institutionService;
 
     public ActionUnitService(ActionUnitRepository actionUnitRepository,
-                             ConceptService conceptService, ActionCodeRepository actionCodeRepository, PermissionServiceImpl permissionService, ActionUnitWriteVerifier actionUnitWriteVerifier) {
+                             ConceptService conceptService, ActionCodeRepository actionCodeRepository,
+                             PermissionServiceImpl permissionService,
+                             TeamMemberRepository teamMemberRepository, InstitutionService institutionService) {
         this.actionUnitRepository = actionUnitRepository;
         this.conceptService = conceptService;
         this.actionCodeRepository = actionCodeRepository;
         this.permissionService = permissionService;
-        this.actionUnitWriteVerifier = actionUnitWriteVerifier;
+        this.teamMemberRepository = teamMemberRepository;
+        this.institutionService = institutionService;
     }
 
     /**
@@ -346,7 +353,7 @@ public class ActionUnitService implements ArkEntityService {
     }
 
     /**
-     * Verify if the user has the permission to create action units
+     * Verify if the user has the permission to create action units in the current institution
      *
      * @param user The user to check the permission on
      * @return True if the user has sufficient permissions
@@ -382,7 +389,22 @@ public class ActionUnitService implements ArkEntityService {
      * @return True if the user has sufficient permissions
      */
     public boolean canCreateRecordingUnit(UserInfo user, ActionUnit action) {
-        return (permissionService.isInstitutionManager(user) || permissionService.isActionManager(user)) ||
-                (actionUnitWriteVerifier.hasSpecificWritePermission(user, action) && isActionUnitStillOngoing(action));
+        // Authorized if user is the organisation manager, action unit manager
+        // or action team member while action is still open
+        return (institutionService.isManagerOf(action.getCreatedByInstitution(),user.getUser()) || isManagerOf(action, user.getUser())) ||
+                (teamMemberRepository.existsByActionUnitAndPerson(action, user.getUser()) && isActionUnitStillOngoing(action));
     }
+
+    /**
+     * Checks if a person is a manager of a given action
+     *
+     * @param action the action to check
+     * @param person      the person to check
+     * @return true if the person is a manager of the institution, false otherwise
+     */
+    public boolean isManagerOf(ActionUnit action, Person person) {
+        // For now only the author is the manager, but we might need to extend it.
+        return action.getAuthor() == person;
+    }
+
 }

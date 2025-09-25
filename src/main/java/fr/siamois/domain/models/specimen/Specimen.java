@@ -13,6 +13,7 @@ import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -73,8 +74,7 @@ public class Specimen extends SpecimenParent implements ArkEntity {
             inverseJoinColumns = @JoinColumn(name = "fk_person_id"))
     private List<Person> collectors;
 
-    @ManyToMany(mappedBy = "specimens")
-    private Set<SpecimenGroup> groups = new HashSet<>();
+
 
     @FieldCode
     public static final String CATEGORY_FIELD = "SIAS.CATEGORY"; // ceramique, ...

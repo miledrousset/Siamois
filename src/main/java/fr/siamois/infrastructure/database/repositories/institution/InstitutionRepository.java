@@ -44,7 +44,7 @@ public interface InstitutionRepository extends CrudRepository<Institution, Long>
                     "FROM institution_manager im " +
                     "WHERE im.fk_person_id = :personId AND im.fk_institution_id = :institutionId"
     )
-    boolean personIsInstitutionManager(Long institutionId, Long personId);
+    boolean personIsInstitutionManagerOf(Long institutionId, Long personId);
 
 
 

@@ -21,21 +21,21 @@ public class RecordingUnitController {
         this.navBean = navBean;
     }
 
-    @GetMapping("/recordingunit")
+    @GetMapping("/recording-unit")
     public String toRecordingUnitList() {
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
         flowBean.addRecordingUnitListPanel(null);
         return FORWARD_FLOW_XHTML;
     }
 
-    @GetMapping("/recordingunit/{id}")
+    @GetMapping("/recording-unit/{id}")
     public String toRecordingUnit(@PathVariable Long id) {
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);
         flowBean.addRecordingUnitPanel(id);
         return FORWARD_FLOW_XHTML;
     }
 
-    @GetMapping("/actionunit/{id}/recordingunit/new")
+    @GetMapping("/action-unit/{id}/recording-unit/new")
     public String newRecordingUnit(@PathVariable Long id) {
         // todo : open dialog
         navBean.setApplicationMode(NavBean.ApplicationMode.SIAMOIS);

@@ -15,6 +15,7 @@ import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
+import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -90,6 +91,8 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
             inverseJoinColumns = @JoinColumn(name = "fk_person_id"))
     private List<Person> excavators = new ArrayList<>();
 
+    @OneToMany(mappedBy = "recordingUnit")
+    private Set<Specimen> specimenList;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(
