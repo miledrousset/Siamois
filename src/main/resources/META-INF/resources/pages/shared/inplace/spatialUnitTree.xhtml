@@ -51,16 +51,16 @@
                              scrollable="true"
                              scrollHeight="400px"
                              paginator="true"
-                             var="spatialUnit"
+                             var="su"
                              styleClass="#{cc.attrs.answer.hasBeenModified ? 'track-change sia-modified-field': 'track-change'}"
                 >
-                    <p:column headerText="Nom" filterBy="#{spatialUnit.name}"
+                    <p:column headerText="Nom" filterBy="#{su.name}"
                               filterMatchMode="contains">
 
-                            <p:outputLabel value="#{spatialUnit.getName()}" style="margin-right:1em"/>
+                            <p:outputLabel value="#{su.getName()}" style="margin-right:1em"/>
                             <p:commandButton value="Ajouter"
-                                             rendered="#{!cc.attrs.panelModel.treeStates.get(cc.attrs.answer).selection.contains(spatialUnit)}"
-                                             actionListener="#{cc.attrs.panelModel.addSUToSelection(cc.attrs.answer,spatialUnit)}"
+                                             rendered="#{!cc.attrs.panelModel.treeStates.get(cc.attrs.answer).selection.contains(su)}"
+                                             actionListener="#{cc.attrs.panelModel.addSUToSelection(cc.attrs.answer,su)}"
                                              update="#{cc.attrs.updateTargetsOnBlur} selectedSpatialUnitPanel"
                                              immediate="true"/>
 
