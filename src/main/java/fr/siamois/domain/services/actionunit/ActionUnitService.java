@@ -30,10 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Service for managing Action Units.
@@ -404,7 +401,7 @@ public class ActionUnitService implements ArkEntityService {
      */
     public boolean isManagerOf(ActionUnit action, Person person) {
         // For now only the author is the manager, but we might need to extend it.
-        return action.getAuthor() == person;
+        return Objects.equals(action.getAuthor().getId(), person.getId());
     }
 
 }
