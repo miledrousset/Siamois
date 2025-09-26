@@ -6,12 +6,10 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @MappedSuperclass
 public abstract class ActionUnitParent extends TraceableEntity {
@@ -60,9 +58,18 @@ public abstract class ActionUnitParent extends TraceableEntity {
     @Column(name="min_recording_unit_code")
     protected Integer minRecordingUnitCode;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ActionUnitParent that = (ActionUnitParent) o;
+        return Objects.equals(fullIdentifier, that.fullIdentifier);
+    }
 
-
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(fullIdentifier);
+    }
 
 
 }

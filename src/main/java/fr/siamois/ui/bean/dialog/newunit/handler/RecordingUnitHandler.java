@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class RecordingUnitHandler implements INewUnitHandler<RecordingUnit> {
@@ -49,16 +50,21 @@ public class RecordingUnitHandler implements INewUnitHandler<RecordingUnit> {
     @Override public RecordingUnit save(UserInfo u, RecordingUnit unit) throws EntityAlreadyExistsException {
         return recordingUnitService.save(unit, unit.getType(), null, null, null); }
     @Override public String dialogWidgetVar() { return "newUnitDiag"; }
+
     @Override public void initFromContext(GenericNewUnitDialogBean<?> bean) throws CannotInitializeNewUnitDialogException {
         RecordingUnit unit = (RecordingUnit) bean.getUnit();
         ActionUnit actionUnit ;
         if (bean.getLazyDataModel() instanceof RecordingUnitInActionUnitLazyDataModel typedModel) {
             actionUnit = actionUnitService.findById(typedModel.getActionUnit().getId());
-            unit.setCreatedByInstitution(actionUnit.getCreatedByInstitution());
-            unit.setActionUnit(actionUnit);
-        } else {
+        }
+        else if(bean.getParent() instanceof ActionUnit) {
+            actionUnit = (ActionUnit) bean.getParent();
+        }
+        else {
             throw new CannotInitializeNewUnitDialogException("Recording unit cannot be created without a context");
         }
+        unit.setCreatedByInstitution(actionUnit.getCreatedByInstitution());
+        unit.setActionUnit(actionUnit);
         unit.setExcavators(List.of(sessionSettingsBean.getAuthenticatedUser()));
         unit.setAuthors(List.of(sessionSettingsBean.getAuthenticatedUser()));
         unit.setStartDate(OffsetDateTime.now());

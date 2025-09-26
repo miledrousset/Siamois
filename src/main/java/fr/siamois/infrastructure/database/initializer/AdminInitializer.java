@@ -133,7 +133,7 @@ public class AdminInitializer implements DatabaseInitializer {
 
     protected boolean processExistingInstitution() {
         Institution institution;
-        Optional<Institution> optInstitution = institutionRepository.findInstitutionByIdentifier("SIAMOIS");
+        Optional<Institution> optInstitution = institutionRepository.findInstitutionByIdentifier("siamois");
         if (optInstitution.isPresent()) {
             institution = optInstitution.get();
             if (createdAdminIsNotOwnerOf(institution.getManagers())) {

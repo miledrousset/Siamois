@@ -23,6 +23,9 @@ public class ActionUnitWriteVerifier implements WritePermissionVerifier {
     @Override
     public boolean hasSpecificWritePermission(UserInfo userInfo, TraceableEntity resource) {
         ActionUnit actionUnit = (ActionUnit) resource;
+        /* FIXME: Being a team member does not grant write permission on the action unit. To be discussed w/ Julien about
+        what he wanted to achive here */
         return teamMemberRepository.existsByActionUnitAndPerson(actionUnit, userInfo.getUser());
     }
+
 }

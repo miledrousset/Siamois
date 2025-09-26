@@ -239,6 +239,22 @@
                 <cellbody:cellBodyThreeItems set="#{item.children}"/>
             </p:column>
 
+            <!-- Prelevements -->
+            <p:column responsivePriority="3">
+                <f:facet name="header">
+                    <cellheader:withIcon icon="bi bi-box-2"
+                                         text="#{langBean.msg('common.entity.specimen')}"/>
+                </f:facet>
+                <cellbody:cellBodyThreeItems set="#{item.specimenList}" displayAttribute="fullIdentifier" commandLinkStyleClass="sia-recording-unit-command-link"/>
+                <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
+                                 actionListener="#{genericNewUnitDialogBean.selectKind('SPECIMEN',item.specimenList, item)}"
+                                 oncomplete="PF('newUnitDiag').show();"
+                                 rendered="#{specimenBean.showCreateSpecimenButton(item)}"
+                                 update="newUnitForm"
+                                 style="margin-right: .5rem">
+                </p:commandButton>
+            </p:column>
+
 
             <!-- Action toolbar-->
             <p:column responsivePriority="1" exportable="false" toggleable="false">

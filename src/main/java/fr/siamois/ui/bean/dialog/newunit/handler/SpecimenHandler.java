@@ -1,6 +1,7 @@
 package fr.siamois.ui.bean.dialog.newunit.handler;
 
 import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.exceptions.EntityAlreadyExistsException;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
@@ -11,8 +12,10 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.newunit.GenericNewUnitDialogBean;
 import fr.siamois.ui.bean.dialog.newunit.UnitKind;
 import fr.siamois.ui.exceptions.CannotInitializeNewUnitDialogException;
+import fr.siamois.ui.lazydatamodel.RecordingUnitInActionUnitLazyDataModel;
 import fr.siamois.ui.lazydatamodel.SpecimenInRecordingUnitLazyDataModel;
 import org.springframework.stereotype.Component;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -60,10 +63,12 @@ public class SpecimenHandler implements INewUnitHandler<Specimen> {
         RecordingUnit ru;
         if (bean.getLazyDataModel() instanceof SpecimenInRecordingUnitLazyDataModel typedModel) {
             ru = typedModel.getRecordingUnit();
-            unit.setRecordingUnit(ru);
+        } else if (bean.getParent() instanceof RecordingUnit) {
+            ru = (RecordingUnit) bean.getParent();
         } else {
             throw new CannotInitializeNewUnitDialogException("Specimen cannot be created without a context");
         }
+        unit.setRecordingUnit(ru);
         unit.setCreatedByInstitution(sessionSettingsBean.getSelectedInstitution());
         unit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
         unit.setAuthors(List.of(sessionSettingsBean.getAuthenticatedUser()));

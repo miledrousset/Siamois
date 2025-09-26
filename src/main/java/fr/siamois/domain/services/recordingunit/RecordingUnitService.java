@@ -1,6 +1,8 @@
 package fr.siamois.domain.services.recordingunit;
 
 import fr.siamois.domain.models.ArkEntity;
+import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.exceptions.recordingunit.MaxRecordingUnitIdentifierReached;
@@ -10,10 +12,16 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
+import fr.siamois.domain.services.InstitutionService;
+import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.authorization.PermissionServiceImpl;
+import fr.siamois.domain.services.authorization.writeverifier.ActionUnitWriteVerifier;
+import fr.siamois.domain.services.authorization.writeverifier.RecordingUnitWriteVerifier;
 import fr.siamois.domain.services.form.CustomFormResponseService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.recordingunit.RecordingUnitRepository;
+import fr.siamois.infrastructure.database.repositories.team.TeamMemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
@@ -37,16 +45,22 @@ public class RecordingUnitService implements ArkEntityService {
     private final ConceptService conceptService;
     private final CustomFormResponseService customFormResponseService;
     private final PersonRepository personRepository;
+    private final InstitutionService institutionService;
+    private final ActionUnitService actionUnitService;
+    private final TeamMemberRepository teamMemberRepository;
 
 
     public RecordingUnitService(RecordingUnitRepository recordingUnitRepository,
                                 ConceptService conceptService,
                                 CustomFormResponseService customFormResponseService,
-                                PersonRepository personRepository) {
+                                PersonRepository personRepository, InstitutionService institutionService, ActionUnitService actionUnitService, TeamMemberRepository teamMemberRepository) {
         this.recordingUnitRepository = recordingUnitRepository;
         this.conceptService = conceptService;
         this.customFormResponseService = customFormResponseService;
         this.personRepository = personRepository;
+        this.institutionService = institutionService;
+        this.actionUnitService = actionUnitService;
+        this.teamMemberRepository = teamMemberRepository;
     }
 
     /**
@@ -126,13 +140,13 @@ public class RecordingUnitService implements ArkEntityService {
             managedRecordingUnit.setSpatialUnit(recordingUnit.getSpatialUnit());
 
             // many to many (need managed instances)
-            managedRecordingUnit.setAuthors((List<Person>) personRepository.findAllById(
+            managedRecordingUnit.setAuthors(personRepository.findAllById(
                             recordingUnit.getAuthors().stream()
                                     .map(Person::getId)
                                     .toList()
                     )
             );
-            managedRecordingUnit.setExcavators((List<Person>) personRepository.findAllById(
+            managedRecordingUnit.setExcavators(personRepository.findAllById(
                             recordingUnit.getExcavators().stream()
                                     .map(Person::getId)
                                     .toList()
@@ -288,6 +302,20 @@ public class RecordingUnitService implements ArkEntityService {
         });
 
         return res;
+    }
+
+    /**
+     * Verify if the user has the permission to create specimen in the context of a recording unit
+     *
+     * @param user The user to check the permission on
+     * @param ru   The context
+     * @return True if the user has sufficient permissions
+     */
+    public boolean canCreateSpecimen(UserInfo user, RecordingUnit ru) {
+        ActionUnit action = ru.getActionUnit();
+        return institutionService.isManagerOf(action.getCreatedByInstitution(),user.getUser()) ||
+                actionUnitService.isManagerOf(action, user.getUser()) ||
+                (teamMemberRepository.existsByActionUnitAndPerson(action, user.getUser()) && actionUnitService.isActionUnitStillOngoing(action));
     }
 
 }

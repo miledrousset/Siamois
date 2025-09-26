@@ -24,7 +24,7 @@
                                  actionListener="#{genericNewUnitDialogBean.selectKind('SPECIMEN',panelModel.specimenListLazyDataModel)}"
                                  oncomplete="PF('newUnitDiag').show();"
                                  update="newUnitForm"
-                                 rendered="#{flowBean.readWriteMode == 'WRITE'}"
+                                 rendered="#{specimenBean.showCreateSpecimenButton(panelModel.unit)}"
                                  style="margin-right: .5rem">
                 </p:commandButton>
             </f:facet>

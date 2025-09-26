@@ -220,6 +220,14 @@
                     </f:facet>
                     <cellbody:cellBodyThreeItems set="#{item.recordingUnitList}" displayAttribute="fullIdentifier"
                                                  commandLinkStyleClass="sia-recording-unit-command-link"/>
+                    <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
+                                     id="newRecordingUnitButton"
+                                     actionListener="#{genericNewUnitDialogBean.selectKind('RECORDING',item.recordingUnitList,item)}"
+                                     oncomplete="PF('newUnitDiag').show();"
+                                     update="newUnitForm"
+                                     rendered="#{actionUnitBean.showCreateRecordingUnitButton(item)}"
+                                     style="margin-right: .5rem">
+                    </p:commandButton>
 
                 </p:column>
 

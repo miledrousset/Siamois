@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -211,7 +210,7 @@ public class InstitutionService {
      * @return true if the person is a manager of the institution, false otherwise
      */
     public boolean isManagerOf(Institution institution, Person person) {
-        return institution.getManagers().contains(person);
+        return institutionRepository.personIsInstitutionManagerOf(institution.getId(), person.getId());
     }
 
     /**
@@ -268,7 +267,7 @@ public class InstitutionService {
      * @return true if the person is an institution manager, false otherwise
      */
     public boolean personIsInstitutionManager(Person person, Institution institution) {
-        return institutionRepository.personIsInstitutionManager(institution.getId(), person.getId());
+        return institutionRepository.personIsInstitutionManagerOf(institution.getId(), person.getId());
     }
 
     /**

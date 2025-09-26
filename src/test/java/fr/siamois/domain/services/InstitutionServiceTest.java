@@ -199,6 +199,8 @@ class InstitutionServiceTest {
         institution.setName("institution");
         institution.getManagers().add(person);
 
+        when(institutionRepository.personIsInstitutionManagerOf(any(Long.class), any(Long.class))).thenReturn(true);
+
         boolean result = institutionService.isManagerOf(institution, person);
 
         assertThat(result).isTrue();
@@ -399,7 +401,7 @@ class InstitutionServiceTest {
         Person person = new Person();
         person.setId(1L);
 
-        when(institutionRepository.personIsInstitutionManager(institution.getId(), person.getId())).thenReturn(true);
+        when(institutionRepository.personIsInstitutionManagerOf(institution.getId(), person.getId())).thenReturn(true);
 
         boolean result = institutionService.personIsInstitutionManager(person, institution);
 
@@ -414,7 +416,7 @@ class InstitutionServiceTest {
         Person person = new Person();
         person.setId(1L);
 
-        when(institutionRepository.personIsInstitutionManager(institution.getId(), person.getId())).thenReturn(false);
+        when(institutionRepository.personIsInstitutionManagerOf(institution.getId(), person.getId())).thenReturn(false);
 
         boolean result = institutionService.personIsInstitutionManager(person, institution);
 
@@ -460,7 +462,7 @@ class InstitutionServiceTest {
         Person person = new Person();
         person.setId(1L);
 
-        when(institutionRepository.personIsInstitutionManager(institution.getId(), person.getId())).thenReturn(true);
+        when(institutionRepository.personIsInstitutionManagerOf(institution.getId(), person.getId())).thenReturn(true);
 
         boolean result = institutionService.personIsInstitutionManagerOrActionManager(person, institution);
 
@@ -475,7 +477,7 @@ class InstitutionServiceTest {
         Person person = new Person();
         person.setId(1L);
 
-        when(institutionRepository.personIsInstitutionManager(institution.getId(), person.getId())).thenReturn(false);
+        when(institutionRepository.personIsInstitutionManagerOf(institution.getId(), person.getId())).thenReturn(false);
         when(actionManagerRepository.findByPersonAndInstitution(person, institution))
                 .thenReturn(Optional.of(new ActionManagerRelation(institution, person)));
 
@@ -492,7 +494,7 @@ class InstitutionServiceTest {
         Person person = new Person();
         person.setId(1L);
 
-        when(institutionRepository.personIsInstitutionManager(institution.getId(), person.getId())).thenReturn(false);
+        when(institutionRepository.personIsInstitutionManagerOf(institution.getId(), person.getId())).thenReturn(false);
         when(actionManagerRepository.findByPersonAndInstitution(person, institution)).thenReturn(Optional.empty());
 
         boolean result = institutionService.personIsInstitutionManagerOrActionManager(person, institution);
