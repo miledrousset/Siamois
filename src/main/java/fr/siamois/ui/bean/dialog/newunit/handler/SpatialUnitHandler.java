@@ -23,7 +23,16 @@ public class SpatialUnitHandler implements INewUnitHandler<SpatialUnit> {
     @Override public SpatialUnit save(UserInfo u, SpatialUnit unit) throws EntityAlreadyExistsException { return spatialUnitService.save(u, unit); }
     @Override public String dialogWidgetVar() { return "newUnitDiag"; }
 
-    @Override public void initFromContext(GenericNewUnitDialogBean<?> bean) { /* parents/enfants si besoin */ }
+    @Override public void initFromContext(GenericNewUnitDialogBean<?> bean) {
+        SpatialUnit unit = (SpatialUnit) bean.getUnit();
+        if(bean.getMultiHierarchyParent() != null) {
+            unit.getParents().add((SpatialUnit) bean.getMultiHierarchyParent());
+        }
+        if(bean.getMultiHierarchyChild() != null) {
+            unit.getChildren().add((SpatialUnit) bean.getMultiHierarchyChild());
+        }
+    }
+
 
     @Override
     public List<SpatialUnit> getSpatialUnitOptions(SpatialUnit unit) {

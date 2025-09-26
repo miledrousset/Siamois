@@ -7,8 +7,11 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.ui.bean.dialog.newunit.GenericNewUnitDialogBean;
 import fr.siamois.ui.bean.dialog.newunit.UnitKind;
+import fr.siamois.ui.exceptions.CannotInitializeNewUnitDialogException;
+import fr.siamois.ui.lazydatamodel.ActionUnitInSpatialUnitLazyDataModel;
 import org.springframework.stereotype.Component;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Component
@@ -24,7 +27,21 @@ public class ActionUnitHandler implements INewUnitHandler<ActionUnit> {
     @Override public ActionUnit newEmpty() { return new ActionUnit(); }
     @Override public ActionUnit save(UserInfo u, ActionUnit unit) throws EntityAlreadyExistsException { return actionUnitService.save(u, unit, unit.getType()); }
     @Override public String dialogWidgetVar() { return "newUnitDiag"; }
-    @Override public void initFromContext(GenericNewUnitDialogBean<?> bean) { /* parents/enfants si besoin */ }
+
+    @Override public void initFromContext(GenericNewUnitDialogBean<?> bean) throws CannotInitializeNewUnitDialogException {
+        ActionUnit unit = (ActionUnit) bean.getUnit();
+        SpatialUnit spatialUnit ;
+        if (bean.getLazyDataModel() instanceof ActionUnitInSpatialUnitLazyDataModel typedModel) {
+            spatialUnit = typedModel.getSpatialUnit();
+            unit.getSpatialContext().add(spatialUnit);
+        }
+        else if(bean.getParent() instanceof SpatialUnit) {
+            spatialUnit = (SpatialUnit) bean.getParent();
+            unit.getSpatialContext().add(spatialUnit);
+        }
+        unit.setBeginDate(OffsetDateTime.now());
+    }
+
 
     @Override
     public List<SpatialUnit> getSpatialUnitOptions(ActionUnit unit) {

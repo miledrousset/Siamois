@@ -43,6 +43,9 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
     protected transient Set<T> setToUpdate;
     // Context of creation (parent)
     protected TraceableEntity parent;
+    // Multi hierarchy parent/children
+    protected T multiHierarchyParent;
+    protected T multiHierarchyChild;
 
     protected final LangBean langBean;
     protected final FlowBean flowBean;
@@ -75,6 +78,8 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
         this.kind = kind;
         this.handler = (INewUnitHandler<T>) handlers.get(kind);
         this.lazyDataModel = null;
+        this.multiHierarchyChild = null;
+        this.multiHierarchyParent = null;
         init();
     }
 
@@ -85,6 +90,8 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
         this.lazyDataModel = context;
         this.setToUpdate = null;
         this.parent = null;
+        this.multiHierarchyChild = null;
+        this.multiHierarchyParent = null;
         init();
     }
 
@@ -94,6 +101,19 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
         this.lazyDataModel = null;
         this.setToUpdate = context;
         this.parent = parent;
+        this.multiHierarchyChild = null;
+        this.multiHierarchyParent = null;
+        init();
+    }
+
+    public void selectKind(UnitKind kind, Set<T> context, T parent, T child) throws CannotInitializeNewUnitDialogException {
+        this.kind = kind;
+        this.handler = (INewUnitHandler<T>) handlers.get(kind);
+        this.lazyDataModel = null;
+        this.setToUpdate = context;
+        this.parent = null;
+        this.multiHierarchyChild = child;
+        this.multiHierarchyParent = parent;
         init();
     }
 
@@ -137,7 +157,6 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
     protected void reset() {
         unit = null;
         formResponse = null;
-        setToUpdate = null;
     }
 
     public void init() throws CannotInitializeNewUnitDialogException {
