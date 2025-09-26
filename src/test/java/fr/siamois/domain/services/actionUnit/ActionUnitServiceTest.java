@@ -13,16 +13,19 @@ import fr.siamois.domain.models.exceptions.actionunit.NullActionUnitIdentifierEx
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.authorization.PermissionServiceImpl;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
+import fr.siamois.infrastructure.database.repositories.team.TeamMemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.OffsetDateTime;
@@ -34,8 +37,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ActionUnitServiceTest {
@@ -48,10 +50,18 @@ class ActionUnitServiceTest {
     private ActionCodeRepository actionCodeRepository;
     @Mock
     private PermissionServiceImpl permissionService;
+    @Mock private InstitutionService institutionService;
+    @Mock private TeamMemberRepository teamMemberRepository;
 
 
+    @Spy
     @InjectMocks
     private ActionUnitService actionUnitService;
+
+    @Mock private ActionUnit action;
+    @Mock private Institution institution;
+    @Mock private UserInfo userInfo;
+    @Mock private Person person;
 
 
     SpatialUnit spatialUnit1;
@@ -112,9 +122,9 @@ class ActionUnitServiceTest {
         actionUnitWithCodes.setSecondaryActionCodes(new HashSet<>(List.of(secondaryActionCode1, secondaryActionCode2, secondaryActionCodeThatWillBeRemoved)));
 
         actionUnitWithCodes.setIdentifier("Test");
-        Institution institution = new Institution();
+        Institution institution1 = new Institution();
         institution.setIdentifier("MOM");
-        actionUnitWithCodes.setCreatedByInstitution(institution);
+        actionUnitWithCodes.setCreatedByInstitution(institution1);
 
         failedCode = new ActionCode();
         failedCode.setType(c2);
@@ -305,17 +315,17 @@ class ActionUnitServiceTest {
 
     @Test
     void findWithoutArk() {
-        Institution institution = new Institution();
-        institution.setId(1L);
+        Institution institution1 = new Institution();
+        institution1.setId(1L);
 
         ActionUnit actionUnitLocal = new ActionUnit();
         actionUnitLocal.setId(1L);
         ActionUnit actionUnitLocal2 = new ActionUnit();
         actionUnitLocal2.setId(2L);
 
-        when(actionUnitRepository.findAllByArkIsNullAndCreatedByInstitution(institution)).thenReturn(List.of(actionUnitLocal, actionUnitLocal2));
+        when(actionUnitRepository.findAllByArkIsNullAndCreatedByInstitution(institution1)).thenReturn(List.of(actionUnitLocal, actionUnitLocal2));
 
-        List<ActionUnit> result = actionUnitService.findWithoutArk(institution);
+        List<ActionUnit> result = actionUnitService.findWithoutArk(institution1);
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -373,17 +383,17 @@ class ActionUnitServiceTest {
 
     @Test
     void findAllByInstitution_success() {
-        Institution institution = new Institution();
-        institution.setId(1L);
+        Institution institution1 = new Institution();
+        institution1.setId(1L);
 
         actionUnit1 = new ActionUnit();
         actionUnit1.setId(1L);
         actionUnit2 = new ActionUnit();
         actionUnit2.setId(2L);
 
-        when(actionUnitRepository.findByCreatedByInstitution(institution)).thenReturn(new HashSet<>(List.of(actionUnit1, actionUnit2)));
+        when(actionUnitRepository.findByCreatedByInstitution(institution1)).thenReturn(new HashSet<>(List.of(actionUnit1, actionUnit2)));
 
-        Set<ActionUnit> result = actionUnitService.findAllByInstitution(institution);
+        Set<ActionUnit> result = actionUnitService.findAllByInstitution(institution1);
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -391,27 +401,14 @@ class ActionUnitServiceTest {
         assertTrue(result.contains(actionUnit2));
     }
 
-    @Test
-    void returnsTrue_whenUserIsInstitutionManager() {
-        Person person = new Person();
-        person.setId(1L);
-        Institution i = new Institution();
-        i.setId(1L);
-        UserInfo user = new UserInfo(i ,person, "fr");
-
-        when(permissionService.isInstitutionManager(user)).thenReturn(true);
-
-
-        assertTrue(actionUnitService.hasCreatePermission(user));
-    }
 
     @Test
     void returnsTrue_whenUserIsActionManager() {
-        Person person = new Person();
-        person.setId(1L);
+        Person person1 = new Person();
+        person1.setId(1L);
         Institution i = new Institution();
         i.setId(1L);
-        UserInfo user = new UserInfo(i ,person, "fr");
+        UserInfo user = new UserInfo(i ,person1, "fr");
         when(permissionService.isInstitutionManager(user)).thenReturn(false);
         when(permissionService.isActionManager(user)).thenReturn(true);
 
@@ -420,11 +417,11 @@ class ActionUnitServiceTest {
 
     @Test
     void returnsFalse_whenUserHasNoPermissions() {
-        Person person = new Person();
-        person.setId(1L);
+        Person person1 = new Person();
+        person1.setId(1L);
         Institution i = new Institution();
         i.setId(1L);
-        UserInfo user = new UserInfo(i ,person, "fr");
+        UserInfo user = new UserInfo(i ,person1, "fr");
         when(permissionService.isInstitutionManager(user)).thenReturn(false);
         when(permissionService.isActionManager(user)).thenReturn(false);
 
@@ -472,6 +469,69 @@ class ActionUnitServiceTest {
         au.setBeginDate(begin);
         au.setEndDate(end);
         assertFalse(actionUnitService.isActionUnitStillOngoing(au));
+    }
+
+
+
+    private void commonStubs() {
+        when(action.getCreatedByInstitution()).thenReturn(institution);
+        when(userInfo.getUser()).thenReturn(person);
+    }
+
+    @Test
+    void returnsTrue_whenUserIsInstitutionManager() {
+        commonStubs();
+        when(institutionService.isManagerOf(institution, person)).thenReturn(true);
+
+        assertTrue(actionUnitService.canCreateRecordingUnit(userInfo, action));
+
+    }
+
+    @Test
+    void returnsTrue_whenUserIsActionUnitManager() {
+        commonStubs();
+        when(institutionService.isManagerOf(institution, person)).thenReturn(false);
+        doReturn(true).when(actionUnitService).isManagerOf(action, person);
+
+        assertTrue(actionUnitService.canCreateRecordingUnit(userInfo, action));
+
+    }
+
+    @Test
+    void returnsTrue_whenUserIsTeamMember_andActionIsOngoing() {
+        commonStubs();
+        when(institutionService.isManagerOf(institution, person)).thenReturn(false);
+        doReturn(false).when(actionUnitService).isManagerOf(action, person);
+        when(teamMemberRepository.existsByActionUnitAndPerson(action, person)).thenReturn(true);
+        doReturn(true).when(actionUnitService).isActionUnitStillOngoing(action);
+
+        assertTrue(actionUnitService.canCreateRecordingUnit(userInfo, action));
+
+        verify(teamMemberRepository).existsByActionUnitAndPerson(action, person);
+        verify(actionUnitService).isActionUnitStillOngoing(action);
+    }
+
+    @Test
+    void returnsFalse_whenUserIsTeamMember_butActionIsClosed() {
+        commonStubs();
+        when(institutionService.isManagerOf(institution, person)).thenReturn(false);
+        doReturn(false).when(actionUnitService).isManagerOf(action, person);
+        when(teamMemberRepository.existsByActionUnitAndPerson(action, person)).thenReturn(true);
+        doReturn(false).when(actionUnitService).isActionUnitStillOngoing(action);
+
+        assertFalse(actionUnitService.canCreateRecordingUnit(userInfo, action));
+    }
+
+    @Test
+    void returnsFalse_whenUserHasNoRole() {
+        commonStubs();
+        when(institutionService.isManagerOf(institution, person)).thenReturn(false);
+        doReturn(false).when(actionUnitService).isManagerOf(action, person);
+        when(teamMemberRepository.existsByActionUnitAndPerson(action, person)).thenReturn(false);
+        // `isActionUnitStillOngoing` won’t be called because teamMemberRepository returns false
+
+        assertFalse(actionUnitService.canCreateRecordingUnit(userInfo, action));
+        verify(actionUnitService, never()).isActionUnitStillOngoing(any());
     }
 
 }
