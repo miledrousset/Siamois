@@ -20,11 +20,11 @@
         <f:facet name="rightToolbar">
             <!-- TODO : use proper flowbean add new so that lazy model is properly updated after creation -->
             <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
-                             action="#{flowBean.addNewActionUnitPanel(panelModel.unit.id, panelIndex)}"
-                             rendered="#{flowBean.readWriteMode == 'WRITE'}"
-                             onstart="PF('buiContent').show()"
-                             oncomplete="PF('buiContent').hide();handleScrollToTop();"
-                             update="flow"
+                             id="newRecordingUnitButton"
+                             actionListener="#{genericNewUnitDialogBean.selectKind('ACTION',panelModel.actionLazyDataModel)}"
+                             oncomplete="PF('newUnitDiag').show();"
+                             update="newUnitForm"
+                             rendered="#{flowBean.readWriteMode == 'WRITE' and flowBean.isActionUnitCreateAllowed()}"
                              style="margin-right: .5rem">
             </p:commandButton>
         </f:facet>
