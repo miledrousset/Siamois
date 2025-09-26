@@ -12,6 +12,7 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.newunit.handler.INewUnitHandler;
 import fr.siamois.ui.bean.panel.FlowBean;
 import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
+import fr.siamois.ui.exceptions.CannotInitializeNewUnitDialogException;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import fr.siamois.utils.MessageUtils;
 import jakarta.faces.component.UIComponent;
@@ -70,7 +71,7 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
     }
 
     @SuppressWarnings("unchecked")
-    public void selectKind(UnitKind kind) throws Exception {
+    public void selectKind(UnitKind kind) throws CannotInitializeNewUnitDialogException {
         this.kind = kind;
         this.handler = (INewUnitHandler<T>) handlers.get(kind);
         this.lazyDataModel = null;
@@ -78,7 +79,7 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
     }
 
     @SuppressWarnings("unchecked")
-    public void selectKind(UnitKind kind, BaseLazyDataModel<T> context) throws Exception {
+    public void selectKind(UnitKind kind, BaseLazyDataModel<T> context) throws CannotInitializeNewUnitDialogException {
         this.kind = kind;
         this.handler = (INewUnitHandler<T>) handlers.get(kind);
         this.lazyDataModel = context;
@@ -87,7 +88,7 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
         init();
     }
 
-    public void selectKind(UnitKind kind, Set<T> context, TraceableEntity parent) throws Exception {
+    public void selectKind(UnitKind kind, Set<T> context, TraceableEntity parent) throws CannotInitializeNewUnitDialogException {
         this.kind = kind;
         this.handler = (INewUnitHandler<T>) handlers.get(kind);
         this.lazyDataModel = null;
@@ -139,7 +140,7 @@ public class GenericNewUnitDialogBean<T extends TraceableEntity>
         setToUpdate = null;
     }
 
-    public void init() throws Exception {
+    public void init() throws CannotInitializeNewUnitDialogException {
         reset();
         unit = handler.newEmpty();
         unit.setAuthor(sessionSettingsBean.getAuthenticatedUser());
