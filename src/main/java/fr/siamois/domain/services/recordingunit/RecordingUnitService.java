@@ -313,7 +313,8 @@ public class RecordingUnitService implements ArkEntityService {
      */
     public boolean canCreateSpecimen(UserInfo user, RecordingUnit ru) {
         ActionUnit action = ru.getActionUnit();
-        return (institutionService.isManagerOf(action.getCreatedByInstitution(),user.getUser()) || actionUnitService.isManagerOf(action, user.getUser())) ||
+        return institutionService.isManagerOf(action.getCreatedByInstitution(),user.getUser()) ||
+                actionUnitService.isManagerOf(action, user.getUser()) ||
                 (teamMemberRepository.existsByActionUnitAndPerson(action, user.getUser()) && actionUnitService.isActionUnitStillOngoing(action));
     }
 

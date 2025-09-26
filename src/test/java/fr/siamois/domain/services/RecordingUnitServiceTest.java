@@ -1,5 +1,6 @@
 package fr.siamois.domain.services;
 
+import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
 import fr.siamois.domain.models.auth.Person;
@@ -11,7 +12,7 @@ import fr.siamois.domain.models.recordingunit.StratigraphicRelationship;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
-import fr.siamois.domain.services.form.CustomFormResponseService;
+import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.recordingunit.StratigraphicRelationshipService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
@@ -19,6 +20,7 @@ import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.recordingunit.RecordingUnitRepository;
+import fr.siamois.infrastructure.database.repositories.team.TeamMemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +38,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -51,9 +53,12 @@ class RecordingUnitServiceTest {
     @Mock
     private ConceptService conceptService;
     @Mock
-    private StratigraphicRelationshipService stratigraphicRelationshipService;
+    private InstitutionService institutionService;
     @Mock
-    private CustomFormResponseService customFormResponseService;
+    private ActionUnitService actionUnitService;
+    @Mock
+    private TeamMemberRepository teamMemberRepository;
+
 
     @InjectMocks
     private RecordingUnitService recordingUnitService;
@@ -72,6 +77,12 @@ class RecordingUnitServiceTest {
     Page<RecordingUnit> page ;
     Pageable pageable;
 
+    // For testing permission related method
+    private Person user;
+    private UserInfo userInfo;
+
+    private ActionUnit actionUnit;
+
     @BeforeEach
     void setUp() {
         spatialUnit1 = new SpatialUnit();
@@ -87,7 +98,7 @@ class RecordingUnitServiceTest {
 
         Institution parentInstitution = new Institution();
         parentInstitution.setIdentifier("MOM");
-        ActionUnit actionUnit = new ActionUnit();
+        actionUnit = new ActionUnit();
         actionUnit.setIdentifier("2025");
         actionUnit.setMinRecordingUnitCode(5);
         actionUnit.setId(1L);
@@ -100,6 +111,11 @@ class RecordingUnitServiceTest {
 
         page = new PageImpl<>(List.of(recordingUnit1, recordingUnit2));
         pageable = PageRequest.of(0, 10);
+
+
+        // Permission related methods
+        user = new Person();
+        userInfo = new UserInfo(parentInstitution, user, "fr");
 
 
     }
@@ -273,6 +289,81 @@ class RecordingUnitServiceTest {
         // Assert
         assertEquals(recordingUnit1, actualResult.getContent().get(0));
         assertEquals(recordingUnit2, actualResult.getContent().get(1));
+    }
+
+    @Test
+    void canCreateSpecimen_returnsTrue_whenUserIsManagerOfCreatingInstitution() {
+        RecordingUnit recordingUnit;
+        recordingUnit = mock(RecordingUnit.class);
+        when(recordingUnit.getActionUnit()).thenReturn(actionUnit);
+
+        when(institutionService.isManagerOf(any(Institution.class), any(Person.class))).thenReturn(true);
+
+        boolean result = recordingUnitService.canCreateSpecimen(userInfo, recordingUnit);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void canCreateSpecimen_returnsTrue_whenUserIsActionUnitManager() {
+        RecordingUnit recordingUnit;
+        recordingUnit = mock(RecordingUnit.class);
+        when(recordingUnit.getActionUnit()).thenReturn(actionUnit);
+
+        when(institutionService.isManagerOf(any(Institution.class), any(Person.class))).thenReturn(false);
+        when(actionUnitService.isManagerOf(actionUnit, user)).thenReturn(true);
+
+        boolean result = recordingUnitService.canCreateSpecimen(userInfo, recordingUnit);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void canCreateSpecimen_returnsTrue_whenUserIsTeamMember_andActionUnitIsOngoing() {
+        RecordingUnit recordingUnit;
+        recordingUnit = mock(RecordingUnit.class);
+        when(recordingUnit.getActionUnit()).thenReturn(actionUnit);
+
+        when(institutionService.isManagerOf(any(Institution.class), any(Person.class))).thenReturn(false);
+        when(actionUnitService.isManagerOf(actionUnit, user)).thenReturn(false);
+        when(teamMemberRepository.existsByActionUnitAndPerson(actionUnit, user)).thenReturn(true);
+        when(actionUnitService.isActionUnitStillOngoing(actionUnit)).thenReturn(true);
+
+        boolean result = recordingUnitService.canCreateSpecimen(userInfo, recordingUnit);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void canCreateSpecimen_returnsFalse_whenUserIsTeamMember_butActionUnitIsNotOngoing() {
+        RecordingUnit recordingUnit;
+        recordingUnit = mock(RecordingUnit.class);
+        when(recordingUnit.getActionUnit()).thenReturn(actionUnit);
+
+        when(institutionService.isManagerOf(any(Institution.class), any(Person.class))).thenReturn(false);
+        when(actionUnitService.isManagerOf(actionUnit, user)).thenReturn(false);
+        when(teamMemberRepository.existsByActionUnitAndPerson(actionUnit, user)).thenReturn(true);
+        when(actionUnitService.isActionUnitStillOngoing(actionUnit)).thenReturn(false);
+
+        boolean result = recordingUnitService.canCreateSpecimen(userInfo, recordingUnit);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void canCreateSpecimen_returnsFalse_whenUserHasNoPermissions() {
+        RecordingUnit recordingUnit;
+        recordingUnit = mock(RecordingUnit.class);
+        when(recordingUnit.getActionUnit()).thenReturn(actionUnit);
+
+        when(institutionService.isManagerOf(any(Institution.class), any(Person.class))).thenReturn(false);
+        when(actionUnitService.isManagerOf(actionUnit, user)).thenReturn(false);
+        when(teamMemberRepository.existsByActionUnitAndPerson(actionUnit, user)).thenReturn(false);
+
+        boolean result = recordingUnitService.canCreateSpecimen(userInfo, recordingUnit);
+
+        assertFalse(result);
+        verify(actionUnitService, never()).isActionUnitStillOngoing(any());
     }
 
 }
