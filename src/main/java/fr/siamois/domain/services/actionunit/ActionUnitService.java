@@ -6,18 +6,13 @@ import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.ark.Ark;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.EntityAlreadyExistsException;
 import fr.siamois.domain.models.exceptions.actionunit.*;
-import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
-import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
 import fr.siamois.domain.services.InstitutionService;
-import fr.siamois.domain.services.authorization.PermissionService;
 import fr.siamois.domain.services.authorization.PermissionServiceImpl;
-import fr.siamois.domain.services.authorization.writeverifier.ActionUnitWriteVerifier;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
@@ -370,9 +365,14 @@ public class ActionUnitService implements ArkEntityService {
         OffsetDateTime beginDate = actionUnit.getBeginDate();
         OffsetDateTime endDate = actionUnit.getEndDate();
 
-        // If either date is missing, treat as invalid
-        if (beginDate == null || endDate == null) {
+        // If no begin date, we consider the action has not started yet
+        if (beginDate == null) {
             return false;
+        }
+
+        // If begin date but no end date, action is still on going
+        if (endDate == null) {
+            return true;
         }
 
         OffsetDateTime now = OffsetDateTime.now();
