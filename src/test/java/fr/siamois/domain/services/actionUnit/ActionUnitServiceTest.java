@@ -25,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -428,6 +429,49 @@ class ActionUnitServiceTest {
         when(permissionService.isActionManager(user)).thenReturn(false);
 
         assertFalse(actionUnitService.hasCreatePermission(user));
+    }
+
+    @Test
+    void isActionUnitStillOngoing_returnsFalseWhenBeginIsNull() {
+        ActionUnit au = new ActionUnit();
+        au.setEndDate(OffsetDateTime.now().plusDays(1));
+        assertFalse(actionUnitService.isActionUnitStillOngoing(au));
+    }
+
+    @Test
+    void isActionUnitStillOngoing_returnsTrueWhenEndIsNull() {
+        ActionUnit au = new ActionUnit();
+        au.setBeginDate(OffsetDateTime.now().minusDays(1));
+        assertTrue(actionUnitService.isActionUnitStillOngoing(au));
+    }
+
+    @Test
+    void isActionUnitStillOngoing_returnsFalseWhenNowBeforeBegin() {
+        ActionUnit au = new ActionUnit();
+        OffsetDateTime begin = OffsetDateTime.now().plusHours(2);
+        au.setBeginDate(begin);
+        au.setEndDate(begin.plusHours(1));
+        assertFalse(actionUnitService.isActionUnitStillOngoing(au));
+    }
+
+    @Test
+    void isActionUnitStillOngoing_returnsTrueWhenNowWithinRange() {
+        OffsetDateTime begin = OffsetDateTime.now().minusHours(1);
+        OffsetDateTime end = OffsetDateTime.now().plusHours(1);
+        ActionUnit au = new ActionUnit();
+        au.setBeginDate(begin);
+        au.setEndDate(end);
+        assertTrue(actionUnitService.isActionUnitStillOngoing(au));
+    }
+
+    @Test
+    void isActionUnitStillOngoing_returnsFalseWhenNowAfterEnd() {
+        OffsetDateTime end = OffsetDateTime.now().minusMinutes(1);
+        OffsetDateTime begin = end.minusHours(1);
+        ActionUnit au = new ActionUnit();
+        au.setBeginDate(begin);
+        au.setEndDate(end);
+        assertFalse(actionUnitService.isActionUnitStillOngoing(au));
     }
 
 }

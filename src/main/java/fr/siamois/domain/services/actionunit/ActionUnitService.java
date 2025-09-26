@@ -388,7 +388,8 @@ public class ActionUnitService implements ArkEntityService {
     public boolean canCreateRecordingUnit(UserInfo user, ActionUnit action) {
         // Authorized if user is the organisation manager, action unit manager
         // or action team member while action is still open
-        return (institutionService.isManagerOf(action.getCreatedByInstitution(),user.getUser()) || isManagerOf(action, user.getUser())) ||
+        return institutionService.isManagerOf(action.getCreatedByInstitution(),user.getUser()) ||
+                isManagerOf(action, user.getUser()) ||
                 (teamMemberRepository.existsByActionUnitAndPerson(action, user.getUser()) && isActionUnitStillOngoing(action));
     }
 
