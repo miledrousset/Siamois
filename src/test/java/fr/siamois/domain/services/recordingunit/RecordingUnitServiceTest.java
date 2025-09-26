@@ -3,13 +3,10 @@ package fr.siamois.domain.services.recordingunit;
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
-import fr.siamois.domain.services.form.CustomFormResponseService;
-import fr.siamois.domain.services.vocabulary.ConceptService;
-import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.recordingunit.RecordingUnitRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -27,23 +24,10 @@ class RecordingUnitServiceTest {
     @Mock
     private RecordingUnitRepository recordingUnitRepository;
 
-    @Mock
-    private ConceptService conceptService;
-    @Mock
-    private CustomFormResponseService customFormResponseService;
-    @Mock
-    private PersonRepository personRepository;
 
-    @Mock
-    private StratigraphicRelationshipService stratigraphicRelationshipService;
-
+    @InjectMocks
     private RecordingUnitService recordingUnitService;
 
-    @BeforeEach
-    void beforeEach() {
-        recordingUnitService = new RecordingUnitService(recordingUnitRepository, conceptService,
-                customFormResponseService,personRepository);
-    }
 
     @Test
     void findWithoutArk() {

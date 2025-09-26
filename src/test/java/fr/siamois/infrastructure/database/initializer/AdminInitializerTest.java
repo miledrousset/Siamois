@@ -101,7 +101,7 @@ class AdminInitializerTest {
 
         Institution existingInstitution = new Institution();
         existingInstitution.getManagers().add(oldAdmin);
-        when(institutionRepository.findInstitutionByIdentifier("SIAMOIS")).thenReturn(Optional.of(existingInstitution));
+        when(institutionRepository.findInstitutionByIdentifier("siamois")).thenReturn(Optional.of(existingInstitution));
 
         adminInitializer.setCreatedAdmin(oldAdmin);
         adminInitializer.initializeAdminOrganization();
@@ -122,7 +122,7 @@ class AdminInitializerTest {
         existingInstitution.setManagers(new HashSet<>());
         existingInstitution.getManagers().add(otherAdmin);
 
-        when(institutionRepository.findInstitutionByIdentifier("SIAMOIS")).thenReturn(Optional.of(existingInstitution));
+        when(institutionRepository.findInstitutionByIdentifier("siamois")).thenReturn(Optional.of(existingInstitution));
 
         adminInitializer.setCreatedAdmin(createdAdmin);
         adminInitializer.initializeAdminOrganization();

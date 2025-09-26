@@ -199,6 +199,8 @@ class InstitutionServiceTest {
         institution.setName("institution");
         institution.getManagers().add(person);
 
+        when(institutionRepository.personIsInstitutionManagerOf(any(Long.class), any(Long.class))).thenReturn(true);
+
         boolean result = institutionService.isManagerOf(institution, person);
 
         assertThat(result).isTrue();
