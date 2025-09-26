@@ -13,10 +13,10 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.form.CustomFormResponseService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.recordingunit.StratigraphicRelationshipService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
-import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.infrastructure.api.dto.ConceptFieldDTO;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.recordingunit.RecordingUnitRepository;
@@ -49,7 +49,7 @@ class RecordingUnitServiceTest {
     @Mock
     private PersonRepository personRepository;
     @Mock
-    private FieldService fieldService;
+    private CustomFormResponseService customFormResponseService;
     @Mock
     private ConceptService conceptService;
     @Mock
@@ -238,11 +238,15 @@ class RecordingUnitServiceTest {
         when(recordingUnitRepository.save(any(RecordingUnit.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
+        doNothing().when(customFormResponseService)
+                .saveFormResponse(any(CustomFormResponse.class), any(CustomFormResponse.class));
+
         RecordingUnit res = recordingUnitService.save(recordingUnitToSave, c, List.of(anteriorUnit),
                 List.of(synchronousUnit),
                 List.of(posteriorUnit));
         assertNotNull(res);
-        assertNotNull(res.getFormResponse());
+        verify(customFormResponseService, times(1))
+                .saveFormResponse(any(CustomFormResponse.class), any(CustomFormResponse.class));
 
 
 
