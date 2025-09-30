@@ -20,11 +20,14 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static fr.siamois.utils.MessageUtils.displayErrorMessage;
 
 /**
  * <p>This bean handles the creation of new Spatial Unit</p>
@@ -121,12 +124,22 @@ public class SpatialUnitFieldBean implements Serializable {
      * @return the list of concepts that match the input to display in the autocomplete
      */
     public List<Concept> completeWithFieldCode(String input) {
+        String fieldCode = "Undefined";
         try {
             FacesContext context = FacesContext.getCurrentInstance();
-            String fieldCode = (String) UIComponent.getCurrentComponent(context).getAttributes().get("fieldCode");
+            fieldCode = (String) UIComponent.getCurrentComponent(context).getAttributes().get("fieldCode");
             return fieldConfigurationService.fetchAutocomplete(sessionSettingsBean.getUserInfo(), fieldCode, input);
-        } catch (NoConfigForFieldException e) {
-            log.warn(e.getMessage());
+        }
+        catch (NoConfigForFieldException e) {
+            displayErrorMessage(langBean, "common.error.thesaurus.noConfigForField",fieldCode);
+            return new ArrayList<>();
+        }
+        catch(ResourceAccessException e) {
+            displayErrorMessage(langBean, "common.error.thesaurus.resourceAccess",fieldCode);
+            return new ArrayList<>();
+        }
+        catch(Exception e) {
+            displayErrorMessage(langBean, "common.error.thesaurus.field.exception",fieldCode);
             return new ArrayList<>();
         }
     }
