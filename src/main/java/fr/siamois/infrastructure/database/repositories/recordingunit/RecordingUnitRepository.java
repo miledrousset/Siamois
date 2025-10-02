@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, Long> {
@@ -201,4 +202,6 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
             @Param("global") String global,
             @Param("langCode") String langCode,
             Pageable pageable);
+
+    Optional<RecordingUnit> findByIdentifierAndCreatedByInstitution(Integer identifier, Institution institution);
 }
