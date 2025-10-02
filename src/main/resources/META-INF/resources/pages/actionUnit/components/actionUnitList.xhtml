@@ -110,6 +110,22 @@
 
                 </p:column>
 
+                <!-- Identifier -->
+                <p:column responsivePriority="2" headerText="#{langBean.msg('common.label.identifier')}"
+                          id="identifier"
+                >
+                    <h:outputText value="#{item.displayFullIdentifier()}"/>
+                </p:column>
+
+                <!-- Code -->
+                <p:column responsivePriority="2" headerText="#{langBean.msg('common.label.code')}"
+                          id="code"
+                >
+                    <h:outputText value="#{item.primaryActionCode.code}"/>
+                    <p:chip label="#{labelBean.findLabelOf(item.primaryActionCode.type)}" icon="bi bi-upc"
+                            styleClass="mr-2 action-unit-type-chip"/>
+                </p:column>
+
                 <!-- Action unit type column -->
                 <p:column responsivePriority="1" headerText="#{langBean.msg('table.spatialunit.column.type')}"
                           sortable="true"
@@ -149,6 +165,26 @@
                           id="creationTimeCol"
                 >
                     <h:outputText value="#{panelModel.formatUtcDateTime(item.creationTime)}"/>
+                </p:column>
+
+                <!-- Begin date -->
+                <p:column responsivePriority="2" headerText="#{langBean.msg('common.table.column.beginDate')}"
+                          field="beginDate"
+                          sortable="false"
+                          filterable="false"
+                          id="beginTimeCol"
+                >
+                    <h:outputText value="#{panelModel.formatUtcDateTime(item.beginDate)}"/>
+                </p:column>
+
+                <!-- End date -->
+                <p:column responsivePriority="2" headerText="#{langBean.msg('common.table.column.endDate')}"
+                          field="endDate"
+                          sortable="false"
+                          filterable="false"
+                          id="endTimeCol"
+                >
+                    <h:outputText value="#{panelModel.formatUtcDateTime(item.endDate)}"/>
                 </p:column>
 
                 <!-- Auteur/Proprietaire -->

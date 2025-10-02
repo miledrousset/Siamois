@@ -1,5 +1,6 @@
 package fr.siamois.infrastructure.database.initializer;
 
+import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.ErrorProcessingExpansionException;
@@ -18,6 +19,7 @@ import fr.siamois.domain.models.vocabulary.label.Label;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
 import fr.siamois.infrastructure.database.repositories.SpatialUnitRepository;
+import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
@@ -45,6 +47,8 @@ import java.util.*;
 @Setter
 public class ChartresDatasetInitializer implements DatabaseInitializer {
 
+    private final ActionCodeRepository actionCodeRepository;
+
     // petit DTO pour décrire un concept à créer
     public record ConceptSpec(String vocabularyId, String externalId, String label, String lang) {}
     public static final String VOCABULARY_ID = "th240";
@@ -62,7 +66,8 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
             new ConceptSpec(VOCABULARY_ID, "4286252", "Individuel", "fr"),
             new ConceptSpec(VOCABULARY_ID, "4286251", "Lot", "fr"),
             new ConceptSpec(VOCABULARY_ID, "4287542", "ANImal", "fr"),
-            new ConceptSpec(VOCABULARY_ID, "4287543", "METal", "fr")
+            new ConceptSpec(VOCABULARY_ID, "4287543", "METal", "fr"),
+            new ConceptSpec(VOCABULARY_ID, "4283545", "Code OA", "fr")
     );
 
     private final SpatialUnitRepository spatialUnitRepositoryRepository;
@@ -103,7 +108,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
                                       InstitutionRepository institutionRepository,
                                       VocabularyRepository vocabularyRepository,
                                       VocabularyTypeRepository vocabularyTypeRepository,
-                                      SpatialUnitRepository spatialUnitRepository, ConceptRepository conceptRepository, ConceptLabelRepository conceptLabelRepository, FieldConfigurationService fieldConfigurationService, VocabularyService vocabularyService) {
+                                      SpatialUnitRepository spatialUnitRepository, ConceptRepository conceptRepository, ConceptLabelRepository conceptLabelRepository, FieldConfigurationService fieldConfigurationService, VocabularyService vocabularyService, ActionCodeRepository actionCodeRepository) {
         this.spatialUnitRepositoryRepository = spatialUnitRepositoryRepository;
         this.actionUnitRepository = actionUnitRepository;
         this.recordingUnitRepository = recordingUnitRepository;
@@ -117,6 +122,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
         this.conceptLabelRepository = conceptLabelRepository;
         this.fieldConfigurationService = fieldConfigurationService;
         this.vocabularyService = vocabularyService;
+        this.actionCodeRepository = actionCodeRepository;
     }
 
     /**
@@ -149,12 +155,16 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
                 return conceptRepository.save(c);
             });
 
+            // Do we need to add the label?
+            Optional<ConceptLabel> opt = conceptLabelRepository.findByConceptAndLangCode(concept, spec.lang());
+            if(opt.isEmpty()) {
+                ConceptLabel label = new ConceptLabel();
+                label.setConcept(concept);
+                label.setValue(spec.label());
+                label.setLangCode(spec.lang());
+                conceptLabelRepository.save(label);
+            }
 
-            ConceptLabel label = new ConceptLabel();
-            label.setConcept(concept);
-            label.setValue(spec.label());
-            label.setLangCode(spec.lang());
-            conceptLabelRepository.save(label);
 
         }
     }
@@ -202,6 +212,21 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
             personRepository.save(authorGetOrCreated);
         }
         return authorGetOrCreated;
+    }
+
+    private ActionCode getOrCreateActionCode(String code, Concept type) {
+        Optional<ActionCode> optCode = actionCodeRepository.findById(code);
+        ActionCode codeGetOrCreated ;
+        if(optCode.isPresent()) {
+            codeGetOrCreated = optCode.get();
+        }
+        else {
+            codeGetOrCreated = new ActionCode();
+            codeGetOrCreated.setCode(code);
+            codeGetOrCreated.setType(type);
+            actionCodeRepository.save(codeGetOrCreated);
+        }
+        return codeGetOrCreated;
     }
 
     void initializeSpatialUnits() {
@@ -252,24 +277,36 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
             actionUnit = optAU.get();
         }
         else {
+            // Get or create code
+            Concept actionCodeConcept = conceptRepository
+                    .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4283545")
+                    .orElseThrow(() -> new IllegalStateException("Concept actionCodeConcept introuvable dans th240"));
+            ActionCode codeOA = getOrCreateActionCode("069260", actionCodeConcept);
+            ActionCode codeOA2 = getOrCreateActionCode("0610216", actionCodeConcept);
             // create it
             actionUnit = new ActionUnit();
             actionUnit.setCreatedByInstitution(createdInstitution);
             actionUnit.setIdentifier("C309_01");
             actionUnit.setName("Pôle Gare - Phase 1");
             actionUnit.setAuthor(fouilleur1);
+            actionUnit.setPrimaryActionCode(codeOA);
             actionUnit.setFullIdentifier("chartres-C309_01");
             actionUnit.setType(archeoDiag);
             actionUnit.setSpatialContext(spatialContext);
             actionUnit = actionUnitRepository.save(actionUnit);
+            actionUnit.setBeginDate(OffsetDateTime.of(2012, 6, 12, 0, 0, 0, 0, ZoneOffset.UTC));
+            actionUnit.setEndDate(OffsetDateTime.of(2012, 7, 17, 0, 0, 0, 0, ZoneOffset.UTC));
             // create a second one
             ActionUnit action2 = new ActionUnit();
             action2.setCreatedByInstitution(createdInstitution);
+            action2.setPrimaryActionCode(codeOA2);
             action2.setIdentifier("C309_11");
             action2.setFullIdentifier("chartres-C309_11");
             action2.setName("Pôle Gare - rue du Chemin de Fer et rue du Faubourg Saint-Jean (phase 1)");
             action2.setAuthor(fouilleur1);
             action2.setType(prevFouille);
+            action2.setBeginDate(OffsetDateTime.of(2015, 6, 8, 0, 0, 0, 0, ZoneOffset.UTC));
+            action2.setEndDate(OffsetDateTime.of(2015, 9, 29, 0, 0, 0, 0, ZoneOffset.UTC));
             actionUnitRepository.save(action2);
         }
 

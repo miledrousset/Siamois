@@ -38,7 +38,7 @@ public abstract class ActionUnitParent extends TraceableEntity {
     protected Ark ark;
 
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "fk_primary_action_code")
     protected ActionCode primaryActionCode;
 
