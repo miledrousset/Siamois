@@ -9,6 +9,7 @@ import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
+import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
@@ -29,20 +30,40 @@ import fr.siamois.infrastructure.database.repositories.vocabulary.label.ConceptL
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.type.descriptor.java.ZoneOffsetJavaType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
 
 @Slf4j
 @Component
 @Getter
 @Setter
 public class ChartresDatasetInitializer implements DatabaseInitializer {
+
+    // petit DTO pour décrire un concept à créer
+    public record ConceptSpec(String vocabularyId, String externalId, String label, String lang) {}
+    public static final String VOCABULARY_ID = "th240";
+
+    List<ConceptSpec> concepts = List.of(
+            new ConceptSpec(VOCABULARY_ID, "4287534", "Fouille préventive", "fr"),
+            new ConceptSpec(VOCABULARY_ID, "4287533", "Diagnostic archéologique", "fr"),
+            new ConceptSpec(VOCABULARY_ID, "4287532", "Parcelle", "fr"),
+            new ConceptSpec(VOCABULARY_ID, "4282370", "Commune", "fr"),
+            new ConceptSpec(VOCABULARY_ID, "4282375", "Unité stratigraphique", "fr"),
+            new ConceptSpec(VOCABULARY_ID, "4287539", "Dépôt", "fr"),
+            new ConceptSpec(VOCABULARY_ID, "4287541", "Couche d'occupation", "fr"),
+            new ConceptSpec(VOCABULARY_ID, "4287537", "Interface", "fr"),
+            new ConceptSpec(VOCABULARY_ID, "4287540", "Creusement", "fr"),
+            new ConceptSpec(VOCABULARY_ID, "4286252", "Individuel", "fr"),
+            new ConceptSpec(VOCABULARY_ID, "4286251", "Lot", "fr"),
+            new ConceptSpec(VOCABULARY_ID, "4287542", "ANImal", "fr"),
+            new ConceptSpec(VOCABULARY_ID, "4287543", "METal", "fr")
+    );
 
     private final SpatialUnitRepository spatialUnitRepositoryRepository;
     private final ActionUnitRepository actionUnitRepository;
@@ -65,6 +86,9 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
     private Vocabulary thesaurus;
     private SpatialUnit chartes;
     private Person author;
+    private Person fouilleur1;
+    private Person fouilleur2;
+    private RecordingUnit ru;
     private ActionUnit actionUnit;
 
 
@@ -104,16 +128,46 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
         getAdmin();
         initializeOrganization();
         initializeThesaurus();
+        initializeConcepts();
         initializeSpatialUnits();
         initializeActions();
         initializeRecordings();
+        initializeSpecimens();
+    }
+
+    public void initConcepts(Vocabulary thesaurus, List<ConceptSpec> specs) {
+
+        for (ConceptSpec spec : specs) {
+            Optional<Concept> existing = conceptRepository.findConceptByExternalIdIgnoreCase(
+                    spec.vocabularyId(), spec.externalId()
+            );
+
+            Concept concept = existing.orElseGet(() -> {
+                Concept c = new Concept();
+                c.setExternalId(spec.externalId());
+                c.setVocabulary(thesaurus);
+                return conceptRepository.save(c);
+            });
+
+
+            ConceptLabel label = new ConceptLabel();
+            label.setConcept(concept);
+            label.setValue(spec.label());
+            label.setLangCode(spec.lang());
+            conceptLabelRepository.save(label);
+
+        }
+    }
+
+    private void initializeConcepts() {
+        initConcepts(thesaurus, concepts);
     }
 
     private void initializeThesaurus() throws DatabaseDataInitException {
         // Verify if the thesaurus is already imported in SIAMOIS
         Optional<Vocabulary> optVocabulary = vocabularyRepository.findVocabularyByBaseUriAndVocabExternalId(
                 "https://thesaurus.mom.fr",
-                "th240"
+                VOCABULARY_ID
         );
         if(optVocabulary.isPresent()) {
             thesaurus = optVocabulary.get();
@@ -132,55 +186,36 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
         }
     }
 
-    void initializeSpatialUnits() {
-        // Add concepts
-        Optional<Concept> optParcelle = conceptRepository.findConceptByExternalIdIgnoreCase("th240","4287532");
-        Concept parcelle = null;
-        if(optParcelle.isPresent()) {
-            parcelle = optParcelle.get();
-        }
-        else {
-            parcelle = new Concept();
-            parcelle.setExternalId("4287532");
-            parcelle.setVocabulary(thesaurus);
-            parcelle = conceptRepository.save(parcelle);
-            ConceptLabel label = new ConceptLabel();
-            label.setConcept(parcelle);
-            label.setValue("Parcelle");
-            label.setLangCode("fr");
-            conceptLabelRepository.save(label);
-        }
-
-        Optional<Concept> optCommune = conceptRepository.findConceptByExternalIdIgnoreCase("th240","4282370");
-        Concept commune = null;
-        if(optCommune.isPresent()) {
-            commune = optCommune.get();
-        }
-        else {
-            commune = new Concept();
-            commune.setExternalId("4282370");
-            commune.setVocabulary(thesaurus);
-            commune = conceptRepository.save(commune);
-            ConceptLabel label = new ConceptLabel();
-            label.setConcept(commune);
-            label.setValue("Commune");
-            label.setLangCode("fr");
-            conceptLabelRepository.save(label);
-        }
-
-        Optional<Person> optAuthor = personRepository.findByEmailIgnoreCase("anais.pinhede@siamois.fr");
+    private Person getOrCreatePerson(String email, String name, String lastname, String username) {
+        Optional<Person> optAuthor = personRepository.findByEmailIgnoreCase(email);
+        Person authorGetOrCreated ;
         if(optAuthor.isPresent()) {
-            author = optAuthor.get();
+            authorGetOrCreated = optAuthor.get();
         }
         else {
-            author = new Person();
-            author.setUsername("anais.pinhede");
-            author.setName("Anaïs");
-            author.setLastname("Pinhède");
-            author.setEmail("anais.pinhede@siamois.fr");
-            author.setPassword("mysuperstrongpassword");
-            personRepository.save(author);
+            authorGetOrCreated = new Person();
+            authorGetOrCreated.setUsername(username);
+            authorGetOrCreated.setName(name);
+            authorGetOrCreated.setLastname(lastname);
+            authorGetOrCreated.setEmail(email);
+            authorGetOrCreated.setPassword("mysuperstrongpassword");
+            personRepository.save(authorGetOrCreated);
         }
+        return authorGetOrCreated;
+    }
+
+    void initializeSpatialUnits() {
+        // find concepts
+        Concept parcelle = conceptRepository
+                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287532")
+                .orElseThrow(() -> new IllegalStateException("Concept parcelle introuvable dans th240"));
+        Concept commune = conceptRepository
+                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4282370")
+                .orElseThrow(() -> new IllegalStateException("Concept commune introuvable dans th240"));
+
+        author = getOrCreatePerson("anais.pinhede@siamois.fr", "Anaïs", "Pinhède", "anais.pinhede");
+        fouilleur1 = getOrCreatePerson("pascal.gibut@siamois.fr", "Pascal", "Gibut", "pascal.gibut");
+        fouilleur2 = getOrCreatePerson("duflos.franck@siamois.fr", "Duflos", "Franck", "duflos.franck");
 
         Optional<SpatialUnit> optChartres = spatialUnitRepository.findByNameAndInstitution("Chartres", createdInstitution.getId());
         if(optChartres.isPresent()) {
@@ -204,39 +239,13 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
 
     void initializeActions() {
 
-        Optional<Concept> optPrevFouille = conceptRepository.findConceptByExternalIdIgnoreCase("th240","4287534");
-        Concept prevFouille = null;
-        if(optPrevFouille.isPresent()) {
-            prevFouille = optPrevFouille.get();
-        }
-        else {
-            prevFouille = new Concept();
-            prevFouille.setExternalId("4287534");
-            prevFouille.setVocabulary(thesaurus);
-            prevFouille = conceptRepository.save(prevFouille);
-            ConceptLabel label = new ConceptLabel();
-            label.setConcept(prevFouille);
-            label.setValue("Fouille préventive");
-            label.setLangCode("fr");
-            conceptLabelRepository.save(label);
-        }
-
-        Optional<Concept> optArcheoDiag = conceptRepository.findConceptByExternalIdIgnoreCase("th240","4287533");
-        Concept archeoDiag = null;
-        if(optArcheoDiag.isPresent()) {
-            archeoDiag = optArcheoDiag.get();
-        }
-        else {
-            archeoDiag = new Concept();
-            archeoDiag.setExternalId("4287534");
-            archeoDiag.setVocabulary(thesaurus);
-            archeoDiag = conceptRepository.save(archeoDiag);
-            ConceptLabel label = new ConceptLabel();
-            label.setConcept(archeoDiag);
-            label.setValue("Diagnostic archéologique");
-            label.setLangCode("fr");
-            conceptLabelRepository.save(label);
-        }
+        // find concepts
+        Concept prevFouille = conceptRepository
+                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287534")
+                .orElseThrow(() -> new IllegalStateException("Concept prevFouille introuvable dans th240"));
+        Concept archeoDiag = conceptRepository
+                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287533")
+                .orElseThrow(() -> new IllegalStateException("Concept archeoDiag introuvable dans th240"));
 
         Optional<ActionUnit> optAU = actionUnitRepository.findByIdentifierAndCreatedByInstitution("C309_01", createdInstitution);
         if(optAU.isPresent()) {
@@ -248,7 +257,8 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
             actionUnit.setCreatedByInstitution(createdInstitution);
             actionUnit.setIdentifier("C309_01");
             actionUnit.setName("Pôle Gare - Phase 1");
-            actionUnit.setAuthor(author);
+            actionUnit.setAuthor(fouilleur1);
+            actionUnit.setFullIdentifier("chartres-C309_01");
             actionUnit.setType(archeoDiag);
             actionUnit.setSpatialContext(spatialContext);
             actionUnit = actionUnitRepository.save(actionUnit);
@@ -256,8 +266,9 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
             ActionUnit action2 = new ActionUnit();
             action2.setCreatedByInstitution(createdInstitution);
             action2.setIdentifier("C309_11");
+            action2.setFullIdentifier("chartres-C309_11");
             action2.setName("Pôle Gare - rue du Chemin de Fer et rue du Faubourg Saint-Jean (phase 1)");
-            action2.setAuthor(author);
+            action2.setAuthor(fouilleur1);
             action2.setType(prevFouille);
             actionUnitRepository.save(action2);
         }
@@ -267,22 +278,107 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
 
     void initializeRecordings() {
 
-        // Recording 1100
-        Optional<RecordingUnit> optRU1100 = recordingUnitRepository.findByIdentifierAndCreatedByInstitution(1100, createdInstitution);
-        RecordingUnit ru1100;
-        if(optRU1100.isPresent()) {
+        Concept us = conceptRepository
+                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4282375")
+                .orElseThrow(() -> new IllegalStateException("Concept us introuvable dans th240"));
+        Concept depot = conceptRepository
+                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287539")
+                .orElseThrow(() -> new IllegalStateException("Concept dépôt introuvable dans th240"));
+        Concept coucheOcp = conceptRepository
+                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287541")
+                .orElseThrow(() -> new IllegalStateException("Concept couche d'occupation introuvable dans th240"));
+        Concept interfaceConcept = conceptRepository
+                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287537")
+                .orElseThrow(() -> new IllegalStateException("Concept interface introuvable dans th240"));
+        Concept creusement = conceptRepository
+                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287540")
+                .orElseThrow(() -> new IllegalStateException("Concept creusement introuvable dans th240"));
 
+        Optional<RecordingUnit> optRU = recordingUnitRepository.findByIdentifierAndCreatedByInstitution(1100, createdInstitution);
+        if(optRU.isPresent()) {
+            ru = optRU.get();
         }
         else {
-            ru1100 = new RecordingUnit();
-            ru1100.setCreatedByInstitution(createdInstitution);
-            ru1100.setIdentifier(1100);
-            ru1100.setFullIdentifier("chartes-C309-01-1100");
-            ru1100.setAuthors(List.of(author));
-            ru1100.setExcavators(List.of(author));
+            // create it
+            ru = new RecordingUnit();
+            ru.setCreatedByInstitution(createdInstitution);
+            ru.setIdentifier(1100);
+            ru.setFullIdentifier("chartres-C309_01-1100");
+            ru.setAuthor(fouilleur1);
+            ru.setExcavators(List.of(fouilleur1, fouilleur2));
+            ru.setAuthors(List.of(fouilleur1));
+            ru.setType(us);
+            ru.setCreationTime(OffsetDateTime.of(2012, 6, 22, 0, 0, 0, 0, ZoneOffset.UTC));
+            ru.setSecondaryType(depot);
+            ru.setThirdType(coucheOcp);
+            ru.setSpatialUnit(chartes);
+            ru.setActionUnit(actionUnit);
+            ru = recordingUnitRepository.save(ru);
+            // create a second one
+            RecordingUnit ru2 = new RecordingUnit();
+            ru2.setCreatedByInstitution(createdInstitution);
+            ru2.setIdentifier(1015);
+            ru2.setFullIdentifier("chartres-C309_01-1015");
+            ru2.setAuthor(fouilleur1);
+            ru2.setCreationTime(OffsetDateTime.of(2012, 7, 5, 0, 0, 0, 0, ZoneOffset.UTC));
+            ru2.setExcavators(List.of(fouilleur1));
+            ru2.setAuthors(List.of(fouilleur1));
+            ru2.setType(us);
+            ru2.setSecondaryType(interfaceConcept);
+            ru2.setThirdType(creusement);
+            ru2.setSpatialUnit(chartes);
+            ru2.setActionUnit(actionUnit);
+            recordingUnitRepository.save(ru2);
         }
 
 
+    }
+
+    void initializeSpecimens() {
+
+        Concept indiv = conceptRepository
+                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4286252")
+                .orElseThrow(() -> new IllegalStateException("Concept indiv introuvable dans th240"));
+        Concept lot = conceptRepository
+                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4286251")
+                .orElseThrow(() -> new IllegalStateException("Concept lot d'occupation introuvable dans th240"));
+        Concept animal = conceptRepository
+                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287542")
+                .orElseThrow(() -> new IllegalStateException("Concept animal introuvable dans th240"));
+        Concept metal = conceptRepository
+                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287543")
+                .orElseThrow(() -> new IllegalStateException("Concept metal introuvable dans th240"));
+
+
+        Optional<Specimen> optSpec = specimenRepository.findByFullIdentifierAndCreatedByInstitution("chartres-C309_01-1100-1", createdInstitution);
+            if(optSpec.isEmpty()) {
+                // create it
+                Specimen s1 = new Specimen();
+                s1.setCreatedByInstitution(createdInstitution);
+                s1.setIdentifier(1);
+                s1.setFullIdentifier("chartres-C309_01-1100-1");
+                s1.setAuthor(fouilleur1);
+                s1.setCollectors(List.of(fouilleur1));
+                s1.setAuthors(List.of(fouilleur1));
+                s1.setType(metal);
+                s1.setCreationTime(OffsetDateTime.of(2012, 6, 22, 0, 0, 0, 0, ZoneOffset.UTC));
+                s1.setRecordingUnit(ru);
+                s1.setCategory(indiv);
+                specimenRepository.save(s1);
+                // create a second one
+                Specimen s2 = new Specimen();
+                s2.setCreatedByInstitution(createdInstitution);
+                s2.setIdentifier(1);
+                s2.setFullIdentifier("chartres-C309_01-1100-57");
+                s2.setAuthor(fouilleur1);
+                s2.setCollectors(List.of(fouilleur1));
+                s2.setAuthors(List.of(fouilleur1));
+                s2.setType(animal);
+                s2.setCategory(lot);
+                s2.setCreationTime(OffsetDateTime.of(2012, 6, 22, 0, 0, 0, 0, ZoneOffset.UTC));
+                s2.setRecordingUnit(ru);
+                specimenRepository.save(s2);
+        }
     }
 
 
@@ -339,12 +435,12 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
     private boolean processExistingAdmins() {
         List<Person> admins = personRepository.findAllSuperAdmin();
         Person adminWithUsername = null;
-        for (Person admin : admins) {
-            if (isNotAskedAdmin(admin)) {
-                admin.setSuperAdmin(false);
-                personRepository.save(admin);
+        for (Person adminLoop : admins) {
+            if (isNotAskedAdmin(adminLoop)) {
+                adminLoop.setSuperAdmin(false);
+                personRepository.save(adminLoop);
             } else {
-                adminWithUsername = admin;
+                adminWithUsername = adminLoop;
             }
         }
 

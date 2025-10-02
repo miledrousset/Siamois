@@ -12,6 +12,12 @@ import org.hibernate.annotations.DiscriminatorFormula;
         "ELSE NULL END")
 @Data
 @EqualsAndHashCode
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"fk_concept_id", "lang_code"}),
+                @UniqueConstraint(columnNames = {"fk_vocabulary_id", "lang_code"})
+        }
+)
 public abstract class Label {
 
     @Id
