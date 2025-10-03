@@ -67,7 +67,8 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
             new ConceptSpec(VOCABULARY_ID, "4286251", "Lot", "fr"),
             new ConceptSpec(VOCABULARY_ID, "4287542", "ANImal", "fr"),
             new ConceptSpec(VOCABULARY_ID, "4287543", "METal", "fr"),
-            new ConceptSpec(VOCABULARY_ID, "4283545", "Code OA", "fr")
+            new ConceptSpec(VOCABULARY_ID, "4283545", "Code OA", "fr"),
+            new ConceptSpec(VOCABULARY_ID, "4287544", "Emprise de fouille", "fr")
     );
 
     private final SpatialUnitRepository spatialUnitRepositoryRepository;
@@ -89,7 +90,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
     private Institution createdInstitution;
     private Set<SpatialUnit> spatialContext;
     private Vocabulary thesaurus;
-    private SpatialUnit chartes;
+    private SpatialUnit emprise;
     private Person author;
     private Person fouilleur1;
     private Person fouilleur2;
@@ -237,29 +238,44 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
         Concept commune = conceptRepository
                 .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4282370")
                 .orElseThrow(() -> new IllegalStateException("Concept commune introuvable dans th240"));
+        Concept empriseConcept = conceptRepository
+                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287544")
+                .orElseThrow(() -> new IllegalStateException("Concept emprise introuvable dans th240"));
 
         author = getOrCreatePerson("anais.pinhede@siamois.fr", "Anaïs", "Pinhède", "anais.pinhede");
         fouilleur1 = getOrCreatePerson("pascal.gibut@siamois.fr", "Pascal", "Gibut", "pascal.gibut");
         fouilleur2 = getOrCreatePerson("duflos.franck@siamois.fr", "Duflos", "Franck", "duflos.franck");
 
-        Optional<SpatialUnit> optChartres = spatialUnitRepository.findByNameAndInstitution("Chartres", createdInstitution.getId());
+        Optional<SpatialUnit> optChartres = spatialUnitRepository.findByNameAndInstitution("Emprise de fouille de C309_01", createdInstitution.getId());
         if(optChartres.isPresent()) {
-            chartes = optChartres.get();
-            spatialContext = chartes.getChildren();
+            emprise = optChartres.get();
+
+
         }
         else {
             SpatialUnit parcelleDA154 = new SpatialUnit(); parcelleDA154.setName("Parcelle DA 154"); parcelleDA154.setCategory(parcelle);
             parcelleDA154.setCreatedByInstitution(createdInstitution); parcelleDA154.setAuthor(author);
             SpatialUnit parcelleDA155 = new SpatialUnit(); parcelleDA155.setName("Parcelle DA 155"); parcelleDA155.setCategory(parcelle);
             parcelleDA155.setCreatedByInstitution(createdInstitution); parcelleDA155.setAuthor(author);
+            emprise = new SpatialUnit(); emprise.setName("Emprise de fouille de C309_01"); emprise.setCategory(empriseConcept);
+            emprise.setCreatedByInstitution(createdInstitution); emprise.setAuthor(author);
+            parcelleDA154 = spatialUnitRepository.save(parcelleDA154);
+            parcelleDA155 = spatialUnitRepository.save(parcelleDA155);
+            emprise.getChildren().add(parcelleDA154);
+            emprise.getChildren().add(parcelleDA155);
+            spatialUnitRepository.save(emprise);
             SpatialUnit chartres = new SpatialUnit(); chartres.setName("Chartres"); chartres.setCategory(commune);
             chartres.setCreatedByInstitution(createdInstitution); chartres.setAuthor(author);
             parcelleDA154 = spatialUnitRepository.save(parcelleDA154);
             parcelleDA155 = spatialUnitRepository.save(parcelleDA155);
             chartres.getChildren().add(parcelleDA154);
             chartres.getChildren().add(parcelleDA155);
+            chartres.getChildren().add(emprise);
             spatialUnitRepository.save(chartres);
+
         }
+        spatialContext = new HashSet<>();
+        spatialContext.add(emprise);
     }
 
     void initializeActions() {
@@ -348,7 +364,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
             ru.setCreationTime(OffsetDateTime.of(2012, 6, 22, 0, 0, 0, 0, ZoneOffset.UTC));
             ru.setSecondaryType(depot);
             ru.setThirdType(coucheOcp);
-            ru.setSpatialUnit(chartes);
+            ru.setSpatialUnit(emprise);
             ru.setActionUnit(actionUnit);
             ru = recordingUnitRepository.save(ru);
             // create a second one
@@ -363,7 +379,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
             ru2.setType(us);
             ru2.setSecondaryType(interfaceConcept);
             ru2.setThirdType(creusement);
-            ru2.setSpatialUnit(chartes);
+            ru2.setSpatialUnit(emprise);
             ru2.setActionUnit(actionUnit);
             recordingUnitRepository.save(ru2);
         }

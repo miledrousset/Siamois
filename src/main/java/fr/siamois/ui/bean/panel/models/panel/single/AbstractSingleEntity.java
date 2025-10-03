@@ -1,6 +1,7 @@
 package fr.siamois.ui.bean.panel.models.panel.single;
 
 import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.form.customfield.*;
@@ -84,7 +85,8 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
             CustomFieldDateTime.class, CustomFieldAnswerDateTime::new,
             CustomFieldSelectOneActionUnit.class, CustomFieldAnswerSelectOneActionUnit::new,
             CustomFieldSelectOneSpatialUnit.class, CustomFieldAnswerSelectOneSpatialUnit::new,
-            CustomFieldSelectMultipleSpatialUnitTree.class, CustomFieldAnswerSelectMultipleSpatialUnitTree::new
+            CustomFieldSelectMultipleSpatialUnitTree.class, CustomFieldAnswerSelectMultipleSpatialUnitTree::new,
+            CustomFieldSelectOneActionCode.class, CustomFieldAnswerSelectOneActionCode::new
     );
 
     public boolean hasAutoGenerationFunction(CustomFieldText field) {
@@ -107,7 +109,9 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
 
 
     public record Deps(SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService,
-                       SpatialUnitTreeService spatialUnitTreeService, SpatialUnitService spatialUnitService, ActionUnitService actionUnitService) {}
+                       SpatialUnitTreeService spatialUnitTreeService, SpatialUnitService spatialUnitService,
+                       ActionUnitService actionUnitService) {
+    }
 
     protected AbstractSingleEntity(String titleCodeOrTitle,
                                    String icon,
@@ -120,7 +124,6 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
         this.spatialUnitService = deps.spatialUnitService;
         this.actionUnitService = deps.actionUnitService;
     }
-
 
 
     public String formatDate(OffsetDateTime offsetDateTime) {
@@ -380,6 +383,8 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
             actionUnitAnswer.setValue(a);
         } else if (value instanceof SpatialUnit s && answer instanceof CustomFieldAnswerSelectOneSpatialUnit spatialUnitAnswer) {
             spatialUnitAnswer.setValue(s);
+        } else if (value instanceof ActionCode code && answer instanceof CustomFieldAnswerSelectOneActionCode actionCodeAnswer) {
+            actionCodeAnswer.setValue(code);
         } else if (value instanceof Set<?> set && answer instanceof CustomFieldAnswerSelectMultipleSpatialUnitTree treeAnswer) {
             // Cast set to the expected type
             treeAnswer.setValue((Set<SpatialUnit>) set);
@@ -431,6 +436,8 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
         } else if (answer instanceof CustomFieldAnswerSelectOneSpatialUnit a) {
             return a.getValue();
         } else if (answer instanceof CustomFieldAnswerSelectMultipleSpatialUnitTree a) {
+            return a.getValue();
+        } else if (answer instanceof CustomFieldAnswerSelectOneActionCode a) {
             return a.getValue();
         }
 

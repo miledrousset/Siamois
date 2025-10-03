@@ -168,7 +168,7 @@
                 </f:facet>
                 <p:cellEditor>
                     <f:facet name="output">
-                        <p:chip label="#{labelBean.findLabelOf(item.type)}" icon="pi pi-map-marker"
+                        <p:chip label="#{labelBean.findLabelOf(item.type)}" icon="bi bi-pencil-square"
                                 styleClass="mr-2 recording-unit-type-chip"/>
                     </f:facet>
                     <f:facet name="input">
@@ -182,6 +182,19 @@
 
             </p:column>
 
+            <!-- sous type -->
+            <p:column responsivePriority="1" headerText="#{langBean.msg('recordingunit.field.secondaryType')}">
+                        <p:chip label="#{labelBean.findLabelOf(item.secondaryType)}" icon="bi bii-pencil-square"
+                                styleClass="mr-2 recording-unit-type-chip"/>
+
+            </p:column>
+
+            <!-- third type -->
+            <p:column responsivePriority="1" headerText="#{langBean.msg('recordingunit.field.thirdType')}">
+                <p:chip label="#{labelBean.findLabelOf(item.thirdType)}" icon="bi bi-pencil-square"
+                        styleClass="mr-2 recording-unit-type-chip"/>
+            </p:column>
+
             <!-- Creation time -->
             <p:column responsivePriority="2" headerText="#{langBean.msg('table.spatialunit.column.creationdate')}"
                       sortable="true"
@@ -193,7 +206,7 @@
             </p:column>
 
             <!-- Auteur/Proprietaire -->
-            <p:column responsivePriority="2" headerText="#{langBean.msg('table.spatialunit.column.author')}"
+            <p:column responsivePriority="2" headerText="#{langBean.msg('common.field.createdBy')}"
                       sortable="false"
                       filterable="false"
                       field="author"
@@ -219,8 +232,20 @@
                 #{item.author.displayName()}
             </p:column>
 
+            <!-- Redacteurs -->
+            <p:column responsivePriority="2" headerText="#{langBean.msg('common.field.authors')}"
+            >
+                <cellbody:cellBodyMultiplePersons persons="#{item.authors}"/>
+            </p:column>
 
-            <!-- Parents -->
+
+            <!-- Fouilleurs -->
+            <p:column responsivePriority="2" headerText="#{langBean.msg('common.field.excavators')}"
+            >
+                <cellbody:cellBodyMultiplePersons persons="#{item.excavators}"/>
+            </p:column>
+
+            <!-- parents -->
             <p:column responsivePriority="3">
                 <f:facet name="header">
                     <cellheader:withIcon icon="bi bi-pencil-square"
@@ -239,13 +264,34 @@
                 <cellbody:cellBodyThreeItems set="#{item.children}"/>
             </p:column>
 
+            <!-- Action parent -->
+            <p:column responsivePriority="3" headerText="#{langBean.msg('recordingunit.field.actionUnit')}">
+                <h:outputLink value="#{request.contextPath}/action-unit/#{item.actionUnit.id}">
+                    #{item.actionUnit.name}
+                </h:outputLink>
+            </p:column>
+
+            <!-- Spatial parent -->
+            <p:column responsivePriority="3" headerText="#{langBean.msg('recordingunit.field.spatialUnit')}">
+                <h:outputLink value="#{request.contextPath}/spatial-unit/#{item.spatialUnit.id}">
+                    #{item.spatialUnit.name}
+                </h:outputLink>
+            </p:column>
+
+
             <!-- Prelevements -->
             <p:column responsivePriority="3">
                 <f:facet name="header">
                     <cellheader:withIcon icon="bi bi-box-2"
                                          text="#{langBean.msg('common.entity.specimen')}"/>
                 </f:facet>
-                <cellbody:cellBodyThreeItems set="#{item.specimenList}" displayAttribute="fullIdentifier" commandLinkStyleClass="sia-recording-unit-command-link"/>
+                <cellbody:cellBodyThreeItems
+                        set="#{item.specimenList}"
+                        panelModel="#{cc.attrs.panelModel}"
+                        displayAttribute="fullIdentifier"
+                        commandLinkStyleClass="sia-recording-unit-command-link"
+                        onClickMethod="#{flowBean.goToSpecimenByIdNewPanel}"
+                />
                 <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
                                  actionListener="#{genericNewUnitDialogBean.selectKind('SPECIMEN',item.specimenList, item)}"
                                  oncomplete="PF('newUnitDiag').show();"

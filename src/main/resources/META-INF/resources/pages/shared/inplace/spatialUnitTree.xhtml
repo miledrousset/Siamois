@@ -22,7 +22,19 @@
     <cc:implementation>
         <p:inplace mode="#{cc.attrs.mode}" toggleable="false">
             <f:facet name="output">
-                Just testing
+                <!-- Affichage de la liste normalisé des USp séléctionnées -->
+                <h:panelGroup
+                        rendered="#{not empty cc.attrs.panelModel.getNormalizedSpatialUnits(cc.attrs.answer)}">
+                    <ui:repeat value="#{cc.attrs.panelModel.getNormalizedSpatialUnits(cc.attrs.answer)}" var="su">
+                            <span>
+                                <p:chip label="#{su.name}" styleClass="mr-2 mb-2" removable="false">
+                                </p:chip>
+                            </span>
+                    </ui:repeat>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{empty cc.attrs.panelModel.getNormalizedSpatialUnits(cc.attrs.answer)}">
+                    <em>Aucune USp sélectionnée.</em>
+                </h:panelGroup>
             </f:facet>
             <f:facet name="input">
                 <!-- Affichage de la liste normalisé des USp séléctionnées -->
@@ -57,12 +69,12 @@
                     <p:column headerText="Nom" filterBy="#{su.name}"
                               filterMatchMode="contains">
 
-                            <p:outputLabel value="#{su.getName()}" style="margin-right:1em"/>
-                            <p:commandButton value="Ajouter"
-                                             rendered="#{!cc.attrs.panelModel.treeStates.get(cc.attrs.answer).selection.contains(su)}"
-                                             actionListener="#{cc.attrs.panelModel.addSUToSelection(cc.attrs.answer,su)}"
-                                             update="#{cc.attrs.updateTargetsOnBlur} selectedSpatialUnitPanel"
-                                             immediate="true"/>
+                        <p:outputLabel value="#{su.getName()}" style="margin-right:1em"/>
+                        <p:commandButton value="Ajouter"
+                                         rendered="#{!cc.attrs.panelModel.treeStates.get(cc.attrs.answer).selection.contains(su)}"
+                                         actionListener="#{cc.attrs.panelModel.addSUToSelection(cc.attrs.answer,su)}"
+                                         update="#{cc.attrs.updateTargetsOnBlur} selectedSpatialUnitPanel"
+                                         immediate="true"/>
 
                     </p:column>
 

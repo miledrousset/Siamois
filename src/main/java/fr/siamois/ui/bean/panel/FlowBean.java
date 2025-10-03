@@ -225,6 +225,13 @@ public class FlowBean implements Serializable {
 
     }
 
+    public void  goToSpecimenByIdNewPanel(Long id, AbstractPanel currentPanel) {
+
+        SpecimenPanel newPanel = panelFactory.createSpecimenPanel(id, currentPanel.getBreadcrumb());
+        addPanel(newPanel);
+
+    }
+
     public void  goToSpecimenByIdNewPanel(Long id, Integer currentPanelIndex) {
 
         SpecimenPanel newPanel = panelFactory.createSpecimenPanel(id, panels.get(currentPanelIndex).getBreadcrumb());

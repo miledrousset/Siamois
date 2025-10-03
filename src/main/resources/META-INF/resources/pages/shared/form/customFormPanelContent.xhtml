@@ -149,7 +149,24 @@
                                         panelModel="#{bean}"
                                         updateTargetsOnBlur="#{root}:field-#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
                                         answer="#{bean.formResponse.answers.get(col.field)}"/>
+
+                                <!-- Select one code OA -->
+                                <siaInplace:actionCode
+                                        rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneActionCode'}"
+                                        panelModel="#{bean}"
+                                        field="#{col.field}"
+                                        required="#{col.required}"
+                                        label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
+                                        hasBeenModified="#{bean.formResponse.answers.get(col.field).hasBeenModified}"
+                                        answer="#{bean.formResponse.answers.get(col.field)}"
+                                        mode="#{col.readOnly ? 'output' : flowBean.getInPlaceFieldMode()}"
+                                        updateTargetsOnBlur="#{root}:field-#{prefix}-#{statusIndex}-#{rowStatus.index}-#{colStatus.index}"
+                                />
+
+
                             </sharedInput:panelField>
+
+                            <!-- Select one code OA -->
                         </p:outputPanel>
                     </p:column>
 

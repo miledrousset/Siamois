@@ -7,7 +7,7 @@
     <p:chip label="#{labelBean.findLabelOf(panelModel.unit.type)}"
             icon="#{panelModel.icon}"
             styleClass="mr-2 action-unit-type-chip"/>
-    <span>#{panelModel.titleCodeOrTitle}</span>
+    <span>#{panelModel.titleCodeOrTitle} - (#{panelModel.unit.fullIdentifier})</span>
 
     <p:chip rendered="#{not panelModel.unit.validated}" label="Non validé"
             styleClass="mr-2 error-chip"
