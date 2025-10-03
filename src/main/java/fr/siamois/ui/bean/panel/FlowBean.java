@@ -307,7 +307,7 @@ public class FlowBean implements Serializable {
         panels.remove(idx);
 
         // If only one panel is left, uncollapse it
-        if (panels.size() == 1) {
+        if (panels.size() == 1 || (idx == 0 && !panels.isEmpty())) {
             panels.get(0).setCollapsed(false);
         }
         // If no panel left, open the homepanel
