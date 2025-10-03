@@ -74,7 +74,7 @@ public class SpecimenSeeder {
             if (s.collectors != null) {
                 for (var email : s.collectors) {
                     Person p = recordingUnitSeeder.getAuthorFromEmail(email);
-                    authors.add(p);
+                    collectors.add(p);
                 }
             }
 

@@ -110,7 +110,7 @@ public class RecordingUnitSeeder {
             if (s.excavators != null) {
                 for (var email : s.excavators) {
                     Person p = getAuthorFromEmail(email);
-                    authors.add(p);
+                    excavators.add(p);
                 }
             }
 

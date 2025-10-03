@@ -1,27 +1,8 @@
 package fr.siamois.infrastructure.database.initializer;
-
-import fr.siamois.domain.models.actionunit.ActionUnit;
-import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
-import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.models.recordingunit.RecordingUnit;
-import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
-import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
-import fr.siamois.domain.services.vocabulary.VocabularyService;
 import fr.siamois.infrastructure.database.initializer.seeder.*;
 import fr.siamois.infrastructure.database.initializer.seeder.ConceptSeeder.ConceptSpec;
-import fr.siamois.infrastructure.database.repositories.SpatialUnitRepository;
-import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
-import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
-import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
-import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
-import fr.siamois.infrastructure.database.repositories.recordingunit.RecordingUnitRepository;
-import fr.siamois.infrastructure.database.repositories.specimen.SpecimenRepository;
-import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
-import fr.siamois.infrastructure.database.repositories.vocabulary.VocabularyRepository;
-import fr.siamois.infrastructure.database.repositories.vocabulary.VocabularyTypeRepository;
-import fr.siamois.infrastructure.database.repositories.vocabulary.label.ConceptLabelRepository;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +30,6 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
     public static final String PARCELLE_DA_154 = "Parcelle DA 154";
     public static final String PARCELLE_DA_155 = "Parcelle DA 155";
     public static final String EMPRISE_DE_FOUILLE_DE_C_309_01 = "Emprise de fouille de C309_01";
-    private final ActionCodeRepository actionCodeRepository;
 
     public static final String VOCABULARY_ID = "th240";
 
@@ -184,14 +164,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
     @Value("${siamois.admin.email}")
     private String adminEmail;
 
-    List<InstitutionSeeder.InstitutionSpec> institutions = List.of(
-            new InstitutionSeeder.InstitutionSpec(
-                    "Chartres (Test équipe dev)",
-                    CHARTRES,
-                    "Insertion du jeu de donnée fourni par Anaïs Pinhède",
-                    List.of(adminEmail)
-            )
-    );
+
 
     private final ConceptSeeder conceptSeeder;
     private final PersonSeeder personSeeder;
@@ -209,12 +182,13 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
 
     public ChartresDatasetInitializer(
             PersonSeeder personSeeder, ActionCodeSeeder actionCodeSeeder,
-            ActionCodeRepository actionCodeRepository,
             ConceptSeeder conceptSeeder, ThesaurusSeeder thesaurusSeeder, SpatialUnitSeeder spatialUnitSeeder, ActionUnitSeeder actionUnitSeeder,
             RecordingUnitSeeder recordingUnitSeeder, SpecimenSeeder specimenSeeder, InstitutionSeeder institutionSeeder) {
+
+
+
         this.personSeeder = personSeeder;
         this.actionCodeSeeder = actionCodeSeeder;
-        this.actionCodeRepository = actionCodeRepository;
         this.conceptSeeder = conceptSeeder;
         this.thesaurusSeeder = thesaurusSeeder;
         this.spatialUnitSeeder = spatialUnitSeeder;
@@ -230,6 +204,14 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
     @Override
     @Transactional
     public void initialize() throws DatabaseDataInitException {
+        List<InstitutionSeeder.InstitutionSpec> institutions = List.of(
+                new InstitutionSeeder.InstitutionSpec(
+                        "Chartres (Test équipe dev)",
+                        "Insertion du jeu de donnée fourni par Anaïs Pinhède",
+                        CHARTRES,
+                        List.of(adminEmail)
+                )
+        );
         institutionSeeder.seed(institutions);
         Map<String, Vocabulary> result = thesaurusSeeder.seed(thesauri);
         conceptSeeder.seed(result.get(VOCABULARY_ID), concepts);
