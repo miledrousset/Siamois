@@ -16,6 +16,11 @@ import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
+import fr.siamois.infrastructure.database.initializer.seeder.ConceptSeeder;
+import fr.siamois.infrastructure.database.initializer.seeder.ConceptSeeder.ConceptSpec;
+import fr.siamois.infrastructure.database.initializer.seeder.PersonSeeder;
+import fr.siamois.infrastructure.database.initializer.seeder.SpatialUnitSeeder;
+import fr.siamois.infrastructure.database.initializer.seeder.ThesaurusSeeder;
 import fr.siamois.infrastructure.database.repositories.SpatialUnitRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
@@ -46,9 +51,8 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
 
     private final ActionCodeRepository actionCodeRepository;
 
-    // petit DTO pour décrire un concept à créer
-    public record ConceptSpec(String vocabularyId, String externalId, String label, String lang) {}
     public static final String VOCABULARY_ID = "th240";
+
 
     List<ConceptSpec> concepts = List.of(
             new ConceptSpec(VOCABULARY_ID, "4287534", "Fouille préventive", "fr"),
@@ -68,9 +72,40 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
             new ConceptSpec(VOCABULARY_ID, "4287544", "Emprise de fouille", "fr")
     );
 
-    private final SpatialUnitRepository spatialUnitRepositoryRepository;
+    List<ThesaurusSeeder.ThesaurusSpec> thesauri = List.of(
+            new ThesaurusSeeder.ThesaurusSpec("https://thesaurus.mom.fr", VOCABULARY_ID)
+    );
+
+    List<PersonSeeder.PersonSpec> persons = List.of(
+            new PersonSeeder.PersonSpec("anais.pinhede@siamois.fr", "Anaïs", "Pinhède", "anais.pinhede"),
+            new PersonSeeder.PersonSpec("pascal.gibut@siamois.fr", "Pascal", "Gibut", "pascal.gibut"),
+            new PersonSeeder.PersonSpec("duflos.franck@siamois.fr", "Duflos", "Franck", "duflos.franck")
+    );
+
+    List<SpatialUnitSeeder.SpatialUnitSpecs> spUnits = List.of(
+            new SpatialUnitSeeder.SpatialUnitSpecs("Parcelle DA 154", VOCABULARY_ID, "4287532",
+                    "pascal.gibut@siamois.fr", "chartres", null),
+            new SpatialUnitSeeder.SpatialUnitSpecs("Parcelle DA 155", VOCABULARY_ID, "4287532",
+                    "pascal.gibut@siamois.fr", "chartres", null),
+            new SpatialUnitSeeder.SpatialUnitSpecs("Emprise de fouille de C309_01", VOCABULARY_ID, "4287544",
+                    "pascal.gibut@siamois.fr", "chartres", Set.of(
+                    new SpatialUnitSeeder.ChildKey("Parcelle DA 154"),
+                    new SpatialUnitSeeder.ChildKey("Parcelle DA 155")
+            )),
+            new SpatialUnitSeeder.SpatialUnitSpecs("Chartres", VOCABULARY_ID, "4282370",
+            "pascal.gibut@siamois.fr", "chartres", Set.of(
+                    new SpatialUnitSeeder.ChildKey("Parcelle DA 154"),
+                    new SpatialUnitSeeder.ChildKey("Parcelle DA 155"),
+                    new SpatialUnitSeeder.ChildKey("Emprise de fouille de C309_01")
+            ))
+    );
+
     private final ActionUnitRepository actionUnitRepository;
     private final RecordingUnitRepository recordingUnitRepository;
+    private final ConceptSeeder conceptSeeder;
+    private final PersonSeeder personSeeder;
+    private final ThesaurusSeeder thesaurusSeeder;
+    private final SpatialUnitSeeder spatialUnitSeeder;
     private final SpecimenRepository specimenRepository;
     private final PersonRepository personRepository;
     private final InstitutionRepository institutionRepository;
@@ -98,18 +133,24 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
     @Value("${siamois.admin.username}")
     private String adminUsername;
 
-    public ChartresDatasetInitializer(SpatialUnitRepository spatialUnitRepositoryRepository,
-                                      ActionUnitRepository actionUnitRepository,
-                                      RecordingUnitRepository recordingUnitRepository,
-                                      SpecimenRepository specimenRepository,
-                                      PersonRepository personRepository,
-                                      InstitutionRepository institutionRepository,
-                                      VocabularyRepository vocabularyRepository,
-                                      VocabularyTypeRepository vocabularyTypeRepository,
-                                      SpatialUnitRepository spatialUnitRepository, ConceptRepository conceptRepository, ConceptLabelRepository conceptLabelRepository, FieldConfigurationService fieldConfigurationService, VocabularyService vocabularyService, ActionCodeRepository actionCodeRepository) {
-        this.spatialUnitRepositoryRepository = spatialUnitRepositoryRepository;
+    public ChartresDatasetInitializer(
+            ActionUnitRepository actionUnitRepository,
+            RecordingUnitRepository recordingUnitRepository, PersonSeeder personSeeder,
+            SpecimenRepository specimenRepository,
+            PersonRepository personRepository,
+            InstitutionRepository institutionRepository,
+            VocabularyRepository vocabularyRepository,
+            VocabularyTypeRepository vocabularyTypeRepository,
+            SpatialUnitRepository spatialUnitRepository,
+            ConceptRepository conceptRepository,
+            ConceptLabelRepository conceptLabelRepository,
+            FieldConfigurationService fieldConfigurationService,
+            VocabularyService vocabularyService,
+            ActionCodeRepository actionCodeRepository,
+            ConceptSeeder conceptSeeder, ThesaurusSeeder thesaurusSeeder, SpatialUnitSeeder spatialUnitSeeder) {
         this.actionUnitRepository = actionUnitRepository;
         this.recordingUnitRepository = recordingUnitRepository;
+        this.personSeeder = personSeeder;
         this.specimenRepository = specimenRepository;
         this.personRepository = personRepository;
         this.institutionRepository = institutionRepository;
@@ -121,6 +162,9 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
         this.fieldConfigurationService = fieldConfigurationService;
         this.vocabularyService = vocabularyService;
         this.actionCodeRepository = actionCodeRepository;
+        this.conceptSeeder = conceptSeeder;
+        this.thesaurusSeeder = thesaurusSeeder;
+        this.spatialUnitSeeder = spatialUnitSeeder;
     }
 
     /**
@@ -131,86 +175,18 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
     public void initialize() throws DatabaseDataInitException {
         getAdmin();
         initializeOrganization();
-        initializeThesaurus();
-        initializeConcepts();
-        initializeSpatialUnits();
+        Map<String, Vocabulary> result = thesaurusSeeder.seed(thesauri);
+        conceptSeeder.seed(result.get("th240"), concepts);
+        personSeeder.seed(persons);
+        Map<String, SpatialUnit> spRes = spatialUnitSeeder.seed(spUnits);
+        emprise = spRes.get("Emprise de fouille de C309_01");
+        spatialContext = new HashSet<>();
+        spatialContext.add(emprise);
         initializeActions();
         initializeRecordings();
         initializeSpecimens();
     }
 
-    public void initConcepts(Vocabulary thesaurus, List<ConceptSpec> specs) {
-
-        for (ConceptSpec spec : specs) {
-            Optional<Concept> existing = conceptRepository.findConceptByExternalIdIgnoreCase(
-                    spec.vocabularyId(), spec.externalId()
-            );
-
-            Concept concept = existing.orElseGet(() -> {
-                Concept c = new Concept();
-                c.setExternalId(spec.externalId());
-                c.setVocabulary(thesaurus);
-                return conceptRepository.save(c);
-            });
-
-            // Do we need to add the label?
-            Optional<ConceptLabel> opt = conceptLabelRepository.findByConceptAndLangCode(concept, spec.lang());
-            if(opt.isEmpty()) {
-                ConceptLabel label = new ConceptLabel();
-                label.setConcept(concept);
-                label.setValue(spec.label());
-                label.setLangCode(spec.lang());
-                conceptLabelRepository.save(label);
-            }
-
-
-        }
-    }
-
-    private void initializeConcepts() {
-        initConcepts(thesaurus, concepts);
-    }
-
-    private void initializeThesaurus() throws DatabaseDataInitException {
-        // Verify if the thesaurus is already imported in SIAMOIS
-        Optional<Vocabulary> optVocabulary = vocabularyRepository.findVocabularyByBaseUriAndVocabExternalId(
-                "https://thesaurus.mom.fr",
-                VOCABULARY_ID
-        );
-        if(optVocabulary.isPresent()) {
-            thesaurus = optVocabulary.get();
-        }
-        else {
-            try {
-                thesaurus = vocabularyService.findOrCreateVocabularyOfUri("https://thesaurus.mom.fr/?idt=th240");
-            } catch (InvalidEndpointException e) {
-                throw new DatabaseDataInitException("error with thesaurus init",e);
-            }
-            try {
-                fieldConfigurationService.setupFieldConfigurationForInstitution(createdInstitution, thesaurus);
-            } catch (NotSiamoisThesaurusException | ErrorProcessingExpansionException e) {
-                throw new DatabaseDataInitException("error with thesaurus init",e);
-            }
-        }
-    }
-
-    private Person getOrCreatePerson(String email, String name, String lastname, String username) {
-        Optional<Person> optAuthor = personRepository.findByEmailIgnoreCase(email);
-        Person authorGetOrCreated ;
-        if(optAuthor.isPresent()) {
-            authorGetOrCreated = optAuthor.get();
-        }
-        else {
-            authorGetOrCreated = new Person();
-            authorGetOrCreated.setUsername(username);
-            authorGetOrCreated.setName(name);
-            authorGetOrCreated.setLastname(lastname);
-            authorGetOrCreated.setEmail(email);
-            authorGetOrCreated.setPassword("mysuperstrongpassword");
-            personRepository.save(authorGetOrCreated);
-        }
-        return authorGetOrCreated;
-    }
 
     private ActionCode getOrCreateActionCode(String code, Concept type) {
         Optional<ActionCode> optCode = actionCodeRepository.findById(code);
@@ -227,53 +203,6 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
         return codeGetOrCreated;
     }
 
-    void initializeSpatialUnits() {
-        // find concepts
-        Concept parcelle = conceptRepository
-                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287532")
-                .orElseThrow(() -> new IllegalStateException("Concept parcelle introuvable dans th240"));
-        Concept commune = conceptRepository
-                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4282370")
-                .orElseThrow(() -> new IllegalStateException("Concept commune introuvable dans th240"));
-        Concept empriseConcept = conceptRepository
-                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287544")
-                .orElseThrow(() -> new IllegalStateException("Concept emprise introuvable dans th240"));
-
-        author = getOrCreatePerson("anais.pinhede@siamois.fr", "Anaïs", "Pinhède", "anais.pinhede");
-        fouilleur1 = getOrCreatePerson("pascal.gibut@siamois.fr", "Pascal", "Gibut", "pascal.gibut");
-        fouilleur2 = getOrCreatePerson("duflos.franck@siamois.fr", "Duflos", "Franck", "duflos.franck");
-
-        Optional<SpatialUnit> optChartres = spatialUnitRepository.findByNameAndInstitution("Emprise de fouille de C309_01", createdInstitution.getId());
-        if(optChartres.isPresent()) {
-            emprise = optChartres.get();
-
-
-        }
-        else {
-            SpatialUnit parcelleDA154 = new SpatialUnit(); parcelleDA154.setName("Parcelle DA 154"); parcelleDA154.setCategory(parcelle);
-            parcelleDA154.setCreatedByInstitution(createdInstitution); parcelleDA154.setAuthor(author);
-            SpatialUnit parcelleDA155 = new SpatialUnit(); parcelleDA155.setName("Parcelle DA 155"); parcelleDA155.setCategory(parcelle);
-            parcelleDA155.setCreatedByInstitution(createdInstitution); parcelleDA155.setAuthor(author);
-            emprise = new SpatialUnit(); emprise.setName("Emprise de fouille de C309_01"); emprise.setCategory(empriseConcept);
-            emprise.setCreatedByInstitution(createdInstitution); emprise.setAuthor(author);
-            parcelleDA154 = spatialUnitRepository.save(parcelleDA154);
-            parcelleDA155 = spatialUnitRepository.save(parcelleDA155);
-            emprise.getChildren().add(parcelleDA154);
-            emprise.getChildren().add(parcelleDA155);
-            spatialUnitRepository.save(emprise);
-            SpatialUnit chartres = new SpatialUnit(); chartres.setName("Chartres"); chartres.setCategory(commune);
-            chartres.setCreatedByInstitution(createdInstitution); chartres.setAuthor(author);
-            parcelleDA154 = spatialUnitRepository.save(parcelleDA154);
-            parcelleDA155 = spatialUnitRepository.save(parcelleDA155);
-            chartres.getChildren().add(parcelleDA154);
-            chartres.getChildren().add(parcelleDA155);
-            chartres.getChildren().add(emprise);
-            spatialUnitRepository.save(chartres);
-
-        }
-        spatialContext = new HashSet<>();
-        spatialContext.add(emprise);
-    }
 
     void initializeActions() {
 
@@ -430,8 +359,6 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
                 specimenRepository.save(s2);
         }
     }
-
-
 
     /**
      * Creates the Chartres organisation if it doesn't exist. Changes the manager of the organisation
