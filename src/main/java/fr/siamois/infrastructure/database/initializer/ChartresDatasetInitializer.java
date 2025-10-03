@@ -52,10 +52,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
     private final ActionCodeRepository actionCodeRepository;
 
     public static final String VOCABULARY_ID = "th240";
-    private final ActionUnitSeeder actionUnitSeeder;
-    private final RecordingUnitSeeder recordingUnitSeeder;
-    private final SpecimenSeeder specimenSeeder;
-    private final InstitutionSeeder institutionSeeder;
+
 
 
     List<ConceptSpec> concepts = List.of(
@@ -196,68 +193,27 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
             )
     );
 
-    private final ActionUnitRepository actionUnitRepository;
-    private final RecordingUnitRepository recordingUnitRepository;
     private final ConceptSeeder conceptSeeder;
     private final PersonSeeder personSeeder;
     private final ThesaurusSeeder thesaurusSeeder;
     private final ActionCodeSeeder actionCodeSeeder;
     private final SpatialUnitSeeder spatialUnitSeeder;
-    private final SpecimenRepository specimenRepository;
-    private final PersonRepository personRepository;
-    private final InstitutionRepository institutionRepository;
-    private final VocabularyRepository vocabularyRepository;
-    private final VocabularyTypeRepository vocabularyTypeRepository;
-    private final SpatialUnitRepository spatialUnitRepository;
-    private final ConceptRepository conceptRepository;
-    private final ConceptLabelRepository conceptLabelRepository;
-    private final FieldConfigurationService fieldConfigurationService;
-    private final VocabularyService vocabularyService;
-
-
-    private Person admin;
-    private Institution createdInstitution;
-    private Vocabulary thesaurus;
-    private SpatialUnit emprise;
-    private Person author;
-    private Person fouilleur1;
-    private Person fouilleur2;
-    private RecordingUnit ru;
-    private ActionUnit actionUnit;
+    private final ActionUnitSeeder actionUnitSeeder;
+    private final RecordingUnitSeeder recordingUnitSeeder;
+    private final SpecimenSeeder specimenSeeder;
+    private final InstitutionSeeder institutionSeeder;
 
 
     @Value("${siamois.admin.username}")
     private String adminUsername;
 
     public ChartresDatasetInitializer(
-            ActionUnitRepository actionUnitRepository,
-            RecordingUnitRepository recordingUnitRepository, PersonSeeder personSeeder, ActionCodeSeeder actionCodeSeeder,
-            SpecimenRepository specimenRepository,
-            PersonRepository personRepository,
-            InstitutionRepository institutionRepository,
-            VocabularyRepository vocabularyRepository,
-            VocabularyTypeRepository vocabularyTypeRepository,
-            SpatialUnitRepository spatialUnitRepository,
-            ConceptRepository conceptRepository,
-            ConceptLabelRepository conceptLabelRepository,
-            FieldConfigurationService fieldConfigurationService,
-            VocabularyService vocabularyService,
+            PersonSeeder personSeeder, ActionCodeSeeder actionCodeSeeder,
             ActionCodeRepository actionCodeRepository,
-            ConceptSeeder conceptSeeder, ThesaurusSeeder thesaurusSeeder, SpatialUnitSeeder spatialUnitSeeder, ActionUnitSeeder actionUnitSeeder, RecordingUnitSeeder recordingUnitSeeder, SpecimenSeeder specimenSeeder, InstitutionSeeder institutionSeeder) {
-        this.actionUnitRepository = actionUnitRepository;
-        this.recordingUnitRepository = recordingUnitRepository;
+            ConceptSeeder conceptSeeder, ThesaurusSeeder thesaurusSeeder, SpatialUnitSeeder spatialUnitSeeder, ActionUnitSeeder actionUnitSeeder,
+            RecordingUnitSeeder recordingUnitSeeder, SpecimenSeeder specimenSeeder, InstitutionSeeder institutionSeeder) {
         this.personSeeder = personSeeder;
         this.actionCodeSeeder = actionCodeSeeder;
-        this.specimenRepository = specimenRepository;
-        this.personRepository = personRepository;
-        this.institutionRepository = institutionRepository;
-        this.vocabularyRepository = vocabularyRepository;
-        this.vocabularyTypeRepository = vocabularyTypeRepository;
-        this.spatialUnitRepository = spatialUnitRepository;
-        this.conceptRepository = conceptRepository;
-        this.conceptLabelRepository = conceptLabelRepository;
-        this.fieldConfigurationService = fieldConfigurationService;
-        this.vocabularyService = vocabularyService;
         this.actionCodeRepository = actionCodeRepository;
         this.conceptSeeder = conceptSeeder;
         this.thesaurusSeeder = thesaurusSeeder;
