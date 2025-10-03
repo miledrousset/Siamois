@@ -1,26 +1,16 @@
 package fr.siamois.infrastructure.database.initializer;
 
-import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.ErrorProcessingExpansionException;
-import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
-import fr.siamois.domain.models.exceptions.api.NotSiamoisThesaurusException;
 import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
-import fr.siamois.domain.models.specimen.Specimen;
-import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
-import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
-import fr.siamois.infrastructure.database.initializer.seeder.ConceptSeeder;
+import fr.siamois.infrastructure.database.initializer.seeder.*;
 import fr.siamois.infrastructure.database.initializer.seeder.ConceptSeeder.ConceptSpec;
-import fr.siamois.infrastructure.database.initializer.seeder.PersonSeeder;
-import fr.siamois.infrastructure.database.initializer.seeder.SpatialUnitSeeder;
-import fr.siamois.infrastructure.database.initializer.seeder.ThesaurusSeeder;
 import fr.siamois.infrastructure.database.repositories.SpatialUnitRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
@@ -49,17 +39,30 @@ import java.util.*;
 @Setter
 public class ChartresDatasetInitializer implements DatabaseInitializer {
 
+    public static final String CHARTRES = "chartres";
+    public static final String PARCELLE = "4287532";
+    public static final String PASCAL_GIBUT_SIAMOIS_FR = "pascal.gibut@siamois.fr";
+    public static final String CHARTRES_C_309_01_1015 = "chartres-C309_01-1015";
+    public static final String CHARTRES_C_309_01 = "chartres-C309_01";
+    public static final String US_EXTERNAL_ID = "4282375";
+    public static final String OA_EXT_ID = "4283545";
+    public static final String PARCELLE_DA_154 = "Parcelle DA 154";
+    public static final String PARCELLE_DA_155 = "Parcelle DA 155";
+    public static final String EMPRISE_DE_FOUILLE_DE_C_309_01 = "Emprise de fouille de C309_01";
     private final ActionCodeRepository actionCodeRepository;
 
     public static final String VOCABULARY_ID = "th240";
+    private final ActionUnitSeeder actionUnitSeeder;
+    private final RecordingUnitSeeder recordingUnitSeeder;
+    private final SpecimenSeeder specimenSeeder;
 
 
     List<ConceptSpec> concepts = List.of(
             new ConceptSpec(VOCABULARY_ID, "4287534", "Fouille préventive", "fr"),
             new ConceptSpec(VOCABULARY_ID, "4287533", "Diagnostic archéologique", "fr"),
-            new ConceptSpec(VOCABULARY_ID, "4287532", "Parcelle", "fr"),
+            new ConceptSpec(VOCABULARY_ID, PARCELLE, "Parcelle", "fr"),
             new ConceptSpec(VOCABULARY_ID, "4282370", "Commune", "fr"),
-            new ConceptSpec(VOCABULARY_ID, "4282375", "Unité stratigraphique", "fr"),
+            new ConceptSpec(VOCABULARY_ID, US_EXTERNAL_ID, "Unité stratigraphique", "fr"),
             new ConceptSpec(VOCABULARY_ID, "4287539", "Dépôt", "fr"),
             new ConceptSpec(VOCABULARY_ID, "4287541", "Couche d'occupation", "fr"),
             new ConceptSpec(VOCABULARY_ID, "4287537", "Interface", "fr"),
@@ -68,7 +71,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
             new ConceptSpec(VOCABULARY_ID, "4286251", "Lot", "fr"),
             new ConceptSpec(VOCABULARY_ID, "4287542", "ANImal", "fr"),
             new ConceptSpec(VOCABULARY_ID, "4287543", "METal", "fr"),
-            new ConceptSpec(VOCABULARY_ID, "4283545", "Code OA", "fr"),
+            new ConceptSpec(VOCABULARY_ID, OA_EXT_ID, "Code OA", "fr"),
             new ConceptSpec(VOCABULARY_ID, "4287544", "Emprise de fouille", "fr")
     );
 
@@ -78,26 +81,106 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
 
     List<PersonSeeder.PersonSpec> persons = List.of(
             new PersonSeeder.PersonSpec("anais.pinhede@siamois.fr", "Anaïs", "Pinhède", "anais.pinhede"),
-            new PersonSeeder.PersonSpec("pascal.gibut@siamois.fr", "Pascal", "Gibut", "pascal.gibut"),
+            new PersonSeeder.PersonSpec(PASCAL_GIBUT_SIAMOIS_FR, "Pascal", "Gibut", "pascal.gibut"),
             new PersonSeeder.PersonSpec("duflos.franck@siamois.fr", "Duflos", "Franck", "duflos.franck")
     );
-
+    
     List<SpatialUnitSeeder.SpatialUnitSpecs> spUnits = List.of(
-            new SpatialUnitSeeder.SpatialUnitSpecs("Parcelle DA 154", VOCABULARY_ID, "4287532",
-                    "pascal.gibut@siamois.fr", "chartres", null),
-            new SpatialUnitSeeder.SpatialUnitSpecs("Parcelle DA 155", VOCABULARY_ID, "4287532",
-                    "pascal.gibut@siamois.fr", "chartres", null),
-            new SpatialUnitSeeder.SpatialUnitSpecs("Emprise de fouille de C309_01", VOCABULARY_ID, "4287544",
-                    "pascal.gibut@siamois.fr", "chartres", Set.of(
-                    new SpatialUnitSeeder.ChildKey("Parcelle DA 154"),
-                    new SpatialUnitSeeder.ChildKey("Parcelle DA 155")
+            new SpatialUnitSeeder.SpatialUnitSpecs(PARCELLE_DA_154, VOCABULARY_ID, PARCELLE,
+                    PASCAL_GIBUT_SIAMOIS_FR, CHARTRES, null),
+            new SpatialUnitSeeder.SpatialUnitSpecs(PARCELLE_DA_155, VOCABULARY_ID, PARCELLE,
+                    PASCAL_GIBUT_SIAMOIS_FR, CHARTRES, null),
+            new SpatialUnitSeeder.SpatialUnitSpecs(EMPRISE_DE_FOUILLE_DE_C_309_01, VOCABULARY_ID, "4287544",
+                    PASCAL_GIBUT_SIAMOIS_FR, CHARTRES, Set.of(
+                    new SpatialUnitSeeder.SpatialUnitKey(PARCELLE_DA_154),
+                    new SpatialUnitSeeder.SpatialUnitKey(PARCELLE_DA_155)
             )),
             new SpatialUnitSeeder.SpatialUnitSpecs("Chartres", VOCABULARY_ID, "4282370",
-            "pascal.gibut@siamois.fr", "chartres", Set.of(
-                    new SpatialUnitSeeder.ChildKey("Parcelle DA 154"),
-                    new SpatialUnitSeeder.ChildKey("Parcelle DA 155"),
-                    new SpatialUnitSeeder.ChildKey("Emprise de fouille de C309_01")
+                    PASCAL_GIBUT_SIAMOIS_FR, CHARTRES, Set.of(
+                    new SpatialUnitSeeder.SpatialUnitKey(PARCELLE_DA_154),
+                    new SpatialUnitSeeder.SpatialUnitKey(PARCELLE_DA_155),
+                    new SpatialUnitSeeder.SpatialUnitKey(EMPRISE_DE_FOUILLE_DE_C_309_01)
             ))
+    );
+
+    List<ActionCodeSeeder.ActionCodeSpec> actionCodes = List.of(
+            new ActionCodeSeeder.ActionCodeSpec("069260", OA_EXT_ID, VOCABULARY_ID),
+            new ActionCodeSeeder.ActionCodeSpec("0610216", OA_EXT_ID, VOCABULARY_ID)
+    );
+
+
+    List<ActionUnitSeeder.ActionUnitSpecs> actions = List.of(
+            new ActionUnitSeeder.ActionUnitSpecs(CHARTRES_C_309_01, "Pôle Gare - Phase 1", "C309_01",
+                    "069260", VOCABULARY_ID, "4287533", PASCAL_GIBUT_SIAMOIS_FR, CHARTRES,
+                    OffsetDateTime.of(2012, 6, 12, 0, 0, 0, 0, ZoneOffset.UTC),
+                    OffsetDateTime.of(2012, 7, 17, 0, 0, 0, 0, ZoneOffset.UTC),
+                    Set.of(
+                            new SpatialUnitSeeder.SpatialUnitKey(EMPRISE_DE_FOUILLE_DE_C_309_01)
+                    )),
+            new ActionUnitSeeder.ActionUnitSpecs("chartres-C309_11", "Pôle Gare - rue du Chemin de Fer et rue du Faubourg Saint-Jean (phase 1)",
+                    "C309_11",
+                    "0610216", VOCABULARY_ID, "4287534", PASCAL_GIBUT_SIAMOIS_FR, CHARTRES,
+                    OffsetDateTime.of(2015, 6, 8, 0, 0, 0, 0, ZoneOffset.UTC),
+                    OffsetDateTime.of(2015, 9, 29, 0, 0, 0, 0, ZoneOffset.UTC),
+                    null)
+    );
+
+    List<RecordingUnitSeeder.RecordingUnitSpecs> recUnits = List.of(
+            new RecordingUnitSeeder.RecordingUnitSpecs("chartres-C309_01-1100", 1100,
+                    new ConceptSeeder.ConceptKey(VOCABULARY_ID, US_EXTERNAL_ID),
+                    new ConceptSeeder.ConceptKey(VOCABULARY_ID, "4287539"),
+                    new ConceptSeeder.ConceptKey(VOCABULARY_ID, "4287541"),
+                    PASCAL_GIBUT_SIAMOIS_FR,
+                    CHARTRES,
+                    List.of(PASCAL_GIBUT_SIAMOIS_FR),
+                    List.of(PASCAL_GIBUT_SIAMOIS_FR, "duflos.franck@siamois.fr"),
+                    OffsetDateTime.of(2012, 6, 22, 0, 0, 0, 0, ZoneOffset.UTC),
+                    null,
+                    null,
+                    new SpatialUnitSeeder.SpatialUnitKey(EMPRISE_DE_FOUILLE_DE_C_309_01),
+                    new ActionUnitSeeder.ActionUnitKey(CHARTRES_C_309_01)
+            ),
+            new RecordingUnitSeeder.RecordingUnitSpecs(CHARTRES_C_309_01_1015, 1100,
+                    new ConceptSeeder.ConceptKey(VOCABULARY_ID, US_EXTERNAL_ID),
+                    new ConceptSeeder.ConceptKey(VOCABULARY_ID, "4287537"),
+                    new ConceptSeeder.ConceptKey(VOCABULARY_ID, "4287540"),
+                    PASCAL_GIBUT_SIAMOIS_FR,
+                    CHARTRES,
+                    List.of(PASCAL_GIBUT_SIAMOIS_FR),
+                    List.of(PASCAL_GIBUT_SIAMOIS_FR),
+                    OffsetDateTime.of(2012, 7, 5, 0, 0, 0, 0, ZoneOffset.UTC),
+                    null,
+                    null,
+                    new SpatialUnitSeeder.SpatialUnitKey(EMPRISE_DE_FOUILLE_DE_C_309_01),
+                    new ActionUnitSeeder.ActionUnitKey(CHARTRES_C_309_01)
+            )
+    );
+
+    List<SpecimenSeeder.SpecimenSpecs> specimens = List.of(
+            new SpecimenSeeder.SpecimenSpecs(
+                    "chartres-C309_01-1100-1",
+                    1,
+                    new ConceptSeeder.ConceptKey(VOCABULARY_ID, "4287543"),
+                    new ConceptSeeder.ConceptKey(VOCABULARY_ID, "4286252"),
+                    PASCAL_GIBUT_SIAMOIS_FR,
+                    CHARTRES,
+                    List.of(PASCAL_GIBUT_SIAMOIS_FR),
+                    List.of(PASCAL_GIBUT_SIAMOIS_FR),
+                    OffsetDateTime.of(2012, 6, 22, 0, 0, 0, 0, ZoneOffset.UTC),
+                    new RecordingUnitSeeder.RecordingUnitKey(CHARTRES_C_309_01_1015)
+            ),
+            new SpecimenSeeder.SpecimenSpecs(
+                    "chartres-C309_01-1100-57",
+                    1,
+                    new ConceptSeeder.ConceptKey(VOCABULARY_ID, "4287542"),
+                    new ConceptSeeder.ConceptKey(VOCABULARY_ID, "4286251"),
+                    PASCAL_GIBUT_SIAMOIS_FR,
+                    CHARTRES,
+                    List.of(PASCAL_GIBUT_SIAMOIS_FR),
+                    List.of(PASCAL_GIBUT_SIAMOIS_FR),
+                    OffsetDateTime.of(2012, 6, 22, 0, 0, 0, 0, ZoneOffset.UTC),
+                    new RecordingUnitSeeder.RecordingUnitKey(CHARTRES_C_309_01_1015)
+            )
     );
 
     private final ActionUnitRepository actionUnitRepository;
@@ -105,6 +188,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
     private final ConceptSeeder conceptSeeder;
     private final PersonSeeder personSeeder;
     private final ThesaurusSeeder thesaurusSeeder;
+    private final ActionCodeSeeder actionCodeSeeder;
     private final SpatialUnitSeeder spatialUnitSeeder;
     private final SpecimenRepository specimenRepository;
     private final PersonRepository personRepository;
@@ -120,7 +204,6 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
 
     private Person admin;
     private Institution createdInstitution;
-    private Set<SpatialUnit> spatialContext;
     private Vocabulary thesaurus;
     private SpatialUnit emprise;
     private Person author;
@@ -135,7 +218,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
 
     public ChartresDatasetInitializer(
             ActionUnitRepository actionUnitRepository,
-            RecordingUnitRepository recordingUnitRepository, PersonSeeder personSeeder,
+            RecordingUnitRepository recordingUnitRepository, PersonSeeder personSeeder, ActionCodeSeeder actionCodeSeeder,
             SpecimenRepository specimenRepository,
             PersonRepository personRepository,
             InstitutionRepository institutionRepository,
@@ -147,10 +230,11 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
             FieldConfigurationService fieldConfigurationService,
             VocabularyService vocabularyService,
             ActionCodeRepository actionCodeRepository,
-            ConceptSeeder conceptSeeder, ThesaurusSeeder thesaurusSeeder, SpatialUnitSeeder spatialUnitSeeder) {
+            ConceptSeeder conceptSeeder, ThesaurusSeeder thesaurusSeeder, SpatialUnitSeeder spatialUnitSeeder, ActionUnitSeeder actionUnitSeeder, RecordingUnitSeeder recordingUnitSeeder, SpecimenSeeder specimenSeeder) {
         this.actionUnitRepository = actionUnitRepository;
         this.recordingUnitRepository = recordingUnitRepository;
         this.personSeeder = personSeeder;
+        this.actionCodeSeeder = actionCodeSeeder;
         this.specimenRepository = specimenRepository;
         this.personRepository = personRepository;
         this.institutionRepository = institutionRepository;
@@ -165,10 +249,13 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
         this.conceptSeeder = conceptSeeder;
         this.thesaurusSeeder = thesaurusSeeder;
         this.spatialUnitSeeder = spatialUnitSeeder;
+        this.actionUnitSeeder = actionUnitSeeder;
+        this.recordingUnitSeeder = recordingUnitSeeder;
+        this.specimenSeeder = specimenSeeder;
     }
 
     /**
-        Insert chartres test dataset into DB
+     * Insert chartres test dataset into DB
      */
     @Override
     @Transactional
@@ -176,189 +263,17 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
         getAdmin();
         initializeOrganization();
         Map<String, Vocabulary> result = thesaurusSeeder.seed(thesauri);
-        conceptSeeder.seed(result.get("th240"), concepts);
+        conceptSeeder.seed(result.get(VOCABULARY_ID), concepts);
         personSeeder.seed(persons);
-        Map<String, SpatialUnit> spRes = spatialUnitSeeder.seed(spUnits);
-        emprise = spRes.get("Emprise de fouille de C309_01");
-        spatialContext = new HashSet<>();
-        spatialContext.add(emprise);
-        initializeActions();
-        initializeRecordings();
-        initializeSpecimens();
+        spatialUnitSeeder.seed(spUnits);
+        actionCodeSeeder.seed(actionCodes);
+        actionUnitSeeder.seed(actions);
+        recordingUnitSeeder.seed(recUnits);
+        specimenSeeder.seed(specimens);
     }
 
 
-    private ActionCode getOrCreateActionCode(String code, Concept type) {
-        Optional<ActionCode> optCode = actionCodeRepository.findById(code);
-        ActionCode codeGetOrCreated ;
-        if(optCode.isPresent()) {
-            codeGetOrCreated = optCode.get();
-        }
-        else {
-            codeGetOrCreated = new ActionCode();
-            codeGetOrCreated.setCode(code);
-            codeGetOrCreated.setType(type);
-            actionCodeRepository.save(codeGetOrCreated);
-        }
-        return codeGetOrCreated;
-    }
 
-
-    void initializeActions() {
-
-        // find concepts
-        Concept prevFouille = conceptRepository
-                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287534")
-                .orElseThrow(() -> new IllegalStateException("Concept prevFouille introuvable dans th240"));
-        Concept archeoDiag = conceptRepository
-                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287533")
-                .orElseThrow(() -> new IllegalStateException("Concept archeoDiag introuvable dans th240"));
-
-        Optional<ActionUnit> optAU = actionUnitRepository.findByIdentifierAndCreatedByInstitution("C309_01", createdInstitution);
-        if(optAU.isPresent()) {
-            actionUnit = optAU.get();
-        }
-        else {
-            // Get or create code
-            Concept actionCodeConcept = conceptRepository
-                    .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4283545")
-                    .orElseThrow(() -> new IllegalStateException("Concept actionCodeConcept introuvable dans th240"));
-            ActionCode codeOA = getOrCreateActionCode("069260", actionCodeConcept);
-            ActionCode codeOA2 = getOrCreateActionCode("0610216", actionCodeConcept);
-            // create it
-            actionUnit = new ActionUnit();
-            actionUnit.setCreatedByInstitution(createdInstitution);
-            actionUnit.setIdentifier("C309_01");
-            actionUnit.setName("Pôle Gare - Phase 1");
-            actionUnit.setAuthor(fouilleur1);
-            actionUnit.setPrimaryActionCode(codeOA);
-            actionUnit.setFullIdentifier("chartres-C309_01");
-            actionUnit.setType(archeoDiag);
-            actionUnit.setSpatialContext(spatialContext);
-            actionUnit = actionUnitRepository.save(actionUnit);
-            actionUnit.setBeginDate(OffsetDateTime.of(2012, 6, 12, 0, 0, 0, 0, ZoneOffset.UTC));
-            actionUnit.setEndDate(OffsetDateTime.of(2012, 7, 17, 0, 0, 0, 0, ZoneOffset.UTC));
-            // create a second one
-            ActionUnit action2 = new ActionUnit();
-            action2.setCreatedByInstitution(createdInstitution);
-            action2.setPrimaryActionCode(codeOA2);
-            action2.setIdentifier("C309_11");
-            action2.setFullIdentifier("chartres-C309_11");
-            action2.setName("Pôle Gare - rue du Chemin de Fer et rue du Faubourg Saint-Jean (phase 1)");
-            action2.setAuthor(fouilleur1);
-            action2.setType(prevFouille);
-            action2.setBeginDate(OffsetDateTime.of(2015, 6, 8, 0, 0, 0, 0, ZoneOffset.UTC));
-            action2.setEndDate(OffsetDateTime.of(2015, 9, 29, 0, 0, 0, 0, ZoneOffset.UTC));
-            actionUnitRepository.save(action2);
-        }
-
-
-    }
-
-    void initializeRecordings() {
-
-        Concept us = conceptRepository
-                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4282375")
-                .orElseThrow(() -> new IllegalStateException("Concept us introuvable dans th240"));
-        Concept depot = conceptRepository
-                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287539")
-                .orElseThrow(() -> new IllegalStateException("Concept dépôt introuvable dans th240"));
-        Concept coucheOcp = conceptRepository
-                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287541")
-                .orElseThrow(() -> new IllegalStateException("Concept couche d'occupation introuvable dans th240"));
-        Concept interfaceConcept = conceptRepository
-                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287537")
-                .orElseThrow(() -> new IllegalStateException("Concept interface introuvable dans th240"));
-        Concept creusement = conceptRepository
-                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287540")
-                .orElseThrow(() -> new IllegalStateException("Concept creusement introuvable dans th240"));
-
-        Optional<RecordingUnit> optRU = recordingUnitRepository.findByIdentifierAndCreatedByInstitution(1100, createdInstitution);
-        if(optRU.isPresent()) {
-            ru = optRU.get();
-        }
-        else {
-            // create it
-            ru = new RecordingUnit();
-            ru.setCreatedByInstitution(createdInstitution);
-            ru.setIdentifier(1100);
-            ru.setFullIdentifier("chartres-C309_01-1100");
-            ru.setAuthor(fouilleur1);
-            ru.setExcavators(List.of(fouilleur1, fouilleur2));
-            ru.setAuthors(List.of(fouilleur1));
-            ru.setType(us);
-            ru.setCreationTime(OffsetDateTime.of(2012, 6, 22, 0, 0, 0, 0, ZoneOffset.UTC));
-            ru.setSecondaryType(depot);
-            ru.setThirdType(coucheOcp);
-            ru.setSpatialUnit(emprise);
-            ru.setActionUnit(actionUnit);
-            ru = recordingUnitRepository.save(ru);
-            // create a second one
-            RecordingUnit ru2 = new RecordingUnit();
-            ru2.setCreatedByInstitution(createdInstitution);
-            ru2.setIdentifier(1015);
-            ru2.setFullIdentifier("chartres-C309_01-1015");
-            ru2.setAuthor(fouilleur1);
-            ru2.setCreationTime(OffsetDateTime.of(2012, 7, 5, 0, 0, 0, 0, ZoneOffset.UTC));
-            ru2.setExcavators(List.of(fouilleur1));
-            ru2.setAuthors(List.of(fouilleur1));
-            ru2.setType(us);
-            ru2.setSecondaryType(interfaceConcept);
-            ru2.setThirdType(creusement);
-            ru2.setSpatialUnit(emprise);
-            ru2.setActionUnit(actionUnit);
-            recordingUnitRepository.save(ru2);
-        }
-
-
-    }
-
-    void initializeSpecimens() {
-
-        Concept indiv = conceptRepository
-                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4286252")
-                .orElseThrow(() -> new IllegalStateException("Concept indiv introuvable dans th240"));
-        Concept lot = conceptRepository
-                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4286251")
-                .orElseThrow(() -> new IllegalStateException("Concept lot d'occupation introuvable dans th240"));
-        Concept animal = conceptRepository
-                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287542")
-                .orElseThrow(() -> new IllegalStateException("Concept animal introuvable dans th240"));
-        Concept metal = conceptRepository
-                .findConceptByExternalIdIgnoreCase(VOCABULARY_ID, "4287543")
-                .orElseThrow(() -> new IllegalStateException("Concept metal introuvable dans th240"));
-
-
-        Optional<Specimen> optSpec = specimenRepository.findByFullIdentifierAndCreatedByInstitution("chartres-C309_01-1100-1", createdInstitution);
-            if(optSpec.isEmpty()) {
-                // create it
-                Specimen s1 = new Specimen();
-                s1.setCreatedByInstitution(createdInstitution);
-                s1.setIdentifier(1);
-                s1.setFullIdentifier("chartres-C309_01-1100-1");
-                s1.setAuthor(fouilleur1);
-                s1.setCollectors(List.of(fouilleur1));
-                s1.setAuthors(List.of(fouilleur1));
-                s1.setType(metal);
-                s1.setCreationTime(OffsetDateTime.of(2012, 6, 22, 0, 0, 0, 0, ZoneOffset.UTC));
-                s1.setRecordingUnit(ru);
-                s1.setCategory(indiv);
-                specimenRepository.save(s1);
-                // create a second one
-                Specimen s2 = new Specimen();
-                s2.setCreatedByInstitution(createdInstitution);
-                s2.setIdentifier(1);
-                s2.setFullIdentifier("chartres-C309_01-1100-57");
-                s2.setAuthor(fouilleur1);
-                s2.setCollectors(List.of(fouilleur1));
-                s2.setAuthors(List.of(fouilleur1));
-                s2.setType(animal);
-                s2.setCategory(lot);
-                s2.setCreationTime(OffsetDateTime.of(2012, 6, 22, 0, 0, 0, 0, ZoneOffset.UTC));
-                s2.setRecordingUnit(ru);
-                specimenRepository.save(s2);
-        }
-    }
 
     /**
      * Creates the Chartres organisation if it doesn't exist. Changes the manager of the organisation
@@ -371,7 +286,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
         institution.setName("Chartres (Test équipe dev)");
         institution.setDescription("Insertion du jeu de donnée fourni par Anaïs Pinhède");
         institution.getManagers().add(admin);
-        institution.setIdentifier("chartres");
+        institution.setIdentifier(CHARTRES);
 
         createdInstitution = institutionRepository.save(institution);
 
@@ -386,7 +301,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
 
     protected boolean processExistingInstitution() {
         Institution institution;
-        Optional<Institution> optInstitution = institutionRepository.findInstitutionByIdentifier("chartres");
+        Optional<Institution> optInstitution = institutionRepository.findInstitutionByIdentifier(CHARTRES);
         if (optInstitution.isPresent()) {
             institution = optInstitution.get();
             if (createdAdminIsNotOwnerOf(institution.getManagers())) {

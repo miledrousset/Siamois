@@ -17,6 +17,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+
 public class SpatialUnitSeeder {
     private final PersonRepository personRepository;
     private final ConceptRepository conceptRepository;
@@ -24,11 +25,11 @@ public class SpatialUnitSeeder {
     private final SpatialUnitRepository spatialUnitRepository;
 
     public record SpatialUnitSpecs(String name, String typeVocabularyExtId, String typeConceptExtId, String authorEmail,
-                                   String institutionIdentifier, Set<ChildKey> childrenKey) {
+                                   String institutionIdentifier, Set<SpatialUnitKey> childrenKey) {
 
     }
 
-    public record ChildKey(String unitName) {}
+    public record SpatialUnitKey(String unitName) {}
 
     private SpatialUnit getOrCreateSpatialUnit(SpatialUnit spatialUnit) {
 

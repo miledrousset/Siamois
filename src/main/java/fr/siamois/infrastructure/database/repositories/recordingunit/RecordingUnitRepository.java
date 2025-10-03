@@ -5,6 +5,7 @@ import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -204,4 +205,6 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
             Pageable pageable);
 
     Optional<RecordingUnit> findByIdentifierAndCreatedByInstitution(Integer identifier, Institution institution);
+
+    Optional<RecordingUnit> findByFullIdentifier(@NotNull String fullIdentifier);
 }

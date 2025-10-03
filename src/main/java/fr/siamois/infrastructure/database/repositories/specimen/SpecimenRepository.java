@@ -171,5 +171,7 @@ public interface SpecimenRepository extends CrudRepository<Specimen, Long> {
 
 
     Optional<Specimen> findByFullIdentifierAndCreatedByInstitution(String i, Institution createdInstitution);
+
+    Optional<Specimen> findByFullIdentifier(@NotNull String fullIdentifier);
 }
 

@@ -16,6 +16,8 @@ public class ConceptSeeder {
     private final ConceptRepository conceptRepo;
     private final ConceptLabelRepository labelRepo;
 
+    public record ConceptKey(String vocabularyExtId, String conceptExtId) {}
+
     public record ConceptSpec(String vocabularyId, String externalId, String label, String lang) {}
     public void seed(Vocabulary vocab, List<ConceptSpec> specs) {
         for (var s : specs) {
@@ -26,11 +28,14 @@ public class ConceptSeeder {
                         c.setVocabulary(vocab);
                         return conceptRepo.save(c);
                     });
-            labelRepo.findByConceptAndLangCode(concept, s.lang()).orElseGet(() -> {
+            var optLabel = labelRepo.findByConceptAndLangCode(concept, s.lang());
+            if (optLabel.isEmpty()) {
                 var l = new ConceptLabel();
-                l.setConcept(concept); l.setValue(s.label()); l.setLangCode(s.lang());
-                return labelRepo.save(l);
-            });
+                l.setConcept(concept);
+                l.setValue(s.label());
+                l.setLangCode(s.lang());
+                labelRepo.save(l);
+            }
         }
     }
 }
