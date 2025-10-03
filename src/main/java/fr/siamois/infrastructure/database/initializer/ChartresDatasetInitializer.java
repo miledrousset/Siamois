@@ -55,6 +55,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
     private final ActionUnitSeeder actionUnitSeeder;
     private final RecordingUnitSeeder recordingUnitSeeder;
     private final SpecimenSeeder specimenSeeder;
+    private final InstitutionSeeder institutionSeeder;
 
 
     List<ConceptSpec> concepts = List.of(
@@ -183,6 +184,18 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
             )
     );
 
+    @Value("${siamois.admin.email}")
+    private String adminEmail;
+
+    List<InstitutionSeeder.InstitutionSpec> institutions = List.of(
+            new InstitutionSeeder.InstitutionSpec(
+                    "Chartres (Test équipe dev)",
+                    CHARTRES,
+                    "Insertion du jeu de donnée fourni par Anaïs Pinhède",
+                    List.of(adminEmail)
+            )
+    );
+
     private final ActionUnitRepository actionUnitRepository;
     private final RecordingUnitRepository recordingUnitRepository;
     private final ConceptSeeder conceptSeeder;
@@ -230,7 +243,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
             FieldConfigurationService fieldConfigurationService,
             VocabularyService vocabularyService,
             ActionCodeRepository actionCodeRepository,
-            ConceptSeeder conceptSeeder, ThesaurusSeeder thesaurusSeeder, SpatialUnitSeeder spatialUnitSeeder, ActionUnitSeeder actionUnitSeeder, RecordingUnitSeeder recordingUnitSeeder, SpecimenSeeder specimenSeeder) {
+            ConceptSeeder conceptSeeder, ThesaurusSeeder thesaurusSeeder, SpatialUnitSeeder spatialUnitSeeder, ActionUnitSeeder actionUnitSeeder, RecordingUnitSeeder recordingUnitSeeder, SpecimenSeeder specimenSeeder, InstitutionSeeder institutionSeeder) {
         this.actionUnitRepository = actionUnitRepository;
         this.recordingUnitRepository = recordingUnitRepository;
         this.personSeeder = personSeeder;
@@ -252,6 +265,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
         this.actionUnitSeeder = actionUnitSeeder;
         this.recordingUnitSeeder = recordingUnitSeeder;
         this.specimenSeeder = specimenSeeder;
+        this.institutionSeeder = institutionSeeder;
     }
 
     /**
@@ -260,8 +274,7 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
     @Override
     @Transactional
     public void initialize() throws DatabaseDataInitException {
-        getAdmin();
-        initializeOrganization();
+        institutionSeeder.seed(institutions);
         Map<String, Vocabulary> result = thesaurusSeeder.seed(thesauri);
         conceptSeeder.seed(result.get(VOCABULARY_ID), concepts);
         personSeeder.seed(persons);
@@ -274,76 +287,4 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
 
 
 
-
-    /**
-     * Creates the Chartres organisation if it doesn't exist. Changes the manager of the organisation
-     * to the current admin
-     */
-    void initializeOrganization() {
-        if (processExistingInstitution()) return;
-
-        Institution institution = new Institution();
-        institution.setName("Chartres (Test équipe dev)");
-        institution.setDescription("Insertion du jeu de donnée fourni par Anaïs Pinhède");
-        institution.getManagers().add(admin);
-        institution.setIdentifier(CHARTRES);
-
-        createdInstitution = institutionRepository.save(institution);
-
-        log.info("Created institution {}", institution.getIdentifier());
-    }
-
-    private boolean createdAdminIsNotOwnerOf(Set<Person> managers) {
-        return managers
-                .stream()
-                .noneMatch(adm -> adm.getId().equals(admin.getId()));
-    }
-
-    protected boolean processExistingInstitution() {
-        Institution institution;
-        Optional<Institution> optInstitution = institutionRepository.findInstitutionByIdentifier(CHARTRES);
-        if (optInstitution.isPresent()) {
-            institution = optInstitution.get();
-            if (createdAdminIsNotOwnerOf(institution.getManagers())) {
-                institution.getManagers().add(admin);
-                institutionRepository.save(institution);
-            }
-            log.debug("Institution already exists: {}", institution.getName());
-            createdInstitution = institution;
-            return true;
-        }
-        return false;
-    }
-
-    void getAdmin() throws DatabaseDataInitException {
-        if (processExistingAdmins()) return;
-
-        throw new DatabaseDataInitException("Cant' find superadmin account", new Exception());
-    }
-
-    /*
-     * @return True if wanted admin already exist, false otherwise
-     */
-    private boolean processExistingAdmins() {
-        List<Person> admins = personRepository.findAllSuperAdmin();
-        Person adminWithUsername = null;
-        for (Person adminLoop : admins) {
-            if (isNotAskedAdmin(adminLoop)) {
-                adminLoop.setSuperAdmin(false);
-                personRepository.save(adminLoop);
-            } else {
-                adminWithUsername = adminLoop;
-            }
-        }
-
-        if (adminWithUsername != null) {
-            admin = adminWithUsername;
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isNotAskedAdmin(Person admin) {
-        return !admin.getUsername().equalsIgnoreCase(adminUsername);
-    }
 }
