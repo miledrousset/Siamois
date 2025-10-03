@@ -13,9 +13,7 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
-import fr.siamois.domain.models.vocabulary.VocabularyType;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
-import fr.siamois.domain.models.vocabulary.label.Label;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
 import fr.siamois.infrastructure.database.repositories.SpatialUnitRepository;
@@ -32,7 +30,6 @@ import fr.siamois.infrastructure.database.repositories.vocabulary.label.ConceptL
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.type.descriptor.java.ZoneOffsetJavaType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
