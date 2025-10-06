@@ -12,14 +12,11 @@
 
     <cc:implementation>
 
-        <p:chip rendered="#{not empty cc.attrs.persons}"
-                label="#{cc.attrs.persons[0].displayName()}"
-                icon="bi bi-person"
-                styleClass="mr-2 sia-chip"/>
+        <p:outputLabel rendered="#{not empty cc.attrs.persons}"
+                value="#{cc.attrs.persons[0].displayName()}"/>
 
-        <p:chip rendered="#{cc.attrs.persons.size() > 1}"
-                label="+ #{cc.attrs.persons.size() - 1}"
-                styleClass="mr-2 sia-chip"/>
+        <p:outputLabel rendered="#{cc.attrs.persons.size() > 1}"
+                value=" +#{cc.attrs.persons.size() - 1}"/>
 
     </cc:implementation>
 
