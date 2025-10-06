@@ -35,8 +35,3 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Pcoverage
-      - name: Discord Webhook Action
-        uses: tsickert/discord-webhook@v7.0.0
-        with:
-          webhook-url: "https://discordapp.com/api/webhooks/1424736050898796654/KXPQOHwv5QKSZ5gYqo9ihQ1pjvpp-efLCR66EVmK9TkE1kn2p3fwe6KHRcyKiiYZ_wqn"
-          content: "Test"
