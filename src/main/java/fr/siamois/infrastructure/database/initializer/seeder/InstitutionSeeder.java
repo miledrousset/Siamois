@@ -19,10 +19,14 @@ public class InstitutionSeeder {
     public record InstitutionSpec(String name, String description, String identifier, List<String> managerEmails) {
     }
 
-    private void getOrCreateInstitution(Institution i) {
+    public Institution findInstitutionOrReturnNull(String identifier) {
+        Optional<Institution> opt = institutionRepository.findInstitutionByIdentifier(identifier);
+        return opt.orElse(null);
+    }
 
-        Optional<Institution> opt = institutionRepository.findInstitutionByIdentifier(i.getIdentifier());
-        if (opt.isEmpty()) {
+    private void getOrCreateInstitution(Institution i) {
+        Institution opt = findInstitutionOrReturnNull(i.getIdentifier());
+        if (opt == null) {
             institutionRepository.save(i);
         }
     }

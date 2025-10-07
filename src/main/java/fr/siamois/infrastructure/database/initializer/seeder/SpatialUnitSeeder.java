@@ -6,9 +6,6 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.database.repositories.SpatialUnitRepository;
-import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
-import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
-import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +16,11 @@ import java.util.*;
 @RequiredArgsConstructor
 
 public class SpatialUnitSeeder {
-    private final PersonRepository personRepository;
-    private final ConceptRepository conceptRepository;
-    private final InstitutionRepository institutionRepository;
+    private final PersonSeeder personSeeder;
+    private final ConceptSeeder conceptSeeder;
+    private final InstitutionSeeder institutionSeeder;
     private final SpatialUnitRepository spatialUnitRepository;
+
 
     public record SpatialUnitSpecs(String name, String typeVocabularyExtId, String typeConceptExtId, String authorEmail,
                                    String institutionIdentifier, Set<SpatialUnitKey> childrenKey) {
@@ -38,28 +36,50 @@ public class SpatialUnitSeeder {
         return opt.orElseGet(() -> spatialUnitRepository.save(spatialUnit));
     }
 
+    public SpatialUnit findSpatialUnitOrNull(String name, long institutionId) {
+        Optional<SpatialUnit> opt = spatialUnitRepository.findByNameAndInstitution(name, institutionId);
+        return opt.orElse(null);
+    }
+
+    private Set<SpatialUnit> initializeChildren(long institutionId, Set<SpatialUnitKey> childrenKeys) {
+        Set<SpatialUnit> children = new HashSet<>();
+        if(childrenKeys != null) {
+            for(var childKey : childrenKeys) {
+                SpatialUnit child = findSpatialUnitOrNull(childKey.unitName, institutionId);
+                if(child == null) {
+                    throw new IllegalStateException("Enfant introuvable");
+                }
+                children.add(child);
+            }
+        }
+        return children;
+    }
+
     public Map<String, SpatialUnit> seed(List<SpatialUnitSpecs> specs) {
         Map<String, SpatialUnit> result = new HashMap<>();
         for (var s : specs) {
+
             // Find Type
-            Concept type = conceptRepository
-                    .findConceptByExternalIdIgnoreCase(s.typeVocabularyExtId, s.typeConceptExtId)
-                    .orElseThrow(() -> new IllegalStateException("Concept introuvable"));
-            // Find author
-            Person author = personRepository
-                    .findByEmailIgnoreCase(s.authorEmail)
-                    .orElseThrow(() -> new IllegalStateException("Auteur introuvable"));
-            // Find Institution
-            Institution institution = institutionRepository.findInstitutionByIdentifier(s.institutionIdentifier)
-                    .orElseThrow(() -> new IllegalStateException("Institution introuvable"));
-            Set<SpatialUnit> children = new HashSet<>();
-            if(s.childrenKey != null) {
-                for(var childKey : s.childrenKey) {
-                    SpatialUnit child = spatialUnitRepository.findByNameAndInstitution(childKey.unitName, institution.getId())
-                            .orElseThrow(() -> new IllegalStateException("Enfant introuvable"));
-                    children.add(child);
-                }
+
+            Concept type = conceptSeeder.findConceptOrReturnNull(s.typeVocabularyExtId, s.typeConceptExtId);
+            if(type == null) {
+                throw new IllegalStateException("Concept introuvable");
             }
+
+            // Find author
+            Person author = personSeeder.findPersonOrReturnNull(s.authorEmail);
+            if(author == null) {
+                throw new IllegalStateException("Auteur introuvable");
+            }
+
+            // Find Institution
+            Institution institution = institutionSeeder.findInstitutionOrReturnNull(s.institutionIdentifier);
+            if(institution == null) {
+                throw new IllegalStateException("Institution introuvable");
+            }
+
+            // Find children
+            Set<SpatialUnit> children = initializeChildren(institution.getId(), s.childrenKey);
 
             SpatialUnit toGetOrCreate = new SpatialUnit();
             toGetOrCreate.setName(s.name);
