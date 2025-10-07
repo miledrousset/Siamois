@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -83,6 +84,40 @@ class ConceptSeederTest {
 
         verify(conceptRepository, times(1)).save(any(Concept.class));
         verify(conceptLabelRepository, times(1)).save(any(ConceptLabel.class));
+    }
+
+    @Test
+    void findConceptOrThrow_shouldReturnConcept_whenFound() {
+        // given
+        ConceptSeeder.ConceptKey key = new ConceptSeeder.ConceptKey("VOCAB1", "CONCEPT1");
+        Concept expectedConcept = new Concept();
+        when(conceptRepository.findConceptByExternalIdIgnoreCase("VOCAB1", "CONCEPT1"))
+                .thenReturn(java.util.Optional.of(expectedConcept));
+
+        // when
+        Concept result = seeder.findConceptOrThrow(key);
+
+        // then
+        assertNotNull(result);
+        assertEquals(expectedConcept, result);
+        verify(conceptRepository).findConceptByExternalIdIgnoreCase("VOCAB1", "CONCEPT1");
+    }
+
+    @Test
+    void findConceptOrThrow_shouldThrowException_whenNotFound() {
+        // given
+        ConceptSeeder.ConceptKey key = new ConceptSeeder.ConceptKey("VOCAB2", "CONCEPT2");
+        when(conceptRepository.findConceptByExternalIdIgnoreCase("VOCAB2", "CONCEPT2"))
+                .thenReturn(java.util.Optional.empty());
+
+        // when + then
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> seeder.findConceptOrThrow(key)
+        );
+
+        assertEquals("Concept introuvable", exception.getMessage());
+        verify(conceptRepository).findConceptByExternalIdIgnoreCase("VOCAB2", "CONCEPT2");
     }
 
 

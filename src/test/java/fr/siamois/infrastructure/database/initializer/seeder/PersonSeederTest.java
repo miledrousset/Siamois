@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -46,6 +46,42 @@ class PersonSeederTest {
         Map<String, Person> res = seeder.seed(toInsert);
         assertNotNull(res.get("user@siamois.fr"));
         verify(personRepository, times(1)).save(any(Person.class));
+    }
+
+    @Test
+    void findPersonOrThrow_shouldReturnPerson_whenFound() {
+        // given
+        String email = "test@example.com";
+        Person expectedPerson = new Person();
+        expectedPerson.setEmail(email);
+
+        when(personRepository.findByEmailIgnoreCase(email))
+                .thenReturn(Optional.of(expectedPerson));
+
+        // when
+        Person result = seeder.findPersonOrThrow(email);
+
+        // then
+        assertNotNull(result);
+        assertEquals(expectedPerson, result);
+        verify(personRepository).findByEmailIgnoreCase(email);
+    }
+
+    @Test
+    void findPersonOrThrow_shouldThrowException_whenNotFound() {
+        // given
+        String email = "missing@example.com";
+        when(personRepository.findByEmailIgnoreCase(email))
+                .thenReturn(Optional.empty());
+
+        // when + then
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> seeder.findPersonOrThrow(email)
+        );
+
+        assertEquals("Person introuvable", exception.getMessage());
+        verify(personRepository).findByEmailIgnoreCase(email);
     }
 
 }
