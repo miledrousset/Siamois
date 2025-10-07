@@ -61,6 +61,7 @@
             **/config/**/*.*,
             **/*Exception.*,
             **/*Bean.*,
+            **/*DatasetInitializer.*,
             **/ui/bean/dialog/newunit/**,
             **/*ViewModel.*,
             **/*Converter.*,

@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SpecimenRepository extends CrudRepository<Specimen, Long> {
@@ -168,5 +169,9 @@ public interface SpecimenRepository extends CrudRepository<Specimen, Long> {
             @Param("langCode") String langCode,
             Pageable pageable);
 
+
+    Optional<Specimen> findByFullIdentifierAndCreatedByInstitution(String i, Institution createdInstitution);
+
+    Optional<Specimen> findByFullIdentifier(@NotNull String fullIdentifier);
 }
 

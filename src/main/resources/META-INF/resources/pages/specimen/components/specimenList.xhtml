@@ -3,6 +3,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+                xmlns:cellbody="http://java.sun.com/jsf/composite/pages/shared/cellbody"
                 xmlns:sharedInput="http://xmlns.jcp.org/jsf/composite/pages/shared/input"
                 xmlns:f="http://java.sun.com/jsf/core"
 >
@@ -199,11 +200,11 @@
                           field="creationTime"
                           id="creationTimeCol"
                 >
-                    <h:outputText value="#{panelModel.formatUtcDateTime(item.creationTime)}"/>
+                    <h:outputText value="#{cc.attrs.panelModel.formatUtcDateTime(item.creationTime)}"/>
                 </p:column>
 
                 <!-- Auteur/Proprietaire -->
-                <p:column responsivePriority="2" headerText="#{langBean.msg('table.spatialunit.column.author')}"
+                <p:column responsivePriority="2" headerText="#{langBean.msg('common.field.createdBy')}"
                           sortable="false"
                           filterable="false"
                           field="author"
@@ -229,6 +230,45 @@
                     #{item.author.displayName()}
                 </p:column>
 
+                <!-- collection date -->
+                <p:column responsivePriority="2" headerText="#{langBean.msg('common.table.column.collectionDate')}"
+                >
+                    <h:outputText value="#{cc.attrs.panelModel.formatUtcDateTime(item.collectionDate)}"/>
+                </p:column>
+
+                <!-- Redacteurs -->
+                <p:column responsivePriority="2" headerText="#{langBean.msg('common.field.authors')}"
+                >
+                    <cellbody:cellBodyMultiplePersons persons="#{item.authors}"/>
+                </p:column>
+
+
+                <!-- Collecteurs -->
+                <p:column responsivePriority="2" headerText="#{langBean.msg('common.field.collectors')}"
+                >
+                    <cellbody:cellBodyMultiplePersons persons="#{item.collectors}"/>
+                </p:column>
+
+                <!-- Recording parent -->
+                <p:column responsivePriority="3" headerText="#{langBean.msg('common.entity.recordingUnit')}">
+                    <h:outputLink value="#{request.contextPath}/recording-unit/#{item.recordingUnit.id}">
+                        #{item.recordingUnit.fullIdentifier}
+                    </h:outputLink>
+                </p:column>
+
+                <!-- Action parent -->
+                <p:column responsivePriority="3" headerText="#{langBean.msg('recordingunit.field.actionUnit')}">
+                    <h:outputLink value="#{request.contextPath}/action-unit/#{item.recordingUnit.actionUnit.id}">
+                        #{item.recordingUnit.actionUnit.name}
+                    </h:outputLink>
+                </p:column>
+
+                <!-- Spatial parent -->
+                <p:column responsivePriority="3" headerText="#{langBean.msg('recordingunit.field.spatialUnit')}">
+                    <h:outputLink value="#{request.contextPath}/spatial-unit/#{item.recordingUnit.spatialUnit.id}">
+                        #{item.recordingUnit.spatialUnit.name}
+                    </h:outputLink>
+                </p:column>
 
 
                 <!-- Action toolbar-->

@@ -11,3 +11,17 @@ body .ui-chip.valid-type-chip {
     color: white;
     font-size: 16px;
 }
+
+td {
+    .ui-chip {
+        .ui-chip-text {
+            display: inline-block;
+            max-width: 8em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+            font-size: 12px;
+        }
+    }
+}

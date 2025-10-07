@@ -225,6 +225,20 @@ public class FlowBean implements Serializable {
 
     }
 
+    public void  goToRecordingUnitByIdNewPanel(Long id, AbstractPanel panel) {
+
+        RecordingUnitPanel newPanel = panelFactory.createRecordingUnitPanel(id, panel.getBreadcrumb());
+        addPanel(newPanel);
+
+    }
+
+    public void  goToSpecimenByIdNewPanel(Long id, AbstractPanel currentPanel) {
+
+        SpecimenPanel newPanel = panelFactory.createSpecimenPanel(id, currentPanel.getBreadcrumb());
+        addPanel(newPanel);
+
+    }
+
     public void  goToSpecimenByIdNewPanel(Long id, Integer currentPanelIndex) {
 
         SpecimenPanel newPanel = panelFactory.createSpecimenPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
@@ -235,6 +249,12 @@ public class FlowBean implements Serializable {
     public void goToActionUnitByIdNewPanel(Long id, Integer currentPanelIndex) {
         // Create new panel type and add items to its breadcrumb
         ActionUnitPanel newPanel = panelFactory.createActionUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
+        addPanel(newPanel);
+    }
+
+    public void goToActionUnitByIdNewPanel(Long id, AbstractPanel panel) {
+        // Create new panel type and add items to its breadcrumb
+        ActionUnitPanel newPanel = panelFactory.createActionUnitPanel(id, panel.getBreadcrumb());
         addPanel(newPanel);
     }
 
@@ -287,7 +307,7 @@ public class FlowBean implements Serializable {
         panels.remove(idx);
 
         // If only one panel is left, uncollapse it
-        if (panels.size() == 1) {
+        if (panels.size() == 1 || (idx == 0 && !panels.isEmpty())) {
             panels.get(0).setCollapsed(false);
         }
         // If no panel left, open the homepanel

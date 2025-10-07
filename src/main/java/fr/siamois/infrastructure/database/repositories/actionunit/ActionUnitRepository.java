@@ -18,6 +18,8 @@ import java.util.Set;
 @Repository
 public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long> {
 
+    Optional<ActionUnit> findByFullIdentifier(String fullIdentifier);
+
     Optional<ActionUnit> findByArk(Ark ark);
 
     List<ActionUnit> findAllByArkIsNullAndCreatedByInstitution(@NotNull Institution createdByInstitution);

@@ -148,6 +148,7 @@ public class Person implements UserDetails {
 
     @Override
     public boolean equals(Object o) {
+        // TODO : see w/ Julien
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
         return isExpired() == person.isExpired()

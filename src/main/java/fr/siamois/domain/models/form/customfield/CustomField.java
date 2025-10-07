@@ -66,4 +66,35 @@ public abstract class CustomField implements Serializable {
         return Objects.hash(concept, unitConcept, unitLabel);
     }
 
+    @SuppressWarnings("unchecked")
+    public abstract static class Builder<T extends Builder<T, F>, F extends CustomField> {
+        protected F field;
+
+        protected abstract T self();
+
+        public T label(String label) {
+            field.setLabel(label);
+            return self();
+        }
+
+        public T isSystemField(Boolean isSystemField) {
+            field.setIsSystemField(isSystemField);
+            return self();
+        }
+
+        public T concept(Concept concept) {
+            field.setConcept(concept);
+            return self();
+        }
+
+        public T valueBinding(String valueBinding) {
+            field.setValueBinding(valueBinding);
+            return self();
+        }
+
+        public F build() {
+            return field;
+        }
+    }
+
 }

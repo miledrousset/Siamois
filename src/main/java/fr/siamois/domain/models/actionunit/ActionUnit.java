@@ -6,9 +6,7 @@ import fr.siamois.domain.models.FieldCode;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
-import fr.siamois.domain.models.form.customfield.CustomFieldSelectMultipleSpatialUnitTree;
-import fr.siamois.domain.models.form.customfield.CustomFieldSelectOneFromFieldCode;
-import fr.siamois.domain.models.form.customfield.CustomFieldText;
+import fr.siamois.domain.models.form.customfield.*;
 import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
@@ -118,7 +116,7 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     @Transient
     @JsonIgnore
     public List<String> getBindableFieldNames() {
-        return List.of("type", "name", "identifier", "spatialContext");
+        return List.of("type", "name", "identifier", "spatialContext", "beginDate", "endDate", "primaryActionCode");
     }
 
 // ----------- Concepts for system fields
@@ -139,13 +137,14 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
             .externalId("4285848")
             .build();
 
-    // action unit id
+    // unit id
     @Transient
     @JsonIgnore
     public static final Concept IDENTIFIER_CONCEPT = new Concept.Builder()
             .vocabulary(SYSTEM_THESO)
-            .externalId("4286193")
+            .externalId("4286368")
             .build();
+
 
     // spatial context
     @Transient
@@ -153,6 +152,30 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     public static final Concept SPATIAL_CONTEXT_CONCEPT = new Concept.Builder()
             .vocabulary(SYSTEM_THESO)
             .externalId("4286503")
+            .build();
+
+    // begin date
+    @Transient
+    @JsonIgnore
+    public static final Concept BEGIN_DATE_CONCEPT = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4287545")
+            .build();
+
+    // end date
+    @Transient
+    @JsonIgnore
+    public static final Concept END_DATE_CONCEPT = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4287546")
+            .build();
+
+    // end date
+    @Transient
+    @JsonIgnore
+    public static final Concept ACTION_CODE_CONCEPT = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4287547")
             .build();
 
 
@@ -195,6 +218,35 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
             .isSystemField(true)
             .valueBinding("spatialContext")
             .concept(SPATIAL_CONTEXT_CONCEPT)
+            .build();
+
+    @Transient
+    @JsonIgnore
+    private static final CustomFieldDateTime BEGIN_DATE_FIELD = new CustomFieldDateTime.Builder()
+            .label("common.field.beginDate")
+            .isSystemField(true)
+            .valueBinding("beginDate")
+            .showTime(false)
+            .concept(BEGIN_DATE_CONCEPT)
+            .build();
+
+    @Transient
+    @JsonIgnore
+    private static final CustomFieldDateTime END_DATE_FIELD = new CustomFieldDateTime.Builder()
+            .label("common.field.endDate")
+            .isSystemField(true)
+            .valueBinding("endDate")
+            .showTime(false)
+            .concept(END_DATE_CONCEPT)
+            .build();
+
+    @Transient
+    @JsonIgnore
+    private static final CustomFieldSelectOneActionCode ACTION_CODE_FIELD = new CustomFieldSelectOneActionCode.Builder()
+            .label("actionunit.field.actionCode")
+            .isSystemField(true)
+            .valueBinding("primaryActionCode")
+            .concept(ACTION_CODE_CONCEPT)
             .build();
 
     @Transient
@@ -283,9 +335,36 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
                                                     .field(NAME_FIELD)
                                                     .build())
                                             .addColumn(new CustomCol.Builder()
+                                                    .readOnly(true)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(IDENTIFIER_FIELD)
+                                                    .isRequired(true)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
                                                     .readOnly(false)
                                                     .className(COLUMN_CLASS_NAME)
                                                     .field(ACTION_UNIT_TYPE_FIELD)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(ACTION_CODE_FIELD)
+                                                    .build())
+                                            .build()
+                            )
+                            .addRow(
+                                    new CustomRow.Builder()
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(BEGIN_DATE_FIELD)
+                                                    .isRequired(false)
+                                                    .build())
+                                            .addColumn(new CustomCol.Builder()
+                                                    .readOnly(false)
+                                                    .className(COLUMN_CLASS_NAME)
+                                                    .field(END_DATE_FIELD)
+                                                    .isRequired(false)
                                                     .build())
                                             .build()
                             ).build()
