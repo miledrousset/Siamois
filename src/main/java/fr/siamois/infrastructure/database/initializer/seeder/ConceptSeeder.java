@@ -18,24 +18,42 @@ public class ConceptSeeder {
 
     public record ConceptKey(String vocabularyExtId, String conceptExtId) {}
 
+    public Concept findConceptOrReturnNull(String vocabularyId, String externalId) {
+        return conceptRepo.findConceptByExternalIdIgnoreCase(vocabularyId, externalId)
+                .orElse(null);
+    }
+
+    public ConceptLabel findConceptLabelOrReturnNull(Concept concept, String lang) {
+        return labelRepo.findByConceptAndLangCode(concept, lang)
+                .orElse(null);
+    }
+
+    private void saveLabel(Concept concept, String label, String lang) {
+        var l = new ConceptLabel();
+        l.setConcept(concept);
+        l.setValue(label);
+        l.setLangCode(lang);
+        labelRepo.save(l);
+    }
+
     public record ConceptSpec(String vocabularyId, String externalId, String label, String lang) {}
     public void seed(Vocabulary vocab, List<ConceptSpec> specs) {
         for (var s : specs) {
-            var concept = conceptRepo.findConceptByExternalIdIgnoreCase(s.vocabularyId(), s.externalId())
-                    .orElseGet(() -> {
-                        var c = new Concept();
-                        c.setExternalId(s.externalId());
-                        c.setVocabulary(vocab);
-                        return conceptRepo.save(c);
-                    });
-            var optLabel = labelRepo.findByConceptAndLangCode(concept, s.lang());
-            if (optLabel.isEmpty()) {
-                var l = new ConceptLabel();
-                l.setConcept(concept);
-                l.setValue(s.label());
-                l.setLangCode(s.lang());
-                labelRepo.save(l);
+            Concept concept = findConceptOrReturnNull(s.vocabularyId(), s.externalId());
+            if(concept == null) {
+                var c = new Concept();
+                c.setExternalId(s.externalId());
+                c.setVocabulary(vocab);
+                concept = conceptRepo.save(c);
+                saveLabel(concept, s.label, s.lang);
             }
+            else {
+                ConceptLabel label = findConceptLabelOrReturnNull(concept, s.lang());
+                if (label == null) {
+                    saveLabel(concept, s.label, s.lang);
+                }
+            }
+
         }
     }
 }

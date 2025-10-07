@@ -32,13 +32,6 @@ class InstitutionSeederTest {
     @InjectMocks
     InstitutionSeeder institutionSeeder;
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
 
     @Test
     void seed_AlreadyExists() {
@@ -55,7 +48,6 @@ class InstitutionSeederTest {
         institutionSeeder.seed(toInsert);
 
         verify(institutionRepository, never()).save(any(Institution.class));
-
     }
 
     @Test

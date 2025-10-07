@@ -1,0 +1,89 @@
+package fr.siamois.infrastructure.database.initializer.seeder;
+
+import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
+import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.label.ConceptLabelRepository;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class ConceptSeederTest {
+
+    @Mock
+    ConceptRepository conceptRepository;
+    @Mock
+    ConceptLabelRepository conceptLabelRepository;
+
+    @InjectMocks
+    ConceptSeeder seeder;
+
+    @Test
+    void seed_AlreadyExists_labelAlreadyExists() {
+
+        Concept c = new Concept();
+        Vocabulary v = new Vocabulary();
+        ConceptLabel label = new ConceptLabel();
+
+        List<ConceptSeeder.ConceptSpec> toInsert = List.of(
+                new ConceptSeeder.ConceptSpec("th240", "1234556", "Label", "fr")
+        );
+
+        when(conceptRepository.findConceptByExternalIdIgnoreCase(anyString(),anyString())).thenReturn(Optional.of(c));
+        when(conceptLabelRepository.findByConceptAndLangCode(any(Concept.class), anyString())).thenReturn(Optional.of(label));
+
+        seeder.seed(v, toInsert);
+
+        verify(conceptRepository, never()).save(any(Concept.class));
+        verify(conceptLabelRepository, never()).save(any(ConceptLabel.class));
+    }
+
+    @Test
+    void seed_AlreadyExists_labelDoesNotExist() {
+
+        Concept c = new Concept();
+        Vocabulary v = new Vocabulary();
+
+        List<ConceptSeeder.ConceptSpec> toInsert = List.of(
+                new ConceptSeeder.ConceptSpec("th240", "1234556", "Label", "fr")
+        );
+
+        when(conceptRepository.findConceptByExternalIdIgnoreCase(anyString(),anyString())).thenReturn(Optional.of(c));
+        when(conceptLabelRepository.findByConceptAndLangCode(any(Concept.class), anyString())).thenReturn(Optional.empty());
+
+        seeder.seed(v, toInsert);
+
+        verify(conceptRepository, never()).save(any(Concept.class));
+        verify(conceptLabelRepository, times(1)).save(any(ConceptLabel.class));
+    }
+
+    @Test
+    void seed_DoesNotExist() {
+
+        Vocabulary v = new Vocabulary();
+
+        List<ConceptSeeder.ConceptSpec> toInsert = List.of(
+                new ConceptSeeder.ConceptSpec("th240", "1234556", "Label", "fr")
+        );
+
+        when(conceptRepository.findConceptByExternalIdIgnoreCase(anyString(),anyString())).thenReturn(Optional.empty());
+
+        seeder.seed(v, toInsert);
+
+        verify(conceptRepository, times(1)).save(any(Concept.class));
+        verify(conceptLabelRepository, times(1)).save(any(ConceptLabel.class));
+    }
+
+
+}
