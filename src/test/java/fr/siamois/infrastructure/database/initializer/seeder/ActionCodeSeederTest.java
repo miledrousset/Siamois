@@ -91,8 +91,10 @@ class ActionCodeSeederTest {
         when(conceptRepository.findConceptByExternalIdIgnoreCase("missingVocab", "missingConcept"))
                 .thenReturn(Optional.empty());
 
-        // When / Then
-        assertThatThrownBy(() -> seeder.seed(List.of(spec)))
+
+        List<ActionCodeSeeder.ActionCodeSpec> specs = List.of(spec);
+
+        assertThatThrownBy(() -> seeder.seed(specs))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("Concept introuvable");
 

@@ -67,7 +67,7 @@ public abstract class CustomField implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public static abstract class Builder<T extends Builder<T, F>, F extends CustomField> {
+    public abstract static class Builder<T extends Builder<T, F>, F extends CustomField> {
         protected F field;
 
         protected abstract T self();

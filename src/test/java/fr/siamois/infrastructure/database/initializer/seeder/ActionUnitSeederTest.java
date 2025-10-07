@@ -11,6 +11,7 @@ import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepo
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -51,21 +51,6 @@ class ActionUnitSeederTest {
         );
     }
 
-    private ActionUnitSeeder.ActionUnitSpecs spec(
-            String fullId, String name, String identifier, String primaryCode,
-            String vocabExtId, String conceptExtId,
-            String authorEmail, String institutionIdentifier,
-            OffsetDateTime begin, OffsetDateTime end,
-            Set<SpatialUnitSeeder.SpatialUnitKey> spatialKeys // peut être null
-    ) {
-        return new ActionUnitSeeder.ActionUnitSpecs(
-                fullId, name, identifier, primaryCode,
-                vocabExtId, conceptExtId,
-                authorEmail,
-                institutionIdentifier, begin, end,
-                spatialKeys
-        );
-    }
 
     private void commonLookupsOk(String vocabExtId, String conceptExtId,
                                  String authorEmail, String institutionIdentifier,
@@ -84,10 +69,10 @@ class ActionUnitSeederTest {
     @Test
     void seed_creates_whenNotExisting_andSpatialKeysNull() {
         // Given
-        var concept = new Concept(); concept.setId(1L);
-        var author = new Person();   // set fields if needed
-        var institution = new Institution(); institution.setId(99L);
-        var code = new ActionCode(); code.setCode("AC001");
+        Concept concept = new Concept(); concept.setId(1L);
+        Person author = new Person();   // set fields if needed
+        Institution institution = new Institution(); institution.setId(99L);
+        ActionCode code = new ActionCode(); code.setCode("AC001");
 
         commonLookupsOk("vocA", "conA", "author@x.test", "INST-1", "AC001",
                 concept, author, institution, code);
@@ -98,7 +83,7 @@ class ActionUnitSeederTest {
         var begin = OffsetDateTime.parse("2024-01-01T00:00:00Z");
         var end   = OffsetDateTime.parse("2024-12-31T00:00:00Z");
 
-        var s = spec(
+        ActionUnitSeeder.ActionUnitSpecs s = new ActionUnitSeeder.ActionUnitSpecs(
                 "AU-1", "Name 1", "ID-1", "AC001",
                 "vocA", "conA",
                 "author@x.test",
@@ -111,7 +96,7 @@ class ActionUnitSeederTest {
 
         // Then
         verify(actionUnitRepository).save(actionUnitCaptor.capture());
-        var saved = actionUnitCaptor.getValue();
+        ActionUnit saved = actionUnitCaptor.getValue();
 
         assertThat(saved.getFullIdentifier()).isEqualTo("AU-1");
         assertThat(saved.getIdentifier()).isEqualTo("ID-1");
@@ -130,10 +115,10 @@ class ActionUnitSeederTest {
     @Test
     void seed_doesNotCreate_whenExisting() {
         // Given
-        var concept = new Concept(); concept.setId(1L);
-        var author = new Person();
-        var institution = new Institution(); institution.setId(88L);
-        var code = new ActionCode(); code.setCode("AC002");
+        Concept concept = new Concept(); concept.setId(1L);
+        Person author = new Person();
+        Institution institution = new Institution(); institution.setId(88L);
+        ActionCode code = new ActionCode(); code.setCode("AC002");
 
         commonLookupsOk("vocB", "conB", "a@b.c", "INST-2", "AC002",
                 concept, author, institution, code);
@@ -141,7 +126,7 @@ class ActionUnitSeederTest {
         when(actionUnitRepository.findByFullIdentifier("AU-EXIST"))
                 .thenReturn(Optional.of(new ActionUnit())); // déjà présent
 
-        var s = spec(
+        ActionUnitSeeder.ActionUnitSpecs s = new ActionUnitSeeder.ActionUnitSpecs(
                 "AU-EXIST", "Name X", "IDX", "AC002",
                 "vocB", "conB",
                 "a@b.c", "INST-2",
@@ -162,13 +147,15 @@ class ActionUnitSeederTest {
         when(conceptRepository.findConceptByExternalIdIgnoreCase("v", "c"))
                 .thenReturn(Optional.empty());
 
-        var s = spec("AU-2", "Name", "ID", "ACX",
+        ActionUnitSeeder.ActionUnitSpecs s = new ActionUnitSeeder.ActionUnitSpecs("AU-2", "Name", "ID", "ACX",
                 "v", "c",
                 "author@x", "INST",
                 null, null, null);
 
+        List<ActionUnitSeeder.ActionUnitSpecs> specs = List.of(s);
+
         // When / Then
-        assertThatThrownBy(() -> seeder.seed(List.of(s)))
+        assertThatThrownBy(() -> seeder.seed(specs))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("Concept introuvable");
 
@@ -178,18 +165,20 @@ class ActionUnitSeederTest {
     @Test
     void seed_throws_whenAuthorMissing() {
         // Given
-        var concept = new Concept(); concept.setId(1L);
+        Concept concept = new Concept(); concept.setId(1L);
         when(conceptRepository.findConceptByExternalIdIgnoreCase("v", "c"))
                 .thenReturn(Optional.of(concept));
         when(personRepository.findByEmailIgnoreCase("missing@x"))
                 .thenReturn(Optional.empty());
 
-        var s = spec("AU-3", "Name", "ID", "ACX",
+        ActionUnitSeeder.ActionUnitSpecs s = new ActionUnitSeeder.ActionUnitSpecs("AU-3", "Name", "ID", "ACX",
                 "v", "c",
                 "missing@x", "INST",
                 null, null, null);
 
-        assertThatThrownBy(() -> seeder.seed(List.of(s)))
+        List<ActionUnitSeeder.ActionUnitSpecs> specs = List.of(s);
+
+        assertThatThrownBy(() -> seeder.seed(specs))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("Auteur introuvable");
 
@@ -199,20 +188,22 @@ class ActionUnitSeederTest {
     @Test
     void seed_throws_whenActionCodeMissing() {
         // Given
-        var concept = new Concept(); concept.setId(1L);
-        var author = new Person();
+        Concept concept = new Concept(); concept.setId(1L);
+        Person author = new Person();
 
         when(conceptRepository.findConceptByExternalIdIgnoreCase("v", "c"))
                 .thenReturn(Optional.of(concept));
         when(personRepository.findByEmailIgnoreCase("a@x")).thenReturn(Optional.of(author));
         when(actionCodeRepository.findById("MISSING")).thenReturn(Optional.empty());
 
-        var s = spec("AU-4", "Name", "ID", "MISSING",
+        ActionUnitSeeder.ActionUnitSpecs s = new ActionUnitSeeder.ActionUnitSpecs("AU-4", "Name", "ID", "MISSING",
                 "v", "c",
                 "a@x", "INST",
                 null, null, null);
 
-        assertThatThrownBy(() -> seeder.seed(List.of(s)))
+        List<ActionUnitSeeder.ActionUnitSpecs> specs = List.of(s);
+
+        assertThatThrownBy(() -> seeder.seed(specs))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("Action code introuvable");
 
@@ -222,9 +213,9 @@ class ActionUnitSeederTest {
     @Test
     void seed_throws_whenInstitutionMissing() {
         // Given
-        var concept = new Concept(); concept.setId(1L);
-        var author = new Person();
-        var code = new ActionCode(); code.setCode("ACZ");
+        Concept concept = new Concept(); concept.setId(1L);
+        Person author = new Person();
+        ActionCode code = new ActionCode(); code.setCode("ACZ");
 
         when(conceptRepository.findConceptByExternalIdIgnoreCase("v", "c"))
                 .thenReturn(Optional.of(concept));
@@ -233,12 +224,14 @@ class ActionUnitSeederTest {
         when(institutionRepository.findInstitutionByIdentifier("MISSING"))
                 .thenReturn(Optional.empty());
 
-        var s = spec("AU-5", "Name", "ID", "ACZ",
+        ActionUnitSeeder.ActionUnitSpecs s = new ActionUnitSeeder.ActionUnitSpecs("AU-5", "Name", "ID", "ACZ",
                 "v", "c",
                 "a@x", "MISSING",
                 null, null, null);
 
-        assertThatThrownBy(() -> seeder.seed(List.of(s)))
+        List<ActionUnitSeeder.ActionUnitSpecs> specs = List.of(s);
+
+        assertThatThrownBy(() -> seeder.seed(specs))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("Institution introuvable");
 
@@ -248,23 +241,25 @@ class ActionUnitSeederTest {
     @Test
     void seed_handlesNullSpatialContextKeys_withoutTouchingSpatialRepo() {
         // Given
-        var concept = new Concept(); concept.setId(1L);
-        var author = new Person();
-        var institution = new Institution(); institution.setId(77L);
-        var code = new ActionCode(); code.setCode("AC777");
+        Concept concept = new Concept(); concept.setId(1L);
+        Person author = new Person();
+        Institution institution = new Institution(); institution.setId(77L);
+        ActionCode code = new ActionCode(); code.setCode("AC777");
 
         commonLookupsOk("v77", "c77", "a@77", "INST-77", "AC777",
                 concept, author, institution, code);
 
         when(actionUnitRepository.findByFullIdentifier("AU-77")).thenReturn(Optional.empty());
 
-        var s = spec("AU-77", "Name77", "ID77", "AC777",
+        ActionUnitSeeder.ActionUnitSpecs s = new ActionUnitSeeder.ActionUnitSpecs("AU-77", "Name77", "ID77", "AC777",
                 "v77", "c77",
                 "a@77", "INST-77",
                 null, null, null);
 
+        List<ActionUnitSeeder.ActionUnitSpecs> specs = List.of(s);
+
         // When
-        seeder.seed(List.of(s));
+        seeder.seed(specs);
 
         // Then
         verify(spatialUnitRepository, never()).findByNameAndInstitution(anyString(), anyLong());

@@ -6,7 +6,6 @@ import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.models.vocabulary.VocabularyType;
 import fr.siamois.domain.services.vocabulary.VocabularyService;
 import fr.siamois.infrastructure.database.repositories.vocabulary.VocabularyRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,9 +46,6 @@ class ThesaurusSeederTest {
         vocabulary.setType(vocabularyType);
     }
 
-    @AfterEach
-    void tearDown() {
-    }
 
 
     @Test
