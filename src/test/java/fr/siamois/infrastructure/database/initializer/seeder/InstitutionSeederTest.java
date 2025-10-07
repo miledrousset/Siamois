@@ -1,8 +1,6 @@
 package fr.siamois.infrastructure.database.initializer.seeder;
 
 import fr.siamois.domain.models.auth.Person;
-import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
-import fr.siamois.domain.models.exceptions.database.DatabaseDataInitException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -80,6 +78,27 @@ class InstitutionSeederTest {
 
 
         assertThat(ex.getMessage()).contains("Invalid email: user@siamois.fr");
+
+    }
+
+    @Test
+    void seed_success() {
+
+        Institution i = new Institution();
+        Person p = new Person();
+        i.setIdentifier("test");
+
+        List<InstitutionSeeder.InstitutionSpec> toInsert = List.of(
+                new InstitutionSeeder.InstitutionSpec("Mon institution", "Test", "test",
+                        List.of("user@siamois.fr"))
+        );
+
+        when(personSeeder.findPersonOrReturnNull(anyString())).thenReturn(p);
+        when(institutionRepository.findInstitutionByIdentifier(anyString())).thenReturn(Optional.empty());
+
+        institutionSeeder.seed(toInsert);
+
+        verify(institutionRepository, times(1)).save(any(Institution.class));
 
     }
 }
