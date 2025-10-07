@@ -6,10 +6,7 @@ import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.database.repositories.institution.InstitutionRepository;
-import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
-import fr.siamois.infrastructure.database.repositories.recordingunit.RecordingUnitRepository;
 import fr.siamois.infrastructure.database.repositories.specimen.SpecimenRepository;
-import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +19,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SpecimenSeeder {
 
-    private final PersonRepository personRepository;
-    private final ConceptRepository conceptRepository;
+    private final ConceptSeeder conceptSeeder;
     private final InstitutionRepository institutionRepository;
-    private final RecordingUnitRepository recordingUnitRepository;
     private final RecordingUnitSeeder recordingUnitSeeder;
     private final SpecimenRepository specimenRepository;
     private final PersonSeeder personSeeder;
@@ -55,8 +50,8 @@ public class SpecimenSeeder {
 
         for (var s : specs) {
             // Find Type
-            Concept type = recordingUnitSeeder.getConceptFromKey(s.type);
-            Concept cat = recordingUnitSeeder.getConceptFromKey(s.category);
+            Concept type = conceptSeeder.findConceptOrThrow(s.type);
+            Concept cat = conceptSeeder.findConceptOrThrow(s.category);
             // Find author
             Person author = personSeeder.findPersonOrReturnNull(s.authorEmail);
 

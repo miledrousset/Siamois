@@ -24,6 +24,14 @@ public class PersonSeeder {
                 .orElse(null);
     }
 
+    public Person findPersonOrThrow(String email) {
+        Person p = findPersonOrReturnNull(email);
+        if(p == null ) {
+            throw new IllegalStateException("Person introuvable");
+        }
+        return p;
+    }
+
     private Person getOrCreatePerson(String email, String name, String lastname, String username) {
         Person authorGetOrCreated = findPersonOrReturnNull(email) ;
         if(authorGetOrCreated != null) {

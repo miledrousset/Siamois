@@ -70,7 +70,7 @@ public class ActionUnitSeeder {
             if(s.spatialContextKeys != null) {
                 for(var childKey : s.spatialContextKeys) {
                     SpatialUnit child = spatialUnitRepository.findByNameAndInstitution(childKey.unitName(), institution.getId())
-                            .orElseThrow(() -> new IllegalStateException("Enfant introuvable"));
+                            .orElseThrow(() -> new IllegalStateException("USp introuvable"));
                     spatialContext.add(child);
                 }
             }
