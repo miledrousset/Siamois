@@ -14,7 +14,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class InstitutionSeeder {
     private final InstitutionRepository institutionRepository;
-    private final RecordingUnitSeeder recordingUnitSeeder;
+    private final PersonSeeder personSeeder;
 
     public record InstitutionSpec(String name, String description, String identifier, List<String> managerEmails) {
     }
@@ -27,21 +27,18 @@ public class InstitutionSeeder {
         }
     }
 
-
-
     public void seed(List<InstitutionSpec> specs) {
-
         for (var s : specs) {
-
             Set<Person> managers = new HashSet<>();
-
             if (s.managerEmails != null) {
                 for (var email : s.managerEmails) {
-                    Person p = recordingUnitSeeder.getAuthorFromEmail(email);
+                    Person p = personSeeder.findPersonOrReturnNull(email);
+                    if(p == null) {
+                        throw new IllegalArgumentException("Invalid email: " + email);
+                    }
                     managers.add(p);
                 }
             }
-
             Institution toCreate = new Institution();
             toCreate.setName(s.name);
             toCreate.setIdentifier(s.identifier);
@@ -49,6 +46,5 @@ public class InstitutionSeeder {
             toCreate.setManagers(managers);
             getOrCreateInstitution(toCreate);
         }
-
     }
 }

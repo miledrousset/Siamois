@@ -28,6 +28,7 @@ public class SpecimenSeeder {
     private final RecordingUnitRepository recordingUnitRepository;
     private final RecordingUnitSeeder recordingUnitSeeder;
     private final SpecimenRepository specimenRepository;
+    private final PersonSeeder personSeeder;
 
     public record SpecimenSpecs(String fullIdentifier, Integer identifier,
                                      ConceptSeeder.ConceptKey type,
@@ -57,7 +58,7 @@ public class SpecimenSeeder {
             Concept type = recordingUnitSeeder.getConceptFromKey(s.type);
             Concept cat = recordingUnitSeeder.getConceptFromKey(s.category);
             // Find author
-            Person author = recordingUnitSeeder.getAuthorFromEmail(s.authorEmail);
+            Person author = personSeeder.findPersonOrReturnNull(s.authorEmail);
 
             // Find Institution
             Institution institution = institutionRepository.findInstitutionByIdentifier(s.institutionIdentifier)
@@ -67,13 +68,13 @@ public class SpecimenSeeder {
             List<Person> collectors = new ArrayList<>();
             if (s.authors != null) {
                 for (var email : s.authors) {
-                    Person p = recordingUnitSeeder.getAuthorFromEmail(email);
+                    Person p = personSeeder.findPersonOrReturnNull(email);
                     authors.add(p);
                 }
             }
             if (s.collectors != null) {
                 for (var email : s.collectors) {
-                    Person p = recordingUnitSeeder.getAuthorFromEmail(email);
+                    Person p = personSeeder.findPersonOrReturnNull(email);
                     collectors.add(p);
                 }
             }

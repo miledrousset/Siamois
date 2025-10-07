@@ -30,6 +30,7 @@ public class RecordingUnitSeeder {
     private final RecordingUnitRepository recordingUnitRepository;
     private final SpatialUnitRepository spatialUnitRepository;
     private final ActionUnitRepository actionUnitRepository;
+    private final PersonSeeder personSeeder;
 
     public record RecordingUnitSpecs(String fullIdentifier, Integer identifier,
                                      ConceptSeeder.ConceptKey type,
@@ -64,11 +65,7 @@ public class RecordingUnitSeeder {
                 .orElseThrow(() -> new IllegalStateException("Concept introuvable"));
     }
 
-    public Person getAuthorFromEmail(String email) {
-        return personRepository
-                .findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new IllegalStateException("Auteur introuvable"));
-    }
+
 
     public ActionUnit getActionUnitFromKey(ActionUnitSeeder.ActionUnitKey key) {
         return actionUnitRepository.findByFullIdentifier(key.fullIdentifier())
@@ -93,7 +90,7 @@ public class RecordingUnitSeeder {
             Concept secondaryType = getConceptFromKey(s.secondaryType);
             Concept thirdType = getConceptFromKey(s.thirdType);
             // Find author
-            Person author = getAuthorFromEmail(s.authorEmail);
+            Person author = personSeeder.findPersonOrReturnNull(s.authorEmail);
 
             // Find Institution
             Institution institution = institutionRepository.findInstitutionByIdentifier(s.institutionIdentifier)
@@ -103,13 +100,13 @@ public class RecordingUnitSeeder {
             List<Person> excavators = new ArrayList<>();
             if (s.authors != null) {
                 for (var email : s.authors) {
-                    Person p = getAuthorFromEmail(email);
+                    Person p = personSeeder.findPersonOrReturnNull(email);
                     authors.add(p);
                 }
             }
             if (s.excavators != null) {
                 for (var email : s.excavators) {
-                    Person p = getAuthorFromEmail(email);
+                    Person p = personSeeder.findPersonOrReturnNull(email);
                     excavators.add(p);
                 }
             }

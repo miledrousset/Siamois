@@ -20,6 +20,12 @@ public class PersonSeeder {
     public record PersonSpec(String email, String name, String lastname, String username) {
     }
 
+    public Person findPersonOrReturnNull(String email) {
+        return personRepository
+                .findByEmailIgnoreCase(email)
+                .orElseThrow(null);
+    }
+
     private Person getOrCreatePerson(String email, String name, String lastname, String username) {
         Optional<Person> optAuthor = personRepository.findByEmailIgnoreCase(email);
         Person authorGetOrCreated ;

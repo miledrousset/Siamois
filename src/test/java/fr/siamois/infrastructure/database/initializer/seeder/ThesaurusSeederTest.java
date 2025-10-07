@@ -69,7 +69,7 @@ class ThesaurusSeederTest {
     }
 
     @Test
-    void seed_shouldThrowDatabaseDataInitException_whenInvalidEndpointExceptionOccurs() throws DatabaseDataInitException, InvalidEndpointException {
+    void seed_shouldThrowDatabaseDataInitException_whenInvalidEndpointExceptionOccurs() throws  InvalidEndpointException {
         List<ThesaurusSeeder.ThesaurusSpec> toInsert = List.of(
                 new ThesaurusSeeder.ThesaurusSpec("https://opentheso.mom.fr", "th240")
         );
@@ -101,6 +101,5 @@ class ThesaurusSeederTest {
         Map<String, Vocabulary> result = thesaurusSeeder.seed(toInsert);
 
         assertEquals(result.get("th240"), vocabulary);
-
     }
 }
