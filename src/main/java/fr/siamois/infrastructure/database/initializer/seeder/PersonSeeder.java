@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
 
 @Service
 @RequiredArgsConstructor
@@ -23,14 +21,13 @@ public class PersonSeeder {
     public Person findPersonOrReturnNull(String email) {
         return personRepository
                 .findByEmailIgnoreCase(email)
-                .orElseThrow(null);
+                .orElse(null);
     }
 
     private Person getOrCreatePerson(String email, String name, String lastname, String username) {
-        Optional<Person> optAuthor = personRepository.findByEmailIgnoreCase(email);
-        Person authorGetOrCreated ;
-        if(optAuthor.isPresent()) {
-            authorGetOrCreated = optAuthor.get();
+        Person authorGetOrCreated = findPersonOrReturnNull(email) ;
+        if(authorGetOrCreated != null) {
+            return authorGetOrCreated;
         }
         else {
             authorGetOrCreated = new Person();
