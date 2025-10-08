@@ -384,11 +384,6 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
         return localDate.atTime(LocalTime.NOON).atOffset(ZoneOffset.UTC);
     }
 
-    @Override
-    public BaseLazyDataModel<RecordingUnit> getLazyDataModelParents() {
-        return null;
-    }
-
     public void refreshUnit() {
 
         // reinit
