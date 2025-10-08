@@ -19,99 +19,27 @@
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
             <!-- Tabs -->
-            <p:tabView id="recordingUnitTabs" activeIndex="#{panelModel.activeTabIndex}">
+            <p:tabView id="recordingUnitTabs" dynamic="true" activeIndex="#{panelModel.activeTabIndex}"
+                       value="#{panelModel.tabs}" var="tabItem">
                 <p:ajax event="tabChange" listener="#{panelModel.onTabChange}"/>
 
                 <!-- Overview tab -->
-                <p:tab id="overviewTab">
+                <p:tab>
 
                     <f:facet name="title">
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value='#{langBean.msg("panel.tab.overview")}'/>
-                            <ui:param name="icon" value="bi bi-eye"/>
+                            <ui:param name="title" value='#{langBean.msg(tabItem.titleCode)}'/>
+                            <ui:param name="icon" value="#{tabItem.icon}"/>
                         </ui:include>
                     </f:facet>
 
-                    <ui:include src="/panel/spatialunit/tab/overviewTab.xhtml">
-                        <ui:param name="panelModel" value="#{panelModel}"/>
-                        <ui:param name="panelIndex" value="#{panelIndex}"/>
-                        <ui:param name="root" value="recordingUnitForm:recordingUnitTabs"/>
-                    </ui:include>
-
-                </p:tab>
-
-                <p:tab id="detailsTab">
-                    <!-- Common fields -->
-                    <f:facet name="title">
-                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value='#{langBean.msg("panel.tab.details")}'/>
-                            <ui:param name="icon" value="bi bi-info-circle"/>
+                    <ui:fragment rendered="#{tabItem['class'].simpleName eq 'OverviewFormTab'}">
+                        <ui:include src="/panel/spatialunit/tab/overviewTab.xhtml">
+                            <ui:param name="panelModel" value="#{panelModel}"/>
+                            <ui:param name="panelIndex" value="#{panelIndex}"/>
+                            <ui:param name="root" value="#{tabItem.root}:#{panelModel.getIndexOfTab(tabItem)}"/>
                         </ui:include>
-                    </f:facet>
-
-                    <ui:include src="/panel/spatialunit/tab/detailsTab.xhtml">
-                        <ui:param name="panelModel" value="#{panelModel}"/>
-                        <ui:param name="panelIndex" value="#{panelIndex}"/>
-                        <ui:param name="root" value="recordingUnitForm:recordingUnitTabs"/>
-                    </ui:include>
-
-                </p:tab>
-                <p:tab title="Hierarchie" id="hierarchy">
-                    <f:facet name="title">
-                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value="Hierarchie 🚧"/>
-                            <ui:param name="icon" value="bi bi-geo-alt"/>
-
-                            <ui:param name="emptyTab" value="#{panelModel.isHierarchyTabEmpty()}"/>
-                            <ui:param name="validated" value="#{panelModel.unit.validated}"/>
-                        </ui:include>
-
-                    </f:facet>
-
-
-                </p:tab>
-
-                <p:tab title="Prelevements">
-                    <f:facet name="title">
-                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value="Prelevements"/>
-                            <ui:param name="icon" value="bi bi-box2"/>
-                            <ui:param name="emptyTab" value="true"/>
-                            <ui:param name="validated" value="#{panelModel.unit.validated}"/>
-                        </ui:include>
-                    </f:facet>
-
-                    <ui:include src="/panel/spatialunit/tab/specimenTab.xhtml">
-                        <ui:param name="panelModel" value="#{panelModel}"/>
-                        <ui:param name="panelIndex" value="#{panelIndex}"/>
-                    </ui:include>
-
-                </p:tab>
-
-
-                <p:tab title="Documents" id="documentTab">
-
-                    <f:facet name="title">
-                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value="Documents 🚧"/>
-                            <ui:param name="icon" value="bi bi-paperclip"/>
-                            <ui:param name="emptyTab" value="#{panelModel.documents.size() == 0}"/>
-                            <ui:param name="validated" value="#{panelModel.unit.validated}"/>
-                        </ui:include>
-                    </f:facet>
-
-
-
-                </p:tab>
-
-                <p:tab title="Versions">
-                    <f:facet name="title">
-                        <ui:include src="/pages/shared/tab/tabTitle.xhtml">
-                            <ui:param name="title" value="Versions 🚧"/>
-                            <ui:param name="icon" value="bi bi-clock-history"/>
-                        </ui:include>
-                    </f:facet>
-
+                    </ui:fragment>
 
                 </p:tab>
 
@@ -145,9 +73,6 @@
         </h:form>
 
     </h:panelGroup>
-
-
-
 
 
 </ui:fragment>

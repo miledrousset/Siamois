@@ -7,6 +7,9 @@ import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.FormPanelTab;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.OverviewFormTab;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.PanelTab;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,6 +20,7 @@ import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
@@ -51,6 +55,9 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     // Gestion du formulaire via form layout
     protected CustomForm overviewForm;
 
+    //
+    protected transient List<PanelTab> tabs;
+
     public abstract void init();
 
     public abstract List<Person> authorsAvailable();
@@ -69,6 +76,21 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
                                         AbstractSingleEntity.Deps deps) {
         super(titleCodeOrTitle, icon, panelClass, deps);
         this.documentCreationBean = documentCreationBean;
+
+        // Overview tab
+        tabs = new ArrayList<>();
+        OverviewFormTab overviewTab = new OverviewFormTab("panel.tab.overview",
+                "bi bi-eye",
+                "overviewTab",
+                "recordingUnitForm:recordingUnitTabs",
+                "overviewTab.xhtml");
+        tabs.add(overviewTab);
+        FormPanelTab detailsTab = new FormPanelTab("panel.tab.details",
+                "bi bi-pen",
+                "detailTab",
+                "recordingUnitForm:recordingUnitTabs",
+                "/panel/spatialunit/tab/detailsTab.xhtml");
+        tabs.add(detailsTab);
     }
 
 
@@ -81,6 +103,10 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     public abstract void saveDocument();
 
     public abstract void save(Boolean validated);
+
+    public Integer getIndexOfTab(PanelTab tab) {
+        return tabs.indexOf(tab);
+    }
 
 
     public void initDialog() throws NoConfigForFieldException {
@@ -102,13 +128,13 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
         Tab activeTab = event.getTab(); // Get the selected tab
 
         int index = activeTabIndex;
-        List<Tab> tabs = tabView.getChildren().stream()
+        List<Tab> tabList = tabView.getChildren().stream()
                 .filter(Tab.class::isInstance)
                 .map(Tab.class::cast)
                 .toList();
 
         for (int i = 0; i < tabs.size(); i++) {
-            if (tabs.get(i).equals(activeTab)) {
+            if (tabList.get(i).equals(activeTab)) {
                 index = i;
                 break;
             }

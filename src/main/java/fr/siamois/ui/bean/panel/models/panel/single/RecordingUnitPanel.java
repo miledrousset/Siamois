@@ -60,7 +60,7 @@ import java.util.Set;
 @Data
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class RecordingUnitPanel extends AbstractSingleEntityPanel<RecordingUnit, RecordingUnitHist>  implements Serializable {
+public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel<RecordingUnit, RecordingUnitHist>  implements Serializable {
 
     // Deps
     protected final transient LangBean langBean;
