@@ -15,6 +15,7 @@ import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.spatialunit.SpatialUnitService;
 import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
@@ -51,6 +52,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
     protected final transient SpatialUnitTreeService spatialUnitTreeService;
     protected final transient SpatialUnitService spatialUnitService;
     protected final transient ActionUnitService actionUnitService;
+    protected final transient DocumentService documentService;
 
     //--------------- Locals
     protected transient T unit;
@@ -110,7 +112,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
 
     public record Deps(SessionSettingsBean sessionSettingsBean, FieldConfigurationService fieldConfigurationService,
                        SpatialUnitTreeService spatialUnitTreeService, SpatialUnitService spatialUnitService,
-                       ActionUnitService actionUnitService) {
+                       ActionUnitService actionUnitService, DocumentService documentService) {
     }
 
     protected AbstractSingleEntity(String titleCodeOrTitle,
@@ -123,6 +125,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
         this.spatialUnitTreeService = deps.spatialUnitTreeService;
         this.spatialUnitService = deps.spatialUnitService;
         this.actionUnitService = deps.actionUnitService;
+        this.documentService = deps.documentService;
     }
 
 

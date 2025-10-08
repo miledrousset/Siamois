@@ -18,6 +18,8 @@ import org.primefaces.component.tabview.Tab;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,9 +105,39 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
 
     public abstract void visualise(H history);
 
-    public abstract void saveDocument();
-
     public abstract void save(Boolean validated);
+
+    protected abstract boolean documentExistsInUnitByHash(T unit, String hash);
+
+    protected abstract void addDocumentToUnit(Document doc, T unit);
+
+    public void saveDocument() {
+        try {
+            BufferedInputStream currentFile = new BufferedInputStream(documentCreationBean.getDocFile().getInputStream());
+            String hash = documentService.getMD5Sum(currentFile);
+            currentFile.mark(Integer.MAX_VALUE);
+            if (documentExistsInUnitByHash(unit, hash)) {
+                log.error("Document already exists in spatial unit");
+                currentFile.reset();
+                return;
+            }
+        } catch (IOException e) {
+            log.error("Error while processing spatial unit document", e);
+            return;
+        }
+
+        Document created = documentCreationBean.createDocument();
+        if (created == null)
+            return;
+
+        log.trace("Document created: {}", created);
+        addDocumentToUnit(created, unit);
+        log.trace("Document added to unit: {}", unit);
+
+        documents.add(created);
+        PrimeFaces.current().executeScript("PF('newDocumentDiag').hide()");
+        PrimeFaces.current().ajax().update("spatialUnitForm");
+    }
 
     public Integer getIndexOfTab(PanelTab tab) {
         return tabs.indexOf(tab);

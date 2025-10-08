@@ -344,32 +344,13 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
     }
 
     @Override
-    public void saveDocument() {
-        try {
-            BufferedInputStream currentFile = new BufferedInputStream(documentCreationBean.getDocFile().getInputStream());
-            String hash = documentService.getMD5Sum(currentFile);
-            currentFile.mark(Integer.MAX_VALUE);
-            if (documentService.existInSpatialUnitByHash(unit, hash)) {
-                log.error("Document already exists in spatial unit");
-                currentFile.reset();
-                return;
-            }
-        } catch (IOException e) {
-            log.error("Error while processing spatial unit document", e);
-            return;
-        }
+    protected boolean documentExistsInUnitByHash(SpatialUnit unit, String hash) {
+        return documentService.existInSpatialUnitByHash(unit, hash);
+    }
 
-        Document created = documentCreationBean.createDocument();
-        if (created == null)
-            return;
-
-        log.trace("Document created: {}", created);
-        documentService.addToSpatialUnit(created, unit);
-        log.trace("Document added to spatial unit: {}", unit);
-
-        documents.add(created);
-        PrimeFaces.current().executeScript("PF('newDocumentDiag').hide()");
-        PrimeFaces.current().ajax().update("spatialUnitForm");
+    @Override
+    protected void addDocumentToUnit(Document doc, SpatialUnit unit) {
+        documentService.addToSpatialUnit(doc, unit);
     }
 
     public boolean contentIsImage(String mimeType) {
