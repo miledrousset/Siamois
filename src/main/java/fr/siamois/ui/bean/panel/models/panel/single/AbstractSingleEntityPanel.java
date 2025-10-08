@@ -88,6 +88,11 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
                 "detailTab",
                 "recordingUnitForm:recordingUnitTabs");
         tabs.add(detailsTab);
+        DocumentTab documentTab = new DocumentTab("panel.tab.documents",
+                "bi bi-paperclip",
+                "detailTab",
+                "recordingUnitForm:recordingUnitTabs");
+        tabs.add(documentTab);
         activeTabIndex = 1;
     }
 

@@ -255,7 +255,7 @@
                     <cellheader:withIcon icon="bi bi-pencil-square"
                                          text="#{langBean.msg('table.spatialunit.column.parents')}"/>
                 </f:facet>
-                <cellbody:cellBodyThreeItems set="#{item.parents}"/>
+                <cellbody:cellBodyThreeItems set="#{item.parents}" displayAttribute="fullIdentifier" />
             </p:column>
 
 
@@ -265,7 +265,7 @@
                     <cellheader:withIcon icon="bi bi-pencil-square"
                                          text="#{langBean.msg('table.spatialunit.column.children')}"/>
                 </f:facet>
-                <cellbody:cellBodyThreeItems set="#{item.children}"/>
+                <cellbody:cellBodyThreeItems set="#{item.children}" displayAttribute="fullIdentifier"/>
             </p:column>
 
             <!-- Action parent -->

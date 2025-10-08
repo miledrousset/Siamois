@@ -148,8 +148,14 @@
             </p:tabView>
 
             <!-- Save/Cancel Toolbar -->
-            <p:toolbar class="panel-footer" rendered="#{flowBean.readWriteMode == 'WRITE'}">
-                <p:toolbarGroup align="right">
+            <p:toolbar class="panel-footer" >
+                <p:toolbarGroup align="left">
+                    Dernière modification le #{panelModel.unit.creationTime} par #{panelModel.unit.author.displayName()}
+                    <p:commandButton id="seeHistoryButton" value="Historique"
+                                     style="margin-left: 1rem">
+                    </p:commandButton>
+                </p:toolbarGroup>
+                <p:toolbarGroup align="right" rendered="#{flowBean.readWriteMode == 'WRITE'}">
                     <p:commandLink value='#{langBean.msg("common.action.cancel")}'
                                    update="panel-#{panelIndex}"
                                    id="cancelButton"
