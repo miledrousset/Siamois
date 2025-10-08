@@ -7,10 +7,9 @@ import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
-import fr.siamois.ui.bean.panel.models.panel.single.tab.FormPanelTab;
-import fr.siamois.ui.bean.panel.models.panel.single.tab.OverviewFormTab;
-import fr.siamois.ui.bean.panel.models.panel.single.tab.PanelTab;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.*;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
+import io.micrometer.common.lang.Nullable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -82,15 +81,14 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
         OverviewFormTab overviewTab = new OverviewFormTab("panel.tab.overview",
                 "bi bi-eye",
                 "overviewTab",
-                "recordingUnitForm:recordingUnitTabs",
-                "overviewTab.xhtml");
+                "recordingUnitForm:recordingUnitTabs");
         tabs.add(overviewTab);
-        FormPanelTab detailsTab = new FormPanelTab("panel.tab.details",
+        DetailsFormTab detailsTab = new DetailsFormTab("panel.tab.details",
                 "bi bi-pen",
                 "detailTab",
-                "recordingUnitForm:recordingUnitTabs",
-                "/panel/spatialunit/tab/detailsTab.xhtml");
+                "recordingUnitForm:recordingUnitTabs");
         tabs.add(detailsTab);
+        activeTabIndex = 1;
     }
 
 
@@ -123,24 +121,14 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
 
 
     public void onTabChange(TabChangeEvent<?> event) {
-        // update tab inddex
-        TabView tabView = (TabView) event.getComponent(); // Get the TabView
-        Tab activeTab = event.getTab(); // Get the selected tab
+        activeTabIndex = event.getIndex();
+    }
 
-        int index = activeTabIndex;
-        List<Tab> tabList = tabView.getChildren().stream()
-                .filter(Tab.class::isInstance)
-                .map(Tab.class::cast)
-                .toList();
-
-        for (int i = 0; i < tabs.size(); i++) {
-            if (tabList.get(i).equals(activeTab)) {
-                index = i;
-                break;
-            }
-        }
-
-        activeTabIndex = index;
+    @Nullable
+    public Boolean emptyTabFor(Object tabItem) {
+        if (tabItem instanceof MultiHierarchyTab) return isHierarchyTabEmpty();
+        if (tabItem instanceof DocumentTab) return documents.isEmpty();
+        return null; // N/A for others
     }
 
 }

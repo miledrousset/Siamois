@@ -32,8 +32,9 @@ import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
-import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
-import fr.siamois.ui.lazydatamodel.SpecimenInRecordingUnitLazyDataModel;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.DetailsFormTab;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.MultiHierarchyTab;
+import fr.siamois.ui.lazydatamodel.*;
 import fr.siamois.utils.MessageUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -82,6 +83,12 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
 
     // Linked specimen
     private transient SpecimenInRecordingUnitLazyDataModel specimenListLazyDataModel ;
+
+    // lazy model for children
+    private RecordingUnitChildrenLazyDataModel lazyDataModelChildren ;
+    // lazy model for parents
+    private RecordingUnitParentsLazyDataModel lazyDataModelParents ;
+
 
 
     // ----------- Concepts for system fields
@@ -378,11 +385,6 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
     }
 
     @Override
-    protected BaseLazyDataModel<RecordingUnit> getLazyDataModelChildren() {
-        return null;
-    }
-
-    @Override
     public BaseLazyDataModel<RecordingUnit> getLazyDataModelParents() {
         return null;
     }
@@ -410,12 +412,30 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
 
             initForms();
 
-            // Get all the CHILDREN of the recording unit
+            // Init tabs
+            MultiHierarchyTab multiHierTab = new MultiHierarchyTab(
+                    "panel.tab.hierarchy",
+                    "bi bi-pencil-square",
+                    "hierarchyTab",
+                    "recordingUnitForm:recordingUnitTabs");
+            tabs.add(multiHierTab);
+
+            // Get  the CHILDREN of the recording unit
+            lazyDataModelChildren = new RecordingUnitChildrenLazyDataModel(
+                    recordingUnitService,
+                    langBean,
+                    unit
+            );
             selectedCategoriesChildren = new ArrayList<>();
             totalChildrenCount = 0;
             // Get all the Parents of the recording unit
             selectedCategoriesParents = new ArrayList<>();
             totalParentsCount = 0;
+            lazyDataModelParents = new RecordingUnitParentsLazyDataModel(
+                    recordingUnitService,
+                    langBean,
+                    unit
+            );
 
 
         } catch (RuntimeException e) {

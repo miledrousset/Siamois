@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class FormPanelTab extends PanelTab {
 
-    public FormPanelTab(String titleCode, String icon, String id, String root, String viewPath) {
-        super(titleCode, icon, id, root, viewPath);
+    public FormPanelTab(String titleCode, String icon, String id, String root) {
+        super(titleCode, icon, id, root);
     }
 }

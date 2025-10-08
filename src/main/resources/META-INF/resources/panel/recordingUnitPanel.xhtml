@@ -19,7 +19,7 @@
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
             <!-- Tabs -->
-            <p:tabView id="recordingUnitTabs" dynamic="true" activeIndex="#{panelModel.activeTabIndex}"
+            <p:tabView id="recordingUnitTabs" activeIndex="#{panelModel.activeTabIndex}"
                        value="#{panelModel.tabs}" var="tabItem">
                 <p:ajax event="tabChange" listener="#{panelModel.onTabChange}"/>
 
@@ -30,6 +30,8 @@
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
                             <ui:param name="title" value='#{langBean.msg(tabItem.titleCode)}'/>
                             <ui:param name="icon" value="#{tabItem.icon}"/>
+                            <ui:param name="emptyTab" value="#{panelModel.emptyTabFor(tabItem)}"/>
+                            <ui:param name="validated" value="#{panelModel.unit.validated}"/>
                         </ui:include>
                     </f:facet>
 
@@ -38,6 +40,21 @@
                             <ui:param name="panelModel" value="#{panelModel}"/>
                             <ui:param name="panelIndex" value="#{panelIndex}"/>
                             <ui:param name="root" value="#{tabItem.root}:#{panelModel.getIndexOfTab(tabItem)}"/>
+                        </ui:include>
+                    </ui:fragment>
+
+                    <ui:fragment rendered="#{tabItem['class'].simpleName eq 'DetailsFormTab'}">
+                        <ui:include src="/panel/spatialunit/tab/detailsTab.xhtml">
+                            <ui:param name="panelModel" value="#{panelModel}"/>
+                            <ui:param name="panelIndex" value="#{panelIndex}"/>
+                            <ui:param name="root" value="#{tabItem.root}:#{panelModel.getIndexOfTab(tabItem)}"/>
+                        </ui:include>
+                    </ui:fragment>
+
+                    <ui:fragment rendered="#{tabItem['class'].simpleName eq 'MultiHierarchyTab'}">
+                        <ui:include src="/panel/spatialunit/tab/hierarchyTab.xhtml">
+                            <ui:param name="panelModel" value="#{panelModel}"/>
+                            <ui:param name="panelIndex" value="#{panelIndex}"/>
                         </ui:include>
                     </ui:fragment>
 
