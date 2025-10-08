@@ -209,11 +209,12 @@ public class ChartresDatasetInitializer implements DatabaseInitializer {
                         "Chartres (Test équipe dev)",
                         "Insertion du jeu de donnée fourni par Anaïs Pinhède",
                         CHARTRES,
-                        List.of(adminEmail)
+                        List.of(adminEmail),
+                        "https://thesaurus.mom.fr", VOCABULARY_ID
                 )
         );
-        institutionSeeder.seed(institutions);
         Map<String, Vocabulary> result = thesaurusSeeder.seed(thesauri);
+        institutionSeeder.seed(institutions);
         conceptSeeder.seed(result.get(VOCABULARY_ID), concepts);
         personSeeder.seed(persons);
         spatialUnitSeeder.seed(spUnits);
