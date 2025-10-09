@@ -213,6 +213,16 @@ public class DocumentService implements ArkEntityService {
     }
 
     /**
+     * Adds a document to a recording unit.
+     *
+     * @param document    the document to be added
+     * @param recordingUnit the recording unit to which the document is to be added
+     */
+    public void addToRecordingUnit(Document document, RecordingUnit recordingUnit) {
+        documentRepository.addDocumentToRecordingUnit(document.getId(), recordingUnit.getId());
+    }
+
+    /**
      * Finds an InputStream for a document.
      *
      * @param document the document for which the InputStream is to be found
@@ -272,6 +282,17 @@ public class DocumentService implements ArkEntityService {
      */
     public boolean existInSpatialUnitByHash(SpatialUnit spatialUnit, String hash) {
         return documentRepository.existsByHashInSpatialUnit(spatialUnit.getId(), hash);
+    }
+
+    /**
+     * Checks if a document with a specific hash exists in a given spatial unit.
+     *
+     * @param recordingUnit the spatial unit in which to check for the document
+     * @param hash        the hash of the document to check
+     * @return true if the document exists in the spatial unit, false otherwise
+     */
+    public boolean existInRecordingUnitByHash(RecordingUnit recordingUnit, String hash) {
+        return documentRepository.existsByHashInRecordingUnit(recordingUnit.getId(), hash);
     }
 
 }

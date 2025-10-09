@@ -1,6 +1,5 @@
 package fr.siamois.ui.bean.panel.models.panel.single;
 
-import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.actionunit.ActionUnitFormMapping;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
@@ -20,21 +19,15 @@ import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.HistoryService;
-import fr.siamois.domain.services.spatialunit.SpatialUnitService;
-import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
-import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
 import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
-import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
-import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
-import fr.siamois.ui.bean.panel.models.panel.single.tab.DetailsFormTab;
 import fr.siamois.ui.bean.panel.models.panel.single.tab.MultiHierarchyTab;
 import fr.siamois.ui.lazydatamodel.*;
 import fr.siamois.utils.MessageUtils;
@@ -71,7 +64,6 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
     protected final transient PersonService personService;
     private final transient RedirectBean redirectBean;
     private final transient HistoryService historyService;
-    private final transient DocumentService documentService;
     protected final transient ConceptService conceptService;
     private final transient SpecimenService specimenService;
 
@@ -90,6 +82,29 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
     private RecordingUnitChildrenLazyDataModel lazyDataModelChildren ;
     // lazy model for parents
     private RecordingUnitParentsLazyDataModel lazyDataModelParents ;
+
+    protected RecordingUnitPanel(LangBean langBean,
+                                 RecordingUnitService recordingUnitService,
+                                 PersonService personService, ConceptService conceptService,
+                                 DocumentCreationBean documentCreationBean,
+                                 RedirectBean redirectBean,
+                                 HistoryService historyService,
+                                 AbstractSingleEntity.Deps deps,
+                                 SpecimenService specimenService) {
+
+        super("common.entity.recordingunit",
+                "bi bi-pencil-square",
+                "siamois-panel recording-unit-panel single-panel",
+                documentCreationBean, deps);
+        this.langBean = langBean;
+        this.recordingUnitService = recordingUnitService;
+        this.personService = personService;
+        this.conceptService = conceptService;
+        this.redirectBean = redirectBean;
+        this.historyService = historyService;
+        this.specimenService = specimenService;
+    }
+
 
 
 
@@ -249,28 +264,6 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
 
 
 
-    protected RecordingUnitPanel(LangBean langBean,
-                                 RecordingUnitService recordingUnitService,
-                                 PersonService personService, ConceptService conceptService,
-                                 DocumentCreationBean documentCreationBean,
-                                 RedirectBean redirectBean,
-                                 HistoryService historyService,
-                                 AbstractSingleEntity.Deps deps,
-                                 DocumentService documentService, SpecimenService specimenService) {
-
-        super("common.entity.recordingunit",
-                "bi bi-pencil-square",
-                "siamois-panel recording-unit-panel single-panel",
-                documentCreationBean, deps);
-        this.langBean = langBean;
-        this.recordingUnitService = recordingUnitService;
-        this.personService = personService;
-        this.conceptService = conceptService;
-        this.redirectBean = redirectBean;
-        this.historyService = historyService;
-        this.documentService = documentService;
-        this.specimenService = specimenService;
-    }
 
     @Override
     public String display() {
@@ -627,12 +620,12 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
 
     @Override
     protected boolean documentExistsInUnitByHash(RecordingUnit unit, String hash) {
-        return false;
+        return documentService.existInRecordingUnitByHash(unit, hash);
     }
 
     @Override
     protected void addDocumentToUnit(Document doc, RecordingUnit unit) {
-        return ;
+        documentService.addToRecordingUnit(doc, unit);
     }
 
     @Override

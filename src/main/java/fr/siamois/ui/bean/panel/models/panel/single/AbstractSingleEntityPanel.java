@@ -17,6 +17,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
+import org.springframework.util.MimeType;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -106,6 +107,11 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     public abstract void visualise(H history);
 
     public abstract void save(Boolean validated);
+
+    public boolean contentIsImage(String mimeType) {
+        MimeType currentMimeType = MimeType.valueOf(mimeType);
+        return currentMimeType.getType().equals("image");
+    }
 
     protected abstract boolean documentExistsInUnitByHash(T unit, String hash);
 

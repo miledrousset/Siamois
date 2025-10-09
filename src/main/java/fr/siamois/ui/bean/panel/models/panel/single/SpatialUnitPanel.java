@@ -82,7 +82,6 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
     private final transient RecordingUnitService recordingUnitService;
     private final transient SessionSettingsBean sessionSettings;
     private final transient SpatialUnitHelperService spatialUnitHelperService;
-    private final transient DocumentService documentService;
     private final transient CustomFieldService customFieldService;
     private final transient ConceptService conceptService;
     private final transient LabelService labelService;
@@ -117,7 +116,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
     @Autowired
     private SpatialUnitPanel(RecordingUnitService recordingUnitService,
                              SessionSettingsBean sessionSettings,
-                             SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService,
+                             SpatialUnitHelperService spatialUnitHelperService,
                              DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
                              ConceptService conceptService,
                              LabelService labelService, LangBean langBean, PersonService personService,
@@ -128,7 +127,6 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
         this.recordingUnitService = recordingUnitService;
         this.sessionSettings = sessionSettings;
         this.spatialUnitHelperService = spatialUnitHelperService;
-        this.documentService = documentService;
         this.customFieldService = customFieldService;
         this.labelService = labelService;
         this.conceptService = conceptService;
@@ -352,12 +350,6 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
     protected void addDocumentToUnit(Document doc, SpatialUnit unit) {
         documentService.addToSpatialUnit(doc, unit);
     }
-
-    public boolean contentIsImage(String mimeType) {
-        MimeType currentMimeType = MimeType.valueOf(mimeType);
-        return currentMimeType.getType().equals("image");
-    }
-
 
 
 
