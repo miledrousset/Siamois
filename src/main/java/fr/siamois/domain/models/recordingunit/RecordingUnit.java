@@ -218,14 +218,16 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
             .valueBinding("excavators")
             .concept(excavatorsConcept)
             .build();
+    public static final String MR_2_RECORDING_UNIT_TYPE_CHIP = "mr-2 recording-unit-type-chip";
+    public static final String BI_BI_PENCIL_SQUARE = "bi bi-pencil-square";
     @Transient
     @JsonIgnore
     private static CustomFieldSelectOneFromFieldCode recordingUnitTypeField = new CustomFieldSelectOneFromFieldCode.Builder()
             .label("spatialunit.field.type")
             .isSystemField(true)
             .valueBinding("type")
-            .styleClass("mr-2 recording-unit-type-chip")
-            .iconClass("bi bi-pencil-square")
+            .styleClass(MR_2_RECORDING_UNIT_TYPE_CHIP)
+            .iconClass(BI_BI_PENCIL_SQUARE)
             .fieldCode(RecordingUnit.TYPE_FIELD_CODE)
             .concept(recordingUnitTypeConcept)
             .build();
@@ -314,8 +316,8 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
             .label("recordingunit.field.secondaryType")
             .isSystemField(true)
             .valueBinding("secondaryType")
-            .styleClass("mr-2 recording-unit-type-chip")
-            .iconClass("bi bi-pencil-square")
+            .styleClass(MR_2_RECORDING_UNIT_TYPE_CHIP)
+            .iconClass(BI_BI_PENCIL_SQUARE)
             .parentField(recordingUnitTypeField)
             .concept(recordingUnitSecondaryTypeConcept)
             .build();
@@ -326,8 +328,8 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
             .label("recordingunit.field.thirdType")
             .isSystemField(true)
             .valueBinding("thirdType")
-            .styleClass("mr-2 recording-unit-type-chip")
-            .iconClass("bi bi-pencil-square")
+            .styleClass(MR_2_RECORDING_UNIT_TYPE_CHIP)
+            .iconClass(BI_BI_PENCIL_SQUARE)
             .parentField(recordingUnitSecondaryTypeField)
             .concept(recordingUnitIdentificationConcept)
             .build();
@@ -357,8 +359,7 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
             .build();
 
 
-
-
+    public static final String COMMON_HEADER_GENERAL = "common.header.general";
     @Transient
     @JsonIgnore
     public static final CustomForm NEW_UNIT_FORM = new CustomForm.Builder()
@@ -366,7 +367,7 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
             .description("Contains the main form")
             .addPanel(
                     new CustomFormPanel.Builder()
-                            .name("common.header.general")
+                            .name(COMMON_HEADER_GENERAL)
                             .isSystemPanel(true)
                             .addRow(
                                     new CustomRow.Builder()
@@ -419,7 +420,7 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
                     .description("Contains the main form")
                     .addPanel(
                             new CustomFormPanel.Builder()
-                                    .name("common.header.general")
+                                    .name(COMMON_HEADER_GENERAL)
                                     .isSystemPanel(true)
                                     .addRow(
                                             new CustomRow.Builder()
@@ -498,7 +499,7 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
                     .description("Contains the overview")
                     .addPanel(
                             new CustomFormPanel.Builder()
-                                    .name("common.header.general")
+                                    .name(COMMON_HEADER_GENERAL)
                                     .isSystemPanel(true)
                                     .addRow(
                                             new CustomRow.Builder()

@@ -30,6 +30,7 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEntity<T>  implements Serializable {
 
+    public static final String RECORDING_UNIT_FORM_RECORDING_UNIT_TABS = "recordingUnitForm:recordingUnitTabs";
     // Deps
     protected final transient DocumentCreationBean documentCreationBean;
 
@@ -84,17 +85,17 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
         OverviewFormTab overviewTab = new OverviewFormTab("panel.tab.overview",
                 "bi bi-eye",
                 "overviewTab",
-                "recordingUnitForm:recordingUnitTabs");
+                RECORDING_UNIT_FORM_RECORDING_UNIT_TABS);
         tabs.add(overviewTab);
         DetailsFormTab detailsTab = new DetailsFormTab("panel.tab.details",
                 "bi bi-pen",
                 "detailTab",
-                "recordingUnitForm:recordingUnitTabs");
+                RECORDING_UNIT_FORM_RECORDING_UNIT_TABS);
         tabs.add(detailsTab);
         DocumentTab documentTab = new DocumentTab("panel.tab.documents",
                 "bi bi-paperclip",
                 "detailTab",
-                "recordingUnitForm:recordingUnitTabs");
+                RECORDING_UNIT_FORM_RECORDING_UNIT_TABS);
         tabs.add(documentTab);
         if(activeTabIndex == null) { activeTabIndex = 1; }
     }

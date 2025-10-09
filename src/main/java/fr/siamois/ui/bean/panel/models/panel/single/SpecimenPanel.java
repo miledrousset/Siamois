@@ -64,7 +64,6 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
     private final transient RedirectBean redirectBean;
     private final transient SpecimenService specimenService;
     private final transient HistoryService historyService;
-    private final transient DocumentService documentService;
     protected final transient ConceptService conceptService;
 
     @Override
@@ -74,7 +73,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
 
     @Override
     protected void addDocumentToUnit(Document doc, Specimen unit) {
-        return ;
+        // Empty because not used yet.
     }
 
 
@@ -181,8 +180,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
                             DocumentCreationBean documentCreationBean,
                             RedirectBean redirectBean,
                             AbstractSingleEntity.Deps deps,
-                            HistoryService historyService,
-                            DocumentService documentService) {
+                            HistoryService historyService) {
 
         super("common.entity.specimen",
                 "bi bi-box2",
@@ -195,7 +193,6 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
         this.conceptService = conceptService;
         this.redirectBean = redirectBean;
         this.historyService = historyService;
-        this.documentService = documentService;
     }
 
     @Override

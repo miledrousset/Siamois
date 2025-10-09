@@ -76,7 +76,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     private final transient LabelService labelService;
     private final TeamMembersBean teamMembersBean;
     private final transient HistoryService historyService;
-    private final transient DocumentService documentService;
     private final transient RecordingUnitService recordingUnitService;
 
     // For entering new code
@@ -95,7 +94,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
     @Override
     protected void addDocumentToUnit(Document doc, ActionUnit unit) {
-        return ;
+        // Empty because not used yet.
     }
 
 
@@ -109,7 +108,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
                            FieldService fieldService, RedirectBean redirectBean,
                            LabelService labelService, TeamMembersBean teamMembersBean,
                            DocumentCreationBean documentCreationBean,
-                           HistoryService historyService, DocumentService documentService, RecordingUnitService recordingUnitService,
+                           HistoryService historyService, RecordingUnitService recordingUnitService,
                            AbstractSingleEntity.Deps deps) {
         super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel single-panel",
                 documentCreationBean, deps);
@@ -120,7 +119,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         this.labelService = labelService;
         this.teamMembersBean = teamMembersBean;
         this.historyService = historyService;
-        this.documentService = documentService;
         this.recordingUnitService = recordingUnitService;
     }
 
