@@ -370,4 +370,48 @@ class RecordingUnitServiceTest {
         verify(actionUnitService, never()).isActionUnitStillOngoing(any());
     }
 
+    @Test
+    void testFindAllByChildAndByNameContainingAndByCategoriesAndByGlobalContaining_Success() {
+
+        when(recordingUnitRepository.findAllByChildAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                any(Long.class),
+                any(String.class),
+                any(Long[].class),
+                any(String.class),
+                any(String.class),
+                any(Pageable.class)
+        )).thenReturn(page);
+
+        // Act
+        Page<RecordingUnit> actualResult = recordingUnitService.findAllByChildAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                1L, "null", new Long[2], "null", "fr", pageable
+        );
+
+        // Assert
+        assertEquals(recordingUnit1, actualResult.getContent().get(0));
+        assertEquals(recordingUnit2, actualResult.getContent().get(1));
+    }
+
+    @Test
+    void testFindAllByParentAndByNameContainingAndByCategoriesAndByGlobalContaining_Success() {
+
+        when(recordingUnitRepository.findAllByParentAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                any(Long.class),
+                any(String.class),
+                any(Long[].class),
+                any(String.class),
+                any(String.class),
+                any(Pageable.class)
+        )).thenReturn(page);
+
+        // Act
+        Page<RecordingUnit> actualResult = recordingUnitService.findAllByParentAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                1L, "null", new Long[2], "null", "fr", pageable
+        );
+
+        // Assert
+        assertEquals(recordingUnit1, actualResult.getContent().get(0));
+        assertEquals(recordingUnit2, actualResult.getContent().get(1));
+    }
+
 }
