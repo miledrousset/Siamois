@@ -35,7 +35,7 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
 
     //--------------- Locals
 
-    protected int activeTabIndex; // Keeping state of active tab
+    protected Integer activeTabIndex; // Keeping state of active tab
     protected transient T backupClone;
     protected String errorMessage;
     protected transient List<H> historyVersion;
@@ -96,7 +96,7 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
                 "detailTab",
                 "recordingUnitForm:recordingUnitTabs");
         tabs.add(documentTab);
-        activeTabIndex = 1;
+        if(activeTabIndex == null) { activeTabIndex = 1; }
     }
 
 

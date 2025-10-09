@@ -286,23 +286,27 @@
             <!-- Prelevements -->
             <p:column responsivePriority="3">
                 <f:facet name="header">
-                    <cellheader:withIcon icon="bi bi-box-2"
+                    <cellheader:withIcon icon="bi bi-bucket"
                                          text="#{langBean.msg('common.entity.specimen')}"/>
                 </f:facet>
-                <cellbody:cellBodyThreeItems
-                        set="#{item.specimenList}"
-                        panelModel="#{cc.attrs.panelModel}"
-                        displayAttribute="fullIdentifier"
-                        commandLinkStyleClass="sia-recording-unit-command-link"
-                        onClickMethod="#{flowBean.goToSpecimenByIdNewPanel}"
-                />
-                <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
-                                 actionListener="#{genericNewUnitDialogBean.selectKind('SPECIMEN',item.specimenList, item)}"
-                                 oncomplete="PF('newUnitDiag').show();"
-                                 rendered="#{specimenBean.showCreateSpecimenButton(item)}"
-                                 update="newUnitForm"
-                                 style="margin-right: .5rem">
-                </p:commandButton>
+                <div style="display: flex; flex-direction: row; gap: 2em;">
+                    <p:commandLink
+                            action="#{flowBean.goToRecordingUnitByIdNewPanel(item.id,cc.attrs.panelIndex,4)}"
+                            onstart="PF('buiContent').show()"
+                            oncomplete="PF('buiContent').hide();handleScrollToTop();"
+                            process="@form"
+                            update="flow"
+                    >
+                        <h:outputText value="#{item.specimenList.size()} (voir)"/>
+                    </p:commandLink>
+                    <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
+                                     actionListener="#{genericNewUnitDialogBean.selectKind('SPECIMEN',item.specimenList, item)}"
+                                     oncomplete="PF('newUnitDiag').show();"
+                                     rendered="#{specimenBean.showCreateSpecimenButton(item)}"
+                                     update="newUnitForm"
+                                     style="margin-right: .5rem">
+                    </p:commandButton>
+                </div>
             </p:column>
 
 

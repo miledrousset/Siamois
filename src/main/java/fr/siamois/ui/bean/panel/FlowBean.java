@@ -225,6 +225,13 @@ public class FlowBean implements Serializable {
 
     }
 
+    public void  goToRecordingUnitByIdNewPanel(Long id, Integer currentPanelIndex, Integer tabIndex) {
+
+        RecordingUnitPanel newPanel = panelFactory.createRecordingUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb(), tabIndex);
+        addPanel(newPanel);
+
+    }
+
     public void  goToRecordingUnitByIdNewPanel(Long id, AbstractPanel panel) {
 
         RecordingUnitPanel newPanel = panelFactory.createRecordingUnitPanel(id, panel.getBreadcrumb());

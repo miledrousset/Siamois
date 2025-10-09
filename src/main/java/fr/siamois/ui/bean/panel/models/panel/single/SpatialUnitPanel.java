@@ -284,17 +284,12 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
         createBarModel();
 
-        activeTabIndex = 0;
-
-
-
         if (idunit == null) {
             this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
             return;
         }
 
         refreshUnit();
-
 
 
         if (this.unit == null) {

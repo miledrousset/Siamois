@@ -122,6 +122,20 @@ public class PanelFactory {
 
     }
 
+    public RecordingUnitPanel createRecordingUnitPanel(Long recordingUnitId, PanelBreadcrumb currentBreadcrumb, Integer tabIndex) {
+
+        PanelBreadcrumb bc = new PanelBreadcrumb();
+        bc.getModel().getElements().clear();
+        bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+
+        return new RecordingUnitPanel.RecordingUnitPanelBuilder(recordingUnitPanelProvider)
+                .id(recordingUnitId)
+                .tabIndex(tabIndex)
+                .breadcrumb(bc)
+                .build();
+
+    }
+
     public RecordingUnitPanel createRecordingUnitPanel(Long recordingUnitId) {
 
         PanelBreadcrumb bc = new PanelBreadcrumb();

@@ -258,6 +258,107 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
             .concept(actionUnitConcept)
             .build();
 
+    // ----------- Concepts for system fields
+    // Recording unit identifier
+    @Transient
+    @JsonIgnore
+    private static Concept recordingUnitIdConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286193")
+            .build();
+
+    @Transient
+    @JsonIgnore
+    private static Concept recordingUnitSecondaryTypeConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286196")
+            .build();
+    @Transient
+    @JsonIgnore
+    private static Concept recordingUnitIdentificationConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286197")
+            .build();
+
+    // Date
+    @Transient
+    @JsonIgnore
+    private static Concept creationDateConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286200")
+            .build();
+
+    @Transient
+    @JsonIgnore
+    private static Concept closingDateConcept = new Concept.Builder()
+            .vocabulary(SYSTEM_THESO)
+            .externalId("4286199")
+            .build();
+
+    // Action Unit
+
+    // Fields
+    @Transient
+    @JsonIgnore
+    private static CustomFieldText recordingUnitIdField = new CustomFieldText.Builder()
+            .label("recordingunit.field.identifier")
+            .isSystemField(true)
+            .valueBinding("fullIdentifier")
+            .concept(recordingUnitIdConcept)
+            .build();
+
+
+    @Transient
+    @JsonIgnore
+    private static CustomFieldSelectOneConceptFromChildrenOfConcept recordingUnitSecondaryTypeField = new CustomFieldSelectOneConceptFromChildrenOfConcept.Builder()
+            .label("recordingunit.field.secondaryType")
+            .isSystemField(true)
+            .valueBinding("secondaryType")
+            .styleClass("mr-2 recording-unit-type-chip")
+            .iconClass("bi bi-pencil-square")
+            .parentField(recordingUnitTypeField)
+            .concept(recordingUnitSecondaryTypeConcept)
+            .build();
+
+    @Transient
+    @JsonIgnore
+    private static CustomFieldSelectOneConceptFromChildrenOfConcept recordingUnitIdentificationField = new CustomFieldSelectOneConceptFromChildrenOfConcept.Builder()
+            .label("recordingunit.field.thirdType")
+            .isSystemField(true)
+            .valueBinding("thirdType")
+            .styleClass("mr-2 recording-unit-type-chip")
+            .iconClass("bi bi-pencil-square")
+            .parentField(recordingUnitSecondaryTypeField)
+            .concept(recordingUnitIdentificationConcept)
+            .build();
+
+    @Transient
+    @JsonIgnore
+    private static CustomFieldDateTime creationDateField = new CustomFieldDateTime.Builder()
+            .label("recordingunit.field.creationDate")
+            .isSystemField(true)
+            .showTime(true)
+            .valueBinding("creationTime")
+            .concept(creationDateConcept)
+            .build();
+
+
+
+
+
+    @Transient
+    @JsonIgnore
+    private static CustomFieldDateTime closingDateField = new CustomFieldDateTime.Builder()
+            .label("recordingunit.field.closingDate")
+            .isSystemField(true)
+            .valueBinding("endDate")
+            .showTime(false)
+            .concept(closingDateConcept)
+            .build();
+
+
+
+
     @Transient
     @JsonIgnore
     public static final CustomForm NEW_UNIT_FORM = new CustomForm.Builder()
@@ -309,4 +410,116 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
                             ).build()
             )
             .build();
+
+    // Details form
+    @Transient
+    @JsonIgnore
+    public static final CustomForm DETAILS_FORM = new CustomForm.Builder()
+            .name("Details tab form")
+                    .description("Contains the main form")
+                    .addPanel(
+                            new CustomFormPanel.Builder()
+                                    .name("common.header.general")
+                                    .isSystemPanel(true)
+                                    .addRow(
+                                            new CustomRow.Builder()
+                                                    .addColumn(new CustomCol.Builder()
+                                                            .readOnly(true)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(recordingUnitIdField)
+                                                            .build())
+            .addColumn(new CustomCol.Builder()
+                                                            .readOnly(true)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(actionUnitField)
+                                                            .build())
+            .addColumn(new CustomCol.Builder()
+                                                            .readOnly(false)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(spatialUnitField)
+                                                            .build())
+            .addColumn(new CustomCol.Builder()
+                                                            .readOnly(false)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(authorsField)
+                                                            .build())
+            .addColumn(new CustomCol.Builder()
+                                                            .readOnly(false)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(excavatorsField)
+                                                            .build())
+            .build()
+                                    ).addRow(
+                                            new CustomRow.Builder()
+                                                    .addColumn(new CustomCol.Builder()
+                                                            .readOnly(false)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(recordingUnitTypeField)
+                                                            .build())
+            .addColumn(new CustomCol.Builder()
+                                                            .readOnly(false)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(recordingUnitSecondaryTypeField)
+                                                            .build())
+            .addColumn(new CustomCol.Builder()
+                                                            .readOnly(false)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(recordingUnitIdentificationField)
+                                                            .build())
+            .build()
+                                    ).addRow(
+                                            new CustomRow.Builder()
+                                                    .addColumn(new CustomCol.Builder()
+                                                            .readOnly(true)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(creationDateField)
+                                                            .build())
+            .addColumn(new CustomCol.Builder()
+                                                            .readOnly(false)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(openingDateField)
+                                                            .build())
+            .addColumn(new CustomCol.Builder()
+                                                            .readOnly(false)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(closingDateField)
+                                                            .build())
+            .build()
+                                    )
+                                            .build()
+                    )
+                            .build();
+
+    // Details form
+    @Transient
+    @JsonIgnore
+    public static final CustomForm OVERVIEW_FORM = new CustomForm.Builder()
+            .name("Overview tab form")
+                    .description("Contains the overview")
+                    .addPanel(
+                            new CustomFormPanel.Builder()
+                                    .name("common.header.general")
+                                    .isSystemPanel(true)
+                                    .addRow(
+                                            new CustomRow.Builder()
+                                                    .addColumn(new CustomCol.Builder()
+                                                            .readOnly(true)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(recordingUnitTypeField)
+                                                            .build())
+            .addColumn(new CustomCol.Builder()
+                                                            .readOnly(true)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(recordingUnitSecondaryTypeField)
+                                                            .build())
+            .addColumn(new CustomCol.Builder()
+                                                            .readOnly(true)
+                                                            .className(COLUMN_CLASS_NAME)
+                                                            .field(recordingUnitIdentificationField)
+                                                            .build())
+            .build()
+                                    )
+                                            .build()
+                    )
+                            .build();
 }

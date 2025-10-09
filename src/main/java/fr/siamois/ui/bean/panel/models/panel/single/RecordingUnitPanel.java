@@ -108,164 +108,6 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
 
 
 
-
-    // ----------- Concepts for system fields
-    // Recording unit identifier
-    private Concept recordingUnitIdConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4286193")
-            .build();
-    // Authors
-    private Concept authorsConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4286194")
-            .build();
-    // Excavators
-    private Concept excavatorsConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4286195")
-            .build();
-
-    // Recording Unit type
-    private Concept recordingUnitTypeConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4282367")
-            .build();
-    private Concept recordingUnitSecondaryTypeConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4286196")
-            .build();
-    private Concept recordingUnitIdentificationConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4286197")
-            .build();
-
-    // Date
-    private Concept creationDateConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4286200")
-            .build();
-    private Concept openingDateConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4286198")
-            .build();
-    private Concept closingDateConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4286199")
-            .build();
-
-    // Action Unit
-    private Concept actionUnitConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4286244")
-            .build();
-
-    // Spatial Unit
-    private Concept spatialUnitConcept = new Concept.Builder()
-            .vocabulary(SYSTEM_THESO)
-            .externalId("4286245")
-            .build();
-
-    // Fields
-    private CustomFieldText recordingUnitIdField = new CustomFieldText.Builder()
-            .label("recordingunit.field.identifier")
-            .isSystemField(true)
-            .valueBinding("fullIdentifier")
-            .concept(recordingUnitIdConcept)
-            .build();
-
-    private CustomFieldSelectMultiplePerson authorsField = new CustomFieldSelectMultiplePerson.Builder()
-            .label("recordingunit.field.authors")
-            .isSystemField(true)
-            .valueBinding("authors")
-            .concept(authorsConcept)
-            .build();
-
-    private CustomFieldSelectMultiplePerson excavatorsField = new CustomFieldSelectMultiplePerson.Builder()
-            .label("recordingunit.field.excavators")
-            .isSystemField(true)
-            .valueBinding("excavators")
-            .concept(excavatorsConcept)
-            .build();
-
-    private CustomFieldSelectOneFromFieldCode recordingUnitTypeField = new CustomFieldSelectOneFromFieldCode.Builder()
-            .label("spatialunit.field.type")
-            .isSystemField(true)
-            .valueBinding("type")
-            .styleClass("mr-2 recording-unit-type-chip")
-            .iconClass("bi bi-pencil-square")
-            .fieldCode(RecordingUnit.TYPE_FIELD_CODE)
-            .concept(recordingUnitTypeConcept)
-            .build();
-
-    private CustomFieldSelectOneConceptFromChildrenOfConcept recordingUnitSecondaryTypeField = new CustomFieldSelectOneConceptFromChildrenOfConcept.Builder()
-            .label("recordingunit.field.secondaryType")
-            .isSystemField(true)
-            .valueBinding("secondaryType")
-            .styleClass("mr-2 recording-unit-type-chip")
-            .iconClass("bi bi-pencil-square")
-            .parentField(recordingUnitTypeField)
-            .concept(recordingUnitSecondaryTypeConcept)
-            .build();
-
-    private CustomFieldSelectOneConceptFromChildrenOfConcept recordingUnitIdentificationField = new CustomFieldSelectOneConceptFromChildrenOfConcept.Builder()
-            .label("recordingunit.field.thirdType")
-            .isSystemField(true)
-            .valueBinding("thirdType")
-            .styleClass("mr-2 recording-unit-type-chip")
-            .iconClass("bi bi-pencil-square")
-            .parentField(recordingUnitSecondaryTypeField)
-            .concept(recordingUnitIdentificationConcept)
-            .build();
-
-    private CustomFieldDateTime creationDateField = new CustomFieldDateTime.Builder()
-            .label("recordingunit.field.creationDate")
-            .isSystemField(true)
-            .showTime(true)
-            .valueBinding("creationTime")
-            .concept(creationDateConcept)
-            .build();
-
-
-
-
-    private CustomFieldDateTime openingDateField = new CustomFieldDateTime.Builder()
-            .label("recordingunit.field.openingDate")
-            .isSystemField(true)
-            .valueBinding("startDate")
-            .showTime(false)
-            .concept(openingDateConcept)
-            .build();
-
-    private CustomFieldDateTime closingDateField = new CustomFieldDateTime.Builder()
-            .label("recordingunit.field.closingDate")
-            .isSystemField(true)
-            .valueBinding("endDate")
-            .showTime(false)
-            .concept(closingDateConcept)
-            .build();
-
-    private CustomFieldSelectOneActionUnit actionUnitField = new CustomFieldSelectOneActionUnit.Builder()
-            .label("recordingunit.field.actionUnit")
-            .isSystemField(true)
-            .valueBinding("actionUnit")
-            .concept(actionUnitConcept)
-            .build();
-
-    private CustomFieldSelectOneSpatialUnit spatialUnitField = new CustomFieldSelectOneSpatialUnit.Builder()
-            .label("recordingunit.field.spatialUnit")
-            .isSystemField(true)
-            .valueBinding("spatialUnit")
-            .concept(spatialUnitConcept)
-            .build();
-
-
-
-
-
-
-
-
     @Override
     public String display() {
         return "/panel/recordingUnitPanel.xhtml";
@@ -390,14 +232,20 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
         try {
 
             unit = recordingUnitService.findById(idunit);
+
+            specimenListLazyDataModel = new SpecimenInRecordingUnitLazyDataModel(
+                    specimenService,
+                    sessionSettingsBean,
+                    langBean,
+                    unit
+            );
+            specimenListLazyDataModel.setSelectedUnits(new ArrayList<>());
+
             backupClone = new RecordingUnit(unit);
+            initForms();
             this.titleCodeOrTitle = unit.getFullIdentifier();
 
             specimenListLazyDataModel.setSelectedUnits(new ArrayList<>());
-
-            initForms();
-
-
 
             // Get  the CHILDREN of the recording unit
             lazyDataModelChildren = new RecordingUnitChildrenLazyDataModel(
@@ -430,115 +278,19 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
     public void init() {
         try {
 
-            // Details form
-            detailsForm = new CustomForm.Builder()
-                    .name("Details tab form")
-                    .description("Contains the main form")
-                    .addPanel(
-                            new CustomFormPanel.Builder()
-                                    .name("common.header.general")
-                                    .isSystemPanel(true)
-                                    .addRow(
-                                            new CustomRow.Builder()
-                                                    .addColumn(new CustomCol.Builder()
-                                                            .readOnly(true)
-                                                            .className(COLUMN_CLASS_NAME)
-                                                            .field(recordingUnitIdField)
-                                                            .build())
-                                                    .addColumn(new CustomCol.Builder()
-                                                            .readOnly(true)
-                                                            .className(COLUMN_CLASS_NAME)
-                                                            .field(actionUnitField)
-                                                            .build())
-                                                    .addColumn(new CustomCol.Builder()
-                                                            .readOnly(false)
-                                                            .className(COLUMN_CLASS_NAME)
-                                                            .field(spatialUnitField)
-                                                            .build())
-                                                    .addColumn(new CustomCol.Builder()
-                                                            .readOnly(false)
-                                                            .className(COLUMN_CLASS_NAME)
-                                                            .field(authorsField)
-                                                            .build())
-                                                    .addColumn(new CustomCol.Builder()
-                                                            .readOnly(false)
-                                                            .className(COLUMN_CLASS_NAME)
-                                                            .field(excavatorsField)
-                                                            .build())
-                                                    .build()
-                                    ).addRow(
-                                            new CustomRow.Builder()
-                                                    .addColumn(new CustomCol.Builder()
-                                                            .readOnly(false)
-                                                            .className(COLUMN_CLASS_NAME)
-                                                            .field(recordingUnitTypeField)
-                                                            .build())
-                                                    .addColumn(new CustomCol.Builder()
-                                                            .readOnly(false)
-                                                            .className(COLUMN_CLASS_NAME)
-                                                            .field(recordingUnitSecondaryTypeField)
-                                                            .build())
-                                                    .addColumn(new CustomCol.Builder()
-                                                            .readOnly(false)
-                                                            .className(COLUMN_CLASS_NAME)
-                                                            .field(recordingUnitIdentificationField)
-                                                            .build())
-                                                    .build()
-                                    ).addRow(
-                                            new CustomRow.Builder()
-                                                    .addColumn(new CustomCol.Builder()
-                                                            .readOnly(true)
-                                                            .className(COLUMN_CLASS_NAME)
-                                                            .field(creationDateField)
-                                                            .build())
-                                                    .addColumn(new CustomCol.Builder()
-                                                            .readOnly(false)
-                                                            .className(COLUMN_CLASS_NAME)
-                                                            .field(openingDateField)
-                                                            .build())
-                                                    .addColumn(new CustomCol.Builder()
-                                                            .readOnly(false)
-                                                            .className(COLUMN_CLASS_NAME)
-                                                            .field(closingDateField)
-                                                            .build())
-                                                    .build()
-                                    )
-                                    .build()
-                    )
-                    .build();
+            if (idunit == null) {
+                this.errorMessage = "The ID of the recording unit must be defined";
+                return;
+            }
 
-            // Details form
-            overviewForm = new CustomForm.Builder()
-                    .name("Overview tab form")
-                    .description("Contains the overview")
-                    .addPanel(
-                            new CustomFormPanel.Builder()
-                                    .name("common.header.general")
-                                    .isSystemPanel(true)
-                                    .addRow(
-                                            new CustomRow.Builder()
-                                                    .addColumn(new CustomCol.Builder()
-                                                            .readOnly(true)
-                                                            .className(COLUMN_CLASS_NAME)
-                                                            .field(recordingUnitTypeField)
-                                                            .build())
-                                                    .addColumn(new CustomCol.Builder()
-                                                            .readOnly(true)
-                                                            .className(COLUMN_CLASS_NAME)
-                                                            .field(recordingUnitSecondaryTypeField)
-                                                            .build())
-                                                    .addColumn(new CustomCol.Builder()
-                                                            .readOnly(true)
-                                                            .className(COLUMN_CLASS_NAME)
-                                                            .field(recordingUnitIdentificationField)
-                                                            .build())
-                                                    .build()
-                                    )
-                                    .build()
-                    )
-                    .build();
+
 
             refreshUnit();
+
+            if (this.unit == null) {
+                log.error("The Recording Unit page should not be accessed without ID or by direct page path");
+                errorMessage = "The Recording Unit page should not be accessed without ID or by direct page path";
+            }
 
             // Init tabs
             MultiHierarchyTab multiHierTab = new MultiHierarchyTab(
@@ -549,13 +301,7 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
 
             tabs.add(2,multiHierTab);
 
-            specimenListLazyDataModel = new SpecimenInRecordingUnitLazyDataModel(
-                    specimenService,
-                    sessionSettingsBean,
-                    langBean,
-                    unit
-            );
-            specimenListLazyDataModel.setSelectedUnits(new ArrayList<>());
+
 
             SpecimenTab specimenTab = new SpecimenTab(
                     "common.entity.specimen",
@@ -566,24 +312,6 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
 
             tabs.add(specimenTab);
 
-            if (idunit == null) {
-                this.errorMessage = "The ID of the recording unit must be defined";
-                return;
-            }
-
-
-
-            if (this.unit == null) {
-                log.error("The Recording Unit page should not be accessed without ID or by direct page path");
-                errorMessage = "The Recording Unit page should not be accessed without ID or by direct page path";
-            }
-
-            // add to BC
-            DefaultMenuItem item = DefaultMenuItem.builder()
-                    .value(unit.getFullIdentifier())
-                    .icon("bi bi-pencil-square")
-                    .build();
-            this.getBreadcrumb().getModel().getElements().add(item);
 
         } catch (
                 ActionUnitNotFoundException e) {
@@ -606,7 +334,8 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
 
     @Override
     public void initForms() {
-
+        overviewForm = RecordingUnit.OVERVIEW_FORM;
+        detailsForm = RecordingUnit.DETAILS_FORM;
         // Init system form answers
         formResponse = initializeFormResponse(detailsForm, unit);
 
@@ -688,6 +417,12 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
 
         public RecordingUnitPanel.RecordingUnitPanelBuilder breadcrumb(PanelBreadcrumb breadcrumb) {
             recordingUnitPanel.setBreadcrumb(breadcrumb);
+
+            return this;
+        }
+
+        public RecordingUnitPanel.RecordingUnitPanelBuilder tabIndex(Integer tabIndex) {
+            recordingUnitPanel.setActiveTabIndex(tabIndex);
 
             return this;
         }
