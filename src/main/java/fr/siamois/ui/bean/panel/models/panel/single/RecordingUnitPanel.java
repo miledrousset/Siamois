@@ -402,13 +402,7 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
 
             initForms();
 
-            // Init tabs
-            MultiHierarchyTab multiHierTab = new MultiHierarchyTab(
-                    "panel.tab.hierarchy",
-                    "bi bi-pencil-square",
-                    "hierarchyTab",
-                    "recordingUnitForm:recordingUnitTabs");
-            tabs.add(multiHierTab);
+
 
             // Get  the CHILDREN of the recording unit
             lazyDataModelChildren = new RecordingUnitChildrenLazyDataModel(
@@ -549,8 +543,14 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
                     )
                     .build();
 
-            activeTabIndex = 0;
+            // Init tabs
+            MultiHierarchyTab multiHierTab = new MultiHierarchyTab(
+                    "panel.tab.hierarchy",
+                    "bi bi-pencil-square",
+                    "hierarchyTab",
+                    "recordingUnitForm:recordingUnitTabs");
 
+            tabs.add(2,multiHierTab);
 
             if (idunit == null) {
                 this.errorMessage = "The ID of the recording unit must be defined";
