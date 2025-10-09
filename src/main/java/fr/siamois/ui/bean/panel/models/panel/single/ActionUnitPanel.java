@@ -95,6 +95,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     @Override
     protected void addDocumentToUnit(Document doc, ActionUnit unit) {
         // Empty because not used yet.
+
     }
 
 
