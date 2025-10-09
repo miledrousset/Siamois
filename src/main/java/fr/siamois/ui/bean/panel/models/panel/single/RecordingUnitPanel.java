@@ -29,6 +29,7 @@ import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.models.panel.single.tab.MultiHierarchyTab;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.SpecimenTab;
 import fr.siamois.ui.lazydatamodel.*;
 import fr.siamois.utils.MessageUtils;
 import lombok.Data;
@@ -392,12 +393,6 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
             backupClone = new RecordingUnit(unit);
             this.titleCodeOrTitle = unit.getFullIdentifier();
 
-            specimenListLazyDataModel = new SpecimenInRecordingUnitLazyDataModel(
-                    specimenService,
-                    sessionSettingsBean,
-                    langBean,
-                    unit
-            );
             specimenListLazyDataModel.setSelectedUnits(new ArrayList<>());
 
             initForms();
@@ -543,6 +538,8 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
                     )
                     .build();
 
+            refreshUnit();
+
             // Init tabs
             MultiHierarchyTab multiHierTab = new MultiHierarchyTab(
                     "panel.tab.hierarchy",
@@ -552,16 +549,33 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
 
             tabs.add(2,multiHierTab);
 
+            specimenListLazyDataModel = new SpecimenInRecordingUnitLazyDataModel(
+                    specimenService,
+                    sessionSettingsBean,
+                    langBean,
+                    unit
+            );
+            specimenListLazyDataModel.setSelectedUnits(new ArrayList<>());
+
+            SpecimenTab specimenTab = new SpecimenTab(
+                    "common.entity.specimen",
+                    "bi bi-bucket",
+                    "specimenTab",
+                    "recordingUnitForm:recordingUnitTabs",
+                    specimenListLazyDataModel);
+
+            tabs.add(specimenTab);
+
             if (idunit == null) {
                 this.errorMessage = "The ID of the recording unit must be defined";
                 return;
             }
 
-            refreshUnit();
+
 
             if (this.unit == null) {
-                log.error("The Action Unit page should not be accessed without ID or by direct page path");
-                errorMessage = "The Action Unit page should not be accessed without ID or by direct page path";
+                log.error("The Recording Unit page should not be accessed without ID or by direct page path");
+                errorMessage = "The Recording Unit page should not be accessed without ID or by direct page path";
             }
 
             // add to BC

@@ -64,6 +64,15 @@
                         </ui:include>
                     </ui:fragment>
 
+                    <ui:fragment rendered="#{tabItem['class'].simpleName eq 'SpecimenTab'}">
+                        <!--@elvariable id="tabItem" type="fr.siamois.ui.bean.panel.models.panel.single.tab.SpecimenTab"-->
+                        <ui:include src="/panel/spatialunit/tab/specimenTab.xhtml">
+                            <ui:param name="panelModel" value="#{panelModel}"/>
+                            <ui:param name="lazyDataModel" value="#{tabItem.specimenListLazyDataModel}"/>
+                            <ui:param name="panelIndex" value="#{panelIndex}"/>
+                        </ui:include>
+                    </ui:fragment>
+
                 </p:tab>
 
 
