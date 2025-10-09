@@ -318,6 +318,45 @@ public class RecordingUnitService implements ArkEntityService {
                 (teamMemberRepository.existsByActionUnitAndPerson(action, user.getUser()) && actionUnitService.isActionUnitStillOngoing(action));
     }
 
+    public Page<RecordingUnit> findAllByParentAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+            Long recordingUnitId,
+            String fullIdentifierFilter,
+            Long[] categoryIds,
+            String globalFilter,
+            String languageCode,
+            Pageable pageable) {
+
+        Page<RecordingUnit> res = recordingUnitRepository.findAllByParentAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                recordingUnitId, fullIdentifierFilter, categoryIds, globalFilter, languageCode, pageable
+        );
+
+
+        // load related entities
+        res.forEach(actionUnit -> {
+            Hibernate.initialize(actionUnit.getParents());
+            Hibernate.initialize(actionUnit.getChildren());
+        });
+
+        return res;
+    }
+
+    public Page<RecordingUnit> findAllByChildAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(Long childId,
+                                                                                                               String fullIdentifierFilter,
+                                                                                                               Long[] categoryIds,
+                                                                                                               String globalFilter, String languageCode, Pageable pageable) {
+        Page<RecordingUnit> res = recordingUnitRepository.findAllByChildAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                childId, fullIdentifierFilter, categoryIds, globalFilter, languageCode, pageable
+        );
+
+
+        // load related entities
+        res.forEach(actionUnit -> {
+            Hibernate.initialize(actionUnit.getParents());
+            Hibernate.initialize(actionUnit.getChildren());
+        });
+
+        return res;
+    }
 }
 
 

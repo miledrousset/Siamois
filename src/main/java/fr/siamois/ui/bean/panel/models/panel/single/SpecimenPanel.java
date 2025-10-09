@@ -1,6 +1,8 @@
 package fr.siamois.ui.bean.panel.models.panel.single;
 
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.actionunit.ActionUnitNotFoundException;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.form.customfield.CustomFieldDateTime;
@@ -62,8 +64,17 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
     private final transient RedirectBean redirectBean;
     private final transient SpecimenService specimenService;
     private final transient HistoryService historyService;
-    private final transient DocumentService documentService;
     protected final transient ConceptService conceptService;
+
+    @Override
+    protected boolean documentExistsInUnitByHash(Specimen unit, String hash) {
+        return false;
+    }
+
+    @Override
+    protected void addDocumentToUnit(Document doc, Specimen unit) {
+        // Empty because not used yet.
+    }
 
 
     // ---------- Locals
@@ -169,8 +180,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
                             DocumentCreationBean documentCreationBean,
                             RedirectBean redirectBean,
                             AbstractSingleEntity.Deps deps,
-                            HistoryService historyService,
-                            DocumentService documentService) {
+                            HistoryService historyService) {
 
         super("common.entity.specimen",
                 "bi bi-box2",
@@ -183,7 +193,6 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
         this.conceptService = conceptService;
         this.redirectBean = redirectBean;
         this.historyService = historyService;
-        this.documentService = documentService;
     }
 
     @Override

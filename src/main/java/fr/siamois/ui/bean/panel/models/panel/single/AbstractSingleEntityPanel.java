@@ -7,7 +7,9 @@ import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.*;
 import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
+import io.micrometer.common.lang.Nullable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +17,12 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
+import org.springframework.util.MimeType;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
@@ -24,12 +30,13 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEntity<T>  implements Serializable {
 
+    public static final String RECORDING_UNIT_FORM_RECORDING_UNIT_TABS = "recordingUnitForm:recordingUnitTabs";
     // Deps
     protected final transient DocumentCreationBean documentCreationBean;
 
     //--------------- Locals
 
-    protected int activeTabIndex; // Keeping state of active tab
+    protected Integer activeTabIndex; // Keeping state of active tab
     protected transient T backupClone;
     protected String errorMessage;
     protected transient List<H> historyVersion;
@@ -51,6 +58,9 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     // Gestion du formulaire via form layout
     protected CustomForm overviewForm;
 
+    //
+    protected transient List<PanelTab> tabs;
+
     public abstract void init();
 
     public abstract List<Person> authorsAvailable();
@@ -69,6 +79,25 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
                                         AbstractSingleEntity.Deps deps) {
         super(titleCodeOrTitle, icon, panelClass, deps);
         this.documentCreationBean = documentCreationBean;
+
+        // Overview tab
+        tabs = new ArrayList<>();
+        OverviewFormTab overviewTab = new OverviewFormTab("panel.tab.overview",
+                "bi bi-eye",
+                "overviewTab",
+                RECORDING_UNIT_FORM_RECORDING_UNIT_TABS);
+        tabs.add(overviewTab);
+        DetailsFormTab detailsTab = new DetailsFormTab("panel.tab.details",
+                "bi bi-pen",
+                "detailTab",
+                RECORDING_UNIT_FORM_RECORDING_UNIT_TABS);
+        tabs.add(detailsTab);
+        DocumentTab documentTab = new DocumentTab("panel.tab.documents",
+                "bi bi-paperclip",
+                "detailTab",
+                RECORDING_UNIT_FORM_RECORDING_UNIT_TABS);
+        tabs.add(documentTab);
+        if(activeTabIndex == null) { activeTabIndex = 1; }
     }
 
 
@@ -78,9 +107,48 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
 
     public abstract void visualise(H history);
 
-    public abstract void saveDocument();
-
     public abstract void save(Boolean validated);
+
+    public boolean contentIsImage(String mimeType) {
+        MimeType currentMimeType = MimeType.valueOf(mimeType);
+        return currentMimeType.getType().equals("image");
+    }
+
+    protected abstract boolean documentExistsInUnitByHash(T unit, String hash);
+
+    protected abstract void addDocumentToUnit(Document doc, T unit);
+
+    public void saveDocument() {
+        try {
+            BufferedInputStream currentFile = new BufferedInputStream(documentCreationBean.getDocFile().getInputStream());
+            String hash = documentService.getMD5Sum(currentFile);
+            currentFile.mark(Integer.MAX_VALUE);
+            if (documentExistsInUnitByHash(unit, hash)) {
+                log.error("Document already exists in spatial unit");
+                currentFile.reset();
+                return;
+            }
+        } catch (IOException e) {
+            log.error("Error while processing spatial unit document", e);
+            return;
+        }
+
+        Document created = documentCreationBean.createDocument();
+        if (created == null)
+            return;
+
+        log.trace("Document created: {}", created);
+        addDocumentToUnit(created, unit);
+        log.trace("Document added to unit: {}", unit);
+
+        documents.add(created);
+        PrimeFaces.current().executeScript("PF('newDocumentDiag').hide()");
+        PrimeFaces.current().ajax().update("spatialUnitForm");
+    }
+
+    public Integer getIndexOfTab(PanelTab tab) {
+        return tabs.indexOf(tab);
+    }
 
 
     public void initDialog() throws NoConfigForFieldException {
@@ -97,24 +165,15 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
 
 
     public void onTabChange(TabChangeEvent<?> event) {
-        // update tab inddex
-        TabView tabView = (TabView) event.getComponent(); // Get the TabView
-        Tab activeTab = event.getTab(); // Get the selected tab
+        activeTabIndex = event.getIndex();
+    }
 
-        int index = activeTabIndex;
-        List<Tab> tabs = tabView.getChildren().stream()
-                .filter(Tab.class::isInstance)
-                .map(Tab.class::cast)
-                .toList();
-
-        for (int i = 0; i < tabs.size(); i++) {
-            if (tabs.get(i).equals(activeTab)) {
-                index = i;
-                break;
-            }
-        }
-
-        activeTabIndex = index;
+    @Nullable
+    public Boolean emptyTabFor(Object tabItem) {
+        if (tabItem instanceof MultiHierarchyTab) return isHierarchyTabEmpty();
+        if (tabItem instanceof DocumentTab) return documents.isEmpty();
+        if (tabItem instanceof SpecimenTab) return true;
+        return null; // N/A for others
     }
 
 }

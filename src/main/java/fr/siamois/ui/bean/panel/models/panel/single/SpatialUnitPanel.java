@@ -82,7 +82,6 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
     private final transient RecordingUnitService recordingUnitService;
     private final transient SessionSettingsBean sessionSettings;
     private final transient SpatialUnitHelperService spatialUnitHelperService;
-    private final transient DocumentService documentService;
     private final transient CustomFieldService customFieldService;
     private final transient ConceptService conceptService;
     private final transient LabelService labelService;
@@ -117,7 +116,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
     @Autowired
     private SpatialUnitPanel(RecordingUnitService recordingUnitService,
                              SessionSettingsBean sessionSettings,
-                             SpatialUnitHelperService spatialUnitHelperService, DocumentService documentService,
+                             SpatialUnitHelperService spatialUnitHelperService,
                              DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
                              ConceptService conceptService,
                              LabelService labelService, LangBean langBean, PersonService personService,
@@ -128,7 +127,6 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
         this.recordingUnitService = recordingUnitService;
         this.sessionSettings = sessionSettings;
         this.spatialUnitHelperService = spatialUnitHelperService;
-        this.documentService = documentService;
         this.customFieldService = customFieldService;
         this.labelService = labelService;
         this.conceptService = conceptService;
@@ -286,17 +284,12 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
         createBarModel();
 
-        activeTabIndex = 0;
-
-
-
         if (idunit == null) {
             this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
             return;
         }
 
         refreshUnit();
-
 
 
         if (this.unit == null) {
@@ -344,39 +337,14 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
     }
 
     @Override
-    public void saveDocument() {
-        try {
-            BufferedInputStream currentFile = new BufferedInputStream(documentCreationBean.getDocFile().getInputStream());
-            String hash = documentService.getMD5Sum(currentFile);
-            currentFile.mark(Integer.MAX_VALUE);
-            if (documentService.existInSpatialUnitByHash(unit, hash)) {
-                log.error("Document already exists in spatial unit");
-                currentFile.reset();
-                return;
-            }
-        } catch (IOException e) {
-            log.error("Error while processing spatial unit document", e);
-            return;
-        }
-
-        Document created = documentCreationBean.createDocument();
-        if (created == null)
-            return;
-
-        log.trace("Document created: {}", created);
-        documentService.addToSpatialUnit(created, unit);
-        log.trace("Document added to spatial unit: {}", unit);
-
-        documents.add(created);
-        PrimeFaces.current().executeScript("PF('newDocumentDiag').hide()");
-        PrimeFaces.current().ajax().update("spatialUnitForm");
+    protected boolean documentExistsInUnitByHash(SpatialUnit unit, String hash) {
+        return documentService.existInSpatialUnitByHash(unit, hash);
     }
 
-    public boolean contentIsImage(String mimeType) {
-        MimeType currentMimeType = MimeType.valueOf(mimeType);
-        return currentMimeType.getType().equals("image");
+    @Override
+    protected void addDocumentToUnit(Document doc, SpatialUnit unit) {
+        documentService.addToSpatialUnit(doc, unit);
     }
-
 
 
 

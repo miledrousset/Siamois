@@ -7,6 +7,7 @@ import fr.siamois.domain.models.document.DocumentParent;
 import fr.siamois.domain.models.exceptions.InvalidFileSizeException;
 import fr.siamois.domain.models.exceptions.InvalidFileTypeException;
 import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.services.document.compressor.FileCompressor;
 import fr.siamois.infrastructure.database.repositories.DocumentRepository;
@@ -176,6 +177,18 @@ class DocumentServiceTest {
     }
 
     @Test
+    void addToRecordingUnit() {
+        Document document = new Document();
+        RecordingUnit recordingUnit = new RecordingUnit();
+
+        documentService.addToRecordingUnit(document, recordingUnit);
+
+        verify(documentRepository, times(1))
+                .addDocumentToRecordingUnit(document.getId(), recordingUnit.getId());
+    }
+
+
+    @Test
     void findInputStreamOfDocument() throws IOException {
         Document document = new Document();
         byte[] data = "test data".getBytes();
@@ -229,6 +242,19 @@ class DocumentServiceTest {
 
         assertTrue(result);
         verify(documentRepository, times(1)).existsByHashInSpatialUnit(spatialUnit.getId(), hash);
+    }
+
+    @Test
+    void existInRecordingUnitByHash() {
+        RecordingUnit recordingUnit = new RecordingUnit();
+        recordingUnit.setId(1L);
+        String hash = "testhash";
+        when(documentRepository.existsByHashInRecordingUnit(recordingUnit.getId(), hash)).thenReturn(true);
+
+        boolean result = documentService.existInRecordingUnitByHash(recordingUnit, hash);
+
+        assertTrue(result);
+        verify(documentRepository, times(1)).existsByHashInRecordingUnit(recordingUnit.getId(), hash);
     }
 
     @Test

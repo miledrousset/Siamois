@@ -15,6 +15,7 @@
         <cc:attribute name="panelModel" required="true" type="fr.siamois.ui.bean.panel.models.panel.AbstractPanel"/>
         <cc:attribute name="panelIndex" required="true" type="java.lang.Integer"/>
         <cc:attribute name="disableAddBtn" required="false" default="false" type="java.lang.Boolean"/>
+        <cc:attribute name="displayColumnToggler" required="false" default="false" type="java.lang.Boolean"/>
 
     </cc:interface>
     <cc:implementation>
@@ -27,7 +28,7 @@
                      id="recordingUnitDataTable"
                      varStatus="status"
                      paginatorPosition="bottom" var="item"
-                     selectionMode="multiple"
+                     selectionPageOnly="false" selectionRowMode="none"
                      selection="#{cc.attrs.lazyDataModel.selectedUnits}"
                      widgetVar="#{cc.clientId}_recordingUnitListTable"
                      lazy="true"
@@ -76,10 +77,13 @@
                                             </span>
 
                                     <!-- Column toggler -->
-                                    <p:commandButton style="margin-left: 1em;" id="toggler" type="button"
+                                    <p:commandButton
+                                            rendered="#{cc.attrs.displayColumnToggler}"
+                                            style="margin-left: 1em;" id="toggler" type="button"
                                                      value="#{langBean.msg('table.columnvisibility')}"
                                                      icon="pi pi-align-justify"/>
                                     <p:columnToggler
+                                            rendered="#{cc.attrs.displayColumnToggler}"
                                             datasource=":#{cc.clientId}:recordingUnitDataTable"
                                             trigger=":#{cc.clientId}:recordingUnitDataTable:toggler">
                                         <p:ajax event="toggle" listener="#{cc.attrs.panelModel.onToggle}"/>
@@ -115,7 +119,7 @@
                 </p:toolbar>
 
             </f:facet>
-
+            <p:column selectionBox="true" style="width:16px;text-align:center"/>
 
             <p:column toggleable="false"
                       headerText="#{langBean.msg('table.recordingunit.column.identifier')}"
@@ -166,9 +170,10 @@
                 </f:facet>
                 <p:cellEditor>
                     <f:facet name="output">
-                        <p:chip label="#{labelBean.findLabelOf(item.type)}"
+                        <p:chip id="typeChip" label="#{labelBean.findLabelOf(item.type)}"
                                 styleClass="mr-2 recording-unit-type-chip">
                         </p:chip>
+                        <p:tooltip for="typeChip" value="#{labelBean.findLabelOf(item.type)}" position="bottom"/>
                     </f:facet>
                     <f:facet name="input">
                         <sharedInput:conceptAutocompleteFieldCode id="typeComponent"
@@ -183,16 +188,17 @@
 
             <!-- sous type -->
             <p:column responsivePriority="2" headerText="#{langBean.msg('recordingunit.field.secondaryType')}">
-                        <p:chip label="#{labelBean.findLabelOf(item.secondaryType)}"
+                        <p:chip id="typeChip2" label="#{labelBean.findLabelOf(item.secondaryType)}"
                                 styleClass="mr-2 recording-unit-type-chip"/>
+                <p:tooltip for="typeChip2" value="#{labelBean.findLabelOf(item.secondaryType)}" position="bottom"/>
 
             </p:column>
 
             <!-- third type -->
             <p:column responsivePriority="2" headerText="#{langBean.msg('recordingunit.field.thirdType')}">
                 <p:chip label="#{labelBean.findLabelOf(item.thirdType)}"
-                        styleClass="mr-2 recording-unit-type-chip"/>
-
+                        styleClass="mr-2 recording-unit-type-chip" id="typeChip3"/>
+                <p:tooltip for="typeChip3" value="#{labelBean.findLabelOf(item.thirdType)}" position="bottom"/>
             </p:column>
 
             <!-- Creation time -->
@@ -251,7 +257,7 @@
                     <cellheader:withIcon icon="bi bi-pencil-square"
                                          text="#{langBean.msg('table.spatialunit.column.parents')}"/>
                 </f:facet>
-                <cellbody:cellBodyThreeItems set="#{item.parents}"/>
+                <cellbody:cellBodyThreeItems set="#{item.parents}" displayAttribute="fullIdentifier" />
             </p:column>
 
 
@@ -261,7 +267,7 @@
                     <cellheader:withIcon icon="bi bi-pencil-square"
                                          text="#{langBean.msg('table.spatialunit.column.children')}"/>
                 </f:facet>
-                <cellbody:cellBodyThreeItems set="#{item.children}"/>
+                <cellbody:cellBodyThreeItems set="#{item.children}" displayAttribute="fullIdentifier"/>
             </p:column>
 
             <!-- Action parent -->
@@ -282,23 +288,27 @@
             <!-- Prelevements -->
             <p:column responsivePriority="3">
                 <f:facet name="header">
-                    <cellheader:withIcon icon="bi bi-box-2"
+                    <cellheader:withIcon icon="bi bi-bucket"
                                          text="#{langBean.msg('common.entity.specimen')}"/>
                 </f:facet>
-                <cellbody:cellBodyThreeItems
-                        set="#{item.specimenList}"
-                        panelModel="#{cc.attrs.panelModel}"
-                        displayAttribute="fullIdentifier"
-                        commandLinkStyleClass="sia-recording-unit-command-link"
-                        onClickMethod="#{flowBean.goToSpecimenByIdNewPanel}"
-                />
-                <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
-                                 actionListener="#{genericNewUnitDialogBean.selectKind('SPECIMEN',item.specimenList, item)}"
-                                 oncomplete="PF('newUnitDiag').show();"
-                                 rendered="#{specimenBean.showCreateSpecimenButton(item)}"
-                                 update="newUnitForm"
-                                 style="margin-right: .5rem">
-                </p:commandButton>
+                <div style="display: flex; flex-direction: row; gap: 2em;">
+                    <p:commandLink
+                            action="#{flowBean.goToRecordingUnitByIdNewPanel(item.id,cc.attrs.panelIndex,4)}"
+                            onstart="PF('buiContent').show()"
+                            oncomplete="PF('buiContent').hide();handleScrollToTop();"
+                            process="@form"
+                            update="flow"
+                    >
+                        <h:outputText value="#{item.specimenList.size()} (voir)"/>
+                    </p:commandLink>
+                    <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
+                                     actionListener="#{genericNewUnitDialogBean.selectKind('SPECIMEN',item.specimenList, item)}"
+                                     oncomplete="PF('newUnitDiag').show();"
+                                     rendered="#{specimenBean.showCreateSpecimenButton(item)}"
+                                     update="newUnitForm"
+                                     style="margin-right: .5rem">
+                    </p:commandButton>
+                </div>
             </p:column>
 
 

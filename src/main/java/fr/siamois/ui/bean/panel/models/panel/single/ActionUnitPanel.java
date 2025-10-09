@@ -3,6 +3,7 @@ package fr.siamois.ui.bean.panel.models.panel.single;
 import fr.siamois.domain.models.actionunit.ActionCode;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.actionunit.ActionUnitNotFoundException;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
@@ -18,6 +19,7 @@ import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.history.ActionUnitHist;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
@@ -74,7 +76,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     private final transient LabelService labelService;
     private final TeamMembersBean teamMembersBean;
     private final transient HistoryService historyService;
-    private final transient DocumentService documentService;
     private final transient RecordingUnitService recordingUnitService;
 
     // For entering new code
@@ -86,21 +87,32 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     private Boolean editType;
     private Concept fType;
 
+    @Override
+    protected boolean documentExistsInUnitByHash(ActionUnit unit, String hash) {
+        return false;
+    }
+
+    @Override
+    protected void addDocumentToUnit(Document doc, ActionUnit unit) {
+        // Empty because not used yet.
+
+    }
+
 
     private transient List<ActionCode> secondaryActionCodes;
 
     // Linked recording units
-    private transient RecordingUnitInActionUnitLazyDataModel recordingUnitListLazyDataModel ;
+    private transient RecordingUnitInActionUnitLazyDataModel recordingUnitListLazyDataModel;
 
 
     public ActionUnitPanel(LangBean langBean,
                            FieldService fieldService, RedirectBean redirectBean,
                            LabelService labelService, TeamMembersBean teamMembersBean,
                            DocumentCreationBean documentCreationBean,
-                           HistoryService historyService, DocumentService documentService, RecordingUnitService recordingUnitService,
+                           HistoryService historyService, RecordingUnitService recordingUnitService,
                            AbstractSingleEntity.Deps deps) {
         super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel single-panel",
-                documentCreationBean, deps );
+                documentCreationBean, deps);
 
         this.langBean = langBean;
         this.fieldService = fieldService;
@@ -108,7 +120,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         this.labelService = labelService;
         this.teamMembersBean = teamMembersBean;
         this.historyService = historyService;
-        this.documentService = documentService;
         this.recordingUnitService = recordingUnitService;
     }
 
@@ -174,7 +185,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     public void init() {
         try {
             activeTabIndex = 0;
-
 
 
             if (idunit == null) {
@@ -258,17 +268,14 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         unit.setValidated(validated);
         try {
             actionUnitService.save(unit);
-        }
-        catch(FailedRecordingUnitSaveException e) {
+        } catch (FailedRecordingUnitSaveException e) {
             MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getName());
-            return ;
+            return;
         }
 
         refreshUnit();
         MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getName());
     }
-
-
 
 
     public void saveNewActionCode() {
