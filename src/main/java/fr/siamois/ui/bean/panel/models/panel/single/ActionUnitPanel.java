@@ -34,9 +34,11 @@ import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.ActionTab;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.RecordingTab;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.SpecimenTab;
 import fr.siamois.ui.bean.settings.team.TeamMembersBean;
-import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
-import fr.siamois.ui.lazydatamodel.RecordingUnitInActionUnitLazyDataModel;
+import fr.siamois.ui.lazydatamodel.*;
 import fr.siamois.utils.MessageUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -78,6 +80,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     private final transient HistoryService historyService;
     private final transient RecordingUnitService recordingUnitService;
 
+
     // For entering new code
     private ActionCode newCode;
     private Integer newCodeIndex; // Index of the new code, if primary: 0, otherwise 1 to N
@@ -103,6 +106,10 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
     // Linked recording units
     private transient RecordingUnitInActionUnitLazyDataModel recordingUnitListLazyDataModel;
+    private Integer totalRecordingUnitCount;
+    // Lazy model for recording unit in the spatial unit
+    private SpecimenInSpatialUnitLazyDataModel specimenLazyDataModel;
+    private Integer totalSpecimenCount;
 
 
     public ActionUnitPanel(LangBean langBean,
@@ -125,7 +132,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
     @Override
     public String display() {
-        return "/panel/actionUnitPanel.xhtml";
+        return "/panel/recordingUnitPanel.xhtml";
     }
 
     @Override
@@ -199,12 +206,25 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
             );
             recordingUnitListLazyDataModel.setSelectedUnits(new ArrayList<>());
 
-            // add to BC
-            DefaultMenuItem item = DefaultMenuItem.builder()
-                    .value(unit.getName())
-                    .icon("bi bi-arrow-down-square")
-                    .build();
-            this.getBreadcrumb().getModel().getElements().add(item);
+            RecordingTab recordingTab = new RecordingTab(
+                    "common.entity.recordingUnits",
+                    "bi bi-pencil-square",
+                    "recordingTab",
+                    "recordingUnitForm:recordingUnitTabs",
+                    recordingUnitListLazyDataModel,
+                    totalRecordingUnitCount);
+
+            tabs.add(recordingTab);
+
+            SpecimenTab specimenTab = new SpecimenTab(
+                    "common.entity.specimens",
+                    "bi bi-bucket",
+                    "specimenTab",
+                    "recordingUnitForm:recordingUnitTabs",
+                    specimenLazyDataModel,
+                    totalSpecimenCount);
+
+            tabs.add(specimenTab);
 
         } catch (
                 ActionUnitNotFoundException e) {
@@ -382,6 +402,11 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         public ActionUnitPanelBuilder breadcrumb(PanelBreadcrumb breadcrumb) {
             actionUnitPanel.setBreadcrumb(breadcrumb);
 
+            return this;
+        }
+
+        public ActionUnitPanelBuilder activeIndex(Integer id) {
+            actionUnitPanel.setActiveTabIndex(id);
             return this;
         }
 

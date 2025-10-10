@@ -2,6 +2,7 @@ package fr.siamois.domain.services.specimen;
 
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.institution.Institution;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
@@ -126,6 +127,20 @@ public class SpecimenService implements ArkEntityService {
         );
     }
 
+    @Transactional
+    public Page<Specimen> findAllBySpatialUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+            Long spatialUnitId,
+            String fullIdentifier,
+            Long[] categoryIds,
+            String global,
+            String langCode,
+            Pageable pageable
+    ) {
+        return specimenRepository.findAllBySpatialUnitIdAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                spatialUnitId, fullIdentifier, categoryIds, global, langCode, pageable
+        );
+    }
+
     /**
      * Updates the type of multiple specimens in bulk.
      *
@@ -146,6 +161,10 @@ public class SpecimenService implements ArkEntityService {
      */
     public long countByInstitution(Institution institution) {
         return specimenRepository.countByCreatedByInstitution(institution);
+    }
+
+    public Integer countBySpatialContext(SpatialUnit spatialUnit) {
+        return specimenRepository.countBySpatialContext(spatialUnit.getId());
     }
 
 }

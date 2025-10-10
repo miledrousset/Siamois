@@ -374,7 +374,7 @@ class ActionUnitServiceTest {
         SpatialUnit spatialUnit = new SpatialUnit();
         spatialUnit.setId(1L);
 
-        when(actionUnitRepository.countBySpatialContext(spatialUnit.getId())).thenReturn(5L);
+        when(actionUnitRepository.countBySpatialContext(spatialUnit.getId())).thenReturn(5);
 
         long result = actionUnitService.countBySpatialContext(spatialUnit);
 

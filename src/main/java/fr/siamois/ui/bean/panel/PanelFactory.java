@@ -82,6 +82,19 @@ public class PanelFactory {
         return panel;
     }
 
+    public SpatialUnitPanel createSpatialUnitPanel(Long spatialUnitId, PanelBreadcrumb currentBreadcrumb,Integer activeIndex) {
+
+        PanelBreadcrumb bc = new PanelBreadcrumb();
+        bc.getModel().getElements().clear();
+        bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+
+        return new SpatialUnitPanel.SpatialUnitPanelBuilder(spatialUnitPanelProvider)
+                .id(spatialUnitId)
+                .activeIndex(activeIndex)
+                .breadcrumb(bc)
+                .build();
+    }
+
     public ActionUnitPanel createActionUnitPanel(Long actionUnitId, PanelBreadcrumb currentBreadcrumb) {
 
         PanelBreadcrumb bc = new PanelBreadcrumb();

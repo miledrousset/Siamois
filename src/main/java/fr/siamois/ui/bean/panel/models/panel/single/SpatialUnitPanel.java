@@ -17,6 +17,7 @@ import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
+import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.spatialunit.SpatialUnitService;
@@ -26,6 +27,7 @@ import fr.siamois.domain.services.form.CustomFieldService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
+import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.LabelService;
@@ -34,11 +36,10 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.models.panel.single.tab.ActionTab;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.RecordingTab;
 import fr.siamois.ui.bean.panel.models.panel.single.tab.SpecimenTab;
 import fr.siamois.ui.bean.panel.utils.SpatialUnitHelperService;
-import fr.siamois.ui.lazydatamodel.ActionUnitInSpatialUnitLazyDataModel;
-import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
-import fr.siamois.ui.lazydatamodel.SpatialUnitParentsLazyDataModel;
+import fr.siamois.ui.lazydatamodel.*;
 import fr.siamois.utils.MessageUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -82,6 +83,7 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
 
     // Dependencies
     private final transient RecordingUnitService recordingUnitService;
+    private final transient SpecimenService specimenService;
     private final transient SessionSettingsBean sessionSettings;
     private final transient SpatialUnitHelperService spatialUnitHelperService;
     private final transient CustomFieldService customFieldService;
@@ -109,7 +111,13 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
     private SpatialUnitParentsLazyDataModel lazyDataModelParents ;
     // Lazy model for actions in the spatial unit
     private ActionUnitInSpatialUnitLazyDataModel actionLazyDataModel;
-    private long totalActionUnitCount;
+    private Integer totalActionUnitCount;
+    // Lazy model for recording unit in the spatial unit
+    private RecordingUnitInSpatialUnitLazyDataModel recordingLazyDataModel;
+    private Integer totalRecordingUnitCount;
+    // Lazy model for recording unit in the spatial unit
+    private SpecimenInSpatialUnitLazyDataModel specimenLazyDataModel;
+    private Integer totalSpecimenCount;
 
 
     private String barModel;
@@ -122,7 +130,7 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
                              DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
                              ConceptService conceptService,
                              LabelService labelService, LangBean langBean, PersonService personService,
-                             AbstractSingleEntity.Deps deps) {
+                             AbstractSingleEntity.Deps deps, SpecimenService specimenService) {
 
         super("common.entity.spatialUnit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel single-panel",
                 documentCreationBean, deps);
@@ -134,6 +142,7 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
         this.conceptService = conceptService;
         this.langBean = langBean;
         this.personService = personService;
+        this.specimenService = specimenService;
     }
 
 
@@ -261,6 +270,22 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
             );
             totalActionUnitCount = actionUnitService.countBySpatialContext(unit);
 
+            // recording in spatial unit lazy model
+            recordingLazyDataModel = new RecordingUnitInSpatialUnitLazyDataModel(
+                    recordingUnitService,
+                    langBean,
+                    unit
+            );
+            totalRecordingUnitCount = recordingUnitService.countBySpatialContext(unit);
+
+            // specimen in spatial unit lazy model
+            specimenLazyDataModel = new SpecimenInSpatialUnitLazyDataModel(
+                    specimenService,
+                    langBean,
+                    unit
+            );
+            totalSpecimenCount = specimenService.countBySpatialContext(unit);
+
         } catch (RuntimeException e) {
             this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
         }
@@ -300,9 +325,30 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
                 "bi bi-arrow-down-square",
                 "actionTab",
                 "recordingUnitForm:recordingUnitTabs",
-                actionLazyDataModel);
+                actionLazyDataModel,
+                totalActionUnitCount);
 
         tabs.add(actionTab);
+
+        RecordingTab recordingTab = new RecordingTab(
+                "common.entity.recordingUnits",
+                "bi bi-pencil-square",
+                "recordingTab",
+                "recordingUnitForm:recordingUnitTabs",
+                recordingLazyDataModel,
+                totalRecordingUnitCount);
+
+        tabs.add(recordingTab);
+
+        SpecimenTab specimenTab = new SpecimenTab(
+                "common.entity.specimens",
+                "bi bi-bucket",
+                "specimenTab",
+                "recordingUnitForm:recordingUnitTabs",
+                specimenLazyDataModel,
+                totalSpecimenCount);
+
+        tabs.add(specimenTab);
 
     }
 
@@ -383,6 +429,11 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
 
         public SpatialUnitPanelBuilder id(Long id) {
             spatialUnitPanel.setIdunit(id);
+            return this;
+        }
+
+        public SpatialUnitPanelBuilder activeIndex(Integer id) {
+            spatialUnitPanel.setActiveTabIndex(id);
             return this;
         }
 

@@ -8,11 +8,12 @@
 
     <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity"-->
     <!--@elvariable id="panelIndex" type="java.lang.Integer"-->
-    🚧 En cours (manque bouteau nouveau from existing ou nouveau). Lien dans les tables à réparer
+    <!--@elvariable id="lazyDataModel"  type="fr.siamois.ui.lazydatamodel.BaseRecordingUnitLazyDataModel"-->
 
     <div class="recording-unit-panel">
         <recordingUnit:recordingUnitList
-                lazyDataModel="#{panelModel.recordingUnitListLazyDataModel}"
+                displayColumnToggler="false"
+                lazyDataModel="#{lazyDataModel}"
                 panelModel="#{panelModel}"
                 panelIndex="#{panelIndex}"
                 id="recordingList"
@@ -20,7 +21,7 @@
             <f:facet name="rightToolbar">
                 <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
                                  id="newRecordingUnitButton"
-                                 actionListener="#{genericNewUnitDialogBean.selectKind('RECORDING',panelModel.recordingUnitListLazyDataModel)}"
+                                 actionListener="#{genericNewUnitDialogBean.selectKind('RECORDING',lazyDataModel)}"
                                  oncomplete="PF('newUnitDiag').show();"
                                  update="newUnitForm"
                                  rendered="#{actionUnitBean.showCreateRecordingUnitButton(panelModel.unit)}"

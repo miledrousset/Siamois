@@ -339,4 +339,74 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
                                                                                                          @Param("global") String global,
                                                                                                          @Param("langCode") String langCode,
                                                                                                          Pageable pageable);
+
+    @Query(
+            nativeQuery = true,
+            value = "WITH ranked_labels AS ( " +
+                    "    SELECT " +
+                    "        l.fk_concept_id, " +
+                    "        l.label_value, " +
+                    "        l.lang_code, " +
+                    "        ROW_NUMBER() OVER ( " +
+                    "            PARTITION BY l.fk_concept_id " +
+                    "            ORDER BY  " +
+                    "                CASE  " +
+                    "                    WHEN l.lang_code = :langCode THEN 1 " +
+                    "                    WHEN l.lang_code = 'en' THEN 2 " +
+                    "                    ELSE 3 " +
+                    "                END " +
+                    "        ) AS rank " +
+                    "    FROM label l " +
+                    ") " +
+                    "SELECT " +
+                    "    ru.*, " +
+                    "    rl.label_value AS c_label " +
+                    "FROM recording_unit ru " +
+                    "LEFT JOIN concept c ON ru.fk_type = c.concept_id " +
+                    "LEFT JOIN ranked_labels rl ON c.concept_id = rl.fk_concept_id AND rl.rank = 1 " +
+                    "WHERE ru.fk_spatial_unit_id = :spatialUnitId " +
+                    "  AND (CAST(:fullIdentifier AS TEXT) IS NULL OR LOWER(ru.full_identifier) LIKE LOWER(CONCAT('%', CAST(:fullIdentifier AS TEXT), '%'))) " +
+                    "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR ru.fk_type IN (:categoryIds)) " +
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(ru.full_identifier) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%'))  " +
+                    "                                     OR LOWER(rl.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%'))) ",
+            countQuery = "WITH ranked_labels AS ( " +
+                    "    SELECT " +
+                    "        l.fk_concept_id, " +
+                    "        l.label_value, " +
+                    "        l.lang_code, " +
+                    "        ROW_NUMBER() OVER ( " +
+                    "            PARTITION BY l.fk_concept_id " +
+                    "            ORDER BY  " +
+                    "                CASE  " +
+                    "                    WHEN l.lang_code = :langCode THEN 1 " +
+                    "                    WHEN l.lang_code = 'en' THEN 2 " +
+                    "                    ELSE 3 " +
+                    "                END " +
+                    "        ) AS rank " +
+                    "    FROM label l " +
+                    ") " +
+                    "SELECT " +
+                    "    ru.*, " +
+                    "    rl.label_value AS c_label " +
+                    "FROM recording_unit ru " +
+                    "LEFT JOIN concept c ON ru.fk_type = c.concept_id " +
+                    "LEFT JOIN ranked_labels rl ON c.concept_id = rl.fk_concept_id AND rl.rank = 1 " +
+                    "WHERE ru.fk_spatial_unit_id = :spatialUnitId " +
+                    "  AND (CAST(:fullIdentifier AS TEXT) IS NULL OR LOWER(ru.full_identifier) LIKE LOWER(CONCAT('%', CAST(:fullIdentifier AS TEXT), '%'))) " +
+                    "  AND (CAST(:categoryIds AS BIGINT[]) IS NULL OR ru.fk_type IN (:categoryIds)) " +
+                    "  AND (CAST(:global AS TEXT) IS NULL OR LOWER(ru.full_identifier) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%'))  " +
+                    "                                     OR LOWER(rl.label_value) LIKE LOWER(CONCAT('%', CAST(:global AS TEXT), '%'))) "
+    )
+    Page<RecordingUnit> findAllBySpatialUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(@Param("spatialUnitId") Long spatialUnitId,
+                                                                                                              @Param("fullIdentifier") String fullIdentifier,
+                                                                                                              @Param("categoryIds") Long[] categoryIds,
+                                                                                                              @Param("global") String global,
+                                                                                                              @Param("langCode") String langCode,
+                                                                                                              Pageable pageable);
+
+    @Query(
+            value = "SELECT COUNT(*) FROM recording_unit WHERE fk_spatial_unit_id = :spatialUnitId",
+            nativeQuery = true
+    )
+    Integer countBySpatialContext(@Param("spatialUnitId") Long spatialUnitId);
 }

@@ -1,5 +1,7 @@
 package fr.siamois.ui.bean;
 
+import fr.siamois.domain.models.TraceableEntity;
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.ui.bean.panel.FlowBean;
@@ -22,9 +24,16 @@ public class SpecimenBean {
         this.flowBean = flowBean;
     }
 
-    public boolean showCreateSpecimenButton(RecordingUnit ru) {
-        return Objects.equals(flowBean.getReadWriteMode(), "WRITE") &&
-                service.canCreateSpecimen(sessionSettingsBean.getUserInfo(), ru) ;
+
+    public boolean showCreateSpecimenButton(TraceableEntity context) {
+        if(context.getClass() == RecordingUnit.class) {
+            return Objects.equals(flowBean.getReadWriteMode(), "WRITE") &&
+                    service.canCreateSpecimen(sessionSettingsBean.getUserInfo(), (RecordingUnit) context) ;
+        }
+        else {
+            return false;
+        }
+
     }
 
 }

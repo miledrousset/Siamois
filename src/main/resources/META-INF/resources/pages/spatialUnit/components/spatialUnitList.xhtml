@@ -139,7 +139,7 @@
                         </p:selectCheckboxMenu>
 
                     </f:facet>
-                    <p:chip label="#{labelBean.findLabelOf(item.category)}" icon="pi pi-map-marker"
+                    <p:chip label="#{labelBean.findLabelOf(item.category)}"
                             styleClass="mr-2 spatial-unit-type-chip"/>
                 </p:column>
 
@@ -188,11 +188,15 @@
 
                                              text="#{langBean.msg('table.spatialunit.column.parents')}"/>
                     </f:facet>
-                    <cellbody:cellBodyThreeItems
-                            set="#{item.parents}"
-                            panelModel="#{cc.attrs.panelModel}"
-                            onClickMethod="#{flowBean.goToSpatialUnitByIdNewPanel}"
-                    />
+                    <p:commandLink
+                            action="#{flowBean.goToSpatialUnitByIdNewPanel(item.id,cc.attrs.panelModel,2)}"
+                            onstart="PF('buiContent').show()"
+                            oncomplete="PF('buiContent').hide();handleScrollToTop();"
+                            process="@form"
+                            update="flow"
+                    >
+                        <h:outputText value="#{item.parents.size()} (voir)"/>
+                    </p:commandLink>
                     <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
                                      id="newSpatialUnitParentsButton"
                                      actionListener="#{genericNewUnitDialogBean.selectKind('SPATIAL', item.parents, null, item)}"
@@ -211,11 +215,15 @@
                         <cellheader:withIcon icon="bi bi-geo-alt"
                                              text="#{langBean.msg('table.spatialunit.column.children')}"/>
                     </f:facet>
-                    <cellbody:cellBodyThreeItems
-                            set="#{item.children}"
-                            panelModel="#{cc.attrs.panelModel}"
-                            onClickMethod="#{flowBean.goToSpatialUnitByIdNewPanel}"
-                    />
+                    <p:commandLink
+                            action="#{flowBean.goToSpatialUnitByIdNewPanel(item.id,cc.attrs.panelModel,2)}"
+                            onstart="PF('buiContent').show()"
+                            oncomplete="PF('buiContent').hide();handleScrollToTop();"
+                            process="@form"
+                            update="flow"
+                    >
+                        <h:outputText value="#{item.children.size()} (voir)"/>
+                    </p:commandLink>
                     <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
                                      id="newSpatialUnitChildrenButton"
                                      actionListener="#{genericNewUnitDialogBean.selectKind('SPATIAL', item.children, item, null)}"
@@ -233,10 +241,15 @@
                         <cellheader:withIcon icon="bi bi-arrow-down-square"
                                              text="#{langBean.msg('table.spatialunit.column.actions')}"/>
                     </f:facet>
-                    <cellbody:cellBodyThreeItems set="#{item.relatedActionUnitList}"
-                                                 panelModel="#{cc.attrs.panelModel}"
-                                                 onClickMethod="#{flowBean.goToActionUnitByIdNewPanel}"
-                    />
+                    <p:commandLink
+                            action="#{flowBean.goToSpatialUnitByIdNewPanel(item.id,cc.attrs.panelModel,4)}"
+                            onstart="PF('buiContent').show()"
+                            oncomplete="PF('buiContent').hide();handleScrollToTop();"
+                            process="@form"
+                            update="flow"
+                    >
+                        <h:outputText value="#{item.relatedActionUnitList.size()} (voir)"/>
+                    </p:commandLink>
 
                     <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
                                      actionListener="#{genericNewUnitDialogBean.selectKind('ACTION',item.relatedActionUnitList, item)}"
@@ -254,13 +267,17 @@
                         <cellheader:withIcon icon="bi bi-pencil-square"
                                              text="#{langBean.msg('table.spatialunit.column.recordings')}"/>
                     </f:facet>
-                    <cellbody:cellBodyThreeItems set="#{item.recordingUnitList}"
-                                                 panelModel="#{cc.attrs.panelModel}"
-                                                 onClickMethod="#{flowBean.goToRecordingUnitByIdNewPanel}"
-                                                 displayAttribute="fullIdentifier"
-                                                 commandLinkStyleClass="sia-recording-unit-command-link"/>
-
+                    <p:commandLink
+                            action="#{flowBean.goToSpatialUnitByIdNewPanel(item.id,cc.attrs.panelModel,5)}"
+                            onstart="PF('buiContent').show()"
+                            oncomplete="PF('buiContent').hide();handleScrollToTop();"
+                            process="@form"
+                            update="flow"
+                    >
+                        <h:outputText value="#{item.recordingUnitList.size()} (voir)"/>
+                    </p:commandLink>
                 </p:column>
+
 
                 <!-- Action toolbar-->
                 <p:column responsivePriority="1" exportable="false" toggleable="false">

@@ -1,18 +1,18 @@
 package fr.siamois.ui.bean.panel.models.panel.single.tab;
 
+import fr.siamois.domain.models.actionunit.ActionUnit;
+import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.ui.lazydatamodel.BaseActionUnitLazyDataModel;
 import fr.siamois.ui.lazydatamodel.BaseSpecimenLazyDataModel;
 import lombok.Data;
 
 @Data
-public class ActionTab extends PanelTab {
+public class ActionTab extends EntityListTab<ActionUnit> {
 
-    // Linked specimen
-    private BaseActionUnitLazyDataModel actionListLazyDataModel ;
 
-    public ActionTab(String titleCode, String icon, String id, String root, BaseActionUnitLazyDataModel actionListLazyDataModel ) {
-        super(titleCode, icon, id, root);
-        this.actionListLazyDataModel = actionListLazyDataModel;
+    public ActionTab(String titleCode, String icon, String id, String root, BaseActionUnitLazyDataModel actionListLazyDataModel,
+                     Integer count) {
+        super(titleCode, icon, id, root, actionListLazyDataModel, count);
     }
 
 }

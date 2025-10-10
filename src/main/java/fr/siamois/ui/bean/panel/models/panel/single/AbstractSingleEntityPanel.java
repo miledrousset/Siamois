@@ -169,10 +169,10 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     }
 
     @Nullable
-    public Boolean emptyTabFor(Object tabItem) {
+    public Boolean emptyTabFor(PanelTab tabItem) {
         if (tabItem instanceof MultiHierarchyTab) return isHierarchyTabEmpty();
         if (tabItem instanceof DocumentTab) return documents.isEmpty();
-        if (tabItem instanceof SpecimenTab) return true;
+        if(tabItem instanceof EntityListTab) return ((EntityListTab<?>) tabItem).getTotalCount() == 0;
         return null; // N/A for others
     }
 

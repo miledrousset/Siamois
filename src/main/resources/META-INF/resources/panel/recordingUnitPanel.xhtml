@@ -68,7 +68,7 @@
                         <!--@elvariable id="tabItem" type="fr.siamois.ui.bean.panel.models.panel.single.tab.SpecimenTab"-->
                         <ui:include src="/panel/spatialunit/tab/specimenTab.xhtml">
                             <ui:param name="panelModel" value="#{panelModel}"/>
-                            <ui:param name="lazyDataModel" value="#{tabItem.specimenListLazyDataModel}"/>
+                            <ui:param name="lazyDataModel" value="#{tabItem.lazyDataModel}"/>
                             <ui:param name="panelIndex" value="#{panelIndex}"/>
                         </ui:include>
                     </ui:fragment>
@@ -77,7 +77,16 @@
                         <!--@elvariable id="tabItem" type="fr.siamois.ui.bean.panel.models.panel.single.tab.ActionTab"-->
                         <ui:include src="/panel/spatialunit/tab/actionTab.xhtml">
                             <ui:param name="panelModel" value="#{panelModel}"/>
-                            <ui:param name="lazyDataModel" value="#{tabItem.actionListLazyDataModel}"/>
+                            <ui:param name="lazyDataModel" value="#{tabItem.lazyDataModel}"/>
+                            <ui:param name="panelIndex" value="#{panelIndex}"/>
+                        </ui:include>
+                    </ui:fragment>
+
+                    <ui:fragment rendered="#{tabItem['class'].simpleName eq 'RecordingTab'}">
+                        <!--@elvariable id="tabItem" type="fr.siamois.ui.bean.panel.models.panel.single.tab.RecordingTab"-->
+                        <ui:include src="/panel/spatialunit/tab/recordingUnitsTab.xhtml">
+                            <ui:param name="panelModel" value="#{panelModel}"/>
+                            <ui:param name="lazyDataModel" value="#{tabItem.lazyDataModel}"/>
                             <ui:param name="panelIndex" value="#{panelIndex}"/>
                         </ui:include>
                     </ui:fragment>
