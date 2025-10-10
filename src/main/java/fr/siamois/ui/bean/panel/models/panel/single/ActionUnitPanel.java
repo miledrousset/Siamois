@@ -26,6 +26,7 @@ import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.domain.services.document.DocumentService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
+import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.domain.services.vocabulary.LabelService;
@@ -79,6 +80,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     private final TeamMembersBean teamMembersBean;
     private final transient HistoryService historyService;
     private final transient RecordingUnitService recordingUnitService;
+    private final transient SpecimenService specimenService;
 
 
     // For entering new code
@@ -92,13 +94,12 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
     @Override
     protected boolean documentExistsInUnitByHash(ActionUnit unit, String hash) {
-        return false;
+        return documentService.existInActionUnitByHash(unit, hash);
     }
 
     @Override
     protected void addDocumentToUnit(Document doc, ActionUnit unit) {
-        // Empty because not used yet.
-
+        documentService.addToActionUnit(doc, unit);
     }
 
 
@@ -108,7 +109,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     private transient RecordingUnitInActionUnitLazyDataModel recordingUnitListLazyDataModel;
     private Integer totalRecordingUnitCount;
     // Lazy model for recording unit in the spatial unit
-    private SpecimenInSpatialUnitLazyDataModel specimenLazyDataModel;
+    private SpecimenInActionUnitLazyDataModel specimenLazyDataModel;
     private Integer totalSpecimenCount;
 
 
@@ -117,7 +118,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
                            LabelService labelService, TeamMembersBean teamMembersBean,
                            DocumentCreationBean documentCreationBean,
                            HistoryService historyService, RecordingUnitService recordingUnitService,
-                           AbstractSingleEntity.Deps deps) {
+                           AbstractSingleEntity.Deps deps, SpecimenService specimenService) {
         super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel single-panel",
                 documentCreationBean, deps);
 
@@ -128,6 +129,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         this.teamMembersBean = teamMembersBean;
         this.historyService = historyService;
         this.recordingUnitService = recordingUnitService;
+        this.specimenService = specimenService;
     }
 
     @Override
@@ -183,8 +185,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     @Override
     public void init() {
         try {
-            activeTabIndex = 0;
-
 
             if (idunit == null) {
                 this.errorMessage = "The ID of the spatial unit must be defined";
@@ -206,6 +206,16 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
             );
             recordingUnitListLazyDataModel.setSelectedUnits(new ArrayList<>());
 
+
+            specimenLazyDataModel = new SpecimenInActionUnitLazyDataModel(
+                    specimenService,
+                    langBean,
+                    unit
+            );
+            specimenLazyDataModel.setSelectedUnits(new ArrayList<>());
+
+            totalSpecimenCount = specimenService.countByActionContext(unit);
+            totalRecordingUnitCount = recordingUnitService.countByActionContext(unit);
             RecordingTab recordingTab = new RecordingTab(
                     "common.entity.recordingUnits",
                     "bi bi-pencil-square",
@@ -213,9 +223,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
                     "recordingUnitForm:recordingUnitTabs",
                     recordingUnitListLazyDataModel,
                     totalRecordingUnitCount);
-
-            tabs.add(recordingTab);
-
             SpecimenTab specimenTab = new SpecimenTab(
                     "common.entity.specimens",
                     "bi bi-bucket",
@@ -223,7 +230,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
                     "recordingUnitForm:recordingUnitTabs",
                     specimenLazyDataModel,
                     totalSpecimenCount);
-
+            tabs.add(recordingTab);
             tabs.add(specimenTab);
 
         } catch (
@@ -253,6 +260,8 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         formResponse = initializeFormResponse(detailsForm, unit);
 
     }
+
+
 
     @Override
     public void cancelChanges() {

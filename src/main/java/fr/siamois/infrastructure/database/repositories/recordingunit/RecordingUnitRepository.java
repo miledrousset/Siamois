@@ -409,4 +409,10 @@ public interface RecordingUnitRepository extends CrudRepository<RecordingUnit, L
             nativeQuery = true
     )
     Integer countBySpatialContext(@Param("spatialUnitId") Long spatialUnitId);
+
+    @Query(
+            value = "SELECT COUNT(*) FROM recording_unit WHERE fk_action_unit_id = :actionUnitId",
+            nativeQuery = true
+    )
+    Integer countByActionContext(@Param("actionUnitId") Long actionUnitId);
 }

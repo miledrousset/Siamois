@@ -108,6 +108,21 @@ public class PanelFactory {
 
     }
 
+    public ActionUnitPanel createActionUnitPanel(Long actionUnitId, PanelBreadcrumb currentBreadcrumb,
+                                                 Integer activeTabIndex) {
+
+        PanelBreadcrumb bc = new PanelBreadcrumb();
+        bc.getModel().getElements().clear();
+        bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+
+        return new ActionUnitPanel.ActionUnitPanelBuilder(actionUnitPanelProvider)
+                .id(actionUnitId)
+                .activeIndex(activeTabIndex)
+                .breadcrumb(bc)
+                .build();
+
+    }
+
     public ActionUnitPanel createActionUnitPanel(Long actionUnitId) {
 
         PanelBreadcrumb bc = new PanelBreadcrumb();

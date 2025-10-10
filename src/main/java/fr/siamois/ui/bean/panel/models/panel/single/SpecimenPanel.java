@@ -197,7 +197,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
 
     @Override
     public String display() {
-        return "/panel/specimenPanel.xhtml";
+        return "/panel/recordingUnitPanel.xhtml";
     }
 
     @Override

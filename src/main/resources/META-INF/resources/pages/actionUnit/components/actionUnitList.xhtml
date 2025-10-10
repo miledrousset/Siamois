@@ -124,7 +124,7 @@
                           id="code"
                 >
                     <h:outputText value="#{item.primaryActionCode.code}"/>
-                    <p:chip label="#{labelBean.findLabelOf(item.primaryActionCode.type)}" icon="bi bi-upc"
+                    <p:chip label="#{labelBean.findLabelOf(item.primaryActionCode.type)}"
                             styleClass="mr-2 action-unit-type-chip"/>
                 </p:column>
 
@@ -155,7 +155,7 @@
                         </p:selectCheckboxMenu>
 
                     </f:facet>
-                    <p:chip label="#{labelBean.findLabelOf(item.type)}" icon="bi bi-arrow-down-square"
+                    <p:chip label="#{labelBean.findLabelOf(item.type)}"
                             styleClass="mr-2 action-unit-type-chip"/>
                 </p:column>
 
@@ -242,9 +242,15 @@
                         <cellheader:withIcon icon="bi bi-geo-alt"
                                              text="#{langBean.msg('table.spatialunit.column.spatialunits')}"/>
                     </f:facet>
-                    <cellbody:cellBodyThreeItems set="#{item.spatialContext}"
-                                                 panelModel="#{cc.attrs.panelModel}"
-                                                 onClickMethod="#{flowBean.goToSpatialUnitByIdNewPanel}"/>
+                    <p:commandLink
+                            action="#{flowBean.goToActionUnitByIdNewPanel(item.id,cc.attrs.panelModel,1)}"
+                            onstart="PF('buiContent').show()"
+                            oncomplete="PF('buiContent').hide();handleScrollToTop();"
+                            process="@form"
+                            update="flow"
+                    >
+                        <h:outputText value="#{item.spatialContext.size()} (voir)"/>
+                    </p:commandLink>
                     <p:commandButton value="Ajouter" icon="bi bi-plus-square"
                                      disabled="true"
                                      rendered="#{flowBean.readWriteMode == 'WRITE'}"
@@ -258,10 +264,15 @@
                         <cellheader:withIcon icon="bi bi-pencil-square"
                                              text="#{langBean.msg('table.spatialunit.column.recordings')}"/>
                     </f:facet>
-                    <cellbody:cellBodyThreeItems set="#{item.recordingUnitList}" displayAttribute="fullIdentifier"
-                                                 panelModel="#{cc.attrs.panelModel}"
-                                                 onClickMethod="#{flowBean.goToRecordingUnitByIdNewPanel}"
-                                                 commandLinkStyleClass="sia-recording-unit-command-link"/>
+                    <p:commandLink
+                            action="#{flowBean.goToActionUnitByIdNewPanel(item.id,cc.attrs.panelModel,3)}"
+                            onstart="PF('buiContent').show()"
+                            oncomplete="PF('buiContent').hide();handleScrollToTop();"
+                            process="@form"
+                            update="flow"
+                    >
+                        <h:outputText value="#{item.recordingUnitList.size()} (voir)"/>
+                    </p:commandLink>
                     <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
                                      id="newRecordingUnitButton"
                                      actionListener="#{genericNewUnitDialogBean.selectKind('RECORDING',item.recordingUnitList,item)}"

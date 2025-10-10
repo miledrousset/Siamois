@@ -60,6 +60,15 @@ public interface DocumentRepository extends CrudRepository<Document, Long> {
     )
     void addDocumentToSpatialUnit(Long documentId, Long spatialUnitId);
 
+    @Transactional
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = "INSERT INTO action_unit_document(fk_document_id, fk_action_unit_id) " +
+                    "VALUES (:documentId, :actionUnitId)"
+    )
+    void addDocumentToActionUnit(Long documentId, Long actionUnitId);
+
     @Query(
             nativeQuery = true,
             value = "SELECT COUNT(*) > 0 " +
@@ -86,4 +95,13 @@ public interface DocumentRepository extends CrudRepository<Document, Long> {
                     "WHERE sud.fk_recording_unit_id = :recordingUnitId AND sd.md5_sum = :hash"
     )
     boolean existsByHashInRecordingUnit(Long recordingUnitId, String hash);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT COUNT(*) > 0 " +
+                    "FROM action_unit_document sud " +
+                    "JOIN siamois_document sd ON sud.fk_document_id = sd.document_id " +
+                    "WHERE sud.fk_action_unit_id = :actionUnitId AND sd.md5_sum = :hash"
+    )
+    boolean existsByHashInActionUnit(Long actionUnitId, String hash);
 }

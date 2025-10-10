@@ -382,11 +382,21 @@ public class RecordingUnitService implements ArkEntityService {
     /**
      * Count the number of RecordingUnits associated with a specific SpatialUnit.
      *
-     * @param spatialUnit The SpatialUnit to count ActionUnits for
+     * @param spatialUnit The SpatialUnit to count RecordingUnits for
      * @return The count of RecordingUnit associated with the SpatialUnit
      */
     public Integer countBySpatialContext(SpatialUnit spatialUnit) {
         return recordingUnitRepository.countBySpatialContext(spatialUnit.getId());
+    }
+
+    /**
+     * Count the number of RecordingUnits associated with a specific ActionUnit.
+     *
+     * @param actionUnit The ActionUnit to count RecordingUnits for
+     * @return The count of RecordingUnit associated with the SpatialUnit
+     */
+    public Integer countByActionContext(ActionUnit actionUnit) {
+        return recordingUnitRepository.countByActionContext(actionUnit.getId());
     }
 }
 
