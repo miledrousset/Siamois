@@ -213,6 +213,16 @@ public class DocumentService implements ArkEntityService {
     }
 
     /**
+     * Adds a document to a spatial unit.
+     *
+     * @param document    the document to be added
+     * @param specimen the spatial unit to which the document is to be added
+     */
+    public void addToSpecimen(Document document, Specimen specimen) {
+        documentRepository.addDocumentToSpecimen(document.getId(), specimen.getId());
+    }
+
+    /**
      * Adds a document to a action unit.
      *
      * @param document    the document to be added
@@ -292,6 +302,17 @@ public class DocumentService implements ArkEntityService {
      */
     public boolean existInSpatialUnitByHash(SpatialUnit spatialUnit, String hash) {
         return documentRepository.existsByHashInSpatialUnit(spatialUnit.getId(), hash);
+    }
+
+    /**
+     * Checks if a document with a specific hash exists in a given specimen.
+     *
+     * @param specimen the specimen in which to check for the document
+     * @param hash        the hash of the document to check
+     * @return true if the document exists in the spatial unit, false otherwise
+     */
+    public boolean existInSpecimenByHash(Specimen specimen, String hash) {
+        return documentRepository.existsByHashInSpecimen(specimen.getId(), hash);
     }
 
     /**

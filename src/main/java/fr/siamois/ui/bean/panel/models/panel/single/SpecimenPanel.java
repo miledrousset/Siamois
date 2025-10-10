@@ -68,14 +68,13 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
 
     @Override
     protected boolean documentExistsInUnitByHash(Specimen unit, String hash) {
-        return false;
+        return documentService.existInSpecimenByHash(unit, hash);
     }
 
     @Override
     protected void addDocumentToUnit(Document doc, Specimen unit) {
-        // Empty because not used yet.
+        documentService.addToSpecimen(doc, unit);
     }
-
 
     // ---------- Locals
     // RU
