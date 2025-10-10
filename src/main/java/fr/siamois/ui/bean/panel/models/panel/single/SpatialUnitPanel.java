@@ -33,6 +33,8 @@ import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.ActionTab;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.SpecimenTab;
 import fr.siamois.ui.bean.panel.utils.SpatialUnitHelperService;
 import fr.siamois.ui.lazydatamodel.ActionUnitInSpatialUnitLazyDataModel;
 import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
@@ -76,7 +78,7 @@ import java.util.stream.Collectors;
 @Data
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, SpatialUnitHist> implements Serializable {
+public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel<SpatialUnit, SpatialUnitHist> implements Serializable {
 
     // Dependencies
     private final transient RecordingUnitService recordingUnitService;
@@ -152,7 +154,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
     @Override
     public String display() {
-        return "/panel/spatialUnitPanel.xhtml";
+        return "/panel/recordingUnitPanel.xhtml";
     }
 
     @Override
@@ -291,15 +293,16 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
         refreshUnit();
 
+        super.init();
 
-        if (this.unit == null) {
-            this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
-            return;
-        }
+        ActionTab actionTab = new ActionTab(
+                "common.entity.actionUnits",
+                "bi bi-arrow-down-square",
+                "actionTab",
+                "recordingUnitForm:recordingUnitTabs",
+                actionLazyDataModel);
 
-        // add to BC
-        this.getBreadcrumb().addSpatialUnit(unit);
-
+        tabs.add(actionTab);
 
     }
 

@@ -133,15 +133,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         return String.format("/actionunit/%s", unit.getId());
     }
 
-    @Override
-    protected BaseLazyDataModel<ActionUnit> getLazyDataModelChildren() {
-        return null;
-    }
 
-    @Override
-    public BaseLazyDataModel<ActionUnit> getLazyDataModelParents() {
-        return null;
-    }
 
     public void refreshUnit() {
 

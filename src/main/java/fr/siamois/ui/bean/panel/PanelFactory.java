@@ -79,8 +79,6 @@ public class PanelFactory {
                 .breadcrumb(bc)
                 .build();
 
-        panel.init();
-
         return panel;
     }
 

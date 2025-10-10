@@ -243,15 +243,6 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
         documents = documentService.findForSpecimen(unit);
     }
 
-    @Override
-    protected BaseLazyDataModel<Specimen> getLazyDataModelChildren() {
-        return null;
-    }
-
-    @Override
-    public BaseLazyDataModel<Specimen> getLazyDataModelParents() {
-        return null;
-    }
 
     @Override
     public void init() {

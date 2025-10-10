@@ -13,6 +13,7 @@
         <cc:attribute name="panelModel" required="true" type="fr.siamois.ui.bean.panel.models.panel.AbstractPanel"/>
         <cc:attribute name="panelIndex" required="true" type="java.lang.Integer"/>
         <cc:attribute name="disableAddBtn" required="false" default="false" type="java.lang.Boolean"/>
+        <cc:attribute name="displayColumnToggler" required="false" default="false" type="java.lang.Boolean"/>
 
     </cc:interface>
     <cc:implementation>
@@ -65,9 +66,11 @@
 
                                 <!-- Column toggler -->
                                 <p:commandButton style="margin-left: 1em;" id="toggler" type="button"
+                                                 rendered="#{cc.attrs.displayColumnToggler}"
                                                  value="#{langBean.msg('table.columnvisibility')}"
                                                  icon="pi pi-align-justify"/>
                                 <p:columnToggler datasource=":#{cc.clientId}:spatialUnitDataTable"
+                                                 rendered="#{cc.attrs.displayColumnToggler}"
                                                  trigger=":#{cc.clientId}:spatialUnitDataTable:toggler">
                                     <p:ajax event="toggle" listener="#{cc.attrs.panelModel.onToggle}"/>
                                 </p:columnToggler>

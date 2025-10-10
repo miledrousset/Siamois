@@ -73,6 +73,15 @@
                         </ui:include>
                     </ui:fragment>
 
+                    <ui:fragment rendered="#{tabItem['class'].simpleName eq 'ActionTab'}">
+                        <!--@elvariable id="tabItem" type="fr.siamois.ui.bean.panel.models.panel.single.tab.ActionTab"-->
+                        <ui:include src="/panel/spatialunit/tab/actionTab.xhtml">
+                            <ui:param name="panelModel" value="#{panelModel}"/>
+                            <ui:param name="lazyDataModel" value="#{tabItem.actionListLazyDataModel}"/>
+                            <ui:param name="panelIndex" value="#{panelIndex}"/>
+                        </ui:include>
+                    </ui:fragment>
+
                 </p:tab>
 
 
@@ -82,9 +91,9 @@
             <p:toolbar class="panel-footer" >
                 <p:toolbarGroup align="left">
                     Dernière modification le #{panelModel.unit.creationTime} par #{panelModel.unit.author.displayName()}
-                    <p:commandButton id="seeHistoryButton" value="Historique"
+<!--                    <p:commandButton id="seeHistoryButton" value="Historique"
                                      style="margin-left: 1rem">
-                    </p:commandButton>
+                    </p:commandButton>-->
                 </p:toolbarGroup>
                 <p:toolbarGroup align="right" rendered="#{flowBean.readWriteMode == 'WRITE'}">
                     <p:commandLink value='#{langBean.msg("common.action.cancel")}'

@@ -47,13 +47,13 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     protected long totalChildrenCount = 0;
     protected transient List<Concept> selectedCategoriesChildren;
 
-    protected abstract BaseLazyDataModel<T> getLazyDataModelChildren();
+
 
     // lazy model for parents of entity
     protected long totalParentsCount = 0;
     protected transient List<Concept> selectedCategoriesParents;
 
-    public abstract BaseLazyDataModel<T> getLazyDataModelParents();
+
 
     // Gestion du formulaire via form layout
     protected CustomForm overviewForm;
@@ -94,7 +94,7 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
         tabs.add(detailsTab);
         DocumentTab documentTab = new DocumentTab("panel.tab.documents",
                 "bi bi-paperclip",
-                "detailTab",
+                "documentsTab",
                 RECORDING_UNIT_FORM_RECORDING_UNIT_TABS);
         tabs.add(documentTab);
         if(activeTabIndex == null) { activeTabIndex = 1; }
