@@ -22,8 +22,7 @@ public abstract class AbstractSingleMultiHierarchicalEntityPanel<T, H> extends A
         MultiHierarchyTab multiHierTab = new MultiHierarchyTab(
                 "panel.tab.hierarchy",
                 this.getIcon(),
-                "hierarchyTab",
-                "recordingUnitForm:recordingUnitTabs");
+                "hierarchyTab");
 
         tabs.add(2,multiHierTab);
     }

@@ -12,14 +12,14 @@
     <p:staticMessage severity="error" summary="Error" closable="false"
                      detail="#{panelModel.errorMessage}"
                      rendered="#{not empty panelModel.errorMessage}"/>
-    <h:panelGroup id="recordingUnitContentPanel" rendered="#{panelModel.unit != null}">
+    <h:panelGroup id="unitContentPanel" rendered="#{panelModel.unit != null}">
 
 
-        <h:form id="recordingUnitForm">
+        <h:form id="singlePanelUnitForm">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
             <!-- Tabs -->
-            <p:tabView id="recordingUnitTabs" activeIndex="#{panelModel.activeTabIndex}"
+            <p:tabView id="singlePanelUnitTabs" activeIndex="#{panelModel.activeTabIndex}"
                        value="#{panelModel.tabs}" var="tabItem">
                 <p:ajax event="tabChange" listener="#{panelModel.onTabChange}"/>
 

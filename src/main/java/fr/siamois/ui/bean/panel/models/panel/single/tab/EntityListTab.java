@@ -11,10 +11,10 @@ public abstract class EntityListTab<T> extends PanelTab {
     private BaseLazyDataModel<T> lazyDataModel ;
     private Integer totalCount;
 
-    protected EntityListTab(String titleCode, String icon, String id, String root,
+    protected EntityListTab(String titleCode, String icon, String id,
                          BaseLazyDataModel<T> lazyDataModel,
                          Integer totalCount) {
-        super(titleCode, icon, id, root);
+        super(titleCode, icon, id);
         this.lazyDataModel = lazyDataModel;
         this.totalCount = totalCount;
     }

@@ -10,9 +10,9 @@ import lombok.Data;
 public class ActionTab extends EntityListTab<ActionUnit> {
 
 
-    public ActionTab(String titleCode, String icon, String id, String root, BaseActionUnitLazyDataModel actionListLazyDataModel,
+    public ActionTab(String titleCode, String icon, String id, BaseActionUnitLazyDataModel actionListLazyDataModel,
                      Integer count) {
-        super(titleCode, icon, id, root, actionListLazyDataModel, count);
+        super(titleCode, icon, id, actionListLazyDataModel, count);
     }
 
 }

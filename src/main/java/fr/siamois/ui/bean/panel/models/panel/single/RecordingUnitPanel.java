@@ -298,7 +298,6 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
                     "common.entity.specimen",
                     "bi bi-bucket",
                     "specimenTab",
-                    "recordingUnitForm:recordingUnitTabs",
                     specimenListLazyDataModel,
                     0);
 

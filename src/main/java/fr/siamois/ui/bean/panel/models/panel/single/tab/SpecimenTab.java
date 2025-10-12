@@ -7,9 +7,9 @@ import lombok.Data;
 @Data
 public class SpecimenTab extends EntityListTab<Specimen> {
 
-    public SpecimenTab(String titleCode, String icon, String id, String root,
+    public SpecimenTab(String titleCode, String icon, String id,
                        BaseSpecimenLazyDataModel specimenListLazyDataModel, Integer count) {
-        super(titleCode, icon, id, root, specimenListLazyDataModel, count);
+        super(titleCode, icon, id,  specimenListLazyDataModel, count);
     }
 
 }

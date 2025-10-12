@@ -8,9 +8,9 @@ import lombok.Data;
 @Data
 public class RecordingTab extends EntityListTab<RecordingUnit> {
 
-    public RecordingTab(String titleCode, String icon, String id, String root,
+    public RecordingTab(String titleCode, String icon, String id,
                         BaseRecordingUnitLazyDataModel recordingListLazyDataModel, Integer count ) {
-        super(titleCode, icon, id, root, recordingListLazyDataModel, count);
+        super(titleCode, icon, id, recordingListLazyDataModel, count);
     }
 
 }

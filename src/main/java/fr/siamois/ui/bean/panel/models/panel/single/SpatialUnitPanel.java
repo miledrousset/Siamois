@@ -324,7 +324,7 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
                 "common.entity.actionUnits",
                 "bi bi-arrow-down-square",
                 "actionTab",
-                "recordingUnitForm:recordingUnitTabs",
+
                 actionLazyDataModel,
                 totalActionUnitCount);
 
@@ -334,7 +334,7 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
                 "common.entity.recordingUnits",
                 "bi bi-pencil-square",
                 "recordingTab",
-                "recordingUnitForm:recordingUnitTabs",
+
                 recordingLazyDataModel,
                 totalRecordingUnitCount);
 
@@ -344,7 +344,7 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
                 "common.entity.specimens",
                 "bi bi-bucket",
                 "specimenTab",
-                "recordingUnitForm:recordingUnitTabs",
+
                 specimenLazyDataModel,
                 totalSpecimenCount);
 

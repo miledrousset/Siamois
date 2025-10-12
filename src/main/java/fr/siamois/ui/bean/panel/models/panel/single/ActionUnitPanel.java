@@ -220,14 +220,12 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
                     "common.entity.recordingUnits",
                     "bi bi-pencil-square",
                     "recordingTab",
-                    "recordingUnitForm:recordingUnitTabs",
                     recordingUnitListLazyDataModel,
                     totalRecordingUnitCount);
             SpecimenTab specimenTab = new SpecimenTab(
                     "common.entity.specimens",
                     "bi bi-bucket",
                     "specimenTab",
-                    "recordingUnitForm:recordingUnitTabs",
                     specimenLazyDataModel,
                     totalSpecimenCount);
             tabs.add(recordingTab);

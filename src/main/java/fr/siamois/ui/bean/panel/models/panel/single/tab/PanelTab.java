@@ -8,12 +8,15 @@ public class PanelTab {
     private String titleCode;
     private String icon;
     private String id;
-    private String root;
+    private static final String ROOT = "singlePanelUnitForm:singlePanelUnitTabs";
 
-    public PanelTab(String titleCode, String icon, String id, String root) {
+    public String getRoot() {
+        return ROOT;
+    }
+
+    public PanelTab(String titleCode, String icon, String id) {
         this.titleCode = titleCode;
         this.icon = icon;
         this.id = id;
-        this.root = root;
     }
 }
