@@ -195,11 +195,6 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
     }
 
     @Override
-    public String display() {
-        return "/panel/recordingUnitPanel.xhtml";
-    }
-
-    @Override
     public String ressourceUri() {
         return "/specimen/" + idunit;
     }

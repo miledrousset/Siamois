@@ -161,10 +161,6 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
         return "spatial-unit-autocomplete";
     }
 
-    @Override
-    public String display() {
-        return "/panel/recordingUnitPanel.xhtml";
-    }
 
     @Override
     public String ressourceUri() {

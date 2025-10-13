@@ -108,10 +108,7 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
 
 
 
-    @Override
-    public String display() {
-        return "/panel/recordingUnitPanel.xhtml";
-    }
+
 
     @Override
     public String ressourceUri() {

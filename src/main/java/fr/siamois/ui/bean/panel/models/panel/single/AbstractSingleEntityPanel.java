@@ -61,6 +61,11 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     //
     protected transient List<PanelTab> tabs;
 
+    @Override
+    public String display() {
+        return "/panel/singleUnitPanel.xhtml";
+    }
+
     public abstract void init();
 
     public abstract List<Person> authorsAvailable();

@@ -132,10 +132,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         this.specimenService = specimenService;
     }
 
-    @Override
-    public String display() {
-        return "/panel/recordingUnitPanel.xhtml";
-    }
 
     @Override
     public String ressourceUri() {
