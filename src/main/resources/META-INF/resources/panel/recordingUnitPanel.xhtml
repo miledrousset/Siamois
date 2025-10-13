@@ -15,7 +15,7 @@
     <h:panelGroup id="unitContentPanel" rendered="#{panelModel.unit != null}">
 
 
-        <h:form id="singlePanelUnitForm">
+        <h:form id="singlePanelUnitForm-#{panelIndex}">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
             <!-- Tabs -->
@@ -25,7 +25,6 @@
 
                 <!-- Overview tab -->
                 <p:tab>
-
                     <f:facet name="title">
                         <ui:include src="/pages/shared/tab/tabTitle.xhtml">
                             <ui:param name="title" value='#{langBean.msg(tabItem.titleCode)}'/>
@@ -39,7 +38,7 @@
                         <ui:include src="/panel/spatialunit/tab/overviewTab.xhtml">
                             <ui:param name="panelModel" value="#{panelModel}"/>
                             <ui:param name="panelIndex" value="#{panelIndex}"/>
-                            <ui:param name="root" value="#{tabItem.root}:#{panelModel.getIndexOfTab(tabItem)}"/>
+                            <ui:param name="root" value="singlePanelUnitForm-#{panelIndex}:singlePanelUnitTabs:#{panelModel.getIndexOfTab(tabItem)}"/>
                         </ui:include>
                     </ui:fragment>
 
@@ -47,7 +46,7 @@
                         <ui:include src="/panel/spatialunit/tab/detailsTab.xhtml">
                             <ui:param name="panelModel" value="#{panelModel}"/>
                             <ui:param name="panelIndex" value="#{panelIndex}"/>
-                            <ui:param name="root" value="#{tabItem.root}:#{panelModel.getIndexOfTab(tabItem)}"/>
+                            <ui:param name="root" value="singlePanelUnitForm-#{panelIndex}:singlePanelUnitTabs:#{panelModel.getIndexOfTab(tabItem)}"/>
                         </ui:include>
                     </ui:fragment>
 
