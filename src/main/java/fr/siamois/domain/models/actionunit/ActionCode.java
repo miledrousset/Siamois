@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -31,4 +32,8 @@ public class ActionCode implements Serializable {
         return code.equals(actionCode.code) &&  type.equals(actionCode.type);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(code, type);
+    }
 }

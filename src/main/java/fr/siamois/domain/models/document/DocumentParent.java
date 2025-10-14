@@ -62,6 +62,7 @@ public abstract class DocumentParent extends TraceableEntity {
     public static final int MAX_DESCRIPTION_LENGTH = 1024;
     public static final int MAX_TITLE_LENGTH = 50;
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof DocumentParent that)) return false;

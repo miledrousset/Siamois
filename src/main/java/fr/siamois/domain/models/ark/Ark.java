@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -31,4 +32,8 @@ public class Ark implements Serializable {
         return qualifier.equals(ark.qualifier) && creatingInstitution.equals(ark.creatingInstitution);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(creatingInstitution, qualifier);
+    }
 }
