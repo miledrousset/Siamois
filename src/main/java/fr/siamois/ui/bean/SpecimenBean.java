@@ -1,7 +1,6 @@
 package fr.siamois.ui.bean;
 
 import fr.siamois.domain.models.TraceableEntity;
-import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.ui.bean.panel.FlowBean;
