@@ -323,14 +323,13 @@ class DocumentServiceTest {
         long specimenId = 101L;
         String hash = "abc123";
         Specimen specimen = new Specimen();
+        specimen.setId(specimenId);
 
-        when(specimen.getId()).thenReturn(specimenId);
         when(documentRepository.existsByHashInSpecimen(specimenId, hash)).thenReturn(true);
 
         boolean result = documentService.existInSpecimenByHash(specimen, hash);
 
         assertTrue(result);
-        verify(specimen).getId();
         verify(documentRepository).existsByHashInSpecimen(specimenId, hash);
 
     }
@@ -340,13 +339,12 @@ class DocumentServiceTest {
         long specimenId = 101L;
         String hash = "missing";
         Specimen specimen = new Specimen();
-        when(specimen.getId()).thenReturn(specimenId);
+        specimen.setId(specimenId);
         when(documentRepository.existsByHashInSpecimen(specimenId, hash)).thenReturn(false);
 
         boolean result = documentService.existInSpecimenByHash(specimen, hash);
 
         assertFalse(result);
-        verify(specimen).getId();
         verify(documentRepository).existsByHashInSpecimen(specimenId, hash);
 
     }
@@ -357,14 +355,14 @@ class DocumentServiceTest {
         long ruId = 202L;
         String hash = "rec-999";
         RecordingUnit recordingUnit = new RecordingUnit();
+        recordingUnit.setId(ruId);
 
-        when(recordingUnit.getId()).thenReturn(ruId);
         when(documentRepository.existsByHashInRecordingUnit(ruId, hash)).thenReturn(true);
 
         boolean result = documentService.existInRecordingUnitByHash(recordingUnit, hash);
 
         assertTrue(result);
-        verify(recordingUnit).getId();
+
         verify(documentRepository).existsByHashInRecordingUnit(ruId, hash);
 
     }
@@ -375,13 +373,12 @@ class DocumentServiceTest {
         String hash = "not-there";
         RecordingUnit recordingUnit = new RecordingUnit();
 
-        when(recordingUnit.getId()).thenReturn(ruId);
+        recordingUnit.setId(ruId);
         when(documentRepository.existsByHashInRecordingUnit(ruId, hash)).thenReturn(false);
 
         boolean result = documentService.existInRecordingUnitByHash(recordingUnit, hash);
 
         assertFalse(result);
-        verify(recordingUnit).getId();
         verify(documentRepository).existsByHashInRecordingUnit(ruId, hash);
 
     }
@@ -392,14 +389,14 @@ class DocumentServiceTest {
         long auId = 303L;
         String hash = "act-111";
         ActionUnit actionUnit = new ActionUnit();
+        actionUnit.setId(auId);
 
-        when(actionUnit.getId()).thenReturn(auId);
+
         when(documentRepository.existsByHashInActionUnit(auId, hash)).thenReturn(true);
 
         boolean result = documentService.existInActionUnitByHash(actionUnit, hash);
 
         assertTrue(result);
-        verify(actionUnit).getId();
         verify(documentRepository).existsByHashInActionUnit(auId, hash);
 
     }
@@ -410,13 +407,12 @@ class DocumentServiceTest {
         String hash = "nope";
         ActionUnit actionUnit = new ActionUnit();
 
-        when(actionUnit.getId()).thenReturn(auId);
+        actionUnit.setId(auId);
         when(documentRepository.existsByHashInActionUnit(auId, hash)).thenReturn(false);
 
         boolean result = documentService.existInActionUnitByHash(actionUnit, hash);
 
         assertFalse(result);
-        verify(actionUnit).getId();
         verify(documentRepository).existsByHashInActionUnit(auId, hash);
 
     }
@@ -428,14 +424,11 @@ class DocumentServiceTest {
         long specimenId = 42L;
         Document document = new Document();
         Specimen specimen = new Specimen();
-
-        when(document.getId()).thenReturn(docId);
-        when(specimen.getId()).thenReturn(specimenId);
+        document.setId(docId);
+        specimen.setId(specimenId);
 
         documentService.addToSpecimen(document, specimen);
 
-        verify(document).getId();
-        verify(specimen).getId();
         verify(documentRepository).addDocumentToSpecimen(docId, specimenId);
     }
 
@@ -445,15 +438,13 @@ class DocumentServiceTest {
         long docId = 7L;
         long actionUnitId = 88L;
         Document document = new Document();
+        document.setId(docId);
         ActionUnit actionUnit = new ActionUnit();
+        actionUnit.setId(actionUnitId);
 
-        when(document.getId()).thenReturn(docId);
-        when(actionUnit.getId()).thenReturn(actionUnitId);
 
         documentService.addToActionUnit(document, actionUnit);
 
-        verify(document).getId();
-        verify(actionUnit).getId();
         verify(documentRepository).addDocumentToActionUnit(docId, actionUnitId);
 
     }
