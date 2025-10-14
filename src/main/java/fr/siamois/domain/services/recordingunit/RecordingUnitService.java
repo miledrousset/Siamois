@@ -15,9 +15,6 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
-import fr.siamois.domain.services.authorization.PermissionServiceImpl;
-import fr.siamois.domain.services.authorization.writeverifier.ActionUnitWriteVerifier;
-import fr.siamois.domain.services.authorization.writeverifier.RecordingUnitWriteVerifier;
 import fr.siamois.domain.services.form.CustomFormResponseService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
@@ -359,10 +356,10 @@ public class RecordingUnitService implements ArkEntityService {
         return res;
     }
 
-    public Page<RecordingUnit> findAllByInstitutionAndBySpatialUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(Long spatialUnitId,
-                                                                                                                                     String fullIdentifierFilter,
-                                                                                                                                     Long[] categoryIds,
-                                                                                                                                     String globalFilter, String languageCode, Pageable pageable
+    public Page<RecordingUnit> findAllBySpatialUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(Long spatialUnitId,
+                                                                                                                     String fullIdentifierFilter,
+                                                                                                                     Long[] categoryIds,
+                                                                                                                     String globalFilter, String languageCode, Pageable pageable
 
     ) {
         Page<RecordingUnit> res = recordingUnitRepository.findAllBySpatialUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(

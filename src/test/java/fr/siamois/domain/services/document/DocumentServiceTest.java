@@ -1,6 +1,7 @@
 package fr.siamois.domain.services.document;
 
 import fr.siamois.domain.models.UserInfo;
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.document.DocumentParent;
@@ -9,6 +10,7 @@ import fr.siamois.domain.models.exceptions.InvalidFileTypeException;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
+import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.services.document.compressor.FileCompressor;
 import fr.siamois.infrastructure.database.repositories.DocumentRepository;
 import fr.siamois.infrastructure.files.DocumentStorage;
@@ -44,6 +46,7 @@ class DocumentServiceTest {
 
     @Mock
     private FileCompressor fileCompressor;
+
 
     @InjectMocks
     private DocumentService documentService;
@@ -313,6 +316,146 @@ class DocumentServiceTest {
         when(fileCompressor.isMatchingCompressor(any(MimeType.class))).thenReturn(false);
 
         assertThrows(IllegalStateException.class, () -> documentService.findCompressorOf(document));
+    }
+
+    @Test
+    void existInSpecimenByHash_returnsTrue_whenRepositorySaysSo() {
+        long specimenId = 101L;
+        String hash = "abc123";
+        Specimen specimen = new Specimen();
+
+        when(specimen.getId()).thenReturn(specimenId);
+        when(documentRepository.existsByHashInSpecimen(specimenId, hash)).thenReturn(true);
+
+        boolean result = documentService.existInSpecimenByHash(specimen, hash);
+
+        assertTrue(result);
+        verify(specimen).getId();
+        verify(documentRepository).existsByHashInSpecimen(specimenId, hash);
+
+    }
+
+    @Test
+    void existInSpecimenByHash_returnsFalse_whenRepositorySaysSo() {
+        long specimenId = 101L;
+        String hash = "missing";
+        Specimen specimen = new Specimen();
+        when(specimen.getId()).thenReturn(specimenId);
+        when(documentRepository.existsByHashInSpecimen(specimenId, hash)).thenReturn(false);
+
+        boolean result = documentService.existInSpecimenByHash(specimen, hash);
+
+        assertFalse(result);
+        verify(specimen).getId();
+        verify(documentRepository).existsByHashInSpecimen(specimenId, hash);
+
+    }
+
+    // -------- existInRecordingUnitByHash --------
+    @Test
+    void existInRecordingUnitByHash_returnsTrue_whenRepositorySaysSo() {
+        long ruId = 202L;
+        String hash = "rec-999";
+        RecordingUnit recordingUnit = new RecordingUnit();
+
+        when(recordingUnit.getId()).thenReturn(ruId);
+        when(documentRepository.existsByHashInRecordingUnit(ruId, hash)).thenReturn(true);
+
+        boolean result = documentService.existInRecordingUnitByHash(recordingUnit, hash);
+
+        assertTrue(result);
+        verify(recordingUnit).getId();
+        verify(documentRepository).existsByHashInRecordingUnit(ruId, hash);
+
+    }
+
+    @Test
+    void existInRecordingUnitByHash_returnsFalse_whenRepositorySaysSo() {
+        long ruId = 202L;
+        String hash = "not-there";
+        RecordingUnit recordingUnit = new RecordingUnit();
+
+        when(recordingUnit.getId()).thenReturn(ruId);
+        when(documentRepository.existsByHashInRecordingUnit(ruId, hash)).thenReturn(false);
+
+        boolean result = documentService.existInRecordingUnitByHash(recordingUnit, hash);
+
+        assertFalse(result);
+        verify(recordingUnit).getId();
+        verify(documentRepository).existsByHashInRecordingUnit(ruId, hash);
+
+    }
+
+    // -------- existInActionUnitByHash --------
+    @Test
+    void existInActionUnitByHash_returnsTrue_whenRepositorySaysSo() {
+        long auId = 303L;
+        String hash = "act-111";
+        ActionUnit actionUnit = new ActionUnit();
+
+        when(actionUnit.getId()).thenReturn(auId);
+        when(documentRepository.existsByHashInActionUnit(auId, hash)).thenReturn(true);
+
+        boolean result = documentService.existInActionUnitByHash(actionUnit, hash);
+
+        assertTrue(result);
+        verify(actionUnit).getId();
+        verify(documentRepository).existsByHashInActionUnit(auId, hash);
+
+    }
+
+    @Test
+    void existInActionUnitByHash_returnsFalse_whenRepositorySaysSo() {
+        long auId = 303L;
+        String hash = "nope";
+        ActionUnit actionUnit = new ActionUnit();
+
+        when(actionUnit.getId()).thenReturn(auId);
+        when(documentRepository.existsByHashInActionUnit(auId, hash)).thenReturn(false);
+
+        boolean result = documentService.existInActionUnitByHash(actionUnit, hash);
+
+        assertFalse(result);
+        verify(actionUnit).getId();
+        verify(documentRepository).existsByHashInActionUnit(auId, hash);
+
+    }
+
+    // -------- addToSpecimen --------
+    @Test
+    void addToSpecimen_delegatesToRepository_withCorrectIds() {
+        long docId = 1L;
+        long specimenId = 42L;
+        Document document = new Document();
+        Specimen specimen = new Specimen();
+
+        when(document.getId()).thenReturn(docId);
+        when(specimen.getId()).thenReturn(specimenId);
+
+        documentService.addToSpecimen(document, specimen);
+
+        verify(document).getId();
+        verify(specimen).getId();
+        verify(documentRepository).addDocumentToSpecimen(docId, specimenId);
+    }
+
+    // -------- addToActionUnit --------
+    @Test
+    void addToActionUnit_delegatesToRepository_withCorrectIds() {
+        long docId = 7L;
+        long actionUnitId = 88L;
+        Document document = new Document();
+        ActionUnit actionUnit = new ActionUnit();
+
+        when(document.getId()).thenReturn(docId);
+        when(actionUnit.getId()).thenReturn(actionUnitId);
+
+        documentService.addToActionUnit(document, actionUnit);
+
+        verify(document).getId();
+        verify(actionUnit).getId();
+        verify(documentRepository).addDocumentToActionUnit(docId, actionUnitId);
+
     }
 
 }

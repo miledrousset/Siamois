@@ -1,8 +1,10 @@
 package fr.siamois.domain.services.specimen;
 
 import fr.siamois.domain.models.ArkEntity;
+import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.infrastructure.database.repositories.specimen.SpecimenRepository;
@@ -139,5 +141,66 @@ class SpecimenServiceTest {
 
         assertEquals(99L, count);
         verify(specimenRepository).countByCreatedByInstitution(institution);
+    }
+
+    @Test
+    void test_findAllBySpatialUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining() {
+        Page<Specimen> expectedPage = new PageImpl<>(List.of(new Specimen()));
+        when(specimenRepository.findAllBySpatialUnitIdAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                eq(1L), eq("DEF"), any(), eq("global"), eq("fr"), any(Pageable.class)))
+                .thenReturn(expectedPage);
+
+        var result = specimenService.findAllBySpatialUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                1L, "DEF", new Long[]{3L}, "global", "fr", PageRequest.of(1, 5));
+
+        assertEquals(expectedPage, result);
+    }
+
+    @Test
+    void test_findAllByActionUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining() {
+        Page<Specimen> expectedPage = new PageImpl<>(List.of(new Specimen()));
+        when(specimenRepository.findAllByActionUnitIdAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                eq(1L), eq("DEF"), any(), eq("global"), eq("fr"), any(Pageable.class)))
+                .thenReturn(expectedPage);
+
+        var result = specimenService.findAllByActionUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                1L, "DEF", new Long[]{3L}, "global", "fr", PageRequest.of(1, 5));
+
+        assertEquals(expectedPage, result);
+    }
+
+
+    @Test
+    void testCountBySpatialContext() {
+        // Arrange
+        SpatialUnit spatialUnit = mock(SpatialUnit.class);
+        when(spatialUnit.getId()).thenReturn(10L);
+        when(specimenRepository.countBySpatialContext(10L)).thenReturn(5);
+
+        // Act
+        Integer result = specimenService.countBySpatialContext(spatialUnit);
+
+        // Assert
+        assertEquals(5, result);
+        verify(spatialUnit).getId();
+        verify(specimenRepository).countBySpatialContext(10L);
+        verifyNoMoreInteractions(specimenRepository);
+    }
+
+    @Test
+    void testCountByActionContext() {
+        // Arrange
+        ActionUnit actionUnit = mock(ActionUnit.class);
+        when(actionUnit.getId()).thenReturn(7L);
+        when(specimenRepository.countByActionContext(7L)).thenReturn(3);
+
+        // Act
+        Integer result = specimenService.countByActionContext(actionUnit);
+
+        // Assert
+        assertEquals(3, result);
+        verify(actionUnit).getId();
+        verify(specimenRepository).countByActionContext(7L);
+        verifyNoMoreInteractions(specimenRepository);
     }
 }
