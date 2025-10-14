@@ -4,8 +4,10 @@ import fr.siamois.domain.models.institution.Institution;
 import jakarta.persistence.*;
 import jakarta.ws.rs.DefaultValue;
 import lombok.Data;
+import org.hibernate.Hibernate;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -42,4 +44,15 @@ public class InstitutionSettings implements Serializable {
         return arkIsEnabled && arkNaan != null && arkPrefix != null;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        InstitutionSettings that = (InstitutionSettings) o;
+        return Objects.equals(institution, that.institution);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(institution);
+    }
 }

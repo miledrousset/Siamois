@@ -7,7 +7,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.util.MimeType;
 
-@EqualsAndHashCode(callSuper = true)
+import java.util.Objects;
+
 @Data
 @Entity
 @Table(name = "siamois_document", schema = "public")
@@ -38,6 +39,16 @@ public class Document extends DocumentParent implements ArkEntity {
     public String fileExtension() {
         int i = fileName.lastIndexOf('.');
         return fileName.substring(i + 1);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
 }

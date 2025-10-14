@@ -13,6 +13,7 @@ import org.hibernate.annotations.ColumnDefault;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Objects;
 
 /**
  * A {@link TraceableEntity} stores the creation time and the creator of an entity. The {@link TraceableEntity} is most likely to have a history
@@ -22,7 +23,6 @@ import java.time.ZoneId;
  */
 @Setter
 @Getter
-@EqualsAndHashCode
 @MappedSuperclass
 public abstract class TraceableEntity implements Serializable {
 
@@ -61,4 +61,16 @@ public abstract class TraceableEntity implements Serializable {
     protected Person lastModifiedBy = null;
 
     public abstract Long getId();
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof TraceableEntity traceableEntity)) return false;
+        return Objects.equals(author, traceableEntity.author) && Objects.equals(createdByInstitution, traceableEntity.createdByInstitution);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(author, createdByInstitution);
+    }
 }

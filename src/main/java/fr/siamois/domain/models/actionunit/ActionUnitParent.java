@@ -63,12 +63,12 @@ public abstract class ActionUnitParent extends TraceableEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ActionUnitParent that = (ActionUnitParent) o;
-        return Objects.equals(fullIdentifier, that.fullIdentifier);
+        return Objects.equals(fullIdentifier, that.fullIdentifier) && super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fullIdentifier);
+        return Objects.hash(fullIdentifier) + super.hashCode();
     }
 
 

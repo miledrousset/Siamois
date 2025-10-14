@@ -23,4 +23,12 @@ public class ActionCode implements Serializable {
 
     @FieldCode
     public static final String TYPE_FIELD_CODE = "SIAAC.TYPE";
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ActionCode actionCode)) return false;
+        return code.equals(actionCode.code) &&  type.equals(actionCode.type);
+    }
+
 }

@@ -11,9 +11,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.locationtech.jts.geom.MultiPolygon;
 
+import java.util.Objects;
 
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @MappedSuperclass
 public abstract class SpatialUnitParent extends TraceableEntity {
@@ -40,6 +40,16 @@ public abstract class SpatialUnitParent extends TraceableEntity {
     @JsonIgnore
     protected ActionUnit parentActionUnit;
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        SpatialUnitParent that = (SpatialUnitParent) o;
+        return Objects.equals(category, that.category) && Objects.equals(geom, that.geom) && Objects.equals(parentActionUnit, that.parentActionUnit) && super.equals(o);
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), category, geom, parentActionUnit) + super.hashCode();
+    }
 }

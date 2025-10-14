@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -44,4 +45,18 @@ public class Movement {
     @Column(name = "notes", length = Integer.MAX_VALUE)
     private String notes;
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Movement movement = (Movement) o;
+        return Objects.equals(specimen, movement.specimen)
+                && Objects.equals(originLocation, movement.originLocation)
+                && Objects.equals(destinationLocation, movement.destinationLocation)
+                && Objects.equals(handledBy, movement.handledBy);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(specimen, originLocation, destinationLocation, handledBy);
+    }
 }

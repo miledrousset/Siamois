@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Objects;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -59,5 +61,21 @@ public abstract class DocumentParent extends TraceableEntity {
     public static final int FILE_INTERNAL_CODE_LENGTH = 10;
     public static final int MAX_DESCRIPTION_LENGTH = 1024;
     public static final int MAX_TITLE_LENGTH = 50;
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DocumentParent that)) return false;
+
+        return Objects.equals(fileName, that.fileName)
+                && Objects.equals(md5Sum, that.md5Sum)
+                && Objects.equals(author, that.author)
+                && Objects.equals(createdByInstitution, that.createdByInstitution)
+                && Objects.equals(format, that.format) && super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fileName, md5Sum, author, createdByInstitution, format) + super.hashCode();
+    }
 
 }
