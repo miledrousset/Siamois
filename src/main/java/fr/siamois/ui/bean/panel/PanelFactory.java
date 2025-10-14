@@ -11,7 +11,6 @@ import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
 import fr.siamois.ui.bean.panel.models.panel.single.SpecimenPanel;
-
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 

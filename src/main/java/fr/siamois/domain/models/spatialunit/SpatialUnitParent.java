@@ -8,7 +8,6 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.locationtech.jts.geom.MultiPolygon;
 
 import java.util.Objects;

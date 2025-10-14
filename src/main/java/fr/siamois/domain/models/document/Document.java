@@ -4,10 +4,7 @@ import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.springframework.util.MimeType;
-
-import java.util.Objects;
 
 @Data
 @Entity

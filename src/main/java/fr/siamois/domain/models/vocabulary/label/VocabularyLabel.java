@@ -1,7 +1,10 @@
 package fr.siamois.domain.models.vocabulary.label;
 
 import fr.siamois.domain.models.vocabulary.Vocabulary;
-import jakarta.persistence.*;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
