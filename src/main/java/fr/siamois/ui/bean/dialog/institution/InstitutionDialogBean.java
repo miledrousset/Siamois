@@ -5,7 +5,6 @@ import fr.siamois.domain.models.exceptions.api.InvalidEndpointException;
 import fr.siamois.domain.models.exceptions.institution.FailedInstitutionSaveException;
 import fr.siamois.domain.models.exceptions.institution.InstitutionAlreadyExistException;
 import fr.siamois.domain.models.institution.Institution;
-import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.ui.bean.ActionFromBean;
 import fr.siamois.ui.bean.SessionSettingsBean;

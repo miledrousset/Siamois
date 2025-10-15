@@ -3,7 +3,6 @@ package fr.siamois.domain.models.actionunit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.siamois.domain.models.ArkEntity;
 import fr.siamois.domain.models.FieldCode;
-import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.institution.NullInstitutionIdentifier;
 import fr.siamois.domain.models.form.customfield.*;
@@ -17,7 +16,6 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +24,6 @@ import java.util.Set;
 import static fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity.COLUMN_CLASS_NAME;
 import static fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity.SYSTEM_THESO;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "action_unit", uniqueConstraints = @UniqueConstraint(columnNames = "identifier"))
@@ -37,7 +34,6 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
     private static final String DETAIL_TAB_NAME = "\"Details tab form\"";
 
     public ActionUnit() {
-
     }
 
     public ActionUnit(ActionUnit unit) {
@@ -106,6 +102,16 @@ public class ActionUnit extends ActionUnitParent implements ArkEntity {
         } else {
             return getFullIdentifier();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     @Override

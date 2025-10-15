@@ -388,8 +388,10 @@ class ActionUnitServiceTest {
 
         actionUnit1 = new ActionUnit();
         actionUnit1.setId(1L);
+        actionUnit1.setFullIdentifier("AU-1");
         actionUnit2 = new ActionUnit();
         actionUnit2.setId(2L);
+        actionUnit2.setFullIdentifier("AU-2");
 
         when(actionUnitRepository.findByCreatedByInstitution(institution1)).thenReturn(new HashSet<>(List.of(actionUnit1, actionUnit2)));
 

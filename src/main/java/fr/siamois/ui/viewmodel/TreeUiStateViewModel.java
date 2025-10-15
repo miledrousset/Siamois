@@ -6,7 +6,10 @@ import org.primefaces.model.CheckboxTreeNode;
 import org.primefaces.model.TreeNode;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Data
 public class TreeUiStateViewModel implements Serializable {

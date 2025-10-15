@@ -580,8 +580,12 @@ class InstitutionServiceTest {
         Institution inst = new Institution();
         inst.setId(42L);
 
-        Person p1 = new Person(); p1.setId(1L);
-        Person p2 = new Person(); p2.setId(2L);
+        Person p1 = new Person();
+        p1.setId(1L);
+        p1.setUsername("user1");
+        Person p2 = new Person();
+        p2.setId(2L);
+        p2.setUsername("user2");
         Set<Person> repoResult = new HashSet<>(Arrays.asList(p1, p2));
 
         when(personRepository.findManagersOfInstitution(42L)).thenReturn(repoResult);

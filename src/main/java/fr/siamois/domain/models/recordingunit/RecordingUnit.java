@@ -19,7 +19,6 @@ import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,13 +28,10 @@ import java.util.Set;
 import static fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity.COLUMN_CLASS_NAME;
 import static fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity.SYSTEM_THESO;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "recording_unit")
 public class RecordingUnit extends RecordingUnitParent implements ArkEntity, ReferencableEntity {
-
-
 
     public RecordingUnit() {
 
@@ -523,4 +519,14 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
                                             .build()
                     )
                             .build();
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

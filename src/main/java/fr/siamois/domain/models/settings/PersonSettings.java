@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -35,6 +36,18 @@ public class PersonSettings implements Serializable {
         person = null;
         defaultInstitution = null;
         langCode = null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PersonSettings personSettings)) return false;
+        return Objects.equals(person, personSettings.person) && Objects.equals(defaultInstitution, personSettings.defaultInstitution);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(person, defaultInstitution);
     }
 
 }
