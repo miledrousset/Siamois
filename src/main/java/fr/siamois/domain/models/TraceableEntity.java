@@ -5,7 +5,6 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.institution.Institution;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -22,7 +21,6 @@ import java.time.ZoneId;
  */
 @Setter
 @Getter
-@EqualsAndHashCode
 @MappedSuperclass
 public abstract class TraceableEntity implements Serializable {
 

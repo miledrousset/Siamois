@@ -1,8 +1,12 @@
 package fr.siamois.domain.models.form.customfieldanswer;
+
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.*;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 
 

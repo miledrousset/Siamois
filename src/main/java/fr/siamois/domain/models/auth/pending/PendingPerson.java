@@ -27,4 +27,17 @@ public class PendingPerson implements Serializable {
     @Column(name = "register_token_expiration_date")
     private OffsetDateTime pendingInvitationExpirationDate;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PendingPerson pendingPerson)) return false;
+
+        return email.equals(pendingPerson.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return email.hashCode();
+    }
+
 }
