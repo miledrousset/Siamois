@@ -2,12 +2,14 @@ package fr.siamois.domain.services.person.verifier;
 
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.auth.*;
+import lombok.Setter;
 
 /**
  * Interface for verifying the data of a Person.
  * This interface defines methods to validate various attributes of a Person object,
  * such as username, email, password, and name.
  */
+@Setter
 public abstract class PersonDataVerifier {
 
     protected boolean isForCreation = false;
@@ -23,7 +25,4 @@ public abstract class PersonDataVerifier {
      */
     public abstract void verify(Person person) throws InvalidUsernameException, UserAlreadyExistException, InvalidEmailException, InvalidPasswordException, InvalidNameException;
 
-    public void setForCreation(boolean forCreation) {
-        isForCreation = forCreation;
-    }
 }
