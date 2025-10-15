@@ -14,8 +14,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
-import org.primefaces.component.tabview.Tab;
-import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 import org.springframework.util.MimeType;
 

@@ -6,6 +6,7 @@ import jakarta.ws.rs.DefaultValue;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -33,4 +34,14 @@ public class PendingInstitutionInvite implements Serializable {
     @Column(name = "is_action_manager")
     private boolean actionManager = false;
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof PendingInstitutionInvite that)) return false;
+        return Objects.equals(institution, that.institution) && Objects.equals(pendingPerson, that.pendingPerson);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(institution, pendingPerson);
+    }
 }

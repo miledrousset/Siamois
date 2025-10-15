@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -23,4 +24,16 @@ public class Ark implements Serializable {
     @Column(name = "qualifier", nullable = false)
     private String qualifier;
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Ark ark)) return false;
+
+        return qualifier.equals(ark.qualifier) && creatingInstitution.equals(ark.creatingInstitution);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(creatingInstitution, qualifier);
+    }
 }

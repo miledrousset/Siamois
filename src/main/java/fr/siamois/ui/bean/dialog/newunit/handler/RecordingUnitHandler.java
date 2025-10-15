@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Component
 public class RecordingUnitHandler implements INewUnitHandler<RecordingUnit> {

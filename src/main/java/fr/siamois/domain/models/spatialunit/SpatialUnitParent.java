@@ -8,12 +8,11 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.locationtech.jts.geom.MultiPolygon;
 
+import java.util.Objects;
 
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @MappedSuperclass
 public abstract class SpatialUnitParent extends TraceableEntity {
@@ -40,6 +39,18 @@ public abstract class SpatialUnitParent extends TraceableEntity {
     @JsonIgnore
     protected ActionUnit parentActionUnit;
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        SpatialUnitParent that = (SpatialUnitParent) o;
+        return Objects.equals(category, that.category)
+                && Objects.equals(geom, that.geom)
+                && Objects.equals(parentActionUnit, that.parentActionUnit);
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(category, geom, parentActionUnit);
+    }
 }

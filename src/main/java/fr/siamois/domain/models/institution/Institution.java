@@ -13,6 +13,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -55,5 +56,17 @@ public class Institution implements Serializable {
     }
 
     public static final int MAX_NAME_LENGTH = 40;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Institution institution)) return false;
+        return Objects.equals(name, institution.name) && Objects.equals(identifier, institution.identifier);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, identifier);
+    }
 
 }

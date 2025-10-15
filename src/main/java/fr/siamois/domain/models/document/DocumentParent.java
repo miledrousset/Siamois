@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Objects;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -60,4 +62,14 @@ public abstract class DocumentParent extends TraceableEntity {
     public static final int MAX_DESCRIPTION_LENGTH = 1024;
     public static final int MAX_TITLE_LENGTH = 50;
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof DocumentParent that)) return false;
+        return Objects.equals(md5Sum, that.md5Sum);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(md5Sum);
+    }
 }

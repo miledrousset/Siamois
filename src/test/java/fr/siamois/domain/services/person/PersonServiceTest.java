@@ -262,7 +262,8 @@ class PersonServiceTest {
     void findAllAuthorsOfSpatialUnitByInstitution_Success() {
 
         Person p = new Person();
-        Institution i = new Institution(); i.setId(1L);
+        Institution i = new Institution();
+        i.setId(1L);
 
         when(personRepository.findAllAuthorsOfSpatialUnitByInstitution(1L)).thenReturn(
                 List.of(p));
@@ -281,7 +282,8 @@ class PersonServiceTest {
     void findAllAuthorsOfActionUnitByInstitution_Success() {
 
         Person p = new Person();
-        Institution i = new Institution(); i.setId(1L);
+        Institution i = new Institution();
+        i.setId(1L);
 
         when(personRepository.findAllAuthorsOfActionUnitByInstitution(1L)).thenReturn(
                 List.of(p));
@@ -303,8 +305,12 @@ class PersonServiceTest {
 
     @Test
     void findClosestByUsernameOrEmail_ShouldReturnUnionOfResults() {
-        Person p1 = new Person(); p1.setId(1L);
-        Person p2 = new Person(); p2.setId(2L);
+        Person p1 = new Person();
+        p1.setId(1L);
+        p1.setEmail("bob");
+        Person p2 = new Person();
+        p2.setId(2L);
+        p2.setUsername("bob");
 
         when(personRepository.findClosestByEmailLimit10("bob")).thenReturn(Set.of(p1));
         when(personRepository.findClosestByUsernameLimit10("bob")).thenReturn(Set.of(p2));
@@ -317,7 +323,8 @@ class PersonServiceTest {
 
     @Test
     void findClosestByUsernameOrEmail_ShouldRemoveDuplicates() {
-        Person p1 = new Person(); p1.setId(1L);
+        Person p1 = new Person();
+        p1.setId(1L);
 
         when(personRepository.findClosestByEmailLimit10("bob")).thenReturn(Set.of(p1));
         when(personRepository.findClosestByUsernameLimit10("bob")).thenReturn(Set.of(p1));
@@ -331,11 +338,13 @@ class PersonServiceTest {
     @Test
     void createAndDeletePendingRelations_ShouldAddManagerAndActionManagerAndAttributions() throws Exception {
         // Arrange
-        Person newPerson = new Person(); newPerson.setId(42L);
+        Person newPerson = new Person();
+        newPerson.setId(42L);
         PendingPerson pendingPerson = new PendingPerson();
         pendingPerson.setEmail("mail@localhost.com");
 
-        Institution institution = new Institution(); institution.setId(1L);
+        Institution institution = new Institution();
+        institution.setId(1L);
 
         PendingInstitutionInvite invite = mock(PendingInstitutionInvite.class);
         when(invite.getInstitution()).thenReturn(institution);
@@ -377,11 +386,13 @@ class PersonServiceTest {
     @Test
     void createAndDeletePendingRelations_ShouldNotAddManagerOrActionManager_WhenFlagsFalse() throws Exception {
         // Arrange
-        Person newPerson = new Person(); newPerson.setId(42L);
+        Person newPerson = new Person();
+        newPerson.setId(42L);
         PendingPerson pendingPerson = new PendingPerson();
         pendingPerson.setEmail("mail@localhost.com");
 
-        Institution institution = new Institution(); institution.setId(1L);
+        Institution institution = new Institution();
+        institution.setId(1L);
 
         PendingInstitutionInvite invite = mock(PendingInstitutionInvite.class);
         when(invite.getInstitution()).thenReturn(institution);
@@ -414,7 +425,8 @@ class PersonServiceTest {
     @Test
     void createAndDeletePendingRelations_ShouldHandleNoInvites() throws Exception {
         // Arrange
-        Person newPerson = new Person(); newPerson.setId(42L);
+        Person newPerson = new Person();
+        newPerson.setId(42L);
         PendingPerson pendingPerson = new PendingPerson();
         pendingPerson.setEmail("mail@localhost.com");
 

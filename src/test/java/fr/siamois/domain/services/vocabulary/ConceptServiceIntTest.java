@@ -95,6 +95,7 @@ class ConceptServiceIntTest {
         Institution institution = new Institution();
         institution.setId(1L);
         institution.setName("SIADev");
+        institution.setIdentifier("SIADev");
         institution.getManagers().add(person);
 
         List<String> unwantedId = List.of("4283550", "4283545", "4283546");
@@ -105,9 +106,10 @@ class ConceptServiceIntTest {
         List<Concept> result = conceptService.findDirectSubConceptOf(concept);
 
         assertThat(result)
-                .hasSize(1)
+                .hasSize(2)
                 .allMatch(Objects::nonNull)
                 .anyMatch(currentConcept -> currentConcept.getExternalId().equalsIgnoreCase("4283544"))
+                .anyMatch(currentConcept -> currentConcept.getExternalId().equalsIgnoreCase("4287626"))
                 .noneMatch(currentConcept -> unwantedId.contains(currentConcept.getExternalId()));
     }
 

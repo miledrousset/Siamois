@@ -148,37 +148,17 @@ public class Person implements UserDetails {
 
     @Override
     public boolean equals(Object o) {
-        // TODO : see w/ Julien
-        if (o == null || getClass() != o.getClass()) return false;
-        Person person = (Person) o;
-        return isExpired() == person.isExpired()
-                && isLocked() == person.isLocked()
-                && isEnabled() == person.isEnabled()
-                && Objects.equals(getId(), person.getId())
-                && Objects.equals(getName(), person.getName())
-                && Objects.equals(getLastname(), person.getLastname())
-                && Objects.equals(getUsername(), person.getUsername())
-                && Objects.equals(getPassword(), person.getPassword())
-                && Objects.equals(getEmail(), person.getEmail())
-                && Objects.equals(passToModify, person.passToModify)
-                && Objects.equals(alertMail, person.alertMail)
-                && Objects.equals(isSuperAdmin, person.isSuperAdmin)
-                && Objects.equals(getApiKey(), person.getApiKey())
-                && Objects.equals(keyNeverExpire, person.keyNeverExpire)
-                && Objects.equals(getKeyExpiresAt(), person.getKeyExpiresAt())
-                && Objects.equals(isServiceAccount, person.isServiceAccount)
-                && Objects.equals(getKeyDescription(), person.getKeyDescription());
+        if (this == o) return true;
+        if (!(o instanceof Person person)) return false;
+
+        return Objects.equals(email, person.email)
+                && Objects.equals(username, person.username)
+                && Objects.equals(name, person.name)
+                && Objects.equals(lastname, person.lastname);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(),
-                getLastname(), getUsername(),
-                getPassword(), getEmail(),
-                passToModify,  alertMail,
-                isSuperAdmin, getApiKey(),
-                keyNeverExpire, getKeyExpiresAt(),
-                isServiceAccount, getKeyDescription(),
-                isExpired(), isLocked(), isEnabled());
+        return Objects.hash(email, username, name, lastname);
     }
 }
