@@ -414,4 +414,56 @@ class RecordingUnitServiceTest {
         assertEquals(recordingUnit2, actualResult.getContent().get(1));
     }
 
+    @Test
+    void test_findAllBySpatialUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining_Success() {
+
+        when(recordingUnitRepository.findAllBySpatialUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                any(Long.class),
+                any(String.class),
+                any(Long[].class),
+                any(String.class),
+                any(String.class),
+                any(Pageable.class)
+        )).thenReturn(page);
+
+        // Act
+        Page<RecordingUnit> actualResult = recordingUnitService.findAllBySpatialUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                1L, "null", new Long[2], "null", "fr", pageable
+        );
+
+        // Assert
+        assertEquals(recordingUnit1, actualResult.getContent().get(0));
+        assertEquals(recordingUnit2, actualResult.getContent().get(1));
+    }
+
+    @Test
+    void testCountBySpatialContext() {
+        // Arrange
+        SpatialUnit spatialUnit = new SpatialUnit();
+        spatialUnit.setId(1L);
+        when(recordingUnitRepository.countBySpatialContext(1L)).thenReturn(5);
+
+        // Act
+        Integer count = recordingUnitService.countBySpatialContext(spatialUnit);
+
+        // Assert
+        assertEquals(5, count);
+        verify(recordingUnitRepository, times(1)).countBySpatialContext(1L);
+    }
+
+    @Test
+    void testCountByActionContext() {
+        // Arrange
+        ActionUnit au = new ActionUnit();
+        au.setId(2L);
+        when(recordingUnitRepository.countByActionContext(2L)).thenReturn(3);
+
+        // Act
+        Integer count = recordingUnitService.countByActionContext(au);
+
+        // Assert
+        assertEquals(3, count);
+        verify(recordingUnitRepository, times(1)).countByActionContext(2L);
+    }
+
 }

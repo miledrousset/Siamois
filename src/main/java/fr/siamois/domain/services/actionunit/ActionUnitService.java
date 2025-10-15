@@ -333,7 +333,7 @@ public class ActionUnitService implements ArkEntityService {
      * @param spatialUnit The SpatialUnit to count ActionUnits for
      * @return The count of ActionUnits associated with the SpatialUnit
      */
-    public long countBySpatialContext(SpatialUnit spatialUnit) {
+    public Integer countBySpatialContext(SpatialUnit spatialUnit) {
         return actionUnitRepository.countBySpatialContext(spatialUnit.getId());
     }
 

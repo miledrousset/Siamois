@@ -62,14 +62,13 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
 
     @Override
     protected boolean documentExistsInUnitByHash(Specimen unit, String hash) {
-        return false;
+        return documentService.existInSpecimenByHash(unit, hash);
     }
 
     @Override
     protected void addDocumentToUnit(Document doc, Specimen unit) {
-        // Empty because not used yet.
+        documentService.addToSpecimen(doc, unit);
     }
-
 
     // ---------- Locals
     // RU
@@ -190,11 +189,6 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
     }
 
     @Override
-    public String display() {
-        return "/panel/specimenPanel.xhtml";
-    }
-
-    @Override
     public String ressourceUri() {
         return "/specimen/" + idunit;
     }
@@ -237,15 +231,6 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
         documents = documentService.findForSpecimen(unit);
     }
 
-    @Override
-    protected BaseLazyDataModel<Specimen> getLazyDataModelChildren() {
-        return null;
-    }
-
-    @Override
-    public BaseLazyDataModel<Specimen> getLazyDataModelParents() {
-        return null;
-    }
 
     @Override
     public void init() {

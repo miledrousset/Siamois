@@ -210,6 +210,14 @@ public class FlowBean implements Serializable {
         addPanel(newPanel);
     }
 
+    public void goToSpatialUnitByIdNewPanel(Long id, AbstractPanel currentPanel, Integer activeIndex) {
+        // Create new panel type and add items to its breadcrumb
+        SpatialUnitPanel newPanel = panelFactory.createSpatialUnitPanel(id, currentPanel.getBreadcrumb(), activeIndex);
+        addPanel(newPanel);
+    }
+
+
+
     public void  goToRecordingUnitByIdCurrentPanel(Long id, Integer currentPanelIndex) {
 
         RecordingUnitPanel newPanel = panelFactory.createRecordingUnitPanel(id, panels.get(currentPanelIndex).getBreadcrumb());
@@ -261,6 +269,12 @@ public class FlowBean implements Serializable {
     public void goToActionUnitByIdNewPanel(Long id, AbstractPanel panel) {
         // Create new panel type and add items to its breadcrumb
         ActionUnitPanel newPanel = panelFactory.createActionUnitPanel(id, panel.getBreadcrumb());
+        addPanel(newPanel);
+    }
+
+    public void goToActionUnitByIdNewPanel(Long id, AbstractPanel panel, Integer activeTabIndex) {
+        // Create new panel type and add items to its breadcrumb
+        ActionUnitPanel newPanel = panelFactory.createActionUnitPanel(id, panel.getBreadcrumb(), activeTabIndex);
         addPanel(newPanel);
     }
 

@@ -59,8 +59,8 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
     protected CustomFormResponse formResponse; // answers to all the fields from overview and details
     protected Boolean hasUnsavedModifications; // Did we modify the unit?
 
-    //
     protected CustomForm detailsForm;
+    protected CustomForm overviewForm;
 
     // For multi select tree UI
     private final Map<CustomFieldAnswerSelectMultipleSpatialUnitTree, TreeUiStateViewModel> treeStates = new HashMap<>();

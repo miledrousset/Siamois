@@ -6,21 +6,25 @@ import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSave
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
+import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.services.form.CustomFieldService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
+import fr.siamois.domain.services.specimen.SpecimenService;
 import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.ActionTab;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.RecordingTab;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.SpecimenTab;
 import fr.siamois.ui.bean.panel.utils.SpatialUnitHelperService;
-import fr.siamois.ui.lazydatamodel.ActionUnitInSpatialUnitLazyDataModel;
-import fr.siamois.ui.lazydatamodel.SpatialUnitChildrenLazyDataModel;
-import fr.siamois.ui.lazydatamodel.SpatialUnitParentsLazyDataModel;
+import fr.siamois.ui.lazydatamodel.*;
 import fr.siamois.utils.MessageUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -54,10 +58,11 @@ import java.util.stream.Collectors;
 @Data
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, SpatialUnitHist> implements Serializable {
+public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel<SpatialUnit, SpatialUnitHist> implements Serializable {
 
     // Dependencies
     private final transient RecordingUnitService recordingUnitService;
+    private final transient SpecimenService specimenService;
     private final transient SessionSettingsBean sessionSettings;
     private final transient SpatialUnitHelperService spatialUnitHelperService;
     private final transient CustomFieldService customFieldService;
@@ -73,19 +78,19 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
     private String spatialUnitListErrorMessage;
     private String spatialUnitParentsListErrorMessage;
 
-
-
-
-    private transient List<CustomField> availableFields;
-    private transient List<CustomField> selectedFields;
-
     // lazy model for children
     private SpatialUnitChildrenLazyDataModel lazyDataModelChildren ;
     // lazy model for parents
     private SpatialUnitParentsLazyDataModel lazyDataModelParents ;
     // Lazy model for actions in the spatial unit
     private ActionUnitInSpatialUnitLazyDataModel actionLazyDataModel;
-    private long totalActionUnitCount;
+    private Integer totalActionUnitCount;
+    // Lazy model for recording unit in the spatial unit
+    private RecordingUnitInSpatialUnitLazyDataModel recordingLazyDataModel;
+    private Integer totalRecordingUnitCount;
+    // Lazy model for recording unit in the spatial unit
+    private SpecimenInSpatialUnitLazyDataModel specimenLazyDataModel;
+    private Integer totalSpecimenCount;
 
 
     private String barModel;
@@ -98,7 +103,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
                              DocumentCreationBean documentCreationBean, CustomFieldService customFieldService,
                              ConceptService conceptService,
                              LabelService labelService, LangBean langBean, PersonService personService,
-                             AbstractSingleEntity.Deps deps) {
+                             AbstractSingleEntity.Deps deps, SpecimenService specimenService) {
 
         super("common.entity.spatialUnit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel single-panel",
                 documentCreationBean, deps);
@@ -110,6 +115,7 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
         this.conceptService = conceptService;
         this.langBean = langBean;
         this.personService = personService;
+        this.specimenService = specimenService;
     }
 
 
@@ -128,10 +134,6 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
         return "spatial-unit-autocomplete";
     }
 
-    @Override
-    public String display() {
-        return "/panel/spatialUnitPanel.xhtml";
-    }
 
     @Override
     public String ressourceUri() {
@@ -205,11 +207,6 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
             initForms();
 
-            // Get direct parents and children counts
-
-            // Fields for recording unit table
-            selectedFields = new ArrayList<>();
-
             // Get all the CHILDREN of the spatial unit
             selectedCategoriesChildren = new ArrayList<>();
             lazyDataModelChildren= new SpatialUnitChildrenLazyDataModel(
@@ -236,6 +233,22 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
                     unit
             );
             totalActionUnitCount = actionUnitService.countBySpatialContext(unit);
+
+            // recording in spatial unit lazy model
+            recordingLazyDataModel = new RecordingUnitInSpatialUnitLazyDataModel(
+                    recordingUnitService,
+                    langBean,
+                    unit
+            );
+            totalRecordingUnitCount = recordingUnitService.countBySpatialContext(unit);
+
+            // specimen in spatial unit lazy model
+            specimenLazyDataModel = new SpecimenInSpatialUnitLazyDataModel(
+                    specimenService,
+                    langBean,
+                    unit
+            );
+            totalSpecimenCount = specimenService.countBySpatialContext(unit);
 
         } catch (RuntimeException e) {
             this.spatialUnitErrorMessage = "Failed to load spatial unit: " + e.getMessage();
@@ -269,15 +282,37 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
         refreshUnit();
 
+        super.init();
 
-        if (this.unit == null) {
-            this.spatialUnitErrorMessage = "The ID of the spatial unit must be defined";
-            return;
-        }
+        ActionTab actionTab = new ActionTab(
+                "common.entity.actionUnits",
+                "bi bi-arrow-down-square",
+                "actionTab",
 
-        // add to BC
-        this.getBreadcrumb().addSpatialUnit(unit);
+                actionLazyDataModel,
+                totalActionUnitCount);
 
+        tabs.add(actionTab);
+
+        RecordingTab recordingTab = new RecordingTab(
+                "common.entity.recordingUnits",
+                "bi bi-pencil-square",
+                "recordingTab",
+
+                recordingLazyDataModel,
+                totalRecordingUnitCount);
+
+        tabs.add(recordingTab);
+
+        SpecimenTab specimenTab = new SpecimenTab(
+                "common.entity.specimens",
+                "bi bi-bucket",
+                "specimenTab",
+
+                specimenLazyDataModel,
+                totalSpecimenCount);
+
+        tabs.add(specimenTab);
 
     }
 
@@ -358,6 +393,11 @@ public class SpatialUnitPanel extends AbstractSingleEntityPanel<SpatialUnit, Spa
 
         public SpatialUnitPanelBuilder id(Long id) {
             spatialUnitPanel.setIdunit(id);
+            return this;
+        }
+
+        public SpatialUnitPanelBuilder activeIndex(Integer id) {
+            spatialUnitPanel.setActiveTabIndex(id);
             return this;
         }
 

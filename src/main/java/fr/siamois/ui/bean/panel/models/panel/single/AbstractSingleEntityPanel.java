@@ -41,23 +41,23 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     protected transient H revisionToDisplay = null;
     protected Long idunit;  // ID of the spatial unit
     protected transient List<Document> documents;
+
     // lazy model for children of entity
     protected long totalChildrenCount = 0;
     protected transient List<Concept> selectedCategoriesChildren;
 
-    protected abstract BaseLazyDataModel<T> getLazyDataModelChildren();
 
     // lazy model for parents of entity
     protected long totalParentsCount = 0;
     protected transient List<Concept> selectedCategoriesParents;
 
-    public abstract BaseLazyDataModel<T> getLazyDataModelParents();
 
-    // Gestion du formulaire via form layout
-    protected CustomForm overviewForm;
-
-    //
     protected transient List<PanelTab> tabs;
+
+    @Override
+    public String display() {
+        return "/panel/singleUnitPanel.xhtml";
+    }
 
     public abstract void init();
 
@@ -82,18 +82,15 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
         tabs = new ArrayList<>();
         OverviewFormTab overviewTab = new OverviewFormTab("panel.tab.overview",
                 "bi bi-eye",
-                "overviewTab",
-                RECORDING_UNIT_FORM_RECORDING_UNIT_TABS);
+                "overviewTab");
         tabs.add(overviewTab);
         DetailsFormTab detailsTab = new DetailsFormTab("panel.tab.details",
                 "bi bi-pen",
-                "detailTab",
-                RECORDING_UNIT_FORM_RECORDING_UNIT_TABS);
+                "detailTab");
         tabs.add(detailsTab);
         DocumentTab documentTab = new DocumentTab("panel.tab.documents",
                 "bi bi-paperclip",
-                "detailTab",
-                RECORDING_UNIT_FORM_RECORDING_UNIT_TABS);
+                "documentsTab");
         tabs.add(documentTab);
         if(activeTabIndex == null) { activeTabIndex = 1; }
     }
@@ -167,10 +164,10 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     }
 
     @Nullable
-    public Boolean emptyTabFor(Object tabItem) {
+    public Boolean emptyTabFor(PanelTab tabItem) {
         if (tabItem instanceof MultiHierarchyTab) return isHierarchyTabEmpty();
         if (tabItem instanceof DocumentTab) return documents.isEmpty();
-        if (tabItem instanceof SpecimenTab) return true;
+        if(tabItem instanceof EntityListTab) return ((EntityListTab<?>) tabItem).getTotalCount() == 0;
         return null; // N/A for others
     }
 

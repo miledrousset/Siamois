@@ -1,5 +1,6 @@
 package fr.siamois.ui.bean;
 
+import fr.siamois.domain.models.TraceableEntity;
 import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
 import fr.siamois.ui.bean.panel.FlowBean;
@@ -22,9 +23,15 @@ public class ActionUnitBean {
         this.flowBean = flowBean;
     }
 
-    public boolean showCreateRecordingUnitButton(ActionUnit au) {
-        return Objects.equals(flowBean.getReadWriteMode(), "WRITE") &&
-                service.canCreateRecordingUnit(sessionSettingsBean.getUserInfo(), au) ;
+    public boolean showCreateRecordingUnitButton(TraceableEntity context) {
+        if(context.getClass() == ActionUnit.class) {
+            return Objects.equals(flowBean.getReadWriteMode(), "WRITE") &&
+                    service.canCreateRecordingUnit(sessionSettingsBean.getUserInfo(), (ActionUnit) context) ;
+        }
+        else {
+            return false;
+        }
+
     }
 
 }

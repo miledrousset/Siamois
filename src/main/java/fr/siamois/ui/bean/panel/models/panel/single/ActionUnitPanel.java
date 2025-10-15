@@ -11,15 +11,20 @@ import fr.siamois.domain.models.history.ActionUnitHist;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
+import fr.siamois.domain.services.spatialunit.SpatialUnitTreeService;
+import fr.siamois.domain.services.specimen.SpecimenService;
+import fr.siamois.domain.services.vocabulary.FieldConfigurationService;
 import fr.siamois.domain.services.vocabulary.FieldService;
 import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.ui.bean.LangBean;
 import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.ActionTab;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.RecordingTab;
+import fr.siamois.ui.bean.panel.models.panel.single.tab.SpecimenTab;
 import fr.siamois.ui.bean.settings.team.TeamMembersBean;
-import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
-import fr.siamois.ui.lazydatamodel.RecordingUnitInActionUnitLazyDataModel;
+import fr.siamois.ui.lazydatamodel.*;
 import fr.siamois.utils.MessageUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -58,6 +63,8 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     private final TeamMembersBean teamMembersBean;
     private final transient HistoryService historyService;
     private final transient RecordingUnitService recordingUnitService;
+    private final transient SpecimenService specimenService;
+
 
     // For entering new code
     private ActionCode newCode;
@@ -70,13 +77,12 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
     @Override
     protected boolean documentExistsInUnitByHash(ActionUnit unit, String hash) {
-        return false;
+        return documentService.existInActionUnitByHash(unit, hash);
     }
 
     @Override
     protected void addDocumentToUnit(Document doc, ActionUnit unit) {
-        // Empty because not used yet.
-
+        documentService.addToActionUnit(doc, unit);
     }
 
 
@@ -84,6 +90,10 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
 
     // Linked recording units
     private transient RecordingUnitInActionUnitLazyDataModel recordingUnitListLazyDataModel;
+    private Integer totalRecordingUnitCount;
+    // Lazy model for recording unit in the spatial unit
+    private SpecimenInActionUnitLazyDataModel specimenLazyDataModel;
+    private Integer totalSpecimenCount;
 
 
     public ActionUnitPanel(LangBean langBean,
@@ -91,7 +101,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
                            LabelService labelService, TeamMembersBean teamMembersBean,
                            DocumentCreationBean documentCreationBean,
                            HistoryService historyService, RecordingUnitService recordingUnitService,
-                           AbstractSingleEntity.Deps deps) {
+                           AbstractSingleEntity.Deps deps, SpecimenService specimenService) {
         super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel single-panel",
                 documentCreationBean, deps);
 
@@ -102,27 +112,16 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         this.teamMembersBean = teamMembersBean;
         this.historyService = historyService;
         this.recordingUnitService = recordingUnitService;
+        this.specimenService = specimenService;
     }
 
-    @Override
-    public String display() {
-        return "/panel/actionUnitPanel.xhtml";
-    }
 
     @Override
     public String ressourceUri() {
         return String.format("/actionunit/%s", unit.getId());
     }
 
-    @Override
-    protected BaseLazyDataModel<ActionUnit> getLazyDataModelChildren() {
-        return null;
-    }
 
-    @Override
-    public BaseLazyDataModel<ActionUnit> getLazyDataModelParents() {
-        return null;
-    }
 
     public void refreshUnit() {
 
@@ -165,8 +164,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     @Override
     public void init() {
         try {
-            activeTabIndex = 0;
-
 
             if (idunit == null) {
                 this.errorMessage = "The ID of the spatial unit must be defined";
@@ -188,12 +185,30 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
             );
             recordingUnitListLazyDataModel.setSelectedUnits(new ArrayList<>());
 
-            // add to BC
-            DefaultMenuItem item = DefaultMenuItem.builder()
-                    .value(unit.getName())
-                    .icon("bi bi-arrow-down-square")
-                    .build();
-            this.getBreadcrumb().getModel().getElements().add(item);
+
+            specimenLazyDataModel = new SpecimenInActionUnitLazyDataModel(
+                    specimenService,
+                    langBean,
+                    unit
+            );
+            specimenLazyDataModel.setSelectedUnits(new ArrayList<>());
+
+            totalSpecimenCount = specimenService.countByActionContext(unit);
+            totalRecordingUnitCount = recordingUnitService.countByActionContext(unit);
+            RecordingTab recordingTab = new RecordingTab(
+                    "common.entity.recordingUnits",
+                    "bi bi-pencil-square",
+                    "recordingTab",
+                    recordingUnitListLazyDataModel,
+                    totalRecordingUnitCount);
+            SpecimenTab specimenTab = new SpecimenTab(
+                    "common.entity.specimens",
+                    "bi bi-bucket",
+                    "specimenTab",
+                    specimenLazyDataModel,
+                    totalSpecimenCount);
+            tabs.add(recordingTab);
+            tabs.add(specimenTab);
 
         } catch (
                 ActionUnitNotFoundException e) {
@@ -222,6 +237,8 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         formResponse = initializeFormResponse(detailsForm, unit);
 
     }
+
+
 
     @Override
     public void cancelChanges() {
@@ -371,6 +388,11 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         public ActionUnitPanelBuilder breadcrumb(PanelBreadcrumb breadcrumb) {
             actionUnitPanel.setBreadcrumb(breadcrumb);
 
+            return this;
+        }
+
+        public ActionUnitPanelBuilder activeIndex(Integer id) {
+            actionUnitPanel.setActiveTabIndex(id);
             return this;
         }
 

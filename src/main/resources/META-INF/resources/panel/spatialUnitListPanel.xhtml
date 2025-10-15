@@ -14,7 +14,7 @@
     <h:form id="spatialUnitListPanelForm">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <spatialUnit:spatialUnitList
-
+                displayColumnToggler="true"
                 lazyDataModel="#{panelModel.lazyDataModel}"
                 panelModel="#{panelModel}"
                 panelIndex="#{panelIndex}"

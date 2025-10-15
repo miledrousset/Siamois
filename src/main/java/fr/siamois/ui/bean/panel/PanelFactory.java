@@ -73,14 +73,24 @@ public class PanelFactory {
         bc.getModel().getElements().clear();
         bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
 
-        SpatialUnitPanel panel = new SpatialUnitPanel.SpatialUnitPanelBuilder(spatialUnitPanelProvider)
+        return new SpatialUnitPanel.SpatialUnitPanelBuilder(spatialUnitPanelProvider)
                 .id(spatialUnitId)
                 .breadcrumb(bc)
                 .build();
 
-        panel.init();
+    }
 
-        return panel;
+    public SpatialUnitPanel createSpatialUnitPanel(Long spatialUnitId, PanelBreadcrumb currentBreadcrumb,Integer activeIndex) {
+
+        PanelBreadcrumb bc = new PanelBreadcrumb();
+        bc.getModel().getElements().clear();
+        bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+
+        return new SpatialUnitPanel.SpatialUnitPanelBuilder(spatialUnitPanelProvider)
+                .id(spatialUnitId)
+                .activeIndex(activeIndex)
+                .breadcrumb(bc)
+                .build();
     }
 
     public ActionUnitPanel createActionUnitPanel(Long actionUnitId, PanelBreadcrumb currentBreadcrumb) {
@@ -91,6 +101,21 @@ public class PanelFactory {
 
         return new ActionUnitPanel.ActionUnitPanelBuilder(actionUnitPanelProvider)
                 .id(actionUnitId)
+                .breadcrumb(bc)
+                .build();
+
+    }
+
+    public ActionUnitPanel createActionUnitPanel(Long actionUnitId, PanelBreadcrumb currentBreadcrumb,
+                                                 Integer activeTabIndex) {
+
+        PanelBreadcrumb bc = new PanelBreadcrumb();
+        bc.getModel().getElements().clear();
+        bc.getModel().getElements().addAll(new ArrayList<>(currentBreadcrumb.getModel().getElements()));
+
+        return new ActionUnitPanel.ActionUnitPanelBuilder(actionUnitPanelProvider)
+                .id(actionUnitId)
+                .activeIndex(activeTabIndex)
                 .breadcrumb(bc)
                 .build();
 

@@ -8,20 +8,19 @@
 
     <!--@elvariable id="panelModel" type="fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel"-->
     <!--@elvariable id="panelIndex" type="java.lang.Integer"-->
-    🚧 En cours (manque bouteau nouveau from existing ou nouveau). Lien dans les tables à réparer
-
+    <!--@elvariable id="lazyDataModel"  type="fr.siamois.ui.lazydatamodel.BaseLazyDataModel"-->
 
     <actionUnit:actionUnitList
-                lazyDataModel="#{panelModel.actionLazyDataModel}"
+                displayColumnToggler="false"
+                lazyDataModel="#{lazyDataModel}"
                 panelModel="#{panelModel}"
                 panelIndex="#{panelIndex}"
                 id="actionList"
         >
         <f:facet name="rightToolbar">
-            <!-- TODO : use proper flowbean add new so that lazy model is properly updated after creation -->
             <p:commandButton value="#{langBean.msg('common.action.create')}" icon="bi bi-plus-square"
                              id="newRecordingUnitButton"
-                             actionListener="#{genericNewUnitDialogBean.selectKind('ACTION',panelModel.actionLazyDataModel)}"
+                             actionListener="#{genericNewUnitDialogBean.selectKind('ACTION',lazyDataModel)}"
                              oncomplete="PF('newUnitDiag').show();"
                              update="newUnitForm"
                              rendered="#{flowBean.readWriteMode == 'WRITE' and flowBean.isActionUnitCreateAllowed()}"

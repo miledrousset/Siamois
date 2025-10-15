@@ -213,6 +213,26 @@ public class DocumentService implements ArkEntityService {
     }
 
     /**
+     * Adds a document to a spatial unit.
+     *
+     * @param document    the document to be added
+     * @param specimen the spatial unit to which the document is to be added
+     */
+    public void addToSpecimen(Document document, Specimen specimen) {
+        documentRepository.addDocumentToSpecimen(document.getId(), specimen.getId());
+    }
+
+    /**
+     * Adds a document to a action unit.
+     *
+     * @param document    the document to be added
+     * @param actionUnit the action unit to which the document is to be added
+     */
+    public void addToActionUnit(Document document, ActionUnit actionUnit) {
+        documentRepository.addDocumentToActionUnit(document.getId(), actionUnit.getId());
+    }
+
+    /**
      * Adds a document to a recording unit.
      *
      * @param document    the document to be added
@@ -285,14 +305,36 @@ public class DocumentService implements ArkEntityService {
     }
 
     /**
-     * Checks if a document with a specific hash exists in a given spatial unit.
+     * Checks if a document with a specific hash exists in a given specimen.
      *
-     * @param recordingUnit the spatial unit in which to check for the document
+     * @param specimen the specimen in which to check for the document
+     * @param hash        the hash of the document to check
+     * @return true if the document exists in the spatial unit, false otherwise
+     */
+    public boolean existInSpecimenByHash(Specimen specimen, String hash) {
+        return documentRepository.existsByHashInSpecimen(specimen.getId(), hash);
+    }
+
+    /**
+     * Checks if a document with a specific hash exists in a given recording unit.
+     *
+     * @param recordingUnit the recording unit in which to check for the document
      * @param hash        the hash of the document to check
      * @return true if the document exists in the spatial unit, false otherwise
      */
     public boolean existInRecordingUnitByHash(RecordingUnit recordingUnit, String hash) {
         return documentRepository.existsByHashInRecordingUnit(recordingUnit.getId(), hash);
+    }
+
+    /**
+     * Checks if a document with a specific hash exists in a given action unit.
+     *
+     * @param actionUnit the action unit in which to check for the document
+     * @param hash        the hash of the document to check
+     * @return true if the document exists in the spatial unit, false otherwise
+     */
+    public boolean existInActionUnitByHash(ActionUnit actionUnit, String hash) {
+        return documentRepository.existsByHashInActionUnit(actionUnit.getId(), hash);
     }
 
 }

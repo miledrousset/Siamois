@@ -108,10 +108,7 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
 
 
 
-    @Override
-    public String display() {
-        return "/panel/recordingUnitPanel.xhtml";
-    }
+
 
     @Override
     public String ressourceUri() {
@@ -292,23 +289,14 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
                 errorMessage = "The Recording Unit page should not be accessed without ID or by direct page path";
             }
 
-            // Init tabs
-            MultiHierarchyTab multiHierTab = new MultiHierarchyTab(
-                    "panel.tab.hierarchy",
-                    "bi bi-pencil-square",
-                    "hierarchyTab",
-                    "recordingUnitForm:recordingUnitTabs");
-
-            tabs.add(2,multiHierTab);
-
-
+            super.init();
 
             SpecimenTab specimenTab = new SpecimenTab(
                     "common.entity.specimen",
                     "bi bi-bucket",
                     "specimenTab",
-                    "recordingUnitForm:recordingUnitTabs",
-                    specimenListLazyDataModel);
+                    specimenListLazyDataModel,
+                    0);
 
             tabs.add(specimenTab);
 

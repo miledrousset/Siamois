@@ -10,6 +10,7 @@ import fr.siamois.domain.models.exceptions.recordingunit.RecordingUnitNotFoundEx
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
+import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.ArkEntityService;
 import fr.siamois.domain.services.InstitutionService;
@@ -353,6 +354,46 @@ public class RecordingUnitService implements ArkEntityService {
         });
 
         return res;
+    }
+
+    public Page<RecordingUnit> findAllBySpatialUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(Long spatialUnitId,
+                                                                                                                     String fullIdentifierFilter,
+                                                                                                                     Long[] categoryIds,
+                                                                                                                     String globalFilter, String languageCode, Pageable pageable
+
+    ) {
+        Page<RecordingUnit> res = recordingUnitRepository.findAllBySpatialUnitAndByFullIdentifierContainingAndByCategoriesAndByGlobalContaining(
+                spatialUnitId, fullIdentifierFilter, categoryIds, globalFilter, languageCode, pageable
+        );
+
+
+        // load related entities
+        res.forEach(actionUnit -> {
+            Hibernate.initialize(actionUnit.getParents());
+            Hibernate.initialize(actionUnit.getChildren());
+        });
+
+        return res;
+    }
+
+    /**
+     * Count the number of RecordingUnits associated with a specific SpatialUnit.
+     *
+     * @param spatialUnit The SpatialUnit to count RecordingUnits for
+     * @return The count of RecordingUnit associated with the SpatialUnit
+     */
+    public Integer countBySpatialContext(SpatialUnit spatialUnit) {
+        return recordingUnitRepository.countBySpatialContext(spatialUnit.getId());
+    }
+
+    /**
+     * Count the number of RecordingUnits associated with a specific ActionUnit.
+     *
+     * @param actionUnit The ActionUnit to count RecordingUnits for
+     * @return The count of RecordingUnit associated with the SpatialUnit
+     */
+    public Integer countByActionContext(ActionUnit actionUnit) {
+        return recordingUnitRepository.countByActionContext(actionUnit.getId());
     }
 }
 
