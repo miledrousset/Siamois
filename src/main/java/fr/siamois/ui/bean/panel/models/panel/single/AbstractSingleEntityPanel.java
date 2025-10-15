@@ -12,6 +12,8 @@ import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import io.micrometer.common.lang.Nullable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.TabChangeEvent;
@@ -24,7 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-@Data
+@Getter
+@Setter
 @Slf4j
 public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEntity<T>  implements Serializable {
 
@@ -73,7 +76,9 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
 
     protected static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-4";
 
-    protected AbstractSingleEntityPanel(String titleCodeOrTitle, String icon, String panelClass, DocumentCreationBean documentCreationBean,
+    protected AbstractSingleEntityPanel(String titleCodeOrTitle,
+                                        String icon, String panelClass,
+                                        DocumentCreationBean documentCreationBean,
                                         AbstractSingleEntity.Deps deps) {
         super(titleCodeOrTitle, icon, panelClass, deps);
         this.documentCreationBean = documentCreationBean;
