@@ -3,7 +3,7 @@
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 
-    <changeSet id="2025.06.18-0" author="Julien Linget" failOnError="false">
+    <changeSet id="2025.06.18-0" author="Julien Linget" failOnError="true">
         <sql>
             create extension IF NOT EXISTS plpgsql;
             create extension IF NOT EXISTS postgis;

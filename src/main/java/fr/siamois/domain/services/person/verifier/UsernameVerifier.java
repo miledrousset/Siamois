@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 @Component
 @Order(1)
-public class UsernameVerifier implements PersonDataVerifier{
+public class UsernameVerifier extends PersonDataVerifier {
     private final PersonRepository personRepository;
 
     public UsernameVerifier(PersonRepository personRepository) {
