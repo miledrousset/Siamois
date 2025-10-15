@@ -12,7 +12,6 @@ import org.hibernate.annotations.ColumnDefault;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.util.Objects;
 
 /**
  * A {@link TraceableEntity} stores the creation time and the creator of an entity. The {@link TraceableEntity} is most likely to have a history

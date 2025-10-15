@@ -2,7 +2,6 @@ package fr.siamois.domain.models.vocabulary.label;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.DiscriminatorFormula;
 
 import java.util.Objects;
