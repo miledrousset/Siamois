@@ -43,10 +43,10 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     protected transient H revisionToDisplay = null;
     protected Long idunit;  // ID of the spatial unit
     protected transient List<Document> documents;
+
     // lazy model for children of entity
     protected long totalChildrenCount = 0;
     protected transient List<Concept> selectedCategoriesChildren;
-
 
 
     // lazy model for parents of entity
@@ -54,11 +54,6 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     protected transient List<Concept> selectedCategoriesParents;
 
 
-
-    // Gestion du formulaire via form layout
-    protected CustomForm overviewForm;
-
-    //
     protected transient List<PanelTab> tabs;
 
     @Override

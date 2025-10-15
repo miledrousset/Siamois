@@ -99,12 +99,6 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
     private String spatialUnitListErrorMessage;
     private String spatialUnitParentsListErrorMessage;
 
-
-
-
-    private transient List<CustomField> availableFields;
-    private transient List<CustomField> selectedFields;
-
     // lazy model for children
     private SpatialUnitChildrenLazyDataModel lazyDataModelChildren ;
     // lazy model for parents
@@ -233,11 +227,6 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
             backupClone = new SpatialUnit(unit);
 
             initForms();
-
-            // Get direct parents and children counts
-
-            // Fields for recording unit table
-            selectedFields = new ArrayList<>();
 
             // Get all the CHILDREN of the spatial unit
             selectedCategoriesChildren = new ArrayList<>();
