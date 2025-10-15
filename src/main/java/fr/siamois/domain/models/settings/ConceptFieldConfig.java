@@ -9,6 +9,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @Entity
@@ -39,4 +41,17 @@ public class ConceptFieldConfig {
     @Column(name = "field_code", nullable = false, length = Integer.MAX_VALUE)
     private String fieldCode;
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ConceptFieldConfig that)) return false;
+        return Objects.equals(institution, that.institution)
+                && Objects.equals(user, that.user)
+                && Objects.equals(concept, that.concept)
+                && Objects.equals(fieldCode, that.fieldCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(institution, user, concept, fieldCode);
+    }
 }

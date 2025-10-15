@@ -53,12 +53,12 @@ public abstract class SpecimenParent extends TraceableEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Specimen that = (Specimen) o;
-        return Objects.equals(fullIdentifier, that.fullIdentifier) && super.equals(o);  // Compare based on RecordingUnit
+        return Objects.equals(fullIdentifier, that.fullIdentifier);  // Compare based on RecordingUnit
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fullIdentifier) + super.hashCode();  // Hash based on RecordingUnit
+        return Objects.hash(fullIdentifier);  // Hash based on RecordingUnit
     }
 
     // utils

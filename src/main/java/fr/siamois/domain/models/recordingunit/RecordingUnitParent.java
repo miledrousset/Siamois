@@ -81,15 +81,12 @@ public abstract class RecordingUnitParent extends TraceableEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (!(o instanceof RecordingUnitParent that)) return false;
-        return Objects.equals(fullIdentifier, that.fullIdentifier) && super.equals(o);  // Compare based on RecordingUnit
+        return Objects.equals(fullIdentifier, that.fullIdentifier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fullIdentifier) + super.hashCode();  // Hash based on RecordingUnit
+        return Objects.hashCode(fullIdentifier);
     }
-
-
 }

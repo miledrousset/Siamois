@@ -60,16 +60,4 @@ public abstract class TraceableEntity implements Serializable {
     protected Person lastModifiedBy = null;
 
     public abstract Long getId();
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof TraceableEntity traceableEntity)) return false;
-        return Objects.equals(author, traceableEntity.author) && Objects.equals(createdByInstitution, traceableEntity.createdByInstitution);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(author, createdByInstitution);
-    }
 }

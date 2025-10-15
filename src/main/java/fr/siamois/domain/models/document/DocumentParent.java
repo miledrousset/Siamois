@@ -64,19 +64,12 @@ public abstract class DocumentParent extends TraceableEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (!(o instanceof DocumentParent that)) return false;
-
-        return Objects.equals(fileName, that.fileName)
-                && Objects.equals(md5Sum, that.md5Sum)
-                && Objects.equals(author, that.author)
-                && Objects.equals(createdByInstitution, that.createdByInstitution)
-                && Objects.equals(format, that.format) && super.equals(o);
+        return Objects.equals(md5Sum, that.md5Sum);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fileName, md5Sum, author, createdByInstitution, format) + super.hashCode();
+        return Objects.hashCode(md5Sum);
     }
-
 }
