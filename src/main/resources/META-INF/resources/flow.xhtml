@@ -195,15 +195,20 @@
             </div>
             <div id="read-write-switch" style="align-content: center; flex:1;
             text-align:center; background: var(--siamois-green-light-100);padding: 0.5em}">
-                <form:csrfform formId="readWriteSwitchForm">
-                    <p:selectOneButton value="#{flowBean.readWriteMode}" var="ic"  >
+                <h:form id="readWriteSwitchForm">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <p:selectOneButton value="#{flowBean.readWriteMode}" var="ic" id="readWriteSwitchButton">
                         <f:selectItem icon="" itemLabel="Lecture" itemValue="READ"/>
                         <f:selectItem itemLabel="Edition" itemValue="WRITE"/>
 
-                        <p:ajax event="change" listener="#{flowBean.changeReadWriteMode()}" update="flow"
+                        <p:ajax event="change" listener="#{flowBean.changeReadWriteMode()}" update="@form"
                                 onstart="PF('buiContent').show()" oncomplete="PF('buiContent').hide()"/>
                     </p:selectOneButton>
-                </form:csrfform>
+                </h:form>
+                <ui:include src="/dialog/unsavedUpdates/unsavedUpdatesDialog.xhtml">
+                    <ui:param name="saveAllAction" value="#{flowBean.saveAllPanels()}"/>
+                    <ui:param name="deleteAllAction" value="#{flowBean.undoChangesOnAllPanels()}"/>
+                </ui:include>
             </div>
         </div>
 

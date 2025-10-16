@@ -21,10 +21,7 @@ import fr.siamois.ui.bean.SessionSettingsBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
 import fr.siamois.ui.bean.panel.models.panel.WelcomePanel;
-import fr.siamois.ui.bean.panel.models.panel.single.ActionUnitPanel;
-import fr.siamois.ui.bean.panel.models.panel.single.RecordingUnitPanel;
-import fr.siamois.ui.bean.panel.models.panel.single.SpatialUnitPanel;
-import fr.siamois.ui.bean.panel.models.panel.single.SpecimenPanel;
+import fr.siamois.ui.bean.panel.models.panel.single.*;
 import jakarta.el.MethodExpression;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
@@ -39,7 +36,9 @@ import org.springframework.stereotype.Component;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>This ui.bean handles the home page</p>
@@ -67,10 +66,13 @@ public class FlowBean implements Serializable {
     private final transient StratigraphicRelationshipService stratigraphicRelationshipService;
     private final transient PermissionService permissionService;
 
+    public static final String READ_MODE = "READ";
+    public static final String WRITE_MODE = "WRITE";
+
     // locals
     private transient DashboardModel responsiveModel;
     private static final String RESPONSIVE_CLASS = "col-12 lg:col-6 xl:col-6";
-    private String readWriteMode = "READ";
+    private String readWriteMode = READ_MODE;
     private static final int MAX_NUMBER_OF_PANEL = 10;
 
     // Search bar
@@ -82,6 +84,8 @@ public class FlowBean implements Serializable {
     @Getter
     private transient List<AbstractPanel> panels = new ArrayList<>();
     private transient int fullscreenPanelIndex = -1;
+
+    private transient Set<AbstractSingleEntityPanel<?, ?>> unsavedPanels = new HashSet<>();
 
     public FlowBean(SpatialUnitService spatialUnitService,
                     RecordingUnitService recordingUnitService,
@@ -341,13 +345,52 @@ public class FlowBean implements Serializable {
             if(fullscreenPanelIndex > panels.size() - 1) {
                 fullscreenPanelIndex = 0;
             }
-            PrimeFaces.current().ajax().update("flow");
+            PrimeFaces.current().ajax().update("");
         }
 
     }
 
+    private void fillAllUnsavedPanel() {
+        unsavedPanels.clear();
+        for (AbstractPanel panel : panels) {
+            if (panel instanceof AbstractSingleEntityPanel<?, ?> singleEntity) {
+                if (singleEntity.getHasUnsavedModifications()) {
+                    unsavedPanels.add(singleEntity);
+                }
+            }
+        }
+    }
+
+    /**
+     * Listener called when the ReadWrite mode variable is flipped.
+     */
     public void changeReadWriteMode() {
-        // Empty method updating read/write.
+        if (readWriteMode.equals(READ_MODE)) {
+            fillAllUnsavedPanel();
+            if (unsavedPanels.isEmpty()) {
+                PrimeFaces.current().ajax().update("flow");
+                return;
+            }
+
+            readWriteMode = WRITE_MODE;
+            PrimeFaces.current().executeScript("PF('confirmUnsavedDialog').show();");
+        } else {
+            PrimeFaces.current().ajax().update("flow");
+        }
+    }
+
+    public void saveAllPanels() {
+        for (AbstractSingleEntityPanel<?,?> panel : unsavedPanels) {
+            panel.save(true);
+        }
+        readWriteMode = READ_MODE;
+    }
+
+    public void undoChangesOnAllPanels() {
+        for (AbstractSingleEntityPanel<?,?> panel : unsavedPanels) {
+            panel.cancelChanges();
+        }
+        readWriteMode = READ_MODE;
     }
 
     public String getInPlaceFieldMode() {
