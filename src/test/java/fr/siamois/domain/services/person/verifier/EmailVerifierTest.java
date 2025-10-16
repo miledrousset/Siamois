@@ -40,6 +40,7 @@ class EmailVerifierTest {
     void verify_shouldThrowEmailAlreadyExistException_whenEmailAlreadyExists() {
         Person person = new Person();
         person.setEmail("existing.email@example.com");
+        emailVerifier.isForCreation = true;
 
         when(personRepository.findByEmailIgnoreCase("existing.email@example.com")).thenReturn(Optional.of(person));
 
