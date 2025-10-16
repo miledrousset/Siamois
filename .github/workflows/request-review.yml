@@ -16,7 +16,6 @@ jobs:
           user_mapping["gregblt"]="1022258621310062623"
           user_mapping["neswatch"]="1427929249355927562"
           
-          
           # Get the GitHub username of the PR creator
           REVIEWER="${{ github.event.requested_reviewer.login }}"
 
