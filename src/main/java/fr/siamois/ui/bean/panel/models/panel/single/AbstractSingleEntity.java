@@ -57,7 +57,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
     //--------------- Locals
     protected transient T unit;
     protected CustomFormResponse formResponse; // answers to all the fields from overview and details
-    protected Boolean hasUnsavedModifications; // Did we modify the unit?
+    protected boolean hasUnsavedModifications = false; // Did we modify the unit?
 
     protected CustomForm detailsForm;
     protected CustomForm overviewForm;

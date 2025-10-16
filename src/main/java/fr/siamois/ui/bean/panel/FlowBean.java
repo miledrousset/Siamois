@@ -356,10 +356,8 @@ public class FlowBean implements Serializable {
     private void fillAllUnsavedPanel() {
         unsavedPanels.clear();
         for (AbstractPanel panel : panels) {
-            if (panel instanceof AbstractSingleEntityPanel<?, ?> singleEntity) {
-                if (singleEntity.getHasUnsavedModifications()) {
-                    unsavedPanels.add(singleEntity);
-                }
+            if (panel instanceof AbstractSingleEntityPanel<?, ?> singleEntity && singleEntity.isHasUnsavedModifications()) {
+                unsavedPanels.add(singleEntity);
             }
         }
     }
@@ -416,7 +414,7 @@ public class FlowBean implements Serializable {
     }
 
     public String getInPlaceFieldMode() {
-        if (readWriteMode.equals("WRITE")) {
+        if (readWriteMode.equals(WRITE_MODE)) {
             return "input";
         }
         return "output";
