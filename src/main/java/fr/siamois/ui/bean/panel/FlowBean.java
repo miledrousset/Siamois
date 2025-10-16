@@ -348,7 +348,7 @@ public class FlowBean implements Serializable {
             if(fullscreenPanelIndex > panels.size() - 1) {
                 fullscreenPanelIndex = 0;
             }
-            PrimeFaces.current().ajax().update("");
+            PrimeFaces.current().ajax().update("flow");
         }
 
     }
