@@ -267,12 +267,12 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
         try {
             actionUnitService.save(unit);
         } catch (FailedRecordingUnitSaveException e) {
-            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getName());
+            MessageUtils.displayErrorMessage(langBean, "common.entity.actionUnits.updateFailed", unit.getName());
             return;
         }
 
         refreshUnit();
-        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getName());
+        MessageUtils.displayInfoMessage(langBean, "common.entity.actionUnits.updated", unit.getName());
     }
 
 

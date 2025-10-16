@@ -150,10 +150,8 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
 
 
     public void setFieldAnswerHasBeenModified(CustomField field) {
-
         formResponse.getAnswers().get(field).setHasBeenModified(true);
         hasUnsavedModifications = true;
-
     }
 
     public void setFieldConceptAnswerHasBeenModified(AjaxBehaviorEvent event) {
@@ -345,10 +343,8 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
                         .map(SpatialUnit::getId)
                         .filter(Objects::nonNull)
                         .toList();
-                if (parents != null) {
-                    for (Long p : parents) {
-                        if (!res.contains(p)) stack.push(p);
-                    }
+                for (Long p : parents) {
+                    if (!res.contains(p)) stack.push(p);
                 }
             }
         }
