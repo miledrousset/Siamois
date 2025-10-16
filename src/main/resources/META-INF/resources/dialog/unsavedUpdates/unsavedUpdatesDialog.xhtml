@@ -8,12 +8,12 @@
 
     <h:form id="unsavedUpdatesForm">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-        <p:confirmDialog message="Il reste des modifications non sauvegardés. Voulez-vous les annuler ?" header="Modifications non sauvegardés" severity="danger" widgetVar="confirmUnsavedDialog">
-            <p:commandButton value="Abandonner les modifications" action="#{flowBean.undoChangesOnAllPanels()}" update="flow readWriteSwitchForm"
+        <p:confirmDialog message="#{langBean.msg('dialog.unsaved.message')}" header="#{langBean.msg('dialog.unsaved.title')}" severity="danger" widgetVar="confirmUnsavedDialog">
+            <p:commandButton value="#{langBean.msg('dialog.unsaved.discard')}" action="#{flowBean.undoChangesOnAllPanels()}" update="flow readWriteSwitchForm"
                              oncomplete="PF('confirmUnsavedDialog').hide()" styleClass="ui-button-danger" icon="pi pi-times"/>
-            <p:commandButton value="Sauvegarder les modifications" action="#{flowBean.saveAllPanels()}" update="flow readWriteSwitchForm"
+            <p:commandButton value="#{langBean.msg('dialog.unsaved.save')}" action="#{flowBean.saveAllPanels()}" update="flow readWriteSwitchForm"
                              oncomplete="PF('confirmUnsavedDialog').hide()" icon="pi pi-save"/>
-            <p:commandButton value="Retour au mode édition" onclick="PF('confirmUnsavedDialog').hide();" type="button"/>
+            <p:commandButton value="#{langBean.msg('dialog.unsaved.cancel')}" onclick="PF('confirmUnsavedDialog').hide();" type="button" styleClass="ui-button-warning"/>
         </p:confirmDialog>
     </h:form>
 </ui:fragment>
