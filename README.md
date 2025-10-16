@@ -8,7 +8,7 @@ Description longue du projet
 
 # Environnement utilisé
 * Java 17
-* PostgreSQL
+* PostgreSQL 16/17
 
 # Installation
 Procédure d'installation
