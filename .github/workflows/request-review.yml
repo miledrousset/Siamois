@@ -29,7 +29,7 @@ jobs:
             echo "::set-output name=discord_tag::<@${DISCORD_USER_ID}>"
           else
             echo "DISCORD_TAG=@{REVIEWER}"
-            echo "::set-output name=discord_tag::No tag found for this user"
+            echo "::set-output name=discord_tag::No tag found for user ${REVIEWER}"
           fi
 
       - name: Send Discord notification
