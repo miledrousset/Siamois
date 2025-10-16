@@ -13,10 +13,9 @@ import java.util.regex.Pattern;
 
 @Component
 @Order(2)
-public class EmailVerifier implements PersonDataVerifier {
+public class EmailVerifier extends PersonDataVerifier {
 
     private final PersonRepository personRepository;
-
     public EmailVerifier(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
@@ -38,7 +37,7 @@ public class EmailVerifier implements PersonDataVerifier {
 
     private void checkMailExistance(String email) throws InvalidEmailException {
         boolean emailExist = personRepository.findByEmailIgnoreCase(email).isPresent();
-        if (emailExist) {
+        if (emailExist && isForCreation) {
             throw new EmailAlreadyExistException("Email already exists.");
         }
     }

@@ -3,15 +3,14 @@ package fr.siamois.ui.bean.panel.models.panel.single;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
-import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.panel.single.tab.*;
-import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 import io.micrometer.common.lang.Nullable;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.TabChangeEvent;
@@ -24,7 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-@Data
+@Getter
+@Setter
 @Slf4j
 public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEntity<T>  implements Serializable {
 
@@ -73,7 +73,9 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
 
     protected static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-4";
 
-    protected AbstractSingleEntityPanel(String titleCodeOrTitle, String icon, String panelClass, DocumentCreationBean documentCreationBean,
+    protected AbstractSingleEntityPanel(String titleCodeOrTitle,
+                                        String icon, String panelClass,
+                                        DocumentCreationBean documentCreationBean,
                                         AbstractSingleEntity.Deps deps) {
         super(titleCodeOrTitle, icon, panelClass, deps);
         this.documentCreationBean = documentCreationBean;
@@ -102,7 +104,12 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
 
     public abstract void visualise(H history);
 
-    public abstract void save(Boolean validated);
+    /**
+     * Save the current entity in the database.
+     * @param validated Set to true if the entity is validated.
+     * @return true if the entity has been saved, false if any error occurred
+     */
+    public abstract boolean save(Boolean validated);
 
     public boolean contentIsImage(String mimeType) {
         MimeType currentMimeType = MimeType.valueOf(mimeType);

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Order(3)
-public class PasswordVerifier implements PersonDataVerifier {
+public class PasswordVerifier extends PersonDataVerifier {
 
     @Override
     public void verify(Person person) throws InvalidPasswordException {

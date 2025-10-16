@@ -12,6 +12,7 @@ import fr.siamois.domain.services.LangService;
 import fr.siamois.domain.services.auth.PendingPersonService;
 import fr.siamois.domain.services.person.verifier.PasswordVerifier;
 import fr.siamois.domain.services.person.verifier.PersonDataVerifier;
+import fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
@@ -48,7 +49,8 @@ public class PersonService {
                          InstitutionService institutionService,
                          LangService langService,
                          PendingPersonRepository pendingPersonRepository,
-                         PendingPersonService pendingPersonService, fr.siamois.infrastructure.database.repositories.person.PendingInstitutionInviteRepository pendingInstitutionInviteRepository) {
+                         PendingPersonService pendingPersonService,
+                         PendingInstitutionInviteRepository pendingInstitutionInviteRepository) {
         this.personRepository = personRepository;
         this.passwordEncoder = passwordEncoder;
         this.verifiers = verifiers;
@@ -101,7 +103,7 @@ public class PersonService {
     public Person createPerson(Person person) throws InvalidUsernameException, InvalidEmailException, UserAlreadyExistException, InvalidPasswordException, InvalidNameException {
         person.setId(-1L);
 
-        checkPersonData(person);
+        checkPersonData(person, true);
 
         person.setPassword(passwordEncoder.encode(person.getPassword()));
 
@@ -112,8 +114,9 @@ public class PersonService {
         return person;
     }
 
-    private void checkPersonData(Person person) throws InvalidUsernameException, InvalidEmailException, UserAlreadyExistException, InvalidPasswordException, InvalidNameException {
+    private void checkPersonData(Person person, boolean isForCreation) throws InvalidUsernameException, InvalidEmailException, UserAlreadyExistException, InvalidPasswordException, InvalidNameException {
         for (PersonDataVerifier verifier : verifiers) {
+            verifier.setForCreation(isForCreation);
             verifier.verify(person);
         }
     }
@@ -160,7 +163,7 @@ public class PersonService {
     }
 
     /**
-     * Update a Person in the database.
+     * Update a Person in the database. This methods cannot update the email of the person as it won't be saved.
      *
      * @param person The Person to update. It must have an ID set.
      * @throws UserAlreadyExistException if a user with the same username or email already exists.
@@ -170,7 +173,7 @@ public class PersonService {
      * @throws InvalidEmailException     if the email is invalid or already exists.
      */
     public void updatePerson(Person person) throws UserAlreadyExistException, InvalidNameException, InvalidPasswordException, InvalidUsernameException, InvalidEmailException {
-        checkPersonData(person);
+        checkPersonData(person, false);
 
         personRepository.save(person);
     }

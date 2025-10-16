@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Order(4)
-public class NamesVerifier implements PersonDataVerifier {
+public class NamesVerifier extends PersonDataVerifier {
 
     private void validateNameLength(String name, String fieldName) throws InvalidNameException {
         if (name != null && name.length() > Person.NAME_MAX_LENGTH) {

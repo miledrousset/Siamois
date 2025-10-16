@@ -57,7 +57,7 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
     //--------------- Locals
     protected transient T unit;
     protected CustomFormResponse formResponse; // answers to all the fields from overview and details
-    protected Boolean hasUnsavedModifications; // Did we modify the unit?
+    protected boolean hasUnsavedModifications = false; // Did we modify the unit?
 
     protected CustomForm detailsForm;
     protected CustomForm overviewForm;
@@ -150,10 +150,8 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
 
 
     public void setFieldAnswerHasBeenModified(CustomField field) {
-
         formResponse.getAnswers().get(field).setHasBeenModified(true);
         hasUnsavedModifications = true;
-
     }
 
     public void setFieldConceptAnswerHasBeenModified(AjaxBehaviorEvent event) {
@@ -345,10 +343,8 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
                         .map(SpatialUnit::getId)
                         .filter(Objects::nonNull)
                         .toList();
-                if (parents != null) {
-                    for (Long p : parents) {
-                        if (!res.contains(p)) stack.push(p);
-                    }
+                for (Long p : parents) {
+                    if (!res.contains(p)) stack.push(p);
                 }
             }
         }
