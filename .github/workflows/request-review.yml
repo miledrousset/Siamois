@@ -1,0 +1,46 @@
+name: request-review.yml
+
+on:
+  pull_request:
+    types: [review_requested]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up GitHub-to-Discord mapping
+        id: mapping
+        run: |
+          # Mapping GitHub usernames to Discord user IDs
+          declare -A user_mapping
+          user_mapping["gregblt"]="1022258621310062623"
+          user_mapping["neswatch"]="1427929249355927562"
+          
+          # Get the GitHub username of the PR creator
+          PR_CREATOR="${{ github.event.pull_request.user.login }}"
+
+          # Check if the GitHub username exists in the mapping
+          DISCORD_USER_ID="${user_mapping[$PR_CREATOR]}"
+
+          # If the user is found, set the Discord tag
+          if [ -n "$DISCORD_USER_ID" ]; then
+            echo "DISCORD_TAG=<@${DISCORD_USER_ID}>"
+            echo "::set-output name=discord_tag::<@${DISCORD_USER_ID}>"
+          else
+            echo "DISCORD_TAG=No tag found for this user"
+            echo "::set-output name=discord_tag::No tag found for this user"
+          fi
+
+      - name: Send Discord notification
+        uses: stegzilla/discord-notify@v2
+        with:
+          webhook_url: https://discordapp.com/api/webhooks/1428317222568198176/MZv28uArd5zcAmsRYaBeag_xeodSVwbR246rK8PKOvuTmXB8AIPo2cwuWCCYTtHr2eHK
+          title: Review de PR demandée
+          message: |
+            "**${{ github.event.pull_request.title }}**"
+            "\n**Creator:** ${{ github.event.pull_request.user.login }}"
+            "\n${{ github.event.pull_request.html_url }}"
+            "\nReview requested by: ${{ steps.mapping.outputs.discord_tag }}"
+          include_image: true
+          avatar_url: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+          username: GitHub PR Review Notifier
