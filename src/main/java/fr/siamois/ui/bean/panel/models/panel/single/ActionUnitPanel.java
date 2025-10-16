@@ -5,6 +5,7 @@ import fr.siamois.domain.models.actionunit.ActionUnit;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.actionunit.ActionUnitNotFoundException;
+import fr.siamois.domain.models.exceptions.actionunit.FailedActionUnitSaveException;
 import fr.siamois.domain.models.exceptions.recordingunit.FailedRecordingUnitSaveException;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.history.ActionUnitHist;
@@ -257,19 +258,20 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit, Actio
     }
 
     @Override
-    public void save(Boolean validated) {
+    public boolean save(Boolean validated) {
 
         updateJpaEntityFromFormResponse(formResponse, unit);
         unit.setValidated(validated);
         try {
             actionUnitService.save(unit);
-        } catch (FailedRecordingUnitSaveException e) {
-            MessageUtils.displayErrorMessage(langBean, "common.entity.actionUnits.updateFailed", unit.getName());
-            return;
+        } catch (FailedActionUnitSaveException e) {
+            MessageUtils.displayErrorMessage(langBean, "common.entity.actionUnits.updateFailed", unit.getFullIdentifier());
+            return false;
         }
 
         refreshUnit();
-        MessageUtils.displayInfoMessage(langBean, "common.entity.actionUnits.updated", unit.getName());
+        MessageUtils.displayInfoMessage(langBean, "common.entity.actionUnits.updated", unit.getFullIdentifier());
+        return true;
     }
 
 

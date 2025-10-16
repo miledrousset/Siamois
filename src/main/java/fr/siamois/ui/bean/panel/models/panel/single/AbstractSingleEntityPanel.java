@@ -104,7 +104,12 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
 
     public abstract void visualise(H history);
 
-    public abstract void save(Boolean validated);
+    /**
+     * Save the current entity in the database.
+     * @param validated Set to true if the entity is validated.
+     * @return true if the entity has been saved, false if any error occurred
+     */
+    public abstract boolean save(Boolean validated);
 
     public boolean contentIsImage(String mimeType) {
         MimeType currentMimeType = MimeType.valueOf(mimeType);

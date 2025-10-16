@@ -22,6 +22,7 @@ import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepo
 import fr.siamois.infrastructure.database.repositories.team.TeamMemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -314,7 +315,11 @@ public class ActionUnitService implements ArkEntityService {
      */
     @Override
     public ArkEntity save(ArkEntity toSave) {
-        return actionUnitRepository.save((ActionUnit) toSave);
+        try {
+            return actionUnitRepository.save((ActionUnit) toSave);
+        } catch (DataIntegrityViolationException e) {
+            throw new FailedActionUnitSaveException(e.getMessage());
+        }
     }
 
     /**

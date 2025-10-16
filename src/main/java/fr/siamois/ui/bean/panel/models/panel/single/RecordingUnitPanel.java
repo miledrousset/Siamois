@@ -364,7 +364,7 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
     }
 
     @Override
-    public void save(Boolean validated) {
+    public boolean save(Boolean validated) {
 
         updateJpaEntityFromFormResponse(formResponse, unit);
         unit.setValidated(validated);
@@ -380,13 +380,13 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
         try {
             recordingUnitService.save(unit, unit.getType(), List.of(), List.of(), List.of());
         } catch (FailedRecordingUnitSaveException e) {
-            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
-            return;
+            MessageUtils.displayErrorMessage(langBean, "common.entity.recordingUnits.updateFailed", unit.getFullIdentifier());
+            return false;
         }
 
         refreshUnit();
-        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getFullIdentifier());
-
+        MessageUtils.displayInfoMessage(langBean, "common.entity.recordingUnits.updated", unit.getFullIdentifier());
+        return true;
     }
 
     public static class RecordingUnitPanelBuilder {

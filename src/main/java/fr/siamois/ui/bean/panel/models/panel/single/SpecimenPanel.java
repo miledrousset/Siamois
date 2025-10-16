@@ -386,7 +386,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
     }
 
     @Override
-    public void save(Boolean validated) {
+    public boolean save(Boolean validated) {
 
         updateJpaEntityFromFormResponse(formResponse, unit);
         unit.setValidated(validated);
@@ -401,13 +401,13 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
         try {
             specimenService.save(unit);
         } catch (FailedRecordingUnitSaveException e) {
-            MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getFullIdentifier());
-            return;
+            MessageUtils.displayErrorMessage(langBean, "common.entity.specimen.updateFailed", unit.getFullIdentifier());
+            return false;
         }
 
         refreshUnit();
-        MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getFullIdentifier());
-
+        MessageUtils.displayInfoMessage(langBean, "common.entity.specimen.updated", unit.getFullIdentifier());
+        return true;
     }
 
     public static class Builder {

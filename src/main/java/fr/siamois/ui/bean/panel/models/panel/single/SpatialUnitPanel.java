@@ -360,7 +360,7 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
 
 
     @Override
-    public void save(Boolean validated) {
+    public boolean save(Boolean validated) {
 
         // Recupération des champs systeme
 
@@ -373,11 +373,12 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
         }
         catch(FailedRecordingUnitSaveException e) {
             MessageUtils.displayErrorMessage(langBean, "common.entity.spatialUnits.updateFailed", unit.getName());
-            return ;
+            return false;
         }
 
         refreshUnit();
         MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", unit.getName());
+        return true;
     }
 
     public static class SpatialUnitPanelBuilder {
