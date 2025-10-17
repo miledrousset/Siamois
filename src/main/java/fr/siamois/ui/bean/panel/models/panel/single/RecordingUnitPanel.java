@@ -133,6 +133,16 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
         return List.of();
     }
 
+    @Override
+    protected String getFormScopePropertyName() {
+        return "type";
+    }
+
+    @Override
+    protected void setFormScopePropertyValue(Concept concept) {
+        unit.setType(concept);
+    }
+
     public LocalDate offsetDateTimeToLocalDate(OffsetDateTime offsetDT) {
         return offsetDT.toLocalDate();
     }
@@ -328,7 +338,6 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
         detailsForm = formService.findCustomFormByRecordingUnitTypeAndInstitutionId(unit.getType(), sessionSettingsBean.getSelectedInstitution());
         // Init system form answers
         formResponse = initializeFormResponse(detailsForm, unit);
-
     }
 
     @Override

@@ -102,6 +102,9 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     public static final String TYPE_FIELD_CODE = "SIARU.TYPE";
 
     @FieldCode
+    public static final String GEOMORPHO_CYCLE_FIELD_CODE = "SIARU.GEOMORPHO";
+
+    @FieldCode
     public static final String METHOD_FIELD_CODE = "SIARU.TYPE";
 
     @FieldCode
@@ -146,7 +149,7 @@ public class RecordingUnit extends RecordingUnitParent implements ArkEntity, Ref
     @JsonIgnore
     public List<String> getBindableFieldNames() {
         return List.of("creationTime", "startDate", "endDate", "fullIdentifier", "authors",
-                "excavators", "type", "secondaryType", "thirdType", "actionUnit", "spatialUnit");
+                "excavators", "type", "secondaryType", "thirdType", "actionUnit", "spatialUnit", "geomorphologicalCycle");
     }
 
     // ----------- Concepts for system fields

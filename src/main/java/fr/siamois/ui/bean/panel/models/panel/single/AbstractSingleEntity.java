@@ -24,11 +24,14 @@ import fr.siamois.ui.bean.panel.models.panel.AbstractPanel;
 import fr.siamois.ui.viewmodel.TreeUiStateViewModel;
 import fr.siamois.utils.DateUtils;
 import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIInput;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.AjaxBehaviorEvent;
+import jakarta.faces.event.ValueChangeEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.TreeNode;
 
 import java.beans.PropertyDescriptor;
@@ -148,18 +151,30 @@ public abstract class AbstractSingleEntity<T> extends AbstractPanel implements S
         return List.of();
     }
 
+    // Nom de la propriété qui fait eventuellement changer le formulaire
+    protected abstract String getFormScopePropertyName();
+    protected abstract void setFormScopePropertyValue(Concept concept);
+
+    protected void onFormScopeChanged(Concept newVal) {
+        setFormScopePropertyValue(newVal); // change type of unit to be able to init forms
+        initForms();
+    }
 
     public void setFieldAnswerHasBeenModified(CustomField field) {
         formResponse.getAnswers().get(field).setHasBeenModified(true);
         hasUnsavedModifications = true;
     }
 
-    public void setFieldConceptAnswerHasBeenModified(AjaxBehaviorEvent event) {
+    public void setFieldConceptAnswerHasBeenModified(SelectEvent<Concept> event) {
         UIComponent component = event.getComponent();
         CustomField field = (CustomField) component.getAttributes().get("field");
 
         formResponse.getAnswers().get(field).setHasBeenModified(true);
         hasUnsavedModifications = true;
+        if(field.getIsSystemField() && Objects.equals(field.getValueBinding(), getFormScopePropertyName())) {
+            Concept newValue =  event.getObject(); // ← la nouvelle valeur
+            onFormScopeChanged(newValue);
+        }
     }
 
 

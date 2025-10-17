@@ -43,9 +43,11 @@
         >
             <f:attribute name="fieldCode" value="#{cc.attrs.field.fieldCode}" />
             <f:attribute name="field" value="#{cc.attrs.field}" />
+            <f:attribute name="selected" value="#{cc.attrs.selectedConcept}"/>
 
             <!-- If defined, we need to update on select to synchronise secondary type choices -->
             <p:ajax
+                    event="itemSelect"
                     listener="#{cc.attrs.itemSelectListener}"
                     disabled="#{empty cc.attrs.itemSelectListener}"
                     update="#{cc.attrs.ajaxUpdateTargets}"

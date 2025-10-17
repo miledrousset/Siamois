@@ -37,6 +37,7 @@
                                                           field="#{cc.attrs.field}"
                                                           label="#{cc.attrs.label}"
                                                           required="#{cc.attrs.required}"
+                                                          ajaxProcessTargets="@this"
                                                           itemSelectListener="#{cc.attrs.panelModel.setFieldConceptAnswerHasBeenModified}"
                                                           editConceptUrl="#{spatialUnitFieldBean.getUrlForFieldCode(cc.attrs.fieldCode)}"/>
             </f:facet>
