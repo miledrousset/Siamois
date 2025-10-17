@@ -20,6 +20,8 @@ import fr.siamois.domain.services.vocabulary.ConceptService;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionCodeRepository;
 import fr.siamois.infrastructure.database.repositories.actionunit.ActionUnitRepository;
 import fr.siamois.infrastructure.database.repositories.team.TeamMemberRepository;
+import fr.siamois.ui.bean.SessionSettingsBean;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -37,6 +39,8 @@ import java.util.*;
  */
 @Slf4j
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class ActionUnitService implements ArkEntityService {
 
     private final ActionUnitRepository actionUnitRepository;
@@ -45,18 +49,6 @@ public class ActionUnitService implements ArkEntityService {
     private final PermissionServiceImpl permissionService;
     private final TeamMemberRepository teamMemberRepository;
     private final InstitutionService institutionService;
-
-    public ActionUnitService(ActionUnitRepository actionUnitRepository,
-                             ConceptService conceptService, ActionCodeRepository actionCodeRepository,
-                             PermissionServiceImpl permissionService,
-                             TeamMemberRepository teamMemberRepository, InstitutionService institutionService) {
-        this.actionUnitRepository = actionUnitRepository;
-        this.conceptService = conceptService;
-        this.actionCodeRepository = actionCodeRepository;
-        this.permissionService = permissionService;
-        this.teamMemberRepository = teamMemberRepository;
-        this.institutionService = institutionService;
-    }
 
     /**
      * Find all Action Units by institution, name, categories, persons, and global search.
@@ -316,7 +308,8 @@ public class ActionUnitService implements ArkEntityService {
     @Override
     public ArkEntity save(ArkEntity toSave) {
         try {
-            return actionUnitRepository.save((ActionUnit) toSave);
+            ActionUnit unit = (ActionUnit) toSave;
+            return actionUnitRepository.save(unit);
         } catch (DataIntegrityViolationException e) {
             throw new FailedActionUnitSaveException(e.getMessage());
         }
