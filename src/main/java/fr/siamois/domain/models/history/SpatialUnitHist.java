@@ -9,6 +9,7 @@ import org.hibernate.annotations.Immutable;
 
 import java.time.OffsetDateTime;
 
+@Deprecated
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity

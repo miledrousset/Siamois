@@ -5,6 +5,7 @@ import fr.siamois.utils.HistoryCopyUtils;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 
+@Deprecated
 public interface HistoryEntry<T> extends Serializable {
     Long getTableId();
     OffsetDateTime getUpdateTime();

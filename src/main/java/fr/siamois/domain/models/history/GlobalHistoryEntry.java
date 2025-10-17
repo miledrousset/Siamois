@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.time.OffsetDateTime;
 
+@Deprecated
 @Data
 @AllArgsConstructor
 public class GlobalHistoryEntry {
