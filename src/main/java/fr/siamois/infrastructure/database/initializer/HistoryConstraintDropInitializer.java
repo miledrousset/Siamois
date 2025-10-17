@@ -13,6 +13,7 @@ import java.util.List;
 @Slf4j
 @Service
 @Order(6)
+@Deprecated
 public class HistoryConstraintDropInitializer implements DatabaseInitializer {
 
     private final HikariDataSource hikariDataSource;

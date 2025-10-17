@@ -18,6 +18,7 @@ import java.util.List;
 @Slf4j
 @Component
 @Order(2)
+@Deprecated
 public class HistoryTriggerInitializer implements DatabaseInitializer {
 
     private final HikariDataSource dataSource;
