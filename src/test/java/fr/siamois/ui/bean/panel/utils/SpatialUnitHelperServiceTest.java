@@ -31,7 +31,6 @@ class SpatialUnitHelperServiceTest {
     @InjectMocks
     private SpatialUnitHelperService spatialUnitHelperService;
 
-    private SpatialUnit spatialUnit;
     private PrimeFaces mockPrimeFaces;
 
     @Mock
@@ -40,7 +39,6 @@ class SpatialUnitHelperServiceTest {
 
     @BeforeEach
     void setUp() {
-        spatialUnit = mock(SpatialUnit.class);
 
         // Mock PrimeFaces
         mockPrimeFaces = mock(PrimeFaces.class);
