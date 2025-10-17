@@ -4,6 +4,7 @@ import fr.siamois.domain.models.institution.Institution;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -11,7 +12,7 @@ import java.util.Objects;
 @Data
 @Entity
 @Table(name = "ark", schema = "public")
-@Audited
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class Ark implements Serializable {
 
     @Id

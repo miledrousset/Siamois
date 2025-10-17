@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -12,7 +13,7 @@ import java.util.Objects;
 @Data
 @Entity
 @Table(name = "vocabulary", schema = "public")
-@Audited
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class Vocabulary implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

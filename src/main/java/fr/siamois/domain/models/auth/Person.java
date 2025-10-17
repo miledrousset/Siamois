@@ -9,6 +9,7 @@ import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -22,7 +23,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "person", schema = "public")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
-@Audited
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class Person implements UserDetails {
 
     // This limit allows the UI to be controlled
