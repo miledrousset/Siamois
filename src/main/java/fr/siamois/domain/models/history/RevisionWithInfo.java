@@ -9,7 +9,7 @@ import java.util.Objects;
 public record RevisionWithInfo<T>(T entity, InfoRevisionEntity revisionEntity,
                                   RevisionType revisionType) implements Comparable<RevisionWithInfo<T>> {
     public OffsetDateTime getDate() {
-        Instant instant = Instant.ofEpochMilli(revisionEntity.getTimestamp());
+        Instant instant = Instant.ofEpochMilli(revisionEntity.getEpochTimestamp());
         return OffsetDateTime.ofInstant(instant, OffsetDateTime.now().getOffset());
     }
 
@@ -20,9 +20,9 @@ public record RevisionWithInfo<T>(T entity, InfoRevisionEntity revisionEntity,
      */
     @Override
     public int compareTo(RevisionWithInfo<T> o) {
-        int cmp = Long.compare(revisionEntity.getTimestamp(), o.revisionEntity.getTimestamp());
+        int cmp = Long.compare(revisionEntity.getEpochTimestamp(), o.revisionEntity.getEpochTimestamp());
         if (cmp != 0) return cmp * -1;
-        return Integer.compare(revisionEntity.getId(), o.revisionEntity.getId()) * -1;
+        return Long.compare(revisionEntity.getRevId(), o.revisionEntity.getRevId()) * -1;
     }
 
     @Override

@@ -48,8 +48,8 @@ class HistoryAuditServiceTest {
         InfoRevisionEntity e1 = new InfoRevisionEntity();
         InfoRevisionEntity e2 = new InfoRevisionEntity();
 
-        e1.setTimestamp(1212L);
-        e2.setTimestamp(3434L);
+        e1.setEpochTimestamp(1212L);
+        e2.setEpochTimestamp(3434L);
 
         Object[] row1 = new Object[] { "entity1-v1", e1, RevisionType.ADD };
         Object[] row2 = new Object[] { "entity1-v2", e2, RevisionType.MOD };

@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
+import org.hibernate.envers.RevisionNumber;
+import org.hibernate.envers.RevisionTimestamp;
 
 /**
  * Custom revision entity to store additional information about revisions.
@@ -18,11 +20,19 @@ import org.hibernate.envers.RevisionEntity;
  */
 @Entity
 @RevisionEntity
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode
 @Data
 @Table(name = "revinfo")
 @EntityListeners(InfoRevisionListener.class)
-public class InfoRevisionEntity extends DefaultRevisionEntity {
+public class InfoRevisionEntity {
+
+    @Id
+    @GeneratedValue
+    @RevisionNumber
+    private long revId;
+
+    @RevisionTimestamp
+    private long epochTimestamp;
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
