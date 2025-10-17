@@ -84,9 +84,8 @@ public class SpatialUnitService implements ArkEntityService {
      * @param history The history of the spatial unit to restore
      */
     public void restore(RevisionWithInfo<SpatialUnit> history) {
-//        SpatialUnit spatialUnit = history.createOriginal(SpatialUnit.class);
-//        log.trace(spatialUnit.toString());
-//        spatialUnitRepository.save(spatialUnit);
+        SpatialUnit revision = history.entity();
+        spatialUnitRepository.save(revision);
     }
 
     private Page<SpatialUnit> initializeSpatialUnitLazyAttributes(Page<SpatialUnit> list) {

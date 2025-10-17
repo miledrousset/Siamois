@@ -325,7 +325,6 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
 
     public void restore(RevisionWithInfo<SpatialUnit> history) {
         spatialUnitHelperService.restore(history);
-        // refresh panel
         init();
         MessageUtils.displayInfoMessage(langBean, "common.entity.spatialUnits.updated", history.getDate().toString());
     }
