@@ -107,7 +107,7 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
                              AbstractSingleEntity.Deps deps, SpecimenService specimenService, HistoryAuditService historyAuditService) {
 
         super("common.entity.spatialUnit", "bi bi-geo-alt", "siamois-panel spatial-unit-panel single-panel",
-                documentCreationBean, deps);
+                documentCreationBean, deps, historyAuditService);
         this.recordingUnitService = recordingUnitService;
         this.sessionSettings = sessionSettings;
         this.spatialUnitHelperService = spatialUnitHelperService;

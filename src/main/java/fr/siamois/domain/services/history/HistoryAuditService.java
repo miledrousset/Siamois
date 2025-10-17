@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.RevisionType;
 import org.hibernate.envers.query.AuditEntity;
+import org.hibernate.envers.query.AuditQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,6 +40,22 @@ public class HistoryAuditService {
         }
 
         return results.stream().toList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> RevisionWithInfo<T> findLastRevisionForEntity(Class<T> entityClass, Long entityId) {
+        AuditQuery query = auditReader.createQuery().forRevisionsOfEntity(entityClass, false, false);
+        query.add(AuditEntity.id().eq(entityId));
+        query.add(AuditEntity.revisionNumber().maximize().computeAggregationInInstanceContext());
+
+        Object[] result = (Object[]) query.getSingleResult();
+
+        return new RevisionWithInfo<>(
+                (T) result[0],
+                (InfoRevisionEntity) result[1],
+                (RevisionType) result[2]
+        );
+
     }
 
 }

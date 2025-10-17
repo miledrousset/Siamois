@@ -179,7 +179,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen>  implemen
         super("common.entity.specimen",
                 "bi bi-box2",
                 "siamois-panel specimen-panel single-panel",
-                documentCreationBean, deps);
+                documentCreationBean, deps, historyAuditService);
         this.langBean = langBean;
         this.recordingUnitService = recordingUnitService;
         this.personService = personService;

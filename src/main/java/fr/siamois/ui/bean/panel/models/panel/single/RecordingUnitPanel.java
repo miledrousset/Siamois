@@ -96,7 +96,7 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
         super("common.entity.recordingunit",
                 "bi bi-pencil-square",
                 "siamois-panel recording-unit-panel single-panel",
-                documentCreationBean, deps);
+                documentCreationBean, deps, historyAuditService);
         this.langBean = langBean;
         this.recordingUnitService = recordingUnitService;
         this.personService = personService;

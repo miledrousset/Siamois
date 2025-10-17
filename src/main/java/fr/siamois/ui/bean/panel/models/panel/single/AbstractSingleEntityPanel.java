@@ -6,6 +6,7 @@ import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
 import fr.siamois.domain.models.history.RevisionWithInfo;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
+import fr.siamois.domain.services.history.HistoryAuditService;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.panel.single.tab.*;
 import io.micrometer.common.lang.Nullable;
@@ -32,6 +33,7 @@ public abstract class AbstractSingleEntityPanel<T> extends AbstractSingleEntity<
     public static final String RECORDING_UNIT_FORM_RECORDING_UNIT_TABS = "recordingUnitForm:recordingUnitTabs";
     // Deps
     protected final transient DocumentCreationBean documentCreationBean;
+    protected final transient HistoryAuditService historyAuditService;
 
     //--------------- Locals
 
@@ -52,8 +54,9 @@ public abstract class AbstractSingleEntityPanel<T> extends AbstractSingleEntity<
     protected long totalParentsCount = 0;
     protected transient List<Concept> selectedCategoriesParents;
 
-
     protected transient List<PanelTab> tabs;
+
+    protected transient RevisionWithInfo<T> bufferedLastRevision;
 
     @Override
     public String display() {
@@ -77,9 +80,11 @@ public abstract class AbstractSingleEntityPanel<T> extends AbstractSingleEntity<
     protected AbstractSingleEntityPanel(String titleCodeOrTitle,
                                         String icon, String panelClass,
                                         DocumentCreationBean documentCreationBean,
-                                        AbstractSingleEntity.Deps deps) {
+                                        AbstractSingleEntity.Deps deps,
+                                        HistoryAuditService historyAuditService) {
         super(titleCodeOrTitle, icon, panelClass, deps);
         this.documentCreationBean = documentCreationBean;
+        this.historyAuditService = historyAuditService;
 
         // Overview tab
         tabs = new ArrayList<>();
@@ -179,4 +184,15 @@ public abstract class AbstractSingleEntityPanel<T> extends AbstractSingleEntity<
         return null; // N/A for others
     }
 
+    @SuppressWarnings("unchecked")
+    public String lastUpdateDate() {
+        bufferedLastRevision = (RevisionWithInfo<T>) historyAuditService.findLastRevisionForEntity(unit.getClass(), idunit);
+        return bufferedLastRevision.getDate().toString();
+    }
+
+    public String lastUpdater() {
+        String result = bufferedLastRevision.revisionEntity().getUpdatedBy().displayName();
+        bufferedLastRevision = null;
+        return result;
+    }
 }

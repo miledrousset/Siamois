@@ -102,7 +102,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit> imple
                            RecordingUnitService recordingUnitService,
                            AbstractSingleEntity.Deps deps, SpecimenService specimenService, HistoryAuditService historyAuditService) {
         super("Unité d'action", "bi bi-arrow-down-square", "siamois-panel action-unit-panel single-panel",
-                documentCreationBean, deps);
+                documentCreationBean, deps, historyAuditService);
 
         this.langBean = langBean;
         this.fieldService = fieldService;
