@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.DefaultValue;
 import lombok.Data;
+import org.hibernate.envers.Audited;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -19,6 +20,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "institution")
+@Audited
 public class Institution implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

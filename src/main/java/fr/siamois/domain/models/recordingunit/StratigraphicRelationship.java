@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 
 import java.util.Objects;
 
@@ -13,6 +14,7 @@ import java.util.Objects;
 @Table(name = "stratigraphic_relationship")
 @Getter
 @Setter
+@Audited
 public class StratigraphicRelationship {
 
     @EmbeddedId

@@ -16,6 +16,7 @@ import fr.siamois.domain.models.form.customform.CustomRow;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.envers.Audited;
 
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +28,7 @@ import static fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity.
 @Data
 @Entity
 @Table(name = "specimen")
+@Audited
 public class Specimen extends SpecimenParent implements ArkEntity {
 
     public Specimen() {

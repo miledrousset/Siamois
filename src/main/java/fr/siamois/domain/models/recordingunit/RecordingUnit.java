@@ -19,6 +19,8 @@ import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.envers.Audited;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,11 +33,9 @@ import static fr.siamois.ui.bean.panel.models.panel.single.AbstractSingleEntity.
 @Data
 @Entity
 @Table(name = "recording_unit")
+@NoArgsConstructor
+@Audited
 public class RecordingUnit extends RecordingUnitParent implements ArkEntity, ReferencableEntity {
-
-    public RecordingUnit() {
-
-    }
 
     public RecordingUnit(RecordingUnit recordingUnit) {
         setType(recordingUnit.getType());

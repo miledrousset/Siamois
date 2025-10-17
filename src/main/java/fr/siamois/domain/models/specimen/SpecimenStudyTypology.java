@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 
 import java.util.Objects;
 
@@ -12,6 +13,7 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table(name = "specimen_study_typology", schema = "public")
+@Audited
 public class SpecimenStudyTypology {
     @EmbeddedId
     private SpecimenStudyTypologyId id;

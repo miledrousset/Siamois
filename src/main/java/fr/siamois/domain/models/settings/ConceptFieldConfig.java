@@ -14,7 +14,6 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@EqualsAndHashCode
 @Table(name = "concept_field_config")
 public class ConceptFieldConfig {
 

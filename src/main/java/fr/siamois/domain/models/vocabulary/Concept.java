@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.envers.Audited;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -12,6 +13,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "concept")
 @NoArgsConstructor
+@Audited
 public class Concept implements Serializable {
 
     // Copy constructor
