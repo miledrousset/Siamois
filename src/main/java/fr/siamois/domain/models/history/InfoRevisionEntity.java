@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
 import org.hibernate.envers.RevisionNumber;
 import org.hibernate.envers.RevisionTimestamp;
