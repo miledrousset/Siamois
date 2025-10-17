@@ -32,10 +32,6 @@ class HistoryAuditServiceTest {
     @InjectMocks
     HistoryAuditService service;
 
-    @BeforeEach
-    void setUp() {
-    }
-
     @AfterEach
     void tearDown() {
         clearInvocations(reader);
@@ -63,7 +59,7 @@ class HistoryAuditServiceTest {
 
         assertEquals(2, results.size());
         verify(reader).createQuery();
-        verify(queryCreator).forRevisionsOfEntity(eq(String.class), eq(false), eq(true));
+        verify(queryCreator).forRevisionsOfEntity(String.class,false, true);
         verify(query).getResultList();
     }
 

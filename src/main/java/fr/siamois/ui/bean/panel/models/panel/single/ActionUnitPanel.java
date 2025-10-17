@@ -62,8 +62,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit> imple
     private final TeamMembersBean teamMembersBean;
     private final transient RecordingUnitService recordingUnitService;
     private final transient SpecimenService specimenService;
-    private final HistoryAuditService historyAuditService;
-
 
     // For entering new code
     private ActionCode newCode;
@@ -111,7 +109,6 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnit> imple
         this.teamMembersBean = teamMembersBean;
         this.recordingUnitService = recordingUnitService;
         this.specimenService = specimenService;
-        this.historyAuditService = historyAuditService;
     }
 
 

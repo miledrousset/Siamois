@@ -49,23 +49,6 @@ class SpatialUnitHelperServiceTest {
     }
 
     @Test
-    void testVisualise() {
-        // TODO: Implement test when spatialUnitHelperService.visualise is defined
-    }
-
-    @Test
-    void testRestore() {
-        // TODO: Implement test when spatialUnitService.restore is defined
-    }
-
-
-
-    @Test
-    void testFindHistory() {
-        // TODO: Implement test when historyService.findSpatialUnitHistory is defined
-    }
-
-    @Test
     void testReinitialize() {
         Consumer<SpatialUnit> spatialUnitSetter = mock(Consumer.class);
         Consumer<String> spatialUnitErrorMessageSetter = mock(Consumer.class);

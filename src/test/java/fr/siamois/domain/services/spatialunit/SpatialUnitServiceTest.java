@@ -289,12 +289,6 @@ class SpatialUnitServiceTest {
     }
 
     @Test
-    void restore_Success() {
-
-    }
-
-
-    @Test
     void findAllOfInstitution_Success() {
         // Arrange
         Institution institution = new Institution();

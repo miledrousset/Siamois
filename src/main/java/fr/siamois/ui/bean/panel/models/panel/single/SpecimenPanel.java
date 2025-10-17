@@ -59,7 +59,6 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen>  implemen
     private final transient RedirectBean redirectBean;
     private final transient SpecimenService specimenService;
     protected final transient ConceptService conceptService;
-    private final HistoryAuditService historyAuditService;
 
     @Override
     protected boolean documentExistsInUnitByHash(Specimen unit, String hash) {

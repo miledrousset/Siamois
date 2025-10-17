@@ -67,8 +67,6 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
     private final transient RedirectBean redirectBean;
     protected final transient ConceptService conceptService;
     private final transient SpecimenService specimenService;
-    private final HistoryAuditService historyAuditService;
-
 
     // ---------- Locals
     // RU
@@ -103,7 +101,6 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
         this.conceptService = conceptService;
         this.redirectBean = redirectBean;
         this.specimenService = specimenService;
-        this.historyAuditService = historyAuditService;
     }
 
 

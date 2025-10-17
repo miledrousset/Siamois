@@ -70,8 +70,6 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
     private final transient LabelService labelService;
     private final transient LangBean langBean;
     private final transient PersonService personService;
-    private final HistoryAuditService historyAuditService;
-
 
     private String spatialUnitErrorMessage;
     private transient List<SpatialUnit> spatialUnitList;
@@ -117,7 +115,6 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
         this.langBean = langBean;
         this.personService = personService;
         this.specimenService = specimenService;
-        this.historyAuditService = historyAuditService;
     }
 
 
