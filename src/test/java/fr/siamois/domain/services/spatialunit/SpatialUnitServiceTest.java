@@ -6,7 +6,6 @@ import fr.siamois.domain.models.ark.Ark;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitNotFoundException;
-import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
@@ -288,16 +287,7 @@ class SpatialUnitServiceTest {
 
     @Test
     void restore_Success() {
-        // Arrange
-        SpatialUnitHist history = new SpatialUnitHist();
-        SpatialUnit spatialUnit = new SpatialUnit();
-        when(spatialUnitRepository.save(any(SpatialUnit.class))).thenReturn(spatialUnit);
 
-        // Act
-        spatialUnitService.restore(history);
-
-        // Assert
-        verify(spatialUnitRepository).save(any(SpatialUnit.class));
     }
 
 

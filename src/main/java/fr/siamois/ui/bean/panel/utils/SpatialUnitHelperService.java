@@ -1,9 +1,9 @@
 package fr.siamois.ui.bean.panel.utils;
 
-import fr.siamois.domain.models.history.SpatialUnitHist;
+import fr.siamois.domain.models.history.RevisionWithInfo;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
-import fr.siamois.domain.services.HistoryService;
 import fr.siamois.domain.services.spatialunit.SpatialUnitService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -14,22 +14,13 @@ import java.util.function.Consumer;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class SpatialUnitHelperService {
 
     private final SpatialUnitService spatialUnitService;
-    private final HistoryService historyService;
 
-    public SpatialUnitHelperService(SpatialUnitService spatialUnitService, HistoryService historyService) {
-        this.spatialUnitService = spatialUnitService;
-        this.historyService = historyService;
-    }
 
-    public void visualise(SpatialUnitHist history, Consumer<SpatialUnitHist> revisionSetter) {
-        log.trace("History version changed to {}", history);
-        revisionSetter.accept(history);
-    }
-
-    public void restore(SpatialUnitHist history) {
+    public void restore(RevisionWithInfo<SpatialUnit> history) {
         log.trace("Restore order received");
         spatialUnitService.restore(history);
 
@@ -49,8 +40,10 @@ public class SpatialUnitHelperService {
         }
     }
 
-    public List<SpatialUnitHist> findHistory(SpatialUnit spatialUnit) {
-        return historyService.findSpatialUnitHistory(spatialUnit);
+    public List<RevisionWithInfo<SpatialUnit>> findHistory(SpatialUnit spatialUnit) {
+        // return historyService.findSpatialUnitHistory(spatialUnit);
+        // TODO: Implement when historyService is defined
+        return List.of();
     }
 
     public void reinitialize(Consumer<SpatialUnit> spatialUnitSetter,

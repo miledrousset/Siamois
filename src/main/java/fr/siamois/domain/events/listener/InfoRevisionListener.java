@@ -8,10 +8,12 @@ import fr.siamois.infrastructure.database.repositories.institution.InstitutionRe
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.ui.bean.SessionSettingsBean;
 import jakarta.persistence.PrePersist;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import javax.faces.bean.SessionScoped;
+
+@SessionScoped
 @Component
 public class InfoRevisionListener {
 

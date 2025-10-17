@@ -12,11 +12,11 @@ import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customform.CustomFormPanel;
 import fr.siamois.domain.models.form.customform.CustomRow;
-import fr.siamois.domain.models.history.SpecimenHist;
+import fr.siamois.domain.models.history.RevisionWithInfo;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.specimen.Specimen;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.domain.services.HistoryService;
+import fr.siamois.domain.services.history.HistoryAuditService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.specimen.SpecimenService;
@@ -26,8 +26,9 @@ import fr.siamois.ui.bean.RedirectBean;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
 import fr.siamois.ui.bean.panel.models.PanelBreadcrumb;
 import fr.siamois.utils.MessageUtils;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.springframework.beans.factory.ObjectProvider;
@@ -43,10 +44,11 @@ import java.util.List;
 
 @Slf4j
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-@Data
+@Getter
+@Setter
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenHist>  implements Serializable {
+public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen>  implements Serializable {
 
     // Deps
     protected final transient LangBean langBean;
@@ -56,8 +58,8 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
     protected final transient PersonService personService;
     private final transient RedirectBean redirectBean;
     private final transient SpecimenService specimenService;
-    private final transient HistoryService historyService;
     protected final transient ConceptService conceptService;
+    private final HistoryAuditService historyAuditService;
 
     @Override
     protected boolean documentExistsInUnitByHash(Specimen unit, String hash) {
@@ -172,7 +174,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
                             DocumentCreationBean documentCreationBean,
                             RedirectBean redirectBean,
                             AbstractSingleEntity.Deps deps,
-                            HistoryService historyService) {
+                            HistoryAuditService historyAuditService) {
 
         super("common.entity.specimen",
                 "bi bi-box2",
@@ -184,7 +186,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
         this.specimenService = specimenService;
         this.conceptService = conceptService;
         this.redirectBean = redirectBean;
-        this.historyService = historyService;
+        this.historyAuditService = historyAuditService;
     }
 
     @Override
@@ -226,7 +228,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
         }
 
 
-        historyVersion = historyService.findSpecimenHistory(unit);
+        history = historyAuditService.findAllRevisionForEntity(Specimen.class, idunit);
         documents = documentService.findForSpecimen(unit);
     }
 
@@ -371,7 +373,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen, SpecimenH
     }
 
     @Override
-    public void visualise(SpecimenHist history) {
+    public void visualise(RevisionWithInfo<Specimen> history) {
         // todo: implement
     }
 

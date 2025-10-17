@@ -14,11 +14,11 @@ import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswerSelectMu
 import fr.siamois.domain.models.form.customform.CustomCol;
 import fr.siamois.domain.models.form.customform.CustomForm;
 import fr.siamois.domain.models.form.customformresponse.CustomFormResponse;
-import fr.siamois.domain.models.history.RecordingUnitHist;
+import fr.siamois.domain.models.history.RevisionWithInfo;
 import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
-import fr.siamois.domain.services.HistoryService;
+import fr.siamois.domain.services.history.HistoryAuditService;
 import fr.siamois.domain.services.person.PersonService;
 import fr.siamois.domain.services.recordingunit.RecordingUnitService;
 import fr.siamois.domain.services.specimen.SpecimenService;
@@ -32,8 +32,9 @@ import fr.siamois.ui.lazydatamodel.RecordingUnitChildrenLazyDataModel;
 import fr.siamois.ui.lazydatamodel.RecordingUnitParentsLazyDataModel;
 import fr.siamois.ui.lazydatamodel.SpecimenInRecordingUnitLazyDataModel;
 import fr.siamois.utils.MessageUtils;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -53,19 +54,20 @@ import java.util.Set;
 
 @Slf4j
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-@Data
+@Getter
+@Setter
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel<RecordingUnit, RecordingUnitHist>  implements Serializable {
+public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel<RecordingUnit>  implements Serializable {
 
     // Deps
     protected final transient LangBean langBean;
     protected final transient RecordingUnitService recordingUnitService;
     protected final transient PersonService personService;
     private final transient RedirectBean redirectBean;
-    private final transient HistoryService historyService;
     protected final transient ConceptService conceptService;
     private final transient SpecimenService specimenService;
+    private final HistoryAuditService historyAuditService;
 
 
     // ---------- Locals
@@ -88,9 +90,8 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
                                  PersonService personService, ConceptService conceptService,
                                  DocumentCreationBean documentCreationBean,
                                  RedirectBean redirectBean,
-                                 HistoryService historyService,
                                  AbstractSingleEntity.Deps deps,
-                                 SpecimenService specimenService) {
+                                 SpecimenService specimenService, HistoryAuditService historyAuditService) {
 
         super("common.entity.recordingunit",
                 "bi bi-pencil-square",
@@ -101,8 +102,8 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
         this.personService = personService;
         this.conceptService = conceptService;
         this.redirectBean = redirectBean;
-        this.historyService = historyService;
         this.specimenService = specimenService;
+        this.historyAuditService = historyAuditService;
     }
 
 
@@ -266,7 +267,7 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
         }
 
 
-        historyVersion = historyService.findRecordingUnitHistory(unit);
+        history = historyAuditService.findAllRevisionForEntity(RecordingUnit.class, idunit);
         documents = documentService.findForRecordingUnit(unit);
     }
 
@@ -344,7 +345,7 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
     }
 
     @Override
-    public void visualise(RecordingUnitHist history) {
+    public void visualise(RevisionWithInfo<RecordingUnit> history) {
         // todo: implement
     }
 

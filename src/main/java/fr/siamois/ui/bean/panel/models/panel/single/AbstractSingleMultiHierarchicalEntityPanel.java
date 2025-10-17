@@ -6,7 +6,7 @@ import fr.siamois.ui.lazydatamodel.BaseLazyDataModel;
 
 import java.io.Serializable;
 
-public abstract class AbstractSingleMultiHierarchicalEntityPanel<T, H> extends AbstractSingleEntityPanel<T, H>  implements Serializable {
+public abstract class AbstractSingleMultiHierarchicalEntityPanel<T> extends AbstractSingleEntityPanel<T>  implements Serializable {
 
     protected AbstractSingleMultiHierarchicalEntityPanel(String titleCodeOrTitle, String icon, String panelClass, DocumentCreationBean documentCreationBean,
                                         AbstractSingleEntity.Deps deps) {

@@ -3,6 +3,7 @@ package fr.siamois.ui.bean.panel.models.panel.single;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
 import fr.siamois.domain.models.exceptions.vocabulary.NoConfigForFieldException;
+import fr.siamois.domain.models.history.RevisionWithInfo;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.models.vocabulary.Vocabulary;
 import fr.siamois.ui.bean.dialog.document.DocumentCreationBean;
@@ -26,7 +27,7 @@ import java.util.List;
 @Getter
 @Setter
 @Slf4j
-public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEntity<T>  implements Serializable {
+public abstract class AbstractSingleEntityPanel<T> extends AbstractSingleEntity<T>  implements Serializable {
 
     public static final String RECORDING_UNIT_FORM_RECORDING_UNIT_TABS = "recordingUnitForm:recordingUnitTabs";
     // Deps
@@ -37,8 +38,8 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
     protected Integer activeTabIndex; // Keeping state of active tab
     protected transient T backupClone;
     protected String errorMessage;
-    protected transient List<H> historyVersion;
-    protected transient H revisionToDisplay = null;
+    protected transient List<RevisionWithInfo<T>> history;
+    protected transient RevisionWithInfo<T> revisionToDisplay = null;
     protected Long idunit;  // ID of the spatial unit
     protected transient List<Document> documents;
 
@@ -102,7 +103,7 @@ public abstract class AbstractSingleEntityPanel<T, H> extends AbstractSingleEnti
 
     public abstract void cancelChanges();
 
-    public abstract void visualise(H history);
+    public abstract void visualise(RevisionWithInfo<T> history);
 
     /**
      * Save the current entity in the database.

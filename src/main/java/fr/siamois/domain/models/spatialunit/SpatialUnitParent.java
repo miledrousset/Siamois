@@ -8,7 +8,6 @@ import fr.siamois.domain.models.vocabulary.Concept;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.Audited;
 import org.locationtech.jts.geom.MultiPolygon;
 
