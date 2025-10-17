@@ -18,6 +18,7 @@ import java.util.List;
 
 @Slf4j
 @Repository
+@Deprecated
 public class GlobalHistoryInstitRepository implements GlobalHistoryRepository {
 
     private final HikariDataSource hikariDataSource;

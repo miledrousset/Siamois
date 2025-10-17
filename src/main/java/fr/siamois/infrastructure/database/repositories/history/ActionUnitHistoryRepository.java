@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
+@Deprecated
 public interface ActionUnitHistoryRepository extends CrudRepository<ActionUnitHist, Long> {
 
     @Query(

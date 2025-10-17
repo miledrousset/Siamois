@@ -10,6 +10,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
+@Deprecated
 public interface GlobalHistoryRepository {
     List<GlobalHistoryEntry> findAllHistoryOfUserBetween(String tableName, UserInfo userInfo, OffsetDateTime start, OffsetDateTime end) throws SQLException;
     List<TraceableEntity> findAllCreationOfUserBetween(String tableName, UserInfo userInfo, OffsetDateTime start, OffsetDateTime end) throws SQLException;

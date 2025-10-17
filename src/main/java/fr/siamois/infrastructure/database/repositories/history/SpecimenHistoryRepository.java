@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
+@Deprecated
 public interface SpecimenHistoryRepository extends CrudRepository<SpecimenHist, Long> {
 
     @Query(

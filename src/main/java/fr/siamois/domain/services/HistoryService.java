@@ -23,6 +23,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
+@Deprecated
 public class HistoryService {
 
     private final SpatialUnitHistoryRepository spatialUnitHistoryRepository;
