@@ -1,20 +1,13 @@
 package fr.siamois.domain.models.history;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.hibernate.envers.RevisionType;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
-@Getter
-@AllArgsConstructor
-public class RevisionWithInfo<T> implements Comparable<RevisionWithInfo<T>> {
-    private final T entity;
-    private final InfoRevisionEntity revisionEntity;
-    private final RevisionType revisionType;
-
+public record RevisionWithInfo<T>(T entity, InfoRevisionEntity revisionEntity,
+                                  RevisionType revisionType) implements Comparable<RevisionWithInfo<T>> {
     public OffsetDateTime getDate() {
         Instant instant = Instant.ofEpochMilli(revisionEntity.getTimestamp());
         return OffsetDateTime.ofInstant(instant, OffsetDateTime.now().getOffset());

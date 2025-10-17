@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.time.OffsetDateTime;
 import java.util.Objects;
@@ -75,6 +76,7 @@ public abstract class RecordingUnitParent extends TraceableEntity {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE}
     )
     @JoinColumn(name = "fk_custom_form_response", referencedColumnName = "custom_form_response_id")
+    @NotAudited
     protected CustomFormResponse formResponse;
 
     @ManyToOne

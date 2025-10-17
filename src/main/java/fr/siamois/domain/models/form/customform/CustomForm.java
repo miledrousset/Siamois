@@ -3,6 +3,7 @@ package fr.siamois.domain.models.form.customform;
 import fr.siamois.domain.services.attributeconverter.CustomFormLayoutConverter;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.envers.Audited;
 
 import java.io.Serializable;
 import java.util.ArrayList;

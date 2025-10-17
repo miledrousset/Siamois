@@ -7,6 +7,7 @@ import fr.siamois.domain.models.recordingunit.RecordingUnit;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
 
 import java.io.Serializable;
 import java.util.HashMap;
