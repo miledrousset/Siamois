@@ -185,7 +185,6 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<Specimen>  implemen
         this.specimenService = specimenService;
         this.conceptService = conceptService;
         this.redirectBean = redirectBean;
-        this.historyAuditService = historyAuditService;
     }
 
     @Override
