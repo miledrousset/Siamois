@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AuditConfiguration {
+public class AuditSettings {
 
     @Bean
     public AuditReader auditReader(EntityManagerFactory entityManagerFactory) {

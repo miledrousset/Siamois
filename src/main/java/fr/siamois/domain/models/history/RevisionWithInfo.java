@@ -13,9 +13,16 @@ public record RevisionWithInfo<T>(T entity, InfoRevisionEntity revisionEntity,
         return OffsetDateTime.ofInstant(instant, OffsetDateTime.now().getOffset());
     }
 
+    /**
+     * Compare first by timestamp, then by revision id to avoid equality when two revisions have the same timestamp in descending order.
+     * @param o the other revision
+     * @return the comparison result
+     */
     @Override
     public int compareTo(RevisionWithInfo<T> o) {
-        return Long.compare(revisionEntity.getTimestamp(), o.revisionEntity.getTimestamp());
+        int cmp = Long.compare(revisionEntity.getTimestamp(), o.revisionEntity.getTimestamp());
+        if (cmp != 0) return cmp * -1;
+        return Integer.compare(revisionEntity.getId(), o.revisionEntity.getId()) * -1;
     }
 
     @Override
