@@ -6,7 +6,6 @@ import fr.siamois.domain.models.ark.Ark;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitAlreadyExistsException;
 import fr.siamois.domain.models.exceptions.spatialunit.SpatialUnitNotFoundException;
-import fr.siamois.domain.models.history.SpatialUnitHist;
 import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.settings.InstitutionSettings;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
@@ -28,7 +27,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -285,21 +287,6 @@ class SpatialUnitServiceTest {
 
         assertEquals("Database error", exception.getMessage());
     }
-
-    @Test
-    void restore_Success() {
-        // Arrange
-        SpatialUnitHist history = new SpatialUnitHist();
-        SpatialUnit spatialUnit = new SpatialUnit();
-        when(spatialUnitRepository.save(any(SpatialUnit.class))).thenReturn(spatialUnit);
-
-        // Act
-        spatialUnitService.restore(history);
-
-        // Assert
-        verify(spatialUnitRepository).save(any(SpatialUnit.class));
-    }
-
 
     @Test
     void findAllOfInstitution_Success() {

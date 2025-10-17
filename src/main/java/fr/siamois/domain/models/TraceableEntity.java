@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.envers.Audited;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -22,6 +23,7 @@ import java.time.ZoneId;
 @Setter
 @Getter
 @MappedSuperclass
+@Audited
 public abstract class TraceableEntity implements Serializable {
 
     @NotNull
@@ -51,12 +53,6 @@ public abstract class TraceableEntity implements Serializable {
     @JoinColumn(name = "fk_validated_by")
     @JsonIgnore
     protected Person validatedBy ;
-
-    @ColumnDefault("NULL")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_last_modification_person_id")
-    @JsonIgnore
-    protected Person lastModifiedBy = null;
 
     public abstract Long getId();
 }
