@@ -20,6 +20,13 @@ import fr.siamois.mapper.InstitutionMapper;
 import fr.siamois.mapper.PersonMapper;
 import fr.siamois.ui.email.EmailManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +37,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
@@ -691,6 +703,106 @@ class PersonServiceTest {
                 "Username must respect max length, got: " + result + " (" + result.length() + " chars)");
         assertTrue(result.startsWith(truncatedForSuffix));
         assertNotEquals(fullBase, result);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void findContainingByNameOrEmailInInstitution_ShouldReturnMappedDtos_InRepositoryOrder() {
+        InstitutionDTO institution = new InstitutionDTO();
+        institution.setId(42L);
+
+        Person other = new Person();
+        other.setId(2L);
+        other.setEmail("other@localhost.com");
+        PersonDTO otherDto = new PersonDTO();
+        otherDto.setId(2L);
+        otherDto.setEmail("other@localhost.com");
+
+        when(personRepository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(person, other)));
+        when(personMapper.convert(person)).thenReturn(personDto);
+        when(personMapper.convert(other)).thenReturn(otherDto);
+
+        List<PersonDTO> res = personService.findContainingByNameOrEmailInInstitution("bob", institution);
+
+        assertEquals(List.of(personDto, otherDto), res);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void findContainingByNameOrEmailInInstitution_ShouldReturnEmptyList_WhenNoPersonMatches() {
+        InstitutionDTO institution = new InstitutionDTO();
+        institution.setId(42L);
+
+        when(personRepository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(Page.empty());
+
+        List<PersonDTO> res = personService.findContainingByNameOrEmailInInstitution("nobody", institution);
+
+        assertTrue(res.isEmpty());
+        verifyNoInteractions(personMapper);
+    }
+
+    @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    void findContainingByNameOrEmailInInstitution_ShouldMatchEmailOnQueryOrInstitutionName_WithinInstitution_AndCapResultsTo100() {
+        InstitutionDTO institution = new InstitutionDTO();
+        institution.setId(42L);
+        institution.setName("MOM");
+
+        when(personRepository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(Page.empty());
+
+        personService.findContainingByNameOrEmailInInstitution("B\u00f4b", institution);
+
+        ArgumentCaptor<Specification> specCaptor = ArgumentCaptor.forClass(Specification.class);
+        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
+        verify(personRepository).findAll(specCaptor.capture(), pageableCaptor.capture());
+
+        assertEquals(PageRequest.of(0, 100), pageableCaptor.getValue());
+
+        Root<Person> root = mock(Root.class, RETURNS_DEEP_STUBS);
+        CriteriaQuery<?> criteriaQuery = mock(CriteriaQuery.class, RETURNS_DEEP_STUBS);
+        CriteriaBuilder criteriaBuilder = mock(CriteriaBuilder.class, RETURNS_DEEP_STUBS);
+
+        Expression<String> unaccentedEmail = stubUnaccentedProperty(criteriaBuilder, root, "email");
+        Predicate queryLike = mock(Predicate.class);
+        Predicate institutionNameLike = mock(Predicate.class);
+        Predicate emailMatch = mock(Predicate.class);
+        // Accents are stripped before the LIKE: "Bôb" is matched as "%bob%"
+        doReturn(queryLike).when(criteriaBuilder).like(unaccentedEmail, "%bob%");
+        doReturn(institutionNameLike).when(criteriaBuilder).like(unaccentedEmail, "%mom%");
+        doReturn(emailMatch).when(criteriaBuilder).or(queryLike, institutionNameLike);
+        // The institution subquery correlates on the person id
+        doReturn(mock(Path.class)).when(root).get("id");
+
+        specCaptor.getValue().toPredicate(root, criteriaQuery, criteriaBuilder);
+
+        // Only the email column is matched, against the query OR against the institution name
+        verify(root, never()).get("name");
+        verify(root, never()).get("lastname");
+        verify(criteriaBuilder).or(queryLike, institutionNameLike);
+        // ... and restricted to the persons holding a profile in the institution
+        verify(criteriaBuilder).exists(any(Subquery.class));
+        verify(criteriaBuilder).and(eq(emailMatch), any(Predicate.class));
+    }
+
+    /**
+     * Stubs the {@code unaccent(lower(root.property))} expression built by
+     * {@link fr.siamois.infrastructure.database.repositories.specs.PersonSpec} and returns it, so that the test can
+     * stub or verify the {@code like} calls made on top of it.
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private Expression<String> stubUnaccentedProperty(CriteriaBuilder criteriaBuilder, Root<Person> root, String property) {
+        Path<String> path = mock(Path.class);
+        Expression<String> lowered = mock(Expression.class);
+        Expression<String> unaccented = mock(Expression.class);
+
+        doReturn(path).when(root).get(property);
+        doReturn(lowered).when(criteriaBuilder).lower(path);
+        doReturn(unaccented).when(criteriaBuilder).function("unaccent", String.class, lowered);
+
+        return unaccented;
     }
 
 }

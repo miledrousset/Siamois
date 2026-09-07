@@ -484,9 +484,11 @@ public class PersonService {
     }
 
     public List<PersonDTO> findContainingByNameOrEmailInInstitution(String query, InstitutionDTO institution) {
-        Specification<Person> spec = Specification.where(PersonSpec.isInInstitution(institution));
-        spec = spec.and(PersonSpec.firstNameOrLastNameContainsIgnoreCase(query));
-        spec = spec.and(PersonSpec.emailContainsIgnoreCase(query));
+        Specification<Person> spec = Specification.where(null);
+        Specification<Person> matchingQuery = Specification.where(PersonSpec.emailContainsIgnoreCase(query));
+        matchingQuery = matchingQuery.or(PersonSpec.emailContainsIgnoreCase(institution.getName()));
+        spec = spec.and(matchingQuery);
+        spec = spec.and(PersonSpec.isInInstitution(institution));
 
         return personRepository
                 .findAll(spec, PageRequest.of(0, 100))

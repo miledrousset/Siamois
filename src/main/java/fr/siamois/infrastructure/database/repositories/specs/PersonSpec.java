@@ -10,6 +10,13 @@ import org.springframework.data.jpa.domain.Specification;
 
 public final class PersonSpec {
 
+    public static final String PERSON = "person";
+    public static final String ID = "id";
+    public static final String INSTITUTION = "institution";
+    public static final String NAME = "name";
+    public static final String LASTNAME = "lastname";
+    public static final String EMAIL = "email";
+
     private PersonSpec() {
         throw new UnsupportedOperationException("PersonSpec should never be instantiated");
     }
@@ -25,8 +32,8 @@ public final class PersonSpec {
             subquery.select(criteriaBuilder.literal(1L));
 
             subquery.where(criteriaBuilder.and(
-                    criteriaBuilder.equal(ppaRoot.get("person").get("id"), personRoot.get("id")),
-                    criteriaBuilder.equal(profileJoin.get("institution").get("id"), institution.getId())
+                    criteriaBuilder.equal(ppaRoot.get(PERSON).get(ID), personRoot.get(ID)),
+                    criteriaBuilder.equal(profileJoin.get(INSTITUTION).get(ID), institution.getId())
             ));
 
             return criteriaBuilder.exists(subquery);
@@ -44,8 +51,8 @@ public final class PersonSpec {
             }
             String pattern = "%" + StringUtils.stripAccents(name.toLowerCase()) + "%";
             return criteriaBuilder.or(
-                    criteriaBuilder.like(unaccentProperty(criteriaBuilder, root.get("name")), pattern),
-                    criteriaBuilder.like(unaccentProperty(criteriaBuilder, root.get("lastname")), pattern)
+                    criteriaBuilder.like(unaccentProperty(criteriaBuilder, root.get(NAME)), pattern),
+                    criteriaBuilder.like(unaccentProperty(criteriaBuilder, root.get(LASTNAME)), pattern)
             );
         });
     }
@@ -56,7 +63,7 @@ public final class PersonSpec {
                 return criteriaBuilder.conjunction();
             }
             String pattern = "%" + StringUtils.stripAccents(email.toLowerCase()) + "%";
-            return criteriaBuilder.like(unaccentProperty(criteriaBuilder, root.get("email")), pattern);
+            return criteriaBuilder.like(unaccentProperty(criteriaBuilder, root.get(EMAIL)), pattern);
         });
     }
 
