@@ -122,31 +122,16 @@ public class SpatialUnitFieldBean implements Serializable {
         return fieldConfigurationService.getUrlForFieldCode(sessionSettingsBean.getUserInfo(), fieldCode, actionUnitId);
     }
 
-    /**
-     * The OpenTheso URL to display for a field's autocomplete, safe to call for any field —
-     * {@code concept.xhtml} calls this with whatever field it's showing, which can be a plain
-     * {@code CustomFieldSelectOne}/{@code CustomFieldSelectMultiple} additional field that isn't a
-     * concept field at all. EL's {@code BeanELResolver} throws {@code PropertyNotFoundException} for a
-     * missing bean property regardless of where the expression is used — plain attribute binding or
-     * method-call argument alike — so the {@code instanceof} check has to happen here instead of in the
-     * view. Delegates to {@link FieldConfigurationService#getUrlForConceptField(CustomFieldConcept, Long)},
-     * which resolves the field's branch/collection restriction for the project, falling back to its
-     * field-code configuration.
-     *
-     * @param field        the field to look the edit URL up for
-     * @param actionUnitId the current project's id, or null if the field isn't project-scoped
-     * @return the edit URL, or null if the field isn't a concept field or has no configuration
-     */
-    public String getUrlForField(CustomField field, Long actionUnitId) {
+    public String getUrlForField(CustomField field) {
         return field instanceof CustomFieldConcept conceptField
-                ? fieldConfigurationService.getUrlForConceptField(conceptField, actionUnitId)
+                ? conceptField.getConcept().getUri()
                 : null;
     }
 
     /**
      * The field code driving a concept field, or null when the field isn't field-code-driven (e.g. a
      * plain {@code CustomFieldSelectOne}/{@code CustomFieldSelectMultiple} additional field) — see
-     * {@link #getUrlForField(CustomField, Long)} for why this can't just be a {@code .fieldCode} EL
+     * {@link #getUrlForField(CustomField)} for why this can't just be a {@code .fieldCode} EL
      * property access in the view.
      */
     public String resolveFieldCode(CustomField field) {

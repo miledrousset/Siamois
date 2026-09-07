@@ -326,37 +326,6 @@ public class FieldConfigurationService {
     }
 
     /**
-     * Gets the OpenTheso URL to display for a concept field, following the same configuration priority
-     * as {@link #fetchAutocomplete(CustomFieldConcept, String, Long)} : the field's own branch/collection
-     * restriction for the given project (Action Unit) takes priority over its field-code configuration.
-     *
-     * @param conceptField the concept field to get the URL for
-     * @param actionUnitId the action unit (project) the field is displayed in, or null for institution-only
-     * @return the OpenTheso URL to display, or null if the field has no usable configuration
-     */
-    @Nullable
-    @Transactional(readOnly = true)
-    public String getUrlForConceptField(@NonNull CustomFieldConcept conceptField, @Nullable Long actionUnitId) {
-        Optional<ConceptFieldFormConfig> opt = fieldFormConfigRepository.findByFieldAndActionUnit(conceptField, actionUnitId);
-        if (opt.isPresent() && !opt.get().isNotValid()) {
-            ConceptFieldFormConfig config = opt.get();
-            if (config.isBranchConfig()) {
-                Concept branchTopTerm = config.getBranchTopTerm();
-                Hibernate.initialize(branchTopTerm.getVocabulary());
-                return getUrlOfConcept(branchTopTerm);
-            }
-            return getUrlOfCollection(config.getCollection());
-        }
-        if (conceptField instanceof CustomFieldConceptFromFieldCode fromFieldCode) {
-            UserInfo info = ExecutionContextHolder.get();
-            if (info != null) {
-                return getUrlForFieldCode(info, fromFieldCode.getFieldCode(), actionUnitId);
-            }
-        }
-        return null;
-    }
-
-    /**
      * Gets the URL for a specific field code for a user.
      *
      * @param info      the user information containing institution and user details
