@@ -326,18 +326,59 @@ public class FieldConfigurationService {
     }
 
     /**
-     * Gets the OpenTheso URL to display for a concept field, following the same configuration priority
-     * as {@link #fetchAutocomplete(CustomFieldConcept, String, Long)} : the field's own branch/collection
-     * restriction for the given project (Action Unit) takes priority over its field-code configuration.
+     * Resolves the field's own restriction (branch/collection) for a project, scoped to one
+     * specific value of the entity's "scope" field (e.g. Type) when given, falling back to the
+     * project's default configuration (the one with no value concept) otherwise or when the
+     * value-specific one doesn't exist. A {@link fr.siamois.domain.models.form.config.FormConfig}
+     * exists per (actionUnit, fieldConcept, valueConcept) triple, so the same field can legitimately
+     * be configured differently under different value concepts of the same project — this must be
+     * scoped by valueConceptId, not just field + actionUnit, or two such configurations would
+     * either collide (NonUniqueResultException) or get silently applied to every value.
+     *
+     * @param conceptField   the concept field to look the restriction up for
+     * @param actionUnitId   the project the configuration is scoped to, or null for institution-only
+     * @param valueConceptId the concept of the entity's current scope-field value, or null when unknown
+     *                       (e.g. a new entity whose type hasn't been set yet)
+     * @return the resolved configuration, or empty if the field has none at all
+     */
+    private Optional<ConceptFieldFormConfig> findFieldFormConfig(@NonNull CustomFieldConcept conceptField, @Nullable Long actionUnitId, @Nullable Long valueConceptId) {
+        if (valueConceptId != null) {
+            Optional<ConceptFieldFormConfig> specific = fieldFormConfigRepository.findByFieldAndActionUnitAndValue(conceptField, actionUnitId, valueConceptId);
+            if (specific.isPresent()) {
+                return specific;
+            }
+        }
+        return fieldFormConfigRepository.findDefaultByFieldAndActionUnit(conceptField, actionUnitId);
+    }
+
+    /**
+     * Same as {@link #getUrlForConceptField(CustomFieldConcept, Long, Long)}, without scoping to a
+     * specific value of the entity's scope field.
      *
      * @param conceptField the concept field to get the URL for
      * @param actionUnitId the action unit (project) the field is displayed in, or null for institution-only
      * @return the OpenTheso URL to display, or null if the field has no usable configuration
      */
     @Nullable
-    @Transactional(readOnly = true)
     public String getUrlForConceptField(@NonNull CustomFieldConcept conceptField, @Nullable Long actionUnitId) {
-        Optional<ConceptFieldFormConfig> opt = fieldFormConfigRepository.findByFieldAndActionUnit(conceptField, actionUnitId);
+        return getUrlForConceptField(conceptField, actionUnitId, null);
+    }
+
+    /**
+     * Gets the OpenTheso URL to display for a concept field, following the same configuration priority
+     * as {@link #fetchAutocomplete(CustomFieldConcept, String, Long, Long)} : the field's own branch/collection
+     * restriction for the given project (Action Unit) and scope value takes priority over its field-code
+     * configuration.
+     *
+     * @param conceptField   the concept field to get the URL for
+     * @param actionUnitId   the action unit (project) the field is displayed in, or null for institution-only
+     * @param valueConceptId the concept of the entity's current scope-field value, or null when unknown
+     * @return the OpenTheso URL to display, or null if the field has no usable configuration
+     */
+    @Nullable
+    @Transactional(readOnly = true)
+    public String getUrlForConceptField(@NonNull CustomFieldConcept conceptField, @Nullable Long actionUnitId, @Nullable Long valueConceptId) {
+        Optional<ConceptFieldFormConfig> opt = findFieldFormConfig(conceptField, actionUnitId, valueConceptId);
         if (opt.isPresent() && !opt.get().isNotValid()) {
             ConceptFieldFormConfig config = opt.get();
             if (config.isBranchConfig()) {
@@ -471,14 +512,25 @@ public class FieldConfigurationService {
     }
 
     /**
+     * Same as {@link #fetchAutocomplete(CustomFieldConcept, String, Long, Long)}, without scoping
+     * to a specific value of the entity's scope field.
+     */
+    @NonNull
+    public List<ConceptAutocompleteDTO> fetchAutocomplete(CustomFieldConcept conceptField, @Nullable String input, @Nullable Long actionUnitId) throws NoConfigForFieldException {
+        return fetchAutocomplete(conceptField, input, actionUnitId, null);
+    }
+
+    /**
      * Fetches autocomplete suggestions for a concept field, following the configuration set up for that
-     * field on the given project (Action Unit) : a thesaurus branch or a thesaurus collection.
+     * field on the given project (Action Unit) and scope value: a thesaurus branch or a thesaurus collection.
      * When the field has no such configuration and is driven by a field code, falls back on the
      * institution or project configuration of that field code.
      *
-     * @param conceptField the concept field for which to fetch autocomplete suggestions
-     * @param input        the input string to match against concept labels. Can be null or empty.
-     * @param actionUnitId the action unit (project) the field is displayed in, or null for institution-only
+     * @param conceptField   the concept field for which to fetch autocomplete suggestions
+     * @param input          the input string to match against concept labels. Can be null or empty.
+     * @param actionUnitId   the action unit (project) the field is displayed in, or null for institution-only
+     * @param valueConceptId the concept of the entity's current scope-field value (e.g. its Type), or null
+     *                       when unknown — see {@link #findFieldFormConfig}
      * @return a list of matching ConceptAutocompleteDTO objects
      * @throws NoConfigForFieldException if the field falls back on a field code that has no configuration
      * @throws IllegalStateException     if the field has no usable configuration at all
@@ -486,7 +538,7 @@ public class FieldConfigurationService {
     @NonNull
     @ExecutionTimeLogger
     @Transactional(readOnly = true, rollbackFor = Exception.class)
-    public List<ConceptAutocompleteDTO> fetchAutocomplete(CustomFieldConcept conceptField, @Nullable String input, @Nullable Long actionUnitId) throws NoConfigForFieldException {
+    public List<ConceptAutocompleteDTO> fetchAutocomplete(CustomFieldConcept conceptField, @Nullable String input, @Nullable Long actionUnitId, @Nullable Long valueConceptId) throws NoConfigForFieldException {
         UserInfo info = ExecutionContextHolder.get();
         if (info == null) {
             throw new IllegalStateException(String.format("No execution context bound to fetch the autocomplete of field %s", conceptField.getId()));
@@ -496,7 +548,7 @@ public class FieldConfigurationService {
             input = input.trim();
         }
 
-        Optional<ConceptFieldFormConfig> opt = fieldFormConfigRepository.findByFieldAndActionUnit(conceptField, actionUnitId);
+        Optional<ConceptFieldFormConfig> opt = findFieldFormConfig(conceptField, actionUnitId, valueConceptId);
         if (opt.isEmpty()) {
             if (conceptField instanceof CustomFieldConceptFromFieldCode conceptFromFieldCode) {
                 return fetchAutocomplete(info, conceptFromFieldCode.getFieldCode(), input, actionUnitId);

@@ -401,7 +401,7 @@ class FieldConfigurationServiceTest {
         ConceptFieldFormConfig config = new ConceptFieldFormConfig();
         config.setBranchTopTerm(branchTopTerm);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
 
         String result = service.getUrlForConceptField(field, 42L);
 
@@ -420,7 +420,7 @@ class FieldConfigurationServiceTest {
         ConceptFieldFormConfig config = new ConceptFieldFormConfig();
         config.setCollection(collection);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
 
         String result = service.getUrlForConceptField(field, 42L);
 
@@ -439,7 +439,7 @@ class FieldConfigurationServiceTest {
         cfc.setConcept(concept);
         cfc.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
         when(conceptFieldConfigRepository.findOneByFieldCodeAndActionUnitId(SpatialUnit.CATEGORY_FIELD_CODE, 42L))
                 .thenReturn(Optional.of(cfc));
 
@@ -462,7 +462,7 @@ class FieldConfigurationServiceTest {
         cfc.setConcept(concept);
         cfc.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(new ConceptFieldFormConfig()));
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(new ConceptFieldFormConfig()));
         when(conceptFieldConfigRepository.findOneByFieldCodeAndActionUnitId(SpatialUnit.CATEGORY_FIELD_CODE, 42L))
                 .thenReturn(Optional.of(cfc));
 
@@ -475,7 +475,7 @@ class FieldConfigurationServiceTest {
     void getUrlForConceptField_shouldReturnNull_whenNoFormConfigAndFieldIsNotFieldCodeDriven() {
         CustomFieldSelectOne field = new CustomFieldSelectOne();
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
 
         String result = service.getUrlForConceptField(field, 42L);
 
@@ -487,7 +487,7 @@ class FieldConfigurationServiceTest {
         CustomFieldSelectOneFromFieldCode field = new CustomFieldSelectOneFromFieldCode();
         field.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
         ExecutionContextHolder.clear();
 
         String result = service.getUrlForConceptField(field, 42L);
@@ -825,7 +825,7 @@ class FieldConfigurationServiceTest {
         ConceptFieldFormConfig config = new ConceptFieldFormConfig();
         config.setBranchTopTerm(topTerm);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
 
         List<ConceptAutocompleteDTO> expectedResults = List.of(
                 new ConceptAutocompleteDTO(new ConceptDTO(), "Concept 100", "100"));
@@ -849,7 +849,7 @@ class FieldConfigurationServiceTest {
         ConceptFieldFormConfig config = new ConceptFieldFormConfig();
         config.setCollection(collection);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
 
         List<ConceptAutocompleteDTO> expectedResults = List.of(
                 new ConceptAutocompleteDTO(new ConceptDTO(), "Concept 100", "100"));
@@ -869,7 +869,7 @@ class FieldConfigurationServiceTest {
         field.setId(7L);
         field.setFieldCode(fieldCode);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
 
         ConceptFieldConfig cfc = new ConceptFieldConfig();
         Concept concept = new Concept();
@@ -893,7 +893,7 @@ class FieldConfigurationServiceTest {
         CustomFieldSelectOne field = new CustomFieldSelectOne();
         field.setId(7L);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
 
         assertThrows(IllegalStateException.class, () -> service.fetchAutocomplete(field, "que", 42L));
         verifyNoInteractions(autocompleteRepository);
@@ -918,7 +918,7 @@ class FieldConfigurationServiceTest {
 
         ConceptFieldFormConfig config = new ConceptFieldFormConfig();
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
 
         assertThrows(IllegalStateException.class, () -> service.fetchAutocomplete(field, "que", 42L));
         verifyNoInteractions(autocompleteRepository);

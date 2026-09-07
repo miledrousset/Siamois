@@ -465,6 +465,22 @@ public class EntityFormContext<T extends AbstractEntityDTO> {
     }
 
     /**
+     * The concept id of this entity's current "scope" value (e.g. its Type), used to pick the
+     * value-specific {@link fr.siamois.domain.models.form.config.FormConfig} for a concept field's
+     * branch/collection restriction — see
+     * {@link fr.siamois.domain.services.vocabulary.FieldConfigurationService#fetchAutocomplete(fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldConcept, String, Long, Long)}.
+     * Null when the entity has no scope field, or that field has no answer yet (e.g. a new entity
+     * whose type hasn't been set) — callers fall back to the project's default configuration in
+     * that case.
+     */
+    public Long getFormScopeValueConceptId() {
+        CustomFieldAnswerSelectOneFromFieldCodeViewModel ans = getFormScopeAnswer();
+        return ans != null && ans.getValue() != null && ans.getValue().concept() != null
+                ? ans.getValue().concept().getId()
+                : null;
+    }
+
+    /**
      * Resolves the project (Action Unit) id to check for a thesaurus override when resolving
      * concept-autocomplete fields on this entity; null for entities with no project scope
      * (SpatialUnit, Specimen, Container, Phase), which keeps the institution-only lookup.

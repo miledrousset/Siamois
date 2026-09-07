@@ -60,9 +60,10 @@
                                                           ajaxUpdateTargets="#{cc.attrs.updateTargetsOnBlur}"
                                                           required="#{cc.attrs.required}"
                                                           itemSelectListener="#{cc.attrs.onConceptChanged}"
-                                                          editConceptUrl="#{spatialUnitFieldBean.getUrlForField(cc.attrs.field, cc.attrs.formCtx eq null ? null : cc.attrs.formCtx.actionUnitIdForThesaurus)}"
+                                                          editConceptUrl="#{spatialUnitFieldBean.getUrlForField(cc.attrs.field, cc.attrs.formCtx eq null ? null : cc.attrs.formCtx.actionUnitIdForThesaurus, cc.attrs.formCtx eq null ? null : cc.attrs.formCtx.formScopeValueConceptId)}"
                                                           dependsOnBaseConcept="#{cc.attrs.dependsOnBaseConcept}"
-                                                          actionUnitId="#{cc.attrs.formCtx eq null ? null : cc.attrs.formCtx.actionUnitIdForThesaurus}"/>
+                                                          actionUnitId="#{cc.attrs.formCtx eq null ? null : cc.attrs.formCtx.actionUnitIdForThesaurus}"
+                                                          valueConceptId="#{cc.attrs.formCtx eq null ? null : cc.attrs.formCtx.formScopeValueConceptId}"/>
             </h:panelGroup>
         </p:outputPanel>
     </cc:implementation>

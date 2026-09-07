@@ -1006,7 +1006,7 @@ class TableFieldConfigServiceImplTest {
 
     @Test
     void listConfigurableTypes_shouldReturnEmptyListWhenInputIsNull() throws NoConfigForFieldException {
-        when(fieldConfigurationService.fetchAutocomplete(any(), eq("SIAS.CAT"), isNull(), eq(PROJECT_ID)))
+        when(fieldConfigurationService.fetchAutocomplete(any(UserInfo.class), eq("SIAS.CAT"), isNull(), eq(PROJECT_ID)))
                 .thenReturn(List.of());
         when(formConfigRepository.findAllByActionUnitAndField(PROJECT_ID, FIELD_CONCEPT_ID))
                 .thenReturn(List.of());
@@ -1436,7 +1436,7 @@ class TableFieldConfigServiceImplTest {
     // --- listConfigurableTypes / fieldValues ---
     @Test
     void listConfigurableTypes_shouldReturnEmptyListWhenProjectHasNoFieldConfiguration() throws Exception {
-        when(fieldConfigurationService.fetchAutocomplete(any(), eq("SIAS.CAT"), any(), eq(PROJECT_ID)))
+        when(fieldConfigurationService.fetchAutocomplete(any(UserInfo.class), eq("SIAS.CAT"), any(), eq(PROJECT_ID)))
                 .thenThrow(new NoConfigForFieldException("no config"));
 
         assertThat(service.listConfigurableTypes(PROJECT_ID, ConfigurableTable.MOBILIER, "é")).isEmpty();
