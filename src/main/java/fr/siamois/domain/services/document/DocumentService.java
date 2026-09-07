@@ -61,6 +61,19 @@ public class DocumentService implements ArkEntityService {
         return documentRepository.save((Document) toSave);
     }
 
+    /**
+     * Saves a document that has no associated uploaded file (e.g. it references an external or physical file).
+     *
+     * @param userInfo the user information for the operation
+     * @param document the document to save
+     * @return the saved document
+     */
+    public Document saveWithoutFile(UserInfo userInfo, Document document) {
+        document.setCreatedBy(personMapper.invertConvert(userInfo.getUser()));
+        document.setCreatedByInstitution(institutionMapper.invertConvert(userInfo.getInstitution()));
+        return documentRepository.save(document);
+    }
+
     @Override
     public AbstractEntityDTO save(AbstractEntityDTO toSave) {
         throw new UnsupportedOperationException("DocumentService.save(AbstractEntityDTO) is not implemented");

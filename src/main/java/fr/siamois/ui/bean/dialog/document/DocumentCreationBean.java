@@ -105,8 +105,16 @@ public class DocumentCreationBean implements Serializable {
     }
 
     public Document createDocument() {
-        if (docFile == null) {
-            MessageUtils.displayErrorMessage(langBean, "documents.nofileset");
+        if (docTitle == null || docTitle.isBlank()) {
+            MessageUtils.displayErrorMessage(langBean, "documents.titleRequired");
+            return null;
+        }
+        if (docNature == null) {
+            MessageUtils.displayErrorMessage(langBean, "documents.natureRequired");
+            return null;
+        }
+        if (docType == null) {
+            MessageUtils.displayErrorMessage(langBean, "documents.typeRequired");
             return null;
         }
 
@@ -116,6 +124,12 @@ public class DocumentCreationBean implements Serializable {
         if (Boolean.TRUE.equals(sessionSettingsBean.getInstitutionSettings().getArkIsEnabled())) {
             Ark ark = arkService.generateAndSave(sessionSettingsBean.getInstitutionSettings());
             document.setArk(ark);
+        }
+
+        if (docFile == null) {
+            document = documentService.saveWithoutFile(userInfo, document);
+            reset();
+            return document;
         }
 
         try (InputStream inputStream = docFile.getInputStream()) {

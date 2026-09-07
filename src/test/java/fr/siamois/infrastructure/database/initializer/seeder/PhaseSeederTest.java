@@ -71,7 +71,7 @@ class PhaseSeederTest {
     }
 
     private void stubActionUnitFound() {
-        when(actionUnitRepository.findAllByIdentifierInAndCreatedByInstitutionIdentifier(anyCollection(), eq("INST")))
+        when(actionUnitRepository.findAllByFullIdentifierInAndCreatedByInstitutionIdentifier(anyCollection(), eq("INST")))
                 .thenReturn(List.of(actionUnit));
     }
 

@@ -376,6 +376,9 @@ public abstract class AbstractSingleEntityPanel<T extends AbstractEntityDTO> ext
     public abstract boolean save(Boolean validated);
 
     public boolean contentIsImage(String mimeType) {
+        if (mimeType == null || mimeType.isBlank()) {
+            return false;
+        }
         MimeType currentMimeType = MimeType.valueOf(mimeType);
         return currentMimeType.getType().equals("image");
     }
@@ -385,18 +388,20 @@ public abstract class AbstractSingleEntityPanel<T extends AbstractEntityDTO> ext
     protected abstract void addDocumentToUnit(Document doc, T unit);
 
     public void saveDocument() {
-        try {
-            BufferedInputStream currentFile = new BufferedInputStream(documentCreationBean.getDocFile().getInputStream());
-            String hash = documentService.getMD5Sum(currentFile);
-            currentFile.mark(Integer.MAX_VALUE);
-            if (documentExistsInUnitByHash(unit, hash)) {
-                log.error("Document already exists in spatial unit");
-                currentFile.reset();
+        if (documentCreationBean.getDocFile() != null) {
+            try {
+                BufferedInputStream currentFile = new BufferedInputStream(documentCreationBean.getDocFile().getInputStream());
+                String hash = documentService.getMD5Sum(currentFile);
+                currentFile.mark(Integer.MAX_VALUE);
+                if (documentExistsInUnitByHash(unit, hash)) {
+                    log.error("Document already exists in spatial unit");
+                    currentFile.reset();
+                    return;
+                }
+            } catch (IOException e) {
+                log.error("Error while processing spatial unit document", e);
                 return;
             }
-        } catch (IOException e) {
-            log.error("Error while processing spatial unit document", e);
-            return;
         }
 
         Document created = documentCreationBean.createDocument();

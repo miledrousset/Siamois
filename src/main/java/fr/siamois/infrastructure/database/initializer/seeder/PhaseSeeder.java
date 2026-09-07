@@ -161,7 +161,9 @@ public class PhaseSeeder {
     private ActionUnit resolveActionUnit(PhaseSpecs s, Map<ActionUnitSeeder.ActionUnitKey, ActionUnit> actionUnitsByKey) {
         return SeederUtils.field("projet", () -> {
             ActionUnit found = actionUnitsByKey.get(s.actionUnitKey());
-            if (found == null) throw new IllegalStateException("Projet introuvable");
+            if (found == null) throw new IllegalStateException(
+                    "Projet introuvable (identifiant '" + s.actionUnitKey().fullIdentifier()
+                            + "', institution '" + s.actionUnitKey().institutionIdentifier() + "')");
             return found;
         });
     }
@@ -221,7 +223,7 @@ public class PhaseSeeder {
                         Collectors.mapping(ActionUnitSeeder.ActionUnitKey::fullIdentifier, Collectors.toList())));
         Map<ActionUnitSeeder.ActionUnitKey, ActionUnit> result = new HashMap<>();
         for (var entry : identifiersByInstitution.entrySet()) {
-            for (ActionUnit au : actionUnitRepository.findAllByIdentifierInAndCreatedByInstitutionIdentifier(entry.getValue(), entry.getKey())) {
+            for (ActionUnit au : actionUnitRepository.findAllByFullIdentifierInAndCreatedByInstitutionIdentifier(entry.getValue(), entry.getKey())) {
                 result.put(new ActionUnitSeeder.ActionUnitKey(au.getFullIdentifier(), entry.getKey()), au);
             }
         }

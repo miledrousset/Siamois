@@ -96,7 +96,7 @@ class RecordingUnitSeederTest {
     private void stubActionUnitFound() {
         ActionUnit au = new ActionUnit();
         au.setFullIdentifier("action-01");
-        when(actionUnitRepository.findAllByIdentifierInAndCreatedByInstitutionIdentifier(anyCollection(), eq("chartres")))
+        when(actionUnitRepository.findAllByFullIdentifierInAndCreatedByInstitutionIdentifier(anyCollection(), eq("chartres")))
                 .thenReturn(List.of(au));
     }
 
