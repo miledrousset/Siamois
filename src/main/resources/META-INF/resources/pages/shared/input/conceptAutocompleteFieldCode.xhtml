@@ -97,7 +97,11 @@
                 <h:panelGroup id="conceptItem" layout="block" style="display:flex; flex-direction: column">
                     <h:outputText style="vertical-align: middle" value="#{autocompleteDto.conceptLabelToDisplay.label}"/>
                     <h:panelGroup rendered="#{autocompleteDto.conceptLabelToDisplay.altLabel}">
-                        <small>#{langBean.msg('concept.common.preflabel')} : #{autocompleteDto.originalPrefLabel}</small>
+                        <small class="concept-item-altlabel">#{langBean.msg('concept.common.correspondsToPrefLabel', autocompleteDto.originalPrefLabel)}</small>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" styleClass="concept-item-definition"
+                                  rendered="#{not empty autocompleteDto.definition}">
+                        <small>#{autocompleteDto.definition}</small>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{not empty autocompleteDto.hierarchyPrefLabels}">
                         <small>#{langBean.msg('concept.common.parents')} : #{autocompleteDto.hierarchyPrefLabels}</small>
