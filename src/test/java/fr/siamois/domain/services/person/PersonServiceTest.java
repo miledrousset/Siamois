@@ -745,10 +745,9 @@ class PersonServiceTest {
 
     @Test
     @SuppressWarnings({"unchecked", "rawtypes"})
-    void findContainingByNameOrEmailInInstitution_ShouldMatchEmailOnQueryOrInstitutionName_WithinInstitution_AndCapResultsTo100() {
+    void findContainingByNameOrEmailInInstitution_ShouldMatchNameOrEmailWithinInstitution_AndCapResultsTo100() {
         InstitutionDTO institution = new InstitutionDTO();
         institution.setId(42L);
-        institution.setName("MOM");
 
         when(personRepository.findAll(any(Specification.class), any(Pageable.class)))
                 .thenReturn(Page.empty());
@@ -765,44 +764,51 @@ class PersonServiceTest {
         CriteriaQuery<?> criteriaQuery = mock(CriteriaQuery.class, RETURNS_DEEP_STUBS);
         CriteriaBuilder criteriaBuilder = mock(CriteriaBuilder.class, RETURNS_DEEP_STUBS);
 
-        Expression<String> unaccentedEmail = stubUnaccentedProperty(criteriaBuilder, root, "email");
-        Predicate queryLike = mock(Predicate.class);
-        Predicate institutionNameLike = mock(Predicate.class);
-        Predicate emailMatch = mock(Predicate.class);
         // Accents are stripped before the LIKE: "Bôb" is matched as "%bob%"
-        doReturn(queryLike).when(criteriaBuilder).like(unaccentedEmail, "%bob%");
-        doReturn(institutionNameLike).when(criteriaBuilder).like(unaccentedEmail, "%mom%");
-        doReturn(emailMatch).when(criteriaBuilder).or(queryLike, institutionNameLike);
+        Predicate nameLike = stubUnaccentedLike(criteriaBuilder, root, "name", "%bob%");
+        Predicate lastnameLike = stubUnaccentedLike(criteriaBuilder, root, "lastname", "%bob%");
+        Predicate emailLike = stubUnaccentedLike(criteriaBuilder, root, "email", "%bob%");
+        Predicate nameOrLastname = mock(Predicate.class);
+        Predicate nameOrEmail = mock(Predicate.class);
+        doReturn(nameOrLastname).when(criteriaBuilder).or(nameLike, lastnameLike);
+        doReturn(nameOrEmail).when(criteriaBuilder).or(nameOrLastname, emailLike);
         // The institution subquery correlates on the person id
         doReturn(mock(Path.class)).when(root).get("id");
 
         specCaptor.getValue().toPredicate(root, criteriaQuery, criteriaBuilder);
 
-        // Only the email column is matched, against the query OR against the institution name
-        verify(root, never()).get("name");
-        verify(root, never()).get("lastname");
-        verify(criteriaBuilder).or(queryLike, institutionNameLike);
-        // ... and restricted to the persons holding a profile in the institution
+        // The name/lastname match is OR-ed with the email match, not AND-ed
+        verify(criteriaBuilder).or(nameOrLastname, emailLike);
+        // ... and the whole text match is restricted to the persons holding a profile in the institution
         verify(criteriaBuilder).exists(any(Subquery.class));
-        verify(criteriaBuilder).and(eq(emailMatch), any(Predicate.class));
+        verify(criteriaBuilder).and(any(Predicate.class), eq(nameOrEmail));
+    }
+
+    @Test
+    void findContainingByNameOrEmailInInstitution_ShouldReturnEmptyList_WhenInstitutionIsNull() {
+        List<PersonDTO> res = personService.findContainingByNameOrEmailInInstitution("bob", null);
+
+        assertTrue(res.isEmpty());
+        verifyNoInteractions(personRepository);
     }
 
     /**
-     * Stubs the {@code unaccent(lower(root.property))} expression built by
-     * {@link fr.siamois.infrastructure.database.repositories.specs.PersonSpec} and returns it, so that the test can
-     * stub or verify the {@code like} calls made on top of it.
+     * Stubs the {@code like(unaccent(lower(root.property)), pattern)} chain built by
+     * {@link fr.siamois.infrastructure.database.repositories.specs.PersonSpec} and returns the resulting predicate.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private Expression<String> stubUnaccentedProperty(CriteriaBuilder criteriaBuilder, Root<Person> root, String property) {
+    private Predicate stubUnaccentedLike(CriteriaBuilder criteriaBuilder, Root<Person> root, String property, String pattern) {
         Path<String> path = mock(Path.class);
         Expression<String> lowered = mock(Expression.class);
         Expression<String> unaccented = mock(Expression.class);
+        Predicate like = mock(Predicate.class);
 
         doReturn(path).when(root).get(property);
         doReturn(lowered).when(criteriaBuilder).lower(path);
         doReturn(unaccented).when(criteriaBuilder).function("unaccent", String.class, lowered);
+        doReturn(like).when(criteriaBuilder).like(unaccented, pattern);
 
-        return unaccented;
+        return like;
     }
 
 }

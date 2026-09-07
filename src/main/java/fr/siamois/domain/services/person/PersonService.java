@@ -401,6 +401,7 @@ public class PersonService {
     }
 
     private static final int USERNAME_RANDOM_SUFFIX_MAX_ATTEMPTS = 20;
+    private static final int MAX_SEARCH_RESULTS = 100;
 
     /**
      * Builds a username from the person's first/last name (falling back to their e-mail's local part,
@@ -483,15 +484,31 @@ public class PersonService {
         return lettersDigitsDots.substring(start, end);
     }
 
+    /**
+     * Find the persons of an institution whose firstname, lastname or email contains the given query.
+     * <p>
+     * Comparison is case- and accent-insensitive, and the result is capped to the first
+     * {@value #MAX_SEARCH_RESULTS} matches as this backs an autocomplete.
+     *
+     * @param query       The searched text; when null or blank, every person of the institution matches
+     * @param institution The institution the search is scoped to
+     * @return The matching persons, or an empty list when no institution is given
+     */
     public List<PersonDTO> findContainingByNameOrEmailInInstitution(String query, InstitutionDTO institution) {
-        Specification<Person> spec = Specification.where(null);
-        Specification<Person> matchingQuery = Specification.where(PersonSpec.firstNameOrLastNameContainsIgnoreCase(query));
-        matchingQuery = matchingQuery.or(PersonSpec.emailContainsIgnoreCase(query));
-        spec = spec.and(matchingQuery);
-        spec = spec.and(PersonSpec.isInInstitution(institution));
+        if (institution == null) {
+            return List.of();
+        }
+
+        Specification<Person> matchingQuery = Specification
+                .where(PersonSpec.firstNameOrLastNameContainsIgnoreCase(query))
+                .and(PersonSpec.emailContainsIgnoreCase(query));
+
+        Specification<Person> spec = Specification
+                .where(PersonSpec.isInInstitution(institution))
+                .and(matchingQuery);
 
         return personRepository
-                .findAll(spec, PageRequest.of(0, 100))
+                .findAll(spec, PageRequest.of(0, MAX_SEARCH_RESULTS))
                 .map(personMapper::convert)
                 .toList();
     }
