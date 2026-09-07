@@ -79,6 +79,26 @@ class DocumentServiceTest {
     }
 
     @Test
+    void saveWithoutFile() {
+        UserInfo userInfo = new UserInfo(new InstitutionDTO(), new PersonDTO(), "fr");
+        Document document = new Document();
+        Person person = new Person();
+        Institution institution = new Institution();
+
+        when(personMapper.invertConvert(userInfo.getUser())).thenReturn(person);
+        when(institutionMapper.invertConvert(userInfo.getInstitution())).thenReturn(institution);
+        when(documentRepository.save(document)).thenReturn(document);
+
+        Document result = documentService.saveWithoutFile(userInfo, document);
+
+        assertNotNull(result);
+        assertEquals(document, result);
+        assertEquals(person, document.getCreatedBy());
+        assertEquals(institution, document.getCreatedByInstitution());
+        verify(documentRepository, times(1)).save(document);
+    }
+
+    @Test
     void save() {
         Document document = new Document();
 
