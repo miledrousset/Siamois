@@ -1036,6 +1036,82 @@ class TableFieldConfigServiceImplTest {
                 .isInstanceOf(NoSuchElementException.class);
     }
 
+    // --- saveFormConfig (concept-id-keyed) ---
+    @Test
+    void saveFormConfig_byId_shouldCreateTheConfigurationWhenTheTypeHasNoneYet() {
+        Long metalConceptId = 300L;
+        Concept metalConcept = concept(metalConceptId, "metal");
+        when(formConfigRepository.findByActionUnitAndFieldAndValue(PROJECT_ID, FIELD_CONCEPT_ID, metalConceptId))
+                .thenReturn(Optional.empty());
+        when(conceptRepository.findById(metalConceptId)).thenReturn(Optional.of(metalConcept));
+        ActionUnit project = new ActionUnit();
+        project.setId(PROJECT_ID);
+        project.setCreatedByInstitution(new Institution());
+        when(actionUnitRepository.findById(PROJECT_ID)).thenReturn(Optional.of(project));
+        when(formConfigRepository.save(any(FormConfig.class))).thenAnswer(call -> call.getArgument(0));
+
+        TypeFormConfig config = TypeFormConfig.builder()
+                .identifierFormat("M-{NUM_MOBILIER:00}")
+                .minCode(1)
+                .maxCode(99)
+                .build();
+
+        service.saveFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, metalConceptId, config);
+
+        ArgumentCaptor<FormConfig> saved = ArgumentCaptor.forClass(FormConfig.class);
+        verify(formConfigRepository, times(2)).save(saved.capture());
+        FormConfig persisted = saved.getValue();
+        assertThat(persisted.getValueConcept()).isEqualTo(metalConcept);
+        assertThat(persisted.getIdentifierFormat()).isEqualTo("M-{NUM_MOBILIER:00}");
+        assertThat(persisted.getMinCode()).isEqualTo(1);
+        assertThat(persisted.getMaxCode()).isEqualTo(99);
+    }
+
+    @Test
+    void saveFormConfig_byId_shouldPersistIdentifierSettingsOnExistingType() {
+        TypeFormConfig changes = TypeFormConfig.builder()
+                .identifierFormat("CER-{NUM_MOBILIER:000}")
+                .minCode(5)
+                .maxCode(500)
+                .build();
+
+        service.saveFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, CERAMIQUE_CONCEPT_ID, changes);
+
+        assertThat(ceramiqueConfig.getIdentifierFormat()).isEqualTo("CER-{NUM_MOBILIER:000}");
+        assertThat(ceramiqueConfig.getMinCode()).isEqualTo(5);
+        assertThat(ceramiqueConfig.getMaxCode()).isEqualTo(500);
+        verify(formConfigRepository).save(ceramiqueConfig);
+    }
+
+    @Test
+    void saveFormConfig_byId_shouldThrowWhenConceptIdIsUnknown() {
+        Long unknownConceptId = 404L;
+        when(formConfigRepository.findByActionUnitAndFieldAndValue(PROJECT_ID, FIELD_CONCEPT_ID, unknownConceptId))
+                .thenReturn(Optional.empty());
+        when(conceptRepository.findById(unknownConceptId)).thenReturn(Optional.empty());
+        ActionUnit project = new ActionUnit();
+        project.setId(PROJECT_ID);
+        project.setCreatedByInstitution(new Institution());
+        when(actionUnitRepository.findById(PROJECT_ID)).thenReturn(Optional.of(project));
+
+        TypeFormConfig config = TypeFormConfig.builder().identifierFormat("{NUM_MOBILIER:00}").build();
+
+        assertThatThrownBy(() -> service.saveFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, unknownConceptId, config))
+                .isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    void saveFormConfig_byId_shouldThrowWhenProjectHasNoVocabularyConfigured() throws Exception {
+        when(fieldConfigurationService.findConfigurationForFieldCode(any(), anyString(), any(Long.class)))
+                .thenThrow(new NoConfigForFieldException("no config"));
+
+        TypeFormConfig config = TypeFormConfig.builder().identifierFormat("{NUM_MOBILIER:00}").build();
+
+        assertThatThrownBy(() -> service.saveFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, CERAMIQUE_CONCEPT_ID, config))
+                .isInstanceOf(IllegalStateException.class);
+        verify(formConfigRepository, never()).save(any());
+    }
+
     // --- searchFieldCatalog ---
     @Test
     void searchFieldCatalog_shouldReturnEmptyListWhenQueryIsNull() {

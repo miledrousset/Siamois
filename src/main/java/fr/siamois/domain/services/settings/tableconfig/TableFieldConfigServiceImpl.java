@@ -192,6 +192,24 @@ public class TableFieldConfigServiceImpl implements TableFieldConfigService {
 
     @Override
     @Transactional
+    public void saveFormConfig(Long projectId, ConfigurableTable table, Long typeConceptId, TypeFormConfig config) {
+        FormConfig stored = createOrGetFormConfig(projectId, table, typeConceptId)
+                .orElseThrow(() -> new IllegalStateException(
+                        "No vocabulary configured for field " + table.getFieldCode() + " of project " + projectId));
+        if (config.getIdentifierFormat() == null || config.getIdentifierFormat().isBlank()) {
+            throw new IllegalArgumentException("Identifier format is required");
+        }
+        if (config.getMinCode() < 0 || config.getMaxCode() < config.getMinCode()) {
+            throw new IllegalArgumentException("Invalid identifier range");
+        }
+        stored.setIdentifierFormat(config.getIdentifierFormat());
+        stored.setMinCode(config.getMinCode());
+        stored.setMaxCode(config.getMaxCode());
+        formConfigRepository.save(stored);
+    }
+
+    @Override
+    @Transactional
     public FormConfig resolveIdentifierConfig(Long projectId, ConfigurableTable table, Long typeConceptId) {
         if (typeConceptId != null) {
             Optional<FormConfig> typed = findFormConfig(projectId, table, typeConceptId);

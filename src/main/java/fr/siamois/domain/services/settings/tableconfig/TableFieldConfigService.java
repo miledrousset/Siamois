@@ -93,6 +93,17 @@ public interface TableFieldConfigService {
     void saveFormConfig(Long projectId, ConfigurableTable table, TypeFormConfig config);
 
     /**
+     * Concept-id-keyed equivalent of {@link #saveFormConfig(Long, ConfigurableTable, TypeFormConfig)}.
+     * The type is created if it has no configuration yet.
+     *
+     * @param projectId     the project (action unit) this configuration is scoped to
+     * @param table         the table the type belongs to
+     * @param typeConceptId the concept identifying the type
+     * @param config        the configuration to save; {@link TypeFormConfig#getTypeName()} is ignored
+     */
+    void saveFormConfig(Long projectId, ConfigurableTable table, Long typeConceptId, TypeFormConfig config);
+
+    /**
      * Resolves the persisted identifier configuration for a type. An unconfigured type inherits
      * the project's default row, which is materialized with table defaults when necessary.
      */
