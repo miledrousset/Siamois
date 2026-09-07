@@ -133,7 +133,6 @@ public class SessionSettingsBean implements Serializable {
      * declaring an order, so rebuilding the {@link UserInfo} any earlier would capture the old language.
      */
     @EventListener({InstitutionChangeEvent.class, LangageChangeEvent.class})
-    @Order(Integer.MAX_VALUE)
     public void refreshExecutionContext() {
         ExecutionContextHolder.set(getUserInfo());
     }

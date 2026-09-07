@@ -137,11 +137,4 @@ public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecif
     @Query("UPDATE Person p SET p.password = :password, p.passToModify = false WHERE p.id = :id")
     int updatePasswordById(@Param("id") Long id,
                            @Param("password") String password);
-
-    @Query("SELECT p FROM Person p " +
-            "WHERE LOWER(p.name) LIKE CONCAT('%', :nameOrLastname, '%') " +
-            "OR LOWER(p.lastname) LIKE CONCAT('%', :nameOrLastname, '%') " +
-            "ORDER BY p.lastname " +
-            "LIMIT :limit")
-    List<Person> findAllByNameOrLastname(String nameOrLastname, int limit);
 }
