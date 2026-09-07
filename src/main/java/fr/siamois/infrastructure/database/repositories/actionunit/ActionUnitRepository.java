@@ -49,7 +49,7 @@ public interface ActionUnitRepository extends CrudRepository<ActionUnit, Long>, 
 
     Optional<ActionUnit> findByIdentifierAndCreatedByInstitutionIdentifier(String identifier, String institutionId);
 
-    List<ActionUnit> findAllByIdentifierInAndCreatedByInstitutionIdentifier(Collection<String> identifiers, String institutionId);
+    List<ActionUnit> findAllByFullIdentifierInAndCreatedByInstitutionIdentifier(Collection<String> fullIdentifiers, String institutionId);
 
     @Query(value = """
             SELECT su.*

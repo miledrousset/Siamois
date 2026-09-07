@@ -286,7 +286,9 @@ public class RecordingUnitSeeder {
     private ActionUnit resolveActionUnit(RecordingUnitSpecs s, Map<ActionUnitSeeder.ActionUnitKey, ActionUnit> actionUnitsByKey) {
         return SeederUtils.field("actionUnitIdentifier", () -> {
             ActionUnit found = actionUnitsByKey.get(s.actionUnitIdentifier);
-            if (found == null) throw new IllegalStateException("Action introuvable");
+            if (found == null) throw new IllegalStateException(
+                    "Action introuvable (identifiant '" + s.actionUnitIdentifier.fullIdentifier()
+                            + "', institution '" + s.actionUnitIdentifier.institutionIdentifier() + "')");
             return found;
         });
     }
@@ -357,7 +359,7 @@ public class RecordingUnitSeeder {
                         Collectors.mapping(ActionUnitSeeder.ActionUnitKey::fullIdentifier, Collectors.toList())));
         Map<ActionUnitSeeder.ActionUnitKey, ActionUnit> result = new HashMap<>();
         for (var entry : identifiersByInstitution.entrySet()) {
-            for (ActionUnit au : actionUnitRepository.findAllByIdentifierInAndCreatedByInstitutionIdentifier(entry.getValue(), entry.getKey())) {
+            for (ActionUnit au : actionUnitRepository.findAllByFullIdentifierInAndCreatedByInstitutionIdentifier(entry.getValue(), entry.getKey())) {
                 result.put(new ActionUnitSeeder.ActionUnitKey(au.getFullIdentifier(), entry.getKey()), au);
             }
         }
