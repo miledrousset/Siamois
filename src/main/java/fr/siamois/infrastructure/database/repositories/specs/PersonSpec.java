@@ -1,0 +1,70 @@
+package fr.siamois.infrastructure.database.repositories.specs;
+
+import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.permissions.PersonProfileAssignment;
+import fr.siamois.domain.models.permissions.Profile;
+import fr.siamois.dto.entity.InstitutionDTO;
+import jakarta.persistence.criteria.*;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.jpa.domain.Specification;
+
+public final class PersonSpec {
+
+    public static final String PERSON = "person";
+    public static final String ID = "id";
+    public static final String INSTITUTION = "institution";
+    public static final String NAME = "name";
+    public static final String LASTNAME = "lastname";
+    public static final String EMAIL = "email";
+
+    private PersonSpec() {
+        throw new UnsupportedOperationException("PersonSpec should never be instantiated");
+    }
+
+    public static Specification<Person> isInInstitution(InstitutionDTO institution) {
+        return ((personRoot, query, criteriaBuilder) -> {
+            if (institution == null || institution.getId() == null) {
+                return criteriaBuilder.conjunction();
+            }
+            Subquery<Long> subquery = query.subquery(Long.class);
+            Root<PersonProfileAssignment> ppaRoot = subquery.from(PersonProfileAssignment.class);
+            Join<PersonProfileAssignment, Profile> profileJoin = ppaRoot.join("profile");
+            subquery.select(criteriaBuilder.literal(1L));
+
+            subquery.where(criteriaBuilder.and(
+                    criteriaBuilder.equal(ppaRoot.get(PERSON).get(ID), personRoot.get(ID)),
+                    criteriaBuilder.equal(profileJoin.get(INSTITUTION).get(ID), institution.getId())
+            ));
+
+            return criteriaBuilder.exists(subquery);
+        });
+    }
+
+    private static Expression<String> unaccentProperty(CriteriaBuilder criteriaBuilder, Expression<String> expression) {
+        return criteriaBuilder.function("unaccent", String.class, criteriaBuilder.lower(expression));
+    }
+
+    public static Specification<Person> firstNameOrLastNameContainsIgnoreCase(String name) {
+        return ((root, query, criteriaBuilder) -> {
+            if (name == null || name.isBlank()) {
+                return criteriaBuilder.conjunction();
+            }
+            String pattern = "%" + StringUtils.stripAccents(name.toLowerCase()) + "%";
+            return criteriaBuilder.or(
+                    criteriaBuilder.like(unaccentProperty(criteriaBuilder, root.get(NAME)), pattern),
+                    criteriaBuilder.like(unaccentProperty(criteriaBuilder, root.get(LASTNAME)), pattern)
+            );
+        });
+    }
+
+    public static Specification<Person> emailContainsIgnoreCase(String email) {
+        return ((root, query, criteriaBuilder) -> {
+            if (email == null || email.isBlank()) {
+                return criteriaBuilder.conjunction();
+            }
+            String pattern = "%" + StringUtils.stripAccents(email.toLowerCase()) + "%";
+            return criteriaBuilder.like(unaccentProperty(criteriaBuilder, root.get(EMAIL)), pattern);
+        });
+    }
+
+}

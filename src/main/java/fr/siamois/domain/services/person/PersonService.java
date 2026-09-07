@@ -13,6 +13,7 @@ import fr.siamois.dto.entity.PersonDTO;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
+import fr.siamois.infrastructure.database.repositories.specs.PersonSpec;
 import fr.siamois.mapper.PersonMapper;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
@@ -20,6 +21,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -141,19 +144,6 @@ public class PersonService {
         for (PasswordVerifier verifier : passVerifiers) {
             verifier.verify(password);
         }
-    }
-
-    /**
-     * Find all the person where name or lastname match the string. Case is ignored.
-     *
-     * @param nameOrLastname The string to look for in name or username
-     * @return The Person list
-     */
-    public List<PersonDTO> findAllByNameLastnameContaining(String nameOrLastname) {
-        List<Person> persons = personRepository.findAllByNameOrLastname(nameOrLastname, 100);
-        return persons.stream()
-                .map(personMapper::convert)
-                .toList();
     }
 
     /**
@@ -411,6 +401,7 @@ public class PersonService {
     }
 
     private static final int USERNAME_RANDOM_SUFFIX_MAX_ATTEMPTS = 20;
+    private static final int MAX_SEARCH_RESULTS = 100;
 
     /**
      * Builds a username from the person's first/last name (falling back to their e-mail's local part,
@@ -491,5 +482,34 @@ public class PersonService {
             end--;
         }
         return lettersDigitsDots.substring(start, end);
+    }
+
+    /**
+     * Find the persons of an institution whose firstname, lastname or email contains the given query.
+     * <p>
+     * Comparison is case- and accent-insensitive, and the result is capped to the first
+     * {@value #MAX_SEARCH_RESULTS} matches as this backs an autocomplete.
+     *
+     * @param query       The searched text; when null or blank, every person of the institution matches
+     * @param institution The institution the search is scoped to
+     * @return The matching persons, or an empty list when no institution is given
+     */
+    public List<PersonDTO> findContainingByNameOrEmailInInstitution(String query, InstitutionDTO institution) {
+        if (institution == null) {
+            return List.of();
+        }
+
+        Specification<Person> matchingQuery = Specification
+                .where(PersonSpec.firstNameOrLastNameContainsIgnoreCase(query))
+                .or(PersonSpec.emailContainsIgnoreCase(query));
+
+        Specification<Person> spec = Specification
+                .where(PersonSpec.isInInstitution(institution))
+                .and(matchingQuery);
+
+        return personRepository
+                .findAll(spec, PageRequest.of(0, MAX_SEARCH_RESULTS))
+                .map(personMapper::convert)
+                .toList();
     }
 }
