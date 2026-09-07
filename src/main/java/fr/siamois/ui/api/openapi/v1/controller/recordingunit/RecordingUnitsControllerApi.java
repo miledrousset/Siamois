@@ -36,49 +36,43 @@ public class RecordingUnitsControllerApi {
     private final RecordingUnitOpenApiService recordingUnitOpenApiService;
 
     /**
-     * @deprecated Cet endpoint n'est scopé qu'à l'organisation (`organizationId`), sans notion de projet
-     * (action unit) — or c'est au niveau du projet que sont résolues la configuration des champs et le
-     * formulaire effectif par type (voir {@code GET /api/v1/projects/{projectId}/recording-unit-types}).
-     * Le formulaire retourné ici est donc toujours le formulaire système statique
-     * ({@link fr.siamois.domain.models.recordingunit.RecordingUnit#NEW_UNIT_FORM}), identique quel que
-     * soit le type ou l'organisation passés en paramètre. À terme, cet endpoint doit être retiré au
-     * profit d'un formulaire de création scopé par projet, probablement intégré à
-     * {@code GET /api/v1/projects/{projectId}/recording-unit-types}.
+     * @deprecated Retourne un seul type à la fois (un appel par type) ; préférer
+     * {@code GET /api/v1/projects/{projectId}/recording-unit-types} qui retourne tous les types
+     * configurés du projet en un seul appel. Reste correct fonctionnellement : le formulaire est
+     * résolu par projet et par type comme l'endpoint ci-dessus.
      */
     @Deprecated(forRemoval = true)
     @GetMapping("/creation-form")
     @Operation(
             summary = "Formulaire de création d'une unité d'enregistrement",
             description = "Bundle formulaire (layout), définition des champs et vocabulaires pour un type d'UE donné "
-                    + "(concept) dans le contexte d'une organisation. "
-                    + "Paramètres : `organizationId` (institution dans le périmètre JWT) et `recordingUnitTypeConceptId` "
-                    + "(identifiant du concept de type d'UE). "
+                    + "(concept) dans le contexte d'un projet. "
+                    + "Paramètres : `projectId` (identifiant ou clé du projet, dans le périmètre JWT) et "
+                    + "`recordingUnitTypeConceptId` (identifiant du concept de type d'UE). "
                     + "La langue des libellés de vocabulaire suit l'en-tête Accept-Language. "
-                    + "**Déprécié** : non scopé par projet, retourne toujours le formulaire système statique quel que "
-                    + "soit le type demandé — doit être remplacé par un formulaire de création scopé par projet, "
-                    + "probablement intégré à `GET /api/v1/projects/{projectId}/recording-unit-types`.",
+                    + "**Déprécié** : ne retourne qu'un seul type par appel — préférer "
+                    + "`GET /api/v1/projects/{projectId}/recording-unit-types` qui retourne tous les types "
+                    + "configurés du projet en un seul appel.",
             deprecated = true
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Non authentifié"),
-            @ApiResponse(responseCode = "403", description = "Organisation hors périmètre"),
-            @ApiResponse(responseCode = "404", description = "Organisation ou type d'UE introuvable"),
+            @ApiResponse(responseCode = "404", description = "Projet introuvable, non accessible, ou type d'UE introuvable"),
             @ApiResponse(responseCode = "500", description = "Erreur interne")
     })
     public ResponseEntity<RecordingUnitCreateFormResponse> getRecordingUnitCreateForm(
-            @Parameter(description = "Institution (doit être dans le périmètre JWT).", example = "10")
-            @RequestParam long organizationId,
+            @Parameter(description = "Identifiant ou clé du projet (doit être dans le périmètre JWT).", example = "10")
+            @RequestParam String projectId,
             @Parameter(description = "Identifiant du concept définissant le type d'UE (concept_id).", example = "42")
             @RequestParam long recordingUnitTypeConceptId,
             @Parameter(description = "Langue préférée pour les libellés de vocabulaire (première entrée utilisée).")
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String acceptLanguage) {
 
         ProjectApiCaller caller = projectApiService.requireCaller();
-        projectApiService.assertOrganizationInCallerScope(organizationId, caller.accessibleInstitutionIds());
         String lang = ProjectApiService.primaryAcceptLanguage(acceptLanguage);
         RecordingUnitCreateFormData data = recordingUnitOpenApiService.buildRecordingUnitCreateForm(
-                organizationId, recordingUnitTypeConceptId, caller.person(), lang);
+                projectId, recordingUnitTypeConceptId, caller.person(), caller.accessibleInstitutionIds(), lang);
         return ResponseEntity.ok(new RecordingUnitCreateFormResponse(data));
     }
 

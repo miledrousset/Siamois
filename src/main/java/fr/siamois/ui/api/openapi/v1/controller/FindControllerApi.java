@@ -150,47 +150,41 @@ public class FindControllerApi {
 
 
     /**
-     * @deprecated Cet endpoint n'est scopé qu'à l'organisation (`organizationId`), sans notion de projet
-     * (action unit) — or c'est au niveau du projet que sont résolues la configuration des champs et le
-     * formulaire effectif par type (voir {@code GET /api/v1/projects/{projectId}/find-types}).
-     * Le formulaire retourné ici est donc toujours le formulaire système statique
-     * ({@link fr.siamois.domain.models.specimen.Specimen#NEW_UNIT_FORM}), identique quel que soit le
-     * type ou l'organisation passés en paramètre. À terme, cet endpoint doit être retiré au profit d'un
-     * formulaire de création scopé par projet, probablement intégré à
-     * {@code GET /api/v1/projects/{projectId}/find-types}.
+     * @deprecated Retourne un seul type à la fois (un appel par type) ; préférer
+     * {@code GET /api/v1/projects/{projectId}/find-types} qui retourne tous les types configurés du
+     * projet en un seul appel. Reste correct fonctionnellement : le formulaire est résolu par projet et
+     * par type comme l'endpoint ci-dessus.
      */
     @Deprecated(forRemoval = true)
     @GetMapping("/form")
     @Operation(
             summary = "Formulaire de création/modification d'un mobilier",
             description = "Retourne le layout et la définition des champs pour un type de mobilier (concept) "
-                    + "dans le contexte de l'organisation. Métadonnées UI seules (sans valeurs persistées) ; "
+                    + "dans le contexte d'un projet. Métadonnées UI seules (sans valeurs persistées) ; "
                     + "pour un mobilier existant avec ses réponses, utiliser GET /api/v1/finds/{id}. "
-                    + "**Déprécié** : non scopé par projet, retourne toujours le formulaire système statique quel que "
-                    + "soit le type demandé — doit être remplacé par un formulaire de création scopé par projet, "
-                    + "probablement intégré à `GET /api/v1/projects/{projectId}/find-types`.",
+                    + "**Déprécié** : ne retourne qu'un seul type par appel — préférer "
+                    + "`GET /api/v1/projects/{projectId}/find-types` qui retourne tous les types configurés du "
+                    + "projet en un seul appel.",
             deprecated = true
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Non authentifié"),
-            @ApiResponse(responseCode = "403", description = "Organisation hors périmètre"),
-            @ApiResponse(responseCode = "404", description = "Organisation ou type de mobilier introuvable"),
+            @ApiResponse(responseCode = "404", description = "Projet introuvable, non accessible, ou type de mobilier introuvable"),
             @ApiResponse(responseCode = "500", description = "Erreur interne")
     })
     public ResponseEntity<FindCreateFormResponse> getFindForm(
-            @Parameter(description = "Institution (doit être dans le périmètre JWT).", example = "10", required = true)
-            @RequestParam long organizationId,
+            @Parameter(description = "Identifiant ou clé du projet (doit être dans le périmètre JWT).", example = "10", required = true)
+            @RequestParam String projectId,
             @Parameter(description = "Identifiant du concept de type de mobilier (concept_id).", example = "42", required = true)
             @RequestParam long typeConceptId,
             @Parameter(description = "Langue des libellés de champs (première entrée utilisée).")
             @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String acceptLanguage) {
 
         ProjectApiCaller caller = projectApiService.requireCaller();
-        projectApiService.assertOrganizationInCallerScope(organizationId, caller.accessibleInstitutionIds());
         String lang = ProjectApiService.primaryAcceptLanguage(acceptLanguage);
         return ResponseEntity.ok(new FindCreateFormResponse(
                 recordingUnitOpenApiService.buildFindCreateForm(
-                        organizationId, typeConceptId, caller.person(), lang)));
+                        projectId, typeConceptId, caller.person(), caller.accessibleInstitutionIds(), lang)));
     }
 }
