@@ -361,7 +361,9 @@ public class FieldConfigurationService {
      */
     @Nullable
     public String getUrlForConceptField(@NonNull CustomFieldConcept conceptField, @Nullable Long actionUnitId) {
-        return getUrlForConceptField(conceptField, actionUnitId, null);
+        // Routed through selfProvider rather than a direct 'this' call: getUrlForConceptField(3-arg)
+        // is @Transactional, and a same-class call bypasses the Spring proxy that advice runs on.
+        return selfProvider.getObject().getUrlForConceptField(conceptField, actionUnitId, null);
     }
 
     /**
@@ -517,7 +519,9 @@ public class FieldConfigurationService {
      */
     @NonNull
     public List<ConceptAutocompleteDTO> fetchAutocomplete(CustomFieldConcept conceptField, @Nullable String input, @Nullable Long actionUnitId) throws NoConfigForFieldException {
-        return fetchAutocomplete(conceptField, input, actionUnitId, null);
+        // Routed through selfProvider rather than a direct 'this' call: fetchAutocomplete(4-arg) is
+        // @Transactional, and a same-class call bypasses the Spring proxy that advice runs on.
+        return selfProvider.getObject().fetchAutocomplete(conceptField, input, actionUnitId, null);
     }
 
     /**
