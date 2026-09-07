@@ -235,7 +235,6 @@ BEGIN
                                  FROM concept_label cl
                                           JOIN concept c ON cl.fk_concept_id = c.concept_id
                                  WHERE cl.lang_code = p_langcode
-                                   AND cl.label_type = 0
                                    AND NOT c.is_deleted
                                    AND (p_field_concept_id IS NULL OR
                                         cl.fk_field_parent_concept_id = p_field_concept_id)
