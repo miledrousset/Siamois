@@ -4,9 +4,8 @@ import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.permissions.PersonProfileAssignment;
 import fr.siamois.domain.models.permissions.Profile;
 import fr.siamois.dto.entity.InstitutionDTO;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
+import jakarta.persistence.criteria.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 public final class PersonSpec {
@@ -34,15 +33,19 @@ public final class PersonSpec {
         });
     }
 
+    private static Expression<String> unaccentProperty(CriteriaBuilder criteriaBuilder, Expression<String> expression) {
+        return criteriaBuilder.function("unaccent", String.class, criteriaBuilder.lower(expression));
+    }
+
     public static Specification<Person> firstNameOrLastNameContainsIgnoreCase(String name) {
         return ((root, query, criteriaBuilder) -> {
             if (name == null || name.isBlank()) {
                 return criteriaBuilder.conjunction();
             }
-            String pattern = "%" + name.toLowerCase() + "%";
+            String pattern = "%" + StringUtils.stripAccents(name.toLowerCase()) + "%";
             return criteriaBuilder.or(
-                    criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), pattern),
-                    criteriaBuilder.like(criteriaBuilder.lower(root.get("lastname")), pattern)
+                    criteriaBuilder.like(unaccentProperty(criteriaBuilder, root.get("name")), pattern),
+                    criteriaBuilder.like(unaccentProperty(criteriaBuilder, root.get("lastname")), pattern)
             );
         });
     }
@@ -52,8 +55,8 @@ public final class PersonSpec {
             if (email == null || email.isBlank()) {
                 return criteriaBuilder.conjunction();
             }
-            String pattern = "%" + email.toLowerCase() + "%";
-            return criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), pattern);
+            String pattern = "%" + StringUtils.stripAccents(email.toLowerCase()) + "%";
+            return criteriaBuilder.like(unaccentProperty(criteriaBuilder, root.get("email")), pattern);
         });
     }
 
