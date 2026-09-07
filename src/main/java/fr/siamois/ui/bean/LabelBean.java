@@ -85,6 +85,27 @@ public class LabelBean implements Serializable {
         return concept.getExternalId();
     }
 
+    /**
+     * Find the best matching pref label for the given concept entity based on the user's preferred language.
+     * Converts to {@link ConceptDTO} first so the entity (and its lazy collections) is never touched
+     * outside a Hibernate session.
+     * Named distinctly from {@link #findLabelOf(ConceptDTO)} (rather than overloaded) because Jakarta EL's
+     * method resolution evaluates coercibility against every same-named candidate, including the
+     * {@code ConceptDTO} overload, and that coercibility check itself calls {@code Concept.toString()}
+     * (via Lombok's generated toString touching the lazy {@code relatedConcepts} collection), throwing
+     * {@code LazyInitializationException} outside a Hibernate session before the right overload is ever picked.
+     *
+     * @param concept the concept entity to find the label for
+     * @return the best matching label, or the concept's external ID if no label is found
+     */
+    @Nullable
+    public String findLabelOfConcept(@Nullable Concept concept) {
+        if (concept == null) {
+            return null;
+        }
+        return findLabelOf(conversionService.convert(concept, ConceptDTO.class));
+    }
+
     public String findVocabularyLabelOf(Concept concept) {
         if (concept == null) {
             return null;

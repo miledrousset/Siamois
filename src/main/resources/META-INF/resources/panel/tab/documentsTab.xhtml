@@ -23,15 +23,15 @@
                     </p:column>
 
                     <p:column headerText="Nature">
-                        <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.nature)}"/>
+                        <h:outputText value="#{labelBean.findLabelOfConcept(siamoisDocument.nature)}"/>
                     </p:column>
 
                     <p:column headerText="Grandeur">
-                        <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.scale)}"/>
+                        <h:outputText value="#{labelBean.findLabelOfConcept(siamoisDocument.scale)}"/>
                     </p:column>
 
                     <p:column headerText="Type de document">
-                        <h:outputText value="#{labelBean.findLabelOf(siamoisDocument.format)}"/>
+                        <h:outputText value="#{labelBean.findLabelOfConcept(siamoisDocument.format)}"/>
                     </p:column>
 
                     <p:column headerText="Auteur">
@@ -50,7 +50,8 @@
                         <p:commandButton
                                 value="Télécharger"
                                 ajax="true"
-                                styleClass="mr-2">
+                                styleClass="mr-2"
+                                rendered="#{not empty siamoisDocument.fileCode}">
                             <p:fileDownload value="#{panelModel.streamOf(siamoisDocument)}"/>
                         </p:commandButton>
                     </p:column>
