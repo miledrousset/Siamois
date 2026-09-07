@@ -50,6 +50,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -588,6 +589,44 @@ class TableFieldConfigServiceImplTest {
     }
 
     @Test
+    void createOrGetFormConfig_shouldRecoverFormConfig_whenConcurrentInsertViolatesUniqueConstraint() {
+        // Two requests race to materialize the same row: both find it missing, both attempt to
+        // insert. This one loses the DB constraint and must recover by re-reading the row the
+        // winner just committed, instead of surfacing the constraint violation.
+        when(formConfigRepository.findByActionUnitAndFieldAndValue(PROJECT_ID, FIELD_CONCEPT_ID, CERAMIQUE_CONCEPT_ID))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(ceramiqueConfig));
+        ActionUnit project = new ActionUnit();
+        project.setId(PROJECT_ID);
+        project.setCreatedByInstitution(new Institution());
+        when(actionUnitRepository.findById(PROJECT_ID)).thenReturn(Optional.of(project));
+        when(formConfigRepository.save(any(FormConfig.class)))
+                .thenThrow(new DataIntegrityViolationException("duplicate key"));
+
+        Optional<FormConfig> result = service.createOrGetFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, "Céramique");
+
+        assertThat(result).contains(ceramiqueConfig);
+    }
+
+    @Test
+    void createOrGetFormConfig_shouldRethrowTheConstraintViolation_whenRecoveryAlsoFindsNothing() {
+        // The constraint was violated by something other than a concurrent insert of this exact row
+        // (e.g. a stale duplicate already in the table) — re-reading finds nothing either, so the
+        // original exception must propagate rather than being swallowed.
+        when(formConfigRepository.findByActionUnitAndFieldAndValue(PROJECT_ID, FIELD_CONCEPT_ID, CERAMIQUE_CONCEPT_ID))
+                .thenReturn(Optional.empty());
+        ActionUnit project = new ActionUnit();
+        project.setId(PROJECT_ID);
+        project.setCreatedByInstitution(new Institution());
+        when(actionUnitRepository.findById(PROJECT_ID)).thenReturn(Optional.of(project));
+        DataIntegrityViolationException original = new DataIntegrityViolationException("duplicate key");
+        when(formConfigRepository.save(any(FormConfig.class))).thenThrow(original);
+
+        assertThatThrownBy(() -> service.createOrGetFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, "Céramique"))
+                .isSameAs(original);
+    }
+
+    @Test
     void createOrGetFormConfig_shouldInheritTheIdentifierConfigurationOfTheProjectDefault() {
         // Until it has a row of its own, a type is generated with the identifier configuration of the
         // default one; materializing that row must not silently move it back onto the built-in bounds.
@@ -668,6 +707,45 @@ class TableFieldConfigServiceImplTest {
         assertThat(result.get().getValueConcept()).isEqualTo(metalConcept);
         verify(formConfigRepository).save(any(FormConfig.class));
         verifyNoInteractions(labelService);
+    }
+
+    @Test
+    void createOrGetFormConfig_byId_shouldRecoverFormConfig_whenConcurrentInsertViolatesUniqueConstraint() {
+        Long metalConceptId = 300L;
+        Concept metalConcept = concept(metalConceptId, "metal");
+        FormConfig metalConfig = formConfig(77L, metalConcept);
+        when(formConfigRepository.findByActionUnitAndFieldAndValue(PROJECT_ID, FIELD_CONCEPT_ID, metalConceptId))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(metalConfig));
+        when(conceptRepository.findById(metalConceptId)).thenReturn(Optional.of(metalConcept));
+        ActionUnit project = new ActionUnit();
+        project.setId(PROJECT_ID);
+        project.setCreatedByInstitution(new Institution());
+        when(actionUnitRepository.findById(PROJECT_ID)).thenReturn(Optional.of(project));
+        when(formConfigRepository.save(any(FormConfig.class)))
+                .thenThrow(new DataIntegrityViolationException("duplicate key"));
+
+        Optional<FormConfig> result = service.createOrGetFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, metalConceptId);
+
+        assertThat(result).contains(metalConfig);
+    }
+
+    @Test
+    void createOrGetFormConfig_byId_shouldRethrowTheConstraintViolation_whenRecoveryAlsoFindsNothing() {
+        Long metalConceptId = 300L;
+        Concept metalConcept = concept(metalConceptId, "metal");
+        when(formConfigRepository.findByActionUnitAndFieldAndValue(PROJECT_ID, FIELD_CONCEPT_ID, metalConceptId))
+                .thenReturn(Optional.empty());
+        when(conceptRepository.findById(metalConceptId)).thenReturn(Optional.of(metalConcept));
+        ActionUnit project = new ActionUnit();
+        project.setId(PROJECT_ID);
+        project.setCreatedByInstitution(new Institution());
+        when(actionUnitRepository.findById(PROJECT_ID)).thenReturn(Optional.of(project));
+        DataIntegrityViolationException original = new DataIntegrityViolationException("duplicate key");
+        when(formConfigRepository.save(any(FormConfig.class))).thenThrow(original);
+
+        assertThatThrownBy(() -> service.createOrGetFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, metalConceptId))
+                .isSameAs(original);
     }
 
     @Test
