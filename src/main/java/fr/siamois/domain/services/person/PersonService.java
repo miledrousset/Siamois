@@ -501,7 +501,7 @@ public class PersonService {
 
         Specification<Person> matchingQuery = Specification
                 .where(PersonSpec.firstNameOrLastNameContainsIgnoreCase(query))
-                .and(PersonSpec.emailContainsIgnoreCase(query));
+                .or(PersonSpec.emailContainsIgnoreCase(query));
 
         Specification<Person> spec = Specification
                 .where(PersonSpec.isInInstitution(institution))
