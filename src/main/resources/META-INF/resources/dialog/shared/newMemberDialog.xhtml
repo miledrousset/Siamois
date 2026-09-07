@@ -46,6 +46,16 @@
                                             dropdown="false">
                                 <p:ajax event="itemSelect" process="@this" update="@form"/>
                                 <p:ajax event="itemUnselect" process="@this" update="@form"/>
+                                <f:facet name="footer">
+                                    <div class="new-member-invite-footer">
+                                        <p:commandButton value="#{langBean.msg('newOrganizationMember.action.inviteNewUser')}"
+                                                         icon="pi pi-user-plus"
+                                                         styleClass="ui-button-outlined new-member-invite-button"
+                                                         action="#{dialogBean.goToInvite()}"
+                                                         process="@this"
+                                                         update="@form"/>
+                                    </div>
+                                </f:facet>
                             </p:autoComplete>
                             <div class="new-member-secondary-actions">
                                 <p:commandLink action="#{dialogBean.goToInvite()}"
@@ -197,12 +207,19 @@
                                      styleClass="ui-button-secondary"
                                      action="#{dialogBean.exit()}"
                                      update="@form"/>
-                    <p:commandButton value="#{dialogBean.primaryActionLabel}"
-                                     rendered="#{dialogBean.stepMain or dialogBean.stepInvite}"
-                                     disabled="#{!dialogBean.primaryActionEnabled}"
-                                     action="#{dialogBean.primaryAction()}"
-                                     process="@form"
-                                     update="@form #{updateTarget}"/>
+                    <h:panelGroup layout="block" styleClass="dialog-buttons-primary-group"
+                                  rendered="#{dialogBean.stepMain or dialogBean.stepInvite}">
+                        <h:panelGroup layout="block" styleClass="new-member-invite-counter"
+                                      rendered="#{dialogBean.stepMain and dialogBean.pendingInvitationCount > 0}">
+                            <i class="bi bi-envelope"/>
+                            #{langBean.msg('newOrganizationMember.hint.invitationsPending', dialogBean.pendingInvitationCount)}
+                        </h:panelGroup>
+                        <p:commandButton value="#{dialogBean.primaryActionLabel}"
+                                         disabled="#{!dialogBean.primaryActionEnabled}"
+                                         action="#{dialogBean.primaryAction()}"
+                                         process="@form"
+                                         update="@form #{updateTarget}"/>
+                    </h:panelGroup>
                     <p:commandButton value="#{langBean.msg('newOrganizationMember.csv.action.confirm', dialogBean.csvImportCount)}"
                                      rendered="#{dialogBean.stepCsvImport and not empty dialogBean.csvPreviewRows}"
                                      disabled="#{!dialogBean.csvImportEnabled}"

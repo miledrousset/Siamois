@@ -229,9 +229,12 @@ public abstract class AbstractNewMemberDialogBean implements Serializable {
      * from already-existing accounts.
      */
     public String memberChipLabel(PersonDTO person) {
-        return isDraft(person)
-                ? person.displayName() + " · " + langBean.msg("newOrganizationMember.chip.newAccount")
+        String label = StringUtils.isNotBlank(person.getEmail())
+                ? person.displayName() + " (" + person.getEmail() + ")"
                 : person.displayName();
+        return isDraft(person)
+                ? label + " · " + langBean.msg("newOrganizationMember.chip.newAccount")
+                : label;
     }
 
     /**
@@ -725,9 +728,20 @@ public abstract class AbstractNewMemberDialogBean implements Serializable {
         if (step == WizardStep.INVITE) {
             return langBean.msg("newOrganizationMember.action.invite");
         }
-        return selectedMembers.isEmpty()
-                ? langBean.msg("newOrganizationMember.action.add")
+        if (selectedMembers.isEmpty()) {
+            return langBean.msg("newOrganizationMember.action.add");
+        }
+        return getPendingInvitationCount() > 0
+                ? langBean.msg("newOrganizationMember.action.inviteAndAddCount", selectedMembers.size())
                 : langBean.msg("newOrganizationMember.action.addCount", selectedMembers.size());
+    }
+
+    /**
+     * @return how many of the currently staged {@link #selectedMembers} are not-yet-created drafts —
+     * i.e. how many invitation e-mails {@link #confirmWizard()} will send if submitted now.
+     */
+    public long getPendingInvitationCount() {
+        return selectedMembers.stream().filter(AbstractNewMemberDialogBean::isDraft).count();
     }
 
     /**
