@@ -732,3 +732,16 @@ body .ptc-summary .ui-tabs .ui-tabs-panels .ui-tabs-panel {
     background: var(--siamois-green-light-350);
     font-weight: 600;
 }
+
+.concept-item-definition {
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--text-light);
+}
+
+.concept-item-altlabel {
+    font-style: italic;
+    color: var(--siamois-green-active);
+}
