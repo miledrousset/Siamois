@@ -49,6 +49,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.ObjectProvider;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -96,6 +97,8 @@ class TableFieldConfigServiceImplTest {
     private CustomFieldAnswerRepository customFieldAnswerRepository;
     @Mock
     private PersonRepository personRepository;
+    @Mock
+    private ObjectProvider<TableFieldConfigServiceImpl> selfProvider;
 
     @InjectMocks
     private TableFieldConfigServiceImpl service;
@@ -114,6 +117,7 @@ class TableFieldConfigServiceImplTest {
         person = new PersonDTO();
         person.setId(PERSON_ID);
         ExecutionContextHolder.set(new UserInfo(institution, person, "fr"));
+        when(selfProvider.getObject()).thenReturn(service);
 
         fieldConcept = concept(FIELD_CONCEPT_ID, "field");
         ceramiqueConcept = concept(CERAMIQUE_CONCEPT_ID, "ceramique");
