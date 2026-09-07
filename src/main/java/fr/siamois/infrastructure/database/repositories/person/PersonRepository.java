@@ -1,8 +1,8 @@
 package fr.siamois.infrastructure.database.repositories.person;
 
 import fr.siamois.domain.models.auth.Person;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,21 +14,12 @@ import java.util.Optional;
 import java.util.Set;
 
 @Repository
-public interface PersonRepository extends JpaRepository<Person, Long> {
+public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecificationExecutor<Person> {
 
     Optional<Person> findByUsernameIgnoreCase(String username);
 
     /** Broad prefetch by firstname only — callers narrow to an exact (name, lastname) pair themselves. */
     List<Person> findAllByNameIgnoreCaseIn(Collection<String> names);
-
-    @Query(
-            nativeQuery = true,
-            value = "SELECT p.* FROM person p " +
-                    "WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :nameOrLastname, '%')) " +
-                    "OR LOWER(p.lastname) LIKE LOWER(CONCAT('%', :nameOrLastname, '%')) " +
-                    "LIMIT :limit"
-    )
-    List<Person> findAllByNameOrLastname(String nameOrLastname, int limit);
 
 
     @Query(
@@ -50,15 +41,6 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
     List<Person> findAllAuthorsOfActionUnitByInstitution(Long institutionId);
 
     Optional<Person> findById(long id);
-
-    @Modifying
-    @Transactional
-    @Query(
-            nativeQuery = true,
-            value = "INSERT INTO person_role_institution(fk_person_id, fk_role_concept_id, fk_institution_id) " +
-                    "VALUES (:personId, :conceptId, :institutionId)"
-    )
-    void addPersonToInstitution(Long personId, Long institutionId, Long conceptId);
 
     Optional<Person> findByEmailIgnoreCase(String email);
 
@@ -155,4 +137,11 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
     @Query("UPDATE Person p SET p.password = :password, p.passToModify = false WHERE p.id = :id")
     int updatePasswordById(@Param("id") Long id,
                            @Param("password") String password);
+
+    @Query("SELECT p FROM Person p " +
+            "WHERE LOWER(p.name) LIKE CONCAT('%', :nameOrLastname, '%') " +
+            "OR LOWER(p.lastname) LIKE CONCAT('%', :nameOrLastname, '%') " +
+            "ORDER BY p.lastname " +
+            "LIMIT :limit")
+    List<Person> findAllByNameOrLastname(String nameOrLastname, int limit);
 }

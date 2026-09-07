@@ -13,6 +13,7 @@ import fr.siamois.dto.entity.PersonDTO;
 import fr.siamois.infrastructure.database.repositories.person.PendingPersonRepository;
 import fr.siamois.infrastructure.database.repositories.person.PersonRepository;
 import fr.siamois.infrastructure.database.repositories.settings.PersonSettingsRepository;
+import fr.siamois.infrastructure.database.repositories.specs.PersonSpec;
 import fr.siamois.mapper.PersonMapper;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
@@ -20,6 +21,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -141,19 +144,6 @@ public class PersonService {
         for (PasswordVerifier verifier : passVerifiers) {
             verifier.verify(password);
         }
-    }
-
-    /**
-     * Find all the person where name or lastname match the string. Case is ignored.
-     *
-     * @param nameOrLastname The string to look for in name or username
-     * @return The Person list
-     */
-    public List<PersonDTO> findAllByNameLastnameContaining(String nameOrLastname) {
-        List<Person> persons = personRepository.findAllByNameOrLastname(nameOrLastname, 100);
-        return persons.stream()
-                .map(personMapper::convert)
-                .toList();
     }
 
     /**
@@ -491,5 +481,16 @@ public class PersonService {
             end--;
         }
         return lettersDigitsDots.substring(start, end);
+    }
+
+    public List<PersonDTO> findContainingByNameOrEmailInInstitution(String query, InstitutionDTO institution) {
+        Specification<Person> spec = Specification.where(PersonSpec.isInInstitution(institution));
+        spec = spec.and(PersonSpec.firstNameOrLastNameContainsIgnoreCase(query));
+        spec = spec.and(PersonSpec.emailContainsIgnoreCase(query));
+
+        return personRepository
+                .findAll(spec, PageRequest.of(0, 100))
+                .map(personMapper::convert)
+                .toList();
     }
 }

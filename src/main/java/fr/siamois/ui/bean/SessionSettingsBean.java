@@ -143,7 +143,7 @@ public class SessionSettingsBean implements Serializable {
             return Collections.emptyList();
         }
         query = query.toLowerCase();
-        return personService.findAllByNameLastnameContaining(query);
+        return personService.findContainingByNameOrEmailInInstitution(query, userInfo.getInstitution());
     }
 
     private long parseTimeoutToSeconds() {

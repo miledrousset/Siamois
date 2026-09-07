@@ -108,17 +108,6 @@ class PersonServiceTest {
     }
 
     @Test
-    void findAllByNameLastnameContaining_Success() {
-        when(personRepository.findAllByNameOrLastname("bob", 100)).thenReturn(List.of(person));
-
-        // Act
-        List<PersonDTO> actualResult = personService.findAllByNameLastnameContaining("bob");
-
-        // Assert
-        assertEquals(1, actualResult.size());
-    }
-
-    @Test
     void updatePerson_Success() throws UserAlreadyExistException, InvalidNameException, InvalidPasswordException, InvalidUsernameException, InvalidEmailException {
         // Arrange
         when(personRepository.save(person)).thenReturn(person);
