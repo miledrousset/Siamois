@@ -218,14 +218,14 @@ margin-top: 1em;
                                     <!-- Title -->
                                     <h3 id="relationTitle" class="relation-title relation-edit-row">
                                         <h:commandLink
-                                                action="#{flowBean.addRecordingUnitToOverview(cc.attrs.answer.selectedRel.unit1.id, cc.attrs.panelModel, 3)}"
+                                                action="#{flowBean.addRecordingUnitToOverview(cc.attrs.answer.selectedRel.unit1.id, cc.attrs.panelModel, 3, false)}"
                                         >
                                             #{cc.attrs.answer.selectedRel.unit1.fullIdentifier}
                                         </h:commandLink>
 
                                         #{labelBean.findLabelOf(cc.attrs.answer.selectedRel.concept)}
                                         <h:commandLink
-                                                action="#{flowBean.addRecordingUnitToOverview(cc.attrs.answer.selectedRel.unit2.id, cc.attrs.panelModel, 3)}"
+                                                action="#{flowBean.addRecordingUnitToOverview(cc.attrs.answer.selectedRel.unit2.id, cc.attrs.panelModel, 3, false)}"
                                         >
                                             #{cc.attrs.answer.selectedRel.unit2.fullIdentifier}
                                         </h:commandLink>

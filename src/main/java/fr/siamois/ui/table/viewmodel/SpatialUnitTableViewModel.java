@@ -230,7 +230,7 @@ public class SpatialUnitTableViewModel extends EntityTableViewModel<SpatialUnitD
 
             case VIEW_RELATION -> {
                 setOverviewEntityId(su.getId());
-                flowBean.addSpatialUnitToOverview(su.getId(), parentPanel, 3);
+                flowBean.addSpatialUnitToOverview(su.getId(), parentPanel, 3, false);
             }
 
             case ADD_RELATION -> {

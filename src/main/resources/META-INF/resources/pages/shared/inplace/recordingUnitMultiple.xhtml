@@ -51,7 +51,8 @@
                             action="#{flowBean.addRecordingUnitToOverview(
                                 cc.attrs.answer.value.id,
                                 focusViewBean.mainPanel,
-                                null
+                                null,
+                                false
                             )}"
                             process="@this"
                             update="@this">
@@ -70,7 +71,8 @@
                                     action="#{flowBean.addRecordingUnitToOverview(
                                         ru.id,
                                         focusViewBean.mainPanel,
-                                        null
+                                        null,
+                                        false
                                     )}"
                                     process="@this"
                                     update="@none"
@@ -133,7 +135,8 @@
                             action="#{flowBean.addRecordingUnitToOverview(
                                 ru.id,
                                 focusViewBean.mainPanel,
-                                null
+                                null,
+                                false
                             )}"
                             process="@this"
                             update="@none">

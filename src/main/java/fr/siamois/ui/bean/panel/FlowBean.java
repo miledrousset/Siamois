@@ -328,7 +328,7 @@ public class FlowBean implements Serializable {
                 .get("clickedUnitId");
 
         if (idParam != null) {
-            addRecordingUnitToOverview(Long.parseLong(idParam), targetPanel, 3);
+            addRecordingUnitToOverview(Long.parseLong(idParam), targetPanel, 3, false);
         }
 
 
