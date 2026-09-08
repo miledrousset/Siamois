@@ -253,6 +253,60 @@ class ConceptServiceTest {
     }
 
     @Test
+    void saveOrGetConceptFromUri_shouldPersistTheConceptReturnedByTheThesaurus() {
+        String uri = "http://example.com/?idc=concept1&idt=vocab1";
+        FullInfoDTO dto = new FullInfoDTO();
+        PurlInfoDTO id = new PurlInfoDTO();
+        id.setValue("concept1");
+        PurlInfoDTO label = new PurlInfoDTO();
+        label.setLang("fr");
+        label.setValue("Libellé FR");
+        dto.setIdentifier(new PurlInfoDTO[]{id});
+        dto.setPrefLabel(new PurlInfoDTO[]{label});
+
+        when(conceptApi.fetchConceptInfoByUri("http://example.com", uri)).thenReturn(dto);
+        when(conceptRepository.findConceptByExternalIdIgnoreCase("vocab1", "concept1")).thenReturn(Optional.of(concept));
+        when(conceptRepository.save(any(Concept.class))).thenAnswer(i -> i.getArgument(0));
+
+        Concept result = conceptService.saveOrGetConceptFromUri(vocabulary, uri, null);
+
+        assertEquals(concept, result);
+        verify(labelService, times(1)).updateLabel(concept, "fr", "Libellé FR", null);
+    }
+
+    @Test
+    void saveOrGetConceptFromUri_shouldThrow_whenTheThesaurusReturnsNoConcept() {
+        String uri = "http://example.com/?idc=concept1&idt=vocab1";
+        when(conceptApi.fetchConceptInfoByUri("http://example.com", uri)).thenReturn(null);
+
+        assertThrows(IllegalStateException.class,
+                () -> conceptService.saveOrGetConceptFromUri(vocabulary, uri, null));
+        verifyNoInteractions(conceptRepository);
+    }
+
+    @Test
+    void saveOrGetConceptFromUri_shouldThrow_whenTheConceptCarriesNoLabel() {
+        String uri = "http://example.com/?idc=concept1&idt=vocab1";
+        FullInfoDTO dto = new FullInfoDTO();
+        dto.setPrefLabel(null);
+        when(conceptApi.fetchConceptInfoByUri("http://example.com", uri)).thenReturn(dto);
+
+        assertThrows(IllegalStateException.class,
+                () -> conceptService.saveOrGetConceptFromUri(vocabulary, uri, null));
+    }
+
+    @Test
+    void saveOrGetConceptFromUri_shouldThrow_whenTheConceptCarriesAnEmptyLabelArray() {
+        String uri = "http://example.com/?idc=concept1&idt=vocab1";
+        FullInfoDTO dto = new FullInfoDTO();
+        dto.setPrefLabel(new PurlInfoDTO[]{});
+        when(conceptApi.fetchConceptInfoByUri("http://example.com", uri)).thenReturn(dto);
+
+        assertThrows(IllegalStateException.class,
+                () -> conceptService.saveOrGetConceptFromUri(vocabulary, uri, null));
+    }
+
+    @Test
     void updateAllLabelsFromDTO_shouldDoNothingWhenPrefLabelNull() {
         FullInfoDTO dto = new FullInfoDTO();
         dto.setPrefLabel(null);

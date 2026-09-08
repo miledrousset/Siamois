@@ -171,6 +171,28 @@ public class ConceptService {
     }
 
     /**
+     * Fetches the concept designated by a thesaurus URI and persists it (or returns the existing
+     * local copy), unlike {@link #fetchConceptDesignatedBy(VocabularyDTO, String)} which only
+     * returns a detached preview.
+     *
+     * @param vocabulary         the vocabulary the concept belongs to
+     * @param uri                the thesaurus URI designating the concept
+     * @param fieldParentConcept the parent concept in the field context, if applicable
+     * @return the saved or existing concept
+     * @throws IllegalStateException if the thesaurus did not return the concept
+     */
+    @NonNull
+    @Transactional
+    public Concept saveOrGetConceptFromUri(@NonNull Vocabulary vocabulary, @NonNull String uri,
+                                            @Nullable Concept fieldParentConcept) {
+        FullInfoDTO info = conceptApi.fetchConceptInfoByUri(vocabulary.getBaseUri(), uri);
+        if (info == null || info.getPrefLabel() == null || info.getPrefLabel().length == 0) {
+            throw new IllegalStateException("The thesaurus did not return the concept designated by " + uri);
+        }
+        return saveOrGetConceptFromFullDTO(vocabulary, info, fieldParentConcept);
+    }
+
+    /**
      * Fetches from the thesaurus every concept related to {@code baseValue} that is still a stub — a row
      * created for a {@code skos:related} link during an import, which records the link without fetching
      * the concept behind it. Nothing reads a related concept until an autocomplete asks for the

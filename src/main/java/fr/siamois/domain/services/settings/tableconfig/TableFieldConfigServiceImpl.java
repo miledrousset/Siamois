@@ -78,6 +78,8 @@ public class TableFieldConfigServiceImpl implements TableFieldConfigService {
     private static final String NO_SOURCE = "—";
     private static final int DEFAULT_MIN_CODE = 1;
     private static final int DEFAULT_MAX_CODE = 999;
+    public static final String OF_PROJECT = " of project ";
+    public static final String NO_VOCABULARY_CONFIGURED_FOR_FIELD = "No vocabulary configured for field ";
 
     private final FieldConfigurationService fieldConfigurationService;
     private final LabelService labelService;
@@ -183,6 +185,24 @@ public class TableFieldConfigServiceImpl implements TableFieldConfigService {
         // Existing callers use this method only to materialize a row and omit identifier values.
         if (config.getIdentifierFormat() == null) return;
         if (config.getIdentifierFormat().isBlank()) {
+            throw new IllegalArgumentException("Identifier format is required");
+        }
+        if (config.getMinCode() < 0 || config.getMaxCode() < config.getMinCode()) {
+            throw new IllegalArgumentException("Invalid identifier range");
+        }
+        stored.setIdentifierFormat(config.getIdentifierFormat());
+        stored.setMinCode(config.getMinCode());
+        stored.setMaxCode(config.getMaxCode());
+        formConfigRepository.save(stored);
+    }
+
+    @Override
+    @Transactional
+    public void saveFormConfig(Long projectId, ConfigurableTable table, Long typeConceptId, TypeFormConfig config) {
+        FormConfig stored = createOrGetFormConfig(projectId, table, typeConceptId)
+                .orElseThrow(() -> new IllegalStateException(
+                        NO_VOCABULARY_CONFIGURED_FOR_FIELD + table.getFieldCode() + OF_PROJECT + projectId));
+        if (config.getIdentifierFormat() == null || config.getIdentifierFormat().isBlank()) {
             throw new IllegalArgumentException("Identifier format is required");
         }
         if (config.getMinCode() < 0 || config.getMaxCode() < config.getMinCode()) {
@@ -763,7 +783,7 @@ public class TableFieldConfigServiceImpl implements TableFieldConfigService {
                 .orElseThrow(() -> new NoSuchElementException("Unknown project: " + projectId));
         Concept fieldConcept = findFieldConcept(projectId, table)
                 .orElseThrow(() -> new IllegalStateException(
-                        "No vocabulary configured for field " + table.getFieldCode() + " of project " + projectId));
+                        NO_VOCABULARY_CONFIGURED_FOR_FIELD + table.getFieldCode() + OF_PROJECT + projectId));
 
         FormConfig config = new FormConfig();
         config.setActionUnit(project);
@@ -784,7 +804,7 @@ public class TableFieldConfigServiceImpl implements TableFieldConfigService {
                 .orElseThrow(() -> new NoSuchElementException("Unknown project: " + projectId));
         Concept fieldConcept = findFieldConcept(projectId, table)
                 .orElseThrow(() -> new IllegalStateException(
-                        "No vocabulary configured for field " + table.getFieldCode() + " of project " + projectId));
+                        NO_VOCABULARY_CONFIGURED_FOR_FIELD + table.getFieldCode() + OF_PROJECT + projectId));
 
         FormConfig config = new FormConfig();
         config.setActionUnit(project);

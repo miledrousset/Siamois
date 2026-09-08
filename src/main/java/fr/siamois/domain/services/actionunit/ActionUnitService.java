@@ -83,6 +83,7 @@ public class ActionUnitService implements ArkEntityService {
     private final ProfileMapper profileMapper;
     private final ProfilePermissionService profilePermissionService;
     private final InstitutionService institutionService;
+    private final DefaultProjectIdentifierConfigSeeder defaultProjectIdentifierConfigSeeder;
 
 
     /**
@@ -245,6 +246,7 @@ public class ActionUnitService implements ArkEntityService {
         ActionUnitDTO savedDTO = actionUnitMapper.convert(saveNotTransactional(info, actionUnit, typeConcept));
         if (isCreation) {
             assignRoles(info, savedDTO);
+            defaultProjectIdentifierConfigSeeder.seed(savedDTO.getId());
         }
         return savedDTO;
     }

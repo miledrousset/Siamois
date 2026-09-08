@@ -16,6 +16,7 @@ import fr.siamois.domain.models.institution.Institution;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.actionunit.ActionUnitService;
+import fr.siamois.domain.services.actionunit.DefaultProjectIdentifierConfigSeeder;
 import fr.siamois.domain.services.permissions.PersonProfileAssignmentService;
 import fr.siamois.domain.services.permissions.ProfilePermissionService;
 import fr.siamois.domain.services.permissions.ProfileService;
@@ -85,6 +86,7 @@ class ActionUnitServiceTest {
     @Mock private ProfileMapper profileMapper;
     @Mock private ProfilePermissionService profilePermissionService;
     @Mock private InstitutionService institutionService;
+    @Mock private DefaultProjectIdentifierConfigSeeder defaultProjectIdentifierConfigSeeder;
     @InjectMocks
     private ActionUnitService actionUnitService;
 
