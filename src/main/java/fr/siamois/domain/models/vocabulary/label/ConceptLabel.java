@@ -18,7 +18,7 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table(name = "concept_label", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"fk_concept_id", "lang_code", "label_type"})
+        @UniqueConstraint(columnNames = {"fk_concept_id", "lang_code", "label_type", "label"})
 })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "label_type", discriminatorType = DiscriminatorType.INTEGER)

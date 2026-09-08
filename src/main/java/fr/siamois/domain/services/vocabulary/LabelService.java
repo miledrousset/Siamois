@@ -10,6 +10,7 @@ import fr.siamois.dto.entity.vocabulary.ConceptAltLabelDTO;
 import fr.siamois.dto.entity.vocabulary.ConceptDTO;
 import fr.siamois.dto.entity.vocabulary.ConceptLabelDTO;
 import fr.siamois.dto.entity.vocabulary.ConceptPrefLabelDTO;
+import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
 import fr.siamois.infrastructure.database.repositories.vocabulary.label.ConceptLabelRepository;
 import fr.siamois.infrastructure.database.repositories.vocabulary.label.VocabularyLabelRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,12 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Service to manage labels for concepts and vocabularies.
@@ -124,6 +127,8 @@ public class LabelService {
 
     /**
      * Updates or creates an alternative label for a concept in the specified language.
+     * A concept may have several alternative labels (synonyms) for the same language, so the
+     * lookup is keyed on the exact (concept, lang, value) triple rather than (concept, lang) alone.
      *
      * @param savedConcept       the concept to update the alt label for
      * @param lang               the language code for the alt label
@@ -131,7 +136,7 @@ public class LabelService {
      * @param fieldParentConcept the parent concept of the field, can be null
      */
     public void updateAltLabel(@NonNull Concept savedConcept, @NonNull String lang, @NonNull String value, @Nullable Concept fieldParentConcept) {
-        Optional<ConceptAltLabel> opt = conceptLabelRepository.findAltLabelByConceptAndLangCode(savedConcept, lang);
+        Optional<ConceptAltLabel> opt = conceptLabelRepository.findAltLabelByConceptAndLangCodeAndLabel(savedConcept, lang, value);
         ConceptAltLabel altLabel;
         if (opt.isPresent()) {
             altLabel = opt.get();
@@ -139,12 +144,39 @@ public class LabelService {
             altLabel = new ConceptAltLabel();
             altLabel.setConcept(savedConcept);
             altLabel.setLangCode(lang);
+            altLabel.setLabel(value);
         }
-        altLabel.setLabel(value);
         if (fieldParentConcept != null && !fieldParentConcept.equals(savedConcept)) {
             altLabel.setParentConcept(fieldParentConcept);
         }
         conceptLabelRepository.save(altLabel);
+    }
+
+    /**
+     * Replaces all alternative labels of a concept with the given set, so labels removed from the
+     * source thesaurus don't linger and every current synonym (including several per language) is kept.
+     *
+     * @param savedConcept       the concept to update the alt labels for
+     * @param altLabels          the full, current set of alt labels for this concept, as (lang, value) pairs
+     * @param fieldParentConcept the parent concept of the field, can be null
+     */
+    public void replaceAltLabels(@NonNull Concept savedConcept, @NonNull PurlInfoDTO[] altLabels, @Nullable Concept fieldParentConcept) {
+        Set<ConceptAltLabel> existing = conceptLabelRepository.findAllAltLabelsByConcept(savedConcept);
+
+        Set<String> desiredKeys = Arrays.stream(altLabels)
+                .map(dto -> dto.getLang() + " " + dto.getValue())
+                .collect(Collectors.toSet());
+
+        List<ConceptAltLabel> toDelete = existing.stream()
+                .filter(label -> !desiredKeys.contains(label.getLangCode() + " " + label.getLabel()))
+                .toList();
+        if (!toDelete.isEmpty()) {
+            conceptLabelRepository.deleteAll(toDelete);
+        }
+
+        for (PurlInfoDTO altLabel : altLabels) {
+            updateAltLabel(savedConcept, altLabel.getLang(), altLabel.getValue(), fieldParentConcept);
+        }
     }
 
     /**

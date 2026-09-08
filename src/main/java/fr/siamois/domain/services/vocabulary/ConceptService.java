@@ -259,9 +259,7 @@ public class ConceptService {
         }
 
         if (conceptDto.getAltLabel() != null) {
-            for (PurlInfoDTO altLabel : conceptDto.getAltLabel()) {
-                labelService.updateAltLabel(savedConcept, altLabel.getLang(), altLabel.getValue(), fieldParentConcept);
-            }
+            labelService.replaceAltLabels(savedConcept, conceptDto.getAltLabel(), fieldParentConcept);
         }
     }
 
