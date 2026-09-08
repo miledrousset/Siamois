@@ -400,6 +400,11 @@ public class EntityFormContext<T extends AbstractEntityDTO> {
         CustomFieldAnswerViewModel ans = formResponse.getAnswers().get(field);
 
         if (ans instanceof CustomFieldAnswerSelectMultipleFromFieldCodeViewModel multipleAns) {
+            // Additional multi-value vocabulary fields start with no list at all (nothing binds them
+            // to an entity property that would have initialized one).
+            if (multipleAns.getValue() == null) {
+                multipleAns.setValue(new ArrayList<>());
+            }
             multipleAns.getValue().add((ConceptAutocompleteDTO) newValue);
             handleAutoSave(field);
             return;

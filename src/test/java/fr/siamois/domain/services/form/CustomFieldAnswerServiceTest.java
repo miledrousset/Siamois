@@ -18,7 +18,9 @@ import fr.siamois.domain.models.form.customfield.recordingunit.CustomFieldMeasur
 import fr.siamois.domain.models.form.customfield.spatialunit.CustomFieldSelectMultipleSpatialUnitTree;
 import fr.siamois.domain.models.form.customfield.spatialunit.CustomFieldSelectOneAddress;
 import fr.siamois.domain.models.form.customfield.spatialunit.CustomFieldSelectOneSpatialUnit;
+import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectMultiple;
 import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectMultipleFromFieldCode;
+import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectOne;
 import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectOneFromFieldCode;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
 import fr.siamois.domain.models.form.customfieldanswer.actionunit.CustomFieldAnswerSelectOneActionCode;
@@ -32,16 +34,22 @@ import fr.siamois.domain.models.form.customfieldanswer.person.CustomFieldAnswerS
 import fr.siamois.domain.models.form.customfieldanswer.spatialunit.CustomFieldAnswerSelectMultipleSpatialUnitTree;
 import fr.siamois.domain.models.form.customfieldanswer.spatialunit.CustomFieldAnswerSelectOneSpatialUnit;
 import fr.siamois.domain.models.form.customfieldanswer.vocabulary.CustomFieldAnswerAnswerSelectMultiple;
+import fr.siamois.domain.models.form.customfieldanswer.vocabulary.CustomFieldAnswerAnswerSelectOne;
 import fr.siamois.domain.models.form.customfieldanswer.vocabulary.CustomFieldAnswerSelectOneFromFieldAnswerCode;
 import fr.siamois.domain.models.form.measurement.UnitDefinition;
 import fr.siamois.domain.models.settings.tableconfig.ConfigurableTable;
 import fr.siamois.domain.models.spatialunit.SpatialUnit;
 import fr.siamois.domain.models.vocabulary.Concept;
+import fr.siamois.domain.models.vocabulary.label.ConceptPrefLabel;
 import fr.siamois.domain.services.measurement.UnitDefinitionService;
 import fr.siamois.domain.services.settings.tableconfig.TableFieldConfigService;
+import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.dto.entity.*;
 import fr.siamois.dto.entity.vocabulary.ConceptDTO;
 import fr.siamois.infrastructure.database.repositories.form.CustomFieldAnswerRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.dto.ConceptAutocompleteDTO;
+import fr.siamois.mapper.ConceptMapper;
 import fr.siamois.mapper.UnitDefinitionMapper;
 import fr.siamois.ui.viewmodel.CustomFormResponseViewModel;
 import fr.siamois.ui.viewmodel.fieldanswer.*;
@@ -85,6 +93,12 @@ class CustomFieldAnswerServiceTest {
     private UnitDefinitionService unitDefinitionService;
     @Mock
     private UnitDefinitionMapper unitDefinitionMapper;
+    @Mock
+    private ConceptMapper conceptMapper;
+    @Mock
+    private ConceptRepository conceptRepository;
+    @Mock
+    private LabelService labelService;
 
     @InjectMocks
     private CustomFieldAnswerService service;
@@ -378,6 +392,109 @@ class CustomFieldAnswerServiceTest {
         verify(customFieldAnswerRepository, never()).save(any());
     }
 
+    // ========== Additional "vocabulaire contrôlé" fields ==========
+
+    @Test
+    void save_shouldStoreTheConceptPickedOnAnAdditionalVocabularyField() {
+        CustomFieldSelectOne field = selectOneField(30L);
+        Concept concept = concept(10L, "th1");
+        when(conceptRepository.findAllById(List.of(10L))).thenReturn(List.of(concept));
+
+        CustomFieldAnswerSelectOneFromFieldCodeViewModel viewModel = new CustomFieldAnswerSelectOneFromFieldCodeViewModel();
+        viewModel.setValue(autocompleteDTO(10L, "Fosse"));
+
+        CustomFieldAnswer saved = savedAnswerOf(field, viewModel);
+
+        assertThat(saved).isExactlyInstanceOf(CustomFieldAnswerAnswerSelectOne.class);
+        assertThat(saved.getValue()).isSameAs(concept);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void save_shouldStoreEveryConceptPickedOnAnAdditionalMultiValueVocabularyField() {
+        CustomFieldSelectMultiple field = selectMultipleField(31L);
+        Concept fosse = concept(10L, "th1");
+        Concept mur = concept(11L, "th2");
+        when(conceptRepository.findAllById(List.of(10L, 11L))).thenReturn(List.of(fosse, mur));
+
+        CustomFieldAnswerSelectMultipleFromFieldCodeViewModel viewModel = new CustomFieldAnswerSelectMultipleFromFieldCodeViewModel();
+        viewModel.setValue(new ArrayList<>(List.of(autocompleteDTO(10L, "Fosse"), autocompleteDTO(11L, "Mur"))));
+
+        CustomFieldAnswer saved = savedAnswerOf(field, viewModel);
+
+        assertThat(saved).isExactlyInstanceOf(CustomFieldAnswerAnswerSelectMultiple.class);
+        assertThat((List<Concept>) saved.getValue()).containsExactly(fosse, mur);
+    }
+
+    @Test
+    void save_shouldNotWriteARowForAVocabularyFieldLeftEmpty() {
+        CustomFieldSelectOne field = selectOneField(30L);
+
+        service.save(response(field, new CustomFieldAnswerSelectOneFromFieldCodeViewModel()));
+
+        verify(customFieldAnswerRepository, never()).save(any());
+    }
+
+    @Test
+    void loadAdditionalFieldAnswers_readsBackTheConceptOfAVocabularyField() {
+        RecordingUnitDTO unit = recordingUnitDto(100L, 7L, null);
+        FormConfig formConfig = new FormConfig();
+        formConfig.setId(9L);
+        when(tableFieldConfigService.findFormConfig(7L, ConfigurableTable.UE, (Long) null))
+                .thenReturn(Optional.of(formConfig));
+
+        CustomFieldSelectOne field = selectOneField(30L);
+        Concept concept = concept(10L, "th1");
+        CustomFieldAnswerAnswerSelectOne answer = new CustomFieldAnswerAnswerSelectOne();
+        answer.setCustomField(field);
+        answer.setValue(concept);
+
+        ConceptDTO conceptDTO = conceptDto(10L);
+        when(conceptMapper.convert(concept)).thenReturn(conceptDTO);
+        when(labelService.findLabelOf(concept, "fr")).thenReturn(prefLabel("Fosse"));
+
+        formConfigAnswer.setAnswers(Set.of(answer));
+        when(formConfigAnswerService.findFormConfigAnswer(formConfig, unit)).thenReturn(Optional.of(formConfigAnswer));
+
+        Map<CustomField, CustomFieldAnswerViewModel> result = service.loadAdditionalFieldAnswers(unit);
+
+        assertThat(result.get(field)).isInstanceOfSatisfying(CustomFieldAnswerSelectOneFromFieldCodeViewModel.class, v -> {
+            assertThat(v.getValue().concept()).isSameAs(conceptDTO);
+            assertThat(v.getValue().getConceptLabelToDisplay().getLabel()).isEqualTo("Fosse");
+        });
+    }
+
+    @Test
+    void loadAdditionalFieldAnswers_readsBackEveryConceptOfAMultiValueVocabularyField() {
+        RecordingUnitDTO unit = recordingUnitDto(100L, 7L, null);
+        FormConfig formConfig = new FormConfig();
+        formConfig.setId(9L);
+        when(tableFieldConfigService.findFormConfig(7L, ConfigurableTable.UE, (Long) null))
+                .thenReturn(Optional.of(formConfig));
+
+        CustomFieldSelectMultiple field = selectMultipleField(31L);
+        Concept fosse = concept(10L, "th1");
+        Concept mur = concept(11L, "th2");
+        CustomFieldAnswerAnswerSelectMultiple answer = new CustomFieldAnswerAnswerSelectMultiple();
+        answer.setCustomField(field);
+        answer.setValue(new ArrayList<>(List.of(fosse, mur)));
+
+        when(conceptMapper.convert(fosse)).thenReturn(conceptDto(10L));
+        when(conceptMapper.convert(mur)).thenReturn(conceptDto(11L));
+        when(labelService.findLabelOf(fosse, "fr")).thenReturn(prefLabel("Fosse"));
+        when(labelService.findLabelOf(mur, "fr")).thenReturn(prefLabel("Mur"));
+
+        formConfigAnswer.setAnswers(Set.of(answer));
+        when(formConfigAnswerService.findFormConfigAnswer(formConfig, unit)).thenReturn(Optional.of(formConfigAnswer));
+
+        Map<CustomField, CustomFieldAnswerViewModel> result = service.loadAdditionalFieldAnswers(unit);
+
+        assertThat(result.get(field)).isInstanceOfSatisfying(CustomFieldAnswerSelectMultipleFromFieldCodeViewModel.class,
+                v -> assertThat(v.getValue())
+                        .extracting(dto -> dto.getConceptLabelToDisplay().getLabel())
+                        .containsExactly("Fosse", "Mur"));
+    }
+
     // ========== saveAdditionalFieldAnswers ==========
 
     @Test
@@ -664,6 +781,48 @@ class CustomFieldAnswerServiceTest {
                 return value;
             }
         };
+    }
+
+    private static CustomFieldSelectOne selectOneField(Long id) {
+        CustomFieldSelectOne field = new CustomFieldSelectOne();
+        field.setId(id);
+        field.setIsSystemField(false);
+        return field;
+    }
+
+    private static CustomFieldSelectMultiple selectMultipleField(Long id) {
+        CustomFieldSelectMultiple field = new CustomFieldSelectMultiple();
+        field.setId(id);
+        field.setIsSystemField(false);
+        return field;
+    }
+
+    /**
+     * {@code Concept#equals} compares externalId + vocabulary, never the id, so two fixtures that
+     * differ only by id are equal — and the second {@code when(...)} on them silently replaces the
+     * first. Vocabulary concepts therefore get a distinct external id here.
+     */
+    private static Concept concept(Long id, String externalId) {
+        Concept concept = concept(id);
+        concept.setExternalId(externalId);
+        return concept;
+    }
+
+    private static ConceptDTO conceptDto(long id) {
+        ConceptDTO dto = new ConceptDTO();
+        dto.setId(id);
+        return dto;
+    }
+
+    private static ConceptAutocompleteDTO autocompleteDTO(long conceptId, String label) {
+        return new ConceptAutocompleteDTO(conceptDto(conceptId), label, "fr");
+    }
+
+    private static ConceptPrefLabel prefLabel(String label) {
+        ConceptPrefLabel prefLabel = new ConceptPrefLabel();
+        prefLabel.setLabel(label);
+        prefLabel.setLangCode("fr");
+        return prefLabel;
     }
 
     private static Concept concept(Long id) {

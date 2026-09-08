@@ -18,7 +18,9 @@ import fr.siamois.domain.models.form.customfield.spatialunit.CustomFieldSelectMu
 import fr.siamois.domain.models.form.customfield.spatialunit.CustomFieldSelectOneAddress;
 import fr.siamois.domain.models.form.customfield.spatialunit.CustomFieldSelectOneSpatialUnit;
 import fr.siamois.domain.models.form.customfield.specimen.CustomFieldSelectMultipleSpecimen;
+import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectMultiple;
 import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectMultipleFromFieldCode;
+import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectOne;
 import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectOneFromFieldCode;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
 import fr.siamois.domain.models.form.customfieldanswer.actionunit.CustomFieldAnswerSelectOneActionCode;
@@ -33,6 +35,7 @@ import fr.siamois.domain.models.form.customfieldanswer.person.CustomFieldAnswerS
 import fr.siamois.domain.models.form.customfieldanswer.spatialunit.CustomFieldAnswerSelectMultipleSpatialUnitTree;
 import fr.siamois.domain.models.form.customfieldanswer.spatialunit.CustomFieldAnswerSelectOneSpatialUnit;
 import fr.siamois.domain.models.form.customfieldanswer.vocabulary.CustomFieldAnswerAnswerSelectMultiple;
+import fr.siamois.domain.models.form.customfieldanswer.vocabulary.CustomFieldAnswerAnswerSelectOne;
 import fr.siamois.domain.models.form.customfieldanswer.vocabulary.CustomFieldAnswerSelectOneFromFieldAnswerCode;
 import fr.siamois.ui.viewmodel.fieldanswer.*;
 import org.hibernate.Hibernate;
@@ -75,7 +78,13 @@ public final class CustomFieldAnswerFactory {
                 Map.entry(CustomFieldSelectOneRecordingUnit.class, f -> new CustomFieldAnswerSelectOneRecordingUnitViewModel()),
                 Map.entry(CustomFieldSelectMultipleSpecimen.class, f -> new CustomFieldAnswerSelectMultipleSpecimenViewModel()),
                 Map.entry(CustomFieldSelectMultiplePhase.class, f -> new CustomFieldAnswerSelectMultiplePhaseViewModel()),
-                Map.entry(CustomFieldSelectMultipleFromFieldCode.class, f -> new CustomFieldAnswerSelectMultipleFromFieldCodeViewModel())
+                Map.entry(CustomFieldSelectMultipleFromFieldCode.class, f -> new CustomFieldAnswerSelectMultipleFromFieldCodeViewModel()),
+                // Additional ("Vocabulaire contrôlé") fields created from the project field settings:
+                // their vocabulary comes from the field's own branch/collection configuration instead of
+                // a field code, but the answer holds the very same concept(s), so they reuse the
+                // FromFieldCode view models the concept components and EntityFormContext already handle.
+                Map.entry(CustomFieldSelectOne.class, f -> new CustomFieldAnswerSelectOneFromFieldCodeViewModel()),
+                Map.entry(CustomFieldSelectMultiple.class, f -> new CustomFieldAnswerSelectMultipleFromFieldCodeViewModel())
         );
     }
 
@@ -93,7 +102,9 @@ public final class CustomFieldAnswerFactory {
                 Map.entry(CustomFieldSelectMultipleSpatialUnitTree.class, v -> new CustomFieldAnswerSelectMultipleSpatialUnitTree()),
                 Map.entry(CustomFieldSelectOneActionCode.class, v -> new CustomFieldAnswerSelectOneActionCode()),
                 Map.entry(CustomFieldSelectOneActionUnit.class, v -> new CustomFieldAnswerSelectOneActionUnit()),
-                Map.entry(CustomFieldMeasurement.class, v -> new CustomFieldAnswerMeasurement())
+                Map.entry(CustomFieldMeasurement.class, v -> new CustomFieldAnswerMeasurement()),
+                Map.entry(CustomFieldSelectOne.class, v -> new CustomFieldAnswerAnswerSelectOne()),
+                Map.entry(CustomFieldSelectMultiple.class, v -> new CustomFieldAnswerAnswerSelectMultiple())
         );
     }
 

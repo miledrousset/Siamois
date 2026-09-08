@@ -1,26 +1,36 @@
 package fr.siamois.domain.services.form;
 
+import fr.siamois.domain.models.UserInfo;
 import fr.siamois.domain.models.form.config.FormConfig;
 import fr.siamois.domain.models.form.config.FormConfigAnswer;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.form.customfield.recordingunit.CustomFieldMeasurement;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
 import fr.siamois.domain.models.form.customfieldanswer.measurement.CustomFieldAnswerMeasurement;
+import fr.siamois.domain.models.form.customfieldanswer.vocabulary.CustomFieldAnswerSelectConcept;
 import fr.siamois.domain.models.form.measurement.UnitDefinition;
 import fr.siamois.domain.models.settings.tableconfig.ConfigurableTable;
+import fr.siamois.domain.models.vocabulary.Concept;
 import fr.siamois.domain.services.measurement.UnitDefinitionService;
 import fr.siamois.domain.services.settings.tableconfig.TableFieldConfigService;
 import fr.siamois.domain.services.vocabulary.LabelService;
 import fr.siamois.dto.entity.MeasurementAnswerDTO;
 import fr.siamois.dto.entity.RecordingUnitDTO;
+import fr.siamois.dto.entity.vocabulary.ConceptDTO;
 import fr.siamois.infrastructure.database.repositories.form.CustomFieldAnswerRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.ConceptRepository;
+import fr.siamois.infrastructure.database.repositories.vocabulary.dto.ConceptAutocompleteDTO;
+import fr.siamois.mapper.ConceptMapper;
 import fr.siamois.mapper.UnitDefinitionMapper;
 import fr.siamois.ui.form.CustomFieldAnswerFactory;
 import fr.siamois.ui.viewmodel.CustomFormResponseViewModel;
 import fr.siamois.ui.viewmodel.fieldanswer.CustomFieldAnswerIntegerViewModel;
 import fr.siamois.ui.viewmodel.fieldanswer.CustomFieldAnswerMeasurementViewModel;
+import fr.siamois.ui.viewmodel.fieldanswer.CustomFieldAnswerSelectMultipleFromFieldCodeViewModel;
+import fr.siamois.ui.viewmodel.fieldanswer.CustomFieldAnswerSelectOneFromFieldCodeViewModel;
 import fr.siamois.ui.viewmodel.fieldanswer.CustomFieldAnswerTextViewModel;
 import fr.siamois.ui.viewmodel.fieldanswer.CustomFieldAnswerViewModel;
+import fr.siamois.utils.context.ExecutionContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
@@ -29,12 +39,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomFieldAnswerService {
+
+    /** Locale the app defaults to; matches the French-first UI. */
+    private static final String DEFAULT_LANG = "fr";
 
     private final CustomFieldAnswerRepository customFieldAnswerRepository;
     private final TableFieldConfigService tableFieldConfigService;
@@ -43,6 +57,8 @@ public class CustomFieldAnswerService {
     private final CustomFieldMeasurementService customFieldMeasurementService;
     private final UnitDefinitionService unitDefinitionService;
     private final UnitDefinitionMapper unitDefinitionMapper;
+    private final ConceptMapper conceptMapper;
+    private final ConceptRepository conceptRepository;
 
     /**
      * Persists the answers to a recording unit's additional (non-system) fields.
@@ -150,12 +166,55 @@ public class CustomFieldAnswerService {
                     .comment(stored.getComment())
                     .unit(unitDefinitionMapper.convert(stored.getUnit()))
                     .build());
+        } else if (viewModel instanceof CustomFieldAnswerSelectOneFromFieldCodeViewModel v
+                && answer instanceof CustomFieldAnswerSelectConcept stored) {
+            v.setValue(storedConcepts(stored).stream().findFirst().orElse(null));
+        } else if (viewModel instanceof CustomFieldAnswerSelectMultipleFromFieldCodeViewModel v
+                && answer instanceof CustomFieldAnswerSelectConcept stored) {
+            v.setValue(storedConcepts(stored));
         } else {
             return null;
         }
 
         viewModel.setHasBeenModified(false);
         return viewModel;
+    }
+
+    /**
+     * Rebuilds the autocomplete DTOs a vocabulary field's components display from the concepts
+     * linked to its stored answer. The returned list is mutable: the multi-value field appends to it
+     * as the user picks further concepts.
+     */
+    private List<ConceptAutocompleteDTO> storedConcepts(CustomFieldAnswerSelectConcept stored) {
+        Object value = stored.getValue();
+        List<Concept> concepts;
+        if (value instanceof Concept concept) {
+            concepts = List.of(concept);
+        } else if (value instanceof Collection<?> collection) {
+            concepts = collection.stream()
+                    .filter(Concept.class::isInstance)
+                    .map(Concept.class::cast)
+                    .toList();
+        } else {
+            return new ArrayList<>();
+        }
+
+        String lang = currentLang();
+        return concepts.stream()
+                .map(concept -> toAutocompleteDTO(concept, lang))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private ConceptAutocompleteDTO toAutocompleteDTO(Concept concept, String lang) {
+        return new ConceptAutocompleteDTO(
+                conceptMapper.convert(concept),
+                labelService.findLabelOf(concept, lang).getLabel(),
+                lang);
+    }
+
+    private String currentLang() {
+        UserInfo info = ExecutionContextHolder.get();
+        return info != null && info.getLang() != null ? info.getLang() : DEFAULT_LANG;
     }
 
     private static String fieldIdsOf(Collection<CustomField> fields) {
@@ -178,6 +237,11 @@ public class CustomFieldAnswerService {
         if (answer instanceof CustomFieldAnswerMeasurement measurementAnswer
                 && customFieldAnswerViewModel instanceof CustomFieldAnswerMeasurementViewModel measurementViewModel) {
             createOrUpdateMeasurementAnswer(measurementAnswer, measurementViewModel, customField, optAnswer.isPresent());
+            return;
+        }
+
+        if (answer instanceof CustomFieldAnswerSelectConcept conceptAnswer) {
+            createOrUpdateConceptAnswer(conceptAnswer, customFieldAnswerViewModel, optAnswer.isPresent());
             return;
         }
 
@@ -206,6 +270,79 @@ public class CustomFieldAnswerService {
         customFieldAnswerRepository.save(answer);
     }
 
+    /**
+     * Persists the concept(s) picked on an additional vocabulary field. The view model holds
+     * {@link ConceptAutocompleteDTO}s (what the autocomplete produces) while the answer entity links
+     * {@link Concept} rows, so the picked concepts are re-read from the database by id — they always
+     * exist there already, the autocomplete only ever suggests locally stored concepts.
+     * <p>
+     * An answer never stored and left empty is not created, mirroring the measurement path: an
+     * untouched field shouldn't materialize a row.
+     */
+    private void createOrUpdateConceptAnswer(CustomFieldAnswerSelectConcept answer,
+                                             CustomFieldAnswerViewModel viewModel,
+                                             boolean alreadyStored) {
+        List<Concept> concepts = pickedConcepts(viewModel);
+        if (!alreadyStored && concepts.isEmpty()) {
+            return;
+        }
+
+        answer.setValue(new ArrayList<>(concepts));
+        customFieldAnswerRepository.save(answer);
+    }
+
+    /**
+     * The concepts a vocabulary answer view model currently holds, as {@link Concept} entities.
+     * <p>
+     * The concept components hand the view model detached {@link ConceptAutocompleteDTO}s, so those
+     * are re-read from the database by id — the autocomplete only ever suggests locally stored
+     * concepts, so they are always found. Values that already are entities are kept as they are.
+     */
+    private List<Concept> pickedConcepts(CustomFieldAnswerViewModel viewModel) {
+        List<Object> picked = pickedValues(viewModel);
+
+        List<Long> detachedIds = picked.stream()
+                .map(CustomFieldAnswerService::idOfDetachedConcept)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+
+        Map<Long, Concept> loaded = new HashMap<>();
+        if (!detachedIds.isEmpty()) {
+            conceptRepository.findAllById(detachedIds).forEach(concept -> loaded.put(concept.getId(), concept));
+        }
+
+        // built by iterating the picked values so the stored order is the one the user picked
+        List<Concept> concepts = new ArrayList<>();
+        for (Object value : picked) {
+            Concept concept = value instanceof Concept alreadyAnEntity
+                    ? alreadyAnEntity
+                    : loaded.get(idOfDetachedConcept(value));
+            if (concept != null) {
+                concepts.add(concept);
+            }
+        }
+        return concepts;
+    }
+
+    private static List<Object> pickedValues(CustomFieldAnswerViewModel viewModel) {
+        Object value = viewModel.getValue();
+        if (value == null) {
+            return List.of();
+        }
+        return value instanceof Collection<?> collection ? new ArrayList<>(collection) : List.of(value);
+    }
+
+    private static Long idOfDetachedConcept(Object picked) {
+        if (picked instanceof ConceptAutocompleteDTO autocompleteDTO) {
+            return autocompleteDTO.concept() == null ? null : autocompleteDTO.concept().getId();
+        }
+        if (picked instanceof ConceptDTO conceptDTO) {
+            return conceptDTO.getId();
+        }
+        return null;
+    }
+
     private UnitDefinition unitOf(MeasurementAnswerDTO value, CustomField customField) {
         Long answerUnitId = value != null && value.getUnit() != null ? value.getUnit().getId() : null;
         Long unitId = answerUnitId != null ? answerUnitId : fieldUnitId(customField);
@@ -230,7 +367,14 @@ public class CustomFieldAnswerService {
     }
 
     private CustomFieldAnswer answerEntityOf(@NonNull CustomField field) {
-        return CustomFieldAnswerFactory.ANSWER_ENTITY_CREATORS.get(Hibernate.getClass(field)).apply(null);
+        Class<?> fieldClass = Hibernate.getClass(field);
+        Function<Void, ? extends CustomFieldAnswer> creator =
+                CustomFieldAnswerFactory.ANSWER_ENTITY_CREATORS.get(fieldClass);
+        if (creator == null) {
+            throw new IllegalArgumentException("No persistable answer for field " + field.getId()
+                    + " (" + field.getLabel() + ") of type " + fieldClass.getName());
+        }
+        return creator.apply(null);
     }
 
 }

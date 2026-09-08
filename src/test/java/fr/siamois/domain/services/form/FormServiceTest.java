@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.form.customfield.recordingunit.CustomFieldMeasurement;
 import fr.siamois.domain.models.form.customfield.specimen.CustomFieldSelectMultipleSpecimen;
+import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectMultiple;
 import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectMultipleFromFieldCode;
+import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectOne;
 import fr.siamois.domain.models.form.customform.EnabledWhenJson;
 import fr.siamois.domain.models.form.measurement.UnitDefinition;
 import fr.siamois.domain.models.vocabulary.Concept;
@@ -98,6 +100,50 @@ class FormServiceTest {
         when(field.getIsSystemField()).thenReturn(isSystem);
         when(field.getValueBinding()).thenReturn(binding);
         return field;
+    }
+
+    @Test
+    void initOrReuseResponse_answersAnAdditionalVocabularyField() {
+        FieldSource fieldSource = mock(FieldSource.class);
+        CustomFieldSelectOne selectOne = new CustomFieldSelectOne();
+        selectOne.setId(30L);
+        selectOne.setIsSystemField(false);
+        CustomFieldSelectMultiple selectMultiple = new CustomFieldSelectMultiple();
+        selectMultiple.setId(31L);
+        selectMultiple.setIsSystemField(false);
+        when(fieldSource.getAllFields()).thenReturn(List.of(selectOne, selectMultiple));
+
+        CustomFormResponseViewModel res =
+                formService.initOrReuseResponse(null, new DummyEntity(), fieldSource, true);
+
+        assertInstanceOf(CustomFieldAnswerSelectOneFromFieldCodeViewModel.class, res.getAnswers().get(selectOne));
+        assertInstanceOf(CustomFieldAnswerSelectMultipleFromFieldCodeViewModel.class, res.getAnswers().get(selectMultiple));
+    }
+
+    @Test
+    void initOrReuseResponse_skipsAFieldWithNoAnswerTypeRatherThanLosingTheWholeForm() {
+        FieldSource fieldSource = mock(FieldSource.class);
+        CustomField unsupported = mock(CustomField.class);
+        CustomField supported = mockSystemField(true, "title");
+        when(fieldSource.getAllFields()).thenReturn(List.of(unsupported, supported));
+
+        DummyEntity entity = new DummyEntity();
+        entity.setTitle("Hello");
+
+        CustomFieldAnswerTextViewModel titleAnswer = new CustomFieldAnswerTextViewModel();
+
+        try (MockedStatic<CustomFieldAnswerFactory> mocked = mockStatic(CustomFieldAnswerFactory.class)) {
+            mocked.when(() -> CustomFieldAnswerFactory.instantiateAnswerForField(unsupported))
+                    .thenThrow(new IllegalArgumentException("Unsupported CustomField type"));
+            mocked.when(() -> CustomFieldAnswerFactory.instantiateAnswerForField(supported)).thenReturn(titleAnswer);
+
+            CustomFormResponseViewModel res =
+                    formService.initOrReuseResponse(null, entity, fieldSource, true);
+
+            assertNotNull(res, "an unsupported field must not take the whole response down");
+            assertFalse(res.getAnswers().containsKey(unsupported));
+            assertSame(titleAnswer, res.getAnswers().get(supported));
+        }
     }
 
     @Test
