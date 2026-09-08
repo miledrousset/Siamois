@@ -20,6 +20,7 @@ import fr.siamois.ui.viewmodel.CustomFormResponseViewModel;
 import fr.siamois.ui.viewmodel.fieldanswer.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
  * <p>
  * It is agnostic of layout (single panel vs table row) thanks to FieldSource.
  */
+@Slf4j
 @Service
 @Getter
 @RequiredArgsConstructor
@@ -127,8 +129,17 @@ public class FormService {
             return;
         }
 
-        CustomFieldAnswerViewModel answer =
-                CustomFieldAnswerFactory.instantiateAnswerForField(field);
+        CustomFieldAnswerViewModel answer;
+        try {
+            answer = CustomFieldAnswerFactory.instantiateAnswerForField(field);
+        } catch (IllegalArgumentException e) {
+            // A field type the answer factory doesn't know about must not take the whole form down:
+            // letting this escape leaves the caller's CustomFormResponse null, so the view can't
+            // render a single field any more. Skip the field instead — it renders empty.
+            log.error("No answer type for field {} ({}); it is left out of the form",
+                    field.getId(), field.getLabel(), e);
+            return;
+        }
 
         if (answer == null) {
             return;
