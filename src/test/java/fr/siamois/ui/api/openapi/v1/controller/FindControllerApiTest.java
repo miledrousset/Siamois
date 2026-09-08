@@ -3,6 +3,7 @@ package fr.siamois.ui.api.openapi.v1.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fr.siamois.domain.models.auth.Person;
+import fr.siamois.domain.models.exceptions.actionunit.ActionUnitNotFoundException;
 import fr.siamois.dto.entity.PersonDTO;
 import fr.siamois.ui.api.handler.RestExceptionHandler;
 import fr.siamois.ui.api.openapi.v1.resource.concept.ResolvedConceptResource;
@@ -192,18 +193,17 @@ class FindControllerApiTest {
         type.setId("42");
         type.setResolvedLabel("Céramique");
         FindCreateFormData data = new FindCreateFormData(type, null, Map.of());
-        when(recordingUnitOpenApiService.buildFindCreateForm(10L, 42L, personDto, "fr")).thenReturn(data);
+        when(recordingUnitOpenApiService.buildFindCreateForm("10", 42L, personDto, Set.of(10L), "fr")).thenReturn(data);
 
         mockMvc.perform(get("/api/v1/finds/form")
-                        .param("organizationId", "10")
+                        .param("projectId", "10")
                         .param("typeConceptId", "42")
                         .header(HttpHeaders.ACCEPT_LANGUAGE, "fr"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.findType.id").value("42"))
                 .andExpect(jsonPath("$.data.findType.resolvedLabel").value("Céramique"));
 
-        verify(projectApiService).assertOrganizationInCallerScope(10L, Set.of(10L));
-        verify(recordingUnitOpenApiService).buildFindCreateForm(10L, 42L, personDto, "fr");
+        verify(recordingUnitOpenApiService).buildFindCreateForm("10", 42L, personDto, Set.of(10L), "fr");
     }
 
     @Test
@@ -213,21 +213,21 @@ class FindControllerApiTest {
                 .thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentification requise"));
 
         mockMvc.perform(get("/api/v1/finds/form")
-                        .param("organizationId", "10")
+                        .param("projectId", "10")
                         .param("typeConceptId", "42"))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void getFindForm_outOfScope_returns403() throws Exception {
+    void getFindForm_projectNotAccessible_returns404() throws Exception {
         when(projectApiService.requireCaller())
                 .thenReturn(new ProjectApiCaller(personDto, Set.of(10L), List.of()));
-        doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN, "hors périmètre"))
-                .when(projectApiService).assertOrganizationInCallerScope(99L, Set.of(10L));
+        when(recordingUnitOpenApiService.buildFindCreateForm(eq("99"), anyLong(), eq(personDto), eq(Set.of(10L)), anyString()))
+                .thenThrow(new ActionUnitNotFoundException("Project not found or not accessible"));
 
         mockMvc.perform(get("/api/v1/finds/form")
-                        .param("organizationId", "99")
+                        .param("projectId", "99")
                         .param("typeConceptId", "42"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isNotFound());
     }
 }

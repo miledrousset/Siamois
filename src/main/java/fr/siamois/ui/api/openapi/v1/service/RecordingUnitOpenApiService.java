@@ -473,82 +473,71 @@ public class RecordingUnitOpenApiService {
     }
 
     /**
-     * Formulaire de création d'une UE : même résolution que le détail (type + institution), sans entité persistée.
+     * Formulaire de création d'une UE pour un type donné, résolu pour un projet précis.
      *
-     * @deprecated Scopé uniquement par institution (`organizationId`), sans notion de projet — le
-     * formulaire retourné est donc toujours {@link RecordingUnit#NEW_UNIT_FORM} tel quel, sans passer
-     * par {@link fr.siamois.domain.services.form.EffectiveFormResolver}, contrairement aux autres
-     * méthodes de résolution de formulaire de ce service. À remplacer par un formulaire de création
-     * scopé par projet, probablement intégré à {@link #buildProjectRecordingUnitTypeSettings}.
+     * @deprecated Retourne un seul type à la fois (un appel par type) ; préférer
+     * {@link #buildProjectRecordingUnitTypeSettings} qui retourne tous les types configurés du projet
+     * en un seul appel. Reste correct fonctionnellement (résolution effective par projet + type via
+     * {@link fr.siamois.domain.services.form.EffectiveFormResolver}, comme le fait
+     * {@link #buildProjectRecordingUnitTypeSettings}).
      */
     @Deprecated(forRemoval = true)
     @Transactional(readOnly = true)
-    public RecordingUnitCreateFormData buildRecordingUnitCreateForm(long organizationId,
+    public RecordingUnitCreateFormData buildRecordingUnitCreateForm(String projectId,
                                                                     long recordingUnitTypeConceptId,
                                                                     PersonDTO personDto,
+                                                                    Set<Long> accessibleInstitutionIds,
                                                                     String lang) {
-        InstitutionDTO institution = institutionService.findById(organizationId);
-        if (institution == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Organization not found");
+        AccessibleProjectForApi project = actionUnitService.findAccessibleProjectByKey(projectId, accessibleInstitutionIds);
+        ActionUnitDTO au = project.actionUnit();
+        InstitutionDTO institution = au.getCreatedByInstitution();
+        if (institution == null || institution.getId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Projet sans organisation");
         }
         Concept typeConcept = conceptRepository.findById(recordingUnitTypeConceptId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recording unit type not found"));
-        ConceptDTO typeDto = conceptMapper.convert(typeConcept);
-        ResolvedConceptResource typeResource = toConceptResource(typeDto, lang);
-
-        FormUiDto formUiDto = RecordingUnit.NEW_UNIT_FORM;
-        FieldSource fieldSource = new PanelFieldSource(formUiDto);
-        String layoutJson = FormUiDtoLayoutJson.serialize(formUiDto.getLayout());
-        FormResource formBundle = new FormResource(layoutJson);
-
-        RecordingUnitDTO shell = new RecordingUnitDTO();
-        shell.setType(typeDto);
-        shell.setCreatedByInstitution(institution);
 
         UserInfo userInfo = new UserInfo(institution, personDto, lang);
         Locale locale = langService.localeForApiLang(lang);
-        Map<String, FieldResource> fields = OpenApiExecutionContext.callWithUserInfo(
-                userInfo, () -> buildFieldsMetadataOnly(fieldSource, locale));
+        RecordingUnitIdentifierConfig identifierConfig =
+                buildIdentifierConfig(userInfo, au.getId(), ConfigurableTable.UE, typeConcept.getId());
+        RecordingUnitType type = buildRecordingUnitType(au.getId(), typeConcept, userInfo, locale, identifierConfig);
 
-        return new RecordingUnitCreateFormData(typeResource, formBundle, fields);
+        return new RecordingUnitCreateFormData(type.getConcept(), type.getFormBundle(), type.getFields());
     }
 
     /**
-     * Gabarit UI pour création d'un mobilier : layout et métadonnées ({@link Specimen#NEW_UNIT_FORM}, comme le dialog web).
+     * Gabarit UI pour création d'un mobilier pour un type donné, résolu pour un projet précis.
      *
-     * @deprecated Scopé uniquement par institution (`organizationId`), sans notion de projet — le
-     * formulaire retourné est donc toujours {@link Specimen#NEW_UNIT_FORM} tel quel, sans passer par
-     * {@link fr.siamois.domain.services.form.EffectiveFormResolver}, contrairement aux autres méthodes
-     * de résolution de formulaire de ce service. À remplacer par un formulaire de création scopé par
-     * projet, probablement intégré à {@link #buildProjectFindTypeSettings}.
+     * @deprecated Retourne un seul type à la fois (un appel par type) ; préférer
+     * {@link #buildProjectFindTypeSettings} qui retourne tous les types configurés du projet en un seul
+     * appel. Reste correct fonctionnellement (résolution effective par projet + type via
+     * {@link fr.siamois.domain.services.form.EffectiveFormResolver}, comme le fait
+     * {@link #buildProjectFindTypeSettings}).
      */
     @Deprecated(forRemoval = true)
     @Transactional(readOnly = true)
-    public FindCreateFormData buildFindCreateForm(long organizationId,
+    public FindCreateFormData buildFindCreateForm(String projectId,
                                                   long findTypeConceptId,
                                                   PersonDTO personDto,
+                                                  Set<Long> accessibleInstitutionIds,
                                                   String lang) {
-        InstitutionDTO institution = institutionService.findById(organizationId);
-        if (institution == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Organization not found");
+        AccessibleProjectForApi project = actionUnitService.findAccessibleProjectByKey(projectId, accessibleInstitutionIds);
+        ActionUnitDTO au = project.actionUnit();
+        InstitutionDTO institution = au.getCreatedByInstitution();
+        if (institution == null || institution.getId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Projet sans organisation");
         }
         Concept typeConcept = conceptRepository.findById(findTypeConceptId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Type de mobilier introuvable"));
-        ConceptDTO typeDto = conceptMapper.convert(typeConcept);
-        ResolvedConceptResource typeResource = toConceptResource(typeDto, lang);
-
-        FormUiDto systemForm = Specimen.NEW_UNIT_FORM;
-        FormUiDto formUiDto = conversionService.convert(systemForm, FormUiDto.class);
-        FieldSource fieldSource = new PanelFieldSource(formUiDto);
-        String layoutJson = FormUiDtoLayoutJson.serialize(systemForm.getLayout());
-        FormResource formBundle = new FormResource(layoutJson);
 
         UserInfo userInfo = new UserInfo(institution, personDto, lang);
         Locale locale = langService.localeForApiLang(lang);
-        Map<String, FieldResource> fields = OpenApiExecutionContext.callWithUserInfo(
-                userInfo, () -> buildFieldsMetadataOnly(fieldSource, locale));
+        RecordingUnitIdentifierConfig identifierConfig =
+                buildIdentifierConfig(userInfo, au.getId(), ConfigurableTable.MOBILIER, typeConcept.getId());
+        FindType type = buildFindType(au.getId(), typeConcept, userInfo, locale, identifierConfig);
 
-        return new FindCreateFormData(typeResource, formBundle, fields);
+        return new FindCreateFormData(type.getConcept(), type.getFormBundle(), type.getFields());
     }
 
     /**
