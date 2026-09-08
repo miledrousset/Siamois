@@ -302,7 +302,7 @@ public class RecordingUnitTableViewModel extends EntityTableViewModel<RecordingU
 
             case VIEW_RELATION -> {
                 setOverviewEntityId(ru.getId());
-                flowBean.addRecordingUnitToOverview(ru.getId(), parentPanel, col.getViewTargetIndex());
+                flowBean.addRecordingUnitToOverview(ru.getId(), parentPanel, col.getViewTargetIndex(), false);
             }
 
             case ADD_RELATION -> {
