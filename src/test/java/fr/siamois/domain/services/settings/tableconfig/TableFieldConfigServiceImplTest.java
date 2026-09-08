@@ -1112,6 +1112,28 @@ class TableFieldConfigServiceImplTest {
         verify(formConfigRepository, never()).save(any());
     }
 
+    @Test
+    void saveFormConfig_byId_shouldThrowWhenIdentifierFormatIsBlank() {
+        TypeFormConfig config = TypeFormConfig.builder().identifierFormat("   ").build();
+
+        assertThatThrownBy(() -> service.saveFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, CERAMIQUE_CONCEPT_ID, config))
+                .isInstanceOf(IllegalArgumentException.class);
+        verify(formConfigRepository, never()).save(any());
+    }
+
+    @Test
+    void saveFormConfig_byId_shouldThrowWhenIdentifierRangeIsInvalid() {
+        TypeFormConfig config = TypeFormConfig.builder()
+                .identifierFormat("{NUM_MOBILIER:00}")
+                .minCode(10)
+                .maxCode(5)
+                .build();
+
+        assertThatThrownBy(() -> service.saveFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, CERAMIQUE_CONCEPT_ID, config))
+                .isInstanceOf(IllegalArgumentException.class);
+        verify(formConfigRepository, never()).save(any());
+    }
+
     // --- searchFieldCatalog ---
     @Test
     void searchFieldCatalog_shouldReturnEmptyListWhenQueryIsNull() {
