@@ -60,22 +60,6 @@
 
 
 
-            <f:facet name="itemtip">
-                <h:panelGrid columns="1" cellpadding="5" styleClass="#{cc.attrs.panelStyleClass}"
-                style="background: var(--main-color); min-width: 20em;">
-
-                    <small>#{autocompleteDto.originalPrefLabel}</small><br/>
-                    <small><i>#{autocompleteDto.altlabelsAsString()}</i></small><br/>
-                    <small>#{autocompleteDto.definition}</small><br/>
-                    <p:commandLink
-                            onclick="window.open('#{autocompleteDto.vocabulary().baseUri}/?idc=#{autocompleteDto.concept().externalId}&amp;idt=#{autocompleteDto.vocabulary().externalVocabularyId}', '_blank'); return false;"
-                    >
-                        <small><i>#{langBean.msg("common.action.seeMore")}</i></small>
-                    </p:commandLink>
-
-                </h:panelGrid>
-            </f:facet>
-
             <!-- If defined, we need to update on select to synchronise secondary type choices -->
             <p:ajax
                     event="itemSelect"
