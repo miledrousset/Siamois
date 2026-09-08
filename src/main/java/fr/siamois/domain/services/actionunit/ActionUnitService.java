@@ -50,6 +50,8 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -246,9 +248,22 @@ public class ActionUnitService implements ArkEntityService {
         ActionUnitDTO savedDTO = actionUnitMapper.convert(saveNotTransactional(info, actionUnit, typeConcept));
         if (isCreation) {
             assignRoles(info, savedDTO);
-            defaultProjectIdentifierConfigSeeder.seed(savedDTO.getId());
+            seedIdentifierConfigAfterCommit(savedDTO.getId());
         }
         return savedDTO;
+    }
+
+    private void seedIdentifierConfigAfterCommit(Long projectId) {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            defaultProjectIdentifierConfigSeeder.seed(projectId);
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                defaultProjectIdentifierConfigSeeder.seed(projectId);
+            }
+        });
     }
 
     private void assertWritePermission(UserInfo info, ActionUnitDTO actionUnit) {
