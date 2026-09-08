@@ -1,8 +1,8 @@
 package fr.siamois.infrastructure.database.repositories.person;
 
 import fr.siamois.domain.models.auth.Person;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,21 +14,12 @@ import java.util.Optional;
 import java.util.Set;
 
 @Repository
-public interface PersonRepository extends JpaRepository<Person, Long> {
+public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecificationExecutor<Person> {
 
     Optional<Person> findByUsernameIgnoreCase(String username);
 
     /** Broad prefetch by firstname only — callers narrow to an exact (name, lastname) pair themselves. */
     List<Person> findAllByNameIgnoreCaseIn(Collection<String> names);
-
-    @Query(
-            nativeQuery = true,
-            value = "SELECT p.* FROM person p " +
-                    "WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :nameOrLastname, '%')) " +
-                    "OR LOWER(p.lastname) LIKE LOWER(CONCAT('%', :nameOrLastname, '%')) " +
-                    "LIMIT :limit"
-    )
-    List<Person> findAllByNameOrLastname(String nameOrLastname, int limit);
 
 
     @Query(
@@ -50,15 +41,6 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
     List<Person> findAllAuthorsOfActionUnitByInstitution(Long institutionId);
 
     Optional<Person> findById(long id);
-
-    @Modifying
-    @Transactional
-    @Query(
-            nativeQuery = true,
-            value = "INSERT INTO person_role_institution(fk_person_id, fk_role_concept_id, fk_institution_id) " +
-                    "VALUES (:personId, :conceptId, :institutionId)"
-    )
-    void addPersonToInstitution(Long personId, Long institutionId, Long conceptId);
 
     Optional<Person> findByEmailIgnoreCase(String email);
 
@@ -82,14 +64,43 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
     )
     Set<Person> findClosestByUsernameLimit10(String input);
 
+    @Query(
+            nativeQuery = true,
+            value = "SELECT p.* FROM person p " +
+                    "WHERE p.name ILIKE CONCAT('%', :input, '%') " +
+                    "OR p.lastname ILIKE CONCAT('%', :input, '%') " +
+                    "OR CONCAT(p.name, ' ', p.lastname) ILIKE CONCAT('%', :input, '%') " +
+                    "ORDER BY similarity(CONCAT(p.name, ' ', p.lastname), :input) DESC " +
+                    "LIMIT 10"
+    )
+    Set<Person> findClosestByNameLimit10(String input);
+
     @Query("""
             SELECT COUNT(DISTINCT p.id)
             FROM PersonProfileAssignment a
             JOIN a.person p
             JOIN a.profile prof
-            WHERE prof.institution.id = :institutionId
+            WHERE prof.institution.id = :institutionId AND prof.actionUnit IS NULL
             """)
     long countPersonsInInstitution(Long institutionId);
+
+    /**
+     * Bulk version of {@link #countPersonsInInstitution} : member count per institution, in one query
+     * instead of one per institution — used to render an institution list page's member count column
+     * without an N+1. Counts the same population as {@code findAllAssignmentsByInstitutionId} (the
+     * institution's Members page): organisation-scoped assignments only ({@code actionUnit IS NULL}) —
+     * project-scoped profiles are excluded even though they also carry the institution's id, so a
+     * project-only member isn't counted as an institution member here either.
+     */
+    @Query("""
+            SELECT prof.institution.id, COUNT(DISTINCT p.id)
+            FROM PersonProfileAssignment a
+            JOIN a.person p
+            JOIN a.profile prof
+            WHERE prof.institution.id IN :institutionIds AND prof.actionUnit IS NULL
+            GROUP BY prof.institution.id
+            """)
+    List<Object[]> countPersonsByInstitutionIds(@Param("institutionIds") Collection<Long> institutionIds);
 
     /**
      * Personnes rattachées à une institution, c'est-à-dire ayant au moins un profil

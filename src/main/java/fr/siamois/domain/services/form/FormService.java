@@ -20,9 +20,9 @@ import fr.siamois.ui.viewmodel.CustomFormResponseViewModel;
 import fr.siamois.ui.viewmodel.fieldanswer.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
  * <p>
  * It is agnostic of layout (single panel vs table row) thanks to FieldSource.
  */
+@Slf4j
 @Service
 @Getter
 @RequiredArgsConstructor
@@ -128,8 +129,17 @@ public class FormService {
             return;
         }
 
-        CustomFieldAnswerViewModel answer =
-                CustomFieldAnswerFactory.instantiateAnswerForField(field);
+        CustomFieldAnswerViewModel answer;
+        try {
+            answer = CustomFieldAnswerFactory.instantiateAnswerForField(field);
+        } catch (IllegalArgumentException e) {
+            // A field type the answer factory doesn't know about must not take the whole form down:
+            // letting this escape leaves the caller's CustomFormResponse null, so the view can't
+            // render a single field any more. Skip the field instead — it renders empty.
+            log.error("No answer type for field {} ({}); it is left out of the form",
+                    field.getId(), field.getLabel(), e);
+            return;
+        }
 
         if (answer == null) {
             return;
@@ -466,6 +476,7 @@ public class FormService {
         handlers.put(CustomFieldAnswerSelectOneAddressViewModel.class, this::handleAddress);
         handlers.put(CustomFieldAnswerSelectMultipleSpatialUnitTreeViewModel.class, this::handleSpatialUnitSet);
         handlers.put(CustomFieldAnswerSelectMultipleRecordingUnitViewModel.class, this::handleRecordingUnitSet);
+        handlers.put(CustomFieldAnswerSelectOneRecordingUnitViewModel.class, this::handleRecordingUnit);
         handlers.put(CustomFieldAnswerMeasurementViewModel.class, this::handleMeasurement);
         handlers.put(CustomFieldAnswerSelectMultipleContainerViewModel.class, this::handleContainerSet);
         handlers.put(CustomFieldAnswerSelectMultipleSpecimenViewModel.class, this::handleSpecimenSet);
@@ -604,6 +615,12 @@ public class FormService {
         dto.setSourceName("INTERNAL");
         dto.setCategory(val.getCategory());
         return dto;
+    }
+
+    private void handleRecordingUnit(CustomFieldAnswerViewModel answer, Object value) {
+        if (answer instanceof CustomFieldAnswerSelectOneRecordingUnitViewModel ruAnswer) {
+            ruAnswer.setValue((RecordingUnitSummaryDTO) value);
+        }
     }
 
     private void handleRecordingUnitSet(CustomFieldAnswerViewModel answer, Object value) {

@@ -49,6 +49,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -96,6 +98,8 @@ class TableFieldConfigServiceImplTest {
     private CustomFieldAnswerRepository customFieldAnswerRepository;
     @Mock
     private PersonRepository personRepository;
+    @Mock
+    private ObjectProvider<TableFieldConfigServiceImpl> selfProvider;
 
     @InjectMocks
     private TableFieldConfigServiceImpl service;
@@ -114,6 +118,7 @@ class TableFieldConfigServiceImplTest {
         person = new PersonDTO();
         person.setId(PERSON_ID);
         ExecutionContextHolder.set(new UserInfo(institution, person, "fr"));
+        when(selfProvider.getObject()).thenReturn(service);
 
         fieldConcept = concept(FIELD_CONCEPT_ID, "field");
         ceramiqueConcept = concept(CERAMIQUE_CONCEPT_ID, "ceramique");
@@ -584,6 +589,86 @@ class TableFieldConfigServiceImplTest {
     }
 
     @Test
+    void createOrGetFormConfig_shouldRecoverFormConfig_whenConcurrentInsertViolatesUniqueConstraint() {
+        // Two requests race to materialize the same row: both find it missing, both attempt to
+        // insert. This one loses the DB constraint and must recover by re-reading the row the
+        // winner just committed, instead of surfacing the constraint violation.
+        when(formConfigRepository.findByActionUnitAndFieldAndValue(PROJECT_ID, FIELD_CONCEPT_ID, CERAMIQUE_CONCEPT_ID))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(ceramiqueConfig));
+        ActionUnit project = new ActionUnit();
+        project.setId(PROJECT_ID);
+        project.setCreatedByInstitution(new Institution());
+        when(actionUnitRepository.findById(PROJECT_ID)).thenReturn(Optional.of(project));
+        when(formConfigRepository.save(any(FormConfig.class)))
+                .thenThrow(new DataIntegrityViolationException("duplicate key"));
+
+        Optional<FormConfig> result = service.createOrGetFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, "Céramique");
+
+        assertThat(result).contains(ceramiqueConfig);
+    }
+
+    @Test
+    void createOrGetFormConfig_shouldRethrowTheConstraintViolation_whenRecoveryAlsoFindsNothing() {
+        // The constraint was violated by something other than a concurrent insert of this exact row
+        // (e.g. a stale duplicate already in the table) — re-reading finds nothing either, so the
+        // original exception must propagate rather than being swallowed.
+        when(formConfigRepository.findByActionUnitAndFieldAndValue(PROJECT_ID, FIELD_CONCEPT_ID, CERAMIQUE_CONCEPT_ID))
+                .thenReturn(Optional.empty());
+        ActionUnit project = new ActionUnit();
+        project.setId(PROJECT_ID);
+        project.setCreatedByInstitution(new Institution());
+        when(actionUnitRepository.findById(PROJECT_ID)).thenReturn(Optional.of(project));
+        DataIntegrityViolationException original = new DataIntegrityViolationException("duplicate key");
+        when(formConfigRepository.save(any(FormConfig.class))).thenThrow(original);
+
+        assertThatThrownBy(() -> service.createOrGetFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, "Céramique"))
+                .isSameAs(original);
+    }
+
+    @Test
+    void createOrGetFormConfig_shouldInheritTheIdentifierConfigurationOfTheProjectDefault() {
+        // Until it has a row of its own, a type is generated with the identifier configuration of the
+        // default one; materializing that row must not silently move it back onto the built-in bounds.
+        defaultConfig.setIdentifierFormat("MOB-{NUM_MOBILIER:000}");
+        defaultConfig.setMinCode(100);
+        defaultConfig.setMaxCode(500);
+        when(formConfigRepository.findByActionUnitAndFieldAndValue(PROJECT_ID, FIELD_CONCEPT_ID, CERAMIQUE_CONCEPT_ID))
+                .thenReturn(Optional.empty());
+        ActionUnit project = new ActionUnit();
+        project.setId(PROJECT_ID);
+        project.setCreatedByInstitution(new Institution());
+        when(actionUnitRepository.findById(PROJECT_ID)).thenReturn(Optional.of(project));
+        when(formConfigRepository.save(any(FormConfig.class))).thenAnswer(call -> call.getArgument(0));
+
+        Optional<FormConfig> result = service.createOrGetFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, "Céramique");
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getIdentifierFormat()).isEqualTo("MOB-{NUM_MOBILIER:000}");
+        assertThat(result.get().getMinCode()).isEqualTo(100);
+        assertThat(result.get().getMaxCode()).isEqualTo(500);
+    }
+
+    @Test
+    void createOrGetFormConfig_shouldFallBackOnTheBuiltInIdentifierConfigurationWithoutADefaultToInheritFrom() {
+        when(formConfigRepository.findDefaultByActionUnitAndField(PROJECT_ID, FIELD_CONCEPT_ID))
+                .thenReturn(Optional.empty());
+        ActionUnit project = new ActionUnit();
+        project.setId(PROJECT_ID);
+        project.setCreatedByInstitution(new Institution());
+        when(actionUnitRepository.findById(PROJECT_ID)).thenReturn(Optional.of(project));
+        when(formConfigRepository.save(any(FormConfig.class))).thenAnswer(call -> call.getArgument(0));
+
+        Optional<FormConfig> result = service.createOrGetFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, (Long) null);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getIdentifierFormat())
+                .isEqualTo(ConfigurableTable.MOBILIER.getDefaultIdentifierFormat());
+        assertThat(result.get().getMinCode()).isOne();
+        assertThat(result.get().getMaxCode()).isEqualTo(999);
+    }
+
+    @Test
     void createOrGetFormConfig_shouldReturnEmptyRatherThanCreateOneForAnUnknownType() {
         when(conceptRepository.findAllByFieldContextAndExactLabel(FIELD_CONCEPT_ID, "fr", "Métal"))
                 .thenReturn(List.of());
@@ -622,6 +707,45 @@ class TableFieldConfigServiceImplTest {
         assertThat(result.get().getValueConcept()).isEqualTo(metalConcept);
         verify(formConfigRepository).save(any(FormConfig.class));
         verifyNoInteractions(labelService);
+    }
+
+    @Test
+    void createOrGetFormConfig_byId_shouldRecoverFormConfig_whenConcurrentInsertViolatesUniqueConstraint() {
+        Long metalConceptId = 300L;
+        Concept metalConcept = concept(metalConceptId, "metal");
+        FormConfig metalConfig = formConfig(77L, metalConcept);
+        when(formConfigRepository.findByActionUnitAndFieldAndValue(PROJECT_ID, FIELD_CONCEPT_ID, metalConceptId))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(metalConfig));
+        when(conceptRepository.findById(metalConceptId)).thenReturn(Optional.of(metalConcept));
+        ActionUnit project = new ActionUnit();
+        project.setId(PROJECT_ID);
+        project.setCreatedByInstitution(new Institution());
+        when(actionUnitRepository.findById(PROJECT_ID)).thenReturn(Optional.of(project));
+        when(formConfigRepository.save(any(FormConfig.class)))
+                .thenThrow(new DataIntegrityViolationException("duplicate key"));
+
+        Optional<FormConfig> result = service.createOrGetFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, metalConceptId);
+
+        assertThat(result).contains(metalConfig);
+    }
+
+    @Test
+    void createOrGetFormConfig_byId_shouldRethrowTheConstraintViolation_whenRecoveryAlsoFindsNothing() {
+        Long metalConceptId = 300L;
+        Concept metalConcept = concept(metalConceptId, "metal");
+        when(formConfigRepository.findByActionUnitAndFieldAndValue(PROJECT_ID, FIELD_CONCEPT_ID, metalConceptId))
+                .thenReturn(Optional.empty());
+        when(conceptRepository.findById(metalConceptId)).thenReturn(Optional.of(metalConcept));
+        ActionUnit project = new ActionUnit();
+        project.setId(PROJECT_ID);
+        project.setCreatedByInstitution(new Institution());
+        when(actionUnitRepository.findById(PROJECT_ID)).thenReturn(Optional.of(project));
+        DataIntegrityViolationException original = new DataIntegrityViolationException("duplicate key");
+        when(formConfigRepository.save(any(FormConfig.class))).thenThrow(original);
+
+        assertThatThrownBy(() -> service.createOrGetFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, metalConceptId))
+                .isSameAs(original);
     }
 
     @Test
@@ -942,10 +1066,10 @@ class TableFieldConfigServiceImplTest {
 
     @Test
     void configurableTables_shouldDeclareTheirIdentifierDefaults() {
-        assertThat(ConfigurableTable.UE.getDefaultIdentifierFormat()).isEqualTo("{NUM_UE}");
-        assertThat(ConfigurableTable.MOBILIER.getDefaultIdentifierFormat()).isEqualTo("{NUM_MOBILIER}");
-        assertThat(ConfigurableTable.CONTENANT.getDefaultIdentifierFormat()).isEqualTo("{NUM_CONTAINER}");
-        assertThat(ConfigurableTable.PHASE.getDefaultIdentifierFormat()).isEqualTo("{NUM_PHASE}");
+        assertThat(ConfigurableTable.UE.getDefaultIdentifierFormat()).isEqualTo("{NUM_UE:000}");
+        assertThat(ConfigurableTable.MOBILIER.getDefaultIdentifierFormat()).isEqualTo("{NUM_MOBILIER:000}");
+        assertThat(ConfigurableTable.CONTENANT.getDefaultIdentifierFormat()).isEqualTo("{NUM_CONTAINER:000}");
+        assertThat(ConfigurableTable.PHASE.getDefaultIdentifierFormat()).isEqualTo("{NUM_PHASE:000}");
     }
 
     // ========== New Tests ==========
@@ -964,7 +1088,7 @@ class TableFieldConfigServiceImplTest {
 
     @Test
     void listConfigurableTypes_shouldReturnEmptyListWhenInputIsNull() throws NoConfigForFieldException {
-        when(fieldConfigurationService.fetchAutocomplete(any(), eq("SIAS.CAT"), isNull(), eq(PROJECT_ID)))
+        when(fieldConfigurationService.fetchAutocomplete(any(UserInfo.class), eq("SIAS.CAT"), isNull(), eq(PROJECT_ID)))
                 .thenReturn(List.of());
         when(formConfigRepository.findAllByActionUnitAndField(PROJECT_ID, FIELD_CONCEPT_ID))
                 .thenReturn(List.of());
@@ -992,6 +1116,104 @@ class TableFieldConfigServiceImplTest {
 
         assertThatThrownBy(() -> service.saveFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, config))
                 .isInstanceOf(NoSuchElementException.class);
+    }
+
+    // --- saveFormConfig (concept-id-keyed) ---
+    @Test
+    void saveFormConfig_byId_shouldCreateTheConfigurationWhenTheTypeHasNoneYet() {
+        Long metalConceptId = 300L;
+        Concept metalConcept = concept(metalConceptId, "metal");
+        when(formConfigRepository.findByActionUnitAndFieldAndValue(PROJECT_ID, FIELD_CONCEPT_ID, metalConceptId))
+                .thenReturn(Optional.empty());
+        when(conceptRepository.findById(metalConceptId)).thenReturn(Optional.of(metalConcept));
+        ActionUnit project = new ActionUnit();
+        project.setId(PROJECT_ID);
+        project.setCreatedByInstitution(new Institution());
+        when(actionUnitRepository.findById(PROJECT_ID)).thenReturn(Optional.of(project));
+        when(formConfigRepository.save(any(FormConfig.class))).thenAnswer(call -> call.getArgument(0));
+
+        TypeFormConfig config = TypeFormConfig.builder()
+                .identifierFormat("M-{NUM_MOBILIER:00}")
+                .minCode(1)
+                .maxCode(99)
+                .build();
+
+        service.saveFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, metalConceptId, config);
+
+        ArgumentCaptor<FormConfig> saved = ArgumentCaptor.forClass(FormConfig.class);
+        verify(formConfigRepository, times(2)).save(saved.capture());
+        FormConfig persisted = saved.getValue();
+        assertThat(persisted.getValueConcept()).isEqualTo(metalConcept);
+        assertThat(persisted.getIdentifierFormat()).isEqualTo("M-{NUM_MOBILIER:00}");
+        assertThat(persisted.getMinCode()).isEqualTo(1);
+        assertThat(persisted.getMaxCode()).isEqualTo(99);
+    }
+
+    @Test
+    void saveFormConfig_byId_shouldPersistIdentifierSettingsOnExistingType() {
+        TypeFormConfig changes = TypeFormConfig.builder()
+                .identifierFormat("CER-{NUM_MOBILIER:000}")
+                .minCode(5)
+                .maxCode(500)
+                .build();
+
+        service.saveFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, CERAMIQUE_CONCEPT_ID, changes);
+
+        assertThat(ceramiqueConfig.getIdentifierFormat()).isEqualTo("CER-{NUM_MOBILIER:000}");
+        assertThat(ceramiqueConfig.getMinCode()).isEqualTo(5);
+        assertThat(ceramiqueConfig.getMaxCode()).isEqualTo(500);
+        verify(formConfigRepository).save(ceramiqueConfig);
+    }
+
+    @Test
+    void saveFormConfig_byId_shouldThrowWhenConceptIdIsUnknown() {
+        Long unknownConceptId = 404L;
+        when(formConfigRepository.findByActionUnitAndFieldAndValue(PROJECT_ID, FIELD_CONCEPT_ID, unknownConceptId))
+                .thenReturn(Optional.empty());
+        when(conceptRepository.findById(unknownConceptId)).thenReturn(Optional.empty());
+        ActionUnit project = new ActionUnit();
+        project.setId(PROJECT_ID);
+        project.setCreatedByInstitution(new Institution());
+        when(actionUnitRepository.findById(PROJECT_ID)).thenReturn(Optional.of(project));
+
+        TypeFormConfig config = TypeFormConfig.builder().identifierFormat("{NUM_MOBILIER:00}").build();
+
+        assertThatThrownBy(() -> service.saveFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, unknownConceptId, config))
+                .isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    void saveFormConfig_byId_shouldThrowWhenProjectHasNoVocabularyConfigured() throws Exception {
+        when(fieldConfigurationService.findConfigurationForFieldCode(any(), anyString(), any(Long.class)))
+                .thenThrow(new NoConfigForFieldException("no config"));
+
+        TypeFormConfig config = TypeFormConfig.builder().identifierFormat("{NUM_MOBILIER:00}").build();
+
+        assertThatThrownBy(() -> service.saveFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, CERAMIQUE_CONCEPT_ID, config))
+                .isInstanceOf(IllegalStateException.class);
+        verify(formConfigRepository, never()).save(any());
+    }
+
+    @Test
+    void saveFormConfig_byId_shouldThrowWhenIdentifierFormatIsBlank() {
+        TypeFormConfig config = TypeFormConfig.builder().identifierFormat("   ").build();
+
+        assertThatThrownBy(() -> service.saveFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, CERAMIQUE_CONCEPT_ID, config))
+                .isInstanceOf(IllegalArgumentException.class);
+        verify(formConfigRepository, never()).save(any());
+    }
+
+    @Test
+    void saveFormConfig_byId_shouldThrowWhenIdentifierRangeIsInvalid() {
+        TypeFormConfig config = TypeFormConfig.builder()
+                .identifierFormat("{NUM_MOBILIER:00}")
+                .minCode(10)
+                .maxCode(5)
+                .build();
+
+        assertThatThrownBy(() -> service.saveFormConfig(PROJECT_ID, ConfigurableTable.MOBILIER, CERAMIQUE_CONCEPT_ID, config))
+                .isInstanceOf(IllegalArgumentException.class);
+        verify(formConfigRepository, never()).save(any());
     }
 
     // --- searchFieldCatalog ---
@@ -1394,7 +1616,7 @@ class TableFieldConfigServiceImplTest {
     // --- listConfigurableTypes / fieldValues ---
     @Test
     void listConfigurableTypes_shouldReturnEmptyListWhenProjectHasNoFieldConfiguration() throws Exception {
-        when(fieldConfigurationService.fetchAutocomplete(any(), eq("SIAS.CAT"), any(), eq(PROJECT_ID)))
+        when(fieldConfigurationService.fetchAutocomplete(any(UserInfo.class), eq("SIAS.CAT"), any(), eq(PROJECT_ID)))
                 .thenThrow(new NoConfigForFieldException("no config"));
 
         assertThat(service.listConfigurableTypes(PROJECT_ID, ConfigurableTable.MOBILIER, "é")).isEmpty();

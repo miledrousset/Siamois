@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fr.siamois.domain.models.auth.Person;
 import fr.siamois.domain.models.document.Document;
+import fr.siamois.domain.models.exceptions.actionunit.ActionUnitNotFoundException;
 import fr.siamois.domain.models.exceptions.recordingunit.RecordingUnitNotFoundException;
 import fr.siamois.domain.services.InstitutionService;
 import fr.siamois.domain.services.PhaseService;
@@ -751,20 +752,22 @@ class RecordingUnitsControllerApiTest {
         SecurityContextHolder.clearContext();
 
         mockMvc.perform(get("/api/v1/recording-units/creation-form")
-                        .param("organizationId", "10")
+                        .param("projectId", "10")
                         .param("recordingUnitTypeConceptId", "1"))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void getRecordingUnitCreateForm_orgForbidden_returns403() throws Exception {
+    void getRecordingUnitCreateForm_projectNotAccessible_returns404() throws Exception {
         when(personMapper.convert(person)).thenReturn(personDto);
         when(institutionService.findInstitutionsOfPerson(personDto)).thenReturn(Set.of(institutionDto));
+        when(recordingUnitOpenApiService.buildRecordingUnitCreateForm(eq("999"), anyLong(), eq(personDto), eq(Set.of(10L)), anyString()))
+                .thenThrow(new ActionUnitNotFoundException("Project not found or not accessible"));
 
         mockMvc.perform(get("/api/v1/recording-units/creation-form")
-                        .param("organizationId", "999")
+                        .param("projectId", "999")
                         .param("recordingUnitTypeConceptId", "1"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -775,28 +778,28 @@ class RecordingUnitsControllerApiTest {
         ResolvedConceptResource type = new ResolvedConceptResource();
         type.setId("3");
         RecordingUnitCreateFormData payload = new RecordingUnitCreateFormData(type, null, Map.of());
-        when(recordingUnitOpenApiService.buildRecordingUnitCreateForm(10L, 3L, personDto, "fr"))
+        when(recordingUnitOpenApiService.buildRecordingUnitCreateForm("10", 3L, personDto, Set.of(10L), "fr"))
                 .thenReturn(payload);
 
         mockMvc.perform(get("/api/v1/recording-units/creation-form")
-                        .param("organizationId", "10")
+                        .param("projectId", "10")
                         .param("recordingUnitTypeConceptId", "3")
                         .header("Accept-Language", "fr"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.recordingUnitType.id").value("3"));
 
-        verify(recordingUnitOpenApiService).buildRecordingUnitCreateForm(10L, 3L, personDto, "fr");
+        verify(recordingUnitOpenApiService).buildRecordingUnitCreateForm("10", 3L, personDto, Set.of(10L), "fr");
     }
 
     @Test
     void getRecordingUnitCreateForm_whenServiceNotFound_returns404() throws Exception {
         when(personMapper.convert(person)).thenReturn(personDto);
         when(institutionService.findInstitutionsOfPerson(personDto)).thenReturn(Set.of(institutionDto));
-        when(recordingUnitOpenApiService.buildRecordingUnitCreateForm(anyLong(), anyLong(), eq(personDto), anyString()))
+        when(recordingUnitOpenApiService.buildRecordingUnitCreateForm(anyString(), anyLong(), eq(personDto), eq(Set.of(10L)), anyString()))
                 .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Recording unit type not found"));
 
         mockMvc.perform(get("/api/v1/recording-units/creation-form")
-                        .param("organizationId", "10")
+                        .param("projectId", "10")
                         .param("recordingUnitTypeConceptId", "99"))
                 .andExpect(status().isNotFound());
     }
@@ -808,16 +811,16 @@ class RecordingUnitsControllerApiTest {
 
         ResolvedConceptResource type = new ResolvedConceptResource();
         type.setId("1");
-        when(recordingUnitOpenApiService.buildRecordingUnitCreateForm(10L, 1L, personDto, "en"))
+        when(recordingUnitOpenApiService.buildRecordingUnitCreateForm("10", 1L, personDto, Set.of(10L), "en"))
                 .thenReturn(new RecordingUnitCreateFormData(type, null, Map.of()));
 
         mockMvc.perform(get("/api/v1/recording-units/creation-form")
-                        .param("organizationId", "10")
+                        .param("projectId", "10")
                         .param("recordingUnitTypeConceptId", "1")
                         .header(HttpHeaders.ACCEPT_LANGUAGE, "en-US,en;q=0.9"))
                 .andExpect(status().isOk());
 
-        verify(recordingUnitOpenApiService).buildRecordingUnitCreateForm(10L, 1L, personDto, "en");
+        verify(recordingUnitOpenApiService).buildRecordingUnitCreateForm("10", 1L, personDto, Set.of(10L), "en");
     }
 
     @Test
@@ -827,15 +830,15 @@ class RecordingUnitsControllerApiTest {
 
         ResolvedConceptResource type = new ResolvedConceptResource();
         type.setId("2");
-        when(recordingUnitOpenApiService.buildRecordingUnitCreateForm(10L, 2L, personDto, "fr"))
+        when(recordingUnitOpenApiService.buildRecordingUnitCreateForm("10", 2L, personDto, Set.of(10L), "fr"))
                 .thenReturn(new RecordingUnitCreateFormData(type, null, Map.of()));
 
         mockMvc.perform(get("/api/v1/recording-units/creation-form")
-                        .param("organizationId", "10")
+                        .param("projectId", "10")
                         .param("recordingUnitTypeConceptId", "2"))
                 .andExpect(status().isOk());
 
-        verify(recordingUnitOpenApiService).buildRecordingUnitCreateForm(10L, 2L, personDto, "fr");
+        verify(recordingUnitOpenApiService).buildRecordingUnitCreateForm("10", 2L, personDto, Set.of(10L), "fr");
     }
 
     @Test
@@ -849,11 +852,11 @@ class RecordingUnitsControllerApiTest {
         FieldResource field = new FieldResource("12", "fields", "Libellé", "TEXT", null, false, null, null);
         Map<String, FieldResource> fields = Map.of("12", field);
         RecordingUnitCreateFormData payload = new RecordingUnitCreateFormData(type, bundle, fields);
-        when(recordingUnitOpenApiService.buildRecordingUnitCreateForm(10L, 8L, personDto, "fr"))
+        when(recordingUnitOpenApiService.buildRecordingUnitCreateForm("10", 8L, personDto, Set.of(10L), "fr"))
                 .thenReturn(payload);
 
         mockMvc.perform(get("/api/v1/recording-units/creation-form")
-                        .param("organizationId", "10")
+                        .param("projectId", "10")
                         .param("recordingUnitTypeConceptId", "8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.form.layoutJson").value("{\"layout\":[]}"))

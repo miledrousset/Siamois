@@ -323,117 +323,131 @@ class RecordingUnitOpenApiServiceTest {
     }
 
     @Test
-    void buildRecordingUnitCreateForm_unknownOrganization_throws404() {
-        when(institutionService.findById(10L)).thenReturn(null);
+    void buildRecordingUnitCreateForm_projectWithoutOrganization_throws400() {
+        ActionUnitDTO au = new ActionUnitDTO();
+        au.setId(5L);
+        when(actionUnitService.findAccessibleProjectByKey("5", SCOPE))
+                .thenReturn(new AccessibleProjectForApi(au, 0, 0));
 
-        assertThatThrownBy(() -> service.buildRecordingUnitCreateForm(10L, 1L, personDto, "fr"))
+        assertThatThrownBy(() -> service.buildRecordingUnitCreateForm("5", 1L, personDto, SCOPE, "fr"))
                 .isInstanceOf(ResponseStatusException.class)
-                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode().value()).isEqualTo(HttpStatus.NOT_FOUND.value()));
+                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST));
     }
 
     @Test
     void buildRecordingUnitCreateForm_unknownType_throws404() {
-        when(institutionService.findById(10L)).thenReturn(new InstitutionDTO());
+        InstitutionDTO inst = new InstitutionDTO();
+        inst.setId(10L);
+        ActionUnitDTO au = new ActionUnitDTO();
+        au.setId(5L);
+        au.setCreatedByInstitution(inst);
+        when(actionUnitService.findAccessibleProjectByKey("5", SCOPE))
+                .thenReturn(new AccessibleProjectForApi(au, 0, 0));
         when(conceptRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.buildRecordingUnitCreateForm(10L, 99L, personDto, "fr"))
+        assertThatThrownBy(() -> service.buildRecordingUnitCreateForm("5", 99L, personDto, SCOPE, "fr"))
                 .isInstanceOf(ResponseStatusException.class)
-                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode().value()).isEqualTo(HttpStatus.NOT_FOUND.value()));
+                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND));
     }
 
     @Test
-    void buildFindCreateForm_unknownOrganization_throws404() {
-        when(institutionService.findById(10L)).thenReturn(null);
+    void buildFindCreateForm_projectWithoutOrganization_throws400() {
+        ActionUnitDTO au = new ActionUnitDTO();
+        au.setId(5L);
+        when(actionUnitService.findAccessibleProjectByKey("5", SCOPE))
+                .thenReturn(new AccessibleProjectForApi(au, 0, 0));
 
-        assertThatThrownBy(() -> service.buildFindCreateForm(10L, 1L, personDto, "fr"))
+        assertThatThrownBy(() -> service.buildFindCreateForm("5", 1L, personDto, SCOPE, "fr"))
                 .isInstanceOf(ResponseStatusException.class)
-                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode().value()).isEqualTo(HttpStatus.NOT_FOUND.value()));
+                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST));
     }
 
     @Test
     void buildFindCreateForm_unknownType_throws404() {
-        when(institutionService.findById(10L)).thenReturn(new InstitutionDTO());
+        InstitutionDTO inst = new InstitutionDTO();
+        inst.setId(10L);
+        ActionUnitDTO au = new ActionUnitDTO();
+        au.setId(5L);
+        au.setCreatedByInstitution(inst);
+        when(actionUnitService.findAccessibleProjectByKey("5", SCOPE))
+                .thenReturn(new AccessibleProjectForApi(au, 0, 0));
         when(conceptRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.buildFindCreateForm(10L, 99L, personDto, "fr"))
+        assertThatThrownBy(() -> service.buildFindCreateForm("5", 99L, personDto, SCOPE, "fr"))
                 .isInstanceOf(ResponseStatusException.class)
-                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode().value()).isEqualTo(HttpStatus.NOT_FOUND.value()));
+                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND));
     }
 
     @Test
-    void buildFindCreateForm_usesSpecimenSystemForm() {
+    void buildFindCreateForm_usesEffectiveFormResolverForProjectAndType() {
         InstitutionDTO inst = new InstitutionDTO();
         inst.setId(10L);
-        when(institutionService.findById(10L)).thenReturn(inst);
-        Concept concept = mock(Concept.class);
-        when(conceptRepository.findById(5L)).thenReturn(Optional.of(concept));
-        ConceptDTO typeDto = new ConceptDTO();
-        typeDto.setId(5L);
-        when(conceptMapper.convert(concept)).thenReturn(typeDto);
+        ActionUnitDTO au = new ActionUnitDTO();
+        au.setId(5L);
+        au.setCreatedByInstitution(inst);
+        when(actionUnitService.findAccessibleProjectByKey("5", SCOPE))
+                .thenReturn(new AccessibleProjectForApi(au, 0, 0));
 
-        CustomFieldText textField = mock(CustomFieldText.class);
-        when(textField.getId()).thenReturn(4L);
-        when(textField.getLabel()).thenReturn("Identifier");
-        when(textField.getHint()).thenReturn(null);
-        when(textField.getValueBinding()).thenReturn("fullIdentifier");
-        when(textField.getIsSystemField()).thenReturn(true);
-        FormUiDto formUiDto = formUiDtoWithOneField(textField);
-        when(conversionService.convert(fr.siamois.domain.models.specimen.Specimen.NEW_UNIT_FORM, FormUiDto.class))
-                .thenReturn(formUiDto);
-
-        FindCreateFormData data = service.buildFindCreateForm(10L, 5L, personDto, "fr");
-
-        assertThat(data.form()).isNotNull();
-        assertThat(data.fields()).containsKey("4");
-        assertThat(data.findType().getId()).isEqualTo("5");
-    }
-
-    @Test
-    void buildFindCreateForm_whenFormPresent_populatesFormAndFields() {
-        InstitutionDTO inst = new InstitutionDTO();
-        inst.setId(10L);
-        when(institutionService.findById(10L)).thenReturn(inst);
-        Concept concept = mock(Concept.class);
+        Concept concept = new Concept();
+        concept.setId(7L);
         when(conceptRepository.findById(7L)).thenReturn(Optional.of(concept));
         ConceptDTO typeDto = new ConceptDTO();
         typeDto.setId(7L);
         when(conceptMapper.convert(concept)).thenReturn(typeDto);
 
-        CustomFieldText textField = mock(CustomFieldText.class);
-        when(textField.getId()).thenReturn(55L);
-        when(textField.getLabel()).thenReturn("Description");
-        when(textField.getHint()).thenReturn(null);
-        when(textField.getValueBinding()).thenReturn(null);
-        when(textField.getIsSystemField()).thenReturn(false);
+        FormConfig identifierConfig = new FormConfig();
+        identifierConfig.setIdentifierFormat("M-{NUM_MOBILIER:000}");
+        when(tableFieldConfigService.resolveIdentifierConfig(5L, ConfigurableTable.MOBILIER, 7L))
+                .thenReturn(identifierConfig);
 
-        FormUiDto formUiDto = formUiDtoWithOneField(textField);
-        when(conversionService.convert(fr.siamois.domain.models.specimen.Specimen.NEW_UNIT_FORM, FormUiDto.class))
-                .thenReturn(formUiDto);
+        CustomFieldText textField = new CustomFieldText();
+        textField.setId(55L);
+        textField.setLabel("Description");
+        textField.setIsSystemField(false);
+        when(effectiveFormResolver.resolveEffectiveForm(Specimen.DETAILS_FORM, 5L, ConfigurableTable.MOBILIER, 7L))
+                .thenReturn(formUiDtoWithOneField(textField));
 
-        FindCreateFormData data = service.buildFindCreateForm(10L, 7L, personDto, "fr");
+        FindCreateFormData data = service.buildFindCreateForm("5", 7L, personDto, SCOPE, "fr");
 
         assertThat(data.form()).isNotNull();
         assertThat(data.fields()).containsKey("55");
+        assertThat(data.findType().getId()).isEqualTo("7");
     }
 
     @Test
-    void buildRecordingUnitCreateForm_usesRecordingUnitSystemNewUnitForm() {
+    void buildRecordingUnitCreateForm_usesEffectiveFormResolverForProjectAndType() {
         InstitutionDTO inst = new InstitutionDTO();
         inst.setId(10L);
-        when(institutionService.findById(10L)).thenReturn(inst);
-        Concept concept = mock(Concept.class);
+        ActionUnitDTO au = new ActionUnitDTO();
+        au.setId(5L);
+        au.setCreatedByInstitution(inst);
+        when(actionUnitService.findAccessibleProjectByKey("5", SCOPE))
+                .thenReturn(new AccessibleProjectForApi(au, 0, 0));
+
+        Concept concept = new Concept();
+        concept.setId(7L);
         when(conceptRepository.findById(7L)).thenReturn(Optional.of(concept));
         ConceptDTO typeDto = new ConceptDTO();
         typeDto.setId(7L);
         when(conceptMapper.convert(concept)).thenReturn(typeDto);
 
-        RecordingUnitCreateFormData data = service.buildRecordingUnitCreateForm(10L, 7L, personDto, "fr");
+        FormConfig identifierConfig = new FormConfig();
+        identifierConfig.setIdentifierFormat("T-{NUM_UE:000}");
+        when(tableFieldConfigService.resolveIdentifierConfig(5L, ConfigurableTable.UE, 7L))
+                .thenReturn(identifierConfig);
+
+        CustomFieldText textField = new CustomFieldText();
+        textField.setId(43L);
+        textField.setLabel("Champ");
+        textField.setIsSystemField(false);
+        when(effectiveFormResolver.resolveEffectiveForm(RecordingUnit.DETAILS_FORM, 5L, ConfigurableTable.UE, 7L))
+                .thenReturn(formUiDtoWithOneField(textField));
+
+        RecordingUnitCreateFormData data = service.buildRecordingUnitCreateForm("5", 7L, personDto, SCOPE, "fr");
 
         assertThat(data.form()).isNotNull();
-        // Real fields of RecordingUnit.NEW_UNIT_FORM (recordingunit.field type, opening date, author...).
-        assertThat(data.fields()).containsKey("-302");
-        assertThat(data.fields().get("-302").answerType()).isEqualTo("SELECT_ONE_FROM_FIELD_CODE");
-        verifyNoInteractions(effectiveFormResolver);
+        assertThat(data.fields()).containsKey("43");
+        assertThat(data.recordingUnitType().getId()).isEqualTo("7");
     }
 
     @Test

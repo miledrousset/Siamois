@@ -20,6 +20,10 @@ public interface ConceptLabelRepository extends CrudRepository<ConceptLabel, Lon
 
     Optional<ConceptAltLabel> findAltLabelByConceptAndLangCode(Concept savedConcept, String lang);
 
+    Optional<ConceptAltLabel> findAltLabelByConceptAndLangCodeAndLabel(Concept savedConcept, String lang, String label);
+
+    Set<ConceptAltLabel> findAllAltLabelsByConcept(Concept concept);
+
     Optional<ConceptPrefLabel> findPrefLabelByLangCodeAndConcept(String langCode, Concept concept);
 
     Set<ConceptAltLabel> findAllAltLabelsByLangCodeAndConcept(String langCode, Concept concept);

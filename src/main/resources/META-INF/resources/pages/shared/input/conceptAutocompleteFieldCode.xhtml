@@ -22,6 +22,7 @@
         <cc:attribute name="required" type="java.lang.Boolean" required="false" default="false"/>
         <cc:attribute name="dependsOnBaseConcept" type="fr.siamois.domain.models.vocabulary.Concept" required="false"/>
         <cc:attribute name="actionUnitId" type="java.lang.Long" required="false"/>
+        <cc:attribute name="valueConceptId" type="java.lang.Long" required="false"/>
 
 
     </cc:interface>
@@ -48,30 +49,16 @@
                         placeholder="#{langBean.msg('common.action.chooseConcept')}"
                         showEmptyMessage="false"
                         maxResults="#{fieldConfigurationService.resultLimit()}"
+                        dropdown="true"
         >
             <f:attribute name="fieldCode" value="#{spatialUnitFieldBean.resolveFieldCode(cc.attrs.field)}" />
             <f:attribute name="field" value="#{cc.attrs.field}" />
             <f:attribute name="selected" value="#{cc.attrs.selectedConcept}"/>
             <f:attribute name="dependsOnBaseConcept" value="#{cc.attrs.dependsOnBaseConcept}"/>
             <f:attribute name="actionUnitId" value="#{cc.attrs.actionUnitId}"/>
+            <f:attribute name="valueConceptId" value="#{cc.attrs.valueConceptId}"/>
 
 
-
-            <f:facet name="itemtip">
-                <h:panelGrid columns="1" cellpadding="5" styleClass="#{cc.attrs.panelStyleClass}"
-                style="background: var(--main-color); min-width: 20em;">
-
-                    <small>#{autocompleteDto.originalPrefLabel}</small><br/>
-                    <small><i>#{autocompleteDto.altlabelsAsString()}</i></small><br/>
-                    <small>#{autocompleteDto.definition}</small><br/>
-                    <p:commandLink
-                            onclick="window.open('#{autocompleteDto.vocabulary().baseUri}/?idc=#{autocompleteDto.concept().externalId}&amp;idt=#{autocompleteDto.vocabulary().externalVocabularyId}', '_blank'); return false;"
-                    >
-                        <small><i>#{langBean.msg("common.action.seeMore")}</i></small>
-                    </p:commandLink>
-
-                </h:panelGrid>
-            </f:facet>
 
             <!-- If defined, we need to update on select to synchronise secondary type choices -->
             <p:ajax
@@ -96,7 +83,11 @@
                 <h:panelGroup id="conceptItem" layout="block" style="display:flex; flex-direction: column">
                     <h:outputText style="vertical-align: middle" value="#{autocompleteDto.conceptLabelToDisplay.label}"/>
                     <h:panelGroup rendered="#{autocompleteDto.conceptLabelToDisplay.altLabel}">
-                        <small>#{langBean.msg('concept.common.preflabel')} : #{autocompleteDto.originalPrefLabel}</small>
+                        <small class="concept-item-altlabel">#{langBean.msg('concept.common.correspondsToPrefLabel', autocompleteDto.originalPrefLabel)}</small>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" styleClass="concept-item-definition"
+                                  rendered="#{not empty autocompleteDto.definition}">
+                        <small>#{autocompleteDto.definition}</small>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{not empty autocompleteDto.hierarchyPrefLabels}">
                         <small>#{langBean.msg('concept.common.parents')} : #{autocompleteDto.hierarchyPrefLabels}</small>

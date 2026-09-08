@@ -122,7 +122,6 @@ public class ConceptService {
     }
 
 
-
     /**
      * Finds all concepts related to action units of a given institution.
      *
@@ -169,6 +168,28 @@ public class ConceptService {
         updateAllDefinitionsFromDTO(concept, conceptDTO);
 
         return concept;
+    }
+
+    /**
+     * Fetches the concept designated by a thesaurus URI and persists it (or returns the existing
+     * local copy), unlike {@link #fetchConceptDesignatedBy(VocabularyDTO, String)} which only
+     * returns a detached preview.
+     *
+     * @param vocabulary         the vocabulary the concept belongs to
+     * @param uri                the thesaurus URI designating the concept
+     * @param fieldParentConcept the parent concept in the field context, if applicable
+     * @return the saved or existing concept
+     * @throws IllegalStateException if the thesaurus did not return the concept
+     */
+    @NonNull
+    @Transactional
+    public Concept saveOrGetConceptFromUri(@NonNull Vocabulary vocabulary, @NonNull String uri,
+                                            @Nullable Concept fieldParentConcept) {
+        FullInfoDTO info = conceptApi.fetchConceptInfoByUri(vocabulary.getBaseUri(), uri);
+        if (info == null || info.getPrefLabel() == null || info.getPrefLabel().length == 0) {
+            throw new IllegalStateException("The thesaurus did not return the concept designated by " + uri);
+        }
+        return saveOrGetConceptFromFullDTO(vocabulary, info, fieldParentConcept);
     }
 
     /**
@@ -238,9 +259,7 @@ public class ConceptService {
         }
 
         if (conceptDto.getAltLabel() != null) {
-            for (PurlInfoDTO altLabel : conceptDto.getAltLabel()) {
-                labelService.updateAltLabel(savedConcept, altLabel.getLang(), altLabel.getValue(), fieldParentConcept);
-            }
+            labelService.replaceAltLabels(savedConcept, conceptDto.getAltLabel(), fieldParentConcept);
         }
     }
 
@@ -285,18 +304,13 @@ public class ConceptService {
         }
     }
 
-    public void saveAllSubConceptOfIfUpdated(@NonNull ConceptFieldConfig config) throws ErrorProcessingExpansionException {
-        saveAllSubConceptOfIfUpdated(config, new ProgressWrapper());
-    }
-
-
-        /**
-         * Saves all sub-concepts data and relations if there are updates in the down expansion of the concept field config.
-         *
-         * @param config          the concept field configuration
-         * @param progressWrapper the progress wrapper to track progress
-         * @throws ErrorProcessingExpansionException if an error occurs during processing
-         */
+    /**
+     * Saves all sub-concepts data and relations if there are updates in the down expansion of the concept field config.
+     *
+     * @param config          the concept field configuration
+     * @param progressWrapper the progress wrapper to track progress
+     * @throws ErrorProcessingExpansionException if an error occurs during processing
+     */
     public void saveAllSubConceptOfIfUpdated(@NonNull ConceptFieldConfig config, @NonNull ProgressWrapper progressWrapper) throws ErrorProcessingExpansionException {
         log.trace("API call to fetch down expansion for concept FieldCode : {}", config.getFieldCode());
         try {
@@ -380,6 +394,7 @@ public class ConceptService {
 
     /**
      * Finds a concept by its ID.
+     *
      * @param id the ID of the concept
      * @return an Optional containing the concept if found, or empty if not found
      */
@@ -391,8 +406,8 @@ public class ConceptService {
     /**
      * Finds all parent concepts of a given concept within the context of a specified parent field concept.
      *
-     * @param concept             the concept whose parents are to be found
-     * @param parentFieldConcept  the parent field concept defining the context
+     * @param concept            the concept whose parents are to be found
+     * @param parentFieldConcept the parent field concept defining the context
      * @return a list of parent concepts, ordered from the highest level to the immediate parent
      */
     @NonNull
@@ -457,8 +472,8 @@ public class ConceptService {
      */
     @NonNull
     private List<ConceptAutocompleteDetachedDTO> detachedResultsOfConcept(@NonNull VocabularyDTO vocabularyDTO,
-                                                                         @NonNull List<ConceptRemoteAutocompleteDTO> labelsOfConcept,
-                                                                         @Nullable ConceptRemoteAutocompleteDTO prefLabel) {
+                                                                          @NonNull List<ConceptRemoteAutocompleteDTO> labelsOfConcept,
+                                                                          @Nullable ConceptRemoteAutocompleteDTO prefLabel) {
         ConceptRemoteAutocompleteDTO reference = prefLabel != null ? prefLabel : labelsOfConcept.get(0);
 
         // The thesaurus's own "identifier" field, not its uri : a uri can be an ark, which does not

@@ -20,6 +20,13 @@ import fr.siamois.mapper.InstitutionMapper;
 import fr.siamois.mapper.PersonMapper;
 import fr.siamois.ui.email.EmailManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +37,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
@@ -105,17 +117,6 @@ class PersonServiceTest {
                 personMapper,
                 pendingPersonRepository
         );
-    }
-
-    @Test
-    void findAllByNameLastnameContaining_Success() {
-        when(personRepository.findAllByNameOrLastname("bob", 100)).thenReturn(List.of(person));
-
-        // Act
-        List<PersonDTO> actualResult = personService.findAllByNameLastnameContaining("bob");
-
-        // Assert
-        assertEquals(1, actualResult.size());
     }
 
     @Test
@@ -411,6 +412,7 @@ class PersonServiceTest {
 
         when(personRepository.findClosestByEmailLimit10("bob")).thenReturn(Set.of(p1));
         when(personRepository.findClosestByUsernameLimit10("bob")).thenReturn(Set.of(p2));
+        when(personRepository.findClosestByNameLimit10("bob")).thenReturn(Set.of());
 
         var res = personService.findClosestByUsernameOrEmail("bob");
         assertEquals(2, res.size());
@@ -423,10 +425,26 @@ class PersonServiceTest {
 
         when(personRepository.findClosestByEmailLimit10("bob")).thenReturn(Set.of(p1));
         when(personRepository.findClosestByUsernameLimit10("bob")).thenReturn(Set.of(p1));
+        when(personRepository.findClosestByNameLimit10("bob")).thenReturn(Set.of(p1));
 
         var res = personService.findClosestByUsernameOrEmail("bob");
         assertEquals(1, res.size());
 
+    }
+
+    @Test
+    void findClosestByUsernameOrEmail_ShouldAlsoMatchByName() {
+        Person p3 = new Person();
+        p3.setId(3L);
+        p3.setName("Bob");
+        p3.setLastname("Smith");
+
+        when(personRepository.findClosestByEmailLimit10("bob")).thenReturn(Set.of());
+        when(personRepository.findClosestByUsernameLimit10("bob")).thenReturn(Set.of());
+        when(personRepository.findClosestByNameLimit10("bob")).thenReturn(Set.of(p3));
+
+        var res = personService.findClosestByUsernameOrEmail("bob");
+        assertEquals(1, res.size());
     }
 
     // Pour createAndDeletePendingRelations, on teste via createPerson (chemins principaux)
@@ -574,6 +592,223 @@ class PersonServiceTest {
 
         assertTrue(result.isEmpty());
         verify(personMapper, never()).convert(any(Person.class));
+    }
+
+    @Test
+    void generateUniqueUsername_returnsPlainNameLastname_whenFree() {
+        when(personRepository.findByUsernameIgnoreCase("john.doe")).thenReturn(Optional.empty());
+
+        String result = personService.generateUniqueUsername("John", "Doe", "john.doe@example.com", Set.of());
+
+        assertEquals("john.doe", result);
+    }
+
+    @Test
+    void generateUniqueUsername_stripsAccentsAndSpecialChars() {
+        when(personRepository.findByUsernameIgnoreCase("francois.mullerdupont")).thenReturn(Optional.empty());
+
+        String result = personService.generateUniqueUsername("François", "Müller-Dupont", "f@example.com", Set.of());
+
+        assertEquals("francois.mullerdupont", result);
+    }
+
+    @Test
+    void generateUniqueUsername_fallsBackToEmailLocalPart_whenNamesBlank() {
+        when(personRepository.findByUsernameIgnoreCase("jane.smith")).thenReturn(Optional.empty());
+
+        String result = personService.generateUniqueUsername("", "  ", "jane.smith@example.com", Set.of());
+
+        assertEquals("jane.smith", result);
+    }
+
+    @Test
+    void generateUniqueUsername_fallsBackToUser_whenNothingUsable() {
+        when(personRepository.findByUsernameIgnoreCase("user")).thenReturn(Optional.empty());
+
+        String result = personService.generateUniqueUsername("", "", "", Set.of());
+
+        assertEquals("user", result);
+    }
+
+    @Test
+    void generateUniqueUsername_appendsRandomSuffix_whenAlreadyTakenInDatabase() {
+        when(personRepository.findByUsernameIgnoreCase(anyString())).thenAnswer(inv ->
+                "john.doe".equalsIgnoreCase(inv.getArgument(0)) ? Optional.of(person) : Optional.empty());
+        when(personMapper.convert(person)).thenReturn(personDto);
+
+        String result = personService.generateUniqueUsername("John", "Doe", "john.doe@example.com", Set.of());
+
+        assertNotEquals("john.doe", result);
+        assertTrue(result.matches("john\\.doe\\d+"), "Expected 'john.doe' followed by digits, got: " + result);
+    }
+
+    @Test
+    void generateUniqueUsername_avoidsReservedUsernames_evenWhenDatabaseIsFree() {
+        when(personRepository.findByUsernameIgnoreCase(anyString())).thenReturn(Optional.empty());
+
+        String result = personService.generateUniqueUsername("John", "Doe", "john.doe@example.com", Set.of("john.doe"));
+
+        assertNotEquals("john.doe", result);
+        assertTrue(result.matches("john\\.doe\\d+"), "Expected 'john.doe' followed by digits, got: " + result);
+    }
+
+    @Test
+    void generateUniqueUsername_reservedCheckIsCaseInsensitive() {
+        when(personRepository.findByUsernameIgnoreCase(anyString())).thenReturn(Optional.empty());
+
+        String result = personService.generateUniqueUsername("John", "Doe", "john.doe@example.com", Set.of("John.Doe"));
+
+        assertNotEquals("john.doe", result);
+        assertTrue(result.matches("john\\.doe\\d+"), "Expected 'john.doe' followed by digits, got: " + result);
+    }
+
+    @Test
+    void generateUniqueUsername_worksWithNullReservedUsernames() {
+        when(personRepository.findByUsernameIgnoreCase("john.doe")).thenReturn(Optional.empty());
+
+        String result = personService.generateUniqueUsername("John", "Doe", "j@example.com", null);
+
+        assertEquals("john.doe", result);
+    }
+
+    @Test
+    void generateUniqueUsername_truncatesBase_whenLongerThanMaxLength() {
+        String firstName = "a".repeat(20);
+        String lastName = "b".repeat(20);
+        String expectedBase = (firstName + "." + lastName).substring(0, Person.USERNAME_MAX_LENGTH);
+        when(personRepository.findByUsernameIgnoreCase(expectedBase)).thenReturn(Optional.empty());
+
+        String result = personService.generateUniqueUsername(firstName, lastName, "x@example.com", Set.of());
+
+        assertEquals(expectedBase, result);
+        assertEquals(Person.USERNAME_MAX_LENGTH, result.length());
+    }
+
+    @Test
+    void generateUniqueUsername_truncatesBaseBeforeAppendingSuffix_whenLongBaseIsTaken() {
+        String firstName = "a".repeat(20);
+        String lastName = "b".repeat(20);
+        String fullBase = (firstName + "." + lastName).substring(0, Person.USERNAME_MAX_LENGTH);
+        String truncatedForSuffix = fullBase.substring(0, Person.USERNAME_MAX_LENGTH - 5);
+
+        when(personRepository.findByUsernameIgnoreCase(fullBase)).thenReturn(Optional.of(person));
+        when(personRepository.findByUsernameIgnoreCase(
+                argThat(a -> a != null && !a.equals(fullBase) && a.startsWith(truncatedForSuffix))))
+                .thenReturn(Optional.empty());
+        when(personMapper.convert(person)).thenReturn(personDto);
+
+        String result = personService.generateUniqueUsername(firstName, lastName, "x@example.com", Set.of());
+
+        assertTrue(result.length() <= Person.USERNAME_MAX_LENGTH,
+                "Username must respect max length, got: " + result + " (" + result.length() + " chars)");
+        assertTrue(result.startsWith(truncatedForSuffix));
+        assertNotEquals(fullBase, result);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void findContainingByNameOrEmailInInstitution_ShouldReturnMappedDtos_InRepositoryOrder() {
+        InstitutionDTO institution = new InstitutionDTO();
+        institution.setId(42L);
+
+        Person other = new Person();
+        other.setId(2L);
+        other.setEmail("other@localhost.com");
+        PersonDTO otherDto = new PersonDTO();
+        otherDto.setId(2L);
+        otherDto.setEmail("other@localhost.com");
+
+        when(personRepository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(person, other)));
+        when(personMapper.convert(person)).thenReturn(personDto);
+        when(personMapper.convert(other)).thenReturn(otherDto);
+
+        List<PersonDTO> res = personService.findContainingByNameOrEmailInInstitution("bob", institution);
+
+        assertEquals(List.of(personDto, otherDto), res);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void findContainingByNameOrEmailInInstitution_ShouldReturnEmptyList_WhenNoPersonMatches() {
+        InstitutionDTO institution = new InstitutionDTO();
+        institution.setId(42L);
+
+        when(personRepository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(Page.empty());
+
+        List<PersonDTO> res = personService.findContainingByNameOrEmailInInstitution("nobody", institution);
+
+        assertTrue(res.isEmpty());
+        verifyNoInteractions(personMapper);
+    }
+
+    @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    void findContainingByNameOrEmailInInstitution_ShouldMatchNameOrEmailWithinInstitution_AndCapResultsTo100() {
+        InstitutionDTO institution = new InstitutionDTO();
+        institution.setId(42L);
+
+        when(personRepository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(Page.empty());
+
+        personService.findContainingByNameOrEmailInInstitution("B\u00f4b", institution);
+
+        ArgumentCaptor<Specification> specCaptor = ArgumentCaptor.forClass(Specification.class);
+        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
+        verify(personRepository).findAll(specCaptor.capture(), pageableCaptor.capture());
+
+        assertEquals(PageRequest.of(0, 100), pageableCaptor.getValue());
+
+        Root<Person> root = mock(Root.class, RETURNS_DEEP_STUBS);
+        CriteriaQuery<?> criteriaQuery = mock(CriteriaQuery.class, RETURNS_DEEP_STUBS);
+        CriteriaBuilder criteriaBuilder = mock(CriteriaBuilder.class, RETURNS_DEEP_STUBS);
+
+        // Accents are stripped before the LIKE: "Bôb" is matched as "%bob%"
+        Predicate nameLike = stubUnaccentedLike(criteriaBuilder, root, "name", "%bob%");
+        Predicate lastnameLike = stubUnaccentedLike(criteriaBuilder, root, "lastname", "%bob%");
+        Predicate emailLike = stubUnaccentedLike(criteriaBuilder, root, "email", "%bob%");
+        Predicate nameOrLastname = mock(Predicate.class);
+        Predicate nameOrEmail = mock(Predicate.class);
+        doReturn(nameOrLastname).when(criteriaBuilder).or(nameLike, lastnameLike);
+        doReturn(nameOrEmail).when(criteriaBuilder).or(nameOrLastname, emailLike);
+        // The institution subquery correlates on the person id
+        doReturn(mock(Path.class)).when(root).get("id");
+
+        specCaptor.getValue().toPredicate(root, criteriaQuery, criteriaBuilder);
+
+        // The name/lastname match is OR-ed with the email match, not AND-ed
+        verify(criteriaBuilder).or(nameOrLastname, emailLike);
+        // ... and the whole text match is restricted to the persons holding a profile in the institution
+        verify(criteriaBuilder).exists(any(Subquery.class));
+        verify(criteriaBuilder).and(any(Predicate.class), eq(nameOrEmail));
+    }
+
+    @Test
+    void findContainingByNameOrEmailInInstitution_ShouldReturnEmptyList_WhenInstitutionIsNull() {
+        List<PersonDTO> res = personService.findContainingByNameOrEmailInInstitution("bob", null);
+
+        assertTrue(res.isEmpty());
+        verifyNoInteractions(personRepository);
+    }
+
+    /**
+     * Stubs the {@code like(unaccent(lower(root.property)), pattern)} chain built by
+     * {@link fr.siamois.infrastructure.database.repositories.specs.PersonSpec} and returns the resulting predicate.
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private Predicate stubUnaccentedLike(CriteriaBuilder criteriaBuilder, Root<Person> root, String property, String pattern) {
+        Path<String> path = mock(Path.class);
+        Expression<String> lowered = mock(Expression.class);
+        Expression<String> unaccented = mock(Expression.class);
+        Predicate like = mock(Predicate.class);
+
+        doReturn(path).when(root).get(property);
+        doReturn(lowered).when(criteriaBuilder).lower(path);
+        doReturn(unaccented).when(criteriaBuilder).function("unaccent", String.class, lowered);
+        doReturn(like).when(criteriaBuilder).like(unaccented, pattern);
+
+        return like;
     }
 
 }

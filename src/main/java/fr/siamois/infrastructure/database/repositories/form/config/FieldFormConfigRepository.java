@@ -48,12 +48,48 @@ public interface FieldFormConfigRepository extends JpaRepository<FieldFormConfig
 
     Optional<FieldFormConfig> findByFormConfigAndField(FormConfig formConfig, CustomField field);
 
+    /**
+     * The field's own restriction (branch/collection) for one specific value of the entity's
+     * "scope" field (e.g. Type = Céramique) in a project. A {@link FormConfig} exists per
+     * (actionUnit, fieldConcept, valueConcept) triple, so this must be scoped by valueConceptId
+     * too, not just field + actionUnit — otherwise, when the same field is configured differently
+     * under two value concepts of the same project, the query would match both rows.
+     *
+     * @param conceptField   the concept field to look the restriction up for
+     * @param actionUnitId   the project the configuration is scoped to
+     * @param valueConceptId the concept of the entity's current scope-field value
+     * @return the value-specific configuration, or empty when that value has none yet
+     */
     @Query(
             """
             SELECT ffc
             FROM ConceptFieldFormConfig ffc
-            WHERE ffc.field = :conceptField AND ffc.formConfig.actionUnit.id = :actionUnitId
+            WHERE ffc.field = :conceptField
+              AND ffc.formConfig.actionUnit.id = :actionUnitId
+              AND ffc.formConfig.valueConcept.id = :valueConceptId
             """
     )
-    Optional<ConceptFieldFormConfig> findByFieldAndActionUnit(CustomFieldConcept conceptField, Long actionUnitId);
+    Optional<ConceptFieldFormConfig> findByFieldAndActionUnitAndValue(@Param("conceptField") CustomFieldConcept conceptField,
+                                                                      @Param("actionUnitId") Long actionUnitId,
+                                                                      @Param("valueConceptId") Long valueConceptId);
+
+    /**
+     * The field's own default restriction (branch/collection) for a project, i.e. the one carrying
+     * no value concept — see {@link #findByFieldAndActionUnitAndValue}.
+     *
+     * @param conceptField the concept field to look the restriction up for
+     * @param actionUnitId the project the configuration is scoped to
+     * @return the default configuration, or empty when the project has none yet
+     */
+    @Query(
+            """
+            SELECT ffc
+            FROM ConceptFieldFormConfig ffc
+            WHERE ffc.field = :conceptField
+              AND ffc.formConfig.actionUnit.id = :actionUnitId
+              AND ffc.formConfig.valueConcept IS NULL
+            """
+    )
+    Optional<ConceptFieldFormConfig> findDefaultByFieldAndActionUnit(@Param("conceptField") CustomFieldConcept conceptField,
+                                                                     @Param("actionUnitId") Long actionUnitId);
 }

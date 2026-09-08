@@ -4,6 +4,7 @@ import fr.siamois.domain.models.form.customfield.CustomField;
 import fr.siamois.domain.models.form.customfield.actionunit.CustomFieldSelectOneActionCode;
 import fr.siamois.domain.models.form.customfield.actionunit.CustomFieldSelectOneActionUnit;
 import fr.siamois.domain.models.form.customfield.basetypes.CustomFieldDateTime;
+import fr.siamois.domain.models.form.customfield.basetypes.CustomFieldDecimal;
 import fr.siamois.domain.models.form.customfield.basetypes.CustomFieldInteger;
 import fr.siamois.domain.models.form.customfield.basetypes.CustomFieldText;
 import fr.siamois.domain.models.form.customfield.container.CustomFieldSelectMultipleContainer;
@@ -17,12 +18,15 @@ import fr.siamois.domain.models.form.customfield.spatialunit.CustomFieldSelectMu
 import fr.siamois.domain.models.form.customfield.spatialunit.CustomFieldSelectOneAddress;
 import fr.siamois.domain.models.form.customfield.spatialunit.CustomFieldSelectOneSpatialUnit;
 import fr.siamois.domain.models.form.customfield.specimen.CustomFieldSelectMultipleSpecimen;
+import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectMultiple;
 import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectMultipleFromFieldCode;
+import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectOne;
 import fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldSelectOneFromFieldCode;
 import fr.siamois.domain.models.form.customfieldanswer.CustomFieldAnswer;
 import fr.siamois.domain.models.form.customfieldanswer.actionunit.CustomFieldAnswerSelectOneActionCode;
 import fr.siamois.domain.models.form.customfieldanswer.actionunit.CustomFieldAnswerSelectOneActionUnit;
 import fr.siamois.domain.models.form.customfieldanswer.basetypes.CustomFieldAnswerDateTime;
+import fr.siamois.domain.models.form.customfieldanswer.basetypes.CustomFieldAnswerDecimal;
 import fr.siamois.domain.models.form.customfieldanswer.basetypes.CustomFieldAnswerInteger;
 import fr.siamois.domain.models.form.customfieldanswer.basetypes.CustomFieldAnswerText;
 import fr.siamois.domain.models.form.customfieldanswer.measurement.CustomFieldAnswerMeasurement;
@@ -31,6 +35,7 @@ import fr.siamois.domain.models.form.customfieldanswer.person.CustomFieldAnswerS
 import fr.siamois.domain.models.form.customfieldanswer.spatialunit.CustomFieldAnswerSelectMultipleSpatialUnitTree;
 import fr.siamois.domain.models.form.customfieldanswer.spatialunit.CustomFieldAnswerSelectOneSpatialUnit;
 import fr.siamois.domain.models.form.customfieldanswer.vocabulary.CustomFieldAnswerAnswerSelectMultiple;
+import fr.siamois.domain.models.form.customfieldanswer.vocabulary.CustomFieldAnswerAnswerSelectOne;
 import fr.siamois.domain.models.form.customfieldanswer.vocabulary.CustomFieldAnswerSelectOneFromFieldAnswerCode;
 import fr.siamois.ui.viewmodel.fieldanswer.*;
 import org.hibernate.Hibernate;
@@ -65,6 +70,7 @@ public final class CustomFieldAnswerFactory {
                         new CustomFieldAnswerSelectMultipleSpatialUnitTreeViewModel(((CustomFieldSelectMultipleSpatialUnitTree) f).getSource())),
                 Map.entry(CustomFieldSelectOneActionCode.class, f -> new CustomFieldAnswerSelectOneActionCodeViewModel()),
                 Map.entry(CustomFieldInteger.class, f -> new CustomFieldAnswerIntegerViewModel()),
+                Map.entry(CustomFieldDecimal.class, f -> new CustomFieldAnswerDecimalViewModel()),
                 Map.entry(CustomFieldSelectOnePerson.class, f -> new CustomFieldAnswerSelectOnePersonViewModel()),
                 Map.entry(CustomFieldSelectMultipleRecordingUnit.class, f -> new CustomFieldAnswerSelectMultipleRecordingUnitViewModel()),
                 Map.entry(CustomFieldMeasurement.class, f -> new CustomFieldAnswerMeasurementViewModel()),
@@ -72,7 +78,13 @@ public final class CustomFieldAnswerFactory {
                 Map.entry(CustomFieldSelectOneRecordingUnit.class, f -> new CustomFieldAnswerSelectOneRecordingUnitViewModel()),
                 Map.entry(CustomFieldSelectMultipleSpecimen.class, f -> new CustomFieldAnswerSelectMultipleSpecimenViewModel()),
                 Map.entry(CustomFieldSelectMultiplePhase.class, f -> new CustomFieldAnswerSelectMultiplePhaseViewModel()),
-                Map.entry(CustomFieldSelectMultipleFromFieldCode.class, f -> new CustomFieldAnswerSelectMultipleFromFieldCodeViewModel())
+                Map.entry(CustomFieldSelectMultipleFromFieldCode.class, f -> new CustomFieldAnswerSelectMultipleFromFieldCodeViewModel()),
+                // Additional ("Vocabulaire contrôlé") fields created from the project field settings:
+                // their vocabulary comes from the field's own branch/collection configuration instead of
+                // a field code, but the answer holds the very same concept(s), so they reuse the
+                // FromFieldCode view models the concept components and EntityFormContext already handle.
+                Map.entry(CustomFieldSelectOne.class, f -> new CustomFieldAnswerSelectOneFromFieldCodeViewModel()),
+                Map.entry(CustomFieldSelectMultiple.class, f -> new CustomFieldAnswerSelectMultipleFromFieldCodeViewModel())
         );
     }
 
@@ -80,6 +92,7 @@ public final class CustomFieldAnswerFactory {
         return Map.ofEntries(
                 Map.entry(CustomFieldText.class, v -> new CustomFieldAnswerText()),
                 Map.entry(CustomFieldInteger.class, v -> new CustomFieldAnswerInteger()),
+                Map.entry(CustomFieldDecimal.class, v -> new CustomFieldAnswerDecimal()),
                 Map.entry(CustomFieldDateTime.class, v -> new CustomFieldAnswerDateTime()),
                 Map.entry(CustomFieldSelectOneFromFieldCode.class, v -> new CustomFieldAnswerSelectOneFromFieldAnswerCode()),
                 Map.entry(CustomFieldSelectMultipleFromFieldCode.class, v -> new CustomFieldAnswerAnswerSelectMultiple()),
@@ -89,7 +102,9 @@ public final class CustomFieldAnswerFactory {
                 Map.entry(CustomFieldSelectMultipleSpatialUnitTree.class, v -> new CustomFieldAnswerSelectMultipleSpatialUnitTree()),
                 Map.entry(CustomFieldSelectOneActionCode.class, v -> new CustomFieldAnswerSelectOneActionCode()),
                 Map.entry(CustomFieldSelectOneActionUnit.class, v -> new CustomFieldAnswerSelectOneActionUnit()),
-                Map.entry(CustomFieldMeasurement.class, v -> new CustomFieldAnswerMeasurement())
+                Map.entry(CustomFieldMeasurement.class, v -> new CustomFieldAnswerMeasurement()),
+                Map.entry(CustomFieldSelectOne.class, v -> new CustomFieldAnswerAnswerSelectOne()),
+                Map.entry(CustomFieldSelectMultiple.class, v -> new CustomFieldAnswerAnswerSelectMultiple())
         );
     }
 

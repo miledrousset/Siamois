@@ -6,6 +6,7 @@ import fr.siamois.domain.models.vocabulary.label.ConceptAltLabel;
 import fr.siamois.domain.models.vocabulary.label.ConceptLabel;
 import fr.siamois.domain.models.vocabulary.label.ConceptPrefLabel;
 import fr.siamois.domain.models.vocabulary.label.VocabularyLabel;
+import fr.siamois.infrastructure.api.dto.PurlInfoDTO;
 import fr.siamois.infrastructure.database.repositories.vocabulary.label.ConceptLabelRepository;
 import fr.siamois.infrastructure.database.repositories.vocabulary.label.VocabularyLabelRepository;
 import org.junit.jupiter.api.Test;
@@ -163,27 +164,46 @@ class LabelServiceTest {
     }
 
     @Test
-    void updateAltLabel_shouldUpdateExistingAndSave_whenAltLabelExists_andNoParentProvided() {
+    void updateAltLabel_shouldReuseExistingRow_whenSameLabelAlreadyExists() {
         // Given
         Concept savedConcept = new Concept();
         savedConcept.setId(3L);
         savedConcept.setExternalId("3L");
 
         ConceptAltLabel existing = new ConceptAltLabel();
-        existing.setLabel("Old");
+        existing.setLabel("Existing");
         existing.setConcept(savedConcept);
         existing.setLangCode("fr");
 
-
-        when(conceptLabelRepository.findAltLabelByConceptAndLangCode(savedConcept, "fr")).thenReturn(Optional.of(existing));
+        when(conceptLabelRepository.findAltLabelByConceptAndLangCodeAndLabel(savedConcept, "fr", "Existing")).thenReturn(Optional.of(existing));
         when(conceptLabelRepository.save(any(ConceptAltLabel.class))).thenAnswer(i -> i.getArgument(0));
 
         // When
-        labelService.updateAltLabel(savedConcept, "fr", "Updated", null);
+        labelService.updateAltLabel(savedConcept, "fr", "Existing", null);
 
         // Then
-        assertEquals("Updated", existing.getLabel());
+        assertEquals("Existing", existing.getLabel());
         verify(conceptLabelRepository, times(1)).save(existing);
+    }
+
+    @Test
+    void updateAltLabel_shouldCreateANewRow_whenAnotherAltLabelAlreadyExistsForTheSameLanguage() {
+        // Given: a concept can have several altLabels (synonyms) in the same language
+        Concept savedConcept = new Concept();
+        savedConcept.setId(3L);
+        savedConcept.setExternalId("3L");
+
+        when(conceptLabelRepository.findAltLabelByConceptAndLangCodeAndLabel(savedConcept, "fr", "fait")).thenReturn(Optional.empty());
+        when(conceptLabelRepository.save(any(ConceptAltLabel.class))).thenAnswer(i -> i.getArgument(0));
+
+        // When
+        labelService.updateAltLabel(savedConcept, "fr", "fait", null);
+
+        // Then
+        ArgumentCaptor<ConceptAltLabel> captor = ArgumentCaptor.forClass(ConceptAltLabel.class);
+        verify(conceptLabelRepository, times(1)).save(captor.capture());
+        assertEquals("fait", captor.getValue().getLabel());
+        assertEquals("fr", captor.getValue().getLangCode());
     }
 
     @Test
@@ -203,6 +223,51 @@ class LabelServiceTest {
         assertNotNull(saved);
         // parent must not be set because it's equal to savedConcept
         assertNull(saved.getParentConcept());
+    }
+
+    @Test
+    void replaceAltLabels_shouldKeepEverySynonym_andDropStaleOnes() {
+        // Given: the concept already carries two French altLabels, one of which ("perime")
+        // is no longer returned by the thesaurus, plus the new import brings back two French
+        // synonyms ("objet" and "fait") that must both survive.
+        Concept savedConcept = new Concept();
+        savedConcept.setId(5L);
+        savedConcept.setExternalId("5L");
+
+        ConceptAltLabel staleLabel = new ConceptAltLabel();
+        staleLabel.setConcept(savedConcept);
+        staleLabel.setLangCode("fr");
+        staleLabel.setLabel("perime");
+
+        ConceptAltLabel keptLabel = new ConceptAltLabel();
+        keptLabel.setConcept(savedConcept);
+        keptLabel.setLangCode("fr");
+        keptLabel.setLabel("objet");
+
+        when(conceptLabelRepository.findAllAltLabelsByConcept(savedConcept))
+                .thenReturn(Set.of(staleLabel, keptLabel));
+        when(conceptLabelRepository.findAltLabelByConceptAndLangCodeAndLabel(savedConcept, "fr", "objet"))
+                .thenReturn(Optional.of(keptLabel));
+        when(conceptLabelRepository.findAltLabelByConceptAndLangCodeAndLabel(savedConcept, "fr", "fait"))
+                .thenReturn(Optional.empty());
+        when(conceptLabelRepository.save(any(ConceptAltLabel.class))).thenAnswer(i -> i.getArgument(0));
+
+        PurlInfoDTO objet = new PurlInfoDTO();
+        objet.setLang("fr");
+        objet.setValue("objet");
+        PurlInfoDTO fait = new PurlInfoDTO();
+        fait.setLang("fr");
+        fait.setValue("fait");
+
+        // When
+        labelService.replaceAltLabels(savedConcept, new PurlInfoDTO[]{objet, fait}, null);
+
+        // Then
+        verify(conceptLabelRepository, times(1)).deleteAll(List.of(staleLabel));
+        ArgumentCaptor<ConceptAltLabel> captor = ArgumentCaptor.forClass(ConceptAltLabel.class);
+        verify(conceptLabelRepository, times(2)).save(captor.capture());
+        List<String> savedLabels = captor.getAllValues().stream().map(ConceptAltLabel::getLabel).toList();
+        assertTrue(savedLabels.containsAll(List.of("objet", "fait")));
     }
 
     @Test

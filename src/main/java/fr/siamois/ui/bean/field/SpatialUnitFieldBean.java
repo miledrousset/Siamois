@@ -133,20 +133,21 @@ public class SpatialUnitFieldBean implements Serializable {
      * which resolves the field's branch/collection restriction for the project, falling back to its
      * field-code configuration.
      *
-     * @param field        the field to look the edit URL up for
-     * @param actionUnitId the current project's id, or null if the field isn't project-scoped
+     * @param field          the field to look the edit URL up for
+     * @param actionUnitId   the current project's id, or null if the field isn't project-scoped
+     * @param valueConceptId the entity's current scope-field value (e.g. its Type), or null when unknown
      * @return the edit URL, or null if the field isn't a concept field or has no configuration
      */
-    public String getUrlForField(CustomField field, Long actionUnitId) {
+    public String getUrlForField(CustomField field, Long actionUnitId, Long valueConceptId) {
         return field instanceof CustomFieldConcept conceptField
-                ? fieldConfigurationService.getUrlForConceptField(conceptField, actionUnitId)
+                ? fieldConfigurationService.getUrlForConceptField(conceptField, actionUnitId, valueConceptId)
                 : null;
     }
 
     /**
      * The field code driving a concept field, or null when the field isn't field-code-driven (e.g. a
      * plain {@code CustomFieldSelectOne}/{@code CustomFieldSelectMultiple} additional field) — see
-     * {@link #getUrlForField(CustomField, Long)} for why this can't just be a {@code .fieldCode} EL
+     * {@link #getUrlForField(CustomField, Long, Long)} for why this can't just be a {@code .fieldCode} EL
      * property access in the view.
      */
     public String resolveFieldCode(CustomField field) {
@@ -184,6 +185,12 @@ public class SpatialUnitFieldBean implements Serializable {
             Long actionUnitId = (Long) UIComponent.getCurrentComponent(context)
                     .getAttributes().get("actionUnitId");
 
+            // The entity's current scope-field value (e.g. its Type), when the field's own
+            // branch/collection restriction is configured per value — null falls back to the
+            // project's default configuration. See EntityFormContext#getFormScopeValueConceptId.
+            Long valueConceptId = (Long) UIComponent.getCurrentComponent(context)
+                    .getAttributes().get("valueConceptId");
+
             // A field's own branch/collection restriction (set through the project's field-settings
             // drawer) takes priority over its field-code configuration; fetchAutocomplete(CustomFieldConcept, ...)
             // already falls back to the field-code lookup on its own when the field carries no such
@@ -193,7 +200,7 @@ public class SpatialUnitFieldBean implements Serializable {
                 results = fieldConfigurationService.fetchAutocompleteRelated(
                         sessionSettingsBean.getUserInfo(), fieldCode, dependsOnBaseConcept, input, actionUnitId);
             } else if (fieldAttr instanceof CustomFieldConcept conceptField) {
-                results = fieldConfigurationService.fetchAutocomplete(conceptField, input, actionUnitId);
+                results = fieldConfigurationService.fetchAutocomplete(conceptField, input, actionUnitId, valueConceptId);
             } else {
                 results = fieldConfigurationService.fetchAutocomplete(
                         sessionSettingsBean.getUserInfo(), fieldCode, input, actionUnitId);

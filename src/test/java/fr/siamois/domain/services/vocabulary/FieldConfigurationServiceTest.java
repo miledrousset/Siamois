@@ -401,7 +401,7 @@ class FieldConfigurationServiceTest {
         ConceptFieldFormConfig config = new ConceptFieldFormConfig();
         config.setBranchTopTerm(branchTopTerm);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
 
         String result = service.getUrlForConceptField(field, 42L);
 
@@ -420,7 +420,7 @@ class FieldConfigurationServiceTest {
         ConceptFieldFormConfig config = new ConceptFieldFormConfig();
         config.setCollection(collection);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
 
         String result = service.getUrlForConceptField(field, 42L);
 
@@ -439,7 +439,7 @@ class FieldConfigurationServiceTest {
         cfc.setConcept(concept);
         cfc.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
         when(conceptFieldConfigRepository.findOneByFieldCodeAndActionUnitId(SpatialUnit.CATEGORY_FIELD_CODE, 42L))
                 .thenReturn(Optional.of(cfc));
 
@@ -462,7 +462,7 @@ class FieldConfigurationServiceTest {
         cfc.setConcept(concept);
         cfc.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(new ConceptFieldFormConfig()));
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(new ConceptFieldFormConfig()));
         when(conceptFieldConfigRepository.findOneByFieldCodeAndActionUnitId(SpatialUnit.CATEGORY_FIELD_CODE, 42L))
                 .thenReturn(Optional.of(cfc));
 
@@ -475,7 +475,7 @@ class FieldConfigurationServiceTest {
     void getUrlForConceptField_shouldReturnNull_whenNoFormConfigAndFieldIsNotFieldCodeDriven() {
         CustomFieldSelectOne field = new CustomFieldSelectOne();
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
 
         String result = service.getUrlForConceptField(field, 42L);
 
@@ -487,12 +487,91 @@ class FieldConfigurationServiceTest {
         CustomFieldSelectOneFromFieldCode field = new CustomFieldSelectOneFromFieldCode();
         field.setFieldCode(SpatialUnit.CATEGORY_FIELD_CODE);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
         ExecutionContextHolder.clear();
 
         String result = service.getUrlForConceptField(field, 42L);
 
         assertThat(result).isNull();
+    }
+
+    @Test
+    void getUrlForConceptField_shouldUseValueSpecificConfig_whenItExists() {
+        CustomFieldSelectOneFromFieldCode field = new CustomFieldSelectOneFromFieldCode();
+        field.setFieldCode("SIARU.GEOMORPHO");
+
+        Concept branchTopTerm = new Concept();
+        branchTopTerm.setVocabulary(vocabulary);
+        branchTopTerm.setExternalId("266341");
+
+        ConceptFieldFormConfig valueConfig = new ConceptFieldFormConfig();
+        valueConfig.setBranchTopTerm(branchTopTerm);
+
+        when(fieldFormConfigRepository.findByFieldAndActionUnitAndValue(field, 42L, 200L)).thenReturn(Optional.of(valueConfig));
+
+        String result = service.getUrlForConceptField(field, 42L, 200L);
+
+        assertThat(result).isEqualTo("http://exemple.org/?idc=266341&idt=th2");
+        verify(fieldFormConfigRepository, never()).findDefaultByFieldAndActionUnit(any(), any());
+    }
+
+    @Test
+    void getUrlForConceptField_shouldFallBackToDefaultConfig_whenValueSpecificConfigDoesNotExist() {
+        CustomFieldSelectOneFromFieldCode field = new CustomFieldSelectOneFromFieldCode();
+        field.setFieldCode("SIARU.GEOMORPHO");
+
+        ConceptCollection collection = new ConceptCollection();
+        collection.setVocabulary(vocabulary);
+        collection.setExternalId("g120");
+
+        ConceptFieldFormConfig defaultConfig = new ConceptFieldFormConfig();
+        defaultConfig.setCollection(collection);
+
+        when(fieldFormConfigRepository.findByFieldAndActionUnitAndValue(field, 42L, 200L)).thenReturn(Optional.empty());
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(defaultConfig));
+
+        String result = service.getUrlForConceptField(field, 42L, 200L);
+
+        assertThat(result).isEqualTo("http://exemple.org/?idg=g120&idt=th2");
+    }
+
+    @Test
+    void getUrlForConceptField_shouldNotQueryValueSpecificConfig_whenValueConceptIdIsNull() {
+        CustomFieldSelectOneFromFieldCode field = new CustomFieldSelectOneFromFieldCode();
+        field.setFieldCode("SIARU.GEOMORPHO");
+
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
+
+        service.getUrlForConceptField(field, 42L, null);
+
+        verify(fieldFormConfigRepository, never()).findByFieldAndActionUnitAndValue(any(), any(), any());
+    }
+
+    @Test
+    void getUrlForConceptField_shouldReturnDifferentUrls_forDifferentValueConcepts_ofTheSameFieldAndProject() {
+        // Regression test for the prod bug: a project can configure the same field differently
+        // under two value concepts (e.g. Type=Ceramique on a branch, Type=Depot on a collection).
+        // Resolving one value's config must never leak into another value's lookup.
+        CustomFieldSelectOneFromFieldCode field = new CustomFieldSelectOneFromFieldCode();
+        field.setFieldCode("SIARU.GEOMORPHO");
+
+        Concept branchTopTerm = new Concept();
+        branchTopTerm.setVocabulary(vocabulary);
+        branchTopTerm.setExternalId("266341");
+        ConceptFieldFormConfig ceramiqueConfig = new ConceptFieldFormConfig();
+        ceramiqueConfig.setBranchTopTerm(branchTopTerm);
+
+        ConceptCollection collection = new ConceptCollection();
+        collection.setVocabulary(vocabulary);
+        collection.setExternalId("g120");
+        ConceptFieldFormConfig depotConfig = new ConceptFieldFormConfig();
+        depotConfig.setCollection(collection);
+
+        when(fieldFormConfigRepository.findByFieldAndActionUnitAndValue(field, 42L, 200L)).thenReturn(Optional.of(ceramiqueConfig));
+        when(fieldFormConfigRepository.findByFieldAndActionUnitAndValue(field, 42L, 300L)).thenReturn(Optional.of(depotConfig));
+
+        assertThat(service.getUrlForConceptField(field, 42L, 200L)).isEqualTo("http://exemple.org/?idc=266341&idt=th2");
+        assertThat(service.getUrlForConceptField(field, 42L, 300L)).isEqualTo("http://exemple.org/?idg=g120&idt=th2");
     }
 
     @Test
@@ -825,7 +904,7 @@ class FieldConfigurationServiceTest {
         ConceptFieldFormConfig config = new ConceptFieldFormConfig();
         config.setBranchTopTerm(topTerm);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
 
         List<ConceptAutocompleteDTO> expectedResults = List.of(
                 new ConceptAutocompleteDTO(new ConceptDTO(), "Concept 100", "100"));
@@ -849,7 +928,7 @@ class FieldConfigurationServiceTest {
         ConceptFieldFormConfig config = new ConceptFieldFormConfig();
         config.setCollection(collection);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
 
         List<ConceptAutocompleteDTO> expectedResults = List.of(
                 new ConceptAutocompleteDTO(new ConceptDTO(), "Concept 100", "100"));
@@ -863,25 +942,13 @@ class FieldConfigurationServiceTest {
     }
 
     @Test
-    void fetchAutocompleteOfField_shouldReturnNoSuggestion_whenInputIsBlank() throws NoConfigForFieldException {
-        CustomFieldSelectOne field = new CustomFieldSelectOne();
-        field.setId(7L);
-
-        // an empty input matches everything, the configured branch or collection is not searched for it
-        assertThat(service.fetchAutocomplete(field, null, 42L)).isEmpty();
-        assertThat(service.fetchAutocomplete(field, "   ", 42L)).isEmpty();
-
-        verifyNoInteractions(autocompleteRepository, fieldFormConfigRepository);
-    }
-
-    @Test
     void fetchAutocompleteOfField_shouldFallBackOnTheFieldCodeConfig_whenFieldHasNoFormConfig() throws NoConfigForFieldException {
         String fieldCode = "TESTFIELD";
         CustomFieldSelectOneFromFieldCode field = new CustomFieldSelectOneFromFieldCode();
         field.setId(7L);
         field.setFieldCode(fieldCode);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
 
         ConceptFieldConfig cfc = new ConceptFieldConfig();
         Concept concept = new Concept();
@@ -905,7 +972,7 @@ class FieldConfigurationServiceTest {
         CustomFieldSelectOne field = new CustomFieldSelectOne();
         field.setId(7L);
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
 
         assertThrows(IllegalStateException.class, () -> service.fetchAutocomplete(field, "que", 42L));
         verifyNoInteractions(autocompleteRepository);
@@ -930,10 +997,101 @@ class FieldConfigurationServiceTest {
 
         ConceptFieldFormConfig config = new ConceptFieldFormConfig();
 
-        when(fieldFormConfigRepository.findByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
 
         assertThrows(IllegalStateException.class, () -> service.fetchAutocomplete(field, "que", 42L));
         verifyNoInteractions(autocompleteRepository);
+    }
+
+    @Test
+    void fetchAutocompleteOfField_shouldUseValueSpecificConfig_whenItExists() throws NoConfigForFieldException {
+        CustomFieldSelectOne field = new CustomFieldSelectOne();
+        field.setId(7L);
+
+        Concept topTerm = new Concept();
+        topTerm.setId(99L);
+        topTerm.setVocabulary(vocabulary);
+
+        ConceptFieldFormConfig config = new ConceptFieldFormConfig();
+        config.setBranchTopTerm(topTerm);
+
+        when(fieldFormConfigRepository.findByFieldAndActionUnitAndValue(field, 42L, 200L)).thenReturn(Optional.of(config));
+
+        List<ConceptAutocompleteDTO> expectedResults = List.of(
+                new ConceptAutocompleteDTO(new ConceptDTO(), "Concept 100", "100"));
+        when(autocompleteRepository.findMatchingConceptsInBranchOf(topTerm, "fr", "que", FieldConfigurationService.LIMIT_RESULTS))
+                .thenReturn(expectedResults);
+
+        List<ConceptAutocompleteDTO> results = service.fetchAutocomplete(field, "que", 42L, 200L);
+
+        assertThat(results).isEqualTo(expectedResults);
+        verify(fieldFormConfigRepository, never()).findDefaultByFieldAndActionUnit(any(), any());
+    }
+
+    @Test
+    void fetchAutocompleteOfField_shouldFallBackToDefaultConfig_whenValueSpecificConfigDoesNotExist() throws NoConfigForFieldException {
+        CustomFieldSelectOne field = new CustomFieldSelectOne();
+        field.setId(7L);
+
+        ConceptCollection collection = new ConceptCollection();
+        collection.setId(55L);
+
+        ConceptFieldFormConfig config = new ConceptFieldFormConfig();
+        config.setCollection(collection);
+
+        when(fieldFormConfigRepository.findByFieldAndActionUnitAndValue(field, 42L, 200L)).thenReturn(Optional.empty());
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.of(config));
+
+        List<ConceptAutocompleteDTO> expectedResults = List.of(
+                new ConceptAutocompleteDTO(new ConceptDTO(), "Concept 100", "100"));
+        when(autocompleteRepository.findMatchingConceptsInCollection(collection, "fr", "que", FieldConfigurationService.LIMIT_RESULTS))
+                .thenReturn(expectedResults);
+
+        List<ConceptAutocompleteDTO> results = service.fetchAutocomplete(field, "que", 42L, 200L);
+
+        assertThat(results).isEqualTo(expectedResults);
+    }
+
+    @Test
+    void fetchAutocompleteOfField_shouldNotQueryValueSpecificConfig_whenValueConceptIdIsNull() {
+        CustomFieldSelectOne field = new CustomFieldSelectOne();
+        field.setId(7L);
+
+        when(fieldFormConfigRepository.findDefaultByFieldAndActionUnit(field, 42L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class, () -> service.fetchAutocomplete(field, "que", 42L, null));
+
+        verify(fieldFormConfigRepository, never()).findByFieldAndActionUnitAndValue(any(), any(), any());
+    }
+
+    @Test
+    void fetchAutocompleteOfField_shouldReturnDistinctResults_forDifferentValueConcepts_ofTheSameFieldAndProject() throws NoConfigForFieldException {
+        // Same regression scenario as getUrlForConceptField, for the autocomplete lookup path.
+        CustomFieldSelectOne field = new CustomFieldSelectOne();
+        field.setId(7L);
+
+        Concept topTerm = new Concept();
+        topTerm.setId(99L);
+        ConceptFieldFormConfig ceramiqueConfig = new ConceptFieldFormConfig();
+        ceramiqueConfig.setBranchTopTerm(topTerm);
+
+        ConceptCollection collection = new ConceptCollection();
+        collection.setId(55L);
+        ConceptFieldFormConfig depotConfig = new ConceptFieldFormConfig();
+        depotConfig.setCollection(collection);
+
+        when(fieldFormConfigRepository.findByFieldAndActionUnitAndValue(field, 42L, 200L)).thenReturn(Optional.of(ceramiqueConfig));
+        when(fieldFormConfigRepository.findByFieldAndActionUnitAndValue(field, 42L, 300L)).thenReturn(Optional.of(depotConfig));
+
+        List<ConceptAutocompleteDTO> ceramiqueResults = List.of(new ConceptAutocompleteDTO(new ConceptDTO(), "Ceramique concept", "1"));
+        List<ConceptAutocompleteDTO> depotResults = List.of(new ConceptAutocompleteDTO(new ConceptDTO(), "Depot concept", "2"));
+        when(autocompleteRepository.findMatchingConceptsInBranchOf(topTerm, "fr", "que", FieldConfigurationService.LIMIT_RESULTS))
+                .thenReturn(ceramiqueResults);
+        when(autocompleteRepository.findMatchingConceptsInCollection(collection, "fr", "que", FieldConfigurationService.LIMIT_RESULTS))
+                .thenReturn(depotResults);
+
+        assertThat(service.fetchAutocomplete(field, "que", 42L, 200L)).isEqualTo(ceramiqueResults);
+        assertThat(service.fetchAutocomplete(field, "que", 42L, 300L)).isEqualTo(depotResults);
     }
 
     @Test

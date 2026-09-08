@@ -213,6 +213,7 @@ public class EntityFormContext<T extends AbstractEntityDTO> {
                 services.getRecordingUnitService(),
                 formService,
                 this.formResponse,
+                langBean,
                 unit,
                 measurementOptions,
                 services.getUnitDefinitionService().findOptions()
@@ -399,6 +400,11 @@ public class EntityFormContext<T extends AbstractEntityDTO> {
         CustomFieldAnswerViewModel ans = formResponse.getAnswers().get(field);
 
         if (ans instanceof CustomFieldAnswerSelectMultipleFromFieldCodeViewModel multipleAns) {
+            // Additional multi-value vocabulary fields start with no list at all (nothing binds them
+            // to an entity property that would have initialized one).
+            if (multipleAns.getValue() == null) {
+                multipleAns.setValue(new ArrayList<>());
+            }
             multipleAns.getValue().add((ConceptAutocompleteDTO) newValue);
             handleAutoSave(field);
             return;
@@ -433,6 +439,50 @@ public class EntityFormContext<T extends AbstractEntityDTO> {
                 && Boolean.TRUE.equals(field.getIsSystemField())
                 && formScopeValueBinding != null
                 && formScopeValueBinding.equals(field.getValueBinding());
+    }
+
+    /**
+     * The system field driving this entity's "scope" (type/category), if any — the field whose
+     * change re-initializes the form via {@code formScopeChangeCallback}. Lets a header component
+     * reuse the same field/answer already tracked here instead of a second, parallel binding.
+     */
+    public CustomField getFormScopeField() {
+        if (formScopeValueBinding == null || formScopeValueBinding.isEmpty() || fieldSource == null) {
+            return null;
+        }
+        return fieldSource.getAllFields().stream()
+                .filter(this::isFormScopeField)
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * The current answer for {@link #getFormScopeField()}, if the field exists and already has
+     * a single-concept answer in this form's response.
+     */
+    public CustomFieldAnswerSelectOneFromFieldCodeViewModel getFormScopeAnswer() {
+        CustomField field = getFormScopeField();
+        if (field == null) {
+            return null;
+        }
+        CustomFieldAnswerViewModel ans = getFieldAnswer(field);
+        return ans instanceof CustomFieldAnswerSelectOneFromFieldCodeViewModel single ? single : null;
+    }
+
+    /**
+     * The concept id of this entity's current "scope" value (e.g. its Type), used to pick the
+     * value-specific {@link fr.siamois.domain.models.form.config.FormConfig} for a concept field's
+     * branch/collection restriction — see
+     * {@link fr.siamois.domain.services.vocabulary.FieldConfigurationService#fetchAutocomplete(fr.siamois.domain.models.form.customfield.vocabulary.CustomFieldConcept, String, Long, Long)}.
+     * Null when the entity has no scope field, or that field has no answer yet (e.g. a new entity
+     * whose type hasn't been set) — callers fall back to the project's default configuration in
+     * that case.
+     */
+    public Long getFormScopeValueConceptId() {
+        CustomFieldAnswerSelectOneFromFieldCodeViewModel ans = getFormScopeAnswer();
+        return ans != null && ans.getValue() != null && ans.getValue().concept() != null
+                ? ans.getValue().concept().getId()
+                : null;
     }
 
     /**
@@ -630,7 +680,7 @@ public class EntityFormContext<T extends AbstractEntityDTO> {
      */
     public List<ActionUnitSummaryDTO> completeActionUnitOptions(String query) {
         return services.getActionUnitService()
-                .findMatchingInInstitutionByName(sessionSettingsBean.getSelectedInstitution(), query, 20)
+                .findAllByPersonInInstitutionByNameCompletionWithEditPerm(query, 20)
                 .stream()
                 .map(ActionUnitSummaryDTO::new)
                 .toList();

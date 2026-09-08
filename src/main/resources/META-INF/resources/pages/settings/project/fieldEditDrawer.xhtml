@@ -61,7 +61,7 @@
                    position="right" modal="true" dismissable="true" closeOnEscape="true" blockScroll="true"
                    styleClass="ptc-drawer-sidebar" style="width:460px;max-width:92vw;">
             <p:ajax event="close" listener="#{projectTableFieldSettingsBean.closeDrawer()}"
-                    update=":fieldEditForm:drawerContent :projectTablesFormCC:projectTablesForm"/>
+                    update=":fieldEditForm:drawerContent :projectTablesFormCC:projectTablesForm:fieldsTabs:systemFieldsTable :projectTablesFormCC:projectTablesForm:fieldsTabs:additionalFieldsTable"/>
 
             <h:panelGroup id="drawerContent" layout="block" styleClass="ptc-drawer">
                 <div class="ptc-drawer-header">
@@ -100,7 +100,7 @@
                         <h:panelGroup rendered="#{not projectTableFieldSettingsBean.draftIsSystem}">
                             <h:selectOneMenu id="draftType" value="#{projectTableFieldSettingsBean.draftTypeName}" styleClass="ptc-native-select">
                                 <f:selectItems value="#{projectTableFieldSettingsBean.fieldTypeOptions}" var="t" itemLabel="#{t.label}" itemValue="#{t.name()}"/>
-                                <p:ajax event="change" update=":fieldEditForm:drawerContent"/>
+                                <p:ajax event="change" process="@this draftName draftDescription" update=":fieldEditForm:drawerContent"/>
                             </h:selectOneMenu>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{projectTableFieldSettingsBean.draftIsSystem}">
@@ -130,14 +130,14 @@
                                 <h:panelGroup rendered="#{projectTableFieldSettingsBean.draftIsSystem}">
                                     <p:commandButton value="#{langBean.msg('projectTables.drawer.params.sourcePrincipal')}"
                                                       styleClass="ptc-chip-option #{projectTableFieldSettingsBean.draftSource eq 'principal' ? 'ptc-chip-option-selected' : ''}"
-                                                      actionListener="#{projectTableFieldSettingsBean.selectDraftSource('principal')}" update=":fieldEditForm:drawerContent" process="@this"/>
+                                                      actionListener="#{projectTableFieldSettingsBean.selectDraftSource('principal')}" update=":fieldEditForm:drawerContent" process="@this draftName draftDescription"/>
                                 </h:panelGroup>
                                 <p:commandButton value="#{langBean.msg('projectTables.drawer.params.sourceBranche')}"
                                                   styleClass="ptc-chip-option #{projectTableFieldSettingsBean.draftSource eq 'branche' ? 'ptc-chip-option-selected' : ''}"
-                                                  actionListener="#{projectTableFieldSettingsBean.selectDraftSource('branche')}" update=":fieldEditForm:drawerContent" process="@this"/>
+                                                  actionListener="#{projectTableFieldSettingsBean.selectDraftSource('branche')}" update=":fieldEditForm:drawerContent" process="@this draftName draftDescription"/>
                                 <p:commandButton value="#{langBean.msg('projectTables.drawer.params.sourceCollection')}"
                                                   styleClass="ptc-chip-option #{projectTableFieldSettingsBean.draftSource eq 'collection' ? 'ptc-chip-option-selected' : ''}"
-                                                  actionListener="#{projectTableFieldSettingsBean.selectDraftSource('collection')}" update=":fieldEditForm:drawerContent" process="@this"/>
+                                                  actionListener="#{projectTableFieldSettingsBean.selectDraftSource('collection')}" update=":fieldEditForm:drawerContent" process="@this draftName draftDescription"/>
                             </div>
 
                             <h:panelGroup rendered="#{empty projectTableFieldSettingsBean.draftSource}">
@@ -163,7 +163,7 @@
                                                           icon="bi bi-arrow-clockwise"
                                                           styleClass="ui-button-sm"
                                                           title="#{langBean.msg('projectTables.drawer.params.testConnection')}"
-                                                          actionListener="#{projectTableFieldSettingsBean.testThesaurusConnection()}" update=":fieldEditForm:drawerContent" process="@this draftThesaurusUrl"/>
+                                                          actionListener="#{projectTableFieldSettingsBean.testThesaurusConnection()}" update=":fieldEditForm:drawerContent" process="@this draftThesaurusUrl draftName draftDescription"/>
                                         <h:outputLink value="#{projectTableFieldSettingsBean.draftVocabularyUrl}" target="_blank"
                                                       disabled="#{not projectTableFieldSettingsBean.draftConnectionTested}"
                                                       styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-button-sm">
@@ -241,10 +241,14 @@
                 <div class="ptc-drawer-footer">
                     <p:commandButton id="cancelBtn" value="#{langBean.msg('common.action.cancel')}" styleClass="ui-button-secondary"
                                       actionListener="#{projectTableFieldSettingsBean.closeDrawer()}" immediate="true"
-                                      update=":fieldEditForm:drawerContent :projectTablesFormCC:projectTablesForm"/>
+                                      update=":fieldEditForm:drawerContent :projectTablesFormCC:projectTablesForm:fieldsTabs:systemFieldsTable :projectTablesFormCC:projectTablesForm:fieldsTabs:additionalFieldsTable"/>
+                    <!-- Only the two field tables are re-rendered, not the whole outer form: the tab
+                         panel is what scrolls, so replacing the full form would put the user back at
+                         the top of it after every save/cancel. Both tables are targeted because the
+                         saved draft can be either a system or an additional field. -->
                     <p:commandButton value="#{langBean.msg('common.action.save')}"
                                       actionListener="#{projectTableFieldSettingsBean.saveDrawer()}"
-                                      update=":fieldEditForm:drawerContent :projectTablesFormCC:projectTablesForm"
+                                      update=":fieldEditForm:drawerContent :projectTablesFormCC:projectTablesForm:fieldsTabs:systemFieldsTable :projectTablesFormCC:projectTablesForm:fieldsTabs:additionalFieldsTable"
                                       onstart="startFieldDrawerProgressBar()" oncomplete="endFieldDrawerProgressBar()"/>
                 </div>
             </h:panelGroup>

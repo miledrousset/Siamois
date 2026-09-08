@@ -43,10 +43,13 @@ import fr.siamois.utils.context.ExecutionContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -73,6 +76,10 @@ import java.util.function.Consumer;
 public class TableFieldConfigServiceImpl implements TableFieldConfigService {
 
     private static final String NO_SOURCE = "—";
+    private static final int DEFAULT_MIN_CODE = 1;
+    private static final int DEFAULT_MAX_CODE = 999;
+    public static final String OF_PROJECT = " of project ";
+    public static final String NO_VOCABULARY_CONFIGURED_FOR_FIELD = "No vocabulary configured for field ";
 
     private final FieldConfigurationService fieldConfigurationService;
     private final LabelService labelService;
@@ -84,6 +91,7 @@ public class TableFieldConfigServiceImpl implements TableFieldConfigService {
     private final CustomFieldRepository customFieldRepository;
     private final CustomFieldAnswerRepository customFieldAnswerRepository;
     private final PersonRepository personRepository;
+    private final ObjectProvider<TableFieldConfigServiceImpl> selfProvider;
 
     @Override
     public List<ConfigurableTable> listTables() {
@@ -162,8 +170,8 @@ public class TableFieldConfigServiceImpl implements TableFieldConfigService {
                 .typeName(typeName)
                 .definition(valueConcept.map(this::definitionOf).orElse(""))
                 .identifierFormat(identifiers == null ? table.getDefaultIdentifierFormat() : identifiers.getIdentifierFormat())
-                .minCode(identifiers == null ? 0 : identifiers.getMinCode())
-                .maxCode(identifiers == null ? 999 : identifiers.getMaxCode())
+                .minCode(identifiers == null ? DEFAULT_MIN_CODE : identifiers.getMinCode())
+                .maxCode(identifiers == null ? DEFAULT_MAX_CODE : identifiers.getMaxCode())
                 .build();
     }
 
@@ -177,6 +185,24 @@ public class TableFieldConfigServiceImpl implements TableFieldConfigService {
         // Existing callers use this method only to materialize a row and omit identifier values.
         if (config.getIdentifierFormat() == null) return;
         if (config.getIdentifierFormat().isBlank()) {
+            throw new IllegalArgumentException("Identifier format is required");
+        }
+        if (config.getMinCode() < 0 || config.getMaxCode() < config.getMinCode()) {
+            throw new IllegalArgumentException("Invalid identifier range");
+        }
+        stored.setIdentifierFormat(config.getIdentifierFormat());
+        stored.setMinCode(config.getMinCode());
+        stored.setMaxCode(config.getMaxCode());
+        formConfigRepository.save(stored);
+    }
+
+    @Override
+    @Transactional
+    public void saveFormConfig(Long projectId, ConfigurableTable table, Long typeConceptId, TypeFormConfig config) {
+        FormConfig stored = createOrGetFormConfig(projectId, table, typeConceptId)
+                .orElseThrow(() -> new IllegalStateException(
+                        NO_VOCABULARY_CONFIGURED_FOR_FIELD + table.getFieldCode() + OF_PROJECT + projectId));
+        if (config.getIdentifierFormat() == null || config.getIdentifierFormat().isBlank()) {
             throw new IllegalArgumentException("Identifier format is required");
         }
         if (config.getMinCode() < 0 || config.getMaxCode() < config.getMinCode()) {
@@ -635,7 +661,7 @@ public class TableFieldConfigServiceImpl implements TableFieldConfigService {
                 || !DEFAULT_TYPE.equals(typeName) && findValueConcept(projectId, fieldConcept.get(), typeName).isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(createFormConfig(projectId, table, typeName));
+        return Optional.of(createOrRecoverFormConfig(projectId, table, typeName));
     }
 
     @Override
@@ -647,7 +673,7 @@ public class TableFieldConfigServiceImpl implements TableFieldConfigService {
         if (findFieldConcept(projectId, table).isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(createFormConfig(projectId, table, typeConceptId));
+        return Optional.of(createOrRecoverFormConfig(projectId, table, typeConceptId));
     }
 
     private void applyFieldChange(Long projectId, ConfigurableTable table, String typeName, String fieldName,
@@ -694,7 +720,62 @@ public class TableFieldConfigServiceImpl implements TableFieldConfigService {
 
     private FormConfig requireFormConfig(Long projectId, ConfigurableTable table, String typeName) {
         return findFormConfig(projectId, table, typeName)
-                .orElseGet(() -> createFormConfig(projectId, table, typeName));
+                .orElseGet(() -> createOrRecoverFormConfig(projectId, table, typeName));
+    }
+
+    /**
+     * Materializes a {@link FormConfig} row, tolerating a concurrent request doing the same thing.
+     * The row is created lazily (see the class javadoc), so two requests racing to configure the
+     * same type for the first time can both find {@link #findFormConfig} empty and both attempt to
+     * insert it. {@code uk_form_config_scope} catches that for a type-specific row, but not for the
+     * default one (its {@code valueConcept} is null, and a UNIQUE constraint never considers two
+     * NULLs equal) — either way, the loser here recovers by re-reading the row the winner committed,
+     * instead of surfacing the constraint violation to the user or leaving a stray duplicate.
+     * <p>
+     * The insert runs in its own transaction (via {@link #createFormConfigInNewTransaction}) so a
+     * constraint violation only rolls back that insert, not the whole calling transaction.
+     */
+    private FormConfig createOrRecoverFormConfig(Long projectId, ConfigurableTable table, String typeName) {
+        try {
+            return selfProvider.getObject().createFormConfigInNewTransaction(projectId, table, typeName);
+        } catch (DataIntegrityViolationException e) {
+            return findFormConfig(projectId, table, typeName)
+                    .orElseThrow(() -> e);
+        }
+    }
+
+    /**
+     * Same as {@link #createOrRecoverFormConfig(Long, ConfigurableTable, String)}, for the
+     * type-concept-id-keyed lookup used by {@link #createOrGetFormConfig(Long, ConfigurableTable, Long)}.
+     */
+    private FormConfig createOrRecoverFormConfig(Long projectId, ConfigurableTable table, Long typeConceptId) {
+        try {
+            return selfProvider.getObject().createFormConfigInNewTransaction(projectId, table, typeConceptId);
+        } catch (DataIntegrityViolationException e) {
+            return findFormConfig(projectId, table, typeConceptId)
+                    .orElseThrow(() -> e);
+        }
+    }
+
+    /**
+     * Runs {@link #createFormConfig(Long, ConfigurableTable, String)} in its own transaction, so a
+     * unique-constraint violation caused by a concurrent insert of the same row only rolls back this
+     * insert — the caller's transaction (and any work already done in it) is left intact and can
+     * recover by re-reading the row instead. Must be called through {@link #selfProvider} (a plain
+     * {@code this} call would bypass the transactional proxy and run in the caller's transaction).
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public FormConfig createFormConfigInNewTransaction(Long projectId, ConfigurableTable table, String typeName) {
+        return createFormConfig(projectId, table, typeName);
+    }
+
+    /**
+     * Same as {@link #createFormConfigInNewTransaction(Long, ConfigurableTable, String)}, for the
+     * type-concept-id-keyed creation.
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public FormConfig createFormConfigInNewTransaction(Long projectId, ConfigurableTable table, Long typeConceptId) {
+        return createFormConfig(projectId, table, typeConceptId);
     }
 
     private FormConfig createFormConfig(Long projectId, ConfigurableTable table, String typeName) {
@@ -702,14 +783,14 @@ public class TableFieldConfigServiceImpl implements TableFieldConfigService {
                 .orElseThrow(() -> new NoSuchElementException("Unknown project: " + projectId));
         Concept fieldConcept = findFieldConcept(projectId, table)
                 .orElseThrow(() -> new IllegalStateException(
-                        "No vocabulary configured for field " + table.getFieldCode() + " of project " + projectId));
+                        NO_VOCABULARY_CONFIGURED_FOR_FIELD + table.getFieldCode() + OF_PROJECT + projectId));
 
         FormConfig config = new FormConfig();
         config.setActionUnit(project);
         config.setInstitution(project.getCreatedByInstitution());
         config.setFieldConcept(fieldConcept);
         config.setFieldConfigs(new ArrayList<>());
-        initializeIdentifierConfig(config, table);
+        initializeIdentifierConfig(config, table, projectId, DEFAULT_TYPE.equals(typeName));
         if (!DEFAULT_TYPE.equals(typeName)) {
             config.setValueConcept(findValueConcept(projectId, fieldConcept, typeName)
                     .orElseThrow(() -> new NoSuchElementException(
@@ -723,14 +804,14 @@ public class TableFieldConfigServiceImpl implements TableFieldConfigService {
                 .orElseThrow(() -> new NoSuchElementException("Unknown project: " + projectId));
         Concept fieldConcept = findFieldConcept(projectId, table)
                 .orElseThrow(() -> new IllegalStateException(
-                        "No vocabulary configured for field " + table.getFieldCode() + " of project " + projectId));
+                        NO_VOCABULARY_CONFIGURED_FOR_FIELD + table.getFieldCode() + OF_PROJECT + projectId));
 
         FormConfig config = new FormConfig();
         config.setActionUnit(project);
         config.setInstitution(project.getCreatedByInstitution());
         config.setFieldConcept(fieldConcept);
         config.setFieldConfigs(new ArrayList<>());
-        initializeIdentifierConfig(config, table);
+        initializeIdentifierConfig(config, table, projectId, typeConceptId == null);
         if (typeConceptId != null) {
             config.setValueConcept(conceptRepository.findById(typeConceptId)
                     .orElseThrow(() -> new NoSuchElementException("Unknown concept id " + typeConceptId)));
@@ -738,10 +819,23 @@ public class TableFieldConfigServiceImpl implements TableFieldConfigService {
         return formConfigRepository.save(config);
     }
 
-    private static void initializeIdentifierConfig(FormConfig config, ConfigurableTable table) {
-        config.setIdentifierFormat(table.getDefaultIdentifierFormat());
-        config.setMinCode(0);
-        config.setMaxCode(999);
+    /**
+     * Seeds the identifier configuration of a row being created. A type inherits the identifier
+     * configuration of the project's default configuration — the very one it was reading through
+     * {@link #getFormConfig(Long, ConfigurableTable, String)} until it got a row of its own — so
+     * materializing the row, whatever the change that triggers it, does not silently move the type
+     * back onto the built-in format and bounds.
+     */
+    private void initializeIdentifierConfig(FormConfig config, ConfigurableTable table, Long projectId,
+                                            boolean isDefault) {
+        Optional<FormConfig> inherited = isDefault
+                ? Optional.empty()
+                : findFormConfig(projectId, table, (Long) null);
+        config.setIdentifierFormat(inherited
+                .map(FormConfig::getIdentifierFormat)
+                .orElseGet(table::getDefaultIdentifierFormat));
+        config.setMinCode(inherited.map(FormConfig::getMinCode).orElse(DEFAULT_MIN_CODE));
+        config.setMaxCode(inherited.map(FormConfig::getMaxCode).orElse(DEFAULT_MAX_CODE));
     }
 
     private Optional<Concept> findFieldConcept(Long projectId, ConfigurableTable table) {
