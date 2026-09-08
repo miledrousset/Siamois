@@ -45,15 +45,17 @@
             }
 
             /* ── editor ─────────────────────────────────── */
-            /* The summary block and the tab bar stay put; only the active tab's content (Champs/
-               Identifiants) scrolls, independently from the tree on the left. */
-            .ptc-editor { flex: 1; min-width: 0; max-width: 100%; border: 1px solid #e7e7e3; border-radius: 10px; background: #fff; height: calc(100vh - 250px); min-height: 420px; display: flex; flex-direction: column; overflow: hidden; }
-            .ptc-editor .ptc-summary { flex: none; }
-            .ptc-editor .ui-tabs { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-            .ptc-editor .ui-tabs-nav { flex: none; }
-            .ptc-editor .ui-tabs-panels { flex: 1; min-height: 0; overflow: auto; padding: 2em; }
+            /* The app shell (template.xhtml) is a fixed 100vh frame with no real page-level scroll —
+               every panel scrolls internally. The summary header and the tabview now scroll together
+               as a single region (instead of the header being pinned and only the tabview scrolling),
+               sized to use the available viewport height rather than a short, cramped box. */
+            .ptc-editor { flex: 1; min-width: 0; max-width: 100%; border: 1px solid #e7e7e3; border-radius: 10px; background: #fff; max-height: calc(100vh - 250px); min-height: 420px; display: flex; flex-direction: column; overflow: auto; }
+            .ptc-editor .ui-tabs-panels { padding: 2em; }
             .ptc-editor .ui-datatable table th, .ptc-editor .ui-datatable table td { padding: 12px 16px; }
             .ptc-table-scroll { border: 1px solid #e7e7e3; border-radius: 9px; overflow-x: auto; margin-bottom: 28px; }
+            /* Without this, the last table's own margin-bottom stacks on top of .ui-tabs-panels'
+               padding, doubling the empty space at the bottom of the tab. */
+            .ptc-editor .ui-tabs-panels .ptc-table-scroll:last-child { margin-bottom: 0; }
 
             .ptc-summary { display: flex; gap: 24px; padding: 22px 24px; border-bottom: 1px solid #ececec; flex-wrap: wrap; }
             .ptc-summary-col { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 5px; }
@@ -254,10 +256,10 @@
                                     </div>
 
                                     <div class="ptc-table-scroll">
-                                    <p:dataTable value="#{projectTableFieldSettingsBean.systemFields}" var="f" rowKey="#{f.name}" style="min-width:600px">
+                                    <p:dataTable id="systemFieldsTable" value="#{projectTableFieldSettingsBean.systemFields}" var="f" rowKey="#{f.name}" style="min-width:600px">
                                         <p:column headerText="#{langBean.msg('projectTables.champs.columnActive')}" style="width:80px">
                                             <p:toggleSwitch value="#{f.active}" disabled="#{f.institutionLocked}">
-                                                <p:ajax event="change" listener="#{projectTableFieldSettingsBean.toggleFieldActive(f)}" update="@form"/>
+                                                <p:ajax event="change" listener="#{projectTableFieldSettingsBean.toggleFieldActive(f)}" update=":projectTablesFormCC:projectTablesForm:fieldsTabs:systemFieldsTable"/>
                                             </p:toggleSwitch>
                                         </p:column>
                                         <p:column headerText="#{langBean.msg('projectTables.champs.columnField')}">
@@ -271,11 +273,11 @@
                                         </p:column>
                                         <p:column headerText="#{langBean.msg('projectTables.champs.columnRequired')}" style="width:130px">
                                             <p:toggleSwitch value="#{f.mandatory}" disabled="#{f.institutionLocked}">
-                                                <p:ajax event="change" listener="#{projectTableFieldSettingsBean.toggleFieldMandatory(f)}" update="@form"/>
+                                                <p:ajax event="change" listener="#{projectTableFieldSettingsBean.toggleFieldMandatory(f)}" update=":projectTablesFormCC:projectTablesForm:fieldsTabs:systemFieldsTable"/>
                                             </p:toggleSwitch>
                                         </p:column>
                                         <p:column style="width:80px">
-                                            <p:commandButton icon="bi bi-pencil" styleClass="ui-button-flat ui-button-sm" title="#{langBean.msg('projectTables.champs.editSystemField')}" actionListener="#{projectTableFieldSettingsBean.openDrawerForEdit(f)}" update="@form :fieldEditForm" rendered="#{f.configurable}"/>
+                                            <p:commandButton icon="bi bi-pencil" styleClass="ui-button-flat ui-button-sm" title="#{langBean.msg('projectTables.champs.editSystemField')}" actionListener="#{projectTableFieldSettingsBean.openDrawerForEdit(f)}" update=":fieldEditForm" rendered="#{f.configurable}"/>
                                         </p:column>
                                     </p:dataTable>
                                     </div>
@@ -285,7 +287,7 @@
                                             <span class="ptc-section-title">#{langBean.msg('projectTables.champs.additionalTitle')}</span>
                                             <span class="ptc-section-meta">#{langBean.msg('projectTables.champs.additionalHint')}</span>
                                         </span>
-                                        <p:commandButton value="#{langBean.msg('projectTables.champs.addField')}" actionListener="#{projectTableFieldSettingsBean.addField()}" update="@form :addFieldForm"/>
+                                        <p:commandButton value="#{langBean.msg('projectTables.champs.addField')}" actionListener="#{projectTableFieldSettingsBean.addField()}" update=":addFieldForm"/>
                                     </div>
 
                                     <!-- Row reordering drags from the grip only: the row carries switches and buttons,
@@ -307,14 +309,14 @@
                                         </p:column>
                                         <p:column headerText="#{langBean.msg('projectTables.champs.columnRequired')}" style="width:130px">
                                             <p:toggleSwitch value="#{a.mandatory}" disabled="#{a.institutionLocked}">
-                                                <p:ajax event="change" listener="#{projectTableFieldSettingsBean.toggleFieldMandatory(a)}" update="@form"/>
+                                                <p:ajax event="change" listener="#{projectTableFieldSettingsBean.toggleFieldMandatory(a)}" update=":projectTablesFormCC:projectTablesForm:fieldsTabs:additionalFieldsTable"/>
                                             </p:toggleSwitch>
                                         </p:column>
                                         <p:column headerText="#{langBean.msg('projectTables.champs.columnSource')}">
                                             <h:outputText value="#{a.sourceLabel}"/>
                                         </p:column>
                                         <p:column style="width:80px">
-                                            <p:commandButton icon="bi bi-pencil" styleClass="ui-button-flat ui-button-sm" actionListener="#{projectTableFieldSettingsBean.openDrawerForEdit(a)}" update="@form :fieldEditForm"/>
+                                            <p:commandButton icon="bi bi-pencil" styleClass="ui-button-flat ui-button-sm" actionListener="#{projectTableFieldSettingsBean.openDrawerForEdit(a)}" update=":fieldEditForm"/>
                                             <!-- Only the table is re-rendered: the tab panel is what scrolls
                                                  (.ui-tabs-panels), so replacing the whole form would put the user
                                                  back at the top of it. p:tabView is a NamingContainer, hence the
