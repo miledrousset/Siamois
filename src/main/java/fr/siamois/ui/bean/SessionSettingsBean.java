@@ -58,6 +58,8 @@ public class SessionSettingsBean implements Serializable {
     @Value("${server.servlet.session.timeout}")
     private String sessionTimeout;
 
+    private boolean filemakerMode = false;
+
     public PersonDTO getAuthenticatedUser() {
         return conversionService.convert(AuthenticatedUserUtils.getAuthenticatedUser().orElse(null), PersonDTO.class);
     }

@@ -1,0 +1,161 @@
+/*
+ * Hidden "FileMaker Pro" easter egg theme.
+ * Toggled by typing "filemaker" in the global search bar (see SearchBean#completeText).
+ * Scoped entirely under .filemaker-mode so it has zero effect otherwise.
+ */
+
+.filemaker-mode {
+    background: #d4d0c8 !important;
+    font-family: "Geneva", "Chicago", "Tahoma", "MS Sans Serif", sans-serif !important;
+    color: #000 !important;
+}
+
+.filemaker-mode * {
+    font-family: "Geneva", "Chicago", "Tahoma", "MS Sans Serif", sans-serif !important;
+    border-radius: 0 !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+}
+
+/* App shell */
+.filemaker-mode .sidebar,
+.filemaker-mode #siamoisNav,
+.filemaker-mode #sidebarSettings {
+    background: #ece7d5 !important;
+    border-right: 2px solid #000 !important;
+}
+
+.filemaker-mode .content {
+    background: #d4d0c8 !important;
+}
+
+.filemaker-mode .nav-link {
+    color: #000 !important;
+}
+
+/* Generic panels / cards behave like FileMaker layout windows */
+.filemaker-mode .ui-panel,
+.filemaker-mode .ui-widget-content,
+.filemaker-mode .card,
+.filemaker-mode .siamois-panel {
+    background: #ece7d5 !important;
+    border: 2px solid #000 !important;
+    border-style: outset !important;
+    color: #000 !important;
+}
+
+.filemaker-mode .ui-panel-titlebar,
+.filemaker-mode .ui-widget-header,
+.filemaker-mode .ui-dialog-titlebar {
+    background: linear-gradient(#c7c1af, #ece7d5 4px, #c7c1af) !important;
+    border: 2px solid #000 !important;
+    border-bottom: 1px solid #000 !important;
+    color: #000 !important;
+    font-weight: bold !important;
+    padding: 3px 6px !important;
+}
+
+.filemaker-mode .ui-dialog {
+    border: 2px solid #000 !important;
+    background: #ece7d5 !important;
+}
+
+/* Tables -> FileMaker "browse mode" grid */
+.filemaker-mode .ui-datatable,
+.filemaker-mode table.ui-widget-content,
+.filemaker-mode .ui-datatable-tablewrapper {
+    background: #fff !important;
+    border: 2px solid #000 !important;
+}
+
+.filemaker-mode .ui-datatable-thead > tr > th,
+.filemaker-mode th.ui-state-default {
+    background: linear-gradient(#e8e4d5, #c7c1af) !important;
+    border: 1px solid #6b6858 !important;
+    color: #000 !important;
+    font-weight: bold !important;
+    text-align: left !important;
+}
+
+.filemaker-mode .ui-datatable-tbody > tr > td,
+.filemaker-mode td.ui-widget-content {
+    background: #fffef8 !important;
+    border: 1px solid #b7b3a3 !important;
+    color: #000 !important;
+    font-size: 0.85rem !important;
+}
+
+.filemaker-mode .ui-datatable-tbody > tr:nth-child(even) > td {
+    background: #f2f0e4 !important;
+}
+
+.filemaker-mode .ui-datatable-tbody > tr.ui-state-highlight > td {
+    background: #000080 !important;
+    color: #fff !important;
+}
+
+.filemaker-mode .ui-paginator {
+    background: #ece7d5 !important;
+    border: 1px solid #6b6858 !important;
+}
+
+/* Forms -> FileMaker "layout mode" fields with sunken white boxes */
+.filemaker-mode label,
+.filemaker-mode .p-field label {
+    color: #000 !important;
+    font-weight: bold !important;
+}
+
+.filemaker-mode input.ui-inputfield,
+.filemaker-mode input.ui-inputtext,
+.filemaker-mode textarea.ui-inputtextarea,
+.filemaker-mode .ui-selectonemenu,
+.filemaker-mode .ui-autocomplete-input,
+.filemaker-mode .ui-inputgroup {
+    background: #fff !important;
+    border: 2px solid #6b6858 !important;
+    border-style: inset !important;
+    color: #000 !important;
+    font-size: 0.85rem !important;
+}
+
+.filemaker-mode input.ui-inputfield:focus,
+.filemaker-mode input.ui-inputtext:focus,
+.filemaker-mode textarea.ui-inputtextarea:focus {
+    outline: 1px dotted #000 !important;
+    outline-offset: -3px;
+}
+
+/* Buttons -> chunky beige 3D buttons */
+.filemaker-mode .ui-button,
+.filemaker-mode button.ui-button,
+.filemaker-mode .ui-commandlink,
+.filemaker-mode a.ui-button {
+    background: #ece7d5 !important;
+    border: 2px solid #000 !important;
+    border-style: outset !important;
+    color: #000 !important;
+    font-weight: bold !important;
+    border-radius: 4px !important;
+}
+
+.filemaker-mode .ui-button:active {
+    border-style: inset !important;
+}
+
+/* Scrollbars, for a fuller retro feel in Webkit browsers */
+.filemaker-mode ::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+
+.filemaker-mode ::-webkit-scrollbar-track {
+    background: #d4d0c8;
+    border: 1px solid #6b6858;
+}
+
+.filemaker-mode ::-webkit-scrollbar-thumb {
+    background: #ece7d5;
+    border: 2px solid #000;
+    border-style: outset;
+}

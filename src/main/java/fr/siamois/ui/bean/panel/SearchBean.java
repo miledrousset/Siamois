@@ -42,11 +42,19 @@ public class SearchBean implements Serializable {
     }
 
     private static final String SNAKE_EASTER_EGG_KEYWORD = "motherlode";
+    private static final String FILEMAKER_EASTER_EGG_KEYWORD = "filemaker";
 
     public List<SearchResultDTO> completeText(String input) {
         if (input != null && SNAKE_EASTER_EGG_KEYWORD.equalsIgnoreCase(input.trim())) {
             PrimeFaces.current().ajax().update("snakeGameForm");
             PrimeFaces.current().executeScript("PF('snakeGameDiag').show()");
+            return List.of();
+        }
+        if (input != null && FILEMAKER_EASTER_EGG_KEYWORD.equalsIgnoreCase(input.trim())) {
+            boolean enabled = !sessionSettingsBean.isFilemakerMode();
+            sessionSettingsBean.setFilemakerMode(enabled);
+            PrimeFaces.current().executeScript(
+                    "document.body.classList.toggle('filemaker-mode', " + enabled + ");");
             return List.of();
         }
         return searchRepository.findResultsFor(input,
