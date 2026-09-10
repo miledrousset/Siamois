@@ -28,6 +28,13 @@ siamois:
     # HS256 : au moins 256 bits — utiliser une valeur forte en prod (variable SIAMOIS_JWT_SECRET).
     secret: ${SIAMOIS_JWT_SECRET:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
     access-token-validity: PT15M
+  feedback:
+    github:
+      token: ${SIAMOIS_GITHUB_FEEDBACK_TOKEN:}
+      repository: MOM-CNRS/Siamois
+      label: feedback
+      screenshot-branch: feedback-screenshots
+      issues-url: https://github.com/MOM-CNRS/Siamois/issues?q=is%3Aissue+label%3Afeedback
 
 
 spring:
