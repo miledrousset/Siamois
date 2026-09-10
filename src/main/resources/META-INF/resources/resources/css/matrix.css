@@ -1,0 +1,315 @@
+/*
+ * Hidden "Matrix / dev terminal" easter egg theme — black background, green
+ * monospace text, CRT glow.
+ * Toggled by typing "matrix" in the global search bar (see SearchBean#completeText).
+ * Scoped entirely under .matrix-mode so it has zero effect otherwise.
+ */
+
+@keyframes matrix-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+}
+
+.matrix-mode {
+    background: #0a0e0a !important;
+    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "SFMono-Regular", Consolas, "Courier New", monospace !important;
+    color: #33ff66 !important;
+}
+
+.matrix-mode * {
+    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "SFMono-Regular", Consolas, "Courier New", monospace !important;
+    text-shadow: none !important;
+}
+
+/* CRT scanline overlay, purely decorative, never intercepts clicks */
+.matrix-mode .content::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(51, 255, 102, 0.035) 0px,
+        rgba(51, 255, 102, 0.035) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+    z-index: 9999;
+}
+
+/* App shell -> pure black terminal chrome, green wireframe border */
+.matrix-mode .sidebar,
+.matrix-mode #siamoisNav,
+.matrix-mode #sidebarSettings {
+    background: rgba(5, 7, 5, 0.88) !important;
+    border-right: 1px solid #1f6b34 !important;
+}
+
+.matrix-mode .content {
+    background: rgba(10, 14, 10, 0.55) !important;
+}
+
+/* Give the sidebar's nav list a bounded viewport so it actually has
+   something to auto-scroll through (see resources/js/matrix-rain.js). */
+.matrix-mode .sidebar .nav.flex-column {
+    max-height: 40vh !important;
+    overflow-y: auto !important;
+}
+
+.matrix-mode .sidebar,
+.matrix-mode .sidebar p,
+.matrix-mode .sidebar span,
+.matrix-mode .sidebar div,
+.matrix-mode .sidebar li,
+.matrix-mode .sidebar a,
+.matrix-mode .sidebar i,
+.matrix-mode #siamoisNav *,
+.matrix-mode #sidebarSettings * {
+    color: #33ff66 !important;
+}
+
+.matrix-mode .nav-link {
+    text-shadow: 0 0 4px rgba(51, 255, 102, 0.55) !important;
+}
+
+.matrix-mode .nav-link:hover {
+    background: rgba(51, 255, 102, 0.1) !important;
+}
+
+.matrix-mode .content,
+.matrix-mode .content p,
+.matrix-mode .content span,
+.matrix-mode .content div,
+.matrix-mode .content li,
+.matrix-mode .content a,
+.matrix-mode .content label,
+.matrix-mode .content td,
+.matrix-mode .content th,
+.matrix-mode .content h1,
+.matrix-mode .content h2,
+.matrix-mode .content h3,
+.matrix-mode .content h4,
+.matrix-mode .content h5,
+.matrix-mode .content h6 {
+    color: #33ff66 !important;
+}
+
+/* Panels / cards -> terminal windows */
+.matrix-mode .ui-panel,
+.matrix-mode .ui-widget-content,
+.matrix-mode .card,
+.matrix-mode .siamois-panel {
+    background: rgba(10, 14, 10, 0.82) !important;
+    border: 1px solid #1f6b34 !important;
+    border-radius: 4px !important;
+    box-shadow: 0 0 14px rgba(51, 255, 102, 0.12) !important;
+}
+
+.matrix-mode .ui-panel-titlebar,
+.matrix-mode .ui-widget-header,
+.matrix-mode .ui-dialog-titlebar {
+    background: #0f1a0f !important;
+    border: none !important;
+    border-bottom: 1px solid #1f6b34 !important;
+    color: #7bffa0 !important;
+    font-weight: bold !important;
+    padding: 8px 12px !important;
+    box-shadow: none !important;
+}
+
+.matrix-mode .ui-panel-titlebar::before {
+    content: "> ";
+}
+
+.matrix-mode .ui-dialog {
+    border: 1px solid #33ff66 !important;
+    border-radius: 4px !important;
+    background: #0a0e0a !important;
+    box-shadow: 0 0 30px rgba(51, 255, 102, 0.25) !important;
+}
+
+/* Tables -> green grid on black */
+.matrix-mode .ui-datatable,
+.matrix-mode table.ui-widget-content,
+.matrix-mode .ui-datatable-tablewrapper {
+    background: rgba(10, 14, 10, 0.85) !important;
+    border: 1px solid #1f6b34 !important;
+}
+
+/* Bound scrollable datatable bodies so they have overflow to auto-scroll
+   through (see resources/js/matrix-rain.js). */
+.matrix-mode .ui-datatable-scrollable-body {
+    max-height: 50vh !important;
+}
+
+.matrix-mode .ui-datatable-thead > tr > th,
+.matrix-mode th.ui-state-default {
+    background: #0f1a0f !important;
+    border: 1px solid #1f6b34 !important;
+    color: #7bffa0 !important;
+    font-weight: bold !important;
+    text-align: left !important;
+    box-shadow: none !important;
+}
+
+.matrix-mode .ui-datatable-tbody > tr > td,
+.matrix-mode td.ui-widget-content {
+    background: #0a0e0a !important;
+    border: 1px solid #143a1e !important;
+    color: #33ff66 !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+}
+
+.matrix-mode .ui-datatable-tbody > tr:nth-child(even) > td {
+    background: #0d130d !important;
+}
+
+.matrix-mode .ui-datatable-tbody > tr:hover > td {
+    background: #123018 !important;
+}
+
+.matrix-mode .ui-datatable-tbody > tr.ui-state-highlight > td {
+    background: #143a1e !important;
+    color: #d9ffe4 !important;
+    box-shadow: inset 2px 0 0 #33ff66 !important;
+}
+
+.matrix-mode .ui-paginator {
+    background: #0a0e0a !important;
+    border: 1px solid #1f6b34 !important;
+}
+
+/* Forms -> black inputs, green caret, glow on focus */
+.matrix-mode label,
+.matrix-mode .p-field label {
+    color: #7bffa0 !important;
+    font-weight: bold !important;
+}
+
+.matrix-mode input.ui-inputfield,
+.matrix-mode input.ui-inputtext,
+.matrix-mode textarea.ui-inputtextarea,
+.matrix-mode .ui-selectonemenu,
+.matrix-mode .ui-autocomplete-input,
+.matrix-mode .ui-inputgroup {
+    background: #050705 !important;
+    border: 1px solid #1f6b34 !important;
+    border-radius: 2px !important;
+    color: #33ff66 !important;
+    caret-color: #33ff66 !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+}
+
+.matrix-mode input.ui-inputfield:focus,
+.matrix-mode input.ui-inputtext:focus,
+.matrix-mode textarea.ui-inputtextarea:focus {
+    border-color: #33ff66 !important;
+    outline: none !important;
+    box-shadow: 0 0 8px rgba(51, 255, 102, 0.5) !important;
+}
+
+/* Buttons -> terminal prompt buttons, inverted on hover */
+.matrix-mode .ui-button,
+.matrix-mode button.ui-button,
+.matrix-mode .ui-commandlink,
+.matrix-mode a.ui-button {
+    background: #0a0e0a !important;
+    border: 1px solid #33ff66 !important;
+    border-radius: 2px !important;
+    color: #33ff66 !important;
+    font-weight: bold !important;
+    box-shadow: none !important;
+}
+
+.matrix-mode .ui-button:hover {
+    background: #33ff66 !important;
+    color: #0a0e0a !important;
+    box-shadow: 0 0 12px rgba(51, 255, 102, 0.6) !important;
+}
+
+.matrix-mode .ui-button:hover .ui-icon,
+.matrix-mode .ui-button:hover .ui-button-icon-left,
+.matrix-mode .ui-button:hover .ui-button-icon-right {
+    color: #0a0e0a !important;
+}
+
+.matrix-mode .ui-button .ui-icon,
+.matrix-mode .ui-button .ui-button-icon-left,
+.matrix-mode .ui-button .ui-button-icon-right {
+    color: #33ff66 !important;
+}
+
+.matrix-mode .ui-button.ui-button-flat,
+.matrix-mode .rounded-button {
+    background: transparent !important;
+    border: 1px solid #1f6b34 !important;
+    color: #33ff66 !important;
+}
+
+.matrix-mode .ui-button.ui-button-flat:hover,
+.matrix-mode .rounded-button:hover {
+    background: rgba(51, 255, 102, 0.15) !important;
+    color: #7bffa0 !important;
+}
+
+/* Search bar -> shell prompt with a blinking cursor */
+.matrix-mode #search-bar {
+    position: relative;
+}
+
+.matrix-mode #search-bar::before {
+    content: "$";
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #33ff66;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.matrix-mode #search-bar::after {
+    content: "";
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 7px;
+    height: 1rem;
+    background: #33ff66;
+    animation: matrix-blink 1s step-end infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.matrix-mode .searchInput,
+.matrix-mode #search-bar input {
+    background: #050705 !important;
+    border: 1px solid #33ff66 !important;
+    border-radius: 2px !important;
+    padding-left: 32px !important;
+    color: #33ff66 !important;
+    caret-color: #33ff66 !important;
+}
+
+/* Terminal-style scrollbars */
+.matrix-mode ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.matrix-mode ::-webkit-scrollbar-track {
+    background: #050705;
+}
+
+.matrix-mode ::-webkit-scrollbar-thumb {
+    background: #1f6b34;
+    border: 2px solid #050705;
+}
+
+.matrix-mode ::-webkit-scrollbar-thumb:hover {
+    background: #33ff66;
+}

@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -36,13 +38,32 @@ public class SearchBean implements Serializable {
 
     private UserInfo userInfo;
 
+    private transient List<ThemeMode> themeModes;
+
     @PostConstruct
     public void init() {
         userInfo = sessionSettingsBean.getUserInfo();
+        themeModes = List.of(
+                new ThemeMode("filemaker", "filemaker-mode",
+                        sessionSettingsBean::isFilemakerMode, sessionSettingsBean::setFilemakerMode, null),
+                new ThemeMode("excel", "excel-mode",
+                        sessionSettingsBean::isExcelMode, sessionSettingsBean::setExcelMode, null),
+                new ThemeMode("goofy", "goofy-mode",
+                        sessionSettingsBean::isGoofyMode, sessionSettingsBean::setGoofyMode, null),
+                new ThemeMode("matrix", "matrix-mode",
+                        sessionSettingsBean::isMatrixMode, sessionSettingsBean::setMatrixMode, "siaMatrixRain"),
+                new ThemeMode("noel", "noel-mode",
+                        sessionSettingsBean::isNoelMode, sessionSettingsBean::setNoelMode, "siaSnow"),
+                new ThemeMode("bobleponge", "bob-mode",
+                        sessionSettingsBean::isBobMode, sessionSettingsBean::setBobMode, "siaBubbles")
+        );
     }
 
     private static final String SNAKE_EASTER_EGG_KEYWORD = "motherlode";
-    private static final String FILEMAKER_EASTER_EGG_KEYWORD = "filemaker";
+
+    private record ThemeMode(String keyword, String cssClass, Supplier<Boolean> getter,
+                              Consumer<Boolean> setter, String jsEffect) {
+    }
 
     public List<SearchResultDTO> completeText(String input) {
         if (input != null && SNAKE_EASTER_EGG_KEYWORD.equalsIgnoreCase(input.trim())) {
@@ -50,16 +71,41 @@ public class SearchBean implements Serializable {
             PrimeFaces.current().executeScript("PF('snakeGameDiag').show()");
             return List.of();
         }
-        if (input != null && FILEMAKER_EASTER_EGG_KEYWORD.equalsIgnoreCase(input.trim())) {
-            boolean enabled = !sessionSettingsBean.isFilemakerMode();
-            sessionSettingsBean.setFilemakerMode(enabled);
-            PrimeFaces.current().executeScript(
-                    "document.body.classList.toggle('filemaker-mode', " + enabled + ");");
-            return List.of();
+        if (input != null) {
+            String trimmed = input.trim();
+            for (ThemeMode mode : themeModes) {
+                if (mode.keyword().equalsIgnoreCase(trimmed)) {
+                    applyThemeMode(mode);
+                    return List.of();
+                }
+            }
         }
         return searchRepository.findResultsFor(input,
                 sessionSettingsBean.getSelectedInstitution(),
                 userInfo.getUser());
+    }
+
+    private void applyThemeMode(ThemeMode mode) {
+        boolean enabled = !mode.getter().get();
+        for (ThemeMode m : themeModes) {
+            m.setter().accept(m == mode && enabled);
+        }
+
+        StringBuilder script = new StringBuilder();
+        for (ThemeMode m : themeModes) {
+            boolean active = m == mode && enabled;
+            script.append("document.body.classList.toggle('").append(m.cssClass()).append("', ").append(active).append(");");
+        }
+        for (ThemeMode m : themeModes) {
+            if (m.jsEffect() == null) {
+                continue;
+            }
+            script.append("if (window.").append(m.jsEffect()).append(") {")
+                    .append("if (document.body.classList.contains('").append(m.cssClass()).append("')) { window.").append(m.jsEffect()).append(".start(); }")
+                    .append("else { window.").append(m.jsEffect()).append(".stop(); }")
+                    .append("}");
+        }
+        PrimeFaces.current().executeScript(script.toString());
     }
 
     public void onResultSelect(AjaxBehaviorEvent event) {

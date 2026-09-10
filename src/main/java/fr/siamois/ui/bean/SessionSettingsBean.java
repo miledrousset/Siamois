@@ -59,6 +59,11 @@ public class SessionSettingsBean implements Serializable {
     private String sessionTimeout;
 
     private boolean filemakerMode = false;
+    private boolean excelMode = false;
+    private boolean goofyMode = false;
+    private boolean matrixMode = false;
+    private boolean noelMode = false;
+    private boolean bobMode = false;
 
     public PersonDTO getAuthenticatedUser() {
         return conversionService.convert(AuthenticatedUserUtils.getAuthenticatedUser().orElse(null), PersonDTO.class);

@@ -1,0 +1,290 @@
+/*
+ * Hidden "Goofy" easter egg theme — Comic Sans, rainbow gradients, wobbly panels.
+ * Toggled by typing "goofy" in the global search bar (see SearchBean#completeText).
+ * Scoped entirely under .goofy-mode so it has zero effect otherwise.
+ */
+
+@keyframes goofy-rainbow-shift {
+    0% { background-position: 0 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes goofy-wiggle {
+    0%, 100% { transform: rotate(-1.5deg); }
+    50% { transform: rotate(1.5deg); }
+}
+
+.goofy-mode {
+    background: #fdf6ff !important;
+    font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Marker Felt", cursive, sans-serif !important;
+    color: #2b0a3d !important;
+}
+
+.goofy-mode * {
+    font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Marker Felt", cursive, sans-serif !important;
+    text-shadow: none !important;
+}
+
+/* App shell -> animated rainbow sidebar */
+.goofy-mode .sidebar,
+.goofy-mode #siamoisNav,
+.goofy-mode #sidebarSettings {
+    background: repeating-linear-gradient(
+        100deg,
+        #ff6ec7 0%, #ff6ec7 8%,
+        #ff9f43 8%, #ff9f43 16%,
+        #feca57 16%, #feca57 24%,
+        #1dd1a1 24%, #1dd1a1 32%,
+        #54a0ff 32%, #54a0ff 40%,
+        #a55eea 40%, #a55eea 48%
+    ) !important;
+    background-size: 240% 100% !important;
+    animation: goofy-rainbow-shift 18s linear infinite !important;
+    border-right: 4px solid #2b0a3d !important;
+}
+
+.goofy-mode .sidebar,
+.goofy-mode .sidebar p,
+.goofy-mode .sidebar span,
+.goofy-mode .sidebar div,
+.goofy-mode .sidebar li,
+.goofy-mode .sidebar a,
+.goofy-mode .sidebar i,
+.goofy-mode #siamoisNav *,
+.goofy-mode #sidebarSettings * {
+    color: #ffffff !important;
+    font-weight: bold !important;
+}
+
+.goofy-mode .nav-link {
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35) !important;
+}
+
+.goofy-mode .nav-link:hover {
+    background: rgba(255, 255, 255, 0.28) !important;
+    transform: scale(1.04) rotate(-1deg);
+    display: inline-block;
+}
+
+.goofy-mode .content,
+.goofy-mode .content p,
+.goofy-mode .content span,
+.goofy-mode .content div,
+.goofy-mode .content li,
+.goofy-mode .content a,
+.goofy-mode .content label,
+.goofy-mode .content td,
+.goofy-mode .content th {
+    color: #2b0a3d !important;
+}
+
+.goofy-mode .content h1,
+.goofy-mode .content h2,
+.goofy-mode .content h3,
+.goofy-mode .content h4,
+.goofy-mode .content h5,
+.goofy-mode .content h6 {
+    color: #ff2e88 !important;
+    -webkit-text-stroke: 0.5px #2b0a3d;
+}
+
+/* Panels / cards -> comic-book panels: thick black outline, offset shadow, gentle tilt */
+.goofy-mode .ui-panel,
+.goofy-mode .ui-widget-content,
+.goofy-mode .card,
+.goofy-mode .siamois-panel {
+    background: #fffdf5 !important;
+    border: 3px solid #2b0a3d !important;
+    border-radius: 18px !important;
+    box-shadow: 6px 6px 0 #feca57 !important;
+    transform: rotate(-0.6deg);
+}
+
+.goofy-mode .ui-panel:nth-of-type(even),
+.goofy-mode .card:nth-of-type(even) {
+    transform: rotate(0.6deg);
+    box-shadow: 6px 6px 0 #54a0ff !important;
+}
+
+.goofy-mode .ui-panel-titlebar,
+.goofy-mode .ui-widget-header,
+.goofy-mode .ui-dialog-titlebar {
+    background: #ff6ec7 !important;
+    border: none !important;
+    border-bottom: 3px solid #2b0a3d !important;
+    border-radius: 15px 15px 0 0 !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    padding: 10px 14px !important;
+    box-shadow: none !important;
+}
+
+.goofy-mode .ui-dialog {
+    border: 3px solid #2b0a3d !important;
+    border-radius: 18px !important;
+    background: #fffdf5 !important;
+    box-shadow: 8px 8px 0 #a55eea !important;
+}
+
+/* Tables -> candy-striped rows, thick playful header */
+.goofy-mode .ui-datatable,
+.goofy-mode table.ui-widget-content,
+.goofy-mode .ui-datatable-tablewrapper {
+    background: #fffdf5 !important;
+    border: 3px solid #2b0a3d !important;
+    border-radius: 14px !important;
+    overflow: hidden;
+}
+
+.goofy-mode .ui-datatable-thead > tr > th,
+.goofy-mode th.ui-state-default {
+    background: #feca57 !important;
+    border: none !important;
+    border-bottom: 3px solid #2b0a3d !important;
+    color: #2b0a3d !important;
+    font-weight: bold !important;
+    text-align: left !important;
+    box-shadow: none !important;
+}
+
+.goofy-mode .ui-datatable-tbody > tr > td,
+.goofy-mode td.ui-widget-content {
+    background: #fffdf5 !important;
+    border: none !important;
+    border-bottom: 2px dashed #d8c7f0 !important;
+    color: #2b0a3d !important;
+    font-size: 0.9rem !important;
+    box-shadow: none !important;
+}
+
+.goofy-mode .ui-datatable-tbody > tr:nth-child(even) > td {
+    background: #fdf1ff !important;
+}
+
+.goofy-mode .ui-datatable-tbody > tr:hover > td {
+    background: #d1f7e8 !important;
+}
+
+.goofy-mode .ui-datatable-tbody > tr.ui-state-highlight > td {
+    background: #ffe1f0 !important;
+    color: #2b0a3d !important;
+    box-shadow: inset 3px 0 0 #ff2e88 !important;
+}
+
+.goofy-mode .ui-paginator {
+    background: #fffdf5 !important;
+    border: 3px solid #2b0a3d !important;
+    border-radius: 14px !important;
+    box-shadow: none !important;
+}
+
+/* Forms -> bubbly rounded fields with a rainbow focus ring */
+.goofy-mode label,
+.goofy-mode .p-field label {
+    color: #a55eea !important;
+    font-weight: bold !important;
+}
+
+.goofy-mode input.ui-inputfield,
+.goofy-mode input.ui-inputtext,
+.goofy-mode textarea.ui-inputtextarea,
+.goofy-mode .ui-selectonemenu,
+.goofy-mode .ui-autocomplete-input,
+.goofy-mode .ui-inputgroup {
+    background: #ffffff !important;
+    border: 3px solid #2b0a3d !important;
+    border-radius: 999px !important;
+    color: #2b0a3d !important;
+    font-size: 0.9rem !important;
+    box-shadow: none !important;
+}
+
+.goofy-mode textarea.ui-inputtextarea {
+    border-radius: 18px !important;
+}
+
+.goofy-mode input.ui-inputfield:focus,
+.goofy-mode input.ui-inputtext:focus,
+.goofy-mode textarea.ui-inputtextarea:focus {
+    outline: none !important;
+    border-color: #ff2e88 !important;
+    box-shadow: 0 0 0 3px #feca57 !important;
+}
+
+/* Buttons -> big bouncy candy buttons */
+.goofy-mode .ui-button,
+.goofy-mode button.ui-button,
+.goofy-mode .ui-commandlink,
+.goofy-mode a.ui-button {
+    background: linear-gradient(135deg, #ff6ec7, #ff9f43) !important;
+    border: 3px solid #2b0a3d !important;
+    border-radius: 999px !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    box-shadow: 3px 3px 0 #2b0a3d !important;
+    transition: transform 0.12s ease !important;
+}
+
+.goofy-mode .ui-button:hover {
+    animation: goofy-wiggle 0.4s ease-in-out infinite;
+    box-shadow: 4px 5px 0 #2b0a3d !important;
+}
+
+.goofy-mode .ui-button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #2b0a3d !important;
+}
+
+.goofy-mode .ui-button.ui-button-flat,
+.goofy-mode .rounded-button {
+    background: #ffffff !important;
+    border: 3px solid #2b0a3d !important;
+    color: #2b0a3d !important;
+    box-shadow: 2px 2px 0 #a55eea !important;
+}
+
+.goofy-mode .ui-button.ui-button-flat:hover,
+.goofy-mode .rounded-button:hover {
+    background: #fdf1ff !important;
+}
+
+/* Search bar -> big goofy pill with a party emoji */
+.goofy-mode #search-bar {
+    position: relative;
+}
+
+.goofy-mode #search-bar::before {
+    content: "🎉";
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.goofy-mode .searchInput,
+.goofy-mode #search-bar input {
+    background: #ffffff !important;
+    border: 3px solid #2b0a3d !important;
+    border-radius: 999px !important;
+    padding-left: 32px !important;
+    color: #2b0a3d !important;
+}
+
+/* Confetti scrollbars */
+.goofy-mode ::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+}
+
+.goofy-mode ::-webkit-scrollbar-track {
+    background: #fdf1ff;
+}
+
+.goofy-mode ::-webkit-scrollbar-thumb {
+    background: linear-gradient(#ff6ec7, #54a0ff);
+    border-radius: 10px;
+    border: 2px solid #2b0a3d;
+}

@@ -1,0 +1,279 @@
+/*
+ * Hidden "Excel" easter egg theme — modern Excel 365 / Fluent look.
+ * Toggled by typing "excel" in the global search bar (see SearchBean#completeText).
+ * Scoped entirely under .excel-mode so it has zero effect otherwise.
+ */
+
+.excel-mode {
+    background: #f5f5f5 !important;
+    font-family: "Segoe UI Variable", "Segoe UI", "Calibri", -apple-system, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+.excel-mode * {
+    font-family: "Segoe UI Variable", "Segoe UI", "Calibri", -apple-system, "Helvetica Neue", Arial, sans-serif !important;
+    text-shadow: none !important;
+}
+
+/* ---- Base text colors, set once per region so nothing inherits an
+   unreadable color from the underlying theme ---- */
+.excel-mode .content,
+.excel-mode .content p,
+.excel-mode .content span,
+.excel-mode .content div,
+.excel-mode .content li,
+.excel-mode .content a,
+.excel-mode .content label,
+.excel-mode .content td,
+.excel-mode .content th,
+.excel-mode .content h1,
+.excel-mode .content h2,
+.excel-mode .content h3,
+.excel-mode .content h4,
+.excel-mode .content h5,
+.excel-mode .content h6 {
+    color: #242424 !important;
+}
+
+.excel-mode .sidebar,
+.excel-mode .sidebar p,
+.excel-mode .sidebar span,
+.excel-mode .sidebar div,
+.excel-mode .sidebar li,
+.excel-mode .sidebar a,
+.excel-mode .sidebar i,
+.excel-mode #siamoisNav,
+.excel-mode #siamoisNav *,
+.excel-mode #sidebarSettings,
+.excel-mode #sidebarSettings * {
+    color: #ffffff !important;
+}
+
+/* App shell -> Excel 365's deep green app bar */
+.excel-mode .sidebar,
+.excel-mode #siamoisNav,
+.excel-mode #sidebarSettings {
+    background: #186a3e !important;
+    border-right: none !important;
+}
+
+.excel-mode .content {
+    background: #f5f5f5 !important;
+}
+
+.excel-mode .nav-link {
+    border-radius: 6px !important;
+}
+
+.excel-mode .nav-link:hover {
+    background: rgba(255, 255, 255, 0.14) !important;
+}
+
+.excel-mode .member-avatar {
+    background: rgba(255, 255, 255, 0.18) !important;
+    color: #fff !important;
+}
+
+/* Panels / cards -> flat white cards, single soft border, no heavy shadow */
+.excel-mode .ui-panel,
+.excel-mode .ui-widget-content,
+.excel-mode .card,
+.excel-mode .siamois-panel {
+    background: #ffffff !important;
+    border: 1px solid #d9d9d9 !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+}
+
+.excel-mode .ui-panel-titlebar,
+.excel-mode .ui-widget-header,
+.excel-mode .ui-dialog-titlebar {
+    background: #ffffff !important;
+    border: none !important;
+    border-bottom: 1px solid #d9d9d9 !important;
+    border-radius: 6px 6px 0 0 !important;
+    color: #146c34 !important;
+    font-weight: 600 !important;
+    padding: 10px 14px !important;
+    box-shadow: none !important;
+}
+
+.excel-mode .ui-dialog {
+    border: 1px solid #d9d9d9 !important;
+    border-radius: 6px !important;
+    background: #ffffff !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Tables -> clean grid, light gray rules, green accent only on the header rule */
+.excel-mode .ui-datatable,
+.excel-mode table.ui-widget-content,
+.excel-mode .ui-datatable-tablewrapper {
+    background: #ffffff !important;
+    border: 1px solid #d9d9d9 !important;
+    border-radius: 6px !important;
+    overflow: hidden;
+}
+
+.excel-mode .ui-datatable-thead > tr > th,
+.excel-mode th.ui-state-default {
+    background: #fafafa !important;
+    border: none !important;
+    border-bottom: 2px solid #107c41 !important;
+    font-weight: 600 !important;
+    text-align: left !important;
+    box-shadow: none !important;
+}
+
+.excel-mode .ui-datatable-tbody > tr > td,
+.excel-mode td.ui-widget-content {
+    background: #ffffff !important;
+    border: none !important;
+    border-bottom: 1px solid #ececec !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+}
+
+.excel-mode .ui-datatable-tbody > tr:nth-child(even) > td {
+    background: #fafafa !important;
+}
+
+.excel-mode .ui-datatable-tbody > tr:hover > td {
+    background: #e6f4ea !important;
+}
+
+.excel-mode .ui-datatable-tbody > tr.ui-state-highlight > td {
+    background: #d7edde !important;
+    box-shadow: inset 2px 0 0 #107c41 !important;
+}
+
+.excel-mode .ui-paginator {
+    background: #ffffff !important;
+    border: 1px solid #d9d9d9 !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+}
+
+/* Forms -> flat fields with a clear green focus ring, no drop shadows at rest */
+.excel-mode label,
+.excel-mode .p-field label {
+    color: #424242 !important;
+    font-weight: 600 !important;
+}
+
+.excel-mode input.ui-inputfield,
+.excel-mode input.ui-inputtext,
+.excel-mode textarea.ui-inputtextarea,
+.excel-mode .ui-selectonemenu,
+.excel-mode .ui-autocomplete-input,
+.excel-mode .ui-inputgroup {
+    background: #ffffff !important;
+    border: 1px solid #c7c7c7 !important;
+    border-radius: 4px !important;
+    color: #242424 !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+    transition: border-color 0.1s ease, box-shadow 0.1s ease;
+}
+
+.excel-mode input.ui-inputfield:focus,
+.excel-mode input.ui-inputtext:focus,
+.excel-mode textarea.ui-inputtextarea:focus {
+    border-color: #107c41 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(16, 124, 65, 0.3) !important;
+}
+
+/* Buttons -> solid green primary, neutral outline for secondary/flat actions */
+.excel-mode .ui-button,
+.excel-mode button.ui-button,
+.excel-mode .ui-commandlink,
+.excel-mode a.ui-button {
+    background: #107c41 !important;
+    border: 1px solid #107c41 !important;
+    border-radius: 4px !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+}
+
+.excel-mode .ui-button:hover {
+    background: #0c6836 !important;
+    border-color: #0c6836 !important;
+}
+
+.excel-mode .ui-button:active {
+    background: #0a5a2e !important;
+}
+
+.excel-mode .ui-button .ui-icon,
+.excel-mode .ui-button .ui-button-icon-left,
+.excel-mode .ui-button .ui-button-icon-right {
+    color: #ffffff !important;
+}
+
+.excel-mode .ui-button.ui-button-flat,
+.excel-mode .rounded-button {
+    background: #ffffff !important;
+    border: 1px solid #c7c7c7 !important;
+    color: #242424 !important;
+}
+
+.excel-mode .ui-button.ui-button-flat .ui-icon,
+.excel-mode .rounded-button .ui-icon {
+    color: #242424 !important;
+}
+
+.excel-mode .ui-button.ui-button-flat:hover,
+.excel-mode .rounded-button:hover {
+    background: #e6f4ea !important;
+    border-color: #107c41 !important;
+    color: #0a5a2e !important;
+}
+
+/* Search bar -> subtle formula-input pill with a muted "fx" prefix */
+.excel-mode #search-bar {
+    position: relative;
+}
+
+.excel-mode #search-bar::before {
+    content: "fx";
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-style: italic;
+    color: #6b6b6b;
+    font-weight: 700;
+    font-size: 0.75rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.excel-mode .searchInput,
+.excel-mode #search-bar input {
+    background: #ffffff !important;
+    border: 1px solid #c7c7c7 !important;
+    border-radius: 18px !important;
+    padding-left: 30px !important;
+    color: #242424 !important;
+}
+
+/* Thin, understated scrollbars */
+.excel-mode ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.excel-mode ::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.excel-mode ::-webkit-scrollbar-thumb {
+    background: #c7c7c7;
+    border-radius: 8px;
+    border: 2px solid #f5f5f5;
+}
+
+.excel-mode ::-webkit-scrollbar-thumb:hover {
+    background: #a6a6a6;
+}

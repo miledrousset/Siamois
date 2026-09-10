@@ -1,0 +1,291 @@
+/*
+ * Hidden "Noel" easter egg theme — Christmas: falling snow, red/green/gold,
+ * twinkling lights on the sidebar.
+ * Toggled by typing "noel" in the global search bar (see SearchBean#completeText).
+ * Scoped entirely under .noel-mode so it has zero effect otherwise.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&display=swap');
+
+@keyframes noel-twinkle {
+    0%, 100% { opacity: 1; filter: drop-shadow(0 0 3px currentColor); }
+    50% { opacity: 0.35; filter: drop-shadow(0 0 1px currentColor); }
+}
+
+.noel-mode {
+    background: #f6f7f5 !important;
+    font-family: "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif !important;
+    color: #1c2b20 !important;
+}
+
+.noel-mode * {
+    font-family: "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif !important;
+    text-shadow: none !important;
+}
+
+/* App shell -> deep pine green sidebar strung with twinkling lights */
+.noel-mode .sidebar,
+.noel-mode #siamoisNav,
+.noel-mode #sidebarSettings {
+    background: #0c3d24 !important;
+    border-right: 3px solid #b3122a !important;
+    position: relative;
+}
+
+.noel-mode .sidebar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background-image:
+        radial-gradient(circle, #ffd23f 2.5px, transparent 3px),
+        radial-gradient(circle, #ff5757 2.5px, transparent 3px),
+        radial-gradient(circle, #4ecdc4 2.5px, transparent 3px),
+        radial-gradient(circle, #ffd23f 2.5px, transparent 3px);
+    background-repeat: repeat-x;
+    background-size: 32px 10px;
+    background-position: 0 3px, 8px 3px, 16px 3px, 24px 3px;
+    animation: noel-twinkle 1.6s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.noel-mode .content {
+    background: #f6f7f5 !important;
+}
+
+.noel-mode .sidebar,
+.noel-mode .sidebar p,
+.noel-mode .sidebar span,
+.noel-mode .sidebar div,
+.noel-mode .sidebar li,
+.noel-mode .sidebar a,
+.noel-mode .sidebar i,
+.noel-mode #siamoisNav *,
+.noel-mode #sidebarSettings * {
+    color: #ffffff !important;
+}
+
+.noel-mode .nav-link:hover {
+    background: rgba(255, 255, 255, 0.14) !important;
+}
+
+.noel-mode .content,
+.noel-mode .content p,
+.noel-mode .content span,
+.noel-mode .content div,
+.noel-mode .content li,
+.noel-mode .content a,
+.noel-mode .content label,
+.noel-mode .content td,
+.noel-mode .content th {
+    color: #1c2b20 !important;
+}
+
+.noel-mode .content h1,
+.noel-mode .content h2,
+.noel-mode .content h3,
+.noel-mode .content h4,
+.noel-mode .content h5,
+.noel-mode .content h6 {
+    font-family: "Mountains of Christmas", "Segoe UI", cursive !important;
+    color: #b3122a !important;
+    font-weight: 700 !important;
+}
+
+/* Panels / cards -> white "gift box" cards with a candy-cane top edge */
+.noel-mode .ui-panel,
+.noel-mode .ui-widget-content,
+.noel-mode .card,
+.noel-mode .siamois-panel {
+    background: #ffffff !important;
+    border: 1px solid #dce3de !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(12, 61, 36, 0.1) !important;
+}
+
+.noel-mode .ui-panel-titlebar,
+.noel-mode .ui-widget-header,
+.noel-mode .ui-dialog-titlebar {
+    background: repeating-linear-gradient(
+        -45deg,
+        #b3122a 0, #b3122a 10px,
+        #ffffff 10px, #ffffff 20px
+    ) !important;
+    border: none !important;
+    border-radius: 7px 7px 0 0 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    padding: 10px 14px !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
+    box-shadow: none !important;
+}
+
+.noel-mode .ui-dialog {
+    border: 2px solid #0c3d24 !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    box-shadow: 0 10px 30px rgba(12, 61, 36, 0.25) !important;
+}
+
+/* Tables -> clean grid, gold header rule, festive row hover */
+.noel-mode .ui-datatable,
+.noel-mode table.ui-widget-content,
+.noel-mode .ui-datatable-tablewrapper {
+    background: #ffffff !important;
+    border: 1px solid #dce3de !important;
+    border-radius: 8px !important;
+    overflow: hidden;
+}
+
+.noel-mode .ui-datatable-thead > tr > th,
+.noel-mode th.ui-state-default {
+    background: #0c3d24 !important;
+    border: none !important;
+    border-bottom: 3px solid #d4af37 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    text-align: left !important;
+    box-shadow: none !important;
+}
+
+.noel-mode .ui-datatable-tbody > tr > td,
+.noel-mode td.ui-widget-content {
+    background: #ffffff !important;
+    border: none !important;
+    border-bottom: 1px solid #ececec !important;
+    color: #1c2b20 !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+}
+
+.noel-mode .ui-datatable-tbody > tr:nth-child(even) > td {
+    background: #f5faf6 !important;
+}
+
+.noel-mode .ui-datatable-tbody > tr:hover > td {
+    background: #fdeaea !important;
+}
+
+.noel-mode .ui-datatable-tbody > tr.ui-state-highlight > td {
+    background: #fbdada !important;
+    color: #1c2b20 !important;
+    box-shadow: inset 3px 0 0 #b3122a !important;
+}
+
+.noel-mode .ui-paginator {
+    background: #ffffff !important;
+    border: 1px solid #dce3de !important;
+    border-radius: 8px !important;
+}
+
+/* Forms -> clean fields, gold focus ring */
+.noel-mode label,
+.noel-mode .p-field label {
+    color: #0c3d24 !important;
+    font-weight: 600 !important;
+}
+
+.noel-mode input.ui-inputfield,
+.noel-mode input.ui-inputtext,
+.noel-mode textarea.ui-inputtextarea,
+.noel-mode .ui-selectonemenu,
+.noel-mode .ui-autocomplete-input,
+.noel-mode .ui-inputgroup {
+    background: #ffffff !important;
+    border: 1px solid #c9d3cc !important;
+    border-radius: 6px !important;
+    color: #1c2b20 !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+}
+
+.noel-mode input.ui-inputfield:focus,
+.noel-mode input.ui-inputtext:focus,
+.noel-mode textarea.ui-inputtextarea:focus {
+    border-color: #d4af37 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.35) !important;
+}
+
+/* Buttons -> solid holiday-green primary, candy-cane hover trim */
+.noel-mode .ui-button,
+.noel-mode button.ui-button,
+.noel-mode .ui-commandlink,
+.noel-mode a.ui-button {
+    background: #0c3d24 !important;
+    border: 1px solid #0c3d24 !important;
+    border-radius: 20px !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+}
+
+.noel-mode .ui-button:hover {
+    background: #b3122a !important;
+    border-color: #b3122a !important;
+}
+
+.noel-mode .ui-button:active {
+    background: #8a0e20 !important;
+}
+
+.noel-mode .ui-button.ui-button-flat,
+.noel-mode .rounded-button {
+    background: #ffffff !important;
+    border: 1px solid #c9d3cc !important;
+    color: #1c2b20 !important;
+}
+
+.noel-mode .ui-button.ui-button-flat:hover,
+.noel-mode .rounded-button:hover {
+    background: #f5faf6 !important;
+    border-color: #0c3d24 !important;
+    color: #0c3d24 !important;
+}
+
+/* Search bar -> a little festive tree marker */
+.noel-mode #search-bar {
+    position: relative;
+}
+
+.noel-mode #search-bar::before {
+    content: "🎄";
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.noel-mode .searchInput,
+.noel-mode #search-bar input {
+    background: #ffffff !important;
+    border: 1px solid #c9d3cc !important;
+    border-radius: 18px !important;
+    padding-left: 32px !important;
+    color: #1c2b20 !important;
+}
+
+/* Snow-white scrollbars */
+.noel-mode ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.noel-mode ::-webkit-scrollbar-track {
+    background: #f6f7f5;
+}
+
+.noel-mode ::-webkit-scrollbar-thumb {
+    background: #0c3d24;
+    border-radius: 8px;
+    border: 2px solid #f6f7f5;
+}
+
+.noel-mode ::-webkit-scrollbar-thumb:hover {
+    background: #b3122a;
+}

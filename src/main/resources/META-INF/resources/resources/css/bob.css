@@ -1,0 +1,263 @@
+/*
+ * Hidden "Bob l'éponge" easter egg theme — ocean blue, sponge yellow, rising
+ * bubbles.
+ * Toggled by typing "bobleponge" in the global search bar (see SearchBean#completeText).
+ * Scoped entirely under .bob-mode so it has zero effect otherwise.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap');
+
+.bob-mode {
+    background: #bfe9ff !important;
+    font-family: "Baloo 2", "Comic Sans MS", "Comic Sans", cursive, sans-serif !important;
+    color: #3a2410 !important;
+}
+
+.bob-mode * {
+    font-family: "Baloo 2", "Comic Sans MS", "Comic Sans", cursive, sans-serif !important;
+    text-shadow: none !important;
+}
+
+/* App shell -> deep ocean gradient sidebar */
+.bob-mode .sidebar,
+.bob-mode #siamoisNav,
+.bob-mode #sidebarSettings {
+    background: linear-gradient(180deg, #039be5 0%, #01579b 100%) !important;
+    border-right: 4px solid #7b4b27 !important;
+}
+
+.bob-mode .content {
+    background: #bfe9ff !important;
+}
+
+.bob-mode .sidebar,
+.bob-mode .sidebar p,
+.bob-mode .sidebar span,
+.bob-mode .sidebar div,
+.bob-mode .sidebar li,
+.bob-mode .sidebar a,
+.bob-mode .sidebar i,
+.bob-mode #siamoisNav *,
+.bob-mode #sidebarSettings * {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+.bob-mode .nav-link:hover {
+    background: rgba(255, 255, 255, 0.18) !important;
+}
+
+.bob-mode .content,
+.bob-mode .content p,
+.bob-mode .content span,
+.bob-mode .content div,
+.bob-mode .content li,
+.bob-mode .content a,
+.bob-mode .content label,
+.bob-mode .content td,
+.bob-mode .content th {
+    color: #3a2410 !important;
+}
+
+.bob-mode .content h1,
+.bob-mode .content h2,
+.bob-mode .content h3,
+.bob-mode .content h4,
+.bob-mode .content h5,
+.bob-mode .content h6 {
+    color: #01579b !important;
+    font-weight: 800 !important;
+    -webkit-text-stroke: 0.4px #3a2410;
+}
+
+/* Panels / cards -> square sponge blocks with a pore texture and brown outline */
+.bob-mode .ui-panel,
+.bob-mode .ui-widget-content,
+.bob-mode .card,
+.bob-mode .siamois-panel {
+    background-color: #ffe066 !important;
+    background-image: radial-gradient(#f2c200 1.6px, transparent 1.6px) !important;
+    background-size: 14px 14px !important;
+    border: 3px solid #7b4b27 !important;
+    border-radius: 10px !important;
+    color: #3a2410 !important;
+    box-shadow: 3px 3px 0 #01579b !important;
+}
+
+.bob-mode .ui-panel-titlebar,
+.bob-mode .ui-widget-header,
+.bob-mode .ui-dialog-titlebar {
+    background: #7b4b27 !important;
+    border: none !important;
+    border-radius: 7px 7px 0 0 !important;
+    color: #ffe066 !important;
+    font-weight: 800 !important;
+    padding: 10px 14px !important;
+    box-shadow: none !important;
+}
+
+.bob-mode .ui-dialog {
+    border: 3px solid #7b4b27 !important;
+    border-radius: 10px !important;
+    background: #ffe066 !important;
+    box-shadow: 5px 5px 0 #01579b !important;
+}
+
+/* Tables -> yellow grid, brown rules */
+.bob-mode .ui-datatable,
+.bob-mode table.ui-widget-content,
+.bob-mode .ui-datatable-tablewrapper {
+    background: #fff8dc !important;
+    border: 3px solid #7b4b27 !important;
+    border-radius: 10px !important;
+    overflow: hidden;
+}
+
+.bob-mode .ui-datatable-thead > tr > th,
+.bob-mode th.ui-state-default {
+    background: #ffe066 !important;
+    border: none !important;
+    border-bottom: 3px solid #7b4b27 !important;
+    color: #3a2410 !important;
+    font-weight: 800 !important;
+    text-align: left !important;
+    box-shadow: none !important;
+}
+
+.bob-mode .ui-datatable-tbody > tr > td,
+.bob-mode td.ui-widget-content {
+    background: #fff8dc !important;
+    border: none !important;
+    border-bottom: 1px solid #f0e0a8 !important;
+    color: #3a2410 !important;
+    font-size: 0.9rem !important;
+    box-shadow: none !important;
+}
+
+.bob-mode .ui-datatable-tbody > tr:nth-child(even) > td {
+    background: #fff1c2 !important;
+}
+
+.bob-mode .ui-datatable-tbody > tr:hover > td {
+    background: #cdeeff !important;
+}
+
+.bob-mode .ui-datatable-tbody > tr.ui-state-highlight > td {
+    background: #b3e5ff !important;
+    color: #3a2410 !important;
+    box-shadow: inset 3px 0 0 #01579b !important;
+}
+
+.bob-mode .ui-paginator {
+    background: #fff8dc !important;
+    border: 3px solid #7b4b27 !important;
+    border-radius: 10px !important;
+}
+
+/* Forms -> sponge-yellow fields with an ocean-blue focus ring */
+.bob-mode label,
+.bob-mode .p-field label {
+    color: #01579b !important;
+    font-weight: 800 !important;
+}
+
+.bob-mode input.ui-inputfield,
+.bob-mode input.ui-inputtext,
+.bob-mode textarea.ui-inputtextarea,
+.bob-mode .ui-selectonemenu,
+.bob-mode .ui-autocomplete-input,
+.bob-mode .ui-inputgroup {
+    background: #ffffff !important;
+    border: 2px solid #7b4b27 !important;
+    border-radius: 8px !important;
+    color: #3a2410 !important;
+    font-size: 0.9rem !important;
+    box-shadow: none !important;
+}
+
+.bob-mode input.ui-inputfield:focus,
+.bob-mode input.ui-inputtext:focus,
+.bob-mode textarea.ui-inputtextarea:focus {
+    border-color: #01579b !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(1, 87, 155, 0.3) !important;
+}
+
+/* Buttons -> Krabby-Patty red, chunky and bold */
+.bob-mode .ui-button,
+.bob-mode button.ui-button,
+.bob-mode .ui-commandlink,
+.bob-mode a.ui-button {
+    background: #e53935 !important;
+    border: 2px solid #7b4b27 !important;
+    border-radius: 999px !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    box-shadow: 2px 2px 0 #7b4b27 !important;
+}
+
+.bob-mode .ui-button:hover {
+    background: #c62828 !important;
+}
+
+.bob-mode .ui-button:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 #7b4b27 !important;
+}
+
+.bob-mode .ui-button.ui-button-flat,
+.bob-mode .rounded-button {
+    background: #ffffff !important;
+    border: 2px solid #7b4b27 !important;
+    color: #3a2410 !important;
+}
+
+.bob-mode .ui-button.ui-button-flat:hover,
+.bob-mode .rounded-button:hover {
+    background: #cdeeff !important;
+}
+
+/* Search bar -> a little sponge marker */
+.bob-mode #search-bar {
+    position: relative;
+}
+
+.bob-mode #search-bar::before {
+    content: "🧽";
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.bob-mode .searchInput,
+.bob-mode #search-bar input {
+    background: #ffffff !important;
+    border: 2px solid #7b4b27 !important;
+    border-radius: 999px !important;
+    padding-left: 32px !important;
+    color: #3a2410 !important;
+}
+
+/* Ocean scrollbars */
+.bob-mode ::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+}
+
+.bob-mode ::-webkit-scrollbar-track {
+    background: #bfe9ff;
+}
+
+.bob-mode ::-webkit-scrollbar-thumb {
+    background: #ffe066;
+    border-radius: 8px;
+    border: 2px solid #7b4b27;
+}
+
+.bob-mode ::-webkit-scrollbar-thumb:hover {
+    background: #ffd23f;
+}
