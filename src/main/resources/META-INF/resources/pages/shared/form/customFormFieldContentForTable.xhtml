@@ -49,8 +49,18 @@
             <ui:param name="spatialUnitOptions" value="#{bean.getSpatialUnitOptions()}" />
             <ui:param name="updateTargetsOnBlur" value="#{updateTargetsOnBlur}"/>
             <ui:param name="formCtx" value="#{bean}"/>
-            <ui:param name="mode" value="#{(col.readOnly or not canUserEditRow) ? 'output' : flowBean.getInPlaceFieldMode()}"/>
+            <!--
+                Table cells (prefix eq 'table') no longer follow the panel-wide read/write toggle:
+                a cell renders its full edit widget only while it is the one active cell
+                (tableModel.isActiveCell), everything else stays a lightweight display
+                ('lightTable', handled in fieldCore.xhtml) until clicked. Non-table usage keeps
+                the previous panel-wide behavior.
+            -->
+            <ui:param name="mode" value="#{(col.readOnly or not canUserEditRow) ? 'output' : (prefix eq 'table' ? (tableModel.isActiveCell(rowItem, col) ? 'input' : 'lightTable') : flowBean.getInPlaceFieldMode())}"/>
             <ui:param name="compact" value="true"/>
+            <ui:param name="tableModel" value="#{tableModel}"/>
+            <ui:param name="rowItem" value="#{rowItem}"/>
+            <ui:param name="cellUpdateTarget" value="#{cellUpdateTarget}"/>
 
         </ui:include>
 

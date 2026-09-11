@@ -30,7 +30,7 @@
         output panel's own "rendered" is data-dependent) risks matching nothing at all when
         that inner condition happens to be false.
     -->
-    <p:outputPanel layout="block" styleClass="siamois-row-ajax-target">
+    <p:outputPanel id="fieldCell_#{colIndex}" layout="block" styleClass="siamois-row-ajax-target">
 
     <ui:fragment rendered="#{column.type eq 'FORM_FIELD'}" >
         <ui:include src="/pages/shared/form/customFormFieldContentForTable.xhtml">
@@ -51,8 +51,21 @@
             <ui:param name="updateTargetsOnBlur" value="#{updateTableString}" />
             <!--@elvariable id="canUserEditRow" type="java.lang.Boolean"-->
             <ui:param name="allowEdit" value="#{canUserEditRow}"/>
+            <!-- Click-to-activate: cell starts as plain text, and only becomes its full
+                 PrimeFaces edit widget once the user clicks it (see fieldCore.xhtml). -->
+            <ui:param name="tableModel" value="#{tableModel}"/>
+            <ui:param name="rowItem" value="#{item}"/>
+            <ui:param name="cellUpdateTarget" value="fieldCell_#{colIndex}"/>
         </ui:include>
     </ui:fragment>
+
+    <style>
+        /* Lightweight, non-active table cells (see fieldCore.xhtml): signal they're clickable
+           without looking like a hyperlink, and show where the click will land. */
+        .sia-cell-activate { cursor: pointer; }
+        .sia-cell-activate:hover { background-color: var(--siamois-green-light-100, #eef6ee); }
+        .sia-cell-text.ui-link { color: inherit; text-decoration: none; display: block; width: 100%; }
+    </style>
 
     <!-- RELATION Column -->
     <ui:fragment rendered="#{column.type eq 'RELATION'}">

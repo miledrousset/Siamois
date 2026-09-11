@@ -1,6 +1,8 @@
 <!-- /pages/shared/field/fieldCore.xhtml -->
 <ui:fragment xmlns="http://www.w3.org/1999/xhtml"
              xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+             xmlns:p="http://primefaces.org/ui"
+             xmlns:h="http://java.sun.com/jsf/html"
 
              xmlns:siaInplace="http://xmlns.jcp.org/jsf/composite/pages/shared/inplace"
              xmlns:c="http://java.sun.com/jsp/jstl/core">
@@ -31,6 +33,31 @@
     <!-- TEXT -->
     <c:if test="#{(col['class'].simpleName eq 'FormFieldColumn') or col['class'].simpleName eq 'CustomColUiDto'}">
 
+        <!--
+            'lightTable' (table cells only, see customFormFieldContentForTable.xhtml): the cell
+            isn't the active one, so it must not instantiate a real edit widget. Text fields get a
+            genuinely plain-text rendering here; every other field type keeps its existing
+            'output' display (effectiveMode below), wrapped so a click still switches it to
+            'input'. Either way, clicking activates tableModel.activateCell and re-renders just
+            this cell (cellUpdateTarget) — never the whole row or table.
+        -->
+        <ui:param name="effectiveMode" value="#{mode eq 'lightTable' ? 'output' : mode}"/>
+        <ui:param name="isLightTableCell" value="#{mode eq 'lightTable'}"/>
+
+        <c:if test="#{isLightTableCell and col.field['class'].simpleName eq 'CustomFieldText'}">
+            <p:commandLink styleClass="sia-cell-activate sia-cell-text" ajax="true" process="@this"
+                           action="#{tableModel.activateCell(rowItem, col)}"
+                           update="#{cellUpdateTarget}">
+                <h:outputText value="#{answer.value}"/>
+            </p:commandLink>
+        </c:if>
+
+        <p:outputPanel rendered="#{not (isLightTableCell and col.field['class'].simpleName eq 'CustomFieldText')}"
+                       styleClass="#{isLightTableCell ? 'sia-cell-activate' : ''}">
+            <p:ajax event="click" process="@this" disabled="#{not isLightTableCell}"
+                    listener="#{tableModel.activateCell(rowItem, col)}"
+                    update="#{cellUpdateTarget}"/>
+
         <c:if test="#{col.field['class'].simpleName eq 'CustomFieldText'}">
             <siaInplace:text
                     id="text"
@@ -39,7 +66,7 @@
                     label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
                     hasBeenModified="#{hasBeenModified}"
                     answer="#{answer}"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     updateTargetsOnBlur="#{panelHeaderUpdateId}"
                     panelId="#{panelId}"
                     onModified="#{formCtx.onFieldAnswerModifiedListener}"
@@ -60,7 +87,7 @@
                     panelId="#{panelId}"
                     onModified="#{formCtx.onFieldAnswerModifiedListener}"
                     answer="#{answer}"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     updateTargetsOnBlur="#{panelHeaderUpdateId}"
             />
         </c:if>
@@ -77,7 +104,7 @@
                     panelId="#{panelId}"
                     onModified="#{formCtx.onFieldAnswerModifiedListener}"
                     answer="#{answer}"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     updateTargetsOnBlur="#{panelHeaderUpdateId}"
             />
         </c:if>
@@ -92,7 +119,7 @@
                     field="#{col.field}"
                     hasBeenModified="#{hasBeenModified}"
                     answer="#{answer}"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     updateTargetsOnBlur="#{panelHeaderUpdateId}"
                     onModified="#{formCtx.onFieldAnswerModifiedListener}"
                     panelStyleClass="#{panelStyleClass}"
@@ -113,7 +140,7 @@
                     panelId="#{panelId}"
                     required="#{col.required}"
                     label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     updateTargetsOnBlur="#{conceptFieldsUpdateTargetsOnBlur} #{updateTargetsOnBlur}"
                     answer="#{answer}"
                     panelStyleClass="#{panelStyleClass}"
@@ -130,7 +157,7 @@
                     id="action"
                     hasBeenModified="#{hasBeenModified}"
                     field="#{col.field}"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     required="#{col.required}"
                     label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
                     updateTargetsOnBlur="#{updateTargetsOnBlur}"
@@ -146,7 +173,7 @@
                     hasBeenModified="#{hasBeenModified}"
                     field="#{col.field}"
                     formCtx="#{formCtx}"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     panelId="#{panelId}"
                     onModified="#{formCtx.onFieldAnswerModifiedListener}"
                     updateTargetsOnBlur="#{panelHeaderUpdateId}"
@@ -165,7 +192,7 @@
                     rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOnePerson'}"
                     hasBeenModified="#{hasBeenModified}"
                     field="#{col.field}"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     panelStyleClass="#{panelStyleClass}"
                     required="#{col.required}"
                     panelId="#{panelId}"
@@ -187,7 +214,7 @@
                     multiple="true"
                     required="#{col.required}"
                     label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     onModified="#{formCtx.onFieldAnswerModifiedListener}"
                     panelStyleClass="#{panelStyleClass}"
                     updateTargetsOnBlur="#{updateTargetsOnBlur}"
@@ -204,7 +231,7 @@
                     field="#{col.field}"
                     formCtx="#{formCtx}"
                     multiple="true"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     panelId="#{panelId}"
                     onModified="#{formCtx.onFieldAnswerModifiedListener}"
                     updateTargetsOnBlur="#{panelHeaderUpdateId}"
@@ -223,7 +250,7 @@
                     field="#{col.field}"
                     formCtx="#{formCtx}"
                     multiple="true"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     panelId="#{panelId}"
                     onModified="#{formCtx.onFieldAnswerModifiedListener}"
                     updateTargetsOnBlur="#{panelHeaderUpdateId}"
@@ -243,7 +270,7 @@
                     field="#{col.field}"
                     formCtx="#{formCtx}"
                     multiple="true"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     panelId="#{panelId}"
                     compact="#{compact}"
                     onModified="#{formCtx.onFieldAnswerModifiedListener}"
@@ -265,7 +292,7 @@
                     field="#{col.field}"
                     formCtx="#{formCtx}"
                     multiple="true"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     panelId="#{panelId}"
                     onModified="#{formCtx.onFieldAnswerModifiedListener}"
                     updateTargetsOnBlur="#{panelHeaderUpdateId}"
@@ -286,7 +313,7 @@
                     field="#{col.field}"
                     formCtx="#{formCtx}"
                     multiple="true"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     compact="#{compact}"
                     panelId="#{panelId}"
                     onModified="#{formCtx.onFieldAnswerModifiedListener}"
@@ -307,7 +334,7 @@
                     field="#{col.field}"
                     formCtx="#{formCtx}"
                     multiple="false"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     compact="#{compact}"
                     panelId="#{panelId}"
                     onModified="#{formCtx.onFieldAnswerModifiedListener}"
@@ -331,7 +358,7 @@
                     label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
                     hasBeenModified="#{hasBeenModified}"
                     answer="#{answer}"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     updateTargetsOnBlur="#{updateTargetsOnBlur}"
             />
         </c:if>
@@ -343,7 +370,7 @@
                     rendered="#{col.field['class'].simpleName eq 'CustomFieldSelectOneAddress'}"
                     hasBeenModified="#{hasBeenModified}"
                     field="#{col.field}"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     onModified="#{formCtx.onFieldAnswerModifiedListener}"
                     updateTargetsOnBlur="#{updateTargetsOnBlur}"
                     required="#{col.required}"
@@ -358,7 +385,7 @@
                     rendered="#{col.field['class'].simpleName eq 'CustomFieldMeasurement'}"
                     hasBeenModified="#{hasBeenModified}"
                     field="#{col.field}"
-                    mode="#{mode}"
+                    mode="#{effectiveMode}"
                     panelId="#{panelId}"
                     label="#{spatialUnitFieldBean.resolveCustomFieldLabel(col.field)}"
                     onModified="#{formCtx.onFieldAnswerModifiedListener}"
@@ -367,6 +394,8 @@
                     answer="#{answer}"
             />
         </c:if>
+
+        </p:outputPanel>
 
     </c:if>
 
