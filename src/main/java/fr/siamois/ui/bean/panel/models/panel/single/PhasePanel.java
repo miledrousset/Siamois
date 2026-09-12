@@ -83,7 +83,7 @@ public class PhasePanel extends AbstractSingleEntityPanel<PhaseDTO> implements S
     }
 
     @Override
-    public boolean canUserEditUnit() {
+    protected boolean computeCanUserEditUnit() {
         return unit != null && profilePermissionService.hasPhaseWritePermission(sessionSettingsBean.getUserInfo(), unit);
     }
 

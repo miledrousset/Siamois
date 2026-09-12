@@ -139,7 +139,7 @@ public class SpatialUnitPanel extends AbstractSingleMultiHierarchicalEntityPanel
     }
 
     @Override
-    public boolean canUserEditUnit() {
+    protected boolean computeCanUserEditUnit() {
         return unit != null && profilePermissionService.hasOrganizationPermission(
                 sessionSettingsBean.getUserInfo(), PermissionConstants.ORGANIZATION_MANAGE_PLACES);
     }

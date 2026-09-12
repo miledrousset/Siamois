@@ -96,7 +96,7 @@ public class SpecimenPanel extends AbstractSingleEntityPanel<SpecimenDTO>  imple
     }
 
     @Override
-    public boolean canUserEditUnit() {
+    protected boolean computeCanUserEditUnit() {
         return unit != null && profilePermissionService.hasSpecimenWritePermission(sessionSettingsBean.getUserInfo(), unit);
     }
 

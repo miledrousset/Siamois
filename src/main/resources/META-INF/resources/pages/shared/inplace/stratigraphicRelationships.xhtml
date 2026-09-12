@@ -216,19 +216,25 @@ margin-top: 1em;
 
 
                                     <!-- Title -->
+                                    <!-- p:commandLink et non h:commandLink : ces liens rechargeaient la page entière.
+                                         addPanelToOverview pousse lui-même ses cibles d'update et son script. -->
                                     <h3 id="relationTitle" class="relation-title relation-edit-row">
-                                        <h:commandLink
+                                        <p:commandLink
+                                                process="@this"
+                                                update="@this"
                                                 action="#{flowBean.addRecordingUnitToOverview(cc.attrs.answer.selectedRel.unit1.id, cc.attrs.panelModel, 3, false)}"
                                         >
                                             #{cc.attrs.answer.selectedRel.unit1.fullIdentifier}
-                                        </h:commandLink>
+                                        </p:commandLink>
 
                                         #{labelBean.findLabelOf(cc.attrs.answer.selectedRel.concept)}
-                                        <h:commandLink
+                                        <p:commandLink
+                                                process="@this"
+                                                update="@this"
                                                 action="#{flowBean.addRecordingUnitToOverview(cc.attrs.answer.selectedRel.unit2.id, cc.attrs.panelModel, 3, false)}"
                                         >
                                             #{cc.attrs.answer.selectedRel.unit2.fullIdentifier}
-                                        </h:commandLink>
+                                        </p:commandLink>
                                     </h3>
 
 

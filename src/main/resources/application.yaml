@@ -4,6 +4,11 @@
 server:
   port: ${SIAMOIS_PORT:8099}
   forward-headers-strategy: native
+  # application/xml couvre les réponses partielles de Faces : sans ce type, l'essentiel du gain est perdu.
+  compression:
+    enabled: true
+    mime-types: text/html,text/plain,text/css,text/javascript,application/javascript,application/xml,text/xml,application/json,image/svg+xml,font/ttf
+    min-response-size: 1024
   servlet:
     context-path: ${CONTEXT_PATH:/siamois}
     session:
@@ -40,8 +45,10 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     hikari:
-      maximum-pool-size: 1000
-      minimum-idle: 1
+      # Au-delà du max_connections de PostgreSQL (100 par défaut), les connexions supplémentaires
+      # ne peuvent pas s'ouvrir : un pool dimensionné large ne fait que déplacer l'attente.
+      maximum-pool-size: 25
+      minimum-idle: 5
       idle-timeout: 30000
       connection-test-query: SELECT 1
       data-source-properties:
@@ -53,6 +60,8 @@ spring:
     properties:
       hibernate:
         show_sql: false
+        # Regroupe le chargement des associations paresseuses et évite le N+1 sur les listes.
+        default_batch_fetch_size: 32
         jdbc:
           batch_size: 50
         order_inserts: true

@@ -33,7 +33,7 @@ spring:
     password: siamois
     username: siamois
     hikari:
-      maximum-pool-size: 1000
+      maximum-pool-size: 25
       minimum-idle: 1
       idle-timeout: 30000
       connection-test-query: SELECT 1

@@ -79,6 +79,16 @@ public abstract class CustomField implements Serializable {
     }
 
 
+    /**
+     * Discriminant du type de champ, destiné à l'aiguillage des vues.
+     * <p>Les Facelets testaient {@code field['class'].simpleName}, ce qui coûtait trois résolutions
+     * de propriété EL par test et jusqu'à dix-huit tests par champ rendu. Passer par une propriété
+     * ramène l'aiguillage à une seule lecture, réutilisée par toutes les branches.</p>
+     */
+    public String getKind() {
+        return getClass().getSimpleName();
+    }
+
     public String getIcon() {
         return "bi bi-question";
     }

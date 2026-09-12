@@ -66,7 +66,9 @@
 
                         <f:attribute name="field" value="#{cc.attrs.field}" />
 
-                        <p:ajax event="keyup" delay="1000"
+                        <!-- change : un enregistrement quand l'utilisateur quitte un champ qu'il a modifié,
+                             au lieu d'un aller-retour par seconde de frappe. -->
+                        <p:ajax event="change"
                                 update="#{cc.attrs.updateTargetsOnBlur}"
                                 process="@this"
                                 listener="#{cc.attrs.onModified}"/>
@@ -83,7 +85,7 @@
 
                         <f:attribute name="field" value="#{cc.attrs.field}" />
 
-                        <p:ajax event="keyup" delay="1000"
+                        <p:ajax event="change"
                                 update="#{cc.attrs.updateTargetsOnBlur}"
                                 process="@this"
                                 onstart="$(PrimeFaces.escapeClientId('#{cc.clientId}:input')).removeClass('sia-modified-field'); showSpinner('#{cc.attrs.panelId}')"

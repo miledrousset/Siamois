@@ -33,6 +33,7 @@ import fr.siamois.ui.form.dto.FormUiDto;
 import fr.siamois.ui.form.fieldsource.PanelFieldSource;
 import fr.siamois.ui.viewmodel.CustomFormResponseViewModel;
 import fr.siamois.utils.DateUtils;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.ActionEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,8 +47,10 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -66,6 +69,9 @@ public abstract class AbstractSingleEntity<T extends AbstractEntityDTO>
     public static final String FIELD = "field";
     public static final String COLUMN_CLASS_NAME = "ui-g-12 ui-md-6 ui-lg-3";
     public static final String LONG_COLUMN_CLASS_NAME = "ui-g-12 ui-md-12 ui-lg-12";
+
+    private static final String EDIT_PERMISSION_CACHE_KEY =
+            AbstractSingleEntity.class.getName() + ".canUserEditUnit";
 
     // -------------------- Dependencies --------------------
 
@@ -250,8 +256,33 @@ public abstract class AbstractSingleEntity<T extends AbstractEntityDTO>
      * Checks if the current user has the permission to edit this unit's fields.
      * Used to force the form fields into read-only mode when the permission is missing,
      * so a denied save is never even attempted.
+     *
+     * <p>The answer is memoized for the duration of the current request: the views evaluate this
+     * once per rendered form field, and every evaluation used to reach the database
+     * ({@code ProfilePermissionService} has no cache of its own). The {@link FacesContext}
+     * attribute map is cleared when the context is released, so the permission is still
+     * recomputed on every request — only the redundant calls within one lifecycle are removed.</p>
      */
-    public abstract boolean canUserEditUnit();
+    public final boolean canUserEditUnit() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context == null) {
+            return computeCanUserEditUnit();
+        }
+        return perRequestEditPermissions(context).computeIfAbsent(this, AbstractSingleEntity::computeCanUserEditUnit);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<AbstractSingleEntity<?>, Boolean> perRequestEditPermissions(FacesContext context) {
+        // IdentityHashMap : les panels portent un equals/hashCode Lombok calculé sur un état mutable.
+        return (Map<AbstractSingleEntity<?>, Boolean>) context.getAttributes()
+                .computeIfAbsent(EDIT_PERMISSION_CACHE_KEY, key -> new IdentityHashMap<>());
+    }
+
+    /**
+     * Resolves the edit permission against the permission service. Called at most once per request
+     * and per panel — see {@link #canUserEditUnit()}.
+     */
+    protected abstract boolean computeCanUserEditUnit();
 
     /**
      * In list panels children may override this to provide options.

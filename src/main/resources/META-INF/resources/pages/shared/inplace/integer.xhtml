@@ -42,7 +42,9 @@
                                required="#{cc.attrs.required}"
                                id="input">
                     <f:attribute name="field" value="#{cc.attrs.field}" />
-                    <p:ajax event="keyup" delay="2000" update="#{cc.attrs.updateTargetsOnBlur}"
+                    <!-- change : un enregistrement quand l'utilisateur quitte un champ qu'il a modifié,
+                         au lieu d'un aller-retour toutes les deux secondes de frappe. -->
+                    <p:ajax event="change" update="#{cc.attrs.updateTargetsOnBlur}"
                             process="@this"
                             onstart="$(PrimeFaces.escapeClientId('#{cc.clientId}:input')).removeClass('sia-modified-field'); showSpinner('#{cc.attrs.panelId}')"
                             oncomplete="hideSpinner('#{cc.attrs.panelId}')"

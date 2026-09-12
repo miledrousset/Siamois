@@ -83,7 +83,7 @@ public class ContainerPanel extends AbstractSingleEntityPanel<ContainerDTO> impl
     }
 
     @Override
-    public boolean canUserEditUnit() {
+    protected boolean computeCanUserEditUnit() {
         return unit != null && profilePermissionService.hasContainerWritePermission(sessionSettingsBean.getUserInfo(), unit);
     }
 

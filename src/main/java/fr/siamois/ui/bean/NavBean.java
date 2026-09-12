@@ -34,7 +34,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -68,6 +70,7 @@ public class NavBean implements Serializable {
     private String urlToGoBack; // URL to go back from settings
 
     public static final String COMMON_BOOKMARK_SAVED = "common.bookmark.saved";
+    private static final String BOOKMARK_STATE_CACHE_KEY = NavBean.class.getName() + ".bookmarkStates";
     public static final String FLOW = "FLOW";
     public static final String FOCUS = "FOCUS";
 
@@ -151,10 +154,12 @@ public class NavBean implements Serializable {
 
     public void addToBookmarkedPanels(AbstractPanel panel) {
         bookmarkService.save(sessionSettingsBean.getUserInfo(), panel);
+        invalidateBookmarkCache();
     }
 
     public void removeFromBookmarkedPanels(AbstractPanel panel) {
         bookmarkService.delete(sessionSettingsBean.getUserInfo(), panel.ressourceUri());
+        invalidateBookmarkCache();
     }
 
     public List<Bookmark> getBookmarkedPanels() {
@@ -189,6 +194,7 @@ public class NavBean implements Serializable {
                 ressourceBaseUri + id,
                 titleCodeOrTitle
         );
+        invalidateBookmarkCache();
         MessageUtils.displayInfoMessage(langBean, COMMON_BOOKMARK_SAVED);
     }
 
@@ -213,6 +219,7 @@ public class NavBean implements Serializable {
                 SPECIMEN_BASE_URI + specimen.getId(),
                 specimen.getFullIdentifier()
         );
+        invalidateBookmarkCache();
         MessageUtils.displayInfoMessage(langBean, COMMON_BOOKMARK_SAVED);
     }
 
@@ -223,6 +230,7 @@ public class NavBean implements Serializable {
                 SPATIAL_UNIT_BASE_URI + su.getId(),
                 su.getName()
         );
+        invalidateBookmarkCache();
         MessageUtils.displayInfoMessage(langBean, COMMON_BOOKMARK_SAVED);
     }
 
@@ -231,11 +239,37 @@ public class NavBean implements Serializable {
                 sessionSettingsBean.getUserInfo(),
                 uri
         );
+        invalidateBookmarkCache();
         MessageUtils.displayInfoMessage(langBean, "common.bookmark.unsaved");
     }
 
+    /**
+     * <p>Mémoïsé pour la durée de la requête : flow.xhtml pose la question une fois par panneau ouvert
+     * (jusqu'à dix) et chaque appel descendait jusqu'en base. Les attributs du {@link FacesContext}
+     * sont vidés à la libération du contexte, donc la réponse reste recalculée à chaque requête.</p>
+     * <p>Toute écriture de favori dans le même cycle appelle {@link #invalidateBookmarkCache()}.</p>
+     */
     public Boolean isRessourceBookmarkedByUser(String ressourceUri) {
-        return bookmarkService.isRessourceBookmarkedByUser(sessionSettingsBean.getUserInfo(), ressourceUri);
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context == null) {
+            return bookmarkService.isRessourceBookmarkedByUser(sessionSettingsBean.getUserInfo(), ressourceUri);
+        }
+        return perRequestBookmarkStates(context).computeIfAbsent(ressourceUri,
+                uri -> bookmarkService.isRessourceBookmarkedByUser(sessionSettingsBean.getUserInfo(), uri));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Boolean> perRequestBookmarkStates(FacesContext context) {
+        return (Map<String, Boolean>) context.getAttributes()
+                .computeIfAbsent(BOOKMARK_STATE_CACHE_KEY, key -> new HashMap<String, Boolean>());
+    }
+
+    /** À appeler après toute création ou suppression de favori, pour que le même cycle relise la base. */
+    private void invalidateBookmarkCache() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context != null) {
+            context.getAttributes().remove(BOOKMARK_STATE_CACHE_KEY);
+        }
     }
 
     public void toggleRecordingUnitBookmark(RecordingUnitDTO recordingUnit) {

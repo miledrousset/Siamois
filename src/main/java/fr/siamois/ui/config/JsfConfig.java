@@ -16,18 +16,23 @@ import org.springframework.web.context.ServletContextAware;
 @Configuration
 public class JsfConfig implements ServletContextAware {
 
+    /**
+     * <p>Les paramètres de contexte doivent porter le préfixe {@code jakarta.faces.} : sous Faces 4,
+     * Mojarra ne lit plus les noms {@code javax.faces.} (cf. {@code ProjectStage.PROJECT_STAGE_PARAM_NAME}).</p>
+     * <p>{@code PROJECT_STAGE} et {@code FACELETS_REFRESH_PERIOD} ne sont pas repris ici : JoinFaces règle
+     * le stage via {@code joinfaces.faces.project-stage}, et Mojarra désactive de lui-même la relecture
+     * des Facelets en stage {@code production}.</p>
+     */
     @Override
     public void setServletContext(ServletContext servletContext) {
         servletContext.setInitParameter("com.sun.faces.forceLoadConfiguration", Boolean.TRUE.toString());
-        servletContext.setInitParameter("javax.faces.FACELETS_SKIP_COMMENTS", Boolean.TRUE.toString());
 
-        servletContext.setInitParameter("facelets.DEVELOPMENT", Boolean.TRUE.toString());
+        // Exclut les commentaires XHTML du HTML rendu, donc aussi de chaque réponse ajax.
+        servletContext.setInitParameter("jakarta.faces.FACELETS_SKIP_COMMENTS", Boolean.TRUE.toString());
 
-        servletContext.setInitParameter("javax.faces.DEFAULT_SUFFIX", ".xhtml");
-        servletContext.setInitParameter("javax.faces.PROJECT_STAGE", "Development");
-        servletContext.setInitParameter("javax.faces.FACELETS_REFRESH_PERIOD", "1");
-
-        servletContext.setInitParameter("primefaces.CLIENT_SIDE_VALIDATION", Boolean.TRUE.toString());
+        // Aucun composant n'utilise validateClient : activer la validation côté client ne ferait que
+        // charger validation.bv.js et annoter chaque champ sans bénéfice.
+        servletContext.setInitParameter("primefaces.CLIENT_SIDE_VALIDATION", Boolean.FALSE.toString());
         servletContext.setInitParameter("primefaces.THEME", "siamois-theme");
     }
 

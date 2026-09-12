@@ -36,7 +36,7 @@ spring:
     password: postgres
     username: postgres
     hikari:
-      maximum-pool-size: 1000
+      maximum-pool-size: 25
       minimum-idle: 1
       idle-timeout: 30000
       connection-timeout: 20000

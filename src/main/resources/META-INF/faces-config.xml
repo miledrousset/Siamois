@@ -9,4 +9,9 @@
         <component-class>fr.siamois.ui.custom.LazyTreeTable</component-class>
     </component>
 
+    <lifecycle>
+        <!-- Chronomètre les phases du cycle de vie. Inactif hors niveau DEBUG sur sa propre classe. -->
+        <phase-listener>fr.siamois.ui.config.LifecycleTimingListener</phase-listener>
+    </lifecycle>
+
 </faces-config>

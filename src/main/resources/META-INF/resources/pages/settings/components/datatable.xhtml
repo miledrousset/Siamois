@@ -27,7 +27,8 @@
                         <i class="bi bi-search"/>
                         <p:inputText placeholder="#{cc.attrs.searchInputPlaceholder}"
                                      value="#{cc.attrs.searchInputTextValue}">
-                            <p:ajax event="keyup" update="@form :#{cc.clientId}:formCC:#{cc.attrs.formId}"
+                            <!-- Sans delay, la recherche partait à chaque touche. -->
+                            <p:ajax event="keyup" delay="300" update="@form :#{cc.clientId}:formCC:#{cc.attrs.formId}"
                                     listener="#{cc.attrs.filterAction}"/>
                         </p:inputText>
                     </span>

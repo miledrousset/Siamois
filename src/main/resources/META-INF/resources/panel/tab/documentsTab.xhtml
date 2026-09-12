@@ -12,12 +12,15 @@
                     process="@this"
             />
             <h:panelGroup id="suDocumentsTab">
+                <!-- Pas de p:autoUpdate ici : il réinjectait ce tableau dans chaque réponse ajax de la page.
+                     L'ajout d'un document rafraîchit déjà le panneau entier (AbstractSingleEntityPanel#saveDocument). -->
                 <p:dataTable
                         value="#{panelModel.documents}"
                         var="siamoisDocument"
+                        paginator="true"
+                        rows="10"
+                        paginatorPosition="bottom"
                 >
-                    <p:autoUpdate/>
-
                     <p:column headerText="Titre">
                         <h:outputText value="#{siamoisDocument.title}"/>
                     </p:column>

@@ -124,7 +124,7 @@ public class RecordingUnitPanel extends AbstractSingleMultiHierarchicalEntityPan
     }
 
     @Override
-    public boolean canUserEditUnit() {
+    protected boolean computeCanUserEditUnit() {
         return unit != null && profilePermissionService.hasRecordingUnitWritePermission(sessionSettingsBean.getUserInfo(), unit);
     }
 

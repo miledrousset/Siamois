@@ -156,7 +156,7 @@ public class ActionUnitPanel extends AbstractSingleEntityPanel<ActionUnitDTO> im
     }
 
     @Override
-    public boolean canUserEditUnit() {
+    protected boolean computeCanUserEditUnit() {
         return unit != null && profilePermissionService.hasActionUnitWritePermission(sessionSettingsBean.getUserInfo(), unit);
     }
 
